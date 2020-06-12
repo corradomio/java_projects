@@ -1,0 +1,276 @@
+package jext.jgrapht.util;
+
+public class ContingencyMatrix {
+
+    private final int kd;
+    private final int kt;
+    private final int[][] m;
+    private final int[] ni;
+    private final int[] mj;
+    private int n;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    /**
+     *
+     * @param kt ground truth (rows)
+     * @param kd determined clusters (columns)
+     *
+     * (Data Mining - The text book, pag. 199)
+     */
+    public ContingencyMatrix(int kt, int kd) {
+        this.kd = kd;
+        this.kt = kt;
+        this.m = new int[kt][];
+        for(int i=0; i<kt; ++i)
+            this.m[i] = new int[kd];
+        this.ni = new int[kt];
+        this.mj = new int[kd];
+    }
+
+    // ----------------------------------------------------------------------
+    // Add cluster relation
+    // ----------------------------------------------------------------------
+
+    public ContingencyMatrix add(int i, int j) {
+        m[i][j] += 1;
+        return this;
+    }
+
+    public ContingencyMatrix done() {
+        for(int i=0; i<kt; ++i) {
+            for (int j=0; j<kd; ++j) {
+                int nij = m[i][j];
+                ni[i] += nij;
+                mj[j] += nij;
+                n += nij;
+            }
+        }
+        return this;
+    }
+
+    // ----------------------------------------------------------------------
+    // Metrics
+    // ----------------------------------------------------------------------
+
+    public double getPurity() {
+        double num = 0;
+        double den = 0;
+
+        for(int j=0; j<kd; j++) {
+            num += P(j);
+            den += M(j);
+        }
+
+        return div(num, den);
+    }
+
+    public double getGiniIndex() {
+        double num = 0;
+        double den = 0;
+
+        for(int j=0; j<kd; j++){
+            num += G(j)* M(j);
+            den += M(j);
+        }
+
+        return div(num, den);
+    }
+
+    public double getEntropy() {
+        double num = 0;
+        double den = 0;
+
+        for(int j=0; j<kd; j++){
+            num += E(j)* M(j);
+            den += M(j);
+        }
+
+        return div(num, den);
+    }
+
+    public double getRandIndex() {
+        compute();
+
+        double num = a+d;
+        double den = a + b + c + d; // == n*(n-1)/2
+
+        return chop(div(num, den));
+    }
+
+    public double getAdjustedRandIndex() {
+        // https://en.wikipedia.org/wiki/Rand_index
+        compute();
+
+        // nij*(nij-1)/2
+        double nij1 = 0;
+        for (int i = 0; i < kt; ++i) {
+            for (int j = 0; j < kd; ++j) {
+                int nij = m[i][j];
+                nij1 += nij * (nij - 1);
+            }
+        }
+        nij1 /= 2;
+
+        // ni*(ni-1)/2
+        double ni1 = 0;
+        for(int i=0; i<kt; ++i) {
+            ni1 += ni[i] * (ni[i] - 1);
+        }
+        ni1 /= 2;
+
+        // mj*(mj-1)/2
+        double mj1 = 0;
+        for(int j=0; j<kd; ++j) {
+            mj1 += mj[j] * (mj[j] - 1);
+        }
+        mj1 /= 2;
+
+        // n*(n-1)/2
+        double n1 = n*(n-1)/2.;
+
+        double num = nij1 - div(ni1*mj1, n1);
+        double den = (ni1 + mj1)/2 - div(ni1*mj1, n1);
+
+        return chop(div(num, den));
+    }
+
+    public double getJaccardIndex() {
+        return getJaccardCoefficient();
+    }
+
+    public double getJaccardCoefficient() {
+        compute();
+
+        double num = a;
+        double den = a + b + c;
+
+        return chop(div(num, den));
+    }
+
+    public double getFowlkesMallowsIndex() {
+        compute();
+
+        double m1 = a + b;
+        double m2 = a + c;
+
+        double num = a;
+        double den = sqrt(m1*m2);
+
+        return chop(div(num, den));
+    }
+
+    public double getNormalizedGamma() {
+        compute();
+
+        double m = a + b + c + d;
+        double m1 = a + b;
+        double m2 = a + c;
+
+        double num = (m*a - m1*m2);
+        double den = sqrt(m1*m2*(m - m1)*(m - m2));
+
+        return chop(div(num, den));
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    private int N(int i) {
+        // int s =0;
+        // for(int j = 0; j<kd; ++j)
+        //     s += m[i][j];
+        // return s;
+        return ni[i];
+    }
+
+    private int M(int j) {
+        // int s = 0;
+        // for(int i = 0; i< kt; ++i)
+        //     s += m[i][j];
+        // return s;
+        return mj[j];
+    }
+
+    private int P(int j) {
+        int maxi = m[0][j];
+        for (int i=1; i<kt; ++i) {
+            if (m[i][j] > maxi) {
+                maxi = m[i][j];
+            }
+        }
+        return maxi;
+    }
+
+    private double G(int j) {
+        double gini = 1.;
+        double mj = M(j);
+        for (int i=0; i<kt; ++i) {
+            gini -= sq(div(m[i][j], mj));
+        }
+        return gini;
+    }
+
+    private double E(int j) {
+        double entropy = 0;
+        for(int i=0; i<kt; ++i) {
+            entropy -= div(m[i][j], M(j))*log2(div(m[i][j], M(j)));
+        }
+        return entropy;
+    }
+
+    // ----------------------------------------------------------------------
+
+    private boolean done;
+    private double nij1;        // nij(nij-1)
+    private double nij2;        // nij^2
+    private double ni2;         // ni^2
+    private double mj2;         // mj^2
+    private double a,b,c,d;
+
+    private void compute() {
+        if (done)
+            return;
+        else
+            done = true;
+
+        double n2 = sq(n);
+
+        // nij(nij-1), nij^2
+        nij1 = 0;
+        nij2 = 0;
+        for (int i=0; i<kt; ++i)
+            for(int j=0; j<kd; ++j) {
+                int nij = m[i][j];
+                nij1 += nij*(nij - 1);
+                nij2 += sq(nij);
+            }
+
+        // ni2
+        ni2 = 0;
+        for (int i=0; i<kt; ++i)
+            ni2 += sq(ni[i]);
+
+        // mj2
+        mj2 = 0;
+        for (int j=0; j<kd; ++j)
+            mj2 += sq(mj[j]);
+
+        a = nij1/2;
+        b = (mj2 - nij2)/2;
+        c = (ni2 - nij2)/2;
+        d = ((n2 + nij2) - (ni2 + mj2))/2;
+
+        return;
+    }
+
+
+    private static double div(double x, double y) { return y != 0 ? x/y : 0; }
+    private static double sq(double x) { return x*x;}
+    private static double sqrt(double x) { return Math.sqrt(x); }
+    private static double log2(double x) { return x == 0? 0. : Math.log(x)/Math.log(2); }
+    private static double chop(double x) { return x < 0 ? 0. : x; }
+}

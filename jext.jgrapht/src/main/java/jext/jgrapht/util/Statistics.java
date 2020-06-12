@@ -38,8 +38,8 @@ public class Statistics {
     }
 
     public void print() {
-        System.out.printf("  Min: %f\n", min);
-        System.out.printf("  Max: %f\n", max);
-        System.out.printf("  Mean: %f, %f\n", mean, standardDeviation);
+        System.out.printf("  Min: %.4f\n", min);
+        System.out.printf("  Max: %.4f\n", max);
+        System.out.printf("  Mean: %.4f, %.4f\n", mean, standardDeviation);
     }
 }

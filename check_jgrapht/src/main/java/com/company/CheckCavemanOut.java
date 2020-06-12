@@ -32,13 +32,12 @@ public class CheckCavemanOut {
         int N = 1000;
         int E = 50000;
         int C = 10;
-        int CLIQUE = 5;
 
         // p : betweenCommunities
         // q: in community
         GraphGenerator<Integer, DefaultWeightedEdge, List<Set<Integer>>> gg
                 = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
-                N, E, C, CLIQUE,.001, .99)
+                N, E, C, .001, .99)
                 .communityWeights(new NormalDistrib(0.25, .10).minValue(0.01))
                 .betweenWeights(new NormalDistrib(1., .10).minValue(0.05));
 

@@ -11,7 +11,7 @@ public class NormalDistrib implements Distrib {
     private final double standardDeviation;
     private double minValue = -Double.MAX_VALUE;
     private double maxValue = +Double.MAX_VALUE;
-    private Random rnd;
+    private Random rnd = new Random();
 
     public NormalDistrib() {
         this(0., 1.);

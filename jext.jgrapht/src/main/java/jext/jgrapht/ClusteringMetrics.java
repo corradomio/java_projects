@@ -1,6 +1,6 @@
 package jext.jgrapht;
 
-import jext.jgrapht.util.ConfusionMatrix;
+import jext.jgrapht.util.ContingencyMatrix;
 import jext.util.SetUtils;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
@@ -268,51 +268,85 @@ public class ClusteringMetrics<V, E> {
     //
     // ----------------------------------------------------------------------
 
-    public class Statistics {
+    public static class Statistics {
+        public int numClusters;
+        public List<Integer> clusterSizes;
+        public double modularity;
+        public double dunnIndex;
+        public double daviesBouldinIndex;
+        public double louvainModularity;
 
         public void print() {
             System.out.print("Clustering\n");
-            System.out.printf("  n clusters: %d\n", clustering.getNumberClusters());
-
-            List<Integer> clusterSizes = clustering.getClusters()
-                    .stream()
-                    .map(Set::size)
-                    .collect(Collectors.toList());
+            System.out.printf("  n clusters: %d\n", numClusters);
 
             System.out.printf("  Clusters: %s\n", clusterSizes.toString());
-            System.out.printf("  Modularity: %f\n", getModularity());
-            System.out.printf("  Dunn Index: %f\n", getDunnIndex());
-            System.out.printf("  Davies-Boulding Index: %f\n", getDaviesBouldinIndex());
-            System.out.printf("  Louvain Modularity: %f\n", getLouvainModularity());
+            System.out.printf("  Modularity: %.4f\n", modularity);
+            System.out.printf("  Dunn Index: %.4f\n", dunnIndex);
+            System.out.printf("  Davies-Boulding Index: %.4f\n", daviesBouldinIndex);
+            System.out.printf("  Louvain Modularity: %.4f\n", louvainModularity);
         }
     }
 
     public Statistics getStatistics() {
-        return new Statistics();
+        Statistics stat = new Statistics();
+        stat.numClusters = clustering.getNumberClusters();
+        stat.clusterSizes = clustering.getClusters()
+                .stream()
+                .map(Set::size)
+                .collect(Collectors.toList());
+        stat.modularity = getModularity();
+        stat.dunnIndex = getDunnIndex();
+        stat.daviesBouldinIndex = getDaviesBouldinIndex();
+        stat.louvainModularity = getLouvainModularity();
+
+        return stat;
     }
 
-    public class Comparison {
-        ClusteringAlgorithm.Clustering<V> other;
-
-        Comparison(ClusteringAlgorithm.Clustering<V> other) {
-            this.other = other;
-        }
+    public static class Comparison {
+        public int numClusters1;
+        public int numClusters2;
+        public double purity;
+        public double giniIndex;
+        public double entropy;
+        public double randIndex;
+        public double adjustedRandIndex;
+        public double fowlkesMallowsIndex;
+        public double jaccardCoefficient;
+        public double normalizedGamma;
 
         public void print() {
             System.out.print("Clustering comparison\n");
 
-            ConfusionMatrix cm = getConfusionMatrix(other);
+            System.out.printf("  n clusters 1: %d\n", numClusters1);
+            System.out.printf("  n clusters 2: %d\n", numClusters2);
+            System.out.printf("      Purity: %.4f (1 is better)\n", purity);
+            System.out.printf("  Gini Index: %.4f (0 is better)\n", giniIndex);
+            System.out.printf("     Entropy: %.4f (0 is better)\n", entropy);
 
-            System.out.printf("  n clusters 1: %d\n", clustering.getNumberClusters());
-            System.out.printf("  n clusters 2: %d\n", other.getNumberClusters());
-            System.out.printf("      Purity: %f (1 is better)\n", cm.getPurity());
-            System.out.printf("  Gini Index: %f (0 is better)\n", cm.getGiniIndex());
-            System.out.printf("     Entropy: %f (0 is better)\n", cm.getEntropy());
+            System.out.printf("           Rand Index: %.4f (1 is better)\n", randIndex);
+            System.out.printf("  Adjusted Rand Index: %.4f (1 is better)\n", adjustedRandIndex);
+            System.out.printf("Fowlkes Mallows Index: %.4f (1 is better)\n", fowlkesMallowsIndex);
+            System.out.printf("  Jaccard Coefficient: %.4f (1 is better)\n", jaccardCoefficient);
+            System.out.printf("     Normalized Gamma: %.4f (1 is better)\n", normalizedGamma);
         }
     }
 
     public Comparison getComparison(ClusteringAlgorithm.Clustering<V> other) {
-        return new Comparison(other);
+        Comparison comp = new Comparison();
+        comp.numClusters1 = clustering.getNumberClusters();
+        comp.numClusters2 = other.getNumberClusters();
+        ContingencyMatrix cm = getContingencyMatrix(other);
+
+        comp.purity = cm.getPurity();
+        comp.giniIndex = cm.getGiniIndex();
+        comp.entropy = cm.getEntropy();
+        comp.randIndex = cm.getRandIndex();
+        comp.adjustedRandIndex = cm.getAdjustedRandIndex();
+        comp.fowlkesMallowsIndex = cm.getFowlkesMallowsIndex();
+        comp.jaccardCoefficient = cm.getJaccardCoefficient();
+        comp.normalizedGamma = cm.getNormalizedGamma();
+        return comp;
     }
 
 
@@ -320,10 +354,10 @@ public class ClusteringMetrics<V, E> {
     //
     // ----------------------------------------------------------------------
 
-    public ConfusionMatrix getConfusionMatrix(ClusteringAlgorithm.Clustering<V> other) {
+    public ContingencyMatrix getContingencyMatrix(ClusteringAlgorithm.Clustering<V> other) {
         int nr = clustering.getNumberClusters();
         int nc = other.getNumberClusters();
-        ConfusionMatrix cm = new ConfusionMatrix(nr, nc);
+        ContingencyMatrix cm = new ContingencyMatrix(nr, nc);
         Set<V> v1 = verticesOf(clustering);
         Set<V> v2 = verticesOf(other);
         if (!SetUtils.union(v1, v2).equals(SetUtils.intersection(v1, v2)))
@@ -335,7 +369,7 @@ public class ClusteringMetrics<V, E> {
             cm.add(ci, cj);
         }
 
-        return cm;
+        return cm.done();
     }
 
     private Set<V> verticesOf(ClusteringAlgorithm.Clustering<V> clustering) {

@@ -129,17 +129,15 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
     public static class VertexStatistics extends Statistics {
         public int order;
-        public int components;
 
         VertexStatistics() { }
 
         public void print() {
             System.out.printf("Vertices statistics\n");
             System.out.printf("  Order (n vertices): %d\n", order);
-            System.out.printf("  Components: %d\n", components);
-            System.out.printf("  Min degree: %f\n", min);
-            System.out.printf("  Max degree: %f\n", max);
-            System.out.printf("  Mean degree: %f, %f\n", mean, standardDeviation);
+            System.out.printf("  Min degree: %.4f\n", min);
+            System.out.printf("  Max degree: %.4f\n", max);
+            System.out.printf("  Mean degree: %.4f, %.4f\n", mean, standardDeviation);
             System.out.printf("End\n");
         }
     }
@@ -147,7 +145,6 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     public VertexStatistics getVertexStatistics() {
         VertexStatistics ds = new VertexStatistics();
         ds.order = graph.vertexSet().size();
-        ds.components = new GraphComponents<>(graph).getComponents(EdgeType.UNDIRECTED).size();
 
         graph.vertexSet()
                 .stream()
@@ -228,17 +225,20 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     public static class EdgeStatistics extends Statistics {
         public int size;
         public int order;
+        public int components;
+        public double density;
 
         EdgeStatistics() { }
 
         public void print() {
             System.out.printf("Edges statistics\n");
             System.out.printf("  Size       : %d\n", size);
-            System.out.printf("  Density    : %f\n", (2.*size)/(order*(order-1)));
-            System.out.printf("  Weight     : %f\n", sum1);
-            System.out.printf("  Min weight : %f\n", min);
-            System.out.printf("  Max weight : %f\n", max);
-            System.out.printf("  Mean weight: %f, %f\n", mean, standardDeviation);
+            System.out.printf("  Components : %d\n", components);
+            System.out.printf("  Density    : %.4f\n", density);
+            System.out.printf("  Weight     : %.4f\n", sum1);
+            System.out.printf("  Min weight : %.4f\n", min);
+            System.out.printf("  Max weight : %.4f\n", max);
+            System.out.printf("  Mean weight: %.4f, %.4f\n", mean, standardDeviation);
             System.out.printf("End\n");        }
     }
 
@@ -246,6 +246,8 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
         EdgeStatistics es = new EdgeStatistics();
         es.size  = graph.edgeSet().size();
         es.order = graph.vertexSet().size();
+        es.components = new GraphComponents<>(graph).getComponents(EdgeType.UNDIRECTED).size();
+        es.density = (2.*es.size)/(es.order*(es.order-1));
 
         graph.edgeSet()
                 .stream()

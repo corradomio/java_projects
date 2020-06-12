@@ -1,6 +1,7 @@
 package jext.jgrapht.generate;
 
 import jext.jgrapht.util.Distrib;
+import jext.jgrapht.util.distrib.ConstantDistrib;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.generate.GraphGenerator;
@@ -29,8 +30,8 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     private final double q;
     // probability of an edge between communities
     private final double p;
-    // minimum dimension of a clique
-    private final int clique;
+    // community size distribution
+    private Distrib communitySizes;
     // weight distribution for community edges
     private Distrib communityWeights;
     // weight distribution for edges between communities
@@ -58,17 +59,16 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
      * @param order n of vertices
      * @param size n of edges
      * @param n n of communities
-     * @param clique minimum size of a community
      * @param p probability of an edge to be connected between communities
      * @param q probability of an edge to be connected into the community
      */
-    public RandomCavemanGraphGenerator(int order, int size, int n, int clique, double p, double q) {
-        this.order = order;
-        this.size = size;
-        this.n = n;
-        this.clique = clique;
+    public RandomCavemanGraphGenerator(int order, int size, int n, double p, double q) {
+        this.order = order; // n vertices
+        this.size = size;   // n edges
+        this.n = n;         // n communities
         this.p = p;
         this.q = q;
+        this.communitySizes = new ConstantDistrib((0.+order)/n);
     }
 
     /**
@@ -78,6 +78,16 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
      */
     public RandomCavemanGraphGenerator<V, E> seed(long seed) {
         this.rnd = new Random(seed);
+        return this;
+    }
+
+    /**
+     * Size distribution to use with communities
+     * @param distrib distribution
+     * @return itself
+     */
+    public RandomCavemanGraphGenerator<V, E> communitySizes(Distrib distrib) {
+        communitySizes = distrib;
         return this;
     }
 
@@ -150,58 +160,108 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     // ----------------------------------------------------------------------
 
     private void initAlgorithm() {
+        communitySizes.setRandom(rnd);
         communityWeights.setRandom(rnd);
         betweenWeights.setRandom(rnd);
     }
 
     private void computeCommunitySizes() {
-        // sizes of each community
         csizes = new int[n];
 
-        // generate 'n' (n of communities) random numbers
-        // (plus a final '1.')
-        double[] v = new double[n+1];
-        for (int c = 1; c< n; ++c)
-            v[c] = rnd.nextDouble();
-        v[n] = 1.;
-        Arrays.sort(v);
-
-        // compute the 'difference' between two adjacent
-        // values:   v'[i] = v[i+1]-v[i]
-        for (int c = 0; c< n; ++c)
-            v[c] = v[c+1]-v[c];
-
-        // generate the community sizes
-        int rest = order;
-        for (int c = 0; c< n; ++c) {
-            csizes[c] = (int)(order*v[c]);
-            if (csizes[c] < clique)
-                csizes[c] = clique;
-            rest -= csizes[c];
+        int total = 0;
+        for(int c=0; c<n; ++c){
+            int csz = (int)communitySizes.nextValue();
+            csizes[c] = csz;
+            total += csz;
         }
 
-        // there are not enough vertices
-        // add a vertex to each community
-        for (int c=0; c<n && rest>0; ++c) {
+        // not enough vertices
+        while (total < order) {
+            int c = findSmallest();
             csizes[c] += 1;
-            rest -= 1;
+            total += 1;
         }
 
-        // there are too vertices
-        // remove a vertex only from communities large enough
-        for (int c=0; c<n && rest<0; ++c)
-            if (csizes[c] > clique) {
-                csizes[c] -= 1;
-                rest += 1;
-            }
+        // too vertices
+        while(total > order) {
+            int c = findLargest();
+            csizes[c] -= 1;
+            total -= 1;
+        }
     }
+
+    private int findSmallest() {
+        int selected = 0;
+        int csz = csizes[0];
+        for(int c=0;c<n; ++c) {
+            if (csizes[c] < csz) {
+                selected = c;
+                csz = csizes[c];
+            }
+        }
+        return selected;
+    }
+
+    private int findLargest() {
+        int selected = 0;
+        int csz = csizes[0];
+        for(int c=0;c<n; ++c) {
+            if (csizes[c] > csz) {
+                selected = c;
+                csz = csizes[c];
+            }
+        }
+        return selected;
+    }
+
+    // private void computeCommunitySizes() {
+    //     // sizes of each community
+    //     csizes = new int[n];
+    //
+    //     // generate 'n' (n of communities) random numbers
+    //     // (plus a final '1.')
+    //     double[] v = new double[n+1];
+    //     for (int c = 1; c< n; ++c)
+    //         v[c] = rnd.nextDouble();
+    //     v[n] = 1.;
+    //     Arrays.sort(v);
+    //
+    //     // compute the 'difference' between two adjacent
+    //     // values:   v'[i] = v[i+1]-v[i]
+    //     for (int c = 0; c< n; ++c)
+    //         v[c] = v[c+1]-v[c];
+    //
+    //     // generate the community sizes
+    //     int rest = order;
+    //     for (int c = 0; c< n; ++c) {
+    //         csizes[c] = (int)(order*v[c]);
+    //         if (csizes[c] < clique)
+    //             csizes[c] = clique;
+    //         rest -= csizes[c];
+    //     }
+    //
+    //     // there are not enough vertices
+    //     // add a vertex to each community
+    //     for (int c=0; c<n && rest>0; ++c) {
+    //         csizes[c] += 1;
+    //         rest -= 1;
+    //     }
+    //
+    //     // there are too vertices
+    //     // remove a vertex only from communities large enough
+    //     for (int c=0; c<n && rest<0; ++c)
+    //         if (csizes[c] > clique) {
+    //             csizes[c] -= 1;
+    //             rest += 1;
+    //         }
+    // }
 
     private void computeCommunityStarts() {
         cstart = new int[n+1];
         cstart[0] = 0;
-        for(int c = 1; c< n; ++c)
+        for(int c = 1; c <= n; ++c)
             cstart[c] = cstart[c-1] + csizes[c-1];
-        cstart[n] = cstart[n-1] + csizes[n-1];
+        // cstart[n] = cstart[n-1] + csizes[n-1];
     }
 
     private void addVertices() {

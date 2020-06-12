@@ -13,7 +13,7 @@ public class LanguageUtils {
         put(".java", "java");
         put(".scala", "scala");
         put(".c", "c");
-        put(".h", "c++");
+        put(".h", "c");
         put(".cpp", "c++");
         put(".cxx", "c++");
         put(".hpp", "c++");

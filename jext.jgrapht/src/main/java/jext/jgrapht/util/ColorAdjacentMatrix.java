@@ -23,7 +23,7 @@ public class ColorAdjacentMatrix {
 
         @Override
         public String toString() {
-            return String.format("(%d, %f)", color, weight);
+            return String.format("(%d, %.4f)", color, weight);
         }
     }
 

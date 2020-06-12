@@ -7,6 +7,7 @@ import jext.jgrapht.alg.color.WeightedBMCColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.FileExporter;
+import jext.jgrapht.util.WeightType;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.logger.Logger;
 import org.jgrapht.Graph;
@@ -36,7 +37,6 @@ public class CheckCavemanClustering extends JFrame {
         int N = 1000;
         int E = 50000;
         int C = 10;
-        int CLIQUE = 5;
 
         // similarita' / dissimilarita'
         // inter -> tra
@@ -46,9 +46,8 @@ public class CheckCavemanClustering extends JFrame {
         // q: in community
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg
                 = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
-                N, E, C, CLIQUE,.2, .9)
-                .communityWeights(new NormalDistrib(0.30, .10
-                ).minValue(0.01))
+                N, E, C, .2, .9)
+                .communityWeights(new NormalDistrib(0.30, .10).minValue(0.01))
                 .betweenWeights(  new NormalDistrib(0.50, .10).minValue(0.01));
 
         gg.generateGraph(g);
@@ -98,45 +97,55 @@ public class CheckCavemanClustering extends JFrame {
         // new GraphMetrics<>(g).getVertexStatistics().print();
         // new GraphMetrics<>(g).getEdgeStatistics().print();
 
-        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>
-                gg = genGraph();
+        GraphMetrics.VertexStatistics vs;
+        GraphMetrics.EdgeStatistics   es;
+        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg;
+        Graph<Integer, DefaultWeightedEdge> g, t;
+        ClusteringAlgorithm.Clustering<Integer> groundTrue;
+        ClusteringAlgorithm.Clustering<Integer> clustering;
 
-        Graph<Integer, DefaultWeightedEdge> g = gg.getGraph();
+        gg = genGraph();
+        g = gg.getGraph();
 
-        GraphMetrics.VertexStatistics vs = new GraphMetrics<>(g).getVertexStatistics();
-        GraphMetrics.EdgeStatistics es = new GraphMetrics<>(g).getEdgeStatistics();
+        ClusteringStatistics stats = new ClusteringStatistics(g, gg.getClustering());
 
-        vs.print();
-        es.print();
+        // vs = new GraphMetrics<>(g).getVertexStatistics();
+        // es = new GraphMetrics<>(g).getEdgeStatistics();
+        // vs.print();
+        // es.print();
 
         System.out.printf("-- [groundTruth] --------------------\n");
-        ClusteringAlgorithm.Clustering<Integer> groundTrue = gg.getClustering();
-        new ClusteringMetrics<>(g, groundTrue).invertWeights(es.max).getStatistics().print();
-        new ClusteringMetrics<>(g, groundTrue).getComparison(groundTrue).print();
+        groundTrue = gg.getClustering();
+
+        // new ClusteringMetrics<>(g, groundTrue).invertWeights(es.max).getStatistics().print();
+        // new ClusteringMetrics<>(g, groundTrue).getComparison(groundTrue).print();
+
+        stats.addStats(0., g, groundTrue);
 
         for (double threshold=0.0; threshold<3.8; threshold+=0.1) {
 
-            Graph<Integer, DefaultWeightedEdge> t = new TransformGraph<>(g).upperThresholdGraph(threshold);
+            t = new TransformGraph<>(g).upperThresholdGraph(threshold);
             if (t.edgeSet().isEmpty())
                 break;
 
             System.out.printf("-- [%.1f] --------------------\n", threshold);
-            vs = new GraphMetrics<>(t).getVertexStatistics();
-            es = new GraphMetrics<>(t).getEdgeStatistics();
-
-            vs.print();
-            es.print();
+            // vs = new GraphMetrics<>(t).getVertexStatistics();
+            // es = new GraphMetrics<>(t).getEdgeStatistics();
+            // vs.print();
+            // es.print();
 
             System.out.print("-- cluster\n");
-            ClusteringAlgorithm.Clustering<Integer> clustering =
-                    new ColoringClustering<Integer, DefaultWeightedEdge>(
+            clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(
                             //new ParallelBMCColoring<>(t)
-                            new WeightedBMCColoring<>(t)
+                            new WeightedBMCColoring<>(t).weightType(WeightType.MEAN)
                     ).getClustering();
 
-            new ClusteringMetrics<>(g, clustering).invertWeights(es.max).getStatistics().print();
-            new ClusteringMetrics<>(g, clustering).getComparison(groundTrue).print();
+            // new ClusteringMetrics<>(g, clustering).invertWeights(es.max).getStatistics().print();
+            // new ClusteringMetrics<>(g, clustering).getComparison(groundTrue).print();
+
+            stats.addStats(threshold, t, clustering);
         }
 
+        stats.saveCsv("relaxcave-stats.csv");
     }
 }
