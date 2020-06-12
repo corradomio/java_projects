@@ -47,7 +47,8 @@ public class CheckCavemanClustering extends JFrame {
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg
                 = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
                 N, E, C, CLIQUE,.2, .9)
-                .communityWeights(new NormalDistrib(0.30, .10).minValue(0.01))
+                .communityWeights(new NormalDistrib(0.30, .10
+                ).minValue(0.01))
                 .betweenWeights(  new NormalDistrib(0.50, .10).minValue(0.01));
 
         gg.generateGraph(g);
