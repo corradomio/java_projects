@@ -9,13 +9,17 @@
         with these parameters
       -->
     <cache name="">
-        <!-- num of elements -->
-        <capacity value="1000"/>
-        <!-- expiration
-             after: timeout (milliseconds)
-                    <int>s  (seconds)
-             mode:  insert | access
+        <property name="capacity" value="1024"/>
+        <!--
+        <property name="expireAfterAccess" value="10s"/>
+        <property name="expireAfterWrite" value="30s"/>
           -->
-        <expiry after="10s" mode="access"/>
+    </cache>
+    <cache name="org.hls">
+        <property name="capacity" value="256"/>
+        <!--
+        <property name="expireAfterAccess" value="10s"/>
+        <property name="expireAfterWrite" value="30s"/>
+          -->
     </cache>
 </configuration>

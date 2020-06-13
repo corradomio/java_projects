@@ -28,7 +28,12 @@ public class LanguageUtils {
      * Return the programming language used in the source code, based on the file extension
      */
     public static String guessLanguage(File file) {
-        String extension = PathUtils.getExtension(file.getName());
+        String extension = extensionOf(file.getName());
         return LANGUAGES.getOrDefault(extension, UNKNOWN);
+    }
+
+    private static String extensionOf(String name) {
+        int sep = name.lastIndexOf('.');
+        return sep != -1 ? name.substring(sep+1) : "";
     }
 }

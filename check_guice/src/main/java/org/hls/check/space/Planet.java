@@ -1,4 +1,9 @@
 package org.hls.check.space;
 
-public interface Planet {
+import java.util.List;
+
+public interface Planet extends CelestialBody {
+
+    List<Moon> getMoons();
+
 }

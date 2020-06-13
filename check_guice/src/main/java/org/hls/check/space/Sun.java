@@ -1,4 +1,4 @@
 package org.hls.check.space;
 
-public interface Sun {
+public interface Sun extends CelestialBody {
 }

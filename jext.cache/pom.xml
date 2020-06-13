@@ -4,9 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>org.hls</groupId>
     <artifactId>jext.cache</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
     <repositories>
         <repository>
@@ -15,6 +20,58 @@
         </repository>
     </repositories>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+<!--        <dependency>-->
+<!--            <groupId>com.thoughtworks.xstream</groupId>-->
+<!--            <artifactId>xstream</artifactId>-->
+<!--            <version>1.4.12</version>-->
+<!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.cache2k/cache2k-core -->
+<!--        <dependency>-->
+<!--            <groupId>org.cache2k</groupId>-->
+<!--            <artifactId>cache2k-core</artifactId>-->
+<!--            <version>1.2.4.Final</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
+<!--        <dependency>-->
+<!--            <groupId>org.ehcache</groupId>-->
+<!--            <artifactId>ehcache</artifactId>-->
+<!--            <version>3.8.1</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.cetsoft/imcache -->
+<!--        <dependency>-->
+<!--            <groupId>com.cetsoft</groupId>-->
+<!--            <artifactId>imcache</artifactId>-->
+<!--            <version>0.3.0</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.cetsoft/imcache-core -->
+<!--        <dependency>-->
+<!--            <groupId>com.cetsoft</groupId>-->
+<!--            <artifactId>imcache-core</artifactId>-->
+<!--            <version>0.3.0</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-jcs-core -->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.commons</groupId>-->
+<!--            <artifactId>commons-jcs-core</artifactId>-->
+<!--            <version>2.2.1</version>-->
+<!--        </dependency>-->
+    </dependencies>
 
     <distributionManagement>
         <repository>

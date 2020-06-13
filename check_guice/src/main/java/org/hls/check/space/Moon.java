@@ -1,4 +1,4 @@
 package org.hls.check.space;
 
-public class Moon {
+public interface Moon extends CelestialBody {
 }

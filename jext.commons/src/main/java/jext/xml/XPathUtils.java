@@ -249,6 +249,28 @@ public class XPathUtils {
     }
 
     // ----------------------------------------------------------------------
+    // getProperties()
+    // ----------------------------------------------------------------------
+    //  <root>
+    //      <property name=..." value="..."/>
+    //      <property name=...">value</property>
+    //
+
+    public static Properties getProperties(Element elt) {
+        Properties properties = new Properties();
+        for(Element pelt : selectNodes(elt, "property")) {
+            String name = getValue(pelt, "@name");
+            String value = getValue(pelt, "@value", null);
+            if (value == null)
+                value = getValue(pelt, "#text", "");
+
+            properties.put(name, value);
+        }
+        return properties;
+    }
+
+
+    // ----------------------------------------------------------------------
     // Compose the XML
     // ----------------------------------------------------------------------
     // Set the value of the specified path.
@@ -397,6 +419,17 @@ public class XPathUtils {
                     attr = ((Element) current).getAttributeNode(aname);
                 }
                 current = attr;
+            }
+            // #text | text()
+            else if (step.equals("#text") || step.equals("text()")) {
+                NodeList nl = current.getChildNodes();
+                for(int i=0; i<nl.getLength(); ++i) {
+                    Node node = nl.item(i);
+                    if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
+                        current = node;
+                        break;
+                    }
+                }
             }
             // name
             else if (!step.contains("[")) {

@@ -5,12 +5,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 public class PropertiesUtils {
 
     public static final Properties NO_PROPERTIES = new Properties();
     public static Properties empty() { return NO_PROPERTIES; }
+
+    // ----------------------------------------------------------------------
+    // Load properties
+    // ----------------------------------------------------------------------
 
     public static Properties load(String path) throws IOException {
         return load(new File(path));
@@ -23,6 +29,10 @@ public class PropertiesUtils {
             return properties;
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Filter properties
+    // ----------------------------------------------------------------------
 
     /**
      * Select the properties with the specified prefix and return a new
@@ -41,6 +51,58 @@ public class PropertiesUtils {
             if (name.startsWith(prefix))
                 props.put(name.substring(prefix.length()), allprops.getProperty(name));
         return props;
+    }
+
+    // ----------------------------------------------------------------------
+    // Get typed values
+    // ----------------------------------------------------------------------
+    private static Set<String> FALSE_VALUES = new HashSet<String>(){{
+       add("0");
+       add("false");
+       add("False");
+       add("FALSE");
+       add("f");
+       add("F");
+       add("#f");
+       add("#F");
+       add("off");
+       add("closed");
+    }};
+    private static Set<String> TRUE_VALUES = new HashSet<String>(){{
+        add("1");
+        add("true");
+        add("True");
+        add("TRUE");
+        add("t");
+        add("T");
+        add("#t");
+        add("#T");
+        add("on");
+        add("opened");
+    }};
+
+    public static String getValue(Properties properties, String name) {
+        return properties.getProperty(name);
+    }
+
+    public static int getValue(Properties properties, String name, int defaultValue) {
+        String value = properties.getProperty(name, String.valueOf(defaultValue));
+        return Integer.parseInt(value);
+    }
+
+    public static long getValue(Properties properties, String name, long defaultValue) {
+        String value = properties.getProperty(name, String.valueOf(defaultValue));
+        return Long.parseLong(value);
+    }
+
+    public static boolean getValue(Properties properties, String name, boolean defaultValue) {
+        String value = properties.getProperty(name, String.valueOf(defaultValue));
+        if (FALSE_VALUES.contains(value))
+            return false;
+        if (TRUE_VALUES.contains(value))
+            return true;
+        else
+            return Boolean.parseBoolean(value);
     }
 
     // ----------------------------------------------------------------------
