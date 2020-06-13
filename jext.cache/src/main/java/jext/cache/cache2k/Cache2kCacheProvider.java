@@ -1,4 +1,34 @@
 package jext.cache.cache2k;
 
-public class Cache2kCacheProvider {
+import jext.cache.Cache;
+import jext.cache.CacheProvider;
+import jext.util.PropertiesUtils;
+import jext.util.TimeUtils;
+import org.cache2k.Cache2kBuilder;
+
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+public class Cache2kCacheProvider implements CacheProvider {
+    private static final String CAPACITY = "capacity";
+    private static final String EXPIRE_AFTER_WRITE = "expireAfterWrite";
+
+
+    @Override
+    public <K, V> Cache<K, V> createCache(String name, Properties properties) {
+        Cache2kBuilder builder = Cache2kBuilder.forUnknownTypes();
+
+        if (properties.containsKey(CAPACITY)) {
+            long capacity = PropertiesUtils.getValue(properties, CAPACITY, 128);
+            builder.entryCapacity(capacity);
+        }
+        if (properties.contains(EXPIRE_AFTER_WRITE)) {
+            long duration = TimeUtils.toMillis(PropertiesUtils.getValue(properties, EXPIRE_AFTER_WRITE));
+            builder.expireAfterWrite(duration, TimeUnit.MILLISECONDS);
+        }
+
+        org.cache2k.Cache<K, V> innerCache = builder.build();
+
+        return new Cache2kCache<>(name, innerCache);
+    }
 }

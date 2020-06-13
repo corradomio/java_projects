@@ -2,6 +2,7 @@
 <!-- DOCTYPE cache4j:configuration SYSTEM "cache4j.dtd" -->
 <configuration>
     <provider value="jext.cache.guava.GuavaCacheProvider"/>
+<!--    <provider value="jext.cache.cache2k.Cache2kCacheProvider"/>-->
 
     <!--
         qualified name

@@ -1,6 +1,7 @@
 package jext.cache;
 
 import jext.cache.guava.GuavaCacheProvider;
+import jext.cache.internal.ConfiguredCache;
 import jext.logging.Logger;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
@@ -99,9 +100,11 @@ public class CacheConfigurator {
         CacheConfig cconfig = defaultConfig;
 
         for (CacheConfig cc : configurations) {
+            // found a chache with the exact name
             if (name.equals(cc.name))
                 return cc;
 
+            // select the MOST SPECIFIC configuration
             String prefix = cc.name + ".";
             if (name.startsWith(prefix) && cc.name.length() > cconfig.name.length())
                 cconfig = cc;
@@ -109,22 +112,26 @@ public class CacheConfigurator {
         return cconfig;
     }
 
-    private synchronized <K,V> Cache<K, V> retrieveCache(String name){
-        if (name == null)
-            name = StringUtils.empty();
+    private <K,V> Cache<K, V> retrieveCache(String name){
+        synchronized (caches) {
+            if (name == null)
+                name = StringUtils.empty();
 
-        if (!caches.containsKey(name)) {
-            CacheConfig cconfig = getCacheConfig(name);
+            if (!caches.containsKey(name)) {
+                CacheConfig cconfig = getCacheConfig(name);
 
-            Cache<K, V> cache = cacheProvider.createCache(name, cconfig.properties);
-            ((ConfiguredCache)cache).setConfigurator(this);
+                Cache<K, V> cache = cacheProvider.createCache(name, cconfig.properties);
+                ((ConfiguredCache)cache).setConfigurator(this);
 
-            caches.put(name, cache);
+                caches.put(name, cache);
+            }
+            return caches.get(name);
         }
-        return caches.get(name);
     }
 
-    public synchronized <K,V> void detach(Cache<K, V> cache) {
-        caches.remove(cache.getName());
+    public <K,V> void detach(Cache<K, V> cache) {
+        synchronized (caches) {
+            caches.remove(cache.getName());
+        }
     }
 }

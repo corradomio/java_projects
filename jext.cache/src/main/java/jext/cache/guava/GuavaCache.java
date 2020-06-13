@@ -2,7 +2,7 @@ package jext.cache.guava;
 
 import jext.cache.Cache;
 import jext.cache.CacheConfigurator;
-import jext.cache.ConfiguredCache;
+import jext.cache.internal.ConfiguredCache;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -39,12 +39,12 @@ public class GuavaCache<K, V> implements Cache<K, V>, ConfiguredCache {
     }
 
     @Override
-    public void evict(K key) {
+    public void remove(K key) {
         innerCache.invalidate(key);
     }
 
     @Override
-    public void evictAll() {
+    public void clear() {
         innerCache.invalidateAll();
     }
 
