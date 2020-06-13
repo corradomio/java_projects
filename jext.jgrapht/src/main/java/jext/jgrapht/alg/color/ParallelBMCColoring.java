@@ -2,7 +2,7 @@ package jext.jgrapht.alg.color;
 
 import jext.jgrapht.util.EdgeInfo;
 import jext.jgrapht.util.VertexInfo;
-import jext.logger.Logger;
+import jext.logging.Logger;
 import jext.util.concurrent.SharedBitSet;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;

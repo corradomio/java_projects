@@ -7,6 +7,7 @@
     <groupId>org.hls.test</groupId>
     <artifactId>check_jgrapht</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <!--modules>
         <module>.</module>
@@ -26,12 +27,10 @@
     </properties>
 
     <modules>
-        <module>../jext.collections</module>
-        <module>../jext.embedding</module>
-        <module>../jext.jgrapht</module>
         <module>../jext.commons</module>
-        <module>../jext.cache</module>
-        <module>../jext.tasks</module>
+        <module>../jext.collections</module>
+        <module>../jext.jgrapht</module>
+        <module>../jext.embedding</module>
     </modules>
 
     <dependencies>
@@ -43,20 +42,32 @@
         </dependency>
 
         <dependency>
-            <groupId>jext</groupId>
-            <artifactId>jext.util</artifactId>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>jext</groupId>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.collections</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
             <artifactId>jext.jgrapht</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>jext</groupId>
+            <groupId>org.hls</groupId>
             <artifactId>jext.embedding</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>Local</id>
+            <url>file://jars/$targets</url>
+        </repository>
+    </distributionManagement>
 
 </project>

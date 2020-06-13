@@ -1,6 +1,6 @@
 package jext.jgrapht.nio.adjacent;
 
-import jext.logger.Logger;
+import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.ImportException;

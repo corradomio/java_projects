@@ -5,7 +5,7 @@ import jext.jgrapht.alg.color.ColoringTests;
 import jext.jgrapht.alg.color.ParallelBMCColoring;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;
 import jext.jgrapht.nio.adjacent.FileImporter;
-import jext.logger.Logger;
+import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.VertexColoringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -27,7 +27,7 @@ public class CheckMCColoring {
 
     public static void main(String[] args) {
 
-        Logger.configure("log4j.xml");
+        Logger.configure();
 
         Graph<String, DefaultWeightedEdge> g;
 

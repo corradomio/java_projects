@@ -7,7 +7,7 @@ package jext.jgrapht.alg.color;
 
 import jext.jgrapht.Graphs;
 import jext.jgrapht.util.VertexInfo;
-import jext.logger.Logger;
+import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.VertexColoringAlgorithm;
 

@@ -4,10 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>jext</groupId>
+    <groupId>org.hls</groupId>
     <artifactId>jext.jgrapht</artifactId>
     <version>1.0-SNAPSHOT</version>
-
     <packaging>jar</packaging>
 
     <repositories>
@@ -49,15 +48,14 @@
         </dependency>
 
         <dependency>
-            <groupId>jext</groupId>
-            <artifactId>jext.util</artifactId>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.collections</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>

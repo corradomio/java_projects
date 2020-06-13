@@ -9,7 +9,7 @@ import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.FileExporter;
 import jext.jgrapht.util.WeightType;
 import jext.jgrapht.util.distrib.NormalDistrib;
-import jext.logger.Logger;
+import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -73,7 +73,7 @@ public class CheckCavemanClustering extends JFrame {
 
     public static void main(String[] args) {
 
-        Logger.configure("log4j.xml");
+        Logger.configure();
 
         // Graph<Integer, DefaultWeightedEdge> g = new SimpleGraph<>(
         //         SupplierUtil.createIntegerSupplier(),
