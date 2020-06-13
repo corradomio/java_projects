@@ -1,21 +1,21 @@
-package jext.cache.cache2k;
+package jext.cache.weak;
 
 import jext.cache.Cache;
 import jext.cache.CacheConfigurator;
 import jext.cache.util.ConfiguredCache;
 import jext.cache.util.Unique;
 
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-public class Cache2kCache<K, V> implements Cache<K, V>, ConfiguredCache {
+public class WeakCache<K, V> implements Cache<K, V>, ConfiguredCache {
 
-    private String name;
+    private final String name;
     private CacheConfigurator configurator;
-    private org.cache2k.Cache<K, V> innerCache;
-    private Unique<K> uniqueKeys = new Unique<>();
+    private WeakHashMap<K, V> innerCache;
 
-    Cache2kCache(String name, org.cache2k.Cache<K, V> innerCache) {
+    WeakCache(String name, WeakHashMap<K, V> innerCache) {
         this.name = name;
         this.innerCache = innerCache;
     }
@@ -27,13 +27,14 @@ public class Cache2kCache<K, V> implements Cache<K, V>, ConfiguredCache {
 
     @Override
     public V get(K key) {
-        return innerCache.get(key);
+        synchronized (innerCache) {
+            return innerCache.getOrDefault(key, null);
+        }
     }
 
     @Override
     public V get(K key, Callable<V> callable) throws ExecutionException {
-        K unique = uniqueKeys.getUnique(key);
-        synchronized (unique) {
+        synchronized (innerCache) {
             if (!innerCache.containsKey(key)) {
                 try {
                     V value = callable.call();
@@ -44,31 +45,35 @@ public class Cache2kCache<K, V> implements Cache<K, V>, ConfiguredCache {
                     throw new ExecutionException(e);
                 }
             }
+            return innerCache.get(key);
         }
-        return innerCache.get(key);
     }
 
     @Override
     public void put(K key, V value) {
-        innerCache.put(key, value);
+        synchronized (innerCache) {
+            innerCache.put(key, value);
+        }
     }
 
     @Override
     public void remove(K key) {
-        innerCache.remove(key);
-        uniqueKeys.remove(key);
+        synchronized (innerCache) {
+            innerCache.remove(key);
+        }
     }
 
     @Override
     public void clear() {
-        innerCache.removeAll();
-        uniqueKeys.clear();
+        synchronized (innerCache) {
+            innerCache.clear();
+        }
     }
 
     @Override
     public void close() {
-        configurator.detach(this);
-        innerCache.close();
+        clear();
+        this.configurator.detach(this);
     }
 
     @Override

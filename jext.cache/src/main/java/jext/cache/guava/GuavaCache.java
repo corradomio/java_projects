@@ -2,7 +2,7 @@ package jext.cache.guava;
 
 import jext.cache.Cache;
 import jext.cache.CacheConfigurator;
-import jext.cache.internal.ConfiguredCache;
+import jext.cache.util.ConfiguredCache;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;

@@ -1,4 +1,4 @@
-package jext.cache.internal;
+package jext.cache.util;
 
 import jext.cache.CacheConfigurator;
 

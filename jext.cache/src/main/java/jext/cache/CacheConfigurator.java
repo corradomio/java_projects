@@ -1,7 +1,7 @@
 package jext.cache;
 
 import jext.cache.guava.GuavaCacheProvider;
-import jext.cache.internal.ConfiguredCache;
+import jext.cache.util.ConfiguredCache;
 import jext.logging.Logger;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
