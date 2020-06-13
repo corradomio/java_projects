@@ -7,8 +7,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class UnifomDistrib implements Distrib {
 
-    private final double min;
-    private final double delta;
+    private double min;
+    private double delta;
     private Random rnd = new Random();
 
     public UnifomDistrib() {
@@ -20,8 +20,21 @@ public class UnifomDistrib implements Distrib {
         this.delta = max-min;
     }
 
-    public void setRandom(Random rnd) {
+    public UnifomDistrib random(Random rnd) {
         this.rnd = rnd;
+        return this;
+    }
+
+    public UnifomDistrib range(double min, double max) {
+        this.min = min;
+        this.delta = max-min;
+        return this;
+    }
+
+    public UnifomDistrib centered(double center, double delta) {
+        this.min = center-delta;
+        this.delta = 2*delta;
+        return this;
     }
 
     @Override

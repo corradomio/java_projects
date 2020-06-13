@@ -16,8 +16,8 @@ public class ConstantDistrib implements Distrib {
         this.p = p;
     }
 
-    public void setRandom(Random rnd) {
-
+    public ConstantDistrib random(Random rnd) {
+        return this;
     }
 
     @Override

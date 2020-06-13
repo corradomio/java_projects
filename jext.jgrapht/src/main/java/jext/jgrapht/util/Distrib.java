@@ -4,7 +4,7 @@ import java.util.Random;
 
 public interface Distrib {
 
-    void setRandom(Random random);
+    Distrib random(Random random);
 
     double nextValue();
 }

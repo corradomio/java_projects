@@ -36,6 +36,33 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     //
     // ----------------------------------------------------------------------
 
+    public int getOrder() {
+        return graph.vertexSet().size();
+    }
+
+    public int getSize() {
+        return graph.edgeSet().size();
+    }
+
+    public double getDensity() {
+        long nVertices = graph.vertexSet().size();
+        double nEdges = graph.edgeSet().size();
+        double tEdges = sq(nVertices);
+
+        // maximum number of edges:
+        // simple graph:  V(V-1)/2
+        // direct graph:  V*(V-1)
+        // simple graph + loop: V*V/2
+        // direct graph + loop: V*V
+
+        if (!graph.getType().isAllowingCycles())
+            tEdges -= nVertices;
+        if (!graph.getType().isDirected())
+            tEdges /= 2;
+
+        return nEdges / tEdges;
+    }
+
     public double getDiameter() {
         return org.jgrapht.GraphMetrics.getDiameter(graph);
     }
@@ -154,25 +181,6 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
         return (VertexStatistics) ds.finish();
     }
 
-    public double getDensity() {
-        long nVertices = graph.vertexSet().size();
-        double nEdges = graph.edgeSet().size();
-        double tEdges = sq(nVertices);
-
-        // maximum number of edges:
-        // simple graph:  V(V-1)/2
-        // direct graph:  V*(V-1)
-        // simple graph + loop: V*V/2
-        // direct graph + loop: V*V
-
-        if (!graph.getType().isAllowingCycles())
-            tEdges -= nVertices;
-        if (!graph.getType().isDirected())
-            tEdges /= 2;
-
-        return nEdges / tEdges;
-    }
-
     private static class Assortativity {
         final long degreeMultiply;
         final long degreeSum;
@@ -244,10 +252,10 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
     public EdgeStatistics getEdgeStatistics() {
         EdgeStatistics es = new EdgeStatistics();
-        es.size  = graph.edgeSet().size();
-        es.order = graph.vertexSet().size();
+        es.order = getOrder();
+        es.size  = getSize();
+        es.density = getDensity();
         es.components = new GraphComponents<>(graph).getComponents(EdgeType.UNDIRECTED).size();
-        es.density = (2.*es.size)/(es.order*(es.order-1));
 
         graph.edgeSet()
                 .stream()

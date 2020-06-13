@@ -22,8 +22,9 @@ public class NormalDistrib implements Distrib {
         this.standardDeviation = sdev;
     }
 
-    public void setRandom(Random rnd) {
+    public NormalDistrib random(Random rnd) {
         this.rnd = rnd;
+        return this;
     }
 
     public NormalDistrib minValue(double value) {
@@ -39,6 +40,12 @@ public class NormalDistrib implements Distrib {
     public NormalDistrib range(double min, double max) {
         minValue = min;
         maxValue = max;
+        return this;
+    }
+
+    public NormalDistrib centered(double center, double delta) {
+        minValue = center-delta;
+        maxValue = center+delta;
         return this;
     }
 

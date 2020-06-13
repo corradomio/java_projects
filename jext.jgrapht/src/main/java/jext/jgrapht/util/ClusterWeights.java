@@ -1,23 +1,50 @@
 package jext.jgrapht.util;
 
+import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClusterDistances<V> {
+public class ClusterWeights<V, E> {
 
+    private double maxWeight;
+    private Graph<V, E> graph;
     private ClusteringAlgorithm.Clustering<V> clustering;
-    private final int k;
-    private final int[] clusterSizes;   // n of elements in each cluster
-    private final double[][] clusterWeights;
-    private final double[] vertexWeights;
+
+    private int k;
+    private int[] clusterSizes;   // n of elements in each cluster
+    private double[][] weightClusters;
+    private double[] weightVertices;
+    private double graphWeight;
     private Map<V, Integer> vidx = new HashMap<>();
 
-    public ClusterDistances(ClusteringAlgorithm.Clustering<V> clustering){
-        int order = 0;
+    public ClusterWeights(){
+        this(0.);
+        // int order = 0;
+        // this.clustering = clustering;
+        // this.k = clustering.getNumberClusters();
+        // this.clusterSizes = new int[k];
+        // for (int ci=0; ci<k; ++ci) {
+        //     int clusterSize = clustering.getClusters().get(ci).size();
+        //     this.clusterSizes[ci] = clusterSize;
+        //     order += clusterSize;
+        // }
+        //
+        // this.weightClusters = LinAlg.newMatrix(k);
+        // this.weightVertices = LinAlg.newVector(order);
+    }
+
+    public ClusterWeights(double maxWeight) {
+        this.maxWeight = maxWeight;
+    }
+
+    public ClusterWeights<V, E> init(Graph<V, E> g, ClusteringAlgorithm.Clustering<V> clustering) {
+        this.graph = g;
         this.clustering = clustering;
         this.k = clustering.getNumberClusters();
+
+        int order = 0;
         this.clusterSizes = new int[k];
         for (int ci=0; ci<k; ++ci) {
             int clusterSize = clustering.getClusters().get(ci).size();
@@ -25,8 +52,24 @@ public class ClusterDistances<V> {
             order += clusterSize;
         }
 
-        this.clusterWeights = LinAlg.newMatrix(k);
-        this.vertexWeights = LinAlg.newVector(order);
+        this.weightClusters = LinAlg.newMatrix(k);
+        this.weightVertices = LinAlg.newVector(order);
+
+        graph.edgeSet().forEach(e -> {
+            double weight = weightOf(e);
+            V source = graph.getEdgeSource(e);
+            V target = graph.getEdgeTarget(e);
+            this.add(source, target, weight);
+        });
+
+        return this;
+    }
+
+    private double weightOf(E e) {
+        double weight = graph.getEdgeWeight(e);
+        if(maxWeight > 0)
+            weight = maxWeight - weight;
+        return weight;
     }
 
     // ----------------------------------------------------------------------
@@ -34,13 +77,13 @@ public class ClusterDistances<V> {
     // ----------------------------------------------------------------------
 
     public double getInternalDegree(int ci) {
-        return clusterWeights[ci][ci];
+        return weightClusters[ci][ci];
     }
 
     public double getExternalDegree(int ci) {
-        double extDeg = -clusterWeights[ci][ci];
+        double extDeg = -weightClusters[ci][ci];
         for (int cj=0; cj<k; ++cj)
-            extDeg += clusterWeights[ci][cj];
+            extDeg += weightClusters[ci][cj];
         return extDeg;
     }
 
@@ -53,12 +96,12 @@ public class ClusterDistances<V> {
     public double getModularity() {
         double modularity = 0.;
         for (int c=0; c<k; ++c)
-            modularity += clusterWeights[c][c];
+            modularity += weightClusters[c][c];
 
         for (int ci=0; ci<k; ++ci)
             for(int cj=0; cj<k; ++cj)
                 if (ci != cj)
-                    modularity -= clusterWeights[ci][cj];
+                    modularity -= weightClusters[ci][cj];
 
         return modularity;
     }
@@ -70,6 +113,7 @@ public class ClusterDistances<V> {
      *      DB = --- SUM(i=1,k : max_j --------------------
      *            k                        d_a(C_i,C_J)
      *
+     * https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
      */
     public double getDaviesBouldinIndex() {
         double[] sa = averageDistances();
@@ -77,14 +121,14 @@ public class ClusterDistances<V> {
 
         double sum = 0.;
         for (int ci=0; ci<k; ++ci) {
-            double max = 0;
+            double maxj = 0;
             for (int cj=0; cj<k; ++cj) {
                 if (ci == cj) continue;
                 double daij = da[ci][cj];
-                double ratio = div(sa[ci] + sa[cj], da[ci][cj]);
-                if (ratio > max) max = ratio;
+                double ratio = div(sa[ci] + sa[cj], daij);
+                if (ratio > maxj) maxj = ratio;
             }
-            sum += max;
+            sum += maxj;
         }
         return div(sum, k);
     }
@@ -92,18 +136,18 @@ public class ClusterDistances<V> {
     private double[] averageDistances() {
         // int k = clustering.getNumberClusters();
         double[] averageDistances = LinAlg.newVector(k);
-        for (int i=0; i<k; ++i)
-            averageDistances[i] = div(clusterWeights[i][i], clusterSizes[i]*(clusterSizes[i]-1));
+        for (int c=0; c<k; ++c)
+            averageDistances[c] = div(weightClusters[c][c], clusterSizes[c]*(clusterSizes[c]-1));
         return averageDistances;
     }
 
     private double[][] betweenSeparation() {
         // int k = clustering.getNumberClusters();
         double[][] betweenSeparation = LinAlg.newMatrix(k);
-        for(int i=0; i<k; ++i)
-            for(int j=0; j<k; j++)
-                if(i != j)
-                    betweenSeparation[i][j] = div(clusterWeights[i][i], clusterSizes[i]*clusterSizes[j]);
+        for(int ci=0; ci<k; ++ci)
+            for(int cj=0; cj<k; cj++)
+                if(ci != cj)
+                    betweenSeparation[ci][cj] = div(weightClusters[ci][cj], clusterSizes[ci]*clusterSizes[cj]);
         return betweenSeparation;
     }
 
@@ -114,6 +158,7 @@ public class ClusterDistances<V> {
      *      Dunn_G = ------------------------
      *                   max_h s_a(C_h)
      *
+     * https://en.wikipedia.org/wiki/Dunn_index
      */
     public double getDunnIndex() {
         // int k = clustering.getNumberClusters();
@@ -129,6 +174,8 @@ public class ClusterDistances<V> {
                 if (daij < minda) minda = daij;
             }
         }
+        if (minda == Double.POSITIVE_INFINITY)
+            minda = 0;
 
         double maxsa = -Double.POSITIVE_INFINITY;
         for(int ci=0; ci<k; ++ci) {
@@ -136,10 +183,10 @@ public class ClusterDistances<V> {
             if (sai > maxsa) maxsa = sai;
         }
 
-        if (k <= 1)
-            return 0.;
-        else
-            return div(minda, maxsa);
+        if (maxsa == -Double.POSITIVE_INFINITY)
+            minda = 0;
+
+        return div(minda, maxsa);
     }
 
     // ----------------------------------------------------------------------
@@ -156,12 +203,44 @@ public class ClusterDistances<V> {
      *
      *  w_ij : edge weight
      *  k_i, k_j: sum edge weights attached to the vertices i & j
-     *  m : sum of the edge weights
+     *  m : sum of the edge weights (graph weight)
      *  c_i, c_j: communities
      *  delta: 1 if c_i == c_j else 0
      */
     public double getLouvainModularity() {
+        double lmod = 0.;
+        double[] vprod = vprod();
+        double m2 = 2*graphWeight;
 
+        for(int ci=0; ci<k; ++ci)
+            lmod += m2*weightClusters[ci][ci] - vprod[ci];
+
+        return div(lmod, sq(m2));
+    }
+
+    /**
+     * Product of
+     * @return
+     */
+    private double[] vprod() {
+        double vprod[] = LinAlg.newVector(k);
+
+        graph.edgeSet().forEach(e -> {
+            V source = graph.getEdgeSource(e);
+            V target = graph.getEdgeTarget(e);
+
+            int vi = indexOf(source);
+            int vj = indexOf(target);
+
+            int ci = clusterOf(source);
+            int cj = clusterOf(target);
+
+            if (ci == cj) {
+                vprod[ci] += weightVertices[vi]*weightVertices[vj];
+            }
+        });
+
+        return vprod;
     }
 
     // ----------------------------------------------------------------------
@@ -169,15 +248,17 @@ public class ClusterDistances<V> {
     // ----------------------------------------------------------------------
 
     public void add(V vi, V vj, double weight) {
+        graphWeight += weight;
+
         int ci = clusterOf(vi);
         int cj = clusterOf(vj);
-        clusterWeights[ci][cj] += weight;
-        clusterWeights[cj][ci] += weight;
+        weightClusters[ci][cj] += weight;
+        weightClusters[cj][ci] += weight;
 
         int i = indexOf(vi);
         int j = indexOf(vj);
-        vertexWeights[i] += weight;
-        vertexWeights[j] += weight;
+        weightVertices[i] += weight;
+        weightVertices[j] += weight;
     }
 
     private int indexOf(V v) {
@@ -194,4 +275,5 @@ public class ClusterDistances<V> {
     }
 
     private static double div(double x, double y) { return y != 0. ? x/y : 0.; }
+    private static double sq(double x) { return x*x; }
 }

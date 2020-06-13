@@ -25,7 +25,7 @@ public class ClusteringStatistics {
         public int size;
         public int components;
         public double density;
-        public double weight;
+        public double graphWeight;
         public double minWeight;
         public double maxWeight;
         public double meanWeight;
@@ -51,7 +51,7 @@ public class ClusteringStatistics {
         public String toString() {
             return String.format(
                     "%.4f,%d,%d,%d,%.4f,%.4f,%d,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f," +
-                    "%d,%.4f,%.4f,%.4f,%.4f,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,",
+                    "%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,",
                     threshold,
                     // vertices
                     order,
@@ -63,7 +63,7 @@ public class ClusteringStatistics {
                     size,
                     components,
                     density,
-                    weight,
+                    graphWeight,
                     minWeight,
                     maxWeight,
                     meanWeight,
@@ -75,7 +75,7 @@ public class ClusteringStatistics {
                     dunnIndex,
                     daviesBouldinIndex,
                     // cluser comparison
-                    numClusters2,
+                    // numClusters2,
                     purity,
                     giniIndex,
                     entropy,
@@ -111,8 +111,8 @@ public class ClusteringStatistics {
         GraphMetrics<Integer, DefaultWeightedEdge> tm = new GraphMetrics<>(t);
         GraphMetrics.VertexStatistics vs = tm.getVertexStatistics();
         GraphMetrics.EdgeStatistics   es = tm.getEdgeStatistics();
-        ClusteringMetrics<Integer, DefaultWeightedEdge> cm =
-                new ClusteringMetrics<>(t, clustering).invertWeights(emax);
+        ClusteringMetrics<Integer, DefaultWeightedEdge> cm = new ClusteringMetrics<>(g, clustering);
+                // new ClusteringMetrics<>(t, clustering).invertWeights(emax);
         ClusteringMetrics.Statistics cs = cm.getStatistics();
         ClusteringMetrics.Comparison cmp = cm.getComparison(groundTrue);
 
@@ -130,7 +130,7 @@ public class ClusteringStatistics {
         stats.size = es.size;
         stats.components = es.components;
         stats.density = es.density;
-        stats.weight = es.sum1;
+        stats.graphWeight = es.sum1;
         stats.minWeight = es.min;
         stats.maxWeight = es.max;
         stats.meanWeight = es.mean;
@@ -144,7 +144,7 @@ public class ClusteringStatistics {
         stats.daviesBouldinIndex = cs.daviesBouldinIndex;
 
         // cluster comparison
-        stats.numClusters2 = cmp.numClusters1;
+        // stats.numClusters2 = cmp.numClusters1;
         stats.purity = cmp.purity;
         stats.giniIndex = cmp.giniIndex;
         stats.entropy = cmp.entropy;
@@ -161,8 +161,8 @@ public class ClusteringStatistics {
     public void saveCsv(String filepath) {
         try(FileWriter w = new FileWriter(filepath)) {
             w.write("threshold,order,minDegree,maxDegree,meanDegree,sdevDegree,size,components,density," +
-                    "weight,minWeight,maxWeight,meanWeight,sdevWeight,numClusters,modularity,louvainModularity," +
-                    "dunnIndex,daviesBouldinIndex,numClusters2,purity,giniIndex,entropy,randIndex,adjustedRandIndex," +
+                    "graphWeight,minWeight,maxWeight,meanWeight,sdevWeight,numClusters,modularity,louvainModularity," +
+                    "dunnIndex,daviesBouldinIndex,purity,giniIndex,entropy,randIndex,adjustedRandIndex," +
                     "fowlkesMallowsIndex,jaccardCoefficient,normalizedGamma\n");
 
             for(Stats stats : statistics) {

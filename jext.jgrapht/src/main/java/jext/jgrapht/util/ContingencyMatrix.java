@@ -1,37 +1,85 @@
 package jext.jgrapht.util;
 
+import jext.util.SetUtils;
+import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class ContingencyMatrix {
 
-    private final int kd;
-    private final int kt;
-    private final int[][] m;
-    private final int[] ni;
-    private final int[] mj;
+    private int kd;
+    private int kt;
+    private int[][] m;
+    private int[] ni;
+    private int[] mj;
     private int n;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    /**
-     *
-     * @param kt ground truth (rows)
-     * @param kd determined clusters (columns)
-     *
-     * (Data Mining - The text book, pag. 199)
-     */
-    public ContingencyMatrix(int kt, int kd) {
-        this.kd = kd;
-        this.kt = kt;
-        this.m = new int[kt][];
-        for(int i=0; i<kt; ++i)
-            this.m[i] = new int[kd];
-        this.ni = new int[kt];
-        this.mj = new int[kd];
+    public ContingencyMatrix() {
+
+    }
+
+    // /**
+    //  *
+    //  * @param kt ground truth (rows)
+    //  * @param kd determined clusters (columns)
+    //  *
+    //  * (Data Mining - The text book, pag. 199)
+    //  */
+    // public ContingencyMatrix(int kt, int kd) {
+    //     this.kd = kd;
+    //     this.kt = kt;
+    //     this.m = new int[kt][];
+    //     for(int i=0; i<kt; ++i)
+    //         this.m[i] = new int[kd];
+    //     this.ni = new int[kt];
+    //     this.mj = new int[kd];
+    // }
+
+    public <V> ContingencyMatrix init(ClusteringAlgorithm.Clustering<V> truth, ClusteringAlgorithm.Clustering<V> other) {
+        this.kt = truth.getNumberClusters();
+        this.kd = other.getNumberClusters();
+        this.m = LinAlg.intMatrix(kt, kd);
+        this.ni = LinAlg.intVector(kt);
+        this.mj = LinAlg.intVector(kd);
+
+        Set<V> v1 = verticesOf(truth);
+        Set<V> v2 = verticesOf(other);
+        if (!SetUtils.union(v1, v2).equals(SetUtils.intersection(v1, v2)))
+            throw new IllegalArgumentException("Invalid vertex sets");
+
+        for(V v : v1) {
+            int ci = clusterOf(v, truth);
+            int cj = clusterOf(v, other);
+            this.add(ci, cj);
+        }
+
+        this.done();
+
+        return this;
+    }
+
+    private <V> Set<V> verticesOf(ClusteringAlgorithm.Clustering<V> clustering) {
+        Set<V> vertices = new HashSet<>();
+        clustering.getClusters()
+                .forEach(vertices::addAll);
+        return vertices;
+    }
+
+    private <V> int clusterOf(V v, ClusteringAlgorithm.Clustering<V> clustering) {
+        int k = clustering.getNumberClusters();
+        for (int i=0; i<k; ++i)
+            if (clustering.getClusters().get(i).contains(v))
+                return i;
+        return -1;
     }
 
     // ----------------------------------------------------------------------
-    // Add cluster relation
+    // Add cluster relations
     // ----------------------------------------------------------------------
 
     public ContingencyMatrix add(int i, int j) {

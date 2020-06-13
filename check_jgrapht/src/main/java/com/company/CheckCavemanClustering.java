@@ -1,14 +1,15 @@
 package com.company;
 
-import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedBMCColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.FileExporter;
+import jext.jgrapht.nio.adjacent.FileImporter;
 import jext.jgrapht.util.WeightType;
 import jext.jgrapht.util.distrib.NormalDistrib;
+import jext.jgrapht.util.distrib.UnifomDistrib;
 import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
@@ -18,6 +19,7 @@ import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.AttributeType;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
+import org.jgrapht.nio.dot.DOTImporter;
 import org.jgrapht.util.SupplierUtil;
 
 import javax.swing.*;
@@ -27,31 +29,38 @@ import java.util.Map;
 
 public class CheckCavemanClustering extends JFrame {
 
-    static RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> genGraph() {
+    static RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> generateGraph() {
         Graph<Integer, DefaultWeightedEdge> g = new SimpleGraph<>(
                 SupplierUtil.createIntegerSupplier(),
                 SupplierUtil.createDefaultWeightedEdgeSupplier(),
                 true
         );
 
-        int N = 1000;
-        int E = 50000;
-        int C = 10;
-
         // similarita' / dissimilarita'
         // inter -> tra
         // intra -> dentro
 
+        int N = 10000;               // order, n of vertices
+        int E = 500000;              // size,  n of edges
+        int C = 10;                 // n of communities
+        double betweenProb = .2;    // between communities
+        double insideProb  = .9;    // inside  communities
+
+        int meanSize = N/C;
+        int deltaSize = meanSize/4;
+
         // p : betweenCommunities
-        // q: in community
+        // q : in community
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg
                 = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
-                N, E, C, .2, .9)
+                N, E, C, betweenProb, insideProb)
+                .communitySizes(  new UnifomDistrib().centered(meanSize, deltaSize))
                 .communityWeights(new NormalDistrib(0.30, .10).minValue(0.01))
                 .betweenWeights(  new NormalDistrib(0.50, .10).minValue(0.01));
 
         gg.generateGraph(g);
 
+        // export
         {
             DOTExporter<Integer, DefaultWeightedEdge> dotexp = new DOTExporter<Integer, DefaultWeightedEdge>();
             dotexp.setEdgeAttributeProvider((e) -> {
@@ -66,7 +75,19 @@ public class CheckCavemanClustering extends JFrame {
 
         }
 
+        // Import
+        // {
+        //     DOTImporter<Integer, DefaultWeightedEdge> dotimp = new DOTImporter<>();
+        //     dotimp.addEdgeAttributeConsumer((e, a) -> {
+        //         System.out.printf("%s: %s", e, a);
+        //     });
+        //
+        //     new FileImporter<>(dotimp)
+        //             .importGraph(g, new File("relaxcave.dot"));
+        // }
+
         new GraphMetrics<>(g).getVertexStatistics().print();
+        new GraphMetrics<>(g).getEdgeStatistics().print();
 
         return gg;
     }
@@ -99,15 +120,17 @@ public class CheckCavemanClustering extends JFrame {
 
         GraphMetrics.VertexStatistics vs;
         GraphMetrics.EdgeStatistics   es;
-        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg;
+        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen;
         Graph<Integer, DefaultWeightedEdge> g, t;
         ClusteringAlgorithm.Clustering<Integer> groundTrue;
         ClusteringAlgorithm.Clustering<Integer> clustering;
 
-        gg = genGraph();
-        g = gg.getGraph();
+        ggen = generateGraph();
+        g = ggen.getGraph();
+        groundTrue = ggen.getClustering();
 
-        ClusteringStatistics stats = new ClusteringStatistics(g, gg.getClustering());
+        // Clustering statistics
+        ClusteringStatistics stats = new ClusteringStatistics(g, groundTrue);
 
         // vs = new GraphMetrics<>(g).getVertexStatistics();
         // es = new GraphMetrics<>(g).getEdgeStatistics();
@@ -115,14 +138,13 @@ public class CheckCavemanClustering extends JFrame {
         // es.print();
 
         System.out.printf("-- [groundTruth] --------------------\n");
-        groundTrue = gg.getClustering();
 
         // new ClusteringMetrics<>(g, groundTrue).invertWeights(es.max).getStatistics().print();
         // new ClusteringMetrics<>(g, groundTrue).getComparison(groundTrue).print();
 
         stats.addStats(0., g, groundTrue);
 
-        for (double threshold=0.0; threshold<3.8; threshold+=0.1) {
+        for (double threshold=0.0; threshold<3.8; threshold+=0.03) {
 
             t = new TransformGraph<>(g).upperThresholdGraph(threshold);
             if (t.edgeSet().isEmpty())
