@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE cache4j:configuration SYSTEM "cache4j.dtd" -->
+<configuration>
+    <provider value="jext.cache.guava.GuavaCacheProvider"/>
+
+    <!--
+        qualified name
+        If the name is 'a.b.c', each cache with name 'a.b.c...' will be configured
+        with these parameters
+      -->
+    <cache name="">
+        <!-- num of elements -->
+        <capacity value="1000"/>
+        <!-- expiration
+             after: timeout (milliseconds)
+                    <int>s  (seconds)
+             mode:  insert | access
+          -->
+        <expiry after="10s" mode="access"/>
+    </cache>
+</configuration>
