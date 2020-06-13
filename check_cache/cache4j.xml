@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- DOCTYPE cache4j:configuration SYSTEM "cache4j.dtd" -->
 <configuration>
-    <provider value="jext.cache.guava.GuavaCacheProvider"/>
+<!--    <provider value="jext.cache.guava.GuavaCacheProvider"/>-->
 <!--    <provider value="jext.cache.cache2k.Cache2kCacheProvider"/>-->
+    <provider value="jext.cache.weak.WeakCacheProvider"/>
 
     <!--
         qualified name
