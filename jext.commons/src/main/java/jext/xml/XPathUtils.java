@@ -382,6 +382,10 @@ public class XPathUtils {
     // Select node
     // ----------------------------------------------------------------------
 
+    public static Node selectNode(Element elt, String xpath) {
+        return selectNode(elt,xpath, false, NO_PROPERTIES);
+    }
+
     /**
      * ]
      * @param elt
