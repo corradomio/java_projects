@@ -58,9 +58,9 @@
     <!-- Limit categories -->
     <!-- ================ -->
 
-<!--    <category name="jext.jgrapht.alg.color">-->
-<!--        <priority value="INFO"/>-->
-<!--    </category>-->
+    <category name="jext.maven.MavenDownloader">
+        <priority value="FATAL"/>
+    </category>
 
     <!-- ======================= -->
     <!-- Setup the Root category -->

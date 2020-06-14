@@ -6,7 +6,6 @@ import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
 import jext.maven.Versions;
 import jext.util.concurrent.Parallel;
-import jext.util.concurrent.Sequential;
 
 import java.io.File;
 
