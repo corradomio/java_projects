@@ -19,7 +19,6 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     public final String version;
     private String toString;
 
-
     public MavenCoords(String gid, String aid) {
         this.groupId = gid;
         this.artifactId = aid;
