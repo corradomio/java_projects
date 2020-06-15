@@ -7,6 +7,7 @@ import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.FileExporter;
 import jext.jgrapht.nio.adjacent.FileImporter;
+import jext.jgrapht.nio.clustering.ClusteringExporter;
 import jext.jgrapht.util.WeightType;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.jgrapht.util.distrib.UnifomDistrib;
@@ -47,7 +48,7 @@ public class CheckCavemanClustering extends JFrame {
         double insideProb  = .9;    // inside  communities
 
         int meanSize = N/C;
-        int deltaSize = meanSize/4;
+        int deltaSize = meanSize/10;
 
         // p : betweenCommunities
         // q : in community
@@ -60,7 +61,13 @@ public class CheckCavemanClustering extends JFrame {
 
         gg.generateGraph(g);
 
-        // export
+        // export clustering
+        {
+            ClusteringExporter<Integer> cexp = new ClusteringExporter<>();
+            cexp.exportClustering(gg.getClustering(), new File("relaxcave-clust.json"));
+        }
+
+        // export graph
         {
             DOTExporter<Integer, DefaultWeightedEdge> dotexp = new DOTExporter<Integer, DefaultWeightedEdge>();
             dotexp.setEdgeAttributeProvider((e) -> {
@@ -72,7 +79,6 @@ public class CheckCavemanClustering extends JFrame {
 
             new FileExporter<>(dotexp)
                     .exportGraph(g, new File("relaxcave.dot"));
-
         }
 
         // Import
@@ -144,7 +150,7 @@ public class CheckCavemanClustering extends JFrame {
 
         stats.addStats(0., g, groundTrue);
 
-        for (double threshold=0.0; threshold<3.8; threshold+=0.03) {
+        for (double threshold=0.0; threshold<3.8; threshold+=0.02) {
 
             t = new TransformGraph<>(g).upperThresholdGraph(threshold);
             if (t.edgeSet().isEmpty())

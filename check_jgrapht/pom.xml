@@ -28,7 +28,7 @@
 
     <modules>
         <module>../jext.commons</module>
-        <module>../jext.collections</module>
+<!--        <module>../jext.collections</module>-->
         <module>../jext.jgrapht</module>
         <module>../jext.embedding</module>
     </modules>

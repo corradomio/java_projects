@@ -1,2 +1,5 @@
 data
 weighted
+*.dot
+*.json
+*.csv
