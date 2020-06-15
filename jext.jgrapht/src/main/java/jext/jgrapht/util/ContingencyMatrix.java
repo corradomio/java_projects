@@ -142,10 +142,10 @@ public class ContingencyMatrix {
     public double getRandIndex() {
         compute();
 
-        double num = a+d;
+        double num = a + d;
         double den = a + b + c + d; // == n*(n-1)/2
 
-        return chop(div(num, den));
+        return div(num, den);
     }
 
     public double getAdjustedRandIndex() {
@@ -153,36 +153,29 @@ public class ContingencyMatrix {
         compute();
 
         // nij*(nij-1)/2
-        double nij1 = 0;
-        for (int i = 0; i < kt; ++i) {
-            for (int j = 0; j < kd; ++j) {
-                int nij = m[i][j];
-                nij1 += nij * (nij - 1);
-            }
-        }
-        nij1 /= 2;
+        double nij1h = nij1/2.;
 
         // ni*(ni-1)/2
-        double ni1 = 0;
+        double ni1h = 0;
         for(int i=0; i<kt; ++i) {
-            ni1 += ni[i] * (ni[i] - 1);
+            ni1h += ni[i] * (ni[i] - 1);
         }
-        ni1 /= 2;
+        ni1h /= 2;
 
         // mj*(mj-1)/2
-        double mj1 = 0;
+        double mj1h = 0;
         for(int j=0; j<kd; ++j) {
-            mj1 += mj[j] * (mj[j] - 1);
+            mj1h += mj[j] * (mj[j] - 1);
         }
-        mj1 /= 2;
+        mj1h /= 2.;
 
         // n*(n-1)/2
-        double n1 = n*(n-1)/2.;
+        double n1h = n*(n-1)/2.;
 
-        double num = nij1 - div(ni1*mj1, n1);
-        double den = (ni1 + mj1)/2 - div(ni1*mj1, n1);
+        double num = nij1h - div(ni1h*mj1h, n1h);
+        double den = (ni1h + mj1h)/2 - div(ni1h*mj1h, n1h);
 
-        return chop(div(num, den));
+        return div(num, den);
     }
 
     public double getJaccardIndex() {
@@ -195,7 +188,7 @@ public class ContingencyMatrix {
         double num = a;
         double den = a + b + c;
 
-        return chop(div(num, den));
+        return div(num, den);
     }
 
     public double getFowlkesMallowsIndex() {
@@ -207,20 +200,31 @@ public class ContingencyMatrix {
         double num = a;
         double den = sqrt(m1*m2);
 
-        return chop(div(num, den));
+        return div(num, den);
     }
 
+    /**
+     *
+     * M = a+b+c+d
+     * m1 = a+b
+     * m2 = a+c
+     *              (M*a - m1*m2)
+     * normGamma = -----------------------------------
+     *              sqrt(m1*m2*(M - m1)*(M - m2))
+     *
+     * Theodoridis - 16.10
+     */
     public double getNormalizedGamma() {
         compute();
 
-        double m = a + b + c + d;
+        double M = a + b + c + d;
         double m1 = a + b;
         double m2 = a + c;
 
-        double num = (m*a - m1*m2);
-        double den = sqrt(m1*m2*(m - m1)*(m - m2));
+        double num = (M*a - m1*m2);
+        double den = sqrt(m1*m2*(M - m1)*(M - m2));
 
-        return chop(div(num, den));
+        return div(num, den);
     }
 
     // ----------------------------------------------------------------------
@@ -297,12 +301,12 @@ public class ContingencyMatrix {
                 nij2 += sq(nij);
             }
 
-        // ni2
+        // ni^2
         ni2 = 0;
         for (int i=0; i<kt; ++i)
             ni2 += sq(ni[i]);
 
-        // mj2
+        // mj^2
         mj2 = 0;
         for (int j=0; j<kd; ++j)
             mj2 += sq(mj[j]);
