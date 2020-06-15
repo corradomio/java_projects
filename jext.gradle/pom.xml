@@ -13,6 +13,11 @@
             <id>Local</id>
             <url>file:///jars</url>
         </repository>
+        <repository>
+            <id>GradleRepo</id>
+            <name>Gradle repository</name>
+            <url>https://repo.gradle.org/gradle/libs-releases-local/</url>
+        </repository>
     </repositories>
 
     <properties>
@@ -27,23 +32,11 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+        <!-- https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api -->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/javax.annotation/jsr305 -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>1.0</version>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-tooling-api</artifactId>
+            <version>6.4</version>
         </dependency>
 
     </dependencies>

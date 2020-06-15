@@ -1,4 +1,4 @@
-package jext.gradle;
+package jext.gradle.util;
 
 public class GradleUtils {
 
