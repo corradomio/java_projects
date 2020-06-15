@@ -17,8 +17,8 @@ public class MavenModule {
     private String name;
     private List<MavenModule> modules;
 
-    public MavenModule(File moduleDir, MavenProject project) {
-        this.moduleDir = moduleDir;
+    public MavenModule(MavenProject project) {
+        this.moduleDir = project.getProjectDir();
         this.project = project;
         this.parent = null;
         this.pom = new MavenPom(moduleDir);

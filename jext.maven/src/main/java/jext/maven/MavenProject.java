@@ -14,7 +14,7 @@ public class MavenProject {
 
     public MavenProject(File projectDir) {
         this.projectDir = projectDir;
-        this.rootModule = new MavenModule(projectDir, this);
+        this.rootModule = new MavenModule(this);
     }
 
     public File getProjectDir() {

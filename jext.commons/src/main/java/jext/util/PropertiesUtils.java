@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -81,21 +83,21 @@ public class PropertiesUtils {
         add("opened");
     }};
 
-    public static String getValue(Properties properties, String name) {
+    public static String getString(Properties properties, String name) {
         return properties.getProperty(name);
     }
 
-    public static int getValue(Properties properties, String name, int defaultValue) {
+    public static int getInt(Properties properties, String name, int defaultValue) {
         String value = properties.getProperty(name, String.valueOf(defaultValue));
         return Integer.parseInt(value);
     }
 
-    public static long getValue(Properties properties, String name, long defaultValue) {
+    public static long getLong(Properties properties, String name, long defaultValue) {
         String value = properties.getProperty(name, String.valueOf(defaultValue));
         return Long.parseLong(value);
     }
 
-    public static boolean getValue(Properties properties, String name, boolean defaultValue) {
+    public static boolean getBoolean(Properties properties, String name, boolean defaultValue) {
         String value = properties.getProperty(name, String.valueOf(defaultValue));
         if (FALSE_VALUES.contains(value))
             return false;
@@ -103,6 +105,16 @@ public class PropertiesUtils {
             return true;
         else
             return Boolean.parseBoolean(value);
+    }
+
+    public static File getFile(Properties properties, String name) {
+        String value = properties.getProperty(name);
+        return new File(value);
+    }
+
+    public static URI getURI(Properties properties, String name) throws URISyntaxException {
+        String value = properties.getProperty(name);
+        return new URI(value);
     }
 
     // ----------------------------------------------------------------------
