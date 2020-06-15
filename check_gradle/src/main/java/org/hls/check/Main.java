@@ -1,23 +1,23 @@
 package org.hls.check;
 
+import jext.logging.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
-import org.gradle.tooling.model.Launchable;
+import org.gradle.tooling.model.Model;
 import org.gradle.tooling.model.build.BuildEnvironment;
-import org.gradle.tooling.model.Dependency;
-import org.gradle.tooling.model.eclipse.EclipseProject;
+import org.gradle.tooling.model.idea.IdeaProject;
 
 import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) {
-        BasicConfigurator.configure();
+        Logger.configure();
 
         ProjectConnection connection = GradleConnector.newConnector()
-            .forProjectDirectory(new File("D:\\Projects.github\\github_projects\\hibernate-orm"))
+            .forProjectDirectory(new File("D:\\Projects.github\\other_projects\\hibernate-orm"))
             .connect();
         BuildEnvironment environment = connection.model(BuildEnvironment.class).get();
         System.out.println(environment.getBuildIdentifier().getRootDir());
@@ -44,6 +44,8 @@ public class Main {
             .setStandardOutput(System.out)
             .setStandardError(System.err)
             .run();
+
+        IdeaProject ip = connection.getModel(IdeaProject.class);
 
         // try {
         //     connection.newBuild().forTasks("hibernate-core:htmlDependencyReport").run();

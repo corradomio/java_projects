@@ -1,56 +1,19 @@
 
-import org.gradle.api.internal.project.DefaultProject
+apply plugin: 'java'
 
-//repositories {
-//    mavenCentral()
-//    jcenter()
-//    google()
-//    maven {
-//        url "https://repo.gradle.org/gradle/libs-releases-local/"
-//    }
-//}
+sourceCompatibility = 11.0
 
-//dependencies {
-//    compile 'com.google.guava:guava:23.0'
-//}
-
-println "1: Gradle -> Hello World"
-
-class GreetingPlugin implements Plugin<Project> {
-    void apply(Project project) {
-        println "3: GreetingPlugin.apply()"
-        project.task('hello') {
-            doFirst {
-                println '5: [doFirst] Hello from the GreetingPlugin'
-            }
-            doLast {
-                println '5: [doLast] Hello from the GreetingPlugin'
-            }
-        }
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repo.gradle.org/gradle/libs-releases-local/"
     }
 }
 
 
-class DumpDependencies implements Plugin<Project> {
-    void apply(Project project) {
-        println project.name;
-        project.task('dumpdep') {
-            project.getAllprojects().forEach({ subp ->
-                println subp.name
-            })
-            doFirst {
-//                println '5: [doFirst] DumpDep first'
-            }
-            doLast {
-
-            }
-        }
-    }
+dependencies {
+    compile 'org.gradle:gradle-tooling-api:6.4'
+    compile 'org.slf4j:slf4j-api:1.7.30'
+    compile 'org.slf4j:slf4j-log4j12:1.7.30'
+    compile 'log4j:log4j:1.2.17'
 }
-
-// Apply the plugin
-//println '2: Before to apply GreetingPlugin'
-//apply plugin: GreetingPlugin
-//println '4: After applied GreetingPlugin'
-
-apply plugin: DumpDependencies
