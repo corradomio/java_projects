@@ -37,37 +37,28 @@ import java.util.regex.Matcher;
 
 public class ProjectsCollector extends LineOutputStream implements Iterable<String> {
 
-    private enum State {
-        INIT,
-        ANALYZING,
-        DONE
-    }
-    private State state = State.INIT;
-
     private String rootProject;
     private List<String> projects = new ArrayList<>();
     private LogDigester digester;
 
+    private static final int ANALYZING = 1;
+
     public ProjectsCollector() {
         digester = new LogDigester();
         digester.addRule("Root project '([^']+)'", this::rootProject);
-        digester.addRule("ANALYZING", "[\\\\ +-]+Project ':([^']+).*", this::retrieveProject);
-        digester.addRule("ANALYZING", "", this::endProjects);
+        digester.addRule(ANALYZING, "[\\\\ +-]+Project ':([^']+).*", this::retrieveProject);
+        digester.addRule(ANALYZING, "", LogDigester.STATE_DONE);
     }
 
-    private String rootProject(String status, Matcher matcher, String line) {
+    private int rootProject(int status, Matcher matcher, String line) {
         rootProject = matcher.group(1);
-        return "ANALYZING";
+        return ANALYZING;
     }
 
-    private String retrieveProject(String status, Matcher matcher, String line) {
+    private int retrieveProject(int status, Matcher matcher, String line) {
         String project = matcher.group(1);
         projects.add(project);
-        return status;
-    }
-
-    private String endProjects(String status, Matcher matcher, String line) {
-        return LogDigester.STATE_DONE;
+        return 0;
     }
 
     @Override

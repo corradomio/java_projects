@@ -44,8 +44,8 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
 
     private static Logger logger = Logger.getLogger(DependenciesCollector.class);
 
-    private static final String STATE_CONFIGURATIONS = "CONFIGURATIONS";
-    private static final String STATE_DEPENDENCIES = "DEPENDENCIES";
+    private static final int STATE_CONFIGURATIONS = 1;
+    private static final int  STATE_DEPENDENCIES = 2;
 
     private final LogDigester digester;
     private final Set<String> libraries = new TreeSet<>();
@@ -75,28 +75,44 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         digester.consume(line);
     }
 
-    private String addProject(String state, Matcher matcher, String line) {
+    private static final String FAILED = "FAILED";
+    private static final String NOT_RESOLVED = "(n)";
+
+    private int addProject(int state, Matcher matcher, String line) {
+        // (n): not resolved
+        if (line.contains(NOT_RESOLVED))
+            return state;
+
         String name = matcher.group(1);
         projects.add(name);
-        return null;
+        return state;
     }
 
-    private String addLibrary(String state, Matcher matcher, String line) {
+    private int addLibrary(int state, Matcher matcher, String line) {
+        // (n): not resolved
+        if (line.contains(NOT_RESOLVED))
+            return state;
+        if (line.contains(FAILED))
+            return state;
+
         String coords = matcher.group(1);
-        if (isValidCoords(coords))
-            libraries.add(coords);
-        return null;
+        libraries.add(coords);
+
+        // String coords = matcher.group(1);
+        // if (isValidCoords(coords))
+        //     libraries.add(coords);
+        return state;
     }
 
-    private static boolean isValidCoords(String coords) {
-        String[] parts = coords.split(":");
-        if (parts.length < 2)
-            return false;
-        for (int i=0; i<parts.length; ++i)
-            if (parts[i].isEmpty())
-                return false;
-        return true;
-    }
+    // private static boolean isValidCoords(String coords) {
+    //     String[] parts = coords.split(":");
+    //     if (parts.length < 2)
+    //         return false;
+    //     for (int i=0; i<parts.length; ++i)
+    //         if (parts[i].isEmpty())
+    //             return false;
+    //     return true;
+    // }
 
     public Set<String> getProjects() {
         return projects;
@@ -105,6 +121,5 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     public Set<String> getLibraries() {
         return libraries;
     }
-
 
 }

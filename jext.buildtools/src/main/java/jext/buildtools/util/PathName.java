@@ -1,6 +1,6 @@
 package jext.buildtools.util;
 
-public class PathName {
+public class PathName implements Name {
     private String path;
 
     public PathName() {
@@ -18,11 +18,13 @@ public class PathName {
             this.path = parent.toString() + "/" + name;
     }
 
+    @Override
     public String getName() {
         int sep = path.lastIndexOf('/');
         return path.substring(sep+1);
     }
 
+    @Override
     public String getParentName() {
         if (path.length() == 0)
             return null;
@@ -33,6 +35,7 @@ public class PathName {
             return path.substring(0, sep);
     }
 
+    @Override
     public PathName getParent() {
         String name = getParentName();
         return name == null ? null : new PathName(name);

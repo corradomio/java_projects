@@ -21,27 +21,27 @@ public class LogDigester {
          * @param line
          * @return new state, or null
          */
-        String call(String state, Matcher matcher, String line);
+        int call(int state, Matcher matcher, String line);
     }
 
     private static class NextState implements Rule {
 
-        private String nextState;
+        private int nextState;
 
-        NextState(String nextState) {
+        NextState(int nextState) {
             this.nextState = nextState;
         }
 
         @Override
-        public String call(String state, Matcher matcher, String line) {
+        public int call(int state, Matcher matcher, String line) {
             return nextState;
         }
     }
 
-    public static final String STATE_BEGIN = "";
-    public static final String STATE_DONE = "$DONE";
+    public static final int STATE_BEGIN = -1;
+    public static final int STATE_DONE = -2;
 
-    private String state = STATE_BEGIN;
+    private int state = STATE_BEGIN;
 
     private static class RuleMatcher {
         private Pattern pattern;
@@ -53,7 +53,7 @@ public class LogDigester {
         }
     }
 
-    private Map<String, List<RuleMatcher>> matchers = new HashMap<>();
+    private Map<Integer, List<RuleMatcher>> matchers = new HashMap<>();
 
     public LogDigester() {
 
@@ -61,11 +61,11 @@ public class LogDigester {
 
     // ----------------------------------------------------------------------
 
-    public LogDigester addRule(String regexp, String nextState) {
+    public LogDigester addRule(String regexp, int nextState) {
         return addRule(STATE_BEGIN, regexp, nextState);
     }
 
-    public LogDigester addRule(String state, String regexp, String nextState) {
+    public LogDigester addRule(int state, String regexp, int nextState) {
         return addRule(state, regexp, new NextState(nextState));
     }
 
@@ -75,7 +75,7 @@ public class LogDigester {
         return addRule(STATE_BEGIN, regexp, consumer);
     }
 
-    public LogDigester addRule(String state, String regexp, Rule consumer) {
+    public LogDigester addRule(int state, String regexp, Rule consumer) {
         if (!matchers.containsKey(state))
             matchers.put(state, new ArrayList<>());
         matchers.get(state).add(new RuleMatcher(regexp, consumer));
@@ -85,19 +85,19 @@ public class LogDigester {
     // ----------------------------------------------------------------------
 
     public void consume(String line) {
-        if (STATE_DONE.equals(state))
+        if (STATE_DONE == state)
             return;
 
         if (!matchers.containsKey(state)) {
-            logger.errorf("Used an unknown state with NO rules", state);
+            logger.errorf("Unknown state %s with NO rules", state);
             matchers.put(state, new ArrayList<>());
         }
 
         for(RuleMatcher rm : matchers.get(state)) {
             Matcher matcher = rm.pattern.matcher(line);
             if (matcher.matches()) {
-                String newState = rm.consumer.call(state, matcher, line);
-                if (newState != null)
+                int newState = rm.consumer.call(state, matcher, line);
+                if (newState != 0)
                     state = newState;
                 break;
             }

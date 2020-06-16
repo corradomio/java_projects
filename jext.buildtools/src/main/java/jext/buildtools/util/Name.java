@@ -1,4 +1,8 @@
 package jext.buildtools.util;
 
-public class Name {
+public interface Name {
+
+    String getName();
+    Name getParent();
+    String getParentName();
 }

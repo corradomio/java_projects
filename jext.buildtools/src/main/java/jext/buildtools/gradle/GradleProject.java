@@ -129,4 +129,22 @@ public class GradleProject {
         return connector.connect();
         // return uncloseable;
     }
+
+    public void dump() {
+
+        getModules().forEach(module -> {
+            System.out.printf("Module %s (%s)\n", module.getName(), module.isValid());
+            System.out.println("... dmodules");
+            module.getModuleDependencies()
+                    .forEach(dep -> {
+                        System.out.printf("... ... %s\n", dep);
+                    });
+            System.out.println("... dependencies");
+            module.getDependencies()
+                    .forEach(dep -> {
+                        System.out.printf("... ... %s\n", dep);
+                    });
+        });
+        System.out.println("Done");
+    }
 }
