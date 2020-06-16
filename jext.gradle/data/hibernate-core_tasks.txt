@@ -1,0 +1,183 @@
+> Task :buildSrc:compileJava NO-SOURCE
+> Task :buildSrc:compileGroovy UP-TO-DATE
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+> Task :buildSrc:assemble UP-TO-DATE
+> Task :buildSrc:compileTestJava NO-SOURCE
+> Task :buildSrc:compileTestGroovy NO-SOURCE
+> Task :buildSrc:processTestResources NO-SOURCE
+> Task :buildSrc:testClasses UP-TO-DATE
+> Task :buildSrc:test NO-SOURCE
+> Task :buildSrc:check UP-TO-DATE
+> Task :buildSrc:build UP-TO-DATE
+
+> Configure project :hibernate-agroal
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-c3p0
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-core
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-enhance-maven-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-envers
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-graalvm
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-gradle-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-hikaricp
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jpamodelgen
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-osgi
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+[WARN] Skipping all tests for hibernate-osgi due to Karaf/Pax-Exam issues with latest JDK 11
+
+> Configure project :hibernate-proxool
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-spatial
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-testing
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-vibur
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :documentation
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-ehcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-entitymanager
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-infinispan
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+
+> Configure project :hibernate-integrationtest-java-modules
+Found module name 'org.hibernate.orm.integrationtest.java.module'
+
+> Configure project :hibernate-java8
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Task :hibernate-core:tasks
+
+------------------------------------------------------------
+Tasks runnable from project :hibernate-core - Hibernate's core ORM functionality
+------------------------------------------------------------
+
+Build tasks
+-----------
+assemble - Assembles the outputs of this project.
+build - Assembles and tests this project.
+buildDependents - Assembles and tests this project and all projects that depend on it.
+buildNeeded - Assembles and tests this project and all projects it depends on.
+classes - Assembles main classes.
+clean - Deletes the build directory.
+jar - Assembles a bundle containing the main classes.
+testClasses - Assembles test classes.
+testJavassistClasses - Assembles test javassist classes.
+
+Documentation tasks
+-------------------
+javadoc - Generates Javadoc API documentation for the main source code.
+
+Help tasks
+----------
+buildEnvironment - Displays all buildscript dependencies declared in project ':hibernate-core'.
+components - Displays the components produced by project ':hibernate-core'. [incubating]
+dependencies - Displays all dependencies declared in project ':hibernate-core'.
+dependencyInsight - Displays the insight into a specific dependency in project ':hibernate-core'.
+dependentComponents - Displays the dependent components of components in project ':hibernate-core'. [incubating]
+help - Displays a help message.
+model - Displays the configuration model of project ':hibernate-core'. [incubating]
+outgoingVariants - Displays the outgoing variants of project ':hibernate-core'.
+projects - Displays the sub-projects of project ':hibernate-core'.
+properties - Displays the properties of project ':hibernate-core'.
+tasks - Displays the tasks runnable from project ':hibernate-core'.
+
+IDE tasks
+---------
+cleanIdea - Cleans IDEA project files (IML, IPR)
+idea - Generates IDEA project files (IML, IPR, IWS)
+
+Publishing tasks
+----------------
+bintrayUpload - Publishes artifacts to bintray.com.
+generateMetadataFileForPublishedArtifactsPublication - Generates the Gradle metadata file for publication 'publishedArtifacts'.
+generatePomFileForPublishedArtifactsPublication - Generates the Maven POM file for publication 'publishedArtifacts'.
+publish - Publishes all publications produced by this project.
+publishAllPublicationsToJboss-snapshots-repositoryRepository - Publishes all Maven publications produced by this project to the jboss-snapshots-repository repository.
+publishPublishedArtifactsPublicationToJboss-snapshots-repositoryRepository - Publishes Maven publication 'publishedArtifacts' to Maven repository 'jboss-snapshots-repository'.
+publishPublishedArtifactsPublicationToMavenLocal - Publishes Maven publication 'publishedArtifacts' to the local Maven repository.
+publishToMavenLocal - Publishes all Maven publications produced by this project to the local Maven cache.
+
+Release tasks
+-------------
+baseline - Baseline the project bundle.
+
+Reporting tasks
+---------------
+buildDashboard - Generates a dashboard of all the reports produced by this build.
+projectReport - Generates a report about your project.
+
+SourceGeneration tasks
+----------------------
+xjc - Executes XJC for generation of a JAXB binding model for a XSD.
+
+Verification tasks
+------------------
+check - Runs all checks.
+matrix - Runs the unit tests on Database Matrix
+test - Runs the unit tests.
+
+Rules
+-----
+Pattern: clean<TaskName>: Cleans the output files of a task.
+Pattern: build<ConfigurationName>: Assembles the artifacts of a configuration.
+Pattern: upload<ConfigurationName>: Assembles and uploads the artifacts belonging to a configuration.
+
+To see all tasks and more detail, run gradle tasks --all
+
+To see more detail about a task, run gradle help --task <task>
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 8s
+1 actionable task: 1 executed

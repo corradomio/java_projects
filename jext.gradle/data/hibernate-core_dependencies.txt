@@ -1,0 +1,933 @@
+> Task :buildSrc:compileJava NO-SOURCE
+> Task :buildSrc:compileGroovy UP-TO-DATE
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+> Task :buildSrc:assemble UP-TO-DATE
+> Task :buildSrc:compileTestJava NO-SOURCE
+> Task :buildSrc:compileTestGroovy NO-SOURCE
+> Task :buildSrc:processTestResources NO-SOURCE
+> Task :buildSrc:testClasses UP-TO-DATE
+> Task :buildSrc:test NO-SOURCE
+> Task :buildSrc:check UP-TO-DATE
+> Task :buildSrc:build UP-TO-DATE
+
+> Configure project :hibernate-agroal
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-c3p0
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-core
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-enhance-maven-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-envers
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-graalvm
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-gradle-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-hikaricp
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jpamodelgen
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-osgi
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+[WARN] Skipping all tests for hibernate-osgi due to Karaf/Pax-Exam issues with latest JDK 11
+
+> Configure project :hibernate-proxool
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-spatial
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-testing
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-vibur
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :documentation
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-ehcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-entitymanager
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-infinispan
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+
+> Configure project :hibernate-integrationtest-java-modules
+Found module name 'org.hibernate.orm.integrationtest.java.module'
+
+> Configure project :hibernate-java8
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Task :hibernate-core:dependencies
+
+------------------------------------------------------------
+Project :hibernate-core - Hibernate's core ORM functionality
+------------------------------------------------------------
+
+annotationProcessor - Annotation processors and their dependencies for source set 'main'.
++--- org.jboss.logging:jboss-logging-processor:2.1.0.Final
+|    +--- org.jboss.logging:jboss-logging-annotations:2.1.0.Final
+|    \--- org.jboss.jdeparser:jdeparser:2.0.2.Final
++--- org.jboss.logging:jboss-logging:3.3.2.Final
+\--- org.jboss.logging:jboss-logging-annotations:2.1.0.Final
+
+antlr - The Antlr libraries to be used for this project.
+\--- antlr:antlr:2.7.7
+
+apiElements - API elements for main. (n)
+No dependencies
+
+archives - Configuration for archive artifacts. (n)
+No dependencies
+
+asciidoclet - Dependencies for Asciidoctor Javadoc taglet
+\--- org.asciidoctor:asciidoclet:1.+ -> 1.5.6
+     +--- org.asciidoctor:asciidoctorj:1.5.6
+     |    +--- org.jruby:jruby-complete:1.7.26
+     |    \--- com.beust:jcommander:1.35
+     +--- org.slf4j:slf4j-simple:1.7.25
+     |    \--- org.slf4j:slf4j-api:1.7.25
+     \--- com.google.guava:guava:20.0
+
+baseline
+No dependencies
+
+checkstyle - The Checkstyle libraries to be used for this project.
+\--- com.puppycrawl.tools:checkstyle:8.27
+     +--- info.picocli:picocli:4.1.1
+     +--- antlr:antlr:2.7.7
+     +--- org.antlr:antlr4-runtime:4.7.2
+     +--- commons-beanutils:commons-beanutils:1.9.4
+     |    \--- commons-collections:commons-collections:3.2.2
+     +--- com.google.guava:guava:28.1-jre
+     |    +--- com.google.guava:failureaccess:1.0.1
+     |    +--- com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+     |    +--- com.google.code.findbugs:jsr305:3.0.2
+     |    +--- org.checkerframework:checker-qual:2.8.1
+     |    +--- com.google.errorprone:error_prone_annotations:2.3.2
+     |    +--- com.google.j2objc:j2objc-annotations:1.3
+     |    \--- org.codehaus.mojo:animal-sniffer-annotations:1.18
+     \--- net.sf.saxon:Saxon-HE:9.9.1-5
+
+compileClasspath - Compile classpath for source set 'main'.
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
+\--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+     +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+     +--- org.glassfish.jaxb:txw2:2.3.1
+     +--- com.sun.istack:istack-commons-runtime:3.0.7
+     +--- org.jvnet.staxex:stax-ex:1.8
+     +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+     \--- javax.activation:javax.activation-api:1.2.0
+
+compileOnly - Compile only dependencies for source set 'main'. (n)
+No dependencies
+
+default - Configuration for default artifacts. (n)
+No dependencies
+
+implementation - Implementation only dependencies for source set 'main'. (n)
+No dependencies
+
+matrixCompile - Dependencies used to compile the matrix tests
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|    +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|    +--- org.glassfish.jaxb:txw2:2.3.1
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    +--- org.jvnet.staxex:stax-ex:1.8
+|    +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
++--- project :hibernate-testing
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- project :hibernate-core (*)
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- junit:junit:4.12 (*)
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-install:4.0.8
+|    +--- org.jboss.byteman:byteman-bmunit:4.0.8 (*)
+|    +--- com.experlog:xapool:1.5.0
+|    +--- log4j:log4j:1.2.17
+|    \--- org.jboss.jbossts:jbossjta:4.16.4.Final
++--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.shrinkwrap:shrinkwrap-impl-base:1.2.6
+|    +--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
+|    \--- org.jboss.shrinkwrap:shrinkwrap-spi:1.2.6
+|         \--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.spec.javax.security.jacc:jboss-jacc-api_1.4_spec:1.0.2.Final
+|    \--- org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.1.Final
++--- javax.validation:validation-api:2.0.1.Final
++--- org.mockito:mockito-core:2.19.1
+|    +--- net.bytebuddy:byte-buddy:1.8.13 -> 1.10.10
+|    +--- net.bytebuddy:byte-buddy-agent:1.8.13 -> 1.10.10
+|    \--- org.objenesis:objenesis:2.6
++--- org.mockito:mockito-inline:2.19.1
+|    \--- org.mockito:mockito-core:2.19.1 (*)
++--- joda-time:joda-time:2.3
++--- org.assertj:assertj-core:3.14.0
++--- javax.enterprise:cdi-api:2.0
+|    +--- javax.el:javax.el-api:3.0.0
+|    +--- javax.interceptor:javax.interceptor-api:1.2
+|    \--- javax.inject:javax.inject:1
++--- org.hibernate.validator:hibernate-validator:6.1.5.Final
+|    +--- jakarta.validation:jakarta.validation-api:2.0.2
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    \--- com.fasterxml:classmate:1.3.4 -> 1.5.1
++--- org.apache.derby:derby:10.11.1.1
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:2.0.0
+|    +--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0 (*)
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base:2.0.0
+|         \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi:2.0.0
+|              \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.spec.javax.ejb:jboss-ejb-api_3.2_spec:1.0.0.Final
+\--- org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec:1.0.0.Final
+
+matrixRuntime - Dependencies (baseline) used to run the matrix tests
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|    +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|    +--- org.glassfish.jaxb:txw2:2.3.1
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    +--- org.jvnet.staxex:stax-ex:1.8
+|    +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
++--- project :hibernate-testing
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- project :hibernate-core (*)
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- junit:junit:4.12 (*)
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-install:4.0.8
+|    +--- org.jboss.byteman:byteman-bmunit:4.0.8 (*)
+|    +--- com.experlog:xapool:1.5.0
+|    +--- log4j:log4j:1.2.17
+|    \--- org.jboss.jbossts:jbossjta:4.16.4.Final
++--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.shrinkwrap:shrinkwrap-impl-base:1.2.6
+|    +--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
+|    \--- org.jboss.shrinkwrap:shrinkwrap-spi:1.2.6
+|         \--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.spec.javax.security.jacc:jboss-jacc-api_1.4_spec:1.0.2.Final
+|    \--- org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.1.Final
++--- javax.validation:validation-api:2.0.1.Final
++--- org.mockito:mockito-core:2.19.1
+|    +--- net.bytebuddy:byte-buddy:1.8.13 -> 1.10.10
+|    +--- net.bytebuddy:byte-buddy-agent:1.8.13 -> 1.10.10
+|    \--- org.objenesis:objenesis:2.6
++--- org.mockito:mockito-inline:2.19.1
+|    \--- org.mockito:mockito-core:2.19.1 (*)
++--- joda-time:joda-time:2.3
++--- org.assertj:assertj-core:3.14.0
++--- javax.enterprise:cdi-api:2.0
+|    +--- javax.el:javax.el-api:3.0.0
+|    +--- javax.interceptor:javax.interceptor-api:1.2
+|    \--- javax.inject:javax.inject:1
++--- org.hibernate.validator:hibernate-validator:6.1.5.Final
+|    +--- jakarta.validation:jakarta.validation-api:2.0.2
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    \--- com.fasterxml:classmate:1.3.4 -> 1.5.1
++--- org.apache.derby:derby:10.11.1.1
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:2.0.0
+|    +--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0 (*)
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base:2.0.0
+|         \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi:2.0.0
+|              \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.spec.javax.ejb:jboss-ejb-api_3.2_spec:1.0.0.Final
++--- org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec:1.0.0.Final
++--- log4j:log4j:1.2.17
++--- com.h2database:h2:1.4.196
++--- org.hsqldb:hsqldb:2.3.2
++--- org.postgresql:postgresql:42.2.2
++--- mysql:mysql-connector-java:8.0.17
+|    \--- com.google.protobuf:protobuf-java:3.6.1
++--- org.mariadb.jdbc:mariadb-java-client:2.2.3
++--- com.microsoft.sqlserver:mssql-jdbc:7.2.1.jre8
++--- com.ibm.informix:jdbc:4.10.12
++--- com.sap.cloud.db.jdbc:ngdbc:2.4.59
++--- org.glassfish:javax.el:3.0.1-b09
++--- jaxen:jaxen:1.1
+|    +--- dom4j:dom4j:1.6.1
+|    +--- jdom:jdom:1.0
+|    +--- xerces:xercesImpl:2.6.2
+|    \--- xom:xom:1.0
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xerces:xercesImpl:2.6.2
+|         +--- xalan:xalan:2.6.0
+|         \--- com.ibm.icu:icu4j:2.6.1
++--- org.jboss.weld.se:weld-se-shaded:3.0.0.Final
++--- com.atomikos:transactions:4.0.6
+|    +--- com.atomikos:transactions-api:4.0.6
+|    \--- com.atomikos:atomikos-util:4.0.6
+|         \--- com.atomikos:transactions-api:4.0.6
++--- com.atomikos:transactions-jta:4.0.6
+|    +--- com.atomikos:transactions-api:4.0.6
+|    +--- com.atomikos:transactions:4.0.6 (*)
+|    \--- com.atomikos:atomikos-util:4.0.6 (*)
+\--- org.wildfly.transaction:wildfly-transaction-client:1.1.7.Final
+     +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.0.1.Final -> 1.1.1.Final
+     +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     +--- org.jboss.xnio:xnio-api:3.5.1.Final
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    \--- org.wildfly.client:wildfly-client-config:1.0.0.Final
+     |         +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |         \--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.jboss.remoting:jboss-remoting:5.0.0.Final
+     |    +--- org.jboss.logging:jboss-logging:3.2.1.Final -> 3.3.2.Final
+     |    +--- org.jboss.xnio:xnio-api:3.5.1.Final (*)
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    +--- org.wildfly.client:wildfly-client-config:1.0.0.CR2 -> 1.0.0.Final (*)
+     |    \--- org.wildfly.security:wildfly-elytron:1.1.0.Final
+     |         +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |         \--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.wildfly.security:wildfly-elytron:1.1.0.Final (*)
+     +--- org.wildfly:wildfly-naming-client:1.0.4.Final
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    +--- org.wildfly.client:wildfly-client-config:1.0.0.Final (*)
+     |    +--- org.wildfly.security:wildfly-elytron:1.1.0.Final (*)
+     |    +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |    +--- org.jboss.marshalling:jboss-marshalling:2.0.0.Final
+     |    +--- org.jboss.marshalling:jboss-marshalling-river:2.0.0.Final
+     |    |    \--- org.jboss.marshalling:jboss-marshalling:2.0.0.Final
+     |    \--- org.jboss.remoting:jboss-remoting:5.0.0.Final (*)
+     \--- org.jboss.spec.javax.resource:jboss-connector-api_1.7_spec:1.0.0.Final
+
+provided - Non-exported compile-time dependencies.
++--- org.jboss.logging:jboss-logging-annotations:2.1.0.Final
++--- org.jboss.spec.javax.security.jacc:jboss-jacc-api_1.4_spec:1.0.2.Final
+|    \--- org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.1.Final
++--- javax.validation:validation-api:2.0.1.Final
++--- org.apache.ant:ant:1.8.2
+|    \--- org.apache.ant:ant-launcher:1.8.2
+\--- javax.enterprise:cdi-api:2.0
+     +--- javax.el:javax.el-api:3.0.0
+     +--- javax.interceptor:javax.interceptor-api:1.2
+     \--- javax.inject:javax.inject:1
+
+runtimeClasspath - Runtime classpath of source set 'main'.
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
+\--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+     +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+     +--- org.glassfish.jaxb:txw2:2.3.1
+     +--- com.sun.istack:istack-commons-runtime:3.0.7
+     +--- org.jvnet.staxex:stax-ex:1.8
+     +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+     \--- javax.activation:javax.activation-api:1.2.0
+
+runtimeElements - Elements of runtime for main. (n)
+No dependencies
+
+runtimeOnly - Runtime only dependencies for source set 'main'. (n)
+No dependencies
+
+testAnnotationProcessor - Annotation processors and their dependencies for source set 'test'.
+\--- project :hibernate-jpamodelgen
+     +--- org.jboss.logging:jboss-logging:3.3.2.Final
+     +--- javax.xml.bind:jaxb-api:2.3.1
+     |    \--- javax.activation:javax.activation-api:1.2.0
+     \--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+          +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+          +--- org.glassfish.jaxb:txw2:2.3.1
+          +--- com.sun.istack:istack-commons-runtime:3.0.7
+          +--- org.jvnet.staxex:stax-ex:1.8
+          +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+          \--- javax.activation:javax.activation-api:1.2.0
+
+testCompileClasspath - Compile classpath for source set 'test'.
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|    +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|    +--- org.glassfish.jaxb:txw2:2.3.1
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    +--- org.jvnet.staxex:stax-ex:1.8
+|    +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
++--- project :hibernate-testing
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- project :hibernate-core (*)
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- junit:junit:4.12 (*)
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-install:4.0.8
+|    +--- org.jboss.byteman:byteman-bmunit:4.0.8 (*)
+|    +--- com.experlog:xapool:1.5.0
+|    +--- log4j:log4j:1.2.17
+|    \--- org.jboss.jbossts:jbossjta:4.16.4.Final
++--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.shrinkwrap:shrinkwrap-impl-base:1.2.6
+|    +--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
+|    \--- org.jboss.shrinkwrap:shrinkwrap-spi:1.2.6
+|         \--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.spec.javax.security.jacc:jboss-jacc-api_1.4_spec:1.0.2.Final
+|    \--- org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.1.Final
++--- javax.validation:validation-api:2.0.1.Final
++--- org.mockito:mockito-core:2.19.1
+|    +--- net.bytebuddy:byte-buddy:1.8.13 -> 1.10.10
+|    +--- net.bytebuddy:byte-buddy-agent:1.8.13 -> 1.10.10
+|    \--- org.objenesis:objenesis:2.6
++--- org.mockito:mockito-inline:2.19.1
+|    \--- org.mockito:mockito-core:2.19.1 (*)
++--- joda-time:joda-time:2.3
++--- org.assertj:assertj-core:3.14.0
++--- javax.enterprise:cdi-api:2.0
+|    +--- javax.el:javax.el-api:3.0.0
+|    +--- javax.interceptor:javax.interceptor-api:1.2
+|    \--- javax.inject:javax.inject:1
++--- org.hibernate.validator:hibernate-validator:6.1.5.Final
+|    +--- jakarta.validation:jakarta.validation-api:2.0.2
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    \--- com.fasterxml:classmate:1.3.4 -> 1.5.1
++--- org.apache.derby:derby:10.11.1.1
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:2.0.0
+|    +--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0 (*)
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base:2.0.0
+|         \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi:2.0.0
+|              \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.spec.javax.ejb:jboss-ejb-api_3.2_spec:1.0.0.Final
+\--- org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec:1.0.0.Final
+
+testCompileOnly - Compile only dependencies for source set 'test'. (n)
+No dependencies
+
+testImplementation - Implementation only dependencies for source set 'test'. (n)
+No dependencies
+
+testJavassistAnnotationProcessor - Annotation processors and their dependencies for source set 'test javassist'.
+No dependencies
+
+testJavassistCompileClasspath - Compile classpath for source set 'test javassist'.
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|    +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|    +--- org.glassfish.jaxb:txw2:2.3.1
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    +--- org.jvnet.staxex:stax-ex:1.8
+|    +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
++--- project :hibernate-testing
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- project :hibernate-core (*)
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- junit:junit:4.12 (*)
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-install:4.0.8
+|    +--- org.jboss.byteman:byteman-bmunit:4.0.8 (*)
+|    +--- com.experlog:xapool:1.5.0
+|    +--- log4j:log4j:1.2.17
+|    \--- org.jboss.jbossts:jbossjta:4.16.4.Final
++--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.shrinkwrap:shrinkwrap-impl-base:1.2.6
+|    +--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
+|    \--- org.jboss.shrinkwrap:shrinkwrap-spi:1.2.6
+|         \--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.spec.javax.security.jacc:jboss-jacc-api_1.4_spec:1.0.2.Final
+|    \--- org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.1.Final
++--- javax.validation:validation-api:2.0.1.Final
++--- org.mockito:mockito-core:2.19.1
+|    +--- net.bytebuddy:byte-buddy:1.8.13 -> 1.10.10
+|    +--- net.bytebuddy:byte-buddy-agent:1.8.13 -> 1.10.10
+|    \--- org.objenesis:objenesis:2.6
++--- org.mockito:mockito-inline:2.19.1
+|    \--- org.mockito:mockito-core:2.19.1 (*)
++--- joda-time:joda-time:2.3
++--- org.assertj:assertj-core:3.14.0
++--- javax.enterprise:cdi-api:2.0
+|    +--- javax.el:javax.el-api:3.0.0
+|    +--- javax.interceptor:javax.interceptor-api:1.2
+|    \--- javax.inject:javax.inject:1
++--- org.hibernate.validator:hibernate-validator:6.1.5.Final
+|    +--- jakarta.validation:jakarta.validation-api:2.0.2
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    \--- com.fasterxml:classmate:1.3.4 -> 1.5.1
++--- org.apache.derby:derby:10.11.1.1
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:2.0.0
+|    +--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0 (*)
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base:2.0.0
+|         \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi:2.0.0
+|              \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.spec.javax.ejb:jboss-ejb-api_3.2_spec:1.0.0.Final
+\--- org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec:1.0.0.Final
+
+testJavassistCompileOnly - Compile only dependencies for source set 'test javassist'. (n)
+No dependencies
+
+testJavassistImplementation - Implementation only dependencies for source set 'test javassist'. (n)
+No dependencies
+
+testJavassistRuntimeClasspath - Runtime classpath of source set 'test javassist'.
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|    +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|    +--- org.glassfish.jaxb:txw2:2.3.1
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    +--- org.jvnet.staxex:stax-ex:1.8
+|    +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
++--- project :hibernate-testing
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- project :hibernate-core (*)
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- junit:junit:4.12 (*)
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-install:4.0.8
+|    +--- org.jboss.byteman:byteman-bmunit:4.0.8 (*)
+|    +--- com.experlog:xapool:1.5.0
+|    +--- log4j:log4j:1.2.17
+|    \--- org.jboss.jbossts:jbossjta:4.16.4.Final
++--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.shrinkwrap:shrinkwrap-impl-base:1.2.6
+|    +--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
+|    \--- org.jboss.shrinkwrap:shrinkwrap-spi:1.2.6
+|         \--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.spec.javax.security.jacc:jboss-jacc-api_1.4_spec:1.0.2.Final
+|    \--- org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.1.Final
++--- javax.validation:validation-api:2.0.1.Final
++--- org.mockito:mockito-core:2.19.1
+|    +--- net.bytebuddy:byte-buddy:1.8.13 -> 1.10.10
+|    +--- net.bytebuddy:byte-buddy-agent:1.8.13 -> 1.10.10
+|    \--- org.objenesis:objenesis:2.6
++--- org.mockito:mockito-inline:2.19.1
+|    \--- org.mockito:mockito-core:2.19.1 (*)
++--- joda-time:joda-time:2.3
++--- org.assertj:assertj-core:3.14.0
++--- javax.enterprise:cdi-api:2.0
+|    +--- javax.el:javax.el-api:3.0.0
+|    +--- javax.interceptor:javax.interceptor-api:1.2
+|    \--- javax.inject:javax.inject:1
++--- org.hibernate.validator:hibernate-validator:6.1.5.Final
+|    +--- jakarta.validation:jakarta.validation-api:2.0.2
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    \--- com.fasterxml:classmate:1.3.4 -> 1.5.1
++--- org.apache.derby:derby:10.11.1.1
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:2.0.0
+|    +--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0 (*)
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base:2.0.0
+|         \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi:2.0.0
+|              \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.spec.javax.ejb:jboss-ejb-api_3.2_spec:1.0.0.Final
++--- org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec:1.0.0.Final
++--- log4j:log4j:1.2.17
++--- com.h2database:h2:1.4.196
++--- org.hsqldb:hsqldb:2.3.2
++--- org.postgresql:postgresql:42.2.2
++--- mysql:mysql-connector-java:8.0.17
+|    \--- com.google.protobuf:protobuf-java:3.6.1
++--- org.mariadb.jdbc:mariadb-java-client:2.2.3
++--- com.microsoft.sqlserver:mssql-jdbc:7.2.1.jre8
++--- com.ibm.informix:jdbc:4.10.12
++--- com.sap.cloud.db.jdbc:ngdbc:2.4.59
++--- org.glassfish:javax.el:3.0.1-b09
++--- jaxen:jaxen:1.1
+|    +--- dom4j:dom4j:1.6.1
+|    +--- jdom:jdom:1.0
+|    +--- xerces:xercesImpl:2.6.2
+|    \--- xom:xom:1.0
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xerces:xercesImpl:2.6.2
+|         +--- xalan:xalan:2.6.0
+|         \--- com.ibm.icu:icu4j:2.6.1
++--- org.jboss.weld.se:weld-se-shaded:3.0.0.Final
++--- com.atomikos:transactions:4.0.6
+|    +--- com.atomikos:transactions-api:4.0.6
+|    \--- com.atomikos:atomikos-util:4.0.6
+|         \--- com.atomikos:transactions-api:4.0.6
++--- com.atomikos:transactions-jta:4.0.6
+|    +--- com.atomikos:transactions-api:4.0.6
+|    +--- com.atomikos:transactions:4.0.6 (*)
+|    \--- com.atomikos:atomikos-util:4.0.6 (*)
+\--- org.wildfly.transaction:wildfly-transaction-client:1.1.7.Final
+     +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.0.1.Final -> 1.1.1.Final
+     +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     +--- org.jboss.xnio:xnio-api:3.5.1.Final
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    \--- org.wildfly.client:wildfly-client-config:1.0.0.Final
+     |         +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |         \--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.jboss.remoting:jboss-remoting:5.0.0.Final
+     |    +--- org.jboss.logging:jboss-logging:3.2.1.Final -> 3.3.2.Final
+     |    +--- org.jboss.xnio:xnio-api:3.5.1.Final (*)
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    +--- org.wildfly.client:wildfly-client-config:1.0.0.CR2 -> 1.0.0.Final (*)
+     |    \--- org.wildfly.security:wildfly-elytron:1.1.0.Final
+     |         +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |         \--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.wildfly.security:wildfly-elytron:1.1.0.Final (*)
+     +--- org.wildfly:wildfly-naming-client:1.0.4.Final
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    +--- org.wildfly.client:wildfly-client-config:1.0.0.Final (*)
+     |    +--- org.wildfly.security:wildfly-elytron:1.1.0.Final (*)
+     |    +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |    +--- org.jboss.marshalling:jboss-marshalling:2.0.0.Final
+     |    +--- org.jboss.marshalling:jboss-marshalling-river:2.0.0.Final
+     |    |    \--- org.jboss.marshalling:jboss-marshalling:2.0.0.Final
+     |    \--- org.jboss.remoting:jboss-remoting:5.0.0.Final (*)
+     \--- org.jboss.spec.javax.resource:jboss-connector-api_1.7_spec:1.0.0.Final
+
+testJavassistRuntimeOnly - Runtime only dependencies for source set 'test javassist'. (n)
+No dependencies
+
+testRuntimeClasspath - Runtime classpath of source set 'test'.
++--- antlr:antlr:2.7.7
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.persistence:javax.persistence-api:2.2
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
++--- org.jboss:jandex:2.1.3.Final
++--- com.fasterxml:classmate:1.5.1
++--- javax.activation:javax.activation-api:1.2.0
++--- org.dom4j:dom4j:2.1.3
++--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    \--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- javax.xml.bind:jaxb-api:2.3.1
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|    +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|    +--- org.glassfish.jaxb:txw2:2.3.1
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    +--- org.jvnet.staxex:stax-ex:1.8
+|    +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
++--- project :hibernate-testing
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- project :hibernate-core (*)
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- junit:junit:4.12 (*)
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-install:4.0.8
+|    +--- org.jboss.byteman:byteman-bmunit:4.0.8 (*)
+|    +--- com.experlog:xapool:1.5.0
+|    +--- log4j:log4j:1.2.17
+|    \--- org.jboss.jbossts:jbossjta:4.16.4.Final
++--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.shrinkwrap:shrinkwrap-impl-base:1.2.6
+|    +--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
+|    \--- org.jboss.shrinkwrap:shrinkwrap-spi:1.2.6
+|         \--- org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
++--- org.jboss.spec.javax.security.jacc:jboss-jacc-api_1.4_spec:1.0.2.Final
+|    \--- org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.1.Final
++--- javax.validation:validation-api:2.0.1.Final
++--- org.mockito:mockito-core:2.19.1
+|    +--- net.bytebuddy:byte-buddy:1.8.13 -> 1.10.10
+|    +--- net.bytebuddy:byte-buddy-agent:1.8.13 -> 1.10.10
+|    \--- org.objenesis:objenesis:2.6
++--- org.mockito:mockito-inline:2.19.1
+|    \--- org.mockito:mockito-core:2.19.1 (*)
++--- joda-time:joda-time:2.3
++--- org.assertj:assertj-core:3.14.0
++--- javax.enterprise:cdi-api:2.0
+|    +--- javax.el:javax.el-api:3.0.0
+|    +--- javax.interceptor:javax.interceptor-api:1.2
+|    \--- javax.inject:javax.inject:1
++--- org.hibernate.validator:hibernate-validator:6.1.5.Final
+|    +--- jakarta.validation:jakarta.validation-api:2.0.2
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    \--- com.fasterxml:classmate:1.3.4 -> 1.5.1
++--- org.apache.derby:derby:10.11.1.1
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee:2.0.0
+|    +--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee:2.0.0 (*)
+|    \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base:2.0.0
+|         \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi:2.0.0
+|              \--- org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0
++--- org.jboss.spec.javax.ejb:jboss-ejb-api_3.2_spec:1.0.0.Final
++--- org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec:1.0.0.Final
++--- log4j:log4j:1.2.17
++--- com.h2database:h2:1.4.196
++--- org.hsqldb:hsqldb:2.3.2
++--- org.postgresql:postgresql:42.2.2
++--- mysql:mysql-connector-java:8.0.17
+|    \--- com.google.protobuf:protobuf-java:3.6.1
++--- org.mariadb.jdbc:mariadb-java-client:2.2.3
++--- com.microsoft.sqlserver:mssql-jdbc:7.2.1.jre8
++--- com.ibm.informix:jdbc:4.10.12
++--- com.sap.cloud.db.jdbc:ngdbc:2.4.59
++--- org.glassfish:javax.el:3.0.1-b09
++--- jaxen:jaxen:1.1
+|    +--- dom4j:dom4j:1.6.1
+|    +--- jdom:jdom:1.0
+|    +--- xerces:xercesImpl:2.6.2
+|    \--- xom:xom:1.0
+|         +--- xerces:xmlParserAPIs:2.6.2
+|         +--- xerces:xercesImpl:2.6.2
+|         +--- xalan:xalan:2.6.0
+|         \--- com.ibm.icu:icu4j:2.6.1
++--- org.jboss.weld.se:weld-se-shaded:3.0.0.Final
++--- com.atomikos:transactions:4.0.6
+|    +--- com.atomikos:transactions-api:4.0.6
+|    \--- com.atomikos:atomikos-util:4.0.6
+|         \--- com.atomikos:transactions-api:4.0.6
++--- com.atomikos:transactions-jta:4.0.6
+|    +--- com.atomikos:transactions-api:4.0.6
+|    +--- com.atomikos:transactions:4.0.6 (*)
+|    \--- com.atomikos:atomikos-util:4.0.6 (*)
+\--- org.wildfly.transaction:wildfly-transaction-client:1.1.7.Final
+     +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.0.1.Final -> 1.1.1.Final
+     +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     +--- org.jboss.xnio:xnio-api:3.5.1.Final
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    \--- org.wildfly.client:wildfly-client-config:1.0.0.Final
+     |         +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |         \--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.jboss.remoting:jboss-remoting:5.0.0.Final
+     |    +--- org.jboss.logging:jboss-logging:3.2.1.Final -> 3.3.2.Final
+     |    +--- org.jboss.xnio:xnio-api:3.5.1.Final (*)
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    +--- org.wildfly.client:wildfly-client-config:1.0.0.CR2 -> 1.0.0.Final (*)
+     |    \--- org.wildfly.security:wildfly-elytron:1.1.0.Final
+     |         +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |         \--- org.wildfly.common:wildfly-common:1.2.0.Final
+     +--- org.wildfly.security:wildfly-elytron:1.1.0.Final (*)
+     +--- org.wildfly:wildfly-naming-client:1.0.4.Final
+     |    +--- org.wildfly.common:wildfly-common:1.2.0.Final
+     |    +--- org.wildfly.client:wildfly-client-config:1.0.0.Final (*)
+     |    +--- org.wildfly.security:wildfly-elytron:1.1.0.Final (*)
+     |    +--- org.jboss.logging:jboss-logging:3.3.1.Final -> 3.3.2.Final
+     |    +--- org.jboss.marshalling:jboss-marshalling:2.0.0.Final
+     |    +--- org.jboss.marshalling:jboss-marshalling-river:2.0.0.Final
+     |    |    \--- org.jboss.marshalling:jboss-marshalling:2.0.0.Final
+     |    \--- org.jboss.remoting:jboss-remoting:5.0.0.Final (*)
+     \--- org.jboss.spec.javax.resource:jboss-connector-api_1.7_spec:1.0.0.Final
+
+testRuntimeOnly - Runtime only dependencies for source set 'test'. (n)
+No dependencies
+
+tests - Configuration for the produced test jar
+No dependencies
+
+xjc - Dependencies for running xjc (JAXB class generation)
++--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|    +--- javax.xml.bind:jaxb-api:2.3.1
+|    |    \--- javax.activation:javax.activation-api:1.2.0
+|    +--- org.glassfish.jaxb:txw2:2.3.1
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    +--- org.jvnet.staxex:stax-ex:1.8
+|    +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|    \--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-xjc:2.3.1
+|    +--- org.glassfish.jaxb:jaxb-runtime:2.3.1 (*)
+|    +--- org.glassfish.jaxb:xsom:2.3.1
+|    |    \--- com.sun.xml.bind.external:relaxng-datatype:2.3.1
+|    +--- org.glassfish.jaxb:codemodel:2.3.1
+|    +--- com.sun.xml.bind.external:rngom:2.3.1
+|    |    \--- com.sun.xml.bind.external:relaxng-datatype:2.3.1
+|    +--- com.sun.xml.dtd-parser:dtd-parser:1.4
+|    +--- com.sun.istack:istack-commons-tools:3.0.7
+|    |    \--- org.apache.ant:ant:1.10.2
+|    |         \--- org.apache.ant:ant-launcher:1.10.2
+|    +--- com.sun.istack:istack-commons-runtime:3.0.7
+|    \--- com.sun.xml.bind.external:relaxng-datatype:2.3.1
++--- org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0
+|    +--- org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.12.0
+|    +--- org.jvnet.jaxb2_commons:jaxb2-basics-tools:0.12.0
+|    |    +--- org.slf4j:slf4j-api:1.7.7
+|    |    +--- commons-beanutils:commons-beanutils:1.9.3
+|    |    |    \--- commons-collections:commons-collections:3.2.2
+|    |    +--- org.slf4j:jcl-over-slf4j:1.7.7
+|    |    |    \--- org.slf4j:slf4j-api:1.7.7
+|    |    +--- org.apache.commons:commons-lang3:3.2.1
+|    |    \--- org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.12.0
+|    \--- com.google.code.javaparser:javaparser:1.0.11
++--- org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.12.0
++--- javax.activation:javax.activation-api:1.2.0
++--- org.glassfish.jaxb:jaxb-xjc:2.2.11 -> 2.3.1 (*)
++--- org.jvnet.jaxb2_commons:jaxb2-basics:0.9.3 -> 0.12.0 (*)
+\--- org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.9.3 -> 0.12.0
+
+(*) - dependencies omitted (listed previously)
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 10s
+1 actionable task: 1 executed

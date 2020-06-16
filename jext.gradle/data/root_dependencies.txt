@@ -1,0 +1,134 @@
+> Task :buildSrc:compileJava NO-SOURCE
+> Task :buildSrc:compileGroovy UP-TO-DATE
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+> Task :buildSrc:assemble UP-TO-DATE
+> Task :buildSrc:compileTestJava NO-SOURCE
+> Task :buildSrc:compileTestGroovy NO-SOURCE
+> Task :buildSrc:processTestResources NO-SOURCE
+> Task :buildSrc:testClasses UP-TO-DATE
+> Task :buildSrc:test NO-SOURCE
+> Task :buildSrc:check UP-TO-DATE
+> Task :buildSrc:build UP-TO-DATE
+
+> Configure project :hibernate-agroal
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-c3p0
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-core
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-enhance-maven-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-envers
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-graalvm
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-gradle-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-hikaricp
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jpamodelgen
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-osgi
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+[WARN] Skipping all tests for hibernate-osgi due to Karaf/Pax-Exam issues with latest JDK 11
+
+> Configure project :hibernate-proxool
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-spatial
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-testing
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-vibur
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :documentation
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-ehcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-entitymanager
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-infinispan
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+
+> Configure project :hibernate-integrationtest-java-modules
+Found module name 'org.hibernate.orm.integrationtest.java.module'
+
+> Configure project :hibernate-java8
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Task :dependencies
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+archives - Configuration for archive artifacts. (n)
+No dependencies
+
+default - Configuration for default artifacts. (n)
+No dependencies
+
+derby - The JDBC dependency configuration for the [derby] profile
+\--- org.apache.derby:derby:10.11.1.1
+
+hana - The JDBC dependency configuration for the [hana] profile
+\--- com.sap.cloud.db.jdbc:ngdbc:2.4.59
+
+mariadb - The JDBC dependency configuration for the [mariadb] profile
+\--- org.mariadb.jdbc:mariadb-java-client:2.2.4
+
+mssqlserver - The JDBC dependency configuration for the [mssqlserver] profile
+\--- com.microsoft.sqlserver:mssql-jdbc:6.4.0.jre8
+
+oracle - The JDBC dependency configuration for the [oracle] profile
+\--- :ojdbc8 FAILED
+
+pgsql - The JDBC dependency configuration for the [pgsql] profile
+\--- org.postgresql:postgresql:42.2.2
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 8s
+1 actionable task: 1 executed
