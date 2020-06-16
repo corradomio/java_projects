@@ -1,0 +1,310 @@
+> Task :buildSrc:compileJava NO-SOURCE
+> Task :buildSrc:compileGroovy UP-TO-DATE
+> Task :buildSrc:processResources NO-SOURCE
+> Task :buildSrc:classes UP-TO-DATE
+> Task :buildSrc:jar UP-TO-DATE
+> Task :buildSrc:assemble UP-TO-DATE
+> Task :buildSrc:compileTestJava NO-SOURCE
+> Task :buildSrc:compileTestGroovy NO-SOURCE
+> Task :buildSrc:processTestResources NO-SOURCE
+> Task :buildSrc:testClasses UP-TO-DATE
+> Task :buildSrc:test NO-SOURCE
+> Task :buildSrc:check UP-TO-DATE
+> Task :buildSrc:build UP-TO-DATE
+
+> Configure project :hibernate-agroal
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-c3p0
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-core
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-enhance-maven-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-envers
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-graalvm
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-gradle-plugin
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-hikaricp
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-jpamodelgen
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-osgi
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+[WARN] Skipping all tests for hibernate-osgi due to Karaf/Pax-Exam issues with latest JDK 11
+
+> Configure project :hibernate-proxool
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-spatial
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-testing
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-vibur
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :documentation
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-ehcache
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-entitymanager
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Configure project :hibernate-infinispan
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+
+> Configure project :hibernate-integrationtest-java-modules
+Found module name 'org.hibernate.orm.integrationtest.java.module'
+
+> Configure project :hibernate-java8
+Maven settings.xml file did not exist : C:\Users\Corrado Mio\.m2\settings.xml
+Forcing Javadoc in Java 8 compatible mode
+
+> Task :hibernate-graalvm:dependencies
+
+------------------------------------------------------------
+Project :hibernate-graalvm - Experimental extension to make it easier to compile applications into a GraalVM native image
+------------------------------------------------------------
+
+annotationProcessor - Annotation processors and their dependencies for source set 'main'.
++--- org.jboss.logging:jboss-logging-processor:2.1.0.Final
+|    +--- org.jboss.logging:jboss-logging-annotations:2.1.0.Final
+|    \--- org.jboss.jdeparser:jdeparser:2.0.2.Final
++--- org.jboss.logging:jboss-logging:3.3.2.Final
+\--- org.jboss.logging:jboss-logging-annotations:2.1.0.Final
+
+apiElements - API elements for main. (n)
+No dependencies
+
+archives - Configuration for archive artifacts. (n)
+No dependencies
+
+asciidoclet - Dependencies for Asciidoctor Javadoc taglet
+\--- org.asciidoctor:asciidoclet:1.+ -> 1.5.6
+     +--- org.asciidoctor:asciidoctorj:1.5.6
+     |    +--- org.jruby:jruby-complete:1.7.26
+     |    \--- com.beust:jcommander:1.35
+     +--- org.slf4j:slf4j-simple:1.7.25
+     |    \--- org.slf4j:slf4j-api:1.7.25
+     \--- com.google.guava:guava:20.0
+
+baseline
+No dependencies
+
+checkstyle - The Checkstyle libraries to be used for this project.
+\--- com.puppycrawl.tools:checkstyle:8.27
+     +--- info.picocli:picocli:4.1.1
+     +--- antlr:antlr:2.7.7
+     +--- org.antlr:antlr4-runtime:4.7.2
+     +--- commons-beanutils:commons-beanutils:1.9.4
+     |    \--- commons-collections:commons-collections:3.2.2
+     +--- com.google.guava:guava:28.1-jre
+     |    +--- com.google.guava:failureaccess:1.0.1
+     |    +--- com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
+     |    +--- com.google.code.findbugs:jsr305:3.0.2
+     |    +--- org.checkerframework:checker-qual:2.8.1
+     |    +--- com.google.errorprone:error_prone_annotations:2.3.2
+     |    +--- com.google.j2objc:j2objc-annotations:1.3
+     |    \--- org.codehaus.mojo:animal-sniffer-annotations:1.18
+     \--- net.sf.saxon:Saxon-HE:9.9.1-5
+
+compileClasspath - Compile classpath for source set 'main'.
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- project :hibernate-core
+|    +--- antlr:antlr:2.7.7
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- javax.persistence:javax.persistence-api:2.2
+|    +--- org.javassist:javassist:3.24.0-GA
+|    +--- net.bytebuddy:byte-buddy:1.10.10
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- org.jboss:jandex:2.1.3.Final
+|    +--- com.fasterxml:classmate:1.5.1
+|    +--- javax.activation:javax.activation-api:1.2.0
+|    +--- org.dom4j:dom4j:2.1.3
+|    +--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    |    \--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- javax.xml.bind:jaxb-api:2.3.1
+|    |    \--- javax.activation:javax.activation-api:1.2.0
+|    \--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|         +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|         +--- org.glassfish.jaxb:txw2:2.3.1
+|         +--- com.sun.istack:istack-commons-runtime:3.0.7
+|         +--- org.jvnet.staxex:stax-ex:1.8
+|         +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|         \--- javax.activation:javax.activation-api:1.2.0
+\--- org.graalvm.nativeimage:svm:19.3.1
+     +--- org.graalvm.nativeimage:svm-hosted-native-linux-amd64:19.3.1
+     +--- org.graalvm.nativeimage:svm-hosted-native-darwin-amd64:19.3.1
+     +--- org.graalvm.nativeimage:svm-hosted-native-windows-amd64:19.3.1
+     +--- org.graalvm.sdk:graal-sdk:19.3.1
+     +--- org.graalvm.nativeimage:objectfile:19.3.1
+     +--- org.graalvm.nativeimage:pointsto:19.3.1
+     |    \--- org.graalvm.compiler:compiler:19.3.1
+     |         +--- org.graalvm.sdk:graal-sdk:19.3.1
+     |         \--- org.graalvm.truffle:truffle-api:19.3.1
+     |              \--- org.graalvm.sdk:graal-sdk:19.3.1
+     +--- org.graalvm.truffle:truffle-nfi:19.3.1
+     |    +--- org.graalvm.truffle:truffle-api:19.3.1 (*)
+     |    +--- org.graalvm.truffle:truffle-nfi-native-linux-amd64:19.3.1
+     |    +--- org.graalvm.truffle:truffle-nfi-native-linux-aarch64:19.3.1
+     |    \--- org.graalvm.truffle:truffle-nfi-native-darwin-amd64:19.3.1
+     \--- org.graalvm.compiler:compiler:19.3.1 (*)
+
+compileOnly - Compile only dependencies for source set 'main'. (n)
++--- project hibernate-core (n)
+\--- org.graalvm.nativeimage:svm:19.3.1 (n)
+
+default - Configuration for default artifacts. (n)
+No dependencies
+
+implementation - Implementation only dependencies for source set 'main'. (n)
+No dependencies
+
+provided - Non-exported compile-time dependencies.
+\--- org.jboss.logging:jboss-logging-annotations:2.1.0.Final
+
+runtimeClasspath - Runtime classpath of source set 'main'.
+\--- org.jboss.logging:jboss-logging:3.3.2.Final
+
+runtimeElements - Elements of runtime for main. (n)
+No dependencies
+
+runtimeOnly - Runtime only dependencies for source set 'main'. (n)
+No dependencies
+
+testAnnotationProcessor - Annotation processors and their dependencies for source set 'test'.
+No dependencies
+
+testCompileClasspath - Compile classpath for source set 'test'.
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
+\--- project :hibernate-core
+     +--- antlr:antlr:2.7.7
+     +--- org.jboss.logging:jboss-logging:3.3.2.Final
+     +--- javax.persistence:javax.persistence-api:2.2
+     +--- org.javassist:javassist:3.24.0-GA
+     +--- net.bytebuddy:byte-buddy:1.10.10
+     +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+     +--- org.jboss:jandex:2.1.3.Final
+     +--- com.fasterxml:classmate:1.5.1
+     +--- javax.activation:javax.activation-api:1.2.0
+     +--- org.dom4j:dom4j:2.1.3
+     +--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+     |    \--- org.jboss.logging:jboss-logging:3.3.2.Final
+     +--- javax.xml.bind:jaxb-api:2.3.1
+     |    \--- javax.activation:javax.activation-api:1.2.0
+     \--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+          +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+          +--- org.glassfish.jaxb:txw2:2.3.1
+          +--- com.sun.istack:istack-commons-runtime:3.0.7
+          +--- org.jvnet.staxex:stax-ex:1.8
+          +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+          \--- javax.activation:javax.activation-api:1.2.0
+
+testCompileOnly - Compile only dependencies for source set 'test'. (n)
+No dependencies
+
+testImplementation - Implementation only dependencies for source set 'test'. (n)
+No dependencies
+
+testRuntimeClasspath - Runtime classpath of source set 'test'.
++--- org.jboss.logging:jboss-logging:3.3.2.Final
++--- junit:junit:4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.jboss.byteman:byteman:4.0.8
++--- org.jboss.byteman:byteman-install:4.0.8
++--- org.jboss.byteman:byteman-bmunit:4.0.8
+|    +--- org.jboss.byteman:byteman:4.0.8
+|    +--- org.jboss.byteman:byteman-submit:4.0.8
+|    \--- org.jboss.byteman:byteman-install:4.0.8
++--- project :hibernate-core
+|    +--- antlr:antlr:2.7.7
+|    +--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- javax.persistence:javax.persistence-api:2.2
+|    +--- org.javassist:javassist:3.24.0-GA
+|    +--- net.bytebuddy:byte-buddy:1.10.10
+|    +--- org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.1.1.Final
+|    +--- org.jboss:jandex:2.1.3.Final
+|    +--- com.fasterxml:classmate:1.5.1
+|    +--- javax.activation:javax.activation-api:1.2.0
+|    +--- org.dom4j:dom4j:2.1.3
+|    +--- org.hibernate.common:hibernate-commons-annotations:5.1.0.Final
+|    |    \--- org.jboss.logging:jboss-logging:3.3.2.Final
+|    +--- javax.xml.bind:jaxb-api:2.3.1
+|    |    \--- javax.activation:javax.activation-api:1.2.0
+|    \--- org.glassfish.jaxb:jaxb-runtime:2.3.1
+|         +--- javax.xml.bind:jaxb-api:2.3.1 (*)
+|         +--- org.glassfish.jaxb:txw2:2.3.1
+|         +--- com.sun.istack:istack-commons-runtime:3.0.7
+|         +--- org.jvnet.staxex:stax-ex:1.8
+|         +--- com.sun.xml.fastinfoset:FastInfoset:1.2.15
+|         \--- javax.activation:javax.activation-api:1.2.0
++--- log4j:log4j:1.2.17
++--- org.javassist:javassist:3.24.0-GA
++--- net.bytebuddy:byte-buddy:1.10.10
++--- com.h2database:h2:1.4.196
++--- org.hsqldb:hsqldb:2.3.2
++--- org.postgresql:postgresql:42.2.2
++--- mysql:mysql-connector-java:8.0.17
+|    \--- com.google.protobuf:protobuf-java:3.6.1
++--- org.mariadb.jdbc:mariadb-java-client:2.2.3
++--- com.microsoft.sqlserver:mssql-jdbc:7.2.1.jre8
++--- com.ibm.informix:jdbc:4.10.12
+\--- com.sap.cloud.db.jdbc:ngdbc:2.4.59
+
+testRuntimeOnly - Runtime only dependencies for source set 'test'. (n)
+No dependencies
+
+(*) - dependencies omitted (listed previously)
+
+(n) - Not resolved (configuration is not meant to be resolved)
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 2s
+1 actionable task: 1 executed
