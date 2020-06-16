@@ -5,20 +5,37 @@ import jext.gradle.GradleProject;
 import jext.logging.Logger;
 
 import java.io.File;
-import java.net.URISyntaxException;
+import java.util.Properties;
 
 public class MainGradle {
 
     public static void main(String[] args) throws Exception {
         Logger.configure();
 
-        GradleProject p = new GradleProject(new File("D:\\Projects.github\\other_projects\\hibernate-orm"));
+        GradleProject p = new GradleProject(new File("D:\\Projects.github\\other_projects\\hibernate-orm"))
+                .properties(new Properties(){{
+            put(GradleProject.GRADLE_VERSION, "6.4");
+        }});
 
-        p.connect();
+        p.analyzeStructure();
 
-        p.getRootModule().getModules();
+        // p.connect();
 
-        p.close();
+        p.getModules().forEach(module -> {
+            System.out.printf("Module %s\n", module.getName());
+            System.out.println("... dmodules");
+            module.getModuleDependencies()
+                    .forEach(dep -> {
+                        System.out.printf("... ... %s\n", dep);
+                    });
+            System.out.println("... dependencies");
+            module.getDependencies()
+                    .forEach(dep -> {
+                        System.out.printf("... ... %s\n", dep);
+                    });
+        });
+        System.out.println("Done");
 
+        // p.close();
     }
 }

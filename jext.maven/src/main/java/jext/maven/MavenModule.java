@@ -88,6 +88,10 @@ public class MavenModule {
         return dependencies;
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     @Override
     public int hashCode() {
         return getName().hashCode();
@@ -101,6 +105,6 @@ public class MavenModule {
 
     @Override
     public String toString() {
-        return String.format("Module[%s]", getName());
+        return String.format("MavenModule[%s]", getName());
     }
 }

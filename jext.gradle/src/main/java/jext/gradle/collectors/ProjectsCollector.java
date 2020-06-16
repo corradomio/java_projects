@@ -1,13 +1,13 @@
 package jext.gradle.collectors;
 
 import jext.io.LineOutputStream;
+import jext.logdigester.LogDigester;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /*
     Root project 'hibernate-orm'
@@ -35,54 +35,44 @@ import java.util.regex.Pattern;
     \--- Project ':release'
  */
 
-public class ProjectListCollector extends LineOutputStream implements Iterable<String> {
+public class ProjectsCollector extends LineOutputStream implements Iterable<String> {
 
     private enum State {
-        SKIP,
+        INIT,
         ANALYZING,
         DONE
     }
-    private State state = State.SKIP;
+    private State state = State.INIT;
+
     private String rootProject;
-    protected List<String> projects = new ArrayList<>();
+    private List<String> projects = new ArrayList<>();
+    private LogDigester digester;
 
-    public ProjectListCollector() {
-
+    public ProjectsCollector() {
+        digester = new LogDigester();
+        digester.addRule("Root project '([^']+)'", this::rootProject);
+        digester.addRule("ANALYZING", "[\\\\ +-]+Project ':([^']+).*", this::retrieveProject);
+        digester.addRule("ANALYZING", "", this::endProjects);
     }
 
-    private static final Pattern ROOT_PROJECT_PATTERN = Pattern.compile(
-            "Root project '([^']+)'"
-    );
+    private String rootProject(String status, Matcher matcher, String line) {
+        rootProject = matcher.group(1);
+        return "ANALYZING";
+    }
 
-    private static final Pattern PROJECT_PATTERN = Pattern.compile(
-            "[\\\\ +-]+Project ':([^']+).*"
-    );
+    private String retrieveProject(String status, Matcher matcher, String line) {
+        String project = matcher.group(1);
+        projects.add(project);
+        return status;
+    }
 
-    protected void add(String line) {
-        Matcher matcher;
+    private String endProjects(String status, Matcher matcher, String line) {
+        return LogDigester.STATE_DONE;
+    }
 
-        if (state == State.DONE)
-            return;
-
-        if (state == State.SKIP) {
-            matcher = ROOT_PROJECT_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                rootProject = matcher.group(1);
-                state = State.ANALYZING;
-                return;
-            }
-        }
-
-        if (state == State.ANALYZING) {
-            matcher = PROJECT_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                String project = matcher.group(1);
-                projects.add(project);
-            }
-            else {
-                state = State.DONE;
-            }
-        }
+    @Override
+    public void consume(String line) {
+        digester.consume(line);
     }
 
     @Override

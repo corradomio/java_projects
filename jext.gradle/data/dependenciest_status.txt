@@ -1,0 +1,23 @@
+
+begin:
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+------------------------------------------------------------
+Project :<projectName> - .*
+------------------------------------------------------------
+
+
+done:two possibilities
+
+1)
+
+    A web-based, searchable dependency report is available by adding the --scan option.
+
+2)
+
+    (*) - dependencies omitted (listed previously)
+
+    A web-based, searchable dependency report is available by adding the --scan option.

@@ -62,12 +62,16 @@
         <priority value="FATAL"/>
     </category>
 
+    <category name="org.gradle.tooling">
+        <priority value="INFO"/>
+    </category>
+
     <!-- ======================= -->
     <!-- Setup the Root category -->
     <!-- ======================= -->
 
     <root>
-        <priority value="INFO"/>
+        <priority value="DEBUG"/>
         <appender-ref ref="CONSOLE"/>
         <!-- appender-ref ref="FILE"/ -->
     </root>

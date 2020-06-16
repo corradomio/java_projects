@@ -1,14 +1,20 @@
 package jext.gradle;
 
+import jext.gradle.collectors.DependenciesCollector;
+import jext.gradle.collectors.ErrorsCollector;
+import jext.gradle.collectors.LoggerCollector;
+import jext.gradle.collectors.ProjectsCollector;
 import jext.gradle.util.GradleUtils;
-import jext.gradle.util.StringsOutputStream;
 import jext.logging.Logger;
+import jext.maven.MavenCoords;
 import jext.util.FileUtils;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GradleModule {
 
@@ -17,6 +23,8 @@ public class GradleModule {
     private GradleProject project;
     private GradleModule parent;
     private List<GradleModule> modules;
+    private List<GradleModule> dmodules;
+    private List<MavenCoords> dependencies;
     private File moduleDir;
     private String name;
 
@@ -27,8 +35,20 @@ public class GradleModule {
         this.logger = Logger.getLogger(getClass(), name);
     }
 
+    public GradleModule(String name, GradleModule parent) {
+        this.parent = parent;
+        this.project = parent.getProject();
+        this.moduleDir = new File(parent.getModuleDir(), name);
+        this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
+        this.logger = Logger.getLogger(getClass(), name);
+    }
+
     public String getName() {
         return name;
+    }
+
+    public File getModuleDir() {
+        return moduleDir;
     }
 
     public GradleProject getProject() {
@@ -36,60 +56,111 @@ public class GradleModule {
     }
 
     public List<GradleModule> getModules(){
-        if (modules != null)
-            return modules;
+        if (modules == null)
+            retrieveModules();
+        return modules;
+    }
 
-        /*
-            ------------------------------------------------------------
-            Root project
-            ------------------------------------------------------------
+    public List<GradleModule> getModuleDependencies() {
+        if (dmodules == null)
+            retrieveDependencies();
+        return dmodules;
+    }
 
-            Root project 'hibernate-orm'
-            +--- Project ':documentation' - The Hibernate ORM documentation module
-            +--- Project ':hibernate-agroal' - Integration for Agroal as a ConnectionProvider for Hibernate ORM
-            +--- Project ':hibernate-c3p0' - Integration for c3p0 Connection pooling into Hibernate ORM
-            +--- Project ':hibernate-core' - Hibernate's core ORM functionality
-            +--- Project ':hibernate-ehcache' - Integration for using Ehcache 2.x as a Hibernate second-level-cache provider
-            +--- Project ':hibernate-enhance-maven-plugin' - Enhance Plugin of the Hibernate project for use with Maven build system.
-            +--- Project ':hibernate-entitymanager' - (deprecated - use hibernate-core instead) Hibernate O/RM implementation of the JPA specification
-            +--- Project ':hibernate-envers' - Hibernate's entity version (audit/history) support
-            +--- Project ':hibernate-graalvm' - Experimental extension to make it easier to compile applications into a GraalVM native image
-            +--- Project ':hibernate-gradle-plugin' - Gradle plugin for integrating Hibernate functionality into your build
-            +--- Project ':hibernate-hikaricp' - Integration for HikariCP into Hibernate O/RM
-            +--- Project ':hibernate-infinispan' - (deprecated - use org.infinispan:infinispan-hibernate-cache-v53 instead)
-            +--- Project ':hibernate-integrationtest-java-modules' - Integration tests for running Hibernate ORM in the Java module path
-            +--- Project ':hibernate-java8' - (deprecated - use hibernate-core instead) Support for Java8-specific features - mainly Java8 Date/Time (JSR 310)
-            +--- Project ':hibernate-jcache' - Integration for javax.cache into Hibernate as a second-level caching service
-            +--- Project ':hibernate-jpamodelgen' - Annotation Processor to generate JPA 2 static metamodel classes
-            +--- Project ':hibernate-osgi' - Support for running Hibernate O/RM in OSGi environments
-            +--- Project ':hibernate-proxool' - Integration for Proxool Connection pooling into Hibernate O/RM
-            +--- Project ':hibernate-spatial' - Integrate support for Spatial/GIS data into Hibernate O/RM
-            +--- Project ':hibernate-testing' - Support for testing Hibernate ORM functionality
-            +--- Project ':hibernate-vibur' - Integration for Vibur Connection pooling as a Hibernate ORM ConnectionProvider
-            \--- Project ':release'
+    public List<MavenCoords> getDependencies() {
+        if (dependencies == null)
+            retrieveDependencies();
+        return dependencies;
+    }
 
-         */
+    public void analyzeStructure() {
+        getDependencies();
+        getModuleDependencies();
+        getModules().forEach(GradleModule::analyzeStructure);
+    }
+
+    private void retrieveModules() {
+        logger.debugf("[%s] retrieveModules", getName());
 
         modules = new ArrayList<>();
 
-        StringsOutputStream out = new StringsOutputStream();
-        StringsOutputStream err = new StringsOutputStream();
         String projectsTask = GradleUtils.toTask(name, "projects");
+        ErrorsCollector err = new ErrorsCollector(logger);
+        ProjectsCollector projects = new ProjectsCollector();
         try(ProjectConnection connection = project.getConnection()) {
             connection
-                .newBuild().forTasks(projectsTask)
-                .setStandardOutput(out)
-                .setStandardError(err)
-                .run();
-
-            out.close();
-            err.close();
+                    .newBuild().forTasks(projectsTask)
+                    .setStandardOutput(projects)
+                    .setStandardError(err)
+                    .run();
         }
         catch (Throwable t) {
             logger.error(t, t);
         }
+        finally {
+            projects.close();
+            err.close();
+        }
 
-        return modules;
+        projects.forEach(name -> {
+            modules.add(new GradleModule(name, this));
+        });
+    }
+
+    private void retrieveDependencies() {
+        logger.debugf("[%s] retrieveDependencies", getName());
+
+        String dependenciesTask = GradleUtils.toTask(name, "dependencies");
+        ErrorsCollector err = new ErrorsCollector(logger);
+        DependenciesCollector collector = new DependenciesCollector();
+        LoggerCollector logcoll = new LoggerCollector(logger, collector);
+        try(ProjectConnection connection = project.getConnection()) {
+            connection
+                    .newBuild().forTasks(dependenciesTask)
+                    .setStandardOutput(collector)
+                    // .setStandardOutput(logcoll)
+                    .setStandardError(err)
+                    .run();
+        }
+        catch (Throwable t) {
+            logger.error(t, t);
+        }
+        finally {
+            logcoll.close();
+            collector.close();
+            err.close();
+        }
+
+        dmodules = collector.getProjects()
+                .stream()
+                .map(name -> project.getModule(name))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        dependencies = collector.getLibraries()
+                .stream()
+                .map(MavenCoords::new)
+                .collect(Collectors.toList());
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        GradleModule that = (GradleModule) obj;
+        return getName().equals(that.getName());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("GradleModule[%s]", getName());
     }
 
 }

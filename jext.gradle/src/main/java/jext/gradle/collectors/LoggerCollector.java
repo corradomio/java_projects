@@ -3,12 +3,12 @@ package jext.gradle.collectors;
 import jext.io.LineOutputStream;
 import jext.logging.Logger;
 
-public class LogCollector extends LineOutputStream {
+public class LoggerCollector extends LineOutputStream {
 
     private Logger logger;
     private LineOutputStream delegate;
 
-    public LogCollector(Logger logger, LineOutputStream delegate) {
+    public LoggerCollector(Logger logger, LineOutputStream delegate) {
         this.logger = logger;
         this.delegate = delegate;
     }
@@ -19,7 +19,7 @@ public class LogCollector extends LineOutputStream {
     }
 
     @Override
-    public void accept(String line) {
+    public void consume(String line) {
         String message = line.toLowerCase();
         if (message.contains("error"))
             logger.error(line);
@@ -29,7 +29,7 @@ public class LogCollector extends LineOutputStream {
             logger.info(line);
         else
             logger.debug(line);
-        
-        delegate.accept(line);
+
+        delegate.consume(line);
     }
 }
