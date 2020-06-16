@@ -7,6 +7,7 @@ public interface MavenConst {
     String ARTIFACT_ID = "artifactId";
     String VERSION = "version";
         String NO_VERSION = "";
+        String UNKNOWN = "unknown";
 
     String PACKAGING = "packaging";
         String PACKAGING_TYPES = "jar,pom,maven-plugin,ejb,war,ear,rar";

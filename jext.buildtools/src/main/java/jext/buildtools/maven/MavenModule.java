@@ -13,7 +13,6 @@ public class MavenModule {
     private Logger logger;
 
     private MavenProject project;
-    private MavenModule parent;
     private File moduleDir;
     private MavenPom pom;
     private String name;
@@ -22,9 +21,17 @@ public class MavenModule {
     public MavenModule(MavenProject project) {
         this.moduleDir = project.getProjectDir();
         this.project = project;
-        this.parent = null;
         this.pom = new MavenPom(moduleDir);
         this.name= FileUtils.relativePath(project.getProjectDir(), moduleDir);
+
+        this.logger = Logger.getLogger(MavenModule.class, this.name);
+    }
+
+    public MavenModule(File pomFile, MavenProject project) {
+        this.moduleDir = pomFile.getParentFile();
+        this.project = project;
+        this.pom = new MavenPom(pomFile);
+        this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
 
         this.logger = Logger.getLogger(MavenModule.class, this.name);
     }
@@ -32,17 +39,12 @@ public class MavenModule {
     public MavenModule(String relativePath, MavenModule parent) {
         this.moduleDir = new File(parent.getModuleDir(), relativePath);
         this.project = parent.getProject();
-        this.parent = parent;
         this.pom = new MavenPom(moduleDir);
         this.name= FileUtils.relativePath(project.getProjectDir(), moduleDir);
     }
 
     public File getModuleDir() {
         return moduleDir;
-    }
-
-    public MavenModule getParent() {
-        return parent;
     }
 
     public MavenProject getProject() {

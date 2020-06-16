@@ -1,4 +1,4 @@
-package jext.buildtools.logdigester;
+package jext.buildtools.util;
 
 import jext.logging.Logger;
 

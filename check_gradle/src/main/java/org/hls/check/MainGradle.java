@@ -17,7 +17,7 @@ public class MainGradle {
             put(GradleProject.GRADLE_VERSION, "6.4");
         }});
 
-        p.analyzeStructure();
+        // p.analyzeStructure();
 
         // p.connect();
 

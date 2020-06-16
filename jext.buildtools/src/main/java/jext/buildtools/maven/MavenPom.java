@@ -122,8 +122,8 @@ public class MavenPom implements MavenConst {
         </project>
      */
     public MavenCoords getCoords() {
-        String gid = null;
-        String aid = null;
+        String gid = UNKNOWN;
+        String aid = UNKNOWN;
         String v = NO_VERSION;
 
         // defaults using parent

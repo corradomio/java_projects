@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 public class MavenProject {
 
@@ -35,15 +36,20 @@ public class MavenProject {
         if (modules != null)
             return modules;
 
-        modules = new ArrayList<>();
-        Queue<MavenModule> toVisit = new LinkedList<>();
-        toVisit.add(rootModule);
+        modules = FileUtils.listFiles(projectDir, file -> "pom.xml".equals(file.getName()))
+                .stream()
+                .map(pomFile -> new MavenModule(pomFile, this))
+                .collect(Collectors.toList());
 
-        while (!toVisit.isEmpty()) {
-            MavenModule visited = toVisit.remove();
-            toVisit.addAll(visited.getModules());
-            modules.add(visited);
-        }
+        // modules = new ArrayList<>();
+        // Queue<MavenModule> toVisit = new LinkedList<>();
+        // toVisit.add(rootModule);
+        //
+        // while (!toVisit.isEmpty()) {
+        //     MavenModule visited = toVisit.remove();
+        //     toVisit.addAll(visited.getModules());
+        //     modules.add(visited);
+        // }
 
         return modules;
     }
@@ -76,25 +82,26 @@ public class MavenProject {
 
     private void findPomFiles() {
         List<File> pomFiles = FileUtils.listFiles(projectDir, file -> "pom.xml".equals(file.getName()));
+
     }
 
     public void dump() {
         System.out.println(rootModule.getCoords());
         System.out.println("Modules");
         getModules().forEach(module -> {
-            System.out.printf("... %s: %s\n", module.getName(), module.getCoords());
+            System.out.printf("... '%s' (%s)\n", module.getName(), module.getCoords());
             List<MavenModule> dmodules = module.getModuleDependencies();
             List<MavenCoords> dependencies = module.getDependencies();
             if (!dmodules.isEmpty()) {
-                System.out.printf("... ... Modules\n");
+                System.out.print("... ... Modules\n");
                 dmodules.forEach(dmodule -> {
                     System.out.printf("... ... ... %s\n", dmodule.getName());
                 });
             }
             if (!dependencies.isEmpty()) {
-                System.out.printf("... ... Dependencies\n");
+                System.out.print("... ... Dependencies\n");
                 dependencies.forEach(coords -> {
-                    System.out.printf("... ... ... %s\n", coords.getName());
+                    System.out.printf("... ... ... %s\n", coords.toString());
                 });
             }
         });

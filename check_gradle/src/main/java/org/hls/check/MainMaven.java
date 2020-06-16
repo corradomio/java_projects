@@ -1,17 +1,29 @@
 package org.hls.check;
 
+import jext.buildtools.maven.MavenProject;
 import jext.logging.Logger;
-import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
-import jext.maven.MavenPom;
-import jext.maven.Versions;
+import jext.buildtools.maven.MavenCoords;
+import jext.buildtools.maven.MavenDownloader;
+import jext.buildtools.maven.MavenPom;
+import jext.buildtools.maven.Versions;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
 
-public class Main {
+public class MainMaven {
 
     public static void main(String[] args) {
+        Logger.configure();
+
+        MavenProject project = new MavenProject(new File(
+                // "D:\\Projects.github\\other_projects\\commons-jcs"
+                "D:\\Projects.github\\apache_gitbox\\hadoop"
+        ));
+
+        project.dump();
+    }
+
+    public static void main3(String[] args) {
 
         MavenDownloader downloader = new MavenDownloader();
         MavenPom pom = new MavenPom(

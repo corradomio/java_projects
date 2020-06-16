@@ -22,7 +22,6 @@ public class GradleModule {
     private Logger logger;
 
     private GradleProject project;
-    private GradleModule parent;
     private List<GradleModule> modules;
     private List<GradleModule> dmodules;
     private List<MavenCoords> dependencies;
@@ -38,7 +37,6 @@ public class GradleModule {
     }
 
     public GradleModule(String name, GradleModule parent) {
-        this.parent = parent;
         this.project = parent.getProject();
         this.moduleDir = new File(parent.getModuleDir(), name);
         this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
@@ -63,8 +61,10 @@ public class GradleModule {
     }
 
     public List<GradleModule> getModules(){
-        if (modules == null)
+        if (modules == null) {
             retrieveModules();
+            retrieveDependencies();
+        }
         return modules;
     }
 
@@ -78,11 +78,6 @@ public class GradleModule {
         if (dependencies == null)
             retrieveDependencies();
         return dependencies;
-    }
-
-    public void analyzeStructure() {
-        getDependencies();
-        getModuleDependencies();
     }
 
     private void retrieveModules() {

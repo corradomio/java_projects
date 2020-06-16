@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Queue;
 
-public class GradleProject implements AutoCloseable {
+public class GradleProject {
 
     private static Logger logger = Logger.getLogger(GradleProject.class);
 
@@ -29,12 +29,10 @@ public class GradleProject implements AutoCloseable {
     private final GradleModule rootModule;
     private List<GradleModule> modules;
 
-    // private ProjectConnection connection;
-    // private ProjectConnection uncloseable;
-
     public GradleProject(File projectDir) {
         this.projectDir = projectDir;
         this.rootModule = new GradleModule(this);
+        connect();
     }
 
     public GradleProject properties(Properties properties) {
@@ -44,19 +42,6 @@ public class GradleProject implements AutoCloseable {
 
     public String getName() {
         return projectDir.getName();
-    }
-
-    public void analyzeStructure() {
-        try {
-            connect();
-            getModules().forEach(GradleModule::analyzeStructure);
-        }
-        catch (Throwable t) {
-            logger.error(t, t);
-        }
-        finally {
-            close();
-        }
     }
 
     public GradleModule getRootModule() {
@@ -90,7 +75,20 @@ public class GradleProject implements AutoCloseable {
         return null;
     }
 
-    public void connect() throws URISyntaxException {
+    // private void analyzeStructure() {
+    //     try {
+    //         connect();
+    //         getModules().forEach(GradleModule::analyzeStructure);
+    //     }
+    //     catch (Throwable t) {
+    //         logger.error(t, t);
+    //     }
+    //     finally {
+    //         close();
+    //     }
+    // }
+
+    private void connect() {
         connector = GradleConnector.newConnector().forProjectDirectory(projectDir);
 
         // useInstallation(File gradleHome);
@@ -109,10 +107,10 @@ public class GradleProject implements AutoCloseable {
             connector.useInstallation(gradleHome);
         }
 
-        if (properties.containsKey(GRADLE_URI)) {
-            URI gradleDistribution = PropertiesUtils.getURI(properties, GRADLE_URI);
-            connector.useDistribution(gradleDistribution);
-        }
+        // if (properties.containsKey(GRADLE_URI)) {
+        //     URI gradleDistribution = PropertiesUtils.getURI(properties, GRADLE_URI);
+        //     connector.useDistribution(gradleDistribution);
+        // }
 
         if (properties.containsKey(GRADLE_HOMEDIR)) {
             File gradleUserHomeDir = PropertiesUtils.getFile(properties, GRADLE_HOMEDIR);
@@ -121,12 +119,6 @@ public class GradleProject implements AutoCloseable {
 
         // connection = connector.connect();
         // uncloseable = new UncloseableProjectConnection(connection);
-    }
-
-    public void close() {
-        // if (connection != null)
-        //     connection.close();
-        // connection = null;
     }
 
     public File getProjectDir() {
