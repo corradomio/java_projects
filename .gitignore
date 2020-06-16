@@ -7,4 +7,5 @@ target
 build
 *.removed
 *.suspended
+removed
 

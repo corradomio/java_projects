@@ -28,15 +28,13 @@
 
     <modules>
         <module>../jext.commons</module>
-        <module>../jext.maven</module>
-        <module>../jext.gradle</module>
-        <module>../jext.logdigester</module>
+        <module>../jext.buildtools</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.gradle</artifactId>
+            <artifactId>jext.buildtools</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

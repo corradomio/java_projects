@@ -1,4 +1,4 @@
-package jext.maven;
+package jext.buildtools.maven;
 
 import jext.exception.InvalidValueException;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static jext.maven.MavenConst.NO_VERSION;
+import static jext.buildtools.maven.MavenConst.NO_VERSION;
 
 public class Versions {
 

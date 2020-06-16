@@ -1,4 +1,4 @@
-package jext.gradle.collectors;
+package jext.buildtools.gradle.collectors;
 
 import jext.io.LineOutputStream;
 import jext.logging.Logger;

@@ -1,11 +1,7 @@
-package jext.gradle.collectors;
+package jext.buildtools.gradle.collectors;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jext.io.LineOutputStream;
 import jext.logging.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ErrorsCollector extends LineOutputStream {
     private Logger logger;

@@ -1,7 +1,7 @@
-package jext.maven;
+package jext.buildtools.maven;
 
+import jext.logging.Logger;
 import jext.util.FileUtils;
-import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MavenModule {
+
+    private Logger logger;
 
     private MavenProject project;
     private MavenModule parent;
@@ -23,6 +25,8 @@ public class MavenModule {
         this.parent = null;
         this.pom = new MavenPom(moduleDir);
         this.name= FileUtils.relativePath(project.getProjectDir(), moduleDir);
+
+        this.logger = Logger.getLogger(MavenModule.class, this.name);
     }
 
     public MavenModule(String relativePath, MavenModule parent) {
@@ -86,6 +90,12 @@ public class MavenModule {
                         dependencies.add(coords);
                 });
         return dependencies;
+    }
+
+    public void analyzeStructure() {
+        getModules();
+        getDependencies();
+        getModuleDependencies();
     }
 
     // ----------------------------------------------------------------------

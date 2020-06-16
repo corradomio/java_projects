@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.hls</groupId>
-    <artifactId>jext.maven</artifactId>
+    <artifactId>jext.buildtools</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <repositories>
@@ -17,7 +17,11 @@
             <id>JSR</id>
             <url>https://maven.onehippo.com/maven2/</url>
         </repository>
-    </repositories>
+        <repository>
+            <id>GradleRepo</id>
+            <name>Gradle repository</name>
+            <url>https://repo.gradle.org/gradle/libs-releases-local/</url>
+        </repository>    </repositories>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -48,6 +52,12 @@
             <groupId>javax.annotation</groupId>
             <artifactId>jsr305</artifactId>
             <version>1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api -->
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-tooling-api</artifactId>
+            <version>6.4</version>
         </dependency>
 
     </dependencies>

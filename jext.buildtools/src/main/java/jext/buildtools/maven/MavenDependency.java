@@ -1,4 +1,4 @@
-package jext.maven;
+package jext.buildtools.maven;
 
 /*
     https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html

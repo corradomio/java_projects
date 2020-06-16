@@ -1,7 +1,7 @@
 package org.hls.check;
 
 
-import jext.gradle.GradleProject;
+import jext.buildtools.gradle.GradleProject;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class MainGradle {
         // p.connect();
 
         p.getModules().forEach(module -> {
-            System.out.printf("Module %s\n", module.getName());
+            System.out.printf("Module %s (%s)\n", module.getName(), module.isValid());
             System.out.println("... dmodules");
             module.getModuleDependencies()
                     .forEach(dep -> {

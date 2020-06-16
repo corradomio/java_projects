@@ -1,4 +1,4 @@
-package jext.maven;
+package jext.buildtools.maven;
 
 import jext.logging.Logger;
 import jext.xml.XPathUtils;
@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static jext.maven.MavenCoords.isValid;
-import static jext.maven.MavenCoords.isRange;
-import static jext.maven.MavenCoords.isPattern;
+import static jext.buildtools.maven.MavenCoords.isValid;
+import static jext.buildtools.maven.MavenCoords.isRange;
+import static jext.buildtools.maven.MavenCoords.isPattern;
 
 public class MavenPom implements MavenConst {
 

@@ -1,4 +1,4 @@
-package jext.gradle.util;
+package jext.buildtools.gradle.util;
 
 import org.gradle.api.Incubating;
 import org.gradle.tooling.BuildAction;

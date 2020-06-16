@@ -1,4 +1,4 @@
-package jext.maven;
+package jext.buildtools.maven;
 
 public interface MavenConst {
     String PARENT = "parent";

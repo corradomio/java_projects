@@ -1,23 +1,13 @@
-package jext.gradle;
+package jext.buildtools.gradle;
 
-import jext.gradle.util.UncloseableProjectConnection;
 import jext.logging.Logger;
 import jext.util.PropertiesUtils;
-import jext.util.StringUtils;
-import org.gradle.tooling.BuildAction;
-import org.gradle.tooling.BuildActionExecuter;
-import org.gradle.tooling.BuildLauncher;
-import org.gradle.tooling.GradleConnectionException;
 import org.gradle.tooling.GradleConnector;
-import org.gradle.tooling.ModelBuilder;
 import org.gradle.tooling.ProjectConnection;
-import org.gradle.tooling.ResultHandler;
-import org.gradle.tooling.TestLauncher;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,10 +42,14 @@ public class GradleProject implements AutoCloseable {
         return this;
     }
 
+    public String getName() {
+        return projectDir.getName();
+    }
+
     public void analyzeStructure() {
         try {
             connect();
-            rootModule.analyzeStructure();
+            getModules().forEach(GradleModule::analyzeStructure);
         }
         catch (Throwable t) {
             logger.error(t, t);

@@ -58,7 +58,7 @@
     <!-- Limit categories -->
     <!-- ================ -->
 
-    <category name="jext.maven.MavenDownloader">
+    <category name="jext.buildtools.maven.MavenDownloader">
         <priority value="FATAL"/>
     </category>
 

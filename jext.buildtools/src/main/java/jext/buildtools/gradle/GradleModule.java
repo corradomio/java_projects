@@ -1,12 +1,13 @@
-package jext.gradle;
+package jext.buildtools.gradle;
 
-import jext.gradle.collectors.DependenciesCollector;
-import jext.gradle.collectors.ErrorsCollector;
-import jext.gradle.collectors.LoggerCollector;
-import jext.gradle.collectors.ProjectsCollector;
-import jext.gradle.util.GradleUtils;
+import jext.buildtools.gradle.collectors.DependenciesCollector;
+import jext.buildtools.gradle.collectors.ErrorsCollector;
+import jext.buildtools.gradle.collectors.LoggerCollector;
+import jext.buildtools.gradle.collectors.ProjectsCollector;
+import jext.buildtools.gradle.util.GradleUtils;
 import jext.logging.Logger;
-import jext.maven.MavenCoords;
+import jext.buildtools.maven.MavenCoords;
+import jext.buildtools.maven.MavenModule;
 import jext.util.FileUtils;
 import org.gradle.tooling.ProjectConnection;
 
@@ -32,7 +33,8 @@ public class GradleModule {
         this.project = project;
         this.moduleDir = project.getProjectDir();
         this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
-        this.logger = Logger.getLogger(getClass(), name);
+
+        this.logger = Logger.getLogger(MavenModule.class, this.name);
     }
 
     public GradleModule(String name, GradleModule parent) {
@@ -40,7 +42,8 @@ public class GradleModule {
         this.project = parent.getProject();
         this.moduleDir = new File(parent.getModuleDir(), name);
         this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
-        this.logger = Logger.getLogger(getClass(), name);
+
+        this.logger = Logger.getLogger(MavenModule.class, this.name);
     }
 
     public String getName() {
@@ -49,6 +52,10 @@ public class GradleModule {
 
     public File getModuleDir() {
         return moduleDir;
+    }
+
+    public boolean isValid() {
+        return moduleDir.exists() && moduleDir.isDirectory();
     }
 
     public GradleProject getProject() {
@@ -76,11 +83,10 @@ public class GradleModule {
     public void analyzeStructure() {
         getDependencies();
         getModuleDependencies();
-        getModules().forEach(GradleModule::analyzeStructure);
     }
 
     private void retrieveModules() {
-        logger.debugf("[%s] retrieveModules", getName());
+        logger.debugf("retrieveModules", getName());
 
         modules = new ArrayList<>();
 
@@ -108,7 +114,7 @@ public class GradleModule {
     }
 
     private void retrieveDependencies() {
-        logger.debugf("[%s] retrieveDependencies", getName());
+        logger.debugf("retrieveDependencies");
 
         String dependenciesTask = GradleUtils.toTask(name, "dependencies");
         ErrorsCollector err = new ErrorsCollector(logger);

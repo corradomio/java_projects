@@ -1,4 +1,4 @@
-package jext.maven;
+package jext.buildtools.maven;
 
 import jext.exception.InvalidValueException;
 import jext.logging.Logger;

@@ -1,12 +1,9 @@
-package jext.gradle.collectors;
+package jext.buildtools.gradle.collectors;
 
 import jext.io.LineOutputStream;
-import jext.logdigester.LogDigester;
+import jext.buildtools.logdigester.LogDigester;
 import jext.logging.Logger;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;

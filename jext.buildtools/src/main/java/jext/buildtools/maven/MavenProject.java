@@ -1,4 +1,6 @@
-package jext.maven;
+package jext.buildtools.maven;
+
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,8 +19,16 @@ public class MavenProject {
         this.rootModule = new MavenModule(this);
     }
 
+    public String getName() {
+        return projectDir.getName();
+    }
+
     public File getProjectDir() {
         return projectDir;
+    }
+
+    public MavenModule getRootModule() {
+        return rootModule;
     }
 
     public List<MavenModule> getModules() {
@@ -36,6 +46,11 @@ public class MavenProject {
         }
 
         return modules;
+    }
+
+    public void analyzeStructure() {
+        getModules()
+                .forEach(MavenModule::analyzeStructure);
     }
 
     public MavenModule getModule(String name) {
@@ -57,6 +72,10 @@ public class MavenProject {
 
     public boolean isModule(String coords) {
         return getModule(coords) != null;
+    }
+
+    private void findPomFiles() {
+        List<File> pomFiles = FileUtils.listFiles(projectDir, file -> "pom.xml".equals(file.getName()));
     }
 
     public void dump() {
