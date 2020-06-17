@@ -1,5 +1,6 @@
 package jext.buildtools.gradle;
 
+import jext.buildtools.util.Name;
 import jext.logging.Logger;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.GradleConnector;
@@ -68,8 +69,8 @@ public class GradleProject {
 
     public GradleModule getModule(String name) {
         for (GradleModule module : getModules()) {
-            String mname = module.getName();
-            if (mname.equals(name) || mname.endsWith(name))
+            Name mname = module.getName();
+            if (mname.toString().equals(name) || mname.toString().endsWith(name))
                 return module;
         }
         return null;

@@ -1,5 +1,6 @@
 package jext.buildtools.maven;
 
+import jext.buildtools.util.Name;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -68,8 +69,8 @@ public class MavenProject {
         }
         else {
             for (MavenModule module : getModules()) {
-                String mname = module.getName();
-                if (mname.equals(name) || mname.endsWith(name))
+                Name mname = module.getName();
+                if (mname.toString().equals(name) || mname.toString().endsWith(name))
                     return module;
             }
         }

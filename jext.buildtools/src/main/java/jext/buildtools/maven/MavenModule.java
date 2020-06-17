@@ -1,5 +1,7 @@
 package jext.buildtools.maven;
 
+import jext.buildtools.util.Name;
+import jext.buildtools.util.PathName;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 
@@ -15,32 +17,32 @@ public class MavenModule {
     private MavenProject project;
     private File moduleDir;
     private MavenPom pom;
-    private String name;
+    private Name name;
     private List<MavenModule> modules;
 
     public MavenModule(MavenProject project) {
         this.moduleDir = project.getProjectDir();
         this.project = project;
         this.pom = new MavenPom(moduleDir);
-        this.name= FileUtils.relativePath(project.getProjectDir(), moduleDir);
+        this.name = new PathName(FileUtils.relativePath(project.getProjectDir(), moduleDir));
 
-        this.logger = Logger.getLogger(MavenModule.class, this.name);
+        this.logger = Logger.getLogger(MavenModule.class, this.name.toString());
     }
 
     public MavenModule(File pomFile, MavenProject project) {
         this.moduleDir = pomFile.getParentFile();
         this.project = project;
         this.pom = new MavenPom(pomFile);
-        this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
+        this.name = new PathName(FileUtils.relativePath(project.getProjectDir(), moduleDir));
 
-        this.logger = Logger.getLogger(MavenModule.class, this.name);
+        this.logger = Logger.getLogger(MavenModule.class, this.name.toString());
     }
 
     public MavenModule(String relativePath, MavenModule parent) {
         this.moduleDir = new File(parent.getModuleDir(), relativePath);
         this.project = parent.getProject();
         this.pom = new MavenPom(moduleDir);
-        this.name= FileUtils.relativePath(project.getProjectDir(), moduleDir);
+        this.name = new PathName(FileUtils.relativePath(project.getProjectDir(), moduleDir));
     }
 
     public File getModuleDir() {
@@ -51,7 +53,7 @@ public class MavenModule {
         return project;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 

@@ -5,6 +5,8 @@ import jext.buildtools.gradle.collectors.ErrorsCollector;
 import jext.buildtools.gradle.collectors.LoggerCollector;
 import jext.buildtools.gradle.collectors.ProjectsCollector;
 import jext.buildtools.gradle.util.GradleUtils;
+import jext.buildtools.util.Name;
+import jext.buildtools.util.PathName;
 import jext.logging.Logger;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.maven.MavenModule;
@@ -26,25 +28,25 @@ public class GradleModule {
     private List<GradleModule> dmodules;
     private List<MavenCoords> dependencies;
     private File moduleDir;
-    private String name;
+    private Name name;
 
     public GradleModule(GradleProject project) {
         this.project = project;
         this.moduleDir = project.getProjectDir();
-        this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
+        this.name = new PathName(FileUtils.relativePath(project.getProjectDir(), moduleDir));
 
-        this.logger = Logger.getLogger(MavenModule.class, this.name);
+        this.logger = Logger.getLogger(MavenModule.class, this.name.toString());
     }
 
     public GradleModule(String name, GradleModule parent) {
         this.project = parent.getProject();
         this.moduleDir = new File(parent.getModuleDir(), name);
-        this.name = FileUtils.relativePath(project.getProjectDir(), moduleDir);
+        this.name = new PathName(FileUtils.relativePath(project.getProjectDir(), moduleDir));
 
-        this.logger = Logger.getLogger(MavenModule.class, this.name);
+        this.logger = Logger.getLogger(MavenModule.class, this.name.toString());
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
