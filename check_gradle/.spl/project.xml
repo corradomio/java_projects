@@ -1,0 +1,28 @@
+<project>
+    <!--
+        name: path  = <projectRoot>/name
+        path: name <- <parentDir>/name
+        name & path
+      -->
+    <module name="name" path="path">
+
+        <!--
+            Directories containing the source files
+          -->
+        <sources>
+            <path value="relativeToModuleDir"/>
+        </sources>
+
+        <!--
+            Dependencies
+          -->
+        <dependencies>
+            <module name="dependencyModule"/>
+            <maven coords="gid:aid[:ver]"/>
+            <!--
+                if dir the all files in dir
+              -->
+            <include path="pathFileOrDir" extension=".jar" recursive="false"/>
+        </dependencies>
+    </module>
+</project>
