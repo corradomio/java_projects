@@ -73,25 +73,17 @@ public class FileUtils {
         return relativePath;
     }
 
-    // public static File toCanonicalFile(File parentDir, String path) {
-    //     try {
-    //         return new File(parentDir, path).getCanonicalFile();
-    //     } catch (IOException e) {
-    //         return new File(parentDir, path).getAbsoluteFile();
-    //     }
-    // }
-
     public static String getAbsolutePath(File file) {
         return normalize(file.getAbsolutePath());
     }
 
-    public static String toCanonicalPath(File parentDir, String path) {
-        try {
-            return normalize(new File(parentDir, path).getCanonicalPath());
-        } catch (IOException e) {
-            return normalize(new File(parentDir, path).getAbsolutePath());
-        }
-    }
+    // public static String toCanonicalPath(File parentDir, String path) {
+    //     try {
+    //         return normalize(new File(parentDir, path).getCanonicalPath());
+    //     } catch (IOException e) {
+    //         return normalize(new File(parentDir, path).getAbsolutePath());
+    //     }
+    // }
 
     public static File toAbsoluteFile(String home, String path) {
         if (isAbsolute(path))
@@ -107,7 +99,7 @@ public class FileUtils {
      *      c:/...
      *
      */
-    private static boolean isAbsolute(String path) {
+    public static boolean isAbsolute(String path) {
         path = normalize(path);
         return path.startsWith("/") || path.indexOf(":/") == 1;
     }
@@ -116,7 +108,7 @@ public class FileUtils {
     // addAll/deleteAll
     // ----------------------------------------------------------------------
 
-    public static void addAll(List<File> list, File[] array) {
+    private static void addAll(List<File> list, File[] array) {
         list.addAll(asList(array));
     }
 
@@ -191,6 +183,14 @@ public class FileUtils {
     // File properties
     // ----------------------------------------------------------------------
 
+    public static void walk(File directory) {
+
+    }
+
+    // ----------------------------------------------------------------------
+    // File properties
+    // ----------------------------------------------------------------------
+
     public static String getNameWithoutExt(File file) {
         String name = file.getName();
         int pos = name.lastIndexOf(".");
@@ -205,9 +205,8 @@ public class FileUtils {
 
     public static String toString(File file)
     {
-        byte[] encoded;
         try {
-            encoded = Files.readAllBytes(file.toPath());
+            byte[] encoded = Files.readAllBytes(file.toPath());
             return new String(encoded, Charset.defaultCharset());
         } catch (IOException e) {
             logger.errorf("Unable to read %s: %s", file, e);

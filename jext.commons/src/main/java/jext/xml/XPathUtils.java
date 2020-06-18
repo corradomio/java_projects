@@ -256,6 +256,11 @@ public class XPathUtils {
     //      <property name=...">value</property>
     //
 
+    public static Properties getProperties(Element elt, String xpath) {
+
+        return getProperties((Element)selectNode(elt, xpath));
+    }
+
     public static Properties getProperties(Element elt) {
         Properties properties = new Properties();
         for(Element pelt : selectNodes(elt, "property")) {
@@ -383,7 +388,7 @@ public class XPathUtils {
     // ----------------------------------------------------------------------
 
     public static Node selectNode(Element elt, String xpath) {
-        return selectNode(elt,xpath, false, NO_PROPERTIES);
+        return selectNode(elt, xpath, false, NO_PROPERTIES);
     }
 
     /**
@@ -396,7 +401,10 @@ public class XPathUtils {
      */
     public static Node selectNode(Element elt, String xpath, boolean create, Properties params) {
         Node current = elt;
-        if (xpath.startsWith("/"))
+
+        if (xpath == null)
+            xpath = "";
+        else if (xpath.startsWith("/"))
             xpath = "<root>" + xpath;
 
         String[] steps = xpath.split("/");
