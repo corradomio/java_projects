@@ -102,6 +102,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         return new MavenCoords(gid, aid, v);
     }
 
+    public boolean isValid() {
+        return isValid(groupId) && isValid(artifactId);
+    }
+
     @Override
     public String toString() {
         return toString;

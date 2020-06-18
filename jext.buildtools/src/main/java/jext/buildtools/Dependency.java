@@ -3,7 +3,7 @@ package jext.buildtools;
 public interface Dependency {
 
     enum Type {
-        FILE,
+        LOCAL,
         MAVEN,
         MODULE
     }

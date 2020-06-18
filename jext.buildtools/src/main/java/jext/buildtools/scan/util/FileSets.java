@@ -14,19 +14,16 @@ public class FileSets {
     public void configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
         XPathUtils.selectNodes(selected, "directory")
-                .forEach(incl -> {
-                    FileSet fileSet = new FileSet();
-                    fileSet.configure(incl);
-                    this.fileSets.add(fileSet);
-                });
+                .forEach(this::configureFileSet);
 
         XPathUtils.selectNodes(selected, "filename")
-                .forEach(incl -> {
-                    FileSet fileSet = new FileSet();
-                    fileSet.configure(incl);
-                    this.fileSets.add(fileSet);
-                });
+                .forEach(this::configureFileSet);
+    }
 
+    public void configureFileSet(Element elt) {
+        FileSet fileSet = new FileSet();
+        fileSet.configure(elt);
+        this.fileSets.add(fileSet);
     }
 
     public FileSets addAll(FileSets that) {

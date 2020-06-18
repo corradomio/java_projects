@@ -13,9 +13,13 @@ public class PatternSet {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
         XPathUtils.selectNodes(selected, "filename")
                 .forEach(incl -> {
-                    String name = XPathUtils.getValue(incl, "@name");
-                    this.patterns.add(new FilePattern(name));
+                    String pattern = XPathUtils.getValue(incl, "@name");
+                    addPattern(pattern);
                 });
+    }
+
+    public void addPattern(String pattern) {
+        patterns.add(new FilePattern(pattern));
     }
 
     public boolean accept(File baseDir, File file) {

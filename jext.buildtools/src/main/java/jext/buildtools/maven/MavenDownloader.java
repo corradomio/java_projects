@@ -193,9 +193,9 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
 
     static class Entry {
-        final MavenDependency dcoords;
+        final MavenDep dcoords;
         final int depth;
-        Entry(MavenDependency dcoords, int d) {
+        Entry(MavenDep dcoords, int d) {
             this.dcoords = dcoords;
             this.depth = d;
         }
@@ -239,8 +239,8 @@ public class MavenDownloader implements MavenConst {
 
         // 3) is a 'pom' and 'recursive' - breadth first (queue)
         Queue<Entry> toVisit = new LinkedList<>();
-        toVisit.add(new Entry(new MavenDependency(coords), 0));
-        Set<MavenDependency> visited = new HashSet<>();
+        toVisit.add(new Entry(new MavenDep(coords), 0));
+        Set<MavenDep> visited = new HashSet<>();
 
         while(!toVisit.isEmpty()) {
             Entry entry = toVisit.remove();
@@ -250,7 +250,7 @@ public class MavenDownloader implements MavenConst {
                 continue;
 
             // remove from the queue
-            MavenDependency dcoords = entry.dcoords;
+            MavenDep dcoords = entry.dcoords;
             // if already visited, skip
             if (visited.contains(dcoords))
                 continue;
@@ -301,8 +301,8 @@ public class MavenDownloader implements MavenConst {
         // 2) recursive
 
         Queue<Entry> toVisit = new LinkedList<>();
-        toVisit.add(new Entry(new MavenDependency(coords), 0));
-        Set<MavenDependency> visited = new HashSet<>();
+        toVisit.add(new Entry(new MavenDep(coords), 0));
+        Set<MavenDep> visited = new HashSet<>();
 
         while (!toVisit.isEmpty()) {
             Entry entry = toVisit.remove();
@@ -311,7 +311,7 @@ public class MavenDownloader implements MavenConst {
             if (edepth > depth)
                 continue;
 
-            MavenDependency dcoords = entry.dcoords;
+            MavenDep dcoords = entry.dcoords;
 
             // if already visited, skip
             if (visited.contains(dcoords))

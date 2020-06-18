@@ -143,7 +143,6 @@
             <!-- specify directly the source directories -->
             <sources>
                 <directory name="src/main/java"/>
-                <directory name="src/main/scala" includes="*.scala"/>
                 <directory name="src/java" includes="*.java"/>
                 <directory name="src">
                     <include name="**/*.java"/>
@@ -163,21 +162,38 @@
             </resources>
 
             <repositories>
+                <repository name="Maven Central" url="https://repo.maven.apache.org/maven2/"/>
+            </repositories>
+
+        </module>
+
+        <module name="test">
+            <sources>
+                <directory name="src/main/scala" includes="*.scala"/>
+            </sources>
+
+            <repositories>
                 <repository name="" url=""/>
             </repositories>
 
             <dependencies>
                 <!-- module -->
                 <dependency module="moduleName"/>
-                <!--local file -->
-                <dependency library="extras/local.jar"/>
                 <!-- all files in 'libs' with extension '.jar' -->
-                <dependency library="libs/*.jar"/>
+                <dependency name="libs" includes="*.jar"/>
                 <!-- all files in 'libs' directory -->
-                <dependency library="libs"/>
+                <dependency name="libs"/>
+
                 <!-- maven library -->
                 <dependency maven="groupId:artifactId[:version]"/>
-                <dependency groupId="groupId" artifactId="artifactId" version="version"/>
+                <!-- ivy syntax -->
+                <dependency org="groupId" name="artifactId" rev="version"/>
+                <!--maven syntax -->
+                <dependency>
+                    <groupId>groupId</groupId>
+                    <artifactId>artifactId</artifactId>
+                    <version>version</version>
+                </dependency>
             </dependencies>
 
         </module>

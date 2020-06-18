@@ -12,7 +12,7 @@ package jext.buildtools.maven;
         import              no
  */
 
-public class MavenDependency implements Comparable<MavenDependency>, MavenConst {
+public class MavenDep implements Comparable<MavenDep>, MavenConst {
 
     public MavenCoords coords;
     public final String scope;
@@ -22,13 +22,13 @@ public class MavenDependency implements Comparable<MavenDependency>, MavenConst 
     // Constructors
     // ----------------------------------------------------------------------
 
-    public MavenDependency(MavenCoords coords) {
+    public MavenDep(MavenCoords coords) {
         this.coords = coords;
         this.scope = SCOPE_COMPILE;
         this.noVersion = String.format("%s:%s", coords.groupId, coords.artifactId);
     }
 
-    public MavenDependency(String gid, String aid, String v, String scope) {
+    public MavenDep(String gid, String aid, String v, String scope) {
         this.coords = new MavenCoords(gid, aid, v);
         this.scope = scope;
         this.noVersion = String.format("%s:%s", gid, aid);
@@ -53,7 +53,7 @@ public class MavenDependency implements Comparable<MavenDependency>, MavenConst 
     }
 
     @Override
-    public int compareTo(MavenDependency that) {
+    public int compareTo(MavenDep that) {
         return noVersion.compareTo(that.noVersion);
     }
 
@@ -64,7 +64,7 @@ public class MavenDependency implements Comparable<MavenDependency>, MavenConst 
 
     @Override
     public boolean equals(Object obj) {
-        MavenDependency that = (MavenDependency) obj;
+        MavenDep that = (MavenDep) obj;
         return noVersion.equals(that.noVersion);
     }
 }

@@ -356,7 +356,7 @@ public class MavenPom implements MavenConst {
             .collect(Collectors.toList());
     }
 
-    public List<MavenDependency> getDependencies() {
+    public List<MavenDep> getDependencies() {
         return getDependencies(DEPENDENCIES);
     }
 
@@ -377,11 +377,11 @@ public class MavenPom implements MavenConst {
 
         </project>
      */
-    public List<MavenDependency> getComponents() {
+    public List<MavenDep> getComponents() {
         return getDependencies(DM_DEPENDENCIES);
     }
 
-    private List<MavenDependency> getDependencies(String xpath) {
+    private List<MavenDep> getDependencies(String xpath) {
         if (hasRepositories()) {
             // logger.warnf("With repositories: %s", pomFile);
             List<String> repoUrls = getRepositories();
@@ -391,7 +391,7 @@ public class MavenPom implements MavenConst {
             downloader.addRepositories(repoUrls);
         }
 
-        List<MavenDependency> depList = new ArrayList<>();
+        List<MavenDep> depList = new ArrayList<>();
         Properties props = getProperties();
         MavenCoords coords = getCoords();
         XPathUtils.selectNodes(project, xpath)
@@ -414,7 +414,7 @@ public class MavenPom implements MavenConst {
                 if (isPattern(v))
                     logger.warnf("Pattern version in %s:%s:%s - %s", gid, aid, v, pomFile);
 
-                MavenDependency dcoords = new MavenDependency(gid, aid, v, s);
+                MavenDep dcoords = new MavenDep(gid, aid, v, s);
                 depList.add(dcoords);
             });
 
