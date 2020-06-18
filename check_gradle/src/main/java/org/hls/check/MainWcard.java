@@ -2,14 +2,14 @@ package org.hls.check;
 
 import jext.util.Wildcard;
 
-public class MatchWildcard {
+public class MainWcard {
 
     public static void main(String[] args) {
         Wildcard wc;
 
-        wc = new Wildcard("**/*.java");
+        wc = new Wildcard("ca$a");
 
-        System.out.println(wc.matches("ciccio.java"));
-        System.out.println(wc.matches("/ciccio.java"));
+        System.out.println(wc.accept("casa"));
+        System.out.println(wc.accept("ca$a"));
     }
 }

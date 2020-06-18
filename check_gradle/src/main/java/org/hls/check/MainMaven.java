@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import jext.buildtools.maven.MavenProject;
+import jext.buildtools.util.Dump;
 import jext.logging.Logger;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.maven.MavenDownloader;
@@ -20,7 +21,7 @@ public class MainMaven {
                 "D:\\Projects.github\\apache_gitbox\\hadoop"
         ));
 
-        project.dump();
+        Dump.project(project);
     }
 
     public static void main3(String[] args) {

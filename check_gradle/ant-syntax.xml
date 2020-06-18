@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<examples>
+    <patternset id="">
+
+    </patternset>
+
+    <dirset dir="${build.dir}">
+        <include name="apps/**/classes"/>
+        <exclude name="apps/**/*Test*"/>
+    </dirset>
+    <dirset dir="${build.dir}">
+        <patternset id="non.test.classes">
+            <include name="apps/**/classes"/>
+            <exclude name="apps/**/*Test*"/>
+        </patternset>
+    </dirset>
+    <dirset dir="${debug_build.dir}">
+        <patternset refid="non.test.classes"/>
+    </dirset>
+    <dirset id="dirset" dir="${workingdir}">
+        <present targetdir="${workingdir}">
+            <mapper type="glob" from="*" to="*/${markerfile}"/>
+        </present>
+    </dirset>
+
+
+    <filelist
+            id="docfiles"
+            dir="${doc.src}"
+            files="foo.xml,bar.xml"/>
+    <filelist refid="docfiles"/>
+    <filelist
+            id="docfiles"
+            dir="${doc.src}">
+        <file name="foo.xml"/>
+        <file name="bar.xml"/>
+    </filelist>
+
+
+    <fileset dir="mandatory|no-file"
+            file="mandatory|no-dir"
+            defaultexcludes="yes|no"
+            includes="pat1,pat2 pat3"
+            excludes="pat1,pat2 pat3"
+            casesensitive="yes|no"
+    >
+        <include name="**/*.java"/>
+        <exclude name="**/*Test*"/>
+    </fileset>
+
+</examples>

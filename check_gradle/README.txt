@@ -36,3 +36,8 @@ Gradle
             src/test/<language>
         src/main/<language>
 
+----------------------------------------
+
+Specify a file set:
+
+    <fileset dir
