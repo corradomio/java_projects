@@ -184,11 +184,11 @@
                 <!-- all files in 'libs' directory -->
                 <dependency name="libs"/>
 
-                <!-- maven library -->
+                <!-- maven coords -->
                 <dependency maven="groupId:artifactId[:version]"/>
                 <!-- ivy syntax -->
                 <dependency org="groupId" name="artifactId" rev="version"/>
-                <!--maven syntax -->
+                <!-- maven syntax -->
                 <dependency>
                     <groupId>groupId</groupId>
                     <artifactId>artifactId</artifactId>

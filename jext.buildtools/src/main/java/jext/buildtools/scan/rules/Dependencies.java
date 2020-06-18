@@ -1,4 +1,4 @@
-package jext.buildtools.scan.deps;
+package jext.buildtools.scan.rules;
 
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.scan.util.FileSets;

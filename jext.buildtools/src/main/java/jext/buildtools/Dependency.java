@@ -8,6 +8,10 @@ public interface Dependency {
         MODULE
     }
 
+    default boolean isType(Type type) {
+        return type == getType();
+    }
+
     String getName();
 
     Type getType();
