@@ -1,6 +1,6 @@
 package jext.buildtools.gradle.util;
 
-import jext.buildtools.util.Name;
+import jext.buildtools.Name;
 
 public class GradleUtils {
 

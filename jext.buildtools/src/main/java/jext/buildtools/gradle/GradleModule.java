@@ -1,11 +1,14 @@
 package jext.buildtools.gradle;
 
+import jext.buildtools.Dependency;
+import jext.buildtools.Module;
 import jext.buildtools.gradle.collectors.DependenciesCollector;
 import jext.buildtools.gradle.collectors.ErrorsCollector;
 import jext.buildtools.gradle.collectors.LoggerCollector;
 import jext.buildtools.gradle.collectors.ProjectsCollector;
 import jext.buildtools.gradle.util.GradleUtils;
-import jext.buildtools.util.Name;
+import jext.buildtools.Name;
+import jext.buildtools.util.MavenDependency;
 import jext.buildtools.util.PathName;
 import jext.logging.Logger;
 import jext.buildtools.maven.MavenCoords;
@@ -19,14 +22,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class GradleModule {
+public class GradleModule implements Module {
 
     private Logger logger;
 
     private GradleProject project;
     private List<GradleModule> modules;
     private List<GradleModule> dmodules;
-    private List<MavenCoords> dependencies;
+    private List<Dependency> dependencies;
     private File moduleDir;
     private Name name;
 
@@ -76,7 +79,7 @@ public class GradleModule {
         return dmodules;
     }
 
-    public List<MavenCoords> getDependencies() {
+    public List<Dependency> getDependencies() {
         if (dependencies == null)
             retrieveDependencies();
         return dependencies;
@@ -143,6 +146,7 @@ public class GradleModule {
         dependencies = collector.getLibraries()
                 .stream()
                 .map(MavenCoords::new)
+                .map(MavenDependency::new)
                 .collect(Collectors.toList());
     }
 

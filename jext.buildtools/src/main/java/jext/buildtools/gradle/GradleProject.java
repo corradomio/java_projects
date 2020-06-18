@@ -1,21 +1,20 @@
 package jext.buildtools.gradle;
 
-import jext.buildtools.util.Name;
+import jext.buildtools.Name;
+import jext.buildtools.Project;
 import jext.logging.Logger;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Queue;
 
-public class GradleProject {
+public class GradleProject implements Project {
 
     private static Logger logger = Logger.getLogger(GradleProject.class);
 
@@ -131,21 +130,21 @@ public class GradleProject {
         // return uncloseable;
     }
 
-    public void dump() {
-
-        getModules().forEach(module -> {
-            System.out.printf("Module %s (%s)\n", module.getName(), module.isValid());
-            System.out.println("... dmodules");
-            module.getModuleDependencies()
-                    .forEach(dep -> {
-                        System.out.printf("... ... %s\n", dep);
-                    });
-            System.out.println("... dependencies");
-            module.getDependencies()
-                    .forEach(dep -> {
-                        System.out.printf("... ... %s\n", dep);
-                    });
-        });
-        System.out.println("Done");
-    }
+    // public void dump() {
+    //
+    //     getModules().forEach(module -> {
+    //         System.out.printf("Module %s (%s)\n", module.getName(), module.isValid());
+    //         System.out.println("... dmodules");
+    //         module.getModuleDependencies()
+    //                 .forEach(dep -> {
+    //                     System.out.printf("... ... %s\n", dep);
+    //                 });
+    //         System.out.println("... dependencies");
+    //         module.getDependencies()
+    //                 .forEach(dep -> {
+    //                     System.out.printf("... ... %s\n", dep);
+    //                 });
+    //     });
+    //     System.out.println("Done");
+    // }
 }

@@ -1,4 +1,4 @@
-package jext.buildtools.scan.util;
+package jext.buildtools.scan.rules;
 
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;

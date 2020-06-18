@@ -1,7 +1,6 @@
-package jext.buildtools.scan.util;
+package jext.buildtools.scan.rules;
 
-import jext.buildtools.scan.ScanModule;
-import jext.buildtools.scan.ScanProject;
+import jext.buildtools.scan.util.PatternSet;
 import jext.logging.Logger;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;

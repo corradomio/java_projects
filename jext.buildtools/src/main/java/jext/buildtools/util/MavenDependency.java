@@ -1,13 +1,13 @@
 package jext.buildtools.util;
 
-import jext.buildtools.Library;
+import jext.buildtools.Dependency;
 import jext.buildtools.maven.MavenCoords;
 
-public class MavenLibrary implements Library {
+public class MavenDependency implements Dependency {
 
     private MavenCoords coords;
 
-    public MavenLibrary(MavenCoords coords) {
+    public MavenDependency(MavenCoords coords) {
         this.coords = coords;
     }
 

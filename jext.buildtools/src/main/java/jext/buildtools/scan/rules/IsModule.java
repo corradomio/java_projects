@@ -1,6 +1,5 @@
-package jext.buildtools.scan.util;
+package jext.buildtools.scan.rules;
 
-import jext.util.Wildcard;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 
@@ -10,6 +9,9 @@ import java.util.List;
 
 public class IsModule {
 
+    // list of files or relative paths that must be present
+    // in a directory because the directory can be considered
+    // a 'module'
     private List<String> names = new ArrayList<>();
 
     public void configure(Element elt, String xpath) {

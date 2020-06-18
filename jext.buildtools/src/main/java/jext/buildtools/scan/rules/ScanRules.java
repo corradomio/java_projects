@@ -1,6 +1,7 @@
-package jext.buildtools.scan.util;
+package jext.buildtools.scan.rules;
 
 import jext.buildtools.Name;
+import jext.buildtools.scan.util.PatternSet;
 import jext.logging.Logger;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -43,7 +44,7 @@ public class ScanRules {
 
         moduleScan.configure(elt, "modules/scan");
         isRemoved.configure(elt, "modules/remove");
-        templates.configure(elt, ".");
+        templates.configure(elt, "modules");
     }
 
     public List<File> getModuleDirs(File baseDir) {

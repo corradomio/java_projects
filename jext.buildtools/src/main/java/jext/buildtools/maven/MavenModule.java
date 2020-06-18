@@ -1,6 +1,9 @@
 package jext.buildtools.maven;
 
-import jext.buildtools.util.Name;
+import jext.buildtools.Dependency;
+import jext.buildtools.Name;
+import jext.buildtools.Module;
+import jext.buildtools.util.MavenDependency;
 import jext.buildtools.util.PathName;
 import jext.logging.Logger;
 import jext.util.FileUtils;
@@ -10,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MavenModule {
+public class MavenModule implements Module {
 
     private Logger logger;
 
@@ -61,6 +64,10 @@ public class MavenModule {
         return pom.getCoords().toString();
     }
 
+    public boolean isValid() {
+        return pom.exists();
+    }
+
     public List<MavenModule> getModules() {
         if (modules != null)
             return modules;
@@ -84,15 +91,16 @@ public class MavenModule {
         return dmodules;
     }
 
-    public List<MavenCoords> getDependencies() {
-        List<MavenCoords> dependencies = new ArrayList<>();
+    public List<Dependency> getDependencies() {
+        List<Dependency> dependencies = new ArrayList<>();
 
         pom.getDependencyCoords()
                 .forEach(coords-> {
                     MavenModule dmodule = project.getModule(coords.toString());
                     if (dmodule == null)
-                        dependencies.add(coords);
+                        dependencies.add(new MavenDependency(coords));
                 });
+
         return dependencies;
     }
 

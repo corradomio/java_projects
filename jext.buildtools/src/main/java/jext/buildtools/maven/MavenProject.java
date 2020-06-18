@@ -1,16 +1,14 @@
 package jext.buildtools.maven;
 
-import jext.buildtools.util.Name;
+import jext.buildtools.Name;
+import jext.buildtools.Project;
 import jext.util.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.stream.Collectors;
 
-public class MavenProject {
+public class MavenProject implements Project {
 
     private File projectDir;
     private MavenModule rootModule;
@@ -77,35 +75,34 @@ public class MavenProject {
         return null;
     }
 
-    public boolean isModule(String coords) {
-        return getModule(coords) != null;
-    }
+    // public boolean isModule(String coords) {
+    //     return getModule(coords) != null;
+    // }
 
-    private void findPomFiles() {
-        List<File> pomFiles = FileUtils.listFiles(projectDir, file -> "pom.xml".equals(file.getName()));
+    // private void findPomFiles() {
+    //     List<File> pomFiles = FileUtils.listFiles(projectDir, file -> "pom.xml".equals(file.getName()));
+    // }
 
-    }
-
-    public void dump() {
-        System.out.println(rootModule.getCoords());
-        System.out.println("Modules");
-        getModules().forEach(module -> {
-            System.out.printf("... '%s' (%s)\n", module.getName(), module.getCoords());
-            List<MavenModule> dmodules = module.getModuleDependencies();
-            List<MavenCoords> dependencies = module.getDependencies();
-            if (!dmodules.isEmpty()) {
-                System.out.print("... ... Modules\n");
-                dmodules.forEach(dmodule -> {
-                    System.out.printf("... ... ... %s\n", dmodule.getName());
-                });
-            }
-            if (!dependencies.isEmpty()) {
-                System.out.print("... ... Dependencies\n");
-                dependencies.forEach(coords -> {
-                    System.out.printf("... ... ... %s\n", coords.toString());
-                });
-            }
-        });
-        System.out.println("Done");
-    }
+    // public void dump() {
+    //     System.out.println(rootModule.getCoords());
+    //     System.out.println("Modules");
+    //     getModules().forEach(module -> {
+    //         System.out.printf("... '%s' (%s)\n", module.getName(), module.getCoords());
+    //         List<MavenModule> dmodules = module.getModuleDependencies();
+    //         List<Library> dependencies = module.getDependencies();
+    //         if (!dmodules.isEmpty()) {
+    //             System.out.print("... ... Modules\n");
+    //             dmodules.forEach(dmodule -> {
+    //                 System.out.printf("... ... ... %s\n", dmodule.getName());
+    //             });
+    //         }
+    //         if (!dependencies.isEmpty()) {
+    //             System.out.print("... ... Dependencies\n");
+    //             dependencies.forEach(coords -> {
+    //                 System.out.printf("... ... ... %s\n", coords.toString());
+    //             });
+    //         }
+    //     });
+    //     System.out.println("Done");
+    // }
 }

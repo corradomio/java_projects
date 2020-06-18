@@ -1,5 +1,6 @@
-package jext.buildtools.scan.util;
+package jext.buildtools.scan.rules;
 
+import jext.buildtools.scan.util.FileSets;
 import jext.util.FileUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;

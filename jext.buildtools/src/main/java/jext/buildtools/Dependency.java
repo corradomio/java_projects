@@ -1,10 +1,11 @@
 package jext.buildtools;
 
-public interface Library {
+public interface Dependency {
 
     enum Type {
         FILE,
-        MAVEN
+        MAVEN,
+        MODULE
     }
 
     String getName();

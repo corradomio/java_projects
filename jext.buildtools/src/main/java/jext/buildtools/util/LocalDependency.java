@@ -1,14 +1,14 @@
 package jext.buildtools.util;
 
-import jext.buildtools.Library;
+import jext.buildtools.Dependency;
 
 import java.io.File;
 
-public class JarLibrary implements Library {
+public class LocalDependency implements Dependency {
 
     private File jarFile;
 
-    public JarLibrary(File jarFile) {
+    public LocalDependency(File jarFile) {
         this.jarFile = jarFile;
     }
 

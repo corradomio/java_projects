@@ -60,6 +60,12 @@
             <exclude>
                 <!-- each file/directory with a name starting with a '.' -->
                 <filename name=".*"/>
+                <filename name="*~"/>
+
+                <filename name="CVS"/>
+                <filename name="SCCS"/>
+                <filename name="*.scc"/>
+
                 <!-- file or directory with the following names -->
                 <filename name="target"/>
                 <filename name="out"/>
@@ -67,8 +73,10 @@
             </exclude>
 
             <!--
-                a 'module' is each directory containing one of the following files
-                The path have to be a 'relativePath'
+                a 'module' is each directory containing at least one of the
+                following files.
+
+                'name' must be 'relativePath'
 
                 Macro available: '${dirName}' name of the current directory
 
@@ -91,70 +99,6 @@
                 <filename name="src/main/java"/>
             </module>
 
-            <!--
-                a 'source directory' is each directory that contains
-                source code files.
-
-                Syntax: <relativePath>[/[**/]?[*]?.<extension>]?
-
-                The default for '.<extension>' is '.java'
-
-                If it is specified
-
-                    'src/main/java'
-                    'src/main'
-                    'src'
-
-                it is used the more specific path
-              -->
-            <sources>
-                <filename name="src/main/java"/>
-                <filename name="src/main/scala/.scala"/>
-                <filename name="src/java"/>
-                <filename name="src"/>
-                <filename name="sources"/>
-            </sources>
-
-            <!--
-                a 'resource' can be a directory ar a file. If it is a directory
-                all files in the directory are considered as resources
-              -->
-            <resources>
-                <!-- include the content of the directory -->
-                <directory name="src/main/webapp"/>
-
-                <!-- include specific type of files in the current directory -->
-                <filename name="*.properties"/>
-                <filename name="*.xml"/>
-            </resources>
-
-            <!--
-                Starting list of Maven repositories where to download
-                the libraries
-              -->
-            <repositories>
-                <repository name="" url=""/>
-            </repositories>
-
-            <!--
-                include/exclude dependencies between modules or libraries
-                or maven libraries
-              -->
-            <dependencies>
-                <!-- module -->
-                <include module="moduleName"/>
-                <!--local file -->
-                <include library="extras/local.jar"/>
-                <!-- all files in 'libs' with extension '.jar' -->
-                <include library="libs/*.jar"/>
-                <!-- all files in 'libs' -->
-                <include library="libs"/>
-                <!-- maven library -->
-                <include maven="groupId:artifactId[:version]"/>
-                <include groupId="groupId" artifactId="artifactId" version="version"/>
-                <!-- include a 'named' dependenci -->
-                <include ref="dname"/>
-            </dependencies>
         </scan>
 
         <!--
@@ -168,9 +112,17 @@
         <!--
             It is possible to exclude modules with a specific name
           -->
-        <exclude name="**/*test*/**"/>
+        <remove>
+            <filename name="**/*test*"/>
+            <filename name="**/*example*"/>
+        </remove>
 
-        <module name="amodule">
+        <!--
+            The module with name '' is used as 'template' for all other modules
+            It contains the 'default configuration' for all aspects of the
+            module structure
+          -->
+        <module name="">
             <!--
                 It is possible to specify the directory of an 'external modules',
                 a module NOT DEFINED inside the project directory.
@@ -181,7 +133,7 @@
                 If specified, the path can be 'absolute' (starts with '/' or '<letter>:/'
                 or relative to the project path
               -->
-            <directory path="${projectDir}/${moduleName}"/>
+            <!-- directory path="(absolute|relative)Path"/ -->
             <!--
                 given a 'specific' module, it is possible
                 modify (including/excluding files/directories)
@@ -190,16 +142,24 @@
               -->
             <!-- specify directly the source directories -->
             <sources>
-                <!-- remove the content -->
-                <exclude path="*"/>
-                <!-- include only the specified path -->
-                <filename value="src/main/java"/>
+                <directory name="src/main/java"/>
+                <directory name="src/main/scala" includes="*.scala"/>
+                <directory name="src/java" includes="*.java"/>
+                <directory name="src">
+                    <include name="**/*.java"/>
+                </directory>
+                <directory name="sources"/>
             </sources>
 
-            <!-- add/remove resources files/directories -->
+            <!--
+                add/remove resources files/directories
+                <filename name="..."> == <directory name="." includes="..."/>
+            -->
             <resources>
-                <include path="*.spl"/>
-                <exclude path="src/main/webapps/passwords.*"/>
+                <!-- include specific type of files in the current directory -->
+                <filename name="*.properties"/>
+                <filename name="*.xml"/>
+                <directory name="src/main/webapps"/>
             </resources>
 
             <repositories>
@@ -208,16 +168,16 @@
 
             <dependencies>
                 <!-- module -->
-                <include module="moduleName"/>
+                <dependency module="moduleName"/>
                 <!--local file -->
-                <include library="extras/local.jar"/>
+                <dependency library="extras/local.jar"/>
                 <!-- all files in 'libs' with extension '.jar' -->
-                <include library="libs/*.jar"/>
+                <dependency library="libs/*.jar"/>
                 <!-- all files in 'libs' directory -->
-                <include library="libs"/>
+                <dependency library="libs"/>
                 <!-- maven library -->
-                <include maven="groupId:artifactId[:version]"/>
-                <include groupId="groupId" artifactId="artifactId" version="version"/>
+                <dependency maven="groupId:artifactId[:version]"/>
+                <dependency groupId="groupId" artifactId="artifactId" version="version"/>
             </dependencies>
 
         </module>

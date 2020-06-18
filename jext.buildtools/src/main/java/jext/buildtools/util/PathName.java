@@ -1,5 +1,7 @@
 package jext.buildtools.util;
 
+import jext.buildtools.Name;
+
 public class PathName implements Name {
     private String path;
 
