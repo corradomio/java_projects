@@ -31,34 +31,27 @@
     </description>
 
     <!--
-        Properties
+        Properties (not used yet)
     -->
     <properties>
         <property name="name" value="value"/>
         <property name="name">long value</property>
     </properties>
 
-    <!--
-    <dependencies name="depname">
-        <include maven="org.apache.commons:commons-io:2.2.4"/>
-    </dependencies>
-    -->
-
     <modules>
         <!--
             to identify automatically modules, sources resources etc,
-            the project directory is 'scanned' using the following list
-            of rules
+            the project directory is 'scanned' recursively using the following
+            list of rules
           -->
         <scan>
             <!--
                 some files/directories must be excluded because they contain
                 invalid/useless files
 
-                Applied to file/directory name
+                Applied to file|directory name ONLY
               -->
             <exclude>
-                <!-- each file/directory with a name starting with a '.' -->
                 <filename name=".*"/>
                 <filename name="*~"/>
 
@@ -66,7 +59,6 @@
                 <filename name="SCCS"/>
                 <filename name="*.scc"/>
 
-                <!-- file or directory with the following names -->
                 <filename name="target"/>
                 <filename name="out"/>
                 <filename name="build"/>
@@ -103,14 +95,10 @@
 
         <!--
             it is possible to specify directly a module
-            and add/remove properties or itself.
+            and add/remove properties or the module itself.
 
-            For example, the scan identify TOO modules,
-            dome modules can be 'removed'
-          -->
-
-        <!--
-            It is possible to exclude modules with a specific name
+            For example, if the scan identify TOO modules,
+            some modules can be 'removed'
           -->
         <remove>
             <filename name="**/*test*"/>
@@ -118,11 +106,11 @@
         </remove>
 
         <!--
-            The module with name '' is used as 'template' for all other modules
+            The module with name '*' is used as 'template' for all other modules
             It contains the 'default configuration' for all aspects of the
             module structure
           -->
-        <module name="">
+        <module name="*">
             <!--
                 It is possible to specify the directory of an 'external modules',
                 a module NOT DEFINED inside the project directory.
@@ -134,11 +122,17 @@
                 or relative to the project path
               -->
             <!-- directory path="(absolute|relative)Path"/ -->
+
             <!--
-                given a 'specific' module, it is possible
-                modify (including/excluding files/directories)
-                from the set collected from the previous step,
-                using 'include'/'exclude'
+                list of directories containing the 'source code'
+                Maven and Gradle use, as 'standard' filesystem structure
+
+                    src/main/<language>
+
+                where <language> can be: java, scala, kotlin, groovy, ...
+                For default, all files in the directory are considered as
+                'source code'. However it is possible to specify the file
+                names/extensions
               -->
             <!-- specify directly the source directories -->
             <sources>
@@ -151,16 +145,31 @@
             </sources>
 
             <!--
-                add/remove resources files/directories
-                <filename name="..."> == <directory name="." includes="..."/>
+                list of directories containing 'resources'.
+                A resource is any file used for configuration, or used to model
+                a web application, etc.
+
+                Some common 'resources' are
+
+                1) files with extension '.xml', '.properties'
+                2) the content of the directory 'src/main/resources'
+                3) the web applications, saved in 'src/main/webapp'
             -->
             <resources>
                 <!-- include specific type of files in the current directory -->
-                <filename name="*.properties"/>
-                <filename name="*.xml"/>
-                <directory name="src/main/webapps"/>
+                <directory name=".">
+                    <include name="*.properties"/>
+                    <include name="*.xml"/>
+                    <include name="*.json"/>
+                    <include name="*.yaml"/>
+                </directory>
+                <directory name="src/main/resources"/>
+                <directory name="src/main/webapp"/>
             </resources>
 
+            <!--
+                Default repositories used to download maven libraries
+              -->
             <repositories>
                 <repository name="Maven Central" url="https://repo.maven.apache.org/maven2/"/>
             </repositories>
@@ -168,9 +177,15 @@
         </module>
 
         <module name="test">
+            <directory name="/examples/test"/>
+
             <sources>
                 <directory name="src/main/scala" includes="*.scala"/>
             </sources>
+
+            <resources>
+
+            </resources>
 
             <repositories>
                 <repository name="" url=""/>

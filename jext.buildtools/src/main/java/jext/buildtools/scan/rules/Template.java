@@ -15,13 +15,17 @@ public class Template {
 
     private FileSets sources = new FileSets();
     private FileSets resources = new FileSets();
+    private Dependencies dependencies = new Dependencies();
+    private Repositories repositories = new Repositories();
 
     void configure(Element elt) {
         name = XPathUtils.getValue(elt, "@name");
         directory = XPathUtils.getValue(elt, "directory/@path", "");
 
-        sources.configure(elt, ".");
-        resources.configure(elt, ".");
+        sources.configure(elt, "sources");
+        resources.configure(elt, "resources");
+        dependencies.configure(elt, "dependencies");
+        repositories.configure(elt, "repositories");
     }
 
     public String getName() {
@@ -43,6 +47,10 @@ public class Template {
 
     public List<File> getResources(File baseDir) {
         return resources.getFiles(baseDir);
+    }
+
+    public Dependencies getDependencies() {
+        return dependencies;
     }
 
     public Template merge(Template that) {

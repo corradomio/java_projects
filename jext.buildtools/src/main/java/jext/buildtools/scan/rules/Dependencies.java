@@ -43,7 +43,7 @@ public class Dependencies {
         return modules;
     }
 
-    public List<File> getFiles(File baseDir) {
+    public List<File> getLocalDependencies(File baseDir) {
         return local.getFiles(baseDir);
     }
 

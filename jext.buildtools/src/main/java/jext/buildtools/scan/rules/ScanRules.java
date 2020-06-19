@@ -36,8 +36,6 @@ public class ScanRules {
     }
 
     public void configure(InputStream stream) throws Exception {
-        if (elt != null) return;
-
         elt = XPathUtils.parse(stream).getDocumentElement();
 
         properties = XPathUtils.getProperties(elt, "properties");
