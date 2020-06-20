@@ -2,7 +2,7 @@ package com.company;
 
 import jext.jgrapht.GraphDump;
 import jext.jgrapht.alg.color.ColoringTests;
-import jext.jgrapht.alg.color.ParallelBMCColoring;
+import jext.jgrapht.alg.color.ParallelMCMCBoloring;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;
 import jext.jgrapht.nio.adjacent.FileImporter;
 import jext.logging.Logger;
@@ -79,7 +79,7 @@ public class CheckMCColoring {
         GraphDump.printDegreeStatistics(g);
 
         VertexColoringAlgorithm<String> a  =
-                new ParallelBMCColoring<>(g)
+                new ParallelMCMCBoloring<>(g)
                 // new WeightedBMCColoring<>(g)
                 ;
 

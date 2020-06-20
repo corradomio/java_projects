@@ -2,171 +2,153 @@ package com.company;
 
 import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.GraphMetrics;
+import jext.jgrapht.util.ContingencyMatrix;
+import jext.jgrapht.util.WeightType;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ClusteringStatistics {
 
-    static class Stats {
-        public double threshold;
-
-        // vertices
-        public int order;
-        public int minDegree;
-        public int maxDegree;
-        public double meanDegree;
-        public double sdevDegree;
-        // edges
-        public int size;
-        public int components;
-        public double density;
-        public double graphWeight;
-        public double minWeight;
-        public double maxWeight;
-        public double meanWeight;
-        public double sdevWeight;
-        // cluster
-        public int numClusters;
-        public double modularity;
-        public double louvainModularity;
-        public double dunnIndex;
-        public double daviesBouldinIndex;
-        // cluser comparison
-        public int numClusters2;
-        public double purity;
-        public double giniIndex;
-        public double entropy;
-        public double randIndex;
-        public double adjustedRandIndex;
-        public double fowlkesMallowsIndex;
-        public double jaccardCoefficient;
-        public double normalizedGamma;
-
-        @Override
-        public String toString() {
-            return String.format(
-                    "%.4f,%d,%d,%d,%.4f,%.4f,%d,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f," +
-                    "%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,",
-                    threshold,
-                    // vertices
-                    order,
-                    minDegree,
-                    maxDegree,
-                    meanDegree,
-                    sdevDegree,
-                    // edges
-                    size,
-                    components,
-                    density,
-                    graphWeight,
-                    minWeight,
-                    maxWeight,
-                    meanWeight,
-                    sdevWeight,
-                    // cluster
-                    numClusters,
-                    modularity,
-                    louvainModularity,
-                    dunnIndex,
-                    daviesBouldinIndex,
-                    // cluser comparison
-                    // numClusters2,
-                    purity,
-                    giniIndex,
-                    entropy,
-                    randIndex,
-                    adjustedRandIndex,
-                    fowlkesMallowsIndex,
-                    jaccardCoefficient,
-                    normalizedGamma
-            );
-        }
-
-    }
-
-    private List<Stats> statistics = new ArrayList<>();
+    private List<List> statistics = new ArrayList<>();
 
     private Graph<Integer, DefaultWeightedEdge> g;
     private ClusteringAlgorithm.Clustering<Integer> groundTrue;
     private GraphMetrics<Integer, DefaultWeightedEdge> gMetrics;
     private double emax;
 
-    public ClusteringStatistics(Graph<Integer, DefaultWeightedEdge> g, ClusteringAlgorithm.Clustering<Integer> groundTrue) {
+    private int id;
+    private double betweenProb;
+    private double insideProb;
+    private double communityWeightSdev;
+    private double betweenWeightSdev;
+    private WeightType weighType;
+
+
+    public ClusteringStatistics() {
+
+    }
+
+    public ClusteringStatistics set(Graph<Integer, DefaultWeightedEdge> g, ClusteringAlgorithm.Clustering<Integer> groundTrue) {
         this.g = g;
         this.groundTrue = groundTrue;
         this.gMetrics = new GraphMetrics<>(g);
         this.emax = gMetrics.getEdgeStatistics().max;
+        return this;
     }
 
-    public void addStats(double threshold,
-                         Graph<Integer, DefaultWeightedEdge> t,
-                         ClusteringAlgorithm.Clustering<Integer> clustering)
+    public void set(
+            int id,
+            double betweenProb,
+            double insideProb,
+            double communityWeightSdev,
+            double betweenWeightSdev,
+            WeightType weighType)
     {
-        Stats stats = new Stats();
-        GraphMetrics<Integer, DefaultWeightedEdge> tm = new GraphMetrics<>(t);
-        GraphMetrics.VertexStatistics vs = tm.getVertexStatistics();
-        GraphMetrics.EdgeStatistics   es = tm.getEdgeStatistics();
+        this.id = id;
+        this.betweenProb = betweenProb;
+        this.insideProb = insideProb;
+        this.communityWeightSdev = communityWeightSdev;
+        this.betweenWeightSdev = betweenWeightSdev;
+        this.weighType = weighType;
+    }
+
+    private List header = Arrays.asList(
+            "id",
+            "betweenProb", "insideProb", "communityWeightSdev", "betweenWeightSdev", "weighType",
+            "threshold",
+            "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
+            "size", "components", "density", "graphWeight", "minWeight", "maxWeight", "meanWeight", "sdevWeight",
+            "numClusters", "minCsize", "maxCsize", "meanCsize", "sdevCsize",
+            "unbalancingIndex",  "modularity", "louvainModularity",
+            "dunnIndex", "daviesBouldinIndex", "purity", "giniIndex", "entropy",
+            "randIndex", "adjustedRandIndex", "fowlkesMallowsIndex", "jaccardCoefficient",
+            "normalizedGamma"
+    );
+
+    public void addStats(double threshold,
+            Graph<Integer, DefaultWeightedEdge> t,
+            ClusteringAlgorithm.Clustering<Integer> clustering)
+    {
+        GraphMetrics<Integer, DefaultWeightedEdge> gm = new GraphMetrics<>(t);
+        GraphMetrics.VertexStatistics vs = gm.getVertexStatistics();
+        GraphMetrics.EdgeStatistics   es = gm.getEdgeStatistics();
+
         ClusteringMetrics<Integer, DefaultWeightedEdge> cm = new ClusteringMetrics<>(g, clustering);
-                // new ClusteringMetrics<>(t, clustering).invertWeights(emax);
-        ClusteringMetrics.Statistics cs = cm.getStatistics();
-        ClusteringMetrics.Comparison cmp = cm.getComparison(groundTrue);
+        ClusteringMetrics.ClusterStatistics cs = cm.getStatistics();
 
-        // threshold
-        stats.threshold = threshold;
+        ContingencyMatrix cmt = cm.getContingencyMatrix(groundTrue);
 
-        // vertices
-        stats.order = vs.order;
-        stats.minDegree = (int)vs.min;
-        stats.maxDegree = (int)vs.max;
-        stats.meanDegree = vs.mean;
-        stats.sdevDegree = vs.standardDeviation;
+        List<?> stats = Arrays.asList(
+            id,
+            betweenProb,
+            insideProb,
+            communityWeightSdev,
+            betweenWeightSdev,
+            weighType.toString(),
 
-        // edges
-        stats.size = es.size;
-        stats.components = es.components;
-        stats.density = es.density;
-        stats.graphWeight = es.sum1;
-        stats.minWeight = es.min;
-        stats.maxWeight = es.max;
-        stats.meanWeight = es.mean;
-        stats.sdevWeight = es.standardDeviation;
+            // threshold
+            threshold,
 
-        // cluster properties
-        stats.numClusters = cs.numClusters;
-        stats.modularity = cs.modularity;
-        stats.louvainModularity = cs.louvainModularity;
-        stats.dunnIndex = cs.dunnIndex;
-        stats.daviesBouldinIndex = cs.daviesBouldinIndex;
+            // vertices
+            vs.order,
+            (int)vs.min,
+            (int)vs.max,
+            vs.mean,
+            vs.standardDeviation,
 
-        // cluster comparison
-        // stats.numClusters2 = cmp.numClusters1;
-        stats.purity = cmp.purity;
-        stats.giniIndex = cmp.giniIndex;
-        stats.entropy = cmp.entropy;
-        stats.randIndex = cmp.randIndex;
-        stats.adjustedRandIndex = cmp.adjustedRandIndex;
-        stats.fowlkesMallowsIndex = cmp.fowlkesMallowsIndex;
-        stats.jaccardCoefficient = cmp.jaccardCoefficient;
-        stats.normalizedGamma = cmp.normalizedGamma;
+            // edges
+            es.size,
+            es.components,
+            es.density,
+            es.count*es.mean,
+            es.min,
+            es.max,
+            es.mean,
+            es.standardDeviation,
+
+            // cluster properties
+            cs.numClusters,
+            cs.min,
+            cs.max,
+            cs.mean,
+            cs.standardDeviation,
+
+            // Indices
+            cm.getUnbalancingIndex(),
+            cm.getModularity(),
+            cm.getLouvainModularity(),
+            cm.getDunnIndex(),
+            cm.getDaviesBouldinIndex(),
+
+            // cluster comparison
+            cmt.getPurity(),
+            cmt.getGiniIndex(),
+            cmt.getEntropy(),
+            cmt.getRandIndex(),
+            cmt.getAdjustedRandIndex(),
+            cmt.getFowlkesMallowsIndex(),
+            cmt.getJaccardCoefficient(),
+            cmt.getNormalizedGamma()
+        );
 
         statistics.add(stats);
     }
 
 
     public void saveCsv(String filepath) {
-        try(FileWriter w = new FileWriter(filepath)) {
-            w.write("threshold,order,minDegree,maxDegree,meanDegree,sdevDegree,size,components,density," +
-                    "graphWeight,minWeight,maxWeight,meanWeight,sdevWeight,numClusters,modularity,louvainModularity," +
-                    "dunnIndex,daviesBouldinIndex,purity,giniIndex,entropy,randIndex,adjustedRandIndex," +
-                    "fowlkesMallowsIndex,jaccardCoefficient,normalizedGamma\n");
 
-            for(Stats stats : statistics) {
-                w.write(stats.toString());
+        try(FileWriter w = new FileWriter(filepath)) {
+            w.write(toString(header));
+            w.write("\n");
+
+            for(List<?> stats : statistics) {
+                w.write(toString(stats));
                 w.write("\n");
             }
         }
@@ -176,5 +158,28 @@ public class ClusteringStatistics {
 
     }
 
+    private static String toString(List<?> stats) {
+        StringBuilder sb = new StringBuilder();
+        for (Object e : stats) {
+            if (sb.length() > 0)
+                sb.append(",");
+
+            if (e instanceof String) {
+                sb.append(e.toString());
+            }
+            else if (e instanceof Integer) {
+                sb.append(e.toString());
+            }
+            else if (e instanceof Double) {
+                double d = (Double)e;
+                sb.append(String.format("%.4f", d));
+            }
+            else if (e instanceof Float) {
+                double d = (Float)e;
+                sb.append(String.format("%.4f", d));
+            }
+        }
+        return sb.toString();
+    }
 
 }

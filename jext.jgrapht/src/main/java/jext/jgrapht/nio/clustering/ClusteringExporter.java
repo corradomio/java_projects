@@ -13,8 +13,9 @@ public class ClusteringExporter<V> {
     public void exportClustering(ClusteringAlgorithm.Clustering<V> clustering, File file) {
 
         try(Writer w = new FileWriter(file)) {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(w, clustering);
+            new ObjectMapper()
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValue(w, clustering);
             // Jsonb jsonb = JsonbBuilder.create();
             // jsonb.toJson(clustering);
         }

@@ -243,7 +243,7 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
             System.out.printf("  Size       : %d\n", size);
             System.out.printf("  Components : %d\n", components);
             System.out.printf("  Density    : %.4f\n", density);
-            System.out.printf("  Weight     : %.4f\n", sum1);
+            System.out.printf("  Weight     : %.4f\n", count*mean);
             System.out.printf("  Min weight : %.4f\n", min);
             System.out.printf("  Max weight : %.4f\n", max);
             System.out.printf("  Mean weight: %.4f, %.4f\n", mean, standardDeviation);

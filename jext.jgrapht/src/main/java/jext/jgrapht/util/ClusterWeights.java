@@ -21,18 +21,6 @@ public class ClusterWeights<V, E> {
 
     public ClusterWeights(){
         this(0.);
-        // int order = 0;
-        // this.clustering = clustering;
-        // this.k = clustering.getNumberClusters();
-        // this.clusterSizes = new int[k];
-        // for (int ci=0; ci<k; ++ci) {
-        //     int clusterSize = clustering.getClusters().get(ci).size();
-        //     this.clusterSizes[ci] = clusterSize;
-        //     order += clusterSize;
-        // }
-        //
-        // this.weightClusters = LinAlg.newMatrix(k);
-        // this.weightVertices = LinAlg.newVector(order);
     }
 
     public ClusterWeights(double maxWeight) {

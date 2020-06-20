@@ -12,7 +12,7 @@ public class Templates {
 
     private Template defaultTemplate = new Template();
     private List<Template> namedTemplates = new ArrayList<>();
-    private List<Template> starTmplates = new ArrayList<>();
+    private List<Template> starTemplates = new ArrayList<>();
 
     public void configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
@@ -24,7 +24,7 @@ public class Templates {
                     if (name.isEmpty() || "*".equals(name))
                         defaultTemplate = template;
                     else if(name.contains("*"))
-                        starTmplates.add(template);
+                        starTemplates.add(template);
                     else
                         namedTemplates.add(template);
                 });

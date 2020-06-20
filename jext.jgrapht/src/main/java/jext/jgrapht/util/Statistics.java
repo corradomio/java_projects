@@ -4,14 +4,15 @@ public class Statistics {
 
     private static double sq(double x) { return x*x; }
 
+    public int count;
     public double min = +Double.MAX_VALUE;
     public double max = -Double.MAX_VALUE;
     public double mean = 0.;
-    public double sum1 = 0.;
-    public double sum2 = 0.;
     public double standardDeviation = 0.;
     public double variance = 0.;
-    public int count;
+
+    private double sum1 = 0.;
+    private double sum2 = 0.;
 
     public Statistics() { }
 

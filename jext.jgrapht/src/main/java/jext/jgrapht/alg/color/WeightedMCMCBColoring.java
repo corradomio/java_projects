@@ -7,18 +7,18 @@ import org.jgrapht.Graph;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class WeightedBMCColoring<V,E> extends ParallelBMCColoring<V,E> {
+public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
 
     private ColorAdjacentMatrix cam;
     private ColorAdjacentMatrix futureCam;
     private WeightType type = WeightType.MEAN;
 
 
-    public WeightedBMCColoring(Graph<V,E> graph) {
+    public WeightedMCMCBColoring(Graph<V,E> graph) {
         super(graph);
     }
 
-    public WeightedBMCColoring<V, E> weightType(WeightType type) {
+    public WeightedMCMCBColoring<V, E> weightType(WeightType type) {
         this.type = type;
         return this;
     }

@@ -2,22 +2,26 @@ package jext.jgrapht;
 
 import jext.jgrapht.util.ClusterWeights;
 import jext.jgrapht.util.ContingencyMatrix;
-import jext.util.SetUtils;
+import jext.jgrapht.util.Statistics;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.lang.Math.sqrt;
 
 public class ClusteringMetrics<V, E> {
 
     private final Graph<V, E> graph;
     private final ClusteringAlgorithm.Clustering<V> clustering;
     private double maxWeight;
+    private ClusterWeights<V, E> clusterDistances;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public ClusteringMetrics(Graph<V, E> graph, ClusteringAlgorithm.Clustering<V> clustering) {
         this.graph = graph;
@@ -47,352 +51,196 @@ public class ClusteringMetrics<V, E> {
         return clustering.getNumberClusters();
     }
 
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public static class ClusterStatistics extends Statistics {
+        public int size;
+        public int numClusters;
+    }
+
+    public ClusterStatistics getStatistics() {
+        ClusterStatistics cs = new ClusterStatistics();
+        cs.numClusters = getNumberClusters();
+
+        clustering.getClusters().forEach(cluster ->
+                {
+                    int csize = cluster.size();
+                    cs.size += csize;
+                    cs.add(csize);
+                });
+
+        return (ClusterStatistics) cs.finish();
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public ClusterWeights<V, E> getClusterWeights() {
+        if (clusterDistances != null)
+            return clusterDistances;
+
+        clusterDistances = new ClusterWeights<>();
+        clusterDistances.init(graph, clustering);
+        return clusterDistances;
+    }
+
+    /**
+     * n: n vertices
+     * k: n clusters
+     * nj: n vertices cluster j
+     *
+     * 2020 - Analysis of a parallel MCMC algorithm for graph coloring with nearly uniform balancing
+     * eq (8)
+     */
+    public double getUnbalancingIndex() {
+        int[] i = new int[1];
+        int k = getNumberClusters();
+        int[] nj = new int[k];
+
+        clustering.getClusters().forEach(cluster -> {
+            int csize = cluster.size();
+            nj[i[0]] = csize;
+            i[0] += 1;
+        });
+
+        double n = sum(nj);
+        double nk = n/k;
+
+        double ui = 0;
+        for (int j=0; j<k; ++j) {
+            ui += sq(nj[j] - nk);
+        }
+        ui = sqrt(ui/k);
+
+        return ui;
+    }
+
+    private static double sq(double x) { return x*x; }
+
+    private static int sum(int[] v) {
+        int s = 0;
+        for(int i : v) s += i;
+        return s;
+    }
+
     /**
      *
      * 2007 - Survey Graph Clustering, pag 44
      */
     public double getModularity() {
-        return clusterDistances().getModularity();
-        // int k = getNumberClusters();
-        // checkDistances();
-        //
-        // double modularity = 0.;
-        // for (int c=0; c<k; ++c) {
-        //     modularity += clusterDistances[c][c];
-        // }
-        //
-        // for (int ci=0; ci<k; ++ci)
-        //     for(int cj=0; cj<k; ++cj)
-        //         if (ci != cj)
-        //             modularity -= clusterDistances[ci][cj];
-        //
-        // return modularity;
+        return getClusterWeights().getModularity();
     }
 
     public double getDaviesBouldinIndex() {
-        return clusterDistances().getDaviesBouldinIndex();
-        // int k = clustering.getNumberClusters();
-        // checkDistances();
-        //
-        // double[] sa = averageDistances();
-        // double[][]da = betweenSeparation();
-        //
-        // double sum = 0.;
-        // for (int ci=0; ci<k; ++ci) {
-        //     double max = 0;
-        //     for (int cj=0; cj<k; ++cj) {
-        //         if (ci == cj) continue;
-        //         double daij = da[ci][cj];
-        //         double ratio = div(sa[ci] + sa[cj], da[ci][cj]);
-        //         if (ratio > max) max = ratio;
-        //     }
-        //     sum += max;
-        // }
-        // return div(sum, k);
+        return getClusterWeights().getDaviesBouldinIndex();
     }
 
     public double getDunnIndex() {
-        return clusterDistances().getDunnIndex();
-        // int k = clustering.getNumberClusters();
-        // checkDistances();
-        //
-        // double[] sa = averageDistances();
-        // double[][]da = betweenSeparation();
-        //
-        // double minda = Double.POSITIVE_INFINITY;
-        // for (int ci=0; ci<k; ++ci) {
-        //     for (int cj = 0; cj<k; ++cj) {
-        //         if (ci == cj) continue;
-        //         double daij = da[ci][cj];
-        //         if (daij == 0) continue;
-        //         if (daij < minda) minda = daij;
-        //     }
-        // }
-        //
-        // double maxsa = -Double.POSITIVE_INFINITY;
-        // for(int ci=0; ci<k; ++ci) {
-        //     double sai = sa[ci];
-        //     if (sai > maxsa) maxsa = sai;
-        // }
-        //
-        // if (k <= 1)
-        //     return 0.;
-        // else
-        //     return div(minda, maxsa);
+        return getClusterWeights().getDunnIndex();
     }
 
     public double getLouvainModularity() {
-        return clusterDistances().getLouvainModularity();
-        // int n = graph.vertexSet().size();
-        //
-        // // map vertex -> index
-        // Map<V, Integer> vidx = new HashMap<>();
-        //
-        // int index = 0;
-        // for (V v : graph.vertexSet())
-        //     vidx.put(v, index++);
-        //
-        // double m = 0;
-        // double[] k = new double[n];
-        // for (E e : graph.edgeSet()) {
-        //     V source = graph.getEdgeSource(e);
-        //     V targer = graph.getEdgeTarget(e);
-        //     int i = vidx.get(source);
-        //     int j = vidx.get(targer);
-        //
-        //     double weight = weightOf(e);
-        //     m += weight;
-        //     k[i] += weight;
-        //     k[j] += weight;
-        // }
-        //
-        // double q = 0;
-        // double f = m > 0 ? 1/(2*m) : 0.;
-        // for (E e : graph.edgeSet()) {
-        //     V source = graph.getEdgeSource(e);
-        //     V targer = graph.getEdgeTarget(e);
-        //     int ci = clusterOf(source);
-        //     int cj = clusterOf(targer);
-        //
-        //     if (ci != cj) continue;
-        //
-        //     int i = vidx.get(source);
-        //     int j = vidx.get(targer);
-        //     double weight = weightOf(e);
-        //     q += (weight - f*k[i]*k[j]);
-        // }
-        //
-        // return f*q;
+        return getClusterWeights().getLouvainModularity();
     }
-
-    // private double weightOf(E e) {
-    //     double weight = graph.getEdgeWeight(e);
-    //     if(maxWeight > 0)
-    //         weight = maxWeight - weight;
-    //     return weight;
-    // }
-
-    // ----------------------------------------------------------------------
-    // Cluster distances
-    // ----------------------------------------------------------------------
-
-    // private int[] clusterSizes;   // n of elements in each cluster
-    // private double[][] clusterDistances;
-    private ClusterWeights<V, E> clusterDistances;
-
-    private ClusterWeights clusterDistances() {
-        if (clusterDistances != null)
-            return clusterDistances;
-
-        clusterDistances = new ClusterWeights<V, E>();
-        clusterDistances.init(graph, clustering);
-        // graph.edgeSet().forEach(e -> {
-        //     double weight = weightOf(e);
-        //     V source = graph.getEdgeSource(e);
-        //     V target = graph.getEdgeTarget(e);
-        //     clusterDistances.add(source, target, weight);
-        // });
-
-        // countClusterSizes();
-        // evaluateDistances();
-        return clusterDistances;
-    }
-
-    // private void countClusterSizes() {
-    //     if (clusterSizes != null) return;
-    //
-    //     int k = clustering.getNumberClusters();
-    //     clusterSizes = new int[k];
-    //     for (int ci=0; ci<k; ++ci)
-    //         clusterSizes[ci] = clustering.getClusters().get(ci).size();
-    // }
-
-    // private void evaluateDistances() {
-    //     if (clusterDistances != null) return;
-    //
-    //     int k = clustering.getNumberClusters();
-    //     clusterDistances = new double[k][];
-    //     for (int i=0; i<k; ++i)
-    //         clusterDistances[i] = new double[k];
-    //
-    //     graph.edgeSet().forEach(e -> {
-    //         double weight = weightOf(e);
-    //         V source = graph.getEdgeSource(e);
-    //         V target = graph.getEdgeTarget(e);
-    //         int ci = clusterOf(source);
-    //         int cj = clusterOf(target);
-    //         clusterDistances[ci][cj] += weight;
-    //     });
-    // }
-
-    // private int clusterOf(V v) {
-    //     return clusterOf(v, clustering);
-    // }
-
-    // private int clusterOf(V v, ClusteringAlgorithm.Clustering<V> clustering) {
-    //     int k = clustering.getNumberClusters();
-    //     for (int i=0; i<k; ++i)
-    //         if (clustering.getClusters().get(i).contains(v))
-    //             return i;
-    //     return -1;
-    // }
-
-    // ----------------------------------------------------------------------
-
-    // private static double div(double x, double y) {
-    //     return y != 0. ? x/y : 0.;
-    // }
-
-    // private double[] averageDistances() {
-    //     int k = clustering.getNumberClusters();
-    //     double[] averageDistances = new double[k];
-    //     for (int i=0; i<k; ++i)
-    //         averageDistances[i] = div(clusterDistances[i][i], clusterSizes[i]*(clusterSizes[i]-1));
-    //     return averageDistances;
-    // }
-
-    // private double[][] betweenSeparation() {
-    //     int k = clustering.getNumberClusters();
-    //     double[][] betweenSeparation = new double[k][];
-    //     for (int i=0; i<k; ++i)
-    //         betweenSeparation[i] = new double[k];
-    //     for(int i=0; i<k; ++i)
-    //         for(int j=0; j<k; j++)
-    //             if(i != j)
-    //                 betweenSeparation[i][j] = div(clusterDistances[i][i], clusterSizes[i]*clusterSizes[j]);
-    //     return betweenSeparation;
-    // }
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
-    public static class Statistics {
-        public int numClusters;
-        public List<Integer> clusterSizes;
-        public double modularity;
-        public double dunnIndex;
-        public double daviesBouldinIndex;
-        public double louvainModularity;
-
-        public void print() {
-            System.out.print("Clustering\n");
-            System.out.printf("  n clusters: %d\n", numClusters);
-
-            System.out.printf("  Clusters: %s\n", clusterSizes.toString());
-            System.out.printf("  Modularity: %.4f\n", modularity);
-            System.out.printf("  Dunn Index: %.4f\n", dunnIndex);
-            System.out.printf("  Davies-Boulding Index: %.4f\n", daviesBouldinIndex);
-            System.out.printf("  Louvain Modularity: %.4f\n", louvainModularity);
-        }
-    }
-
-    public Statistics getStatistics() {
-        Statistics stat = new Statistics();
-        stat.numClusters = clustering.getNumberClusters();
-        stat.clusterSizes = clustering.getClusters()
-                .stream()
-                .map(Set::size)
-                .collect(Collectors.toList());
-        stat.modularity = getModularity();
-        stat.dunnIndex = getDunnIndex();
-        stat.daviesBouldinIndex = getDaviesBouldinIndex();
-        stat.louvainModularity = getLouvainModularity();
-
-        return stat;
-    }
-
-    public static class Comparison {
-        public int numClusters1;
-        public int numClusters2;
-        public double purity;
-        public double giniIndex;
-        public double entropy;
-        public double randIndex;
-        public double adjustedRandIndex;
-        public double fowlkesMallowsIndex;
-        public double jaccardCoefficient;
-        public double normalizedGamma;
-
-        public void print() {
-            System.out.print("Clustering comparison\n");
-
-            System.out.printf("  n clusters 1: %d\n", numClusters1);
-            System.out.printf("  n clusters 2: %d\n", numClusters2);
-            System.out.printf("      Purity: %.4f (1 is better)\n", purity);
-            System.out.printf("  Gini Index: %.4f (0 is better)\n", giniIndex);
-            System.out.printf("     Entropy: %.4f (0 is better)\n", entropy);
-
-            System.out.printf("           Rand Index: %.4f (1 is better)\n", randIndex);
-            System.out.printf("  Adjusted Rand Index: %.4f (1 is better)\n", adjustedRandIndex);
-            System.out.printf("Fowlkes Mallows Index: %.4f (1 is better)\n", fowlkesMallowsIndex);
-            System.out.printf("  Jaccard Coefficient: %.4f (1 is better)\n", jaccardCoefficient);
-            System.out.printf("     Normalized Gamma: %.4f (1 is better)\n", normalizedGamma);
-        }
-    }
-
-    public Comparison getComparison(ClusteringAlgorithm.Clustering<V> other) {
-        Comparison comp = new Comparison();
-        comp.numClusters1 = clustering.getNumberClusters();
-        comp.numClusters2 = other.getNumberClusters();
-
-        ContingencyMatrix cm = getContingencyMatrix(other);
-
-        comp.purity = cm.getPurity();
-        comp.giniIndex = cm.getGiniIndex();
-        comp.entropy = cm.getEntropy();
-        comp.randIndex = cm.getRandIndex();
-        comp.adjustedRandIndex = cm.getAdjustedRandIndex();
-        comp.fowlkesMallowsIndex = cm.getFowlkesMallowsIndex();
-        comp.jaccardCoefficient = cm.getJaccardCoefficient();
-        comp.normalizedGamma = cm.getNormalizedGamma();
-        return comp;
-    }
-
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
-    private ContingencyMatrix getContingencyMatrix(ClusteringAlgorithm.Clustering<V> other) {
+    public ContingencyMatrix getContingencyMatrix(ClusteringAlgorithm.Clustering<V> other) {
         ContingencyMatrix cm = new ContingencyMatrix();
         cm.init(clustering, other);
         return cm;
-
-        // int nr = clustering.getNumberClusters();
-        // int nc = other.getNumberClusters();
-        // ContingencyMatrix cm = new ContingencyMatrix(nr, nc);
-        // Set<V> v1 = verticesOf(clustering);
-        // Set<V> v2 = verticesOf(other);
-        // if (!SetUtils.union(v1, v2).equals(SetUtils.intersection(v1, v2)))
-        //     throw new IllegalArgumentException("Invalid vertex sets");
-        //
-        // for(V v : v1) {
-        //     int ci = clusterOf(v, clustering);
-        //     int cj = clusterOf(v, other);
-        //     cm.add(ci, cj);
-        // }
-        //
-        // return cm.done();
     }
 
-    // private int clusterOf(V v) {
-    //     return clusterOf(v, clustering);
+    // public static class Indices {
+    //     public int numClusters;
+    //     public List<Integer> clusterSizes;
+    //     public double modularity;
+    //     public double dunnIndex;
+    //     public double daviesBouldinIndex;
+    //     public double louvainModularity;
+    //
+    //     public void print() {
+    //         System.out.print("Clustering\n");
+    //         System.out.printf("  n clusters: %d\n", numClusters);
+    //
+    //         System.out.printf("  Clusters: %s\n", clusterSizes.toString());
+    //         System.out.printf("  Modularity: %.4f\n", modularity);
+    //         System.out.printf("  Dunn Index: %.4f\n", dunnIndex);
+    //         System.out.printf("  Davies-Boulding Index: %.4f\n", daviesBouldinIndex);
+    //         System.out.printf("  Louvain Modularity: %.4f\n", louvainModularity);
+    //     }
     // }
 
-    // private int clusterOf(V v, ClusteringAlgorithm.Clustering<V> clustering) {
-    //     int k = clustering.getNumberClusters();
-    //     for (int i=0; i<k; ++i)
-    //         if (clustering.getClusters().get(i).contains(v))
-    //             return i;
-    //     return -1;
+    // public Indices getIndices() {
+    //     Indices stat = new Indices();
+    //     stat.numClusters = clustering.getNumberClusters();
+    //     stat.clusterSizes = clustering.getClusters()
+    //             .stream()
+    //             .map(Set::size)
+    //             .collect(Collectors.toList());
+    //     stat.modularity = getModularity();
+    //     stat.dunnIndex = getDunnIndex();
+    //     stat.daviesBouldinIndex = getDaviesBouldinIndex();
+    //     stat.louvainModularity = getLouvainModularity();
+    //
+    //     return stat;
     // }
 
-
-    // private Set<V> verticesOf(ClusteringAlgorithm.Clustering<V> clustering) {
-    //     Set<V> vertices = new HashSet<>();
-    //     clustering.getClusters()
-    //             .forEach(vertices::addAll);
-    //     return vertices;
+    // public static class Comparison {
+    //     public int numClusters1;
+    //     public int numClusters2;
+    //     public double purity;
+    //     public double giniIndex;
+    //     public double entropy;
+    //     public double randIndex;
+    //     public double adjustedRandIndex;
+    //     public double fowlkesMallowsIndex;
+    //     public double jaccardCoefficient;
+    //     public double normalizedGamma;
+    //
+    //     public void print() {
+    //         System.out.print("Clustering comparison\n");
+    //
+    //         System.out.printf("  n clusters 1: %d\n", numClusters1);
+    //         System.out.printf("  n clusters 2: %d\n", numClusters2);
+    //         System.out.printf("      Purity: %.4f (1 is better)\n", purity);
+    //         System.out.printf("  Gini Index: %.4f (0 is better)\n", giniIndex);
+    //         System.out.printf("     Entropy: %.4f (0 is better)\n", entropy);
+    //
+    //         System.out.printf("           Rand Index: %.4f (1 is better)\n", randIndex);
+    //         System.out.printf("  Adjusted Rand Index: %.4f (1 is better)\n", adjustedRandIndex);
+    //         System.out.printf("Fowlkes Mallows Index: %.4f (1 is better)\n", fowlkesMallowsIndex);
+    //         System.out.printf("  Jaccard Coefficient: %.4f (1 is better)\n", jaccardCoefficient);
+    //         System.out.printf("     Normalized Gamma: %.4f (1 is better)\n", normalizedGamma);
+    //     }
     // }
+
+    // public Comparison getComparison(ClusteringAlgorithm.Clustering<V> other) {
+    //     Comparison comp = new Comparison();
+    //     comp.numClusters1 = clustering.getNumberClusters();
+    //     comp.numClusters2 = other.getNumberClusters();
+    //
+    //     ContingencyMatrix cm = getContingencyMatrix(other);
+    //
+    //     comp.purity = cm.getPurity();
+    //     comp.giniIndex = cm.getGiniIndex();
+    //     comp.entropy = cm.getEntropy();
+    //     comp.randIndex = cm.getRandIndex();
+    //     comp.adjustedRandIndex = cm.getAdjustedRandIndex();
+    //     comp.fowlkesMallowsIndex = cm.getFowlkesMallowsIndex();
+    //     comp.jaccardCoefficient = cm.getJaccardCoefficient();
+    //     comp.normalizedGamma = cm.getNormalizedGamma();
+    //     return comp;
+    // }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
 }

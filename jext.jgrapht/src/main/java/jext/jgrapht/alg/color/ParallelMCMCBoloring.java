@@ -21,8 +21,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-
-public class ParallelBMCColoring<V, E>
+/**
+ * MCMCBColoring
+ *      Monte Carlo Markov Chain B Coloring
+ *
+ * @param <V>
+ * @param <E>
+ */
+public class ParallelMCMCBoloring<V, E>
         implements VertexColoringAlgorithm<V>
 {
     private final Logger logger = Logger.getLogger(getClass());
@@ -84,7 +90,7 @@ public class ParallelBMCColoring<V, E>
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ParallelBMCColoring(Graph<V, E> graph) {
+    public ParallelMCMCBoloring(Graph<V, E> graph) {
         this.graph = graph;
     }
 
@@ -92,17 +98,17 @@ public class ParallelBMCColoring<V, E>
     // Configuration
     // ----------------------------------------------------------------------
 
-    public ParallelBMCColoring<V, E> epsilon(float e) {
+    public ParallelMCMCBoloring<V, E> epsilon(float e) {
         epsilon = e;
         return this;
     }
 
-    public ParallelBMCColoring<V, E> reductionFactor(float reductionFactor) {
+    public ParallelMCMCBoloring<V, E> reductionFactor(float reductionFactor) {
         this.reductionFactor = reductionFactor;
         return this;
     }
 
-    public ParallelBMCColoring<V, E> numRetries(int numRetries) {
+    public ParallelMCMCBoloring<V, E> numRetries(int numRetries) {
         this.numRetries = numRetries;
         return this;
     }

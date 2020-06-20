@@ -176,7 +176,7 @@
 
         </module>
 
-        <module name="test">
+        <module name="*.test">
             <directory name="/examples/test"/>
 
             <sources>
