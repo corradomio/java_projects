@@ -24,17 +24,21 @@ public class ScanProject implements Project {
 
     public ScanProject(File projectDir) {
         File scanFile;
-        if (projectDir.isDirectory()) {
-            this.projectDir = projectDir;
-            scanFile = new File(projectDir, "project-scan.xml");
-        }
-        else {
-            scanFile = projectDir;
-            this.projectDir = projectDir.getParentFile();
-        }
 
+        this.projectDir = projectDir;
         this.scanRules = new ScanRules();
+        this.rootModule = new ScanModule(this);
+        this.logger = Logger.getLogger(ScanProject.class, getName());
 
+        // default configuration
+        try(InputStream stream = getClass().getResourceAsStream("/ae/ebtic/spl/analysis/sourcecodev2/scan/project-scan.xml")) {
+            this.scanRules.configure(stream);
+        } catch (Exception e) {
+            logger.errorf("Unable to configure using embedded configuration: %s", e);
+        }
+
+        // add project configuration
+        scanFile = new File(projectDir, "project-scan.xml");
         if (scanFile.exists()) {
             try {
                 this.scanRules.configure(scanFile);
@@ -42,16 +46,16 @@ public class ScanProject implements Project {
                 logger.errorf("Unable to configure using %s: %s", scanFile, e);
             }
         }
-        else {
-            try(InputStream stream = getClass().getResourceAsStream("/jext/buildtools/project-scan.xml")) {
-                this.scanRules.configure(stream);
+
+        // add project configuration
+        scanFile = new File(projectDir, ".spl/project-scan.xml");
+        if (scanFile.exists()) {
+            try {
+                this.scanRules.configure(scanFile);
             } catch (Exception e) {
-                logger.errorf("Unable to configure using embedded configuration: %s", e);
+                logger.errorf("Unable to configure using %s: %s", scanFile, e);
             }
         }
-
-        this.rootModule = new ScanModule(this);
-        this.logger = Logger.getLogger(ScanProject.class, getName());
     }
 
     public String getName() {
@@ -69,6 +73,12 @@ public class ScanProject implements Project {
         catch (Exception e) {
             logger.errorf("Unable to configure using %s: %s", configFile, e);
         }
+    }
+
+    @Override
+    public ScanProject initialize() {
+        getModules();
+        return this;
     }
 
     @Override
@@ -97,29 +107,29 @@ public class ScanProject implements Project {
     }
 
     private void searchModules() {
-        modules = scanRules.getModuleDirs(projectDir)
-                .stream()
-                .map(moduleDir -> new ScanModule(moduleDir, this))
-                .collect(Collectors.toList());
+        modules.addAll(scanRules.getModuleDirs(projectDir)
+            .stream()
+            .map(moduleDir -> new ScanModule(moduleDir, this))
+            .collect(Collectors.toList()));
     }
 
     private void removeModules(){
         modules = modules.stream()
-                .filter(module -> !scanRules.isRemoved(module.getName()))
-                .collect(Collectors.toList());
+            .filter(module -> !scanRules.isRemoved(module.getName()))
+            .collect(Collectors.toList());
     }
 
     private void addMissingModules() {
         Set<String> moduleNames = getModules()
-                .stream()
-                .map(module -> module.getName().toString())
-                .collect(Collectors.toSet());
+            .stream()
+            .map(module -> module.getName().toString())
+            .collect(Collectors.toSet());
         scanRules.getMissingModules(moduleNames)
-                .forEach(template -> {
-                    String name = template.getName();
-                    File moduleDir = template.getModuleDir(projectDir);
-                    modules.add(new ScanModule(name, moduleDir, this));
-                });
+            .forEach(template -> {
+                String name = template.getName();
+                File moduleDir = template.getModuleDir(projectDir);
+                modules.add(new ScanModule(name, moduleDir, this));
+            });
     }
 
     private void configureModules() {
@@ -133,7 +143,7 @@ public class ScanProject implements Project {
     public Module getModule(String name) {
         for(ScanModule module : getModules()) {
             String mname = module.getName().toString();
-            if (mname.equals(name) || mname.endsWith(name))
+            if (mname.equals(name) || name.length() > 0 && mname.endsWith(name))
                 return module;
         }
         return null;

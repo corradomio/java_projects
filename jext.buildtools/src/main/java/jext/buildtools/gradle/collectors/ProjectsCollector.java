@@ -1,7 +1,7 @@
 package jext.buildtools.gradle.collectors;
 
 import jext.io.LineOutputStream;
-import jext.buildtools.util.LogDigester;
+import jext.util.LogDigester;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,8 +45,8 @@ public class ProjectsCollector extends LineOutputStream implements Iterable<Stri
 
     public ProjectsCollector() {
         digester = new LogDigester();
-        digester.addRule("Root project '([^']+)'", this::rootProject);
-        digester.addRule(ANALYZING, "[\\\\ +-]+Project ':([^']+).*", this::retrieveProject);
+        digester.addRule("Root project '([^']+)'.*", this::rootProject);
+        digester.addRule(ANALYZING, "[\\s\\|\\\\+-]+Project\\s+':([^']+)'.*", this::addProject);
         digester.addRule(ANALYZING, "", LogDigester.STATE_DONE);
     }
 
@@ -55,7 +55,7 @@ public class ProjectsCollector extends LineOutputStream implements Iterable<Stri
         return ANALYZING;
     }
 
-    private int retrieveProject(int status, Matcher matcher, String line) {
+    private int addProject(int status, Matcher matcher, String line) {
         String project = matcher.group(1);
         projects.add(project);
         return 0;

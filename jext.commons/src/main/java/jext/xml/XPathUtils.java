@@ -6,7 +6,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,6 +39,30 @@ public class XPathUtils {
     private static final Properties NO_PROPERTIES = new Properties();
     private static final String EMPTY_VALUE = "";
 
+    private static EntityResolver SKIP_ENTITY_RESOLVER = new EntityResolver() {
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId) {
+            return new InputSource(new ByteArrayInputStream(EMPTY_VALUE.getBytes()));
+        }
+    };
+
+    private static ErrorHandler SKIP_ERROR_HANDLER = new ErrorHandler() {
+        @Override
+        public void warning(SAXParseException exception) throws SAXException {
+
+        }
+
+        @Override
+        public void error(SAXParseException exception) throws SAXException {
+
+        }
+
+        @Override
+        public void fatalError(SAXParseException exception) throws SAXException {
+
+        }
+    };
+
     // ----------------------------------------------------------------------
     // Parse
     // ----------------------------------------------------------------------
@@ -46,6 +74,8 @@ public class XPathUtils {
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         factory.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
         DocumentBuilder builder = factory.newDocumentBuilder();
+        builder.setEntityResolver(SKIP_ENTITY_RESOLVER);
+        builder.setErrorHandler(SKIP_ERROR_HANDLER);
         return builder.parse(file);
     }
 
@@ -339,6 +369,8 @@ public class XPathUtils {
      * @return
      */
     public static List<Element> selectNodes(Element elt, String xpath, int limit, Properties params) {
+        Document owner = getOwnerDocument(elt);
+        synchronized (owner) {
         List<Element> selected = new ArrayList<>();
         String aname = null, avalue = "";
 
@@ -382,6 +414,7 @@ public class XPathUtils {
 
         return selected;
     }
+    }
 
     // ----------------------------------------------------------------------
     // Select node
@@ -400,11 +433,10 @@ public class XPathUtils {
      * @return
      */
     public static Node selectNode(Element elt, String xpath, boolean create, Properties params) {
+        Document owner = getOwnerDocument(elt);
+        synchronized (owner) {
         Node current = elt;
-
-        if (xpath == null)
-            xpath = "";
-        else if (xpath.startsWith("/"))
+            if (xpath.startsWith("/"))
             xpath = "<root>" + xpath;
 
         String[] steps = xpath.split("/");
@@ -421,7 +453,7 @@ public class XPathUtils {
                 current = current.getParentNode();
                 // "/..."
             else if("<root>".equals(step))
-                current = getOwnerDocument(current);
+                    current = owner; //getOwnerDocument(current);
                 // "@attr"
             else if (step.startsWith("@")) {
                 String aname = step.substring(1);
@@ -449,6 +481,8 @@ public class XPathUtils {
                 NodeList nl = current.getChildNodes();
                 for(int i=0; i<nl.getLength(); ++i) {
                     Node node = nl.item(i);
+                        if (node == null)
+                            break;
                     if (node.getNodeType() != Node.ELEMENT_NODE)
                         continue;
                     if (!step.equals(((Element)node).getTagName()))
@@ -459,7 +493,7 @@ public class XPathUtils {
                 }
 
                 if(selected == null && create) {
-                    Document doc = getOwnerDocument(current);
+                        Document doc = owner; //getOwnerDocument(current);
                     selected = doc.createElement(step);
                     current.appendChild(selected);
                 }
@@ -490,7 +524,7 @@ public class XPathUtils {
                 }
 
                 if (selected == null && create) {
-                    Document doc = getOwnerDocument(current);
+                        Document doc = owner; //getOwnerDocument(current);
                     selected = doc.createElement(ename);
                     current.appendChild(selected);
                     current = selected;
@@ -531,7 +565,7 @@ public class XPathUtils {
                 if (index == -1) index = 1;
 
                 if (selected == null && create) {
-                    Document doc = getOwnerDocument(current);
+                        Document doc = owner; //getOwnerDocument(current);
                     for(; index>0; --index) {
                         selected = doc.createElement(ename);
                         current.appendChild(selected);
@@ -543,6 +577,7 @@ public class XPathUtils {
         }
 
         return current;
+    }
     }
 
     // parent/step

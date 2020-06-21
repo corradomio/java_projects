@@ -16,4 +16,6 @@ public interface Project {
     default Module getModule(Name name) {
         return getModule(name.toString());
     }
+
+    Project initialize();
 }

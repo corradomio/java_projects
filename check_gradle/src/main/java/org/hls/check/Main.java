@@ -1,11 +1,9 @@
 package org.hls.check;
 
-import jext.logging.Logger;
 import org.apache.log4j.BasicConfigurator;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
-import org.gradle.tooling.model.Model;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.IdeaProject;
 
@@ -14,7 +12,8 @@ import java.io.File;
 public class Main {
 
     public static void main(String[] args) {
-        Logger.configure();
+        //Logger.configure();
+        BasicConfigurator.configure();
 
         ProjectConnection connection = GradleConnector.newConnector()
             .forProjectDirectory(new File("D:\\Projects.github\\other_projects\\hibernate-orm"))

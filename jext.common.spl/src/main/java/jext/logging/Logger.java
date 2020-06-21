@@ -6,6 +6,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,8 +15,16 @@ public class Logger {
 
     private static boolean configured = false;
     private static int timeout = 3000;
+
+    // timed logs
+    private static transient long timestamp;
+    private static transient long count;
+    private static transient Level level = Level.ALL;
+
+    // counted logs
     private static int minCount = 1;
     private static int maxCount = 100;
+    private Map<Level, Map<String, AtomicInteger>> lcounts;
 
     // configuration
 
@@ -78,6 +87,16 @@ public class Logger {
 
     private Logger(org.apache.log4j.Logger logger) {
         this.logger = logger;
+    }
+
+    // query
+
+    public boolean isDebugEnabled() {
+        return logger.isDebugEnabled();
+    }
+
+    public boolean isInfoEnabled() {
+        return logger.isInfoEnabled();
     }
 
     // debug/debugf
@@ -146,12 +165,8 @@ public class Logger {
         logger.fatal(message, t);
     }
 
-    // timed debug/debugf/info/infof
+    // timed debug/info
     // it write a log ONLY each 'timeout' milliseconds
-
-    private static transient long timestamp;
-    private static transient long count;
-    private static transient Level level = Level.ALL;
 
     public void debugt(String format, Object... args) {
         long now = System.currentTimeMillis();
@@ -193,44 +208,42 @@ public class Logger {
         }
     }
 
-    // query
-
-    public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
-    }
-
-    public boolean isInfoEnabled() {
-        return logger.isInfoEnabled();
-    }
-
     // counted warn/error
     // it generate ONLY a specified number of messages
 
-    private static Map<String, AtomicInteger> counts = new ConcurrentHashMap<>();
-
-    public static void clearMessages() {
-        counts.clear();
-    }
-
-    public void warnfc(String format, Object... args) {
-        String message = String.format(format, args);
-        if (!counts.containsKey(message))
-            counts.put(message, new AtomicInteger(0));
-        int count = counts.get(message).incrementAndGet();
-        if (count <= minCount)
+    public void warnc(String category, String format, Object... args) {
+        int count = incrCategory(Level.WARN, category);
+        if (count <= minCount) {
+            String message = String.format(format, args);
             logger.warn(message);
-        else if (count % maxCount == 0)
+        }
+        else if (count % maxCount == 0) {
+            String message = String.format(format, args);
             logger.warn(message + String.format(" (%d times)", count));
+        }
     }
 
-    public void errorfc(String format, Object... args) {
-        String message = String.format(format, args);
-        if (!counts.containsKey(message))
-            counts.put(message, new AtomicInteger(0));
-        int count = counts.get(message).incrementAndGet();
-        if (count <= minCount)
+    public void errorc(String category, String format, Object... args) {
+        int count = incrCategory(Level.ERROR, category);
+        if (count <= minCount) {
+            String message = String.format(format, args);
             logger.error(message);
-        else if (count % maxCount == 0)
+        }
+        else if (count % maxCount == 0) {
+            String message = String.format(format, args);
             logger.error(message + String.format(" (%d times)", count));
+        }
     }
+
+    private int incrCategory(Level level, String category) {
+        if (lcounts == null)
+            lcounts = new HashMap<>();
+        if (!lcounts.containsKey(level))
+            lcounts.put(level, new HashMap<>());
+        Map<String, AtomicInteger> counts = lcounts.get(level);
+        if (!counts.containsKey(category))
+            counts.put(category, new AtomicInteger());
+        return counts.get(category).incrementAndGet();
+    }
+
 }

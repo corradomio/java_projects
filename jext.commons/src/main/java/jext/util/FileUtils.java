@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -73,17 +74,25 @@ public class FileUtils {
         return relativePath;
     }
 
+    // public static File toCanonicalFile(File parentDir, String path) {
+    //     try {
+    //         return new File(parentDir, path).getCanonicalFile();
+    //     } catch (IOException e) {
+    //         return new File(parentDir, path).getAbsoluteFile();
+    //     }
+    // }
+
     public static String getAbsolutePath(File file) {
         return normalize(file.getAbsolutePath());
     }
 
-    // public static String toCanonicalPath(File parentDir, String path) {
-    //     try {
-    //         return normalize(new File(parentDir, path).getCanonicalPath());
-    //     } catch (IOException e) {
-    //         return normalize(new File(parentDir, path).getAbsolutePath());
-    //     }
-    // }
+    public static String toCanonicalPath(File parentDir, String path) {
+        try {
+            return normalize(new File(parentDir, path).getCanonicalPath());
+        } catch (IOException e) {
+            return normalize(new File(parentDir, path).getAbsolutePath());
+        }
+    }
 
     public static File toAbsoluteFile(String home, String path) {
         if (isAbsolute(path))
@@ -179,12 +188,23 @@ public class FileUtils {
             });
     }
 
-    // ----------------------------------------------------------------------
-    // File properties
-    // ----------------------------------------------------------------------
+    /** List directories selected by filter */
+    public static List<File> listDirectories(File directory, FileFilter dirFilter) {
+        Stack<File> toScan = new Stack<>();
+        toScan.push(directory);
+        List<File> selected = new ArrayList<>();
 
-    public static void walk(File directory) {
+        while(!toScan.isEmpty()) {
+            File dir = toScan.pop();
 
+            if (!dirFilter.accept(dir))
+                continue;
+
+            selected.add(dir);
+            toScan.addAll(asList(dir.listFiles(File::isDirectory)));
+        }
+
+        return selected;
     }
 
     // ----------------------------------------------------------------------
@@ -203,6 +223,7 @@ public class FileUtils {
     // Read a text file
     // ----------------------------------------------------------------------
 
+    /** Read the content of a file as a string */
     public static String toString(File file)
     {
         try {
@@ -214,6 +235,7 @@ public class FileUtils {
         }
     }
 
+    /** Read the content of a file as a list of lines */
     public static List<String> toStrings(File file) {
         if (file == null || !file.exists())
             return Collections.emptyList();

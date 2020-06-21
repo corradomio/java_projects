@@ -4,8 +4,11 @@ import jext.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -123,5 +126,12 @@ public class StringUtils {
 
     public static boolean isLowerCase(String s) {
         return LOWERCASE.matcher(s).matches();
+    }
+
+    public static List<String> asList(String[] a) {
+        if (a == null)
+            return java.util.Collections.emptyList();
+        else
+            return Arrays.asList(a);
     }
 }
