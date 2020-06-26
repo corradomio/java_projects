@@ -32,12 +32,14 @@ public class FileSet {
     private FilePatterns includes = new FilePatterns();
     private FilePatterns excludes = new FilePatterns();
     private boolean recursive;
+    private boolean directory;
 
     public void configure(Element elt) {
-        if (elt.getTagName().equals("filename"))
-            configureFilename(elt);
-        else
+        directory = elt.getTagName().equals("directory");
+        if (directory)
             configureDirectory(elt);
+        else
+            configureFilename(elt);
     }
 
     private void configureFilename(Element elt) {
@@ -54,7 +56,7 @@ public class FileSet {
         if (".".equals(relativeDir))
             relativeDir = "";
 
-        inline = XPathUtils.getValue(elt, "@includes", "*");
+        inline = XPathUtils.getValue(elt, "@includes", "");
         patterns = inline.split("[, ]");
         for(String pattern : patterns)
             add(pattern, false);
@@ -74,15 +76,33 @@ public class FileSet {
                     String pattern = XPathUtils.getValue(incl, "@name");
                     add(pattern, true);
                 });
+
+        // add default
+        //
+        //      <include name="*"/>
+        //      <include name="**"/>   (recursive)
+        //
+        // if it is specified only <exclude name="..."/>
+        if (includes.isEmpty())
+            if (directory)
+                add("**", false);
+            else
+                add("*", false);
     }
 
     private void add(String pattern, boolean exclude) {
+        if (pattern.isEmpty())
+            return;
         FilePattern fpat = new FilePattern(pattern);
         if (exclude)
             excludes.add(fpat);
         else
             includes.add(fpat);
         recursive |= fpat.recursive;
+    }
+
+    public String getDir() {
+        return relativeDir;
     }
 
     public List<File> getFiles(File baseDir) {

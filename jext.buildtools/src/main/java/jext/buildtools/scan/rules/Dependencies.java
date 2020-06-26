@@ -9,14 +9,37 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+        <dependencies>
+            <!-- module -->
+            <dependency module="moduleName"/>
+            <!-- all files in 'libs' with extension '.jar' -->
+            <dependency name="libs" includes="*.jar"/>
+            <!-- all files in 'libs' directory -->
+            <dependency name="libs"/>
+
+            <!-- maven coords -->
+            <dependency maven="groupId:artifactId[:version]"/>
+            <!-- ivy syntax -->
+            <dependency org="groupId" name="artifactId" rev="version"/>
+            <!-- maven syntax -->
+            <dependency>
+                <groupId>groupId</groupId>
+                <artifactId>artifactId</artifactId>
+                <version>version</version>
+            </dependency>
+        </dependencies>
+ */
+
 public class Dependencies {
 
     private List<String> modules = new ArrayList<>();
-    private FileSets local = new FileSets();
+    private FileSets fileSets = new FileSets();
     private List<MavenCoords> maven = new ArrayList<>();
 
     public void  configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
+        if (selected == null) return;
         XPathUtils.selectNodes(selected, "dependency")
                 .forEach(dep -> {
                     String value;
@@ -27,7 +50,7 @@ public class Dependencies {
                     }
                     value = XPathUtils.getValue(dep, "name", null);
                     if (value != null) {
-                        local.configureFileSet(dep);
+                        fileSets.configureFileSet(dep);
                         return;
                     }
                     else {
@@ -35,7 +58,6 @@ public class Dependencies {
                         if (coords.isValid())
                             maven.add(coords);
                     }
-
                 });
     }
 
@@ -44,7 +66,7 @@ public class Dependencies {
     }
 
     public List<File> getLocalDependencies(File baseDir) {
-        return local.getFiles(baseDir);
+        return fileSets.getFiles(baseDir);
     }
 
     public List<MavenCoords> getMavenDependencies() {
@@ -52,10 +74,12 @@ public class Dependencies {
     }
 
     private MavenCoords getMavenCoords(Element dep) {
+        // direct maven coordinates
         String coords = XPathUtils.getValue(dep, "@maven", null);
         if (coords != null)
             return new MavenCoords(coords);
 
+        // Ivy syntax
         String groupId = XPathUtils.getValue(dep, "@org", null);
         String artifactId;
         String version;
@@ -64,6 +88,7 @@ public class Dependencies {
             version = XPathUtils.getValue(dep, "@rev", null);
             return new MavenCoords(groupId, artifactId, version);
         }
+        // Maven syntax
         else {
             groupId = XPathUtils.getValue(dep, "groupId");
             artifactId = XPathUtils.getValue(dep, "artifactId");

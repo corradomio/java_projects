@@ -23,9 +23,9 @@ public class Main {
 
         GradleProject project = connection.getModel(GradleProject.class);
         project.getChildren().forEach(p -> {
-            System.out.println("Project " + p.getName());
+            System.out.println("jext.buildtools.Project " + p.getName());
             p.getChildren().forEach(p1 -> {
-                System.out.println("... Project " + p1.getName());
+                System.out.println("... jext.buildtools.Project " + p1.getName());
             });
             // p.getTasks().forEach(t -> {
             //     System.out.println("... Task " + t.getName());

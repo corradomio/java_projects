@@ -97,7 +97,7 @@ Forcing Javadoc in Java 8 compatible mode
 > Task :hibernate-core:dependencies
 
 ------------------------------------------------------------
-Project :hibernate-core - Hibernate's core ORM functionality
+jext.buildtools.Project :hibernate-core - Hibernate's core ORM functionality
 ------------------------------------------------------------
 
 annotationProcessor - Annotation processors and their dependencies for source set 'main'.

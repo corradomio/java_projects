@@ -14,10 +14,60 @@ package jext.buildtools.maven;
 
 public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 
-    public final String groupId;
-    public final String artifactId;
-    public final String version;
+    public String groupId;
+    public String artifactId;
+    public String version;
     private String toString;
+
+
+    public MavenCoords(String coords) {
+        if (coords.contains(":"))
+            parseCoords(coords);
+        else
+            parsePath(coords);
+        init();
+    }
+
+    private void parseCoords(String coords) {
+        // <groupId>:<artifactId>[:<version>]
+        String[] parts = coords.split(":");
+        if (parts.length == 2) {
+            groupId = parts[0];
+            artifactId = parts[1];
+            version = NO_VERSION;
+        }
+        else if (parts.length == 3) {
+            groupId = parts[0];
+            artifactId = parts[1];
+            if (PACKAGING_TYPES.contains(parts[2]))
+                version = NO_VERSION;
+            else
+                version = parts[2];
+        }
+        else {
+            groupId = parts[0];
+            artifactId = parts[1];
+            version = parts[3];
+        }
+    }
+
+    private void parsePath(String path) {
+        // <groupId>/<artifactId>/<version>/<artifactId>-<version>.jar
+        int sep;
+        // remove <artifactId>-<version>.jar
+        sep = path.lastIndexOf('/');
+        path = path.substring(0, sep);
+        // extract <version>
+        sep = path.lastIndexOf('/');
+        version = path.substring(sep+1);
+        path = path.substring(0, sep);
+        // extract <artifactId>
+        sep = path.lastIndexOf('/');
+        artifactId = path.substring(sep+1);
+        path = path.substring(0, sep);
+        groupId = path.replace('/', '.');
+        path = null;
+    }
 
     public MavenCoords(String gid, String aid) {
         this.groupId = gid;
@@ -40,29 +90,6 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         this.groupId = coords.groupId;
         this.artifactId = coords.artifactId;
         this.version = v;
-        init();
-    }
-
-    public MavenCoords(String coords) {
-        String[] parts = coords.split(":");
-        if (parts.length == 2) {
-            groupId = parts[0];
-            artifactId = parts[1];
-            version = NO_VERSION;
-        }
-        else if (parts.length == 3) {
-            groupId = parts[0];
-            artifactId = parts[1];
-            if (PACKAGING_TYPES.contains(parts[2]))
-                version = NO_VERSION;
-            else
-                version = parts[2];
-        }
-        else {
-            groupId = parts[0];
-            artifactId = parts[1];
-            version = parts[3];
-        }
         init();
     }
 
@@ -102,10 +129,6 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         return new MavenCoords(gid, aid, v);
     }
 
-    public boolean isValid() {
-        return isValid(groupId) && isValid(artifactId);
-    }
-
     @Override
     public String toString() {
         return toString;
@@ -126,6 +149,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         if (obj == null) return false;
         MavenCoords that = (MavenCoords) obj;
         return toString.equals(that.toString);
+    }
+
+    public boolean isValid() {
+        return isValid(groupId) && isValid(artifactId);
     }
 
     public static boolean isValid(String s){

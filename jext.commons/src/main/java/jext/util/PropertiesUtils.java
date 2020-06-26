@@ -59,16 +59,16 @@ public class PropertiesUtils {
     // Get typed values
     // ----------------------------------------------------------------------
     private static Set<String> FALSE_VALUES = new HashSet<String>(){{
-       add("0");
-       add("false");
-       add("False");
-       add("FALSE");
-       add("f");
-       add("F");
-       add("#f");
-       add("#F");
-       add("off");
-       add("closed");
+        add("0");
+        add("false");
+        add("False");
+        add("FALSE");
+        add("f");
+        add("F");
+        add("#f");
+        add("#F");
+        add("off");
+        add("closed");
     }};
     private static Set<String> TRUE_VALUES = new HashSet<String>(){{
         add("1");

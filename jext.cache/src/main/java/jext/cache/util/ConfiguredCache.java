@@ -1,12 +1,12 @@
 package jext.cache.util;
 
-import jext.cache.CacheConfigurator;
+import jext.cache.CacheManager;
 
 /**
  * Used internally
  */
 public interface ConfiguredCache {
 
-    void setConfigurator(CacheConfigurator configurator);
+    void setConfigurator(CacheManager configurator);
 
 }

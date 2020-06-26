@@ -1,7 +1,7 @@
 package jext.buildtools.scan;
 
-import jext.buildtools.Module;
-import jext.buildtools.Project;
+import jext.buildtools.ModuleAnalyzer;
+import jext.buildtools.ProjectAnalyzer;
 import jext.buildtools.scan.rules.ScanRules;
 import jext.buildtools.scan.rules.Template;
 import jext.logging.Logger;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ScanProject implements Project {
+public class ScanProject implements ProjectAnalyzer {
 
     private Logger logger;
     private File projectDir;
@@ -31,24 +31,21 @@ public class ScanProject implements Project {
         this.logger = Logger.getLogger(ScanProject.class, getName());
 
         // default configuration
-        try(InputStream stream = getClass().getResourceAsStream("/ae/ebtic/spl/analysis/sourcecodev2/scan/project-scan.xml")) {
+        try(InputStream stream = getClass().getResourceAsStream("/jext/buildtools/scan/project-scan.xml")) {
             this.scanRules.configure(stream);
         } catch (Exception e) {
             logger.errorf("Unable to configure using embedded configuration: %s", e);
         }
 
-        // add project configuration
+        //
+        // add project configuration present in
+        //      <projectDir>/project-scan.xml
+        // OR
+        //      <projectDir>/.spl/project-scan.xml
+        //
         scanFile = new File(projectDir, "project-scan.xml");
-        if (scanFile.exists()) {
-            try {
-                this.scanRules.configure(scanFile);
-            } catch (Exception e) {
-                logger.errorf("Unable to configure using %s: %s", scanFile, e);
-            }
-        }
-
-        // add project configuration
-        scanFile = new File(projectDir, ".spl/project-scan.xml");
+        if (!scanFile.exists())
+            scanFile = new File(projectDir, ".spl/project-scan.xml");
         if (scanFile.exists()) {
             try {
                 this.scanRules.configure(scanFile);
@@ -140,7 +137,7 @@ public class ScanProject implements Project {
     }
 
     @Override
-    public Module getModule(String name) {
+    public ModuleAnalyzer getModule(String name) {
         for(ScanModule module : getModules()) {
             String mname = module.getName().toString();
             if (mname.equals(name) || name.length() > 0 && mname.endsWith(name))

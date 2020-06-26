@@ -8,6 +8,10 @@ public class FilePatterns {
 
     private List<FilePattern> patterns = new ArrayList<>();
 
+    public boolean isEmpty() {
+        return patterns.isEmpty();
+    }
+
     public boolean add(String pattern) {
         FilePattern fpat = new FilePattern(pattern);
         patterns.add(fpat);

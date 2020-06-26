@@ -1,14 +1,8 @@
 package jext.util.concurrent;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Sequential {
 

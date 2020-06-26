@@ -41,8 +41,8 @@ public class Versions {
         List<String> dateList = new ArrayList<>(dateVersion.keySet());
         dateList.sort(String::compareTo);
         return dateList.stream()
-            .map(date -> dateVersion.get(date))
-            .collect(Collectors.toList());
+                .map(date -> dateVersion.get(date))
+                .collect(Collectors.toList());
     }
 
     /** Retrieve the latest version, or NO_VERSION */

@@ -6,23 +6,31 @@ import org.w3c.dom.Element;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static jext.buildtools.maven.MavenCoords.isValid;
-import static jext.buildtools.maven.MavenCoords.isRange;
 import static jext.buildtools.maven.MavenCoords.isPattern;
+import static jext.buildtools.maven.MavenCoords.isRange;
+import static jext.buildtools.maven.MavenCoords.isValid;
 
 public class MavenPom implements MavenConst {
+    // ----------------------------------------------------------------------
+    // Private Fields
+    // ----------------------------------------------------------------------
+
+    private static MavenPom instance = new MavenPom();
+
+    public static MavenPom invalid() { return instance; }
 
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
 
     static final String EMPTY_POM =
-        "<?xml version='1.0' encoding='UTF-8'?>\n" +
-            "<project xmlns='http://maven.apache.org/POM/4.0.0'/>";
+            "<?xml version='1.0' encoding='UTF-8'?>\n" +
+                    "<project xmlns='http://maven.apache.org/POM/4.0.0'/>";
 
     public static final String POM = "pom.xml";
 
@@ -44,6 +52,10 @@ public class MavenPom implements MavenConst {
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
+
+    protected MavenPom() {
+
+    }
 
     public MavenPom(File pomFile) {
         this(pomFile, null);
@@ -68,6 +80,11 @@ public class MavenPom implements MavenConst {
             } catch (Exception e) {
                 logger.error(e, e);
             }
+    }
+
+    public MavenPom setDownloader(MavenDownloader downloader) {
+        this.downloader = downloader;
+        return this;
     }
 
     // ----------------------------------------------------------------------
@@ -122,8 +139,8 @@ public class MavenPom implements MavenConst {
         </project>
      */
     public MavenCoords getCoords() {
-        String gid = UNKNOWN;
-        String aid = UNKNOWN;
+        String gid = null;
+        String aid = null;
         String v = NO_VERSION;
 
         // defaults using parent
@@ -149,7 +166,7 @@ public class MavenPom implements MavenConst {
 
         String gid = XPathUtils.getValue(parent, GROUP_ID);
         String aid = XPathUtils.getValue(parent, ARTIFACT_ID);
-        String v   = XPathUtils.getValue(parent, VERSION);
+        String v = XPathUtils.getValue(parent, VERSION);
 
         if (!isValid(gid) || !isValid(aid) || !isValid(v)) {
             logger.errorf("Invalid parent coords in %s", pomFile);
@@ -227,8 +244,15 @@ public class MavenPom implements MavenConst {
 
         properties = new Properties();
 
-        // 1) System Java properties
+        // 1.1) System Java properties
         //properties.putAll(System.getProperties());
+
+        // 1.2) POM properties
+        {
+            addProperty(properties, "pom.groupId", "groupId", "");
+            addProperty(properties, "pom.artifactId", "artifactId", "");
+            addProperty(properties, "pom.version", "version", "");
+        }
 
         // 2) parent properties
         {
@@ -240,39 +264,48 @@ public class MavenPom implements MavenConst {
         // 3) project properties
         {
             String parentGroupId, parentArtifactId, parentVersion;
+            String groupId, artifactId, version;
 
             // 3.1) project info
             {
-                addProperty(properties,"project.modelVersion", "modelVersion", "4.0.0");
-                addProperty(properties,"project.name", "name", "");
+                addProperty(properties, "project.modelVersion", "modelVersion", "4.0.0");
+                addProperty(properties, "project.name", "name", "");
                 properties.put("project.basedir", pomFile.getParentFile().getAbsolutePath());
             }
 
             // 3.2) parent coords
             {
-                parentGroupId    = addProperty(properties,"project.parent.groupId", "parent/groupId", null);
-                parentArtifactId = addProperty(properties,"project.parent.artifactId", "parent/artifactId", null);
-                parentVersion    = addProperty(properties,"project.parent.version", "parent/version", null);
+                parentGroupId = addProperty(properties, "project.parent.groupId", "parent/groupId", null);
+                parentArtifactId = addProperty(properties, "project.parent.artifactId", "parent/artifactId", null);
+                parentVersion = addProperty(properties, "project.parent.version", "parent/version", null);
             }
 
             // 3.3) current coords
             {
-                addProperty(properties,"project.groupId", "groupId", parentGroupId);
-                addProperty(properties,"project.artifactId", "artifactId", parentArtifactId);
-                addProperty(properties,"project.version", "version", parentVersion);
+                groupId = addProperty(properties, "project.groupId", "groupId", parentGroupId);
+                artifactId = addProperty(properties, "project.artifactId", "artifactId", parentArtifactId);
+                version = addProperty(properties, "project.version", "version", parentVersion);
 
-                addProperty(properties,"project.packaging", "packaging", "jar");
+                addProperty(properties, "project.packaging", "packaging", "jar");
             }
+
+            // 3.4) POM properties: in some ".pom" files there are dependencies with "pom.*" instead then "project.*"
+            {
+                properties.setProperty("pom.groupId", groupId);
+                properties.setProperty("pom.artifactId", artifactId);
+                properties.setProperty("pom.version", version);
+            }
+
         }
 
         // 4) add all 'current properties'
         XPathUtils.selectNodes(project, "properties/*")
-            .forEach(eprop -> {
-                String pname = eprop.getNodeName().trim();
-                String value = eprop.getTextContent().trim();
+                .forEach(eprop -> {
+                    String pname = eprop.getNodeName().trim();
+                    String value = eprop.getTextContent().trim();
 
-                properties.put(pname, value);
-            });
+                    properties.put(pname, value);
+                });
 
         return properties;
     }
@@ -301,7 +334,7 @@ public class MavenPom implements MavenConst {
      */
     public List<String> getRepositories() {
         List<String> repoUrls = new ArrayList<>();
-        for(Element elt : XPathUtils.selectNodes(project, REPOSITORIES)) {
+        for (Element elt : XPathUtils.selectNodes(project, REPOSITORIES)) {
             String repoUrl = XPathUtils.getValue(elt, "url");
             if (isValid(repoUrl))
                 repoUrls.add(repoUrl);
@@ -320,9 +353,8 @@ public class MavenPom implements MavenConst {
         </project>
      */
     public List<String> getModules() {
-        File currentDir = pomFile.getParentFile();
         List<String> modules = new ArrayList<>();
-        for(Element elt : XPathUtils.selectNodes(project, "modules/module")) {
+        for (Element elt : XPathUtils.selectNodes(project, "modules/module")) {
             String relativePath = elt.getTextContent();
             if (isValid(relativePath)) {
                 modules.add(relativePath);
@@ -350,13 +382,19 @@ public class MavenPom implements MavenConst {
      */
 
     public List<MavenCoords> getDependencyCoords() {
-        return getDependencies()
-            .stream()
-            .map(dep -> dep.coords)
-            .collect(Collectors.toList());
+        try {
+            return getDependencies()
+                    .stream()
+                    .map(dep -> dep.coords)
+                    .collect(Collectors.toList());
+        }
+        catch (Throwable t) {
+            logger.error(pomFile.toString() + ": " + t, t);
+            return Collections.emptyList();
+        }
     }
 
-    public List<MavenDep> getDependencies() {
+    public List<MavenDependency> getDependencies() {
         return getDependencies(DEPENDENCIES);
     }
 
@@ -377,46 +415,49 @@ public class MavenPom implements MavenConst {
 
         </project>
      */
-    public List<MavenDep> getComponents() {
+    public List<MavenDependency> getComponents() {
         return getDependencies(DM_DEPENDENCIES);
     }
 
-    private List<MavenDep> getDependencies(String xpath) {
-        if (hasRepositories()) {
-            // logger.warnf("With repositories: %s", pomFile);
-            List<String> repoUrls = getRepositories();
+    private List<MavenDependency> getDependencies(String xpath) {
+        // if (hasRepositories() && downloader != null) {
+        //     // logger.warnf("With repositories: %s", pomFile);
+        //     List<String> repoUrls = getRepositories();
+        //
+        //     // create a local downloader
+        //     downloader = downloader.newDownloader();
+        //     downloader.addRepositories(repoUrls);
+        // }
 
-            // create a local downloader
-            downloader = downloader.newDownloader();
-            downloader.addRepositories(repoUrls);
-        }
-
-        List<MavenDep> depList = new ArrayList<>();
+        List<MavenDependency> depList = new ArrayList<>();
         Properties props = getProperties();
         MavenCoords coords = getCoords();
         XPathUtils.selectNodes(project, xpath)
-            .forEach(dep -> {
-                String gid = XPathUtils.getValue(dep, GROUP_ID, coords.groupId, props);
-                String aid = XPathUtils.getValue(dep, ARTIFACT_ID, coords.artifactId, props);
-                String v = XPathUtils.getValue(dep, VERSION, NO_VERSION, props);
-                String s = XPathUtils.getValue(dep, SCOPE, SCOPE_COMPILE);
+                .forEach(dep -> {
+                    String gid = XPathUtils.getValue(dep, GROUP_ID, coords.groupId, props);
+                    String aid = XPathUtils.getValue(dep, ARTIFACT_ID, coords.artifactId, props);
+                    String v = XPathUtils.getValue(dep, VERSION, NO_VERSION, props);
+                    String s = XPathUtils.getValue(dep, SCOPE, SCOPE_COMPILE);
 
-                // IF v is not valid AND gid is equal to coords.groupId, it is possible to use 'coords.version'
-                //
-                if (!isValid(v) && coords.groupId.equals(gid))
-                    v = coords.version;
+                    // IF v is not valid AND gid is equal to coords.groupId, it is possible to use 'coords.version'
+                    // NO!
+                    //if (!isValid(v) && coords.groupId.equals(gid))
+                    //    v = coords.version;
 
-                //if (!isValid(v))
-                //    logger.warnf("No version in %s:%s - %s", gid, aid, pomFile);
-                if (isRange(v))
-                    logger.warnf("Range version in %s:%s:%s - %s", gid, aid, v, pomFile);
+                    //if (!isValid(v))
+                    //    logger.warnf("No version in %s:%s - %s", gid, aid, pomFile);
+                    if (isRange(v))
+                        logger.warnf("Range version in %s:%s:%s - %s", gid, aid, v, pomFile);
 
-                if (isPattern(v))
-                    logger.warnf("Pattern version in %s:%s:%s - %s", gid, aid, v, pomFile);
+                    if (isPattern(v))
+                        logger.warnf("Pattern version in %s:%s:%s - %s", gid, aid, v, pomFile);
 
-                MavenDep dcoords = new MavenDep(gid, aid, v, s);
-                depList.add(dcoords);
-            });
+                    MavenCoords dcoords = new MavenCoords(gid, aid, v);
+                    if (downloader != null && !dcoords.hasVersion())
+                        dcoords = downloader.getVersioned(dcoords);
+
+                    depList.add( new MavenDependency(dcoords, s));
+                });
 
         return depList;
     }

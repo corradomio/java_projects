@@ -23,7 +23,7 @@
 
   -->
 <project version="1.0">
-    <name>Project Template</name>
+    <name>jext.buildtools.Project Template</name>
     <description>
         Example of SPL project specification file, used to extract the
         dependencies between modules, (internal/external) libraries,

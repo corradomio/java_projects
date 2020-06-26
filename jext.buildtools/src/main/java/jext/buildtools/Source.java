@@ -1,4 +1,17 @@
 package jext.buildtools;
 
-public class Source {
+public interface Source {
+
+    Name getName();
+
+    String getPath();
+
+    Module getModule();
+
+    String getDigest();
+
+    String getLanguage();
+
+    boolean isValid();
+
 }

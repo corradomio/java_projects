@@ -1,4 +1,4 @@
 package jext.buildtools;
 
-public class Library {
+public interface Library {
 }

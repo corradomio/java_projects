@@ -1,9 +1,8 @@
 package jext.cache.weak;
 
 import jext.cache.Cache;
-import jext.cache.CacheConfigurator;
+import jext.cache.CacheManager;
 import jext.cache.util.ConfiguredCache;
-import jext.cache.util.Unique;
 
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
@@ -12,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 public class WeakCache<K, V> implements Cache<K, V>, ConfiguredCache {
 
     private final String name;
-    private CacheConfigurator configurator;
+    private CacheManager configurator;
     private WeakHashMap<K, V> innerCache;
 
     WeakCache(String name, WeakHashMap<K, V> innerCache) {
@@ -77,7 +76,7 @@ public class WeakCache<K, V> implements Cache<K, V>, ConfiguredCache {
     }
 
     @Override
-    public void setConfigurator(CacheConfigurator configurator) {
+    public void setConfigurator(CacheManager configurator) {
         this.configurator = configurator;
     }
 }

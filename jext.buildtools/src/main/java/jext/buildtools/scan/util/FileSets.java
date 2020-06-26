@@ -6,6 +6,7 @@ import org.w3c.dom.Element;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileSets {
 
@@ -31,15 +32,40 @@ public class FileSets {
         return this;
     }
 
+    public List<String> getDirs() {
+        return fileSets.stream().map(FileSet::getDir).collect(Collectors.toList());
+    }
+
     public List<File> getFiles(File baseDir) {
 
-        List<File> sources = new ArrayList<>();
+        List<String> dirs = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+
+        // on the directory list
+        //
+        //      src/main/java
+        //      src/main
+        //      src
+        //
+        // uses ONLY the MORE SPECIFIC directory
+        //
 
         fileSets.forEach(fileSet -> {
-            sources.addAll(fileSet.getFiles(baseDir));
+            String dir = fileSet.getDir();
+            if (isParentOf(dir, dirs))
+                return;
+            files.addAll(fileSet.getFiles(baseDir));
+            dirs.add(dir);
         });
 
-        return sources;
+        return files;
+    }
+
+    private boolean isParentOf(String dir, List<String> dirs) {
+        for (String adir : dirs)
+            if (adir.startsWith(dir))
+                return true;
+        return false;
     }
 
 }

@@ -1,5 +1,7 @@
 package jext.buildtools.maven;
 
+import jext.cache.Cache;
+import jext.cache.CacheManager;
 import jext.exception.InvalidValueException;
 import jext.logging.Logger;
 import jext.util.FileUtils;
@@ -63,7 +65,7 @@ public class MavenDownloader implements MavenConst {
     // <a href="2.0.0/" title="2.0.0/">2.0.0/</a> 2015-01-13 13:40         -
     // to extract the version AND the yyy-mm-dd
     private static final Pattern HREF_VERSION =
-        Pattern.compile("<a href=\"([^\"]+)/\" title=\"[^\"]+\">.*</a>\\s+([0-9\\-]+).*");
+            Pattern.compile("<a href=\"([^\"]+)/\" title=\"[^\"]+\">.*</a>\\s+([0-9\\-]+).*");
 
     // timestamp last download
     private long downloadTimestamp = System.currentTimeMillis();
@@ -78,11 +80,11 @@ public class MavenDownloader implements MavenConst {
 
     public MavenDownloader newDownloader() {
         return new MavenDownloader()
-            .setDownload(downloadDir)
-            .addRepositories(repoUrls)
-            .setDownloadTimeout(downloadTimeout)
-            .setCheckTimeout(checkTimeout)
-            ;
+                .setDownload(downloadDir)
+                .addRepositories(repoUrls)
+                .setDownloadTimeout(downloadTimeout)
+                .setCheckTimeout(checkTimeout)
+                ;
     }
 
     // ----------------------------------------------------------------------
@@ -180,12 +182,29 @@ public class MavenDownloader implements MavenConst {
     }
 
     private MavenCoords normalize(MavenCoords coords) {
-        if (!coords.hasVersion())
-            coords = getVersioned(coords);
-        if (!coords.hasVersion())
+        Cache<MavenCoords, MavenCoords> cache = CacheManager.getCache("maven.normalizedCoords",
+                MavenCoords.class, MavenCoords.class);
+        try {
+            return cache.get(coords, () -> {
+                MavenCoords lcoords = coords;
+                if (!lcoords.hasVersion())
+                    lcoords = getVersioned(lcoords);
+                if (!lcoords.hasVersion())
+                    return lcoords;
+                lcoords = getRelocated(lcoords);
+                return lcoords;
+            });
+        } catch (Throwable e) {
+            logger.error(e, e);
             return coords;
-        coords = getRelocated(coords);
-        return coords;
+        }
+
+        // if (!coords.hasVersion())
+        //     coords = getVersioned(coords);
+        // if (!coords.hasVersion())
+        //     return coords;
+        // coords = getRelocated(coords);
+        // return coords;
     }
 
     // ----------------------------------------------------------------------
@@ -193,11 +212,18 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
 
     static class Entry {
-        final MavenDep dcoords;
+        final Entry parent;
+        final MavenDependency dcoords;
         final int depth;
-        Entry(MavenDep dcoords, int d) {
+        Entry(MavenDependency dcoords) {
+            this.parent = null;
+            this.depth = 0;
             this.dcoords = dcoords;
-            this.depth = d;
+        }
+        Entry(MavenDependency dcoords, Entry parent) {
+            this.parent = parent;
+            this.dcoords = dcoords;
+            this.depth = parent.depth+1;
         }
     }
 
@@ -205,11 +231,11 @@ public class MavenDownloader implements MavenConst {
      * If the artifact is a 'jar', itself, if it is a 'pom', the list of
      * components coords (recursively)
      *
-     * @param depth = 0 -> no recursion
-     *              > 0 -> max depth
-     *              < 0 -> infinite recursion
+     * @param maxDepth = 0 -> no recursion
+     *                 > 0 -> max depth
+     *                 < 0 -> infinite recursion
      */
-    public List<MavenCoords> getComponentsCoords(MavenCoords coords, int depth) {
+    public List<MavenCoords> getComponentsCoords(MavenCoords coords, int maxDepth) {
         coords = getVersioned(coords);
 
         if (!coords.hasVersion()) {
@@ -231,26 +257,26 @@ public class MavenDownloader implements MavenConst {
         }
 
         // 2) is a 'pom' but not 'recursive'
-        if (depth == 0)
+        if (maxDepth == 0)
             return pom.getComponents()
-                .stream()
-                .map(compo -> compo.coords)
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(compo -> compo.coords)
+                    .collect(Collectors.toList());
 
         // 3) is a 'pom' and 'recursive' - breadth first (queue)
         Queue<Entry> toVisit = new LinkedList<>();
-        toVisit.add(new Entry(new MavenDep(coords), 0));
-        Set<MavenDep> visited = new HashSet<>();
+        toVisit.add(new Entry(new MavenDependency(coords)));
+        Set<MavenDependency> visited = new HashSet<>();
 
         while(!toVisit.isEmpty()) {
             Entry entry = toVisit.remove();
             int edepth = entry.depth;
 
-            if (edepth > depth)
+            if (edepth > maxDepth)
                 continue;
 
             // remove from the queue
-            MavenDep dcoords = entry.dcoords;
+            MavenDependency dcoords = entry.dcoords;
             // if already visited, skip
             if (visited.contains(dcoords))
                 continue;
@@ -260,26 +286,26 @@ public class MavenDownloader implements MavenConst {
             if (pom == null)
                 continue;
 
-            // if 'pom', add components to toVisit
-            // if 'jar', add to visited
+                // if 'pom', add components to toVisit
+                // if 'jar', add to visited
             else if (pom.isPomPackaging())
                 pom.getComponents()
-                .forEach(compo -> {
-                    toVisit.add(new Entry(compo, edepth+1));
-                });
+                        .forEach(compo -> {
+                            toVisit.add(new Entry(compo, entry));
+                        });
             else
                 visited.add(dcoords);
         }
 
         return visited.stream()
-            .map(dcoords -> dcoords.coords)
-            .collect(Collectors.toList());
+                .map(dcoords -> dcoords.coords)
+                .collect(Collectors.toList());
     }
 
     /**
      * List of 'dependencies'
      */
-    public List<MavenCoords> getDependencies(MavenCoords coords, int depth) {
+    public List<MavenCoords> getDependencies(MavenCoords coords, int maxDepth) {
         coords = getVersioned(coords);
 
         if (!coords.hasVersion()) {
@@ -288,30 +314,30 @@ public class MavenDownloader implements MavenConst {
         }
 
         // 1) not recursive
-        MavenPom pom = getPom(coords);
+        final MavenPom pom = getPom(coords);
         if (pom == null)
             return Collections.emptyList();
 
-        if (depth == 0)
+        if (maxDepth == 0)
             return pom.getDependencies()
-                .stream()
-                .map(dcoords -> dcoords.coords)
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(dcoords -> dcoords.coords)
+                    .collect(Collectors.toList());
 
         // 2) recursive
 
         Queue<Entry> toVisit = new LinkedList<>();
-        toVisit.add(new Entry(new MavenDep(coords), 0));
-        Set<MavenDep> visited = new HashSet<>();
+        toVisit.add(new Entry(new MavenDependency(coords)));
+        Set<MavenDependency> visited = new HashSet<>();
 
         while (!toVisit.isEmpty()) {
             Entry entry = toVisit.remove();
             int edepth = entry.depth;
 
-            if (edepth > depth)
+            if (edepth > maxDepth)
                 continue;
 
-            MavenDep dcoords = entry.dcoords;
+            MavenDependency dcoords = entry.dcoords;
 
             // if already visited, skip
             if (visited.contains(dcoords))
@@ -321,30 +347,30 @@ public class MavenDownloader implements MavenConst {
             if (edepth > 0 && !dcoords.scopeCompile())
                 continue;
 
-            pom = getPom(dcoords.coords);
-            if (pom == null) {
+            final MavenPom dpom = getPom(dcoords.coords);
+            if (dpom == null) {
                 continue;
             }
-            else if (pom.isPomPackaging()) {
-                pom.getComponents()
-                    .forEach(dep -> {
-                        toVisit.add(new Entry(dep, edepth+1));
-                    });
+            else if (dpom.isPomPackaging()) {
+                dpom.getComponents()
+                        .forEach(dep -> {
+                            toVisit.add(new Entry(dep, entry));
+                        });
             }
             else {
                 visited.add(dcoords);
             }
 
-            pom.getDependencies()
-                .forEach(dep -> {
-                    toVisit.add(new Entry(dep, edepth+1));
-                });
+            dpom.getDependencies()
+                    .forEach(dep -> {
+                        toVisit.add(new Entry(dep, entry));
+                    });
         }
 
         return visited
-            .stream()
-            .map(dcoords -> dcoords.coords)
-            .collect(Collectors.toList());
+                .stream()
+                .map(dcoords -> dcoords.coords)
+                .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------
@@ -388,8 +414,6 @@ public class MavenDownloader implements MavenConst {
 
     @Nullable
     public MavenPom getPom(MavenCoords coords) {
-        if (coords.toString().contains("all-th"))
-            System.out.println("DEBUG");
         coords = normalize(coords);
         return getPom_(coords);
     }
@@ -398,16 +422,36 @@ public class MavenDownloader implements MavenConst {
         if (!coords.hasVersion())
             throw new InvalidValueException(VERSION, coords.toString());
 
-        File pomFile = getFile(coords, MavenType.POM);
-        if (!pomFile.exists())
-            downloadFile(coords, MavenType.POM);
-        if (!pomFile.exists()) {
-            //logger.errorf("Unable to find POM file for %s", coords);
+        Cache<MavenCoords, MavenPom> cache = CacheManager.getCache("maven.pom", MavenCoords.class, MavenPom.class);
+        try {
+            MavenPom pom = cache.get(coords, () -> {
+                File pomFile = getFile(coords, MavenType.POM);
+                if (!pomFile.exists())
+                    downloadFile(coords, MavenType.POM);
+                if (!pomFile.exists()) {
+                    //logger.errorf("Unable to find POM file for %s", coords);
+                    return MavenPom.invalid();
+                }
+
+                return new MavenPom(pomFile, this);
+            });
+
+            return pom == MavenPom.invalid() ? null : pom;
+        } catch (Throwable e) {
+            logger.error(e, e);
             return null;
         }
 
-        MavenPom pom = new MavenPom(pomFile, this);
-        return pom;
+        // File pomFile = getFile(coords, MavenType.POM);
+        // if (!pomFile.exists())
+        //     downloadFile(coords, MavenType.POM);
+        // if (!pomFile.exists()) {
+        //     //logger.errorf("Unable to find POM file for %s", coords);
+        //     return null;
+        // }
+        //
+        // MavenPom pom = new MavenPom(pomFile, this);
+        // return pom;
 
         // if (!relocate)
         //     return pom;
@@ -466,7 +510,7 @@ public class MavenDownloader implements MavenConst {
 
             return latestVersion[0];
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.errorf("%s: %s", metadataFile, e);
             return NO_VERSION;
         }
@@ -486,20 +530,20 @@ public class MavenDownloader implements MavenConst {
             return versions;
 
         FileUtils.toStrings(versionsFile)
-            .forEach(href -> {
-                String version = null;
-                String year = null;
-                Matcher m = HREF_VERSION.matcher(href);
+                .forEach(href -> {
+                    String version = null;
+                    String year = null;
+                    Matcher m = HREF_VERSION.matcher(href);
 
-                if (m.matches()) {
-                    version = m.group(1);
-                    year = m.group(2);
-                }
+                    if (m.matches()) {
+                        version = m.group(1);
+                        year = m.group(2);
+                    }
 
-                // skip the version if the year is "-"
-                if (MavenCoords.isValid(version) && MavenCoords.isValid(year))
-                    versions.add(version, year);
-            });
+                    // skip the version if the year is "-"
+                    if (MavenCoords.isValid(version) && MavenCoords.isValid(year))
+                        versions.add(version, year);
+                });
 
         return versions;
     }
@@ -554,24 +598,24 @@ public class MavenDownloader implements MavenConst {
         switch (type) {
             case VERSIONS:
                 relativePath = String.format("%1$s/%2$s/%2$s.html",
-                    groupId,
-                    artifactId);
+                        groupId,
+                        artifactId);
                 break;
             case METADATA:
                 relativePath = String.format("%s/%s/maven-metadata.xml",
-                    groupId,
-                    artifactId);
+                        groupId,
+                        artifactId);
                 break;
             case POM:
                 relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.pom",
-                    groupId,
-                    artifactId,
-                    version);
+                        groupId,
+                        artifactId,
+                        version);
                 break;
             case JAR:
                 relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.jar",
-                    groupId,
-                    artifactId, version);
+                        groupId,
+                        artifactId, version);
                 break;
             // case INVALID:
             //     relativePath = String.format("%s/%s/flag.invalid",
@@ -598,26 +642,26 @@ public class MavenDownloader implements MavenConst {
         switch (type) {
             case VERSIONS:
                 return String.format("%1$s/%2$s/%3$s",
-                    repoUrl,
-                    groupId,
-                    artifactId);
+                        repoUrl,
+                        groupId,
+                        artifactId);
             case METADATA:
                 return String.format("%1$s/%2$s/%3$s/maven-metadata.xml",
-                    repoUrl,
-                    groupId,
-                    artifactId);
+                        repoUrl,
+                        groupId,
+                        artifactId);
             case POM:
                 return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.pom",
-                    repoUrl,
-                    groupId,
-                    artifactId,
-                    version);
+                        repoUrl,
+                        groupId,
+                        artifactId,
+                        version);
             case JAR:
                 return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.jar",
-                    repoUrl,
-                    groupId,
-                    artifactId,
-                    version);
+                        repoUrl,
+                        groupId,
+                        artifactId,
+                        version);
 
             default:
                 throw new UnsupportedOperationException(type.toString());

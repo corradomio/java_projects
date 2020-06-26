@@ -12,6 +12,7 @@ public class Repositories {
 
     public void configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
+        if (selected == null) return;
         XPathUtils.selectNodes(selected, "repository")
                 .forEach(repo -> {
                     String name = XPathUtils.getValue(repo, "@name");

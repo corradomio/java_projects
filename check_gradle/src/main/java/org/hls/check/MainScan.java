@@ -1,7 +1,7 @@
 package org.hls.check;
 
+import jext.buildtools.SourceProject;
 import jext.buildtools.scan.ScanProject;
-import jext.buildtools.util.Dump;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -17,6 +17,6 @@ public class MainScan {
 
         p.setConfiguration(new File("project-scan.xml"));
 
-        Dump.project(p);
+        SourceProject.dump(p);
     }
 }

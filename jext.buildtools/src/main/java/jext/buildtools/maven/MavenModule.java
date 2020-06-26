@@ -1,19 +1,18 @@
 package jext.buildtools.maven;
 
-import jext.buildtools.Dependency;
+import jext.buildtools.ModuleAnalyzer;
 import jext.buildtools.Name;
-import jext.buildtools.Module;
-import jext.buildtools.util.MavenDependency;
 import jext.buildtools.util.PathName;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MavenModule implements Module {
+public class MavenModule implements ModuleAnalyzer {
 
     private Logger logger;
 
@@ -48,14 +47,12 @@ public class MavenModule implements Module {
         this.name = new PathName(FileUtils.relativePath(project.getProjectDir(), moduleDir));
     }
 
-    public File getModuleDir() {
-        return moduleDir;
-    }
-
+    @Override
     public MavenProject getProject() {
         return project;
     }
 
+    @Override
     public Name getName() {
         return name;
     }
@@ -64,6 +61,12 @@ public class MavenModule implements Module {
         return pom.getCoords().toString();
     }
 
+    @Override
+    public File getModuleDir() {
+        return moduleDir;
+    }
+
+    @Override
     public boolean isValid() {
         return pom.exists();
     }
@@ -73,41 +76,56 @@ public class MavenModule implements Module {
             return modules;
 
         modules = pom.getModules()
-                .stream()
-                .map(relativePath -> new MavenModule(relativePath, this))
-                .collect(Collectors.toList());
+            .stream()
+            .map(relativePath -> new MavenModule(relativePath, this))
+            .collect(Collectors.toList());
         return modules;
     }
 
-    public List<MavenModule> getModuleDependencies() {
-        List<MavenModule> dmodules = new ArrayList<>();
+    @Override
+    public List<Name> getModuleDependencies() {
+        List<Name> dmodules = new ArrayList<>();
 
         pom.getDependencyCoords()
-                .forEach(coords-> {
-                    MavenModule dmodule = project.getModule(coords.toString());
-                    if (dmodule != null)
-                        dmodules.add(dmodule);
-                });
+            .forEach(coords-> {
+                MavenModule dmodule = project.getModule(coords.toString());
+                if (dmodule != null)
+                    dmodules.add(dmodule.getName());
+            });
         return dmodules;
     }
 
-    public List<Dependency> getDependencies() {
-        List<Dependency> dependencies = new ArrayList<>();
+    @Override
+    public List<MavenCoords> getMavenLibraries() {
+        List<MavenCoords> dependencies = new ArrayList<>();
 
         pom.getDependencyCoords()
-                .forEach(coords-> {
-                    MavenModule dmodule = project.getModule(coords.toString());
-                    if (dmodule == null)
-                        dependencies.add(new MavenDependency(coords));
-                });
+            .forEach(coords-> {
+                MavenModule dmodule = project.getModule(coords.toString());
+                if (dmodule == null)
+                    dependencies.add(coords);
+            });
 
         return dependencies;
     }
 
-    public void analyzeStructure() {
+    @Override
+    public List<File> getLocalLibraries() {
+        return Collections.emptyList();
+    }
+
+    public void initialize() {
         getModules();
-        getDependencies();
+        getMavenLibraries();
         getModuleDependencies();
+    }
+
+    public List<File> getSources() {
+        return Collections.emptyList();
+    }
+
+    public List<File> getResources() {
+        return FileUtils.listFiles(moduleDir, "pom.xml");
     }
 
     // ----------------------------------------------------------------------
@@ -121,7 +139,7 @@ public class MavenModule implements Module {
 
     @Override
     public boolean equals(Object obj) {
-        MavenModule that = (MavenModule) obj;
+        ModuleAnalyzer that = (ModuleAnalyzer) obj;
         return getName().equals(that.getName());
     }
 

@@ -97,7 +97,7 @@ Forcing Javadoc in Java 8 compatible mode
 > Task :hibernate-entitymanager:dependencies
 
 ------------------------------------------------------------
-Project :hibernate-entitymanager - (deprecated - use hibernate-core instead) Hibernate O/RM implementation of the JPA specification
+jext.buildtools.Project :hibernate-entitymanager - (deprecated - use hibernate-core instead) Hibernate O/RM implementation of the JPA specification
 ------------------------------------------------------------
 
 annotationProcessor - Annotation processors and their dependencies for source set 'main'.

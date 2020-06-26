@@ -17,12 +17,12 @@
             Dependencies
           -->
         <dependencies>
-            <module name="dependencyModule"/>
-            <maven coords="gid:aid[:ver]"/>
+            <dependency module="dependencyModule"/>
+            <dependency maven="gid:aid[:ver]"/>
             <!--
                 if dir the all files in dir
               -->
-            <include path="pathFileOrDir" extension=".jar" recursive="false"/>
+            <dependency name="pathFileOrDir" includes="**/*.jar"/>
         </dependencies>
     </module>
 </project>

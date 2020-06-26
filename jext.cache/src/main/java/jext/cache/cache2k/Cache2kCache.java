@@ -1,7 +1,7 @@
 package jext.cache.cache2k;
 
 import jext.cache.Cache;
-import jext.cache.CacheConfigurator;
+import jext.cache.CacheManager;
 import jext.cache.util.ConfiguredCache;
 import jext.cache.util.Unique;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 public class Cache2kCache<K, V> implements Cache<K, V>, ConfiguredCache {
 
     private String name;
-    private CacheConfigurator configurator;
+    private CacheManager configurator;
     private org.cache2k.Cache<K, V> innerCache;
     private Unique<K> uniqueKeys = new Unique<>();
 
@@ -72,7 +72,7 @@ public class Cache2kCache<K, V> implements Cache<K, V>, ConfiguredCache {
     }
 
     @Override
-    public void setConfigurator(CacheConfigurator configurator) {
+    public void setConfigurator(CacheManager configurator) {
         this.configurator = configurator;
     }
 }

@@ -15,15 +15,12 @@ import java.util.Set;
 
 public class ScanRules {
 
-    private static Logger logger = Logger.getLogger(ScanRules.class);
+    private final static Logger logger = Logger.getLogger(ScanRules.class);
 
-    private File scanFile;
-    private Element elt;
-
-    private Properties properties = new Properties();
-    private ModuleScan moduleScan = new ModuleScan();
-    private PatternSet isRemoved = new PatternSet();
-    private Templates templates = new Templates();
+    private final Properties properties = new Properties();
+    private final ModuleScan moduleScan = new ModuleScan();
+    private final PatternSet isRemoved = new PatternSet();
+    private final Templates templates = new Templates();
 
     public ScanRules() {
 
@@ -36,9 +33,9 @@ public class ScanRules {
     }
 
     public void configure(InputStream stream) throws Exception {
-        elt = XPathUtils.parse(stream).getDocumentElement();
+        Element elt = XPathUtils.parse(stream).getDocumentElement();
 
-        properties = XPathUtils.getProperties(elt, "properties");
+        properties.putAll(XPathUtils.getProperties(elt, "properties"));
 
         moduleScan.configure(elt, "modules/scan");
         isRemoved.configure(elt, "modules/remove");

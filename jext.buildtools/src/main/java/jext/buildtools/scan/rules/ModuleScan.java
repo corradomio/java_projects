@@ -17,13 +17,14 @@ import java.util.List;
 
 public class ModuleScan {
 
-    private static Logger logger = Logger.getLogger(ModuleScan.class);
+    private final static Logger logger = Logger.getLogger(ModuleScan.class);
 
-    private PatternSet isExcluded = new PatternSet();
-    private IsModule isModule = new IsModule();
+    private final PatternSet isExcluded = new PatternSet();
+    private final IsModule isModule = new IsModule();
 
     public void configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
+        if (selected == null) return;
         isExcluded.configure(selected, "exclude");
         isModule.configure(selected, "module");
     }

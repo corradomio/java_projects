@@ -1,7 +1,7 @@
 package jext.buildtools.gradle;
 
 import jext.buildtools.Name;
-import jext.buildtools.Project;
+import jext.buildtools.ProjectAnalyzer;
 import jext.logging.Logger;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.GradleConnector;
@@ -14,7 +14,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Queue;
 
-public class GradleProject implements Project {
+public class GradleProject implements ProjectAnalyzer {
+
+    public static boolean isValid(File projectDir) {
+        File buildGradle = new File(projectDir, "build.gradle");
+        File buildGradleKts = new File(projectDir, "build.gradle.kts");
+
+        return buildGradle.exists() || buildGradleKts.exists();
+    }
 
     private static Logger logger = Logger.getLogger(GradleProject.class);
 
@@ -22,6 +29,7 @@ public class GradleProject implements Project {
     public static final String GRADLE_INSTALLATION = "gradle.installation";
     public static final String GRADLE_URI = "gradle.uri";
     public static final String GRADLE_HOMEDIR = "gradle.homedir";
+    public static final String GRADLE_BUILD = "gradle.build";
 
     private final File projectDir;
     private Properties properties = PropertiesUtils.empty();
@@ -44,8 +52,9 @@ public class GradleProject implements Project {
         return projectDir.getName();
     }
 
-    public GradleModule getRootModule() {
-        return rootModule;
+    public GradleProject initialize() {
+        getModules();
+        return this;
     }
 
     public List<GradleModule> getModules() {
@@ -69,7 +78,7 @@ public class GradleProject implements Project {
     public GradleModule getModule(String name) {
         for (GradleModule module : getModules()) {
             Name mname = module.getName();
-            if (mname.toString().equals(name) || mname.toString().endsWith(name))
+            if (mname.toString().equals(name) || name.length() > 0 && mname.toString().endsWith(name))
                 return module;
         }
         return null;
@@ -102,19 +111,29 @@ public class GradleProject implements Project {
             connector.useGradleVersion(gradleVersion);
         }
 
-        if (properties.containsKey(GRADLE_INSTALLATION)) {
+        else if (properties.containsKey(GRADLE_INSTALLATION)) {
             File gradleHome = PropertiesUtils.getFile(properties, GRADLE_INSTALLATION);
             connector.useInstallation(gradleHome);
         }
 
-        // if (properties.containsKey(GRADLE_URI)) {
+        // else if (properties.containsKey(GRADLE_URI)) {
         //     URI gradleDistribution = PropertiesUtils.getURI(properties, GRADLE_URI);
         //     connector.useDistribution(gradleDistribution);
         // }
 
-        if (properties.containsKey(GRADLE_HOMEDIR)) {
+        else if (properties.containsKey(GRADLE_HOMEDIR)) {
             File gradleUserHomeDir = PropertiesUtils.getFile(properties, GRADLE_HOMEDIR);
             connector.useGradleUserHomeDir(gradleUserHomeDir);
+        }
+
+        else if (properties.containsKey(GRADLE_BUILD)) {
+            boolean gradleBluild = PropertiesUtils.getBoolean(properties, GRADLE_BUILD, false);
+            if (gradleBluild)
+                connector.useBuildDistribution();
+        }
+
+        else if (hasGradleWrapper()) {
+
         }
 
         // connection = connector.connect();
@@ -128,6 +147,10 @@ public class GradleProject implements Project {
     ProjectConnection getConnection() {
         return connector.connect();
         // return uncloseable;
+    }
+
+    private boolean hasGradleWrapper() {
+        return new File(projectDir, "gradle/wrapper").exists();
     }
 
     // public void dump() {

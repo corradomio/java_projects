@@ -1,21 +1,29 @@
 package jext.buildtools;
 
-import java.io.File;
+
 import java.util.List;
+import java.util.Properties;
 
 public interface Project {
 
-    String getName();
+    /** Project properties */
+    Properties getProperties();
 
-    File getProjectDir();
+    /** Path of the project on the filesystem, if it exists */
+    String getPath();
 
-    List<? extends Module> getModules();
+    /** List of the top level project's modules */
+    List<Module> getModules();
 
-    Module getModule(String name);
+    Module getModule(String moduleName);
 
-    default Module getModule(Name name) {
-        return getModule(name.toString());
-    }
+    // ----------------------------------------------------------------------
+    // Library resolver
+    // ----------------------------------------------------------------------
 
-    Project initialize();
+    // /** Set the library resolver */
+    // Project setLibraryFinder(LibraryFinder lfinder);
+    //
+    // /** Retrieve the library resolver */
+    // LibraryFinder getLibraryFinder();
 }

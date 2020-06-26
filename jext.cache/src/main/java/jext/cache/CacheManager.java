@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class CacheConfiguration {
+public class CacheManager {
 
-    private static CacheConfiguration instance = new CacheConfiguration();
+    private static CacheManager instance = new CacheManager();
 
     public static void configure() {
         instance.defaultConfiguration();
@@ -46,13 +46,13 @@ public class CacheConfiguration {
         }
     }
 
-    private static Logger logger = Logger.getLogger(CacheConfiguration.class);
+    private static Logger logger = Logger.getLogger(CacheManager.class);
     private final CacheConfig defaultConfig = new CacheConfig();
     private final List<CacheConfig> configurations = new ArrayList<>();
     private final Map<String, Cache> caches = new HashMap<>();
     private CacheProvider cacheProvider;
 
-    public CacheConfiguration() {
+    public CacheManager() {
 
     }
 

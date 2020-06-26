@@ -16,6 +16,7 @@ public class IsModule {
 
     public void configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
+        if (selected == null) return;
         XPathUtils.selectNodes(selected, "filename")
                 .forEach(incl -> {
                     String pattern = XPathUtils.getValue(incl, "@name");

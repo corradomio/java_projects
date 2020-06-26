@@ -1,8 +1,8 @@
 package jext.buildtools.gradle.collectors;
 
 import jext.io.LineOutputStream;
-import jext.buildtools.util.LogDigester;
 import jext.logging.Logger;
+import jext.util.LogDigester;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -61,8 +61,9 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         // <projectName> - <description>
         digester.addRule(STATE_CONFIGURATIONS, "[A-Za-z0-9_$:-]+\\s-\\s.*", STATE_DEPENDENCIES);
 
+        //
         // +--- org.jboss.logging:jboss-logging-processor:2.1.0.Final
-        digester.addRule(STATE_DEPENDENCIES, "[\\s\\|\\\\+-]+project :([A-Za-z0-9_$:-]+).*", this::addProject);
+        digester.addRule(STATE_DEPENDENCIES, "[\\s\\|\\\\+-]+project\\s*:\\s*([A-Za-z0-9_$:-]+).*", this::addProject);
         digester.addRule(STATE_DEPENDENCIES, "[\\s\\|\\\\+-]+([A-Za-z0-9_$:.-]+).*", this::addLibrary);
 
         digester.addRule(STATE_DEPENDENCIES, "", STATE_CONFIGURATIONS);
@@ -77,6 +78,7 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
 
     private static final String FAILED = "FAILED";
     private static final String NOT_RESOLVED = "(n)";
+    private static final String PROJECT = "project";
 
     private int addProject(int state, Matcher matcher, String line) {
         // (n): not resolved
@@ -93,6 +95,8 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         if (line.contains(NOT_RESOLVED))
             return state;
         if (line.contains(FAILED))
+            return state;
+        if (line.contains(PROJECT))
             return state;
 
         String coords = matcher.group(1);

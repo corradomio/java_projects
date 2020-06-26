@@ -1,8 +1,8 @@
 package org.hls.check;
 
 
+import jext.buildtools.SourceProject;
 import jext.buildtools.gradle.GradleProject;
-import jext.buildtools.util.Dump;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -18,6 +18,6 @@ public class MainGradle {
             put(GradleProject.GRADLE_VERSION, "6.4");
         }});
 
-        Dump.project(p);
+        SourceProject.dump(p);
     }
 }

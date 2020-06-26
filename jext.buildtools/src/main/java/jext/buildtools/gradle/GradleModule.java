@@ -1,35 +1,34 @@
 package jext.buildtools.gradle;
 
-import jext.buildtools.Dependency;
-import jext.buildtools.Module;
+import jext.buildtools.ModuleAnalyzer;
+import jext.buildtools.Name;
 import jext.buildtools.gradle.collectors.DependenciesCollector;
 import jext.buildtools.gradle.collectors.ErrorsCollector;
 import jext.buildtools.gradle.collectors.LoggerCollector;
 import jext.buildtools.gradle.collectors.ProjectsCollector;
 import jext.buildtools.gradle.util.GradleUtils;
-import jext.buildtools.Name;
-import jext.buildtools.util.MavenDependency;
-import jext.buildtools.util.PathName;
-import jext.logging.Logger;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.maven.MavenModule;
+import jext.buildtools.util.PathName;
+import jext.logging.Logger;
 import jext.util.FileUtils;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class GradleModule implements Module {
+public class GradleModule implements ModuleAnalyzer {
 
     private Logger logger;
 
     private GradleProject project;
     private List<GradleModule> modules;
-    private List<GradleModule> dmodules;
-    private List<Dependency> dependencies;
+    private List<Name> dmodules;
+    private List<MavenCoords> dcoords;
     private File moduleDir;
     private Name name;
 
@@ -49,18 +48,22 @@ public class GradleModule implements Module {
         this.logger = Logger.getLogger(MavenModule.class, this.name.toString());
     }
 
+    @Override
     public Name getName() {
         return name;
     }
 
+    @Override
     public File getModuleDir() {
         return moduleDir;
     }
 
+    @Override
     public boolean isValid() {
         return moduleDir.exists() && moduleDir.isDirectory();
     }
 
+    @Override
     public GradleProject getProject() {
         return project;
     }
@@ -73,16 +76,23 @@ public class GradleModule implements Module {
         return modules;
     }
 
-    public List<GradleModule> getModuleDependencies() {
+    @Override
+    public List<Name> getModuleDependencies() {
         if (dmodules == null)
             retrieveDependencies();
         return dmodules;
     }
 
-    public List<Dependency> getDependencies() {
-        if (dependencies == null)
+    @Override
+    public List<MavenCoords> getMavenLibraries() {
+        if (dcoords == null)
             retrieveDependencies();
-        return dependencies;
+        return dcoords;
+    }
+
+    @Override
+    public List<File> getLocalLibraries() {
+        return Collections.emptyList();
     }
 
     private void retrieveModules() {
@@ -95,10 +105,10 @@ public class GradleModule implements Module {
         ProjectsCollector projects = new ProjectsCollector();
         try(ProjectConnection connection = project.getConnection()) {
             connection
-                    .newBuild().forTasks(projectsTask)
-                    .setStandardOutput(projects)
-                    .setStandardError(err)
-                    .run();
+                .newBuild().forTasks(projectsTask)
+                .setStandardOutput(projects)
+                .setStandardError(err)
+                .run();
         }
         catch (Throwable t) {
             logger.error(t, t);
@@ -116,17 +126,18 @@ public class GradleModule implements Module {
     private void retrieveDependencies() {
         logger.debugf("retrieveDependencies");
 
+        String moduleName = getName().toString();
         String dependenciesTask = GradleUtils.toTask(name, "dependencies");
         ErrorsCollector err = new ErrorsCollector(logger);
         DependenciesCollector collector = new DependenciesCollector();
         LoggerCollector logcoll = new LoggerCollector(logger, collector);
         try(ProjectConnection connection = project.getConnection()) {
             connection
-                    .newBuild().forTasks(dependenciesTask)
-                    .setStandardOutput(collector)
-                    // .setStandardOutput(logcoll)
-                    .setStandardError(err)
-                    .run();
+                .newBuild().forTasks(dependenciesTask)
+                .setStandardOutput(collector)
+                // .setStandardOutput(logcoll)
+                .setStandardError(err)
+                .run();
         }
         catch (Throwable t) {
             logger.error(t, t);
@@ -138,16 +149,24 @@ public class GradleModule implements Module {
         }
 
         dmodules = collector.getProjects()
-                .stream()
-                .map(name -> project.getModule(name))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            .stream()
+            .map(name -> project.getModule(name))
+            .filter(Objects::nonNull)
+            .map(GradleModule::getName)
+            .collect(Collectors.toList());
 
-        dependencies = collector.getLibraries()
-                .stream()
-                .map(MavenCoords::new)
-                .map(MavenDependency::new)
-                .collect(Collectors.toList());
+        dcoords = collector.getLibraries()
+            .stream()
+            .map(MavenCoords::new)
+            .collect(Collectors.toList());
+    }
+
+    public List<File> getSources() {
+        return Collections.emptyList();
+    }
+
+    public List<File> getResources() {
+        return FileUtils.listFiles(moduleDir, ".gradle");
     }
 
     // ----------------------------------------------------------------------
@@ -161,7 +180,7 @@ public class GradleModule implements Module {
 
     @Override
     public boolean equals(Object obj) {
-        GradleModule that = (GradleModule) obj;
+        ModuleAnalyzer that = (ModuleAnalyzer) obj;
         return getName().equals(that.getName());
     }
 

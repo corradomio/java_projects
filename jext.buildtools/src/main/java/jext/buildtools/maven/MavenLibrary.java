@@ -1,4 +1,6 @@
 package jext.buildtools.maven;
 
-public class MavenLibrary {
+import jext.buildtools.Library;
+
+public class MavenLibrary implements Library {
 }

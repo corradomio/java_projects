@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -63,6 +62,29 @@ public class FileUtils {
     //
     // ----------------------------------------------------------------------
 
+    /**
+     * Check if the path is absolute:
+     *
+     *      /...
+     *      c:/...
+     *
+     */
+    public static boolean isAbsolute(String path) {
+        path = normalize(path);
+        return path.startsWith("/") || path.indexOf(":/") == 1;
+    }
+
+    public static File toFile(String baseDir, String path) {
+        return toFile(new File(baseDir), path);
+    }
+
+    public static File toFile(File baseDir, String path) {
+        if (isAbsolute(path))
+            return new File(path);
+        else
+            return new File(baseDir, path);
+    }
+
     public static String relativePath(File parentDir, File file) {
         String parentPath = normalize(parentDir.getAbsolutePath());
         String currentPath = normalize(file.getAbsolutePath());
@@ -73,14 +95,6 @@ public class FileUtils {
             relativePath = relativePath.substring(1);
         return relativePath;
     }
-
-    // public static File toCanonicalFile(File parentDir, String path) {
-    //     try {
-    //         return new File(parentDir, path).getCanonicalFile();
-    //     } catch (IOException e) {
-    //         return new File(parentDir, path).getAbsoluteFile();
-    //     }
-    // }
 
     public static String getAbsolutePath(File file) {
         return normalize(file.getAbsolutePath());
@@ -94,32 +108,9 @@ public class FileUtils {
         }
     }
 
-    public static File toAbsoluteFile(String home, String path) {
-        if (isAbsolute(path))
-            return new File(path);
-        else
-            return new File(home, path);
-    }
-
-    /**
-     * Check if the path is absolute:
-     *
-     *      /...
-     *      c:/...
-     *
-     */
-    public static boolean isAbsolute(String path) {
-        path = normalize(path);
-        return path.startsWith("/") || path.indexOf(":/") == 1;
-    }
-
     // ----------------------------------------------------------------------
     // addAll/deleteAll
     // ----------------------------------------------------------------------
-
-    private static void addAll(List<File> list, File[] array) {
-        list.addAll(asList(array));
-    }
 
     /**
      * Delete recursively the directory specified
@@ -152,59 +143,26 @@ public class FileUtils {
             return Arrays.asList(files);
     }
 
-
-    public static List<File> listFiles1(File directory, String ext) {
-        return asList(directory.listFiles(pathname -> pathname.getName().endsWith(ext)));
-    }
-
-    /** List files with extension */
+    // NOT recursive
     public static List<File> listFiles(File directory, String ext) {
-        return listFiles(directory, pathname -> pathname.getName().endsWith(ext));
+        if (directory == null) return Collections.emptyList();
+        return asList(directory.listFiles((dir, name) -> name.endsWith(ext)));
     }
 
-    public static List<File> listFiles(File directory, FileFilter fileFilter) {
+    // Recursive!
+    public static List<File> listFiles(File directory, FileFilter filter) {
+        if (directory == null) return Collections.emptyList();
         List<File> collectedFiles = new ArrayList<>();
-        listFiles(collectedFiles, directory, fileFilter);
+        listFiles(collectedFiles, directory, filter);
         return collectedFiles;
     }
 
-    public static List<File> listFiles(List<File> dirs, FileFilter fileFilter) {
-        List<File> collectedFiles = new ArrayList<>();
-        dirs.forEach(dir -> listFiles(collectedFiles, dir, fileFilter));
-        return collectedFiles;
-    }
-
-    /**
-     * Collect the files in 'files'
-     */
-    public static void listFiles(List<File> collectedFiles, File directory, FileFilter fileFilter)
-    {
-        File[] selected = directory.listFiles(file -> file.isFile() && fileFilter.accept(file));
-        addAll(collectedFiles, selected);
-
+    // Recursive!
+    public static void listFiles(List<File> collectedFiles, File directory, FileFilter filter) {
+        if (directory == null) return;
+        collectedFiles.addAll(asList(directory.listFiles(file -> file.isFile() && filter.accept(file))));
         asList(directory.listFiles(File::isDirectory))
-            .forEach(dir -> {
-                listFiles(collectedFiles, dir, fileFilter);
-            });
-    }
-
-    /** List directories selected by filter */
-    public static List<File> listDirectories(File directory, FileFilter dirFilter) {
-        Stack<File> toScan = new Stack<>();
-        toScan.push(directory);
-        List<File> selected = new ArrayList<>();
-
-        while(!toScan.isEmpty()) {
-            File dir = toScan.pop();
-
-            if (!dirFilter.accept(dir))
-                continue;
-
-            selected.add(dir);
-            toScan.addAll(asList(dir.listFiles(File::isDirectory)));
-        }
-
-        return selected;
+                .forEach(sundir -> listFiles(collectedFiles, sundir, filter));
     }
 
     // ----------------------------------------------------------------------
@@ -217,6 +175,14 @@ public class FileUtils {
         if (pos != -1)
             name = name.substring(0, pos);
         return name;
+    }
+
+    public static String getExtension(File file) {
+        String name = file.getName();
+        int pos = name.lastIndexOf(".");
+        if (pos != -1)
+            return name.substring(pos);
+        return "";
     }
 
     // ----------------------------------------------------------------------

@@ -19,11 +19,11 @@ public class Cache2kCacheProvider implements CacheProvider {
         Cache2kBuilder builder = Cache2kBuilder.forUnknownTypes();
 
         if (properties.containsKey(CAPACITY)) {
-            long capacity = PropertiesUtils.getValue(properties, CAPACITY, 128);
+            long capacity = PropertiesUtils.getInt(properties, CAPACITY, 128);
             builder.entryCapacity(capacity);
         }
         if (properties.contains(EXPIRE_AFTER_WRITE)) {
-            long duration = TimeUtils.toMillis(PropertiesUtils.getValue(properties, EXPIRE_AFTER_WRITE));
+            long duration = TimeUtils.toMillis(PropertiesUtils.getString(properties, EXPIRE_AFTER_WRITE));
             builder.expireAfterWrite(duration, TimeUnit.MILLISECONDS);
         }
 
