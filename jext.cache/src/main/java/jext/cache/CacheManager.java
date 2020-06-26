@@ -30,7 +30,7 @@ public class CacheManager {
         return instance.retrieveCache(name);
     }
 
-    static class CacheConfig {
+    private static class CacheConfig {
         String name;
         Properties properties;
 

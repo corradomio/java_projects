@@ -66,11 +66,11 @@
 <!--            <version>0.3.0</version>-->
 <!--        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-jcs-core -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.commons</groupId>-->
-<!--            <artifactId>commons-jcs-core</artifactId>-->
-<!--            <version>2.2.1</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jcs-core</artifactId>
+            <version>2.2.1</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
