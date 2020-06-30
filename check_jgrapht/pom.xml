@@ -28,19 +28,12 @@
 
     <modules>
         <module>../jext.commons</module>
-<!--        <module>../jext.collections</module>-->
+        <module>../jext.collections</module>
         <module>../jext.jgrapht</module>
         <module>../jext.embedding</module>
     </modules>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.commons</artifactId>
@@ -61,6 +54,14 @@
             <artifactId>jext.embedding</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>

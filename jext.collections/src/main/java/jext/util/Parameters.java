@@ -1,7 +1,5 @@
 package jext.util;
 
-import jext.logging.Logger;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -153,7 +151,7 @@ public class Parameters extends HashMap<String, Object> {
     // ?p1=v1,...
 
     public Parameters parse(String query) {
-        if (StringUtils.isEmpty(query))
+        if (isEmpty(query))
             return this;
 
         String name, value;
@@ -176,11 +174,15 @@ public class Parameters extends HashMap<String, Object> {
         return this;
     }
 
+    private static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+
     // ----------------------------------------------------------------------
     // IO
     // ----------------------------------------------------------------------
 
-    public static Parameters load(String paramsPath) {
+    public static Parameters load(String paramsPath) throws IOException {
         return load(new File(paramsPath));
     }
 
@@ -190,13 +192,11 @@ public class Parameters extends HashMap<String, Object> {
      * @param propsFile file to read
      * @return Properties object
      */
-    public static Parameters load(File propsFile) {
+    public static Parameters load(File propsFile) throws IOException {
         Parameters params = new Parameters();
         Properties props = new Properties();
         try(InputStream in = new FileInputStream(propsFile)) {
             props.load(in);
-        } catch (IOException e) {
-            Logger.getLogger(Parameters.class).error("Unable to read properties file " + propsFile, e);
         }
 
         props.forEach((k, v) -> {

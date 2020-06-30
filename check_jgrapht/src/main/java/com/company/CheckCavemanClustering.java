@@ -160,7 +160,6 @@ public class CheckCavemanClustering extends JFrame {
     }
 
     public static void main(String[] args) {
-
         Logger.configure();
 
         // Clustering statistics

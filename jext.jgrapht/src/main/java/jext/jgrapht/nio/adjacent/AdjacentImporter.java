@@ -3,20 +3,12 @@ package jext.jgrapht.nio.adjacent;
 import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphImporter;
-import org.jgrapht.nio.ImportException;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * Import a graph defined by a list of adjacent nodes:
