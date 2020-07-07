@@ -22,19 +22,18 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * Create a new grah based on properties
      *
      * @param directed if directed
-     * @param loop if can have loops
+     * @param loop     if can have loops
      * @param multiple if canhave multiple edges
      * @param weighted if is weighted
-     * @param <V> the graph vertex type
-     * @param <E> the graph edge type
+     * @param <V>      the graph vertex type
+     * @param <E>      the graph edge type
      * @return
      */
-    public static <V,E> Graph<V, E> newGraph(
+    public static <V, E> Graph<V, E> newGraph(
             boolean directed,
             boolean loop,
             boolean multiple,
-            boolean weighted)
-    {
+            boolean weighted) {
         GraphTypeBuilder<V, E> gtb = directed
                 ? GraphTypeBuilder.directed()
                 : GraphTypeBuilder.undirected();
@@ -45,8 +44,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 .buildGraph();
     }
 
-    public static <V, E> Set<V> predecessorSetOf(Graph<V, E> g, V vertex)
-    {
+    public static <V, E> Set<V> predecessorSetOf(Graph<V, E> g, V vertex) {
         // Set<V> predecessors = new HashSet<>();
         // Set<? extends E> edges = g.incomingEdgesOf(vertex);
         //
@@ -77,7 +75,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     }
 
     public static <V, E> Set<V> neighborSetOf(Graph<V, E> g, V v, EdgeType edgeType) {
-        switch(edgeType) {
+        switch (edgeType) {
             case IN_EDGE:
                 return predecessorSetOf(g, v);
             case OUT_EDGE:
@@ -105,11 +103,11 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     /**
      * Add an edge and the vertices
      *
-     * @param g the graph
+     * @param g            the graph
      * @param sourceVertex source vertex of the edge
      * @param targetVertex target vertex of the edge
-     * @param <V> the graph vertex type
-     * @param <E> the graph edge type
+     * @param <V>          the graph vertex type
+     * @param <E>          the graph edge type
      * @return the created edge
      */
     public static <V, E> E addEdge(Graph<V, E> g, V sourceVertex, V targetVertex) {
@@ -126,10 +124,10 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     /**
      * Compute the closure of the vertex
      *
-     * @param g the graph
+     * @param g           the graph
      * @param startVertex start vertex used to compute the closure
-     * @param <V> the graph vertex type
-     * @param <E> the graph edge type
+     * @param <V>         the graph vertex type
+     * @param <E>         the graph edge type
      * @return the 'closed' closure (it contains startVertex)
      */
     public static <V, E> Set<V> closureOf(Graph<V, E> g, V startVertex) {
@@ -138,7 +136,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
 
         toVisit.add(startVertex);
 
-        while(!toVisit.isEmpty()) {
+        while (!toVisit.isEmpty()) {
             V v = toVisit.remove();
             visited.add(v);
 
@@ -157,7 +155,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
 
         toVisit.add(startVertex);
 
-        while(!toVisit.isEmpty()) {
+        while (!toVisit.isEmpty()) {
             V v = toVisit.remove();
             if (visited.contains(v))
                 continue;
@@ -169,7 +167,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
 
     /**
      * Check if the graph is connected
-     * @param g the graph
+     *
+     * @param g   the graph
      * @param <V> the graph vertex type
      * @param <E> the graph edge type
      * @return if the graph is connected
@@ -186,7 +185,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     /**
      * Find the vertices of the graph components
      *
-     * @param g the graph
+     * @param g   the graph
      * @param <V> the graph vertex type
      * @param <E> the graph edge type
      * @return the list of components
@@ -195,7 +194,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         Set<V> vset = new HashSet<>(g.vertexSet());
         List<Set<V>> components = new ArrayList<>();
 
-        while(!vset.isEmpty()) {
+        while (!vset.isEmpty()) {
             V startVertex = vset.iterator().next();
             Set<V> component = closureOf(g, startVertex);
             components.add(component);

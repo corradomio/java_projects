@@ -9,9 +9,21 @@ import java.util.regex.Pattern;
 
 public class JavaUtils {
 
+    public static final String ROOT = "";
     public static final String JAVA_LANG = "java.lang";
+    public static final String JAVA_LANG_VOID = "java.lang.Void";
+    public static final String JAVA_LANG_CLASS = "java.lang.Class";
     public static final String JAVA_LANG_OBJECT = "java.lang.Object";
-    public static final String ROOT_PACKAGE = "";
+    public static final String ARRAY = "array";
+
+    public static final String PACKAGE = "package ";
+    public static final String IMPORT_STATIC = "import static ";
+    public static final String IMPORT = "import ";
+    public static final String PUBLIC = "public ";
+    public static final String CLASS = " class ";
+    public static final String INTERFACE = " interface ";
+    public static final String ENUM = " enum ";
+    public static final String ANNOTATION = " @interface ";
 
     /*
         B       byte

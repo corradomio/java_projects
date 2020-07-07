@@ -203,11 +203,15 @@ public class FileUtils {
 
     /** Read the content of a file as a list of lines */
     public static List<String> toStrings(File file) {
+        return toStrings(file, null);
+    }
+
+    public static List<String> toStrings(File file, String terminator) {
         if (file == null || !file.exists())
             return Collections.emptyList();
         List<String> lines = new ArrayList<>();
-        try {
-            InputStream stream = new FileInputStream(file);
+        try(InputStream is = new FileInputStream(file)) {
+            InputStream stream = is;
             if (file.getName().endsWith(".gz"))
                 stream = new GZIPInputStream(stream);
 
@@ -220,10 +224,10 @@ public class FileUtils {
             try(BufferedReader r = new BufferedReader(new InputStreamReader(stream))) {
                 for(String line = r.readLine(); line != null; line = r.readLine()) {
                     lines.add(line);
+                    if (terminator != null && line.startsWith(terminator))
+                        break;
                 }
             }
-
-            stream.close();
         }
         catch (IOException e) {
             logger.errorf("Unable to read %s: %s", file, e);

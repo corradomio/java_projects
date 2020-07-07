@@ -1,19 +1,19 @@
 package jext.name;
 
-public class NamespaceName implements Name {
+public class ObjectName implements Name {
     private String namespace;
 
-    public NamespaceName(String namespace) {
+    public ObjectName(String namespace) {
         this.namespace = namespace;
         this.normalize();
     }
 
-    public NamespaceName(String parent, String name) {
+    public ObjectName(String parent, String name) {
         this.namespace = String.format("%s.%s", parent, name);
         this.normalize();
     }
 
-    public NamespaceName(Name parent, String name) {
+    public ObjectName(Name parent, String name) {
         this.namespace = String.format("%s.%s", parent, name);
         this.normalize();
     }
@@ -39,9 +39,15 @@ public class NamespaceName implements Name {
     }
 
     @Override
-    public Name getParentName() {
+    public Name getParent() {
         int sep = namespace.lastIndexOf('.');
         return sep > 0 ? new PathName(namespace.substring(0, sep)) : null;
+    }
+
+    @Override
+    public String getParentName() {
+        int sep = namespace.lastIndexOf('.');
+        return sep > 0 ? namespace.substring(0, sep) : null;
     }
 
     @Override

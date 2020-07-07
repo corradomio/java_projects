@@ -6,7 +6,7 @@
 
     <groupId>org.hls.test</groupId>
     <artifactId>check_jgrapht</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
 
     <!--modules>
@@ -37,22 +37,22 @@
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.collections</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.jgrapht</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.embedding</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->

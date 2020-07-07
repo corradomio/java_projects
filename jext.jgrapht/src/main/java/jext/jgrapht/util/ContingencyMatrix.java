@@ -6,6 +6,11 @@ import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import java.util.HashSet;
 import java.util.Set;
 
+import static jext.math.Mathx.div;
+import static jext.math.Mathx.log2;
+import static jext.math.Mathx.sq;
+import static jext.math.Mathx.sqrt;
+
 public class ContingencyMatrix {
 
     private int kd;
@@ -318,11 +323,4 @@ public class ContingencyMatrix {
 
         return;
     }
-
-
-    private static double div(double x, double y) { return y != 0 ? x/y : 0; }
-    private static double sq(double x) { return x*x;}
-    private static double sqrt(double x) { return Math.sqrt(x); }
-    private static double log2(double x) { return x == 0? 0. : Math.log(x)/Math.log(2); }
-    private static double chop(double x) { return x < 0 ? 0. : x; }
 }

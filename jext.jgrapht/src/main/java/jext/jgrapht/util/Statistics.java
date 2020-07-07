@@ -1,8 +1,10 @@
 package jext.jgrapht.util;
 
-public class Statistics {
+import jext.math.Mathx;
 
-    private static double sq(double x) { return x*x; }
+import static jext.math.Mathx.sq;
+
+public class Statistics {
 
     public int count;
     public double min = +Double.MAX_VALUE;

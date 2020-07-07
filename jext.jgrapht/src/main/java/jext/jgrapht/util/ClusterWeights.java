@@ -1,78 +1,153 @@
 package jext.jgrapht.util;
 
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static java.lang.Math.max;
+import static jext.math.Mathx.div;
+import static jext.math.Mathx.sq;
 
 public class ClusterWeights<V, E> {
 
-    private double maxWeight;
-    private Graph<V, E> graph;
-    private ClusteringAlgorithm.Clustering<V> clustering;
+    // used to invert the edge weight
+    // private final double maxWeight;
 
+    // graph used for the clustering
+    private Graph<V, E> graph;
+    // graph clustering
+    private ClusteringAlgorithm.Clustering<V> clustering;
+    // direct graph
+    private boolean directed;
+
+    // n of clusters
     private int k;
-    private int[] clusterSizes;   // n of elements in each cluster
+    // n of elements in each cluster
+    private int[] clusterSizes;
+    // weights inter/intra clusters
     private double[][] weightClusters;
+    // vertex's weights (sum of incident edges' weights)
     private double[] weightVertices;
+    // graph weight (sum of all edges' weights)
     private double graphWeight;
+
+    // map vertex -> vertexIndex
     private Map<V, Integer> vidx = new HashMap<>();
 
-    public ClusterWeights(){
-        this(0.);
-    }
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
-    public ClusterWeights(double maxWeight) {
-        this.maxWeight = maxWeight;
-    }
-
-    public ClusterWeights<V, E> init(Graph<V, E> g, ClusteringAlgorithm.Clustering<V> clustering) {
+    public ClusterWeights(Graph<V, E> g, ClusteringAlgorithm.Clustering<V> clustering){
         this.graph = g;
         this.clustering = clustering;
+    }
+
+    // public ClusterWeights(Graph<V, E> g, ClusteringAlgorithm.Clustering<V> clustering, double maxWeight) {
+    //     this.maxWeight = maxWeight;
+    //     this.graph = g;
+    //     this.clustering = clustering;
+    // }
+
+    // ----------------------------------------------------------------------
+    // Initialize
+    // ----------------------------------------------------------------------
+
+    /**
+     * Initialize the data structure with the specified graph and clustering
+     */
+    private void init() {
+        if (k != 0) return;
+
+        // directed
+        this.directed = this.graph.getType().isDirected();
+
+        if (directed)
+            throw new IllegalArgumentException("Graph directed");
+
+        // n of clusters
         this.k = clustering.getNumberClusters();
 
-        int order = 0;
+        // n of elements in each cluster
         this.clusterSizes = new int[k];
         for (int ci=0; ci<k; ++ci) {
             int clusterSize = clustering.getClusters().get(ci).size();
             this.clusterSizes[ci] = clusterSize;
-            order += clusterSize;
         }
 
+        // weights inter/intra clusters
         this.weightClusters = LinAlg.newMatrix(k);
-        this.weightVertices = LinAlg.newVector(order);
+        // vertex's weights (sum of incident edges' weights)
+        this.weightVertices = LinAlg.newVector(this.graph.vertexSet().size());
 
+        // compute the weights
         graph.edgeSet().forEach(e -> {
             double weight = weightOf(e);
             V source = graph.getEdgeSource(e);
             V target = graph.getEdgeTarget(e);
             this.add(source, target, weight);
         });
-
-        return this;
     }
 
     private double weightOf(E e) {
         double weight = graph.getEdgeWeight(e);
-        if(maxWeight > 0)
-            weight = maxWeight - weight;
+        // if(maxWeight > 0)
+        //     weight = maxWeight - weight;
         return weight;
     }
 
+    public void add(V vi, V vj, double weight) {
+        graphWeight += weight;
+
+        int ci = clusterOf(vi);
+        int cj = clusterOf(vj);
+        if (ci < cj)
+            weightClusters[ci][cj] += weight;
+        else
+            weightClusters[cj][ci] += weight;
+
+        int i = indexOf(vi);
+        int j = indexOf(vj);
+        weightVertices[i] += weight;
+        weightVertices[j] += weight;
+    }
+
+    // vertex -> verexIndex
+    private int indexOf(V v) {
+        if (!vidx.containsKey(v))
+            vidx.put(v, vidx.size());
+        return vidx.get(v);
+    }
+
+    // vertex -> cluster
+    private int clusterOf(V v) {
+        List<Set<V>> clusters = clustering.getClusters();
+        for (int ci=0; ci<k; ++ci)
+            if (clusters.get(ci).contains(v))
+                return ci;
+        return -1;
+    }
+
     // ----------------------------------------------------------------------
-    //
+    // Internal/external cluster weights
     // ----------------------------------------------------------------------
 
-    public double getInternalDegree(int ci) {
+    public double getInternalWeight(int ci) {
+        init();
         return weightClusters[ci][ci];
     }
 
-    public double getExternalDegree(int ci) {
-        double extDeg = -weightClusters[ci][ci];
+    public double getExternalWeight(int ci) {
+        init();
+        double extWeight = -weightClusters[ci][ci];
         for (int cj=0; cj<k; ++cj)
-            extDeg += weightClusters[ci][cj];
-        return extDeg;
+            extWeight += weightClusters[ci][cj];
+        return extWeight;
     }
 
     // ----------------------------------------------------------------------
@@ -82,14 +157,21 @@ public class ClusterWeights<V, E> {
      * 2007 - Survey Graph Clustering, pag 44
      */
     public double getModularity() {
+        init();
         double modularity = 0.;
-        for (int c=0; c<k; ++c)
-            modularity += weightClusters[c][c];
+        // for (int c=0; c<k; ++c)
+        //     modularity += weightClusters[c][c];
+        //
+        // for (int ci=0; ci<k; ++ci)
+        //     for(int cj=0; cj<k; ++cj)
+        //         if (ci != cj)
+        //             modularity -= weightClusters[ci][cj];
 
-        for (int ci=0; ci<k; ++ci)
-            for(int cj=0; cj<k; ++cj)
-                if (ci != cj)
-                    modularity -= weightClusters[ci][cj];
+        for (int c=0; c<k; ++c)
+            modularity += getInternalWeight(c);
+
+        for (int c=0; c<k; ++c)
+            modularity -= getExternalWeight(c);
 
         return modularity;
     }
@@ -104,6 +186,7 @@ public class ClusterWeights<V, E> {
      * https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
      */
     public double getDaviesBouldinIndex() {
+        init();
         double[] sa = averageDistances();
         double[][]da = betweenSeparation();
 
@@ -149,6 +232,7 @@ public class ClusterWeights<V, E> {
      * https://en.wikipedia.org/wiki/Dunn_index
      */
     public double getDunnIndex() {
+        init();
         // int k = clustering.getNumberClusters();
         double[] sa = averageDistances();
         double[][]da = betweenSeparation();
@@ -184,10 +268,14 @@ public class ClusterWeights<V, E> {
      *
      * (https://en.wikipedia.org/wiki/Louvain_modularity)
      *
-     *
      *            1             [         k_i*k_j  ]
      *      Q = ----- SUM_{i,j} [ w_ij - --------- ] delta(c_i,c_j)
      *           2m             [           2m     ]
+     *
+     *
+     *            1             [                   ]
+     *      Q = ----- SUM_{i,j} [ 2m*w_ij - k_i*k_j ] delta(c_i,c_j)
+     *          2m^2            [                   ]
      *
      *  w_ij : edge weight
      *  k_i, k_j: sum edge weights attached to the vertices i & j
@@ -196,6 +284,8 @@ public class ClusterWeights<V, E> {
      *  delta: 1 if c_i == c_j else 0
      */
     public double getLouvainModularity() {
+        init();
+
         double lmod = 0.;
         double[] vprod = vprod();
         double m2 = 2*graphWeight;
@@ -207,19 +297,21 @@ public class ClusterWeights<V, E> {
     }
 
     /**
-     * Product of
-     * @return
+     * Product of vertices weights when the vertices are in th same cluster
+     * @return vector of products for each cluster
      */
     private double[] vprod() {
-        double vprod[] = LinAlg.newVector(k);
+        double[] vprod = LinAlg.newVector(k);
 
         graph.edgeSet().forEach(e -> {
             V source = graph.getEdgeSource(e);
             V target = graph.getEdgeTarget(e);
 
+            // vertex -> vertexIndex
             int vi = indexOf(source);
             int vj = indexOf(target);
 
+            // vertex -> cluster
             int ci = clusterOf(source);
             int cj = clusterOf(target);
 
@@ -232,36 +324,52 @@ public class ClusterWeights<V, E> {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Silhouette
     // ----------------------------------------------------------------------
 
-    public void add(V vi, V vj, double weight) {
-        graphWeight += weight;
+    private double getMeanWeight(V source) {
+        int c = clusterOf(source);
+        Set<V> cluster = clustering.getClusters().get(c);
 
-        int ci = clusterOf(vi);
-        int cj = clusterOf(vj);
-        weightClusters[ci][cj] += weight;
-        weightClusters[cj][ci] += weight;
-
-        int i = indexOf(vi);
-        int j = indexOf(vj);
-        weightVertices[i] += weight;
-        weightVertices[j] += weight;
+        double weight = 0.;
+        for (V target : cluster) {
+            E e = graph.getEdge(source, target);
+            if (e == null) continue;
+            weight += weightOf(e);
+        }
+        return div(weight, cluster.size()-1);
     }
 
-    private int indexOf(V v) {
-        if (!vidx.containsKey(v))
-            vidx.put(v, vidx.size());
-        return vidx.get(v);
+    private double getSmallestWeight(V source) {
+        int ci = clusterOf(source);
+        double minWeight = Double.MAX_VALUE;
+        Set<V> neighbors = Graphs.neighborSetOf(graph, source);
+        for (V target : neighbors) {
+            int cj = clusterOf(target);
+            if (ci == cj) continue;
+            E e = graph.getEdge(source, target);
+            double weight = weightOf(e);
+            minWeight = Math.min(weight, minWeight);
+        }
+        return minWeight;
     }
 
-    private int clusterOf(V v) {
-        for (int ci=0; ci<k; ++ci)
-            if (clustering.getClusters().get(ci).contains(v))
-                return ci;
-        return -1;
+    /**
+     *
+     * https://en.wikipedia.org/wiki/Silhouette_(clustering)
+     */
+    public double getSilhouette(V v) {
+        int c = clusterOf(v);
+        if (clustering.getClusters().get(c).size() == 1)
+            return 0;
+
+        double ai = getMeanWeight(v);
+        double bi = getSmallestWeight(v);
+
+        return div(bi - ai, max(bi, ai));
     }
 
-    private static double div(double x, double y) { return y != 0. ? x/y : 0.; }
-    private static double sq(double x) { return x*x; }
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 }

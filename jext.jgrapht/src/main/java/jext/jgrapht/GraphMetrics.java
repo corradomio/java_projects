@@ -2,12 +2,15 @@ package jext.jgrapht;
 
 import jext.jgrapht.alg.closure.GraphComponents;
 import jext.jgrapht.util.Statistics;
+import jext.math.Mathx;
 import org.jgrapht.Graph;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static jext.math.Mathx.sq;
 
 /**
  * Reference: Machine Learning in Complex Network
@@ -20,7 +23,7 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     private final EdgeType edgeType;
 
     // ----------------------------------------------------------------------
-    //
+    // Constructor
     // ----------------------------------------------------------------------
 
     public GraphMetrics(Graph<V, E> g) {
@@ -33,35 +36,8 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // From org.jgrapht.GraphMetrics
     // ----------------------------------------------------------------------
-
-    public int getOrder() {
-        return graph.vertexSet().size();
-    }
-
-    public int getSize() {
-        return graph.edgeSet().size();
-    }
-
-    public double getDensity() {
-        long nVertices = graph.vertexSet().size();
-        double nEdges = graph.edgeSet().size();
-        double tEdges = sq(nVertices);
-
-        // maximum number of edges:
-        // simple graph:  V(V-1)/2
-        // direct graph:  V*(V-1)
-        // simple graph + loop: V*V/2
-        // direct graph + loop: V*V
-
-        if (!graph.getType().isAllowingCycles())
-            tEdges -= nVertices;
-        if (!graph.getType().isDirected())
-            tEdges /= 2;
-
-        return nEdges / tEdges;
-    }
 
     public double getDiameter() {
         return org.jgrapht.GraphMetrics.getDiameter(graph);
@@ -83,103 +59,45 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     //
     // ----------------------------------------------------------------------
 
-    public int degreeOf(V vertex) {
-        switch(edgeType){
-            case UNDIRECTED:
-                return graph.degreeOf(vertex);
-            case IN_EDGE:
-                return graph.inDegreeOf(vertex);
-            case OUT_EDGE:
-            default:
-                return graph.outDegreeOf(vertex);
-        }
+    /**
+     * Number of vertices
+     */
+    public int getOrder() {
+        return graph.vertexSet().size();
     }
 
-    public int getMaxDegree() {
-        switch (edgeType) {
-            case IN_EDGE:
-                return graph.vertexSet()
-                        .parallelStream()
-                        .map(graph::inDegreeOf)
-                        .max(Comparator.comparingInt(i -> i)).orElse(0);
-            case OUT_EDGE:
-                return graph.vertexSet()
-                        .parallelStream()
-                        .map(graph::outDegreeOf)
-                        .max(Comparator.comparingInt(i -> i)).orElse(0);
-            default:
-                return graph.vertexSet()
-                        .parallelStream()
-                        .map(graph::degreeOf)
-                        .max(Comparator.comparingInt(i -> i)).orElse(0);
-        }
+    /**
+     * Number of edges
+     */
+    public int getSize() {
+        return graph.edgeSet().size();
     }
 
-    public Map<V, Integer> getDegrees() {
-        Map<V, Integer> degrees = new HashMap<>();
-        switch (edgeType) {
-            case IN_EDGE:
-                graph.vertexSet().forEach(v -> {
-                    degrees.put(v, graph.inDegreeOf(v));
-                });
-            case OUT_EDGE:
-                graph.vertexSet().forEach(v -> {
-                    degrees.put(v, graph.outDegreeOf(v));
-                });
-                break;
-            default:
-                graph.vertexSet().forEach(v -> {
-                    degrees.put(v, graph.degreeOf(v));
-                });
-                break;
-        }
+    /**
+     * Density: number of edges divided by the number of edges of a clique
+     */
+    public double getDensity() {
+        long nVertices = graph.vertexSet().size();
+        double nEdges = graph.edgeSet().size();
+        double tEdges = sq(nVertices);
 
-        return degrees;
-    }
+        // maximum number of edges:
+        // simple graph:  V(V-1)/2
+        // direct graph:  V*(V-1)
+        // simple graph + loop: V*V/2
+        // direct graph + loop: V*V
 
-    public long[] vertexDegrees(){
-        int n = graph.vertexSet().size();
-        long[] degrees = new long[n];
+        if (!graph.getType().isAllowingCycles())
+            tEdges -= nVertices;
+        if (!graph.getType().isDirected())
+            tEdges /= 2;
 
-        int[] i=new int[1];
-        graph.vertexSet()
-                .forEach(v -> {
-                    degrees[i[0]++] = degreeOf(v);
-                });
-        return degrees;
+        return nEdges / tEdges;
     }
 
     // ----------------------------------------------------------------------
-
-    private static long sq(long x) { return x*x; }
-    private static double sq(double x) { return x*x; }
-
-    public static class VertexStatistics extends Statistics {
-        public int order;
-
-        VertexStatistics() { }
-
-        public void print() {
-            System.out.printf("Vertices statistics\n");
-            System.out.printf("  Order (n vertices): %d\n", order);
-            System.out.printf("  Min degree: %.4f\n", min);
-            System.out.printf("  Max degree: %.4f\n", max);
-            System.out.printf("  Mean degree: %.4f, %.4f\n", mean, standardDeviation);
-            System.out.printf("End\n");
-        }
-    }
-
-    public VertexStatistics getVertexStatistics() {
-        VertexStatistics ds = new VertexStatistics();
-        ds.order = graph.vertexSet().size();
-
-        graph.vertexSet()
-                .stream()
-                .map(this::degreeOf)
-                .forEach(ds::add);
-
-        return (VertexStatistics) ds.finish();
-    }
+    // Assortativity
+    // ----------------------------------------------------------------------
 
     private static class Assortativity {
         final long degreeMultiply;
@@ -225,9 +143,162 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
         double iEdges = 1./nEdges;
         return (   iEdges*a.degreeMultiply) - sq(.5*iEdges*a.degreeSum) /
-               (.5*iEdges*a.degreeSquared)  - sq(.5*iEdges*a.degreeSum);
+                (.5*iEdges*a.degreeSquared) - sq(.5*iEdges*a.degreeSum);
     }
 
+    // ----------------------------------------------------------------------
+    // Vertex degree
+    // ----------------------------------------------------------------------
+
+    public int degreeOf(V vertex) {
+        return degreeOf(vertex, edgeType);
+    }
+
+    public int getMaxDegree() {
+        return getMaxDegree(edgeType);
+    }
+
+    public Map<V, Integer> getDegrees() {
+        return getDegrees(edgeType);
+    }
+
+    public long[] getVerticesDegree(){
+        return getVerticesDegree(edgeType);
+    }
+
+    public int degreeOf(V vertex, EdgeType edgeType) {
+        switch(edgeType){
+            case UNDIRECTED:
+                return graph.degreeOf(vertex);
+            case IN_EDGE:
+                return graph.inDegreeOf(vertex);
+            case OUT_EDGE:
+            default:
+                return graph.outDegreeOf(vertex);
+        }
+    }
+
+    public int getMaxDegree(EdgeType edgeType) {
+        switch (edgeType) {
+            case IN_EDGE:
+                return graph.vertexSet()
+                        .parallelStream()
+                        .map(graph::inDegreeOf)
+                        .max(Comparator.comparingInt(i -> i)).orElse(0);
+            case OUT_EDGE:
+                return graph.vertexSet()
+                        .parallelStream()
+                        .map(graph::outDegreeOf)
+                        .max(Comparator.comparingInt(i -> i)).orElse(0);
+            default:
+                return graph.vertexSet()
+                        .parallelStream()
+                        .map(graph::degreeOf)
+                        .max(Comparator.comparingInt(i -> i)).orElse(0);
+        }
+    }
+
+    public  Map<V, Integer> getDegrees(EdgeType edgeType) {
+        Map<V, Integer> degrees = new HashMap<>();
+        switch (edgeType) {
+            case IN_EDGE:
+                graph.vertexSet().forEach(v -> {
+                    degrees.put(v, graph.inDegreeOf(v));
+                });
+            case OUT_EDGE:
+                graph.vertexSet().forEach(v -> {
+                    degrees.put(v, graph.outDegreeOf(v));
+                });
+                break;
+            default:
+                graph.vertexSet().forEach(v -> {
+                    degrees.put(v, graph.degreeOf(v));
+                });
+                break;
+        }
+        return degrees;
+    }
+
+    public long[] getVerticesDegree(EdgeType edgeType){
+        int n = graph.vertexSet().size();
+        long[] degrees = new long[n];
+
+        int[] i = new int[1];
+        graph.vertexSet()
+                .forEach(v -> {
+                    degrees[i[0]++] = degreeOf(v, edgeType);
+                });
+        return degrees;
+    }
+
+    // ----------------------------------------------------------------------
+    // VertexStatistics
+    // ----------------------------------------------------------------------
+
+    public static class VertexStatistics extends Statistics {
+        public int order;
+
+        VertexStatistics() { }
+
+        public void print() {
+            System.out.printf("Vertices statistics\n");
+            System.out.printf("  Order (n vertices): %d\n", order);
+            System.out.printf("  Min degree: %.4f\n", min);
+            System.out.printf("  Max degree: %.4f\n", max);
+            System.out.printf("  Mean degree: %.4f, %.4f\n", mean, standardDeviation);
+            System.out.printf("End\n");
+        }
+    }
+
+    public VertexStatistics getVertexStatistics() {
+        VertexStatistics ds = new VertexStatistics();
+        ds.order = graph.vertexSet().size();
+
+        graph.vertexSet()
+                .stream()
+                .map(this::degreeOf)
+                .forEach(ds::add);
+
+        return (VertexStatistics) ds.finish();
+    }
+
+    // ----------------------------------------------------------------------
+    // Edge weight
+    // ----------------------------------------------------------------------
+
+    // public double[] getEdgeWeights() {
+    //     int n = graph.edgeSet().size();
+    //     double[] weights = new double[n];
+    //     int[] i = new int[1];
+    //
+    //     graph.edgeSet()
+    //             .stream()
+    //             .map(graph::getEdgeWeight)
+    //             .collect(Collectors.toList())
+    //             .forEach(w -> {
+    //                 weights[i[0]++] = w;
+    //             });
+    //     return weights;
+    // }
+
+    public double weightOf(E e) {
+        return graph.getEdgeWeight(e);
+    }
+
+    public double[] getEdgesWeight(){
+        int n = graph.edgeSet().size();
+        double[] weights = new double[n];
+        int[] i=new int[1];
+
+        graph.edgeSet()
+                .forEach(e -> {
+                    weights[i[0]++] = weightOf(e);
+                });
+        return weights;
+    }
+
+    // ----------------------------------------------------------------------
+    // EdgeStatistics
     // ----------------------------------------------------------------------
 
     public static class EdgeStatistics extends Statistics {
@@ -263,35 +334,6 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
                 .forEach(es::add);
 
         return (EdgeStatistics) es.finish();
-    }
-
-    public double[] getEdgeWeights() {
-        double[] weights = new double[graph.edgeSet().size()];
-        int[] i = new int[1];
-        graph.edgeSet()
-                .stream()
-                .map(graph::getEdgeWeight)
-                .collect(Collectors.toList())
-                .forEach(w -> {
-                    weights[i[0]++] = w;
-                });
-        return weights;
-    }
-
-    public double weightOf(E e) {
-        return graph.getEdgeWeight(e);
-    }
-
-    public double[] edgeWeights(){
-        int n = graph.edgeSet().size();
-        double[] weights = new double[n];
-
-        int[] i=new int[1];
-        graph.edgeSet()
-                .forEach(e -> {
-                    weights[i[0]++] = weightOf(e);
-                });
-        return weights;
     }
 
 }
