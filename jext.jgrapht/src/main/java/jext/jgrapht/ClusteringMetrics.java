@@ -15,7 +15,6 @@ public class ClusteringMetrics<V, E> {
 
     private final Graph<V, E> graph;
     private final ClusteringAlgorithm.Clustering<V> clustering;
-    // private double maxWeight;
     private ClusterWeights<V, E> clusterWeight;
 
     // ----------------------------------------------------------------------
@@ -26,21 +25,6 @@ public class ClusteringMetrics<V, E> {
         this.graph = graph;
         this.clustering = clustering;
     }
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
-    // /**
-    //  * Used to convert a 'similarity' in a 'dissimilarity measure,or viceversa.
-    //  *
-    //  * @param maxWeight max weight used to invert the edge weight
-    //  */
-    // public ClusteringMetrics<V, E> invertWeights(double maxWeight) {
-    //     this.clusterWeight = null;
-    //     this.maxWeight = maxWeight;
-    //     return this;
-    // }
 
     // ----------------------------------------------------------------------
     //

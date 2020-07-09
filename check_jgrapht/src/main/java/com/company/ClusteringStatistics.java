@@ -34,7 +34,7 @@ public class ClusteringStatistics {
 
     }
 
-    public ClusteringStatistics set(Graph<Integer, DefaultWeightedEdge> g, ClusteringAlgorithm.Clustering<Integer> groundTrue) {
+    public ClusteringStatistics setGroundTrue(Graph<Integer, DefaultWeightedEdge> g, ClusteringAlgorithm.Clustering<Integer> groundTrue) {
         this.g = g;
         this.groundTrue = groundTrue;
         this.gMetrics = new GraphMetrics<>(g);
@@ -42,7 +42,7 @@ public class ClusteringStatistics {
         return this;
     }
 
-    public void set(
+    public void setParameters(
             int id,
             double betweenProb,
             double insideProb,

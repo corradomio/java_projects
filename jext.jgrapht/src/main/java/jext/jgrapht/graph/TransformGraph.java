@@ -4,8 +4,10 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.builder.GraphBuilder;
 
+import java.util.Comparator;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -70,4 +72,45 @@ public class TransformGraph<V, E> {
         }
         return complement;
     }
+
+
+    /**
+     * Create a new graph with same vertices and edges but with the
+     * edge weights computed as:
+     *
+     *      factor*maxWeight - edgeWeight
+     *
+     * Note: with factor=1, the edges with weight = maxWeight will be
+     * converted in an edge with weight = 0. It is better to use values
+     * as
+     *
+     *      1 + eps   with eps > 0
+     *
+     */
+    public Graph<V, E> flipEdgeWeights(float factor) {
+        // search the maximum edge weight
+        double maxWeight = graph.edgeSet()
+                .parallelStream()
+                .map(e -> graph.getEdgeWeight(e))
+                .max((o1, o2) -> {
+                    double v1 = o1;
+                    double v2 = o2;
+                    return Double.compare(v1, v2);
+                }).orElseGet(() -> (double) 0)*factor;
+
+        Graph<V, E> flipped = new GraphBuilder<>(graph).build();
+        graph.vertexSet().forEach(flipped::addVertex);
+
+        graph.edgeSet().forEach(e -> {
+            V source = graph.getEdgeSource(e);
+            V target = graph.getEdgeTarget(e);
+            double weight = graph.getEdgeWeight(e);
+
+            E f = flipped.addEdge(source, target);
+            flipped.setEdgeWeight(f, maxWeight - weight);
+        });
+
+        return flipped;
+    }
+
 }

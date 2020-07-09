@@ -132,10 +132,10 @@ public class CheckCavemanClustering extends JFrame {
 
         for(WeightType weighType : weighTypes) {
 
-            stats.set(id, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev, weighType);
-            stats.set(g, groundTrue);
+            stats.setParameters(id, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev, weighType);
+            stats.setGroundTrue(g, groundTrue);
 
-            System.out.printf("-- [groundTruth] --------------------\n" );
+            System.out.print("-- [groundTruth] --------------------\n");
 
             stats.addStats(0., g, groundTrue);
 
