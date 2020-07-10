@@ -1,6 +1,6 @@
 package com.company;
 
-import jext.jgrapht.GraphDump;
+import jext.jgrapht.util.GraphDump;
 import jext.jgrapht.alg.color.ColoringTests;
 import jext.jgrapht.alg.color.ParallelMCMCBoloring;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;

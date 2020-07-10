@@ -85,7 +85,10 @@ public class ClusteringStatistics {
         ContingencyMatrix cmt = cm.getContingencyMatrix(groundTrue);
 
         List<?> stats = Arrays.asList(
+            // id
             id,
+
+            // configuration
             betweenProb,
             insideProb,
             communityWeightSdev,

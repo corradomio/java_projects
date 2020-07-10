@@ -21,6 +21,8 @@ public class LinAlg {
         return new int[n];
     }
 
+    public static int[][] intMatrix(int n) {return intMatrix(n, n); }
+
     public static int[][] intMatrix(int nr, int nc) {
         int[][] m = new int[nr][];
         for (int i=0; i<nr; ++i)

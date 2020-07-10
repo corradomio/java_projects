@@ -4,6 +4,7 @@ import jext.util.SetUtils;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static jext.math.Mathx.div;
@@ -28,22 +29,9 @@ public class ContingencyMatrix {
 
     }
 
-    // /**
-    //  *
-    //  * @param kt ground truth (rows)
-    //  * @param kd determined clusters (columns)
-    //  *
-    //  * (Data Mining - The text book, pag. 199)
-    //  */
-    // public ContingencyMatrix(int kt, int kd) {
-    //     this.kd = kd;
-    //     this.kt = kt;
-    //     this.m = new int[kt][];
-    //     for(int i=0; i<kt; ++i)
-    //         this.m[i] = new int[kd];
-    //     this.ni = new int[kt];
-    //     this.mj = new int[kd];
-    // }
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public <V> ContingencyMatrix init(ClusteringAlgorithm.Clustering<V> truth, ClusteringAlgorithm.Clustering<V> other) {
         this.kt = truth.getNumberClusters();
@@ -60,25 +48,34 @@ public class ContingencyMatrix {
         for(V v : v1) {
             int ci = clusterOf(v, truth);
             int cj = clusterOf(v, other);
-            this.add(ci, cj);
+            //this.add(ci, cj);
+            m[ci][cj] += 1;
         }
 
-        this.done();
+        //this.done();
+        for(int ci=0; ci<kt; ++ci) {
+            for (int cj=0; cj<kd; ++cj) {
+                int nij = m[ci][cj];
+                ni[ci] += nij;
+                mj[cj] += nij;
+                n += nij;
+            }
+        }
 
         return this;
     }
 
     private <V> Set<V> verticesOf(ClusteringAlgorithm.Clustering<V> clustering) {
         Set<V> vertices = new HashSet<>();
-        clustering.getClusters()
-                .forEach(vertices::addAll);
+        clustering.getClusters().forEach(vertices::addAll);
         return vertices;
     }
 
     private <V> int clusterOf(V v, ClusteringAlgorithm.Clustering<V> clustering) {
         int k = clustering.getNumberClusters();
+        List<Set<V>> clusters = clustering.getClusters();
         for (int i=0; i<k; ++i)
-            if (clustering.getClusters().get(i).contains(v))
+            if (clusters.get(i).contains(v))
                 return i;
         return -1;
     }
@@ -87,22 +84,22 @@ public class ContingencyMatrix {
     // Add cluster relations
     // ----------------------------------------------------------------------
 
-    public ContingencyMatrix add(int i, int j) {
-        m[i][j] += 1;
-        return this;
-    }
+    // private ContingencyMatrix add(int ci, int cj) {
+    //     m[ci][cj] += 1;
+    //     return this;
+    // }
 
-    public ContingencyMatrix done() {
-        for(int i=0; i<kt; ++i) {
-            for (int j=0; j<kd; ++j) {
-                int nij = m[i][j];
-                ni[i] += nij;
-                mj[j] += nij;
-                n += nij;
-            }
-        }
-        return this;
-    }
+    // private ContingencyMatrix done() {
+    //     for(int i=0; i<kt; ++i) {
+    //         for (int j=0; j<kd; ++j) {
+    //             int nij = m[i][j];
+    //             ni[i] += nij;
+    //             mj[j] += nij;
+    //             n += nij;
+    //         }
+    //     }
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Metrics

@@ -1,5 +1,7 @@
-package jext.jgrapht;
+package jext.jgrapht.util;
 
+import jext.jgrapht.GraphMetrics;
+import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
 
 import java.util.Map;
