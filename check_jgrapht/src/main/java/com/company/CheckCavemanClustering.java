@@ -118,30 +118,46 @@ public class CheckCavemanClustering extends JFrame {
             double communityWeightSdev,
             double betweenWeightSdev,
             WeightType[] weighTypes,
-            ClusteringStatistics stats
+            ClusteringStatistics disStats,
+            ClusteringStatistics simStats
     )
     {
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen;
         Graph<Integer, DefaultWeightedEdge> g, t;
+        Graph<Integer, DefaultWeightedEdge> h, u;
+
+        TransformGraph<Integer, DefaultWeightedEdge> transform;
+        double maxWeight;
+
         ClusteringAlgorithm.Clustering<Integer> groundTrue;
         ClusteringAlgorithm.Clustering<Integer> clustering;
 
         ggen = generateGraph(id, E, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev);
         g = ggen.getGraph();
+
+        transform = new TransformGraph<>(g);
+        maxWeight = transform.getMaxWeight()*1.1;
+        h = transform.invertWeights(maxWeight);
+
         groundTrue = ggen.getClustering();
 
         for(WeightType weighType : weighTypes) {
 
-            stats.setParameters(id, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev, weighType);
-            stats.setGroundTrue(g, groundTrue);
+            disStats.setParameters(id, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev, weighType);
+            disStats.setGroundTrue(g, groundTrue);
+
+            simStats.setParameters(id, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev, weighType);
+            simStats.setGroundTrue(h, groundTrue);
 
             System.out.print("-- [groundTruth] --------------------\n");
 
-            stats.addStats(0., g, groundTrue);
+            disStats.addStats(0., g, groundTrue);
+            simStats.addStats(0., h, groundTrue);
 
             for (double threshold = 0.0; ; threshold += 0.02) {
 
-                t = new TransformGraph<>(g).upperThresholdGraph(threshold);
+                t = transform.upperThresholdGraph(threshold);
+                u = new TransformGraph<>(t).invertWeights(maxWeight);
                 if (t.edgeSet().isEmpty())
                     break;
 
@@ -153,8 +169,11 @@ public class CheckCavemanClustering extends JFrame {
                         new WeightedMCMCBColoring<>(t).weightType(weighType)
                 ).getClustering();
 
-                stats.addStats(threshold, t, clustering);
-                stats.saveCsv("relaxcave-stats.csv");
+                disStats.addStats(threshold, t, clustering);
+                disStats.saveCsv("generated/relaxcave-dis-stats.csv");
+
+                simStats.addStats(threshold, t, clustering);
+                simStats.saveCsv("generated/relaxcave-sim-stats.csv");
             }
         }
     }
@@ -162,10 +181,11 @@ public class CheckCavemanClustering extends JFrame {
     public static void main(String[] args) {
         Logger.configure();
 
-        // Clustering statistics
-        ClusteringStatistics stats = new ClusteringStatistics();
+        // Clustering statistics (dissimilarity, similarity)
+        ClusteringStatistics disStats = new ClusteringStatistics();
+        ClusteringStatistics simStats = new ClusteringStatistics();
 
-        int id = 101;
+        int id = 100;
         int[] EList = {10000, 50000, 100000};
         double[] betweenProbList = new double[]{ .9 };
         double[] insideProbList = new double[]{ .2, .02 };
@@ -180,8 +200,9 @@ public class CheckCavemanClustering extends JFrame {
         // for (double communityWeightSdev:communityWeightSdevList)
         // for (double betweenWeightSdev:betweenWeightSdevList)
         for (double[] weightsSdev : weightsSdevList)
-            analyzeGraph(id++, E, betweenProb, insideProb, weightsSdev[0], weightsSdev[1], weightTypeList, stats);
+            analyzeGraph(++id, E, betweenProb, insideProb, weightsSdev[0], weightsSdev[1], weightTypeList,
+                    disStats, simStats);
 
-        stats.saveCsv("relaxcave-stats.csv");
+        //stats.saveCsv("relaxcave-stats.csv");
     }
 }

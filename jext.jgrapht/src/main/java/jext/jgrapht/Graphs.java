@@ -2,6 +2,7 @@ package jext.jgrapht;
 
 import jext.jgrapht.util.VertexInfo;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphType;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class Graphs extends org.jgrapht.Graphs {
@@ -33,7 +35,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
             boolean directed,
             boolean loop,
             boolean multiple,
-            boolean weighted) {
+            boolean weighted,
+            Supplier<E> edgeSupplier) {
         GraphTypeBuilder<V, E> gtb = directed
                 ? GraphTypeBuilder.directed()
                 : GraphTypeBuilder.undirected();
@@ -41,7 +44,18 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return gtb.allowingSelfLoops(loop)
                 .allowingMultipleEdges(multiple)
                 .weighted(weighted)
+                .edgeSupplier(edgeSupplier)
                 .buildGraph();
+    }
+
+    public static <V, E> Graph<V, E> newGraph(Graph<V, E> graph) {
+        GraphType gtype = graph.getType();
+        Supplier<E> supplier = graph.getEdgeSupplier();
+        Graph<V, E> cloned = newGraph(gtype.isDirected(), gtype.isAllowingSelfLoops(), gtype.isAllowingMultipleEdges(),
+                gtype.isWeighted(),
+                supplier);
+
+        return cloned;
     }
 
     public static <V, E> Set<V> predecessorSetOf(Graph<V, E> g, V vertex) {

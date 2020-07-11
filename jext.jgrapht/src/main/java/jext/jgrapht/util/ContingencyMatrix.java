@@ -43,16 +43,16 @@ public class ContingencyMatrix {
         Set<V> v1 = verticesOf(truth);
         Set<V> v2 = verticesOf(other);
         if (!SetUtils.union(v1, v2).equals(SetUtils.intersection(v1, v2)))
-            throw new IllegalArgumentException("Invalid vertex sets");
+            throw new IllegalArgumentException("Invalid clustering");
 
+        // contingency matrix
         for(V v : v1) {
             int ci = clusterOf(v, truth);
             int cj = clusterOf(v, other);
-            //this.add(ci, cj);
             m[ci][cj] += 1;
         }
 
-        //this.done();
+        // sum by columns (ni)/rows (mj
         for(int ci=0; ci<kt; ++ci) {
             for (int cj=0; cj<kd; ++cj) {
                 int nij = m[ci][cj];
@@ -81,27 +81,6 @@ public class ContingencyMatrix {
     }
 
     // ----------------------------------------------------------------------
-    // Add cluster relations
-    // ----------------------------------------------------------------------
-
-    // private ContingencyMatrix add(int ci, int cj) {
-    //     m[ci][cj] += 1;
-    //     return this;
-    // }
-
-    // private ContingencyMatrix done() {
-    //     for(int i=0; i<kt; ++i) {
-    //         for (int j=0; j<kd; ++j) {
-    //             int nij = m[i][j];
-    //             ni[i] += nij;
-    //             mj[j] += nij;
-    //             n += nij;
-    //         }
-    //     }
-    //     return this;
-    // }
-
-    // ----------------------------------------------------------------------
     // Metrics
     // ----------------------------------------------------------------------
 
@@ -122,7 +101,7 @@ public class ContingencyMatrix {
         double den = 0;
 
         for(int j=0; j<kd; j++){
-            num += G(j)* M(j);
+            num += G(j)*M(j);
             den += M(j);
         }
 
@@ -234,18 +213,10 @@ public class ContingencyMatrix {
     // ----------------------------------------------------------------------
 
     private int N(int i) {
-        // int s =0;
-        // for(int j = 0; j<kd; ++j)
-        //     s += m[i][j];
-        // return s;
         return ni[i];
     }
 
     private int M(int j) {
-        // int s = 0;
-        // for(int i = 0; i< kt; ++i)
-        //     s += m[i][j];
-        // return s;
         return mj[j];
     }
 
@@ -286,10 +257,8 @@ public class ContingencyMatrix {
     private double a,b,c,d;
 
     private void compute() {
-        if (done)
-            return;
-        else
-            done = true;
+        if (done) return;
+        done = true;
 
         double n2 = sq(n);
 
@@ -317,7 +286,5 @@ public class ContingencyMatrix {
         b = (mj2 - nij2)/2;
         c = (ni2 - nij2)/2;
         d = ((n2 + nij2) - (ni2 + mj2))/2;
-
-        return;
     }
 }

@@ -1,13 +1,12 @@
 package jext.jgrapht.graph;
 
+import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.builder.GraphBuilder;
 
-import java.util.Comparator;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -87,18 +86,18 @@ public class TransformGraph<V, E> {
      *      1 + eps   with eps > 0
      *
      */
-    public Graph<V, E> flipEdgeWeights(float factor) {
+    public Graph<V, E> invertWeights(double maxWeight) {
         // search the maximum edge weight
-        double maxWeight = graph.edgeSet()
-                .parallelStream()
-                .map(e -> graph.getEdgeWeight(e))
-                .max((o1, o2) -> {
-                    double v1 = o1;
-                    double v2 = o2;
-                    return Double.compare(v1, v2);
-                }).orElseGet(() -> (double) 0)*factor;
+        // double maxWeight = graph.edgeSet()
+        //         .parallelStream()
+        //         .map(e -> graph.getEdgeWeight(e))
+        //         .max((o1, o2) -> {
+        //             double v1 = o1;
+        //             double v2 = o2;
+        //             return Double.compare(v1, v2);
+        //         }).orElseGet(() -> (double) 0)*factor;
 
-        Graph<V, E> flipped = new GraphBuilder<>(graph).build();
+        Graph<V, E> flipped = Graphs.newGraph(graph);
         graph.vertexSet().forEach(flipped::addVertex);
 
         graph.edgeSet().forEach(e -> {
@@ -111,6 +110,17 @@ public class TransformGraph<V, E> {
         });
 
         return flipped;
+    }
+
+    public double getMaxWeight() {
+        return graph.edgeSet()
+                .parallelStream()
+                .map(e -> graph.getEdgeWeight(e))
+                .max((o1, o2) -> {
+                    double v1 = o1;
+                    double v2 = o2;
+                    return Double.compare(v1, v2);
+                }).orElseGet(() -> (double) 0);
     }
 
 }
