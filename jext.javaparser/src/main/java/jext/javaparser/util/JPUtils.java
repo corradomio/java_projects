@@ -1,5 +1,6 @@
 package jext.javaparser.util;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
@@ -9,20 +10,26 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
-import jext.logging.Logger;
-import jext.util.JavaUtils;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import jext.java.JavaUtils;
 
 import java.util.Optional;
 
 public class JPUtils {
-
-    private static Logger logger = Logger.getLogger(JPUtils.class);
 
     private static final Class<?> INITIALIZER_DECLARATION = InitializerDeclaration.class;
     private static final Class<?> METHOD_DECLARATION = MethodDeclaration.class;
     private static final Class<?> CONSTRUCTOR_DECLARATION = ConstructorDeclaration.class;
     private static final Class<?> OBJECT_CREATION_EXPR = ObjectCreationExpr.class;
     private static final Class<?> CLASS_OR_INTERFACE = ObjectCreationExpr.class;
+
+    // ----------------------------------------------------------------------
+
+    public static void setTypeSolver(CompilationUnit cu, TypeSolver ts){
+        JavaSymbolSolver symbolResolver = new JavaSymbolSolver(ts);
+        symbolResolver.inject(cu);
+    }
 
     // ----------------------------------------------------------------------
 

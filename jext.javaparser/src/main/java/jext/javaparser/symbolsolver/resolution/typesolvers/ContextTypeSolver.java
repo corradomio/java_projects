@@ -17,7 +17,7 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import jext.javaparser.symbolsolver.namespacemodel.NamespaceDeclaration;
-import jext.util.JavaUtils;
+import jext.java.JavaUtils;
 import jext.util.PathUtils;
 
 import javax.annotation.Nullable;

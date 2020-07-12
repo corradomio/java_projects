@@ -181,6 +181,9 @@ public class CheckCavemanClustering extends JFrame {
     public static void main(String[] args) {
         Logger.configure();
 
+        new File("generated/relaxcave-dis-stats.csv").delete();
+        new File("generated/relaxcave-sim-stats.csv").delete();
+
         // Clustering statistics (dissimilarity, similarity)
         ClusteringStatistics disStats = new ClusteringStatistics();
         ClusteringStatistics simStats = new ClusteringStatistics();

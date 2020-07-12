@@ -1,11 +1,19 @@
 package jext.javaparser.analysis;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.expr.ThisExpr;
+import com.github.javaparser.ast.stmt.ReturnStmt;
 import jext.logging.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
 
@@ -46,11 +54,24 @@ public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
     // Overrides
     // ----------------------------------------------------------------------
 
+    private static Class<?>[] SKIPED_CLASSES = new Class[]{
+            Name.class,
+            SimpleName.class,
+            Modifier.class,
+            NameExpr.class,
+            MarkerAnnotationExpr.class,
+            ThisExpr.class,
+            ReturnStmt.class
+    };
+
     // ----------------------------------------------------------------------
 
     public void defaultAction(Node n, A arg) {
-        if (n instanceof Name) return;
-        if (n instanceof SimpleName) return;
+        for (Class<?> clazz : SKIPED_CLASSES)
+            if (clazz.isInstance(n)) return;
+        // if (n instanceof Name) return;
+        // if (n instanceof SimpleName) return;
+        // if (n instanceof Modifier) return;
 
         System.out.printf("[%s] %s\n", getClassName(n), toString(n));
     }
@@ -73,10 +94,12 @@ public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
     private static String toString(Node n) {
         String s = n.toString().trim();
         s = s.replace('\t', ' ')
-            .replace('\n', '^')
+            .replace('\n', ' ')
             .replace('\r', ' ');
+        while (s.contains("  "))
+            s = s.replace("  ", " ");
         if (s.length() > 100)
-            s = s.substring(0, 100) + "...";
+            s = s.substring(0, 96) + " ...";
         return s;
     }
 }

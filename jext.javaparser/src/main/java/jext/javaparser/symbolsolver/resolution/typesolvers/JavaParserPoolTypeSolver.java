@@ -30,16 +30,10 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
 
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-
-        // synchronized (this/*JavaParserPool.getPool()*/) {
-            Optional<TypeDeclaration<?>> astTypeDeclaration = pool.tryToSolveType(name);
-            if (astTypeDeclaration.isPresent()) {
-                return SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(astTypeDeclaration.get()));
-            }
-            else {
-                return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
-            }
-        // }
+        Optional<TypeDeclaration<?>> astTypeDeclaration = pool.tryToSolveType(name);
+        return astTypeDeclaration
+                .map(typeDeclaration -> SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(typeDeclaration)))
+                .orElseGet(() -> SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class));
     }
 
 }
