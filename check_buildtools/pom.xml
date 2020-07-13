@@ -27,4 +27,12 @@
         <module>../jext.buildtools</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.buildtools</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

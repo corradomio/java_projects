@@ -54,6 +54,7 @@ public class JDKTypeSolver extends CompositeTypeSolver {
             String name = jarFile.getName().toLowerCase();
             if (name.endsWith(".jar"))
                 return new JarTypeSolver(jarFile);
+                // return new com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver(jarFile);
             else if(name.endsWith(".jmod"))
                 return new JmodTypeSolver(jarFile);
             else

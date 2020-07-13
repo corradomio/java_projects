@@ -25,6 +25,7 @@
         <module>..\jext.commons</module>
         <module>..\jext.java</module>
         <module>..\jext.javaparser</module>
+        <module>..\jext.cache</module>
     </modules>
 
     <dependencies>
@@ -48,5 +49,12 @@
         </dependency>
 
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>Local</id>
+            <url>file:///jars</url>
+        </repository>
+    </distributionManagement>
 
 </project>

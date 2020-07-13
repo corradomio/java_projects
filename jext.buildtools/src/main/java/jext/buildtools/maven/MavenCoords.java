@@ -107,6 +107,14 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
             return artifactId;
     }
 
+    public String getArtifact() {
+        return String.format("%s:%s", groupId, artifactId);
+    }
+
+    public Version getVersion() {
+        return hasVersion() ? Version.of(version) : Version.NO_VERSION;
+    }
+
     public boolean hasVersion() {
         return !version.isEmpty() && !isRange(version);
     }
