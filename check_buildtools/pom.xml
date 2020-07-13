@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hls.check</groupId>
+    <artifactId>check_buildtools</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <repositories>
+        <repository>
+            <id>Local</id>
+            <url>file:///jars</url>
+        </repository>
+    </repositories>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <modules>
+        <module>../jext.cache</module>
+        <module>../jext.commons</module>
+        <module>../jext.buildtools</module>
+    </modules>
+
+</project>
