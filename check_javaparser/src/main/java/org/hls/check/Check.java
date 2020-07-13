@@ -7,6 +7,7 @@ import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
@@ -34,11 +35,12 @@ public class Check {
     }
 
     static void analyze(CompilationUnit cu) {
-        CompositeTypeSolver ts = new CompositeTypeSolver("default");
+        //CompositeTypeSolver ts = new CompositeTypeSolver("default");
+        ContextTypeSolver ts = new ContextTypeSolver();
         // ts.add(new JavaParserTypeSolver(new File("data\\bookstore\\src\\main\\java")));
         ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
         // ts.add(new ReflectionTypeSolver());
-        ts.add(new JDKTypeSolver(new File("D:\\Java\\Jdk1.8.0.x64")));
+        ts.add(new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8")));
 
         JPUtils.setTypeSolver(cu, ts);
 
@@ -49,8 +51,8 @@ public class Check {
         try {
             ResolvedMethodDeclaration rmd = mce.resolve();
             System.out.println(mce.toString());
-            System.out.printf("    %s::%s\n", rmd.getQualifiedName(), rmd.getSignature());
-            // System.out.printf("    %s\n", rmd.getQualifiedSignature());
+            // System.out.printf("    %s::%s\n", rmd.getQualifiedName(), rmd.getSignature());
+            System.out.printf("    %s\n", rmd.getQualifiedSignature());
         }
         catch (Throwable t) {
             // System.out.println(mce.toString());
