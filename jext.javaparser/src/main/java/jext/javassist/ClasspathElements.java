@@ -2,12 +2,11 @@ package jext.javassist;
 
 import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.NotFoundException;
-import jext.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
@@ -16,23 +15,42 @@ import java.util.jar.JarFile;
 public class ClasspathElements {
 
     // ----------------------------------------------------------------------
-    // Factory method
+    // Implementation
     // ----------------------------------------------------------------------
 
-    private static ClasspathElements _empty = new ClasspathElements();
+    private class ClasspathElement {
+        private String name;
+        private File libFile;
+        private JarEntry entry;
+        private CtClass ctClazz;
 
-    public static ClasspathElements empty() {
-        return _empty;
+        public ClasspathElement(String name, File libFile, JarEntry entry) {
+            this.name = name;
+            this.libFile = libFile;
+            this.entry = entry;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public synchronized CtClass toCtClass() {
+            if (ctClazz == null)
+                try (JarFile jarFile = new JarFile(libFile);
+                     InputStream is = jarFile.getInputStream(entry)) {
+                    ctClazz = classPool.makeClass(is);
+                }
+                catch (IOException e) { }
+            return ctClazz;
+        }
     }
 
     // ----------------------------------------------------------------------
     // Protected Fields
     // ----------------------------------------------------------------------
 
-    protected Logger logger = Logger.getLogger(getClass());
-
-    protected ClassPool classPool = new ClassPool(false);
-    Map<String, ClasspathElement> classpathElements = new TreeMap<>();
+    private ClassPool classPool = new ClassPool(false);
+    private Map<String, ClasspathElement> classEntries = new TreeMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -45,71 +63,31 @@ public class ClasspathElements {
     // ----------------------------------------------------------------------
 
     public boolean containsKey(String name) {
-        return classpathElements.containsKey(name);
+        return classEntries.containsKey(name);
     }
 
     public CtClass get(String name) {
-        return classpathElements.get(name).toCtClass();
+        return classEntries.get(name).toCtClass();
     }
 
     public boolean isEmpty() {
-        return classpathElements.isEmpty();
+        return classEntries.isEmpty();
     }
 
     public int size() {
-        return classpathElements.size();
+        return classEntries.size();
+    }
+
+    public Collection<String> keySet() {
+        return classEntries.keySet();
     }
 
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
 
-    void appendClassPath(String bytecodeFile) throws IOException {
-        try {
-            classPool.appendClassPath(bytecodeFile);
-        } catch (NotFoundException e) {
-            throw new IOException(e);
-        }
+    void addElement(String name, File libFile, JarEntry entry) {
+        classEntries.put(name, new ClasspathElement(name, libFile, entry));
     }
 
-    void addElement(String name, JarFile jarFile, JarEntry entry) {
-        classpathElements.put(name, new ClasspathElement(name, jarFile, entry));
-    }
-
-    // ----------------------------------------------------------------------
-    // Implementation
-    // ----------------------------------------------------------------------
-
-    public class ClasspathElement {
-        private JarFile jarFile;
-        private JarEntry entry;
-        private String name;
-        private CtClass ctClazz;
-
-        public ClasspathElement(String name, JarFile jarFile, JarEntry entry) {
-            this.jarFile = jarFile;
-            this.entry = entry;
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public synchronized CtClass toCtClass() {
-            if (ctClazz == null)
-                try (InputStream is = jarFile.getInputStream(entry)) {
-                    ctClazz = classPool.makeClass(is);
-                }
-                catch (IOException e) {
-                    logger.error(e, e);
-                }
-            return ctClazz;
-        }
-
-    }
-
-    public void dump() {
-        classpathElements.keySet().forEach(System.out::println);
-    }
 }

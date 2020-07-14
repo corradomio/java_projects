@@ -247,16 +247,25 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
 
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved
+                = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+
         // 0) if already solved
         if (alreadySolved.containsKey(name))
             return alreadySolved.get(name);
 
         // 1) skip it is a namespace
         if (namespaces.containsKey(name))
-            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+            return solved;
 
         // 2) try to solve using the standard methods
-        SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveUsingSolvers(name);
+        //SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveUsingSolvers(name);
+        // first, check standard solvers
+        for(TypeSolver typeSolver : elements) {
+            solved = typeSolver.tryToSolveType(name);
+            if (solved.isSolved())
+                break;
+        }
 
         // 3) it is not possible to solve the symbol using the context HERE
         //    because we must use NOT only the imports but also the definitions of
@@ -269,14 +278,15 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     private void addSolved(String name, SymbolReference<ResolvedReferenceTypeDeclaration> solved) {
-        if (!solved.isSolved()) return;
-        if (alreadySolved.containsKey(name)) return;
+        if (!solved.isSolved() || alreadySolved.containsKey(name))
+            return;
 
         alreadySolved.put(name, solved);
 
         String namespace = JavaUtils.namespaceOf(name);
         while(namespace.length() > 0) {
-            if (namespaces.containsKey(namespace)) break;
+            if (namespaces.containsKey(namespace))
+                break;
             namespaces.put(namespace, new NamespaceDeclaration(namespace));
             namespace = JavaUtils.namespaceOf(namespace);
         }
@@ -381,10 +391,16 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     private static String strip(String signature) {
-        if (signature.contains("<"))
-            signature = signature.substring(0, signature.indexOf('<'));
-        if (signature.contains("["))
-            signature = signature.substring(0, signature.indexOf('['));
+        while (signature.contains("<")) {
+            int pos = signature.lastIndexOf("<");
+            int end = signature.indexOf(">", pos);
+            signature = signature.substring(0, pos) + signature.substring(end+1);
+        }
+        while (signature.contains("[")) {
+            int pos = signature.lastIndexOf("[");
+            int end = signature.indexOf("]", pos);
+            signature = signature.substring(0, pos) + signature.substring(end+1);
+        }
         return signature;
     }
 

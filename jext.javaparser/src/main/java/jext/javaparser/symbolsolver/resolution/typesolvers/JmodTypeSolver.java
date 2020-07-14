@@ -28,7 +28,7 @@ import com.github.javaparser.symbolsolver.javassistmodel.JavassistFactory;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import javassist.CtClass;
 import jext.javassist.ClasspathElements;
-import jext.javassist.JVMByteCodeAnalyzer;
+import jext.javassist.Classpaths;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class JmodTypeSolver extends BaseTypeSolver {
     }
 
     private void addPathToJar(File pathToJar) throws IOException {
-        classpathElements = JVMByteCodeAnalyzer.getInstance().getClasspathElements(pathToJar);
+        classpathElements = Classpaths.getInstance().getClasspathElements(pathToJar);
     }
 
     @Override

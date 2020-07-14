@@ -1,41 +1,37 @@
 package jext.javassist;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import jext.logging.Logger;
-import jext.nio.file.FilteredFileVisitor;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
 import java.util.Enumeration;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
-public class JVMByteCodeAnalyzer {
+public class Classpaths {
 
-    private static JVMByteCodeAnalyzer instance = new JVMByteCodeAnalyzer();
+    private static Classpaths instance = new Classpaths();
 
-    public static JVMByteCodeAnalyzer getInstance() {
+    public static Classpaths getInstance() {
         return instance;
     }
 
     // ----------------------------------------------------------------------
-    // EntryPath -> ClassName convertes
+    // EntryPath -> ClassName converters
     // ----------------------------------------------------------------------
 
-    private static final String JMOD_EXT = ".jmod";
+    private static final String DOT_JAR = ".jar";
+    private static final String DOT_JMOD = ".jmod";
     private static final String DOT_CLASS = ".class";
     private static final String CLASSES_SLASH = "classes/";
 
     @FunctionalInterface
     private interface EntryPathConverter {
-        String entryPathToClassName(String entryPath);
+        String toClassName(String entryPath);
     }
 
     private static EntryPathConverter JARPATH_CONVERTER = entryPath -> {
@@ -58,8 +54,8 @@ public class JVMByteCodeAnalyzer {
         return className;
     };
 
-    private static EntryPathConverter getEntryPathConverter(Path filename) {
-        return (filename.endsWith(JMOD_EXT))
+    private static EntryPathConverter getEntryPathConverter(File libFile) {
+        return (libFile.getName().endsWith(DOT_JMOD))
             ? JMODPATH_CONVERTER
             : JARPATH_CONVERTER;
     }
@@ -68,17 +64,13 @@ public class JVMByteCodeAnalyzer {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private static Logger logger = Logger.getLogger(JVMByteCodeAnalyzer.class);
-
-    private Cache<File, ClasspathElements> classpaths;
-    // private Cache<File, List<TypeDesc>> typedescs;
-
+    private Map<File, ClasspathElements> classpaths = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public JVMByteCodeAnalyzer() {
+    public Classpaths() {
 
     }
 
@@ -86,119 +78,58 @@ public class JVMByteCodeAnalyzer {
     // Operations
     // ----------------------------------------------------------------------
 
-    public synchronized ClasspathElements getClasspathElements(File fileToAnalyze) throws IOException {
-        return getClasspathElementsNoSync(fileToAnalyze);
+    public synchronized ClasspathElements getClasspathElements(File libFile) {
+        if (!classpaths.containsKey(libFile))
+            composeClasspath(libFile);
+
+        return classpaths.get(libFile);
     }
 
-    private ClasspathElements getClasspathElementsNoSync(File fileToAnalyze) throws IOException {
-        check();
-
-        try {
-            return classpaths.get(fileToAnalyze, () -> composeClassPaths(fileToAnalyze));
-        } catch (ExecutionException e) {
-            throw new IOException(e);
-        }
+    public Collection<File> classpaths() {
+        return this.classpaths.keySet();
     }
 
-
-    // public synchronized List<TypeDesc> getTypes(File libraryFile) {
-    //     try {
-    //         return getTypesNoSync(libraryFile);
-    //     } catch (IOException e) {
-    //         logger.error(e, e);
-    //         return Collections.emptyList();
-    //     }
-    // }
-
-    // private synchronized List<TypeDesc> getTypesNoSync(File fileToAnalyze) throws IOException {
-    //     check();
-    //     try {
-    //         return typedescs.get(fileToAnalyze, () -> composeTypeDescs(fileToAnalyze));
-    //     } catch (ExecutionException e) {
-    //         throw new IOException(e);
-    //     }
-    // }
-
+    public Collection<ClasspathElements> classpathElements() {
+        return this.classpaths.values();
+    }
 
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
 
-    private ClasspathElements composeClassPaths(File fileToAnalyze) throws IOException {
-        Path pathToAnalyze = fileToAnalyze.toPath();
+    private ClasspathElements composeClasspath(File libFile) {
         ClasspathElements cpe = new ClasspathElements();
-        if (fileToAnalyze.isDirectory())
-            analyzeDirectory(cpe, pathToAnalyze);
-        else
-            analyzeFile(cpe, pathToAnalyze);
 
-        classpaths.put(fileToAnalyze, cpe);
+        if (libFile.isDirectory())
+            analyzeDirectory(cpe, libFile);
+        else
+            analyzeFile(cpe, libFile);
+
+        classpaths.put(libFile, cpe);
         return cpe;
     }
 
-    // private List<TypeDesc> composeTypeDescs(File fileToAnalyze) throws IOException {
-    //     ClasspathElements cpes = getClasspathElementsNoSync(fileToAnalyze);
-    //     List<TypeDesc> descs = new ArrayList<>();
-    //
-    //     for (ClasspathElements.ClasspathElement cpe : cpes.classpathElements.values()) {
-    //         TypeDesc td = new TypeDesc();
-    //         td.name = cpe.getName();
-    //
-    //         descs.add(td);
-    //     }
-    //
-    //     return descs;
-    // }
+    private void analyzeFile(ClasspathElements cpe, File libFile) {
 
-    private void analyzeFile(ClasspathElements cpe, Path pathToAnalyze) throws IOException {
+        EntryPathConverter epc = getEntryPathConverter(libFile);
 
-        EntryPathConverter epc = getEntryPathConverter(pathToAnalyze);
-
-        String bytecodeFile = pathToAnalyze.toString();
-        cpe.appendClassPath(bytecodeFile);
-
-        JarFile jarFile = new JarFile(bytecodeFile);
-        JarEntry entry;
-        Enumeration<JarEntry> e = jarFile.entries();
-        while (e.hasMoreElements()) {
-            entry = e.nextElement();
-            if (entry != null && !entry.isDirectory() && entry.getName().endsWith(".class")) {
-                String name = epc.entryPathToClassName(entry.getName());
-                cpe.addElement(name, jarFile, entry);
+        try (JarFile jarFile = new JarFile(libFile)) {
+            JarEntry entry;
+            Enumeration<JarEntry> e = jarFile.entries();
+            while (e.hasMoreElements()) {
+                entry = e.nextElement();
+                if (entry != null && !entry.isDirectory() && entry.getName().endsWith(DOT_CLASS)) {
+                    String name = epc.toClassName(entry.getName());
+                    cpe.addElement(name, libFile, entry);
+                }
             }
         }
+        catch (IOException e) {}
     }
 
-    private void analyzeDirectory(ClasspathElements cpe, Path dirToAnalyze) throws IOException {
-        Files.walkFileTree(dirToAnalyze, new FilteredFileVisitor<Path>() {
-            @Override
-            public boolean filterFile(Path file) {
-                String name = file.toString();
-                return name.endsWith(".jar") || name.endsWith(".jmod");
-            }
-
-            @Override
-            public void onVisitFile(Path fileToAnalyze, BasicFileAttributes attrs) throws IOException {
-                analyzeFile(cpe, fileToAnalyze);
-            }
-        });
-    }
-
-    // ----------------------------------------------------------------------
-    // Cache
-    // ----------------------------------------------------------------------
-
-    private void check() {
-        if (classpaths != null)
-            return;
-
-        classpaths = CacheBuilder.newBuilder()
-            .expireAfterAccess(2, TimeUnit.MINUTES)
-            .build();
-
-        // typedescs = CacheBuilder.newBuilder()
-        //     .expireAfterAccess(2, TimeUnit.MINUTES)
-        //     .build();
+    private void analyzeDirectory(ClasspathElements cpe, File libDir) {
+        FileUtils.listFiles(libDir, DOT_JAR).forEach(libFile ->analyzeFile(cpe, libFile));
+        FileUtils.listFiles(libDir, DOT_JMOD).forEach(libFile ->analyzeFile(cpe, libFile));
     }
 
 }

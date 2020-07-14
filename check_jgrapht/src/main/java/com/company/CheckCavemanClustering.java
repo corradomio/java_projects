@@ -51,9 +51,9 @@ public class CheckCavemanClustering extends JFrame {
         int C = 10;                 // n of communities
         // double betweenProb = .2;    // between communities
         // double insideProb  = .9;    // inside  communities
-        double communityWeightMean = 0.3;
+        double communityWeightMean = 0.3;   // peso DENTRO il cluster
         // double communityWeightSdev = 0.1;
-        double betweenWeightMean = 0.5;
+        double betweenWeightMean = 0.5;     // peso TRA cluster
         // double betweenWeightSdev = 0.1;
 
         int meanSize = N/C;
@@ -132,12 +132,19 @@ public class CheckCavemanClustering extends JFrame {
         ClusteringAlgorithm.Clustering<Integer> groundTrue;
         ClusteringAlgorithm.Clustering<Integer> clustering;
 
+        // generate the caveman graph
         ggen = generateGraph(id, E, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev);
+
+        // select the graph
         g = ggen.getGraph();
 
         transform = new TransformGraph<>(g);
-        maxWeight = transform.getMaxWeight()*1.1;
-        h = transform.invertWeights(maxWeight);
+
+        // extract the max weight
+        maxWeight = transform.getMaxWeight();
+
+        // invert the edge weights
+        h = transform.invertWeights(maxWeight*1.1);
 
         groundTrue = ggen.getClustering();
 
@@ -190,8 +197,8 @@ public class CheckCavemanClustering extends JFrame {
 
         int id = 100;
         int[] EList = {10000, 50000, 100000};
-        double[] betweenProbList = new double[]{ .9 };
-        double[] insideProbList = new double[]{ .2, .02 };
+        double[] betweenProbList = new double[]{ .2, .02 };
+        double[] insideProbList = new double[]{ .9 };
         // double[] communityWeightSdevList = new double[]{ .1 };
         // double[] betweenWeightSdevList = new double []{ .1 };
         double[][] weightsSdevList= new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };

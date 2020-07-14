@@ -17,7 +17,7 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
 
     public JavaParserPoolTypeSolver(JavaParserPool pool) {
-        this("Pool", pool);
+        this("Default", pool);
     }
 
     public JavaParserPoolTypeSolver(String name, JavaParserPool pool) {
