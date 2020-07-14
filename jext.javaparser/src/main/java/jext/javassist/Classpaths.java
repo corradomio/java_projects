@@ -10,14 +10,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 
 public class JVMByteCodeAnalyzer {
 
@@ -73,7 +71,7 @@ public class JVMByteCodeAnalyzer {
     private static Logger logger = Logger.getLogger(JVMByteCodeAnalyzer.class);
 
     private Cache<File, ClasspathElements> classpaths;
-    private Cache<File, List<TypeDesc>> typedescs;
+    // private Cache<File, List<TypeDesc>> typedescs;
 
 
     // ----------------------------------------------------------------------
@@ -103,23 +101,23 @@ public class JVMByteCodeAnalyzer {
     }
 
 
-    public synchronized List<TypeDesc> getTypes(File libraryFile) {
-        try {
-            return getTypesNoSync(libraryFile);
-        } catch (IOException e) {
-            logger.error(e, e);
-            return Collections.emptyList();
-        }
-    }
+    // public synchronized List<TypeDesc> getTypes(File libraryFile) {
+    //     try {
+    //         return getTypesNoSync(libraryFile);
+    //     } catch (IOException e) {
+    //         logger.error(e, e);
+    //         return Collections.emptyList();
+    //     }
+    // }
 
-    private synchronized List<TypeDesc> getTypesNoSync(File fileToAnalyze) throws IOException {
-        check();
-        try {
-            return typedescs.get(fileToAnalyze, () -> composeTypeDescs(fileToAnalyze));
-        } catch (ExecutionException e) {
-            throw new IOException(e);
-        }
-    }
+    // private synchronized List<TypeDesc> getTypesNoSync(File fileToAnalyze) throws IOException {
+    //     check();
+    //     try {
+    //         return typedescs.get(fileToAnalyze, () -> composeTypeDescs(fileToAnalyze));
+    //     } catch (ExecutionException e) {
+    //         throw new IOException(e);
+    //     }
+    // }
 
 
     // ----------------------------------------------------------------------
@@ -138,19 +136,19 @@ public class JVMByteCodeAnalyzer {
         return cpe;
     }
 
-    private List<TypeDesc> composeTypeDescs(File fileToAnalyze) throws IOException {
-        ClasspathElements cpes = getClasspathElementsNoSync(fileToAnalyze);
-        List<TypeDesc> descs = new ArrayList<>();
-
-        for (ClasspathElements.ClasspathElement cpe : cpes.classpathElements.values()) {
-            TypeDesc td = new TypeDesc();
-            td.name = cpe.getName();
-
-            descs.add(td);
-        }
-
-        return descs;
-    }
+    // private List<TypeDesc> composeTypeDescs(File fileToAnalyze) throws IOException {
+    //     ClasspathElements cpes = getClasspathElementsNoSync(fileToAnalyze);
+    //     List<TypeDesc> descs = new ArrayList<>();
+    //
+    //     for (ClasspathElements.ClasspathElement cpe : cpes.classpathElements.values()) {
+    //         TypeDesc td = new TypeDesc();
+    //         td.name = cpe.getName();
+    //
+    //         descs.add(td);
+    //     }
+    //
+    //     return descs;
+    // }
 
     private void analyzeFile(ClasspathElements cpe, Path pathToAnalyze) throws IOException {
 
@@ -198,9 +196,9 @@ public class JVMByteCodeAnalyzer {
             .expireAfterAccess(2, TimeUnit.MINUTES)
             .build();
 
-        typedescs = CacheBuilder.newBuilder()
-            .expireAfterAccess(2, TimeUnit.MINUTES)
-            .build();
+        // typedescs = CacheBuilder.newBuilder()
+        //     .expireAfterAccess(2, TimeUnit.MINUTES)
+        //     .build();
     }
 
 }
