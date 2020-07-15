@@ -13,7 +13,7 @@ public abstract class BaseTypeSolver implements TypeSolver {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    protected Logger logger = Logger.getLogger(getClass());
+    protected Logger logger;
     protected TypeSolver parent;
     protected String name = getClass().getSimpleName();
 
@@ -21,7 +21,9 @@ public abstract class BaseTypeSolver implements TypeSolver {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private BaseTypeSolver() { }
+    private BaseTypeSolver() {
+        this.logger = Logger.getLogger(getClass(), name);
+    }
 
     protected BaseTypeSolver(String name) {
         this.name = name;

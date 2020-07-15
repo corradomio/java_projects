@@ -6,7 +6,7 @@ import jext.javassist.Classpaths;
 
 import java.io.File;
 
-public class CheckClassPool {
+public class CheckClasspaths {
 
     public static void main(String[] args) throws NotFoundException {
         // ClassPool classPool = new ClassPool(false);
@@ -27,6 +27,7 @@ public class CheckClassPool {
         // });
 
         Classpaths cp = new Classpaths();
+
         ClasspathElements cpe = cp.getClasspathElements(new File("D:\\Java\\MiniJdk\\Jdk14"));
         cpe.keySet().forEach(className -> {
             System.out.println(cpe.get(className).getName());

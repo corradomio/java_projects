@@ -4,21 +4,16 @@ import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
 public class Classpaths {
-
-    private static Classpaths instance = new Classpaths();
-
-    public static Classpaths getInstance() {
-        return instance;
-    }
 
     // ----------------------------------------------------------------------
     // EntryPath -> ClassName converters
@@ -78,6 +73,14 @@ public class Classpaths {
     // Operations
     // ----------------------------------------------------------------------
 
+    public void add(File libFile) {
+        composeClasspath(libFile);
+    }
+
+    public void addAll(List<File> libFiles) {
+        libFiles.forEach(this::composeClasspath);
+    }
+
     public synchronized ClasspathElements getClasspathElements(File libFile) {
         if (!classpaths.containsKey(libFile))
             composeClasspath(libFile);
@@ -85,12 +88,8 @@ public class Classpaths {
         return classpaths.get(libFile);
     }
 
-    public Collection<File> classpaths() {
-        return this.classpaths.keySet();
-    }
-
-    public Collection<ClasspathElements> classpathElements() {
-        return this.classpaths.values();
+    public synchronized List<ClasspathElements> classpathElements() {
+        return new ArrayList<>(this.classpaths.values());
     }
 
     // ----------------------------------------------------------------------
@@ -128,8 +127,10 @@ public class Classpaths {
     }
 
     private void analyzeDirectory(ClasspathElements cpe, File libDir) {
-        FileUtils.listFiles(libDir, DOT_JAR).forEach(libFile ->analyzeFile(cpe, libFile));
-        FileUtils.listFiles(libDir, DOT_JMOD).forEach(libFile ->analyzeFile(cpe, libFile));
+        FileUtils.listFiles(libDir, pathname -> pathname.getName().endsWith(DOT_JAR))
+            .forEach(libFile ->analyzeFile(cpe, libFile));
+        FileUtils.listFiles(libDir, pathname -> pathname.getName().endsWith(DOT_JMOD))
+            .forEach(libFile ->analyzeFile(cpe, libFile));
     }
 
 }
