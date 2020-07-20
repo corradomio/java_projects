@@ -33,7 +33,7 @@ public class Check {
     public static void main(String[] args) throws Exception {
 
         TypeSolver ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
-        System.out.println(ts.tryToSolveType("java.util.Collection"));
+        // System.out.println(ts.tryToSolveType("java.util.Collection"));
 
         JavaParserPool pool = JavaParserPool.getPool();
         // pool.addSourceRoot(new File("data\\bookstore\\src\\main\\java"));
@@ -95,7 +95,7 @@ public class Check {
         }
         catch (Throwable t) {
             System.out.println(mce.toString());
-            System.out.println("... " + t.getMessage());
+            System.out.println("... " + t);
         }
     }
 }

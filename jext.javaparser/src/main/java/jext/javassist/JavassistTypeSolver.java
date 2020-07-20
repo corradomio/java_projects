@@ -22,9 +22,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JarFilesTypeSolver extends BaseTypeSolver {
+public class JavassistTypeSolver extends BaseTypeSolver {
 
-    private static final Logger logger = Logger.getLogger(JarFilesTypeSolver.class);
+    private static final Logger logger = Logger.getLogger(JavassistTypeSolver.class);
 
     class ClasspathElement {
         String name;
@@ -50,7 +50,7 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
     private Set<File> libraryFiles = new HashSet<>();
     private Set<String> libraryNames = new HashSet<>();
 
-    protected JarFilesTypeSolver(String name) {
+    protected JavassistTypeSolver(String name) {
         super(name);
     }
 
@@ -133,7 +133,6 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
             throw new RuntimeException(e);
         }
     }
-
 
     // ----------------------------------------------------------------------
     // EntryPath -> ClassName converters
