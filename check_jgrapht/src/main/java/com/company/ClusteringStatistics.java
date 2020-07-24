@@ -123,7 +123,7 @@ public class ClusteringStatistics {
             cs.standardDeviation,
 
             // Indices
-            cm.getUnbalancingIndex(),
+            cmt.getUnbalancingIndex(),
             cm.getModularity(),
             cm.getLouvainModularity(),
             cm.getDunnIndex(),

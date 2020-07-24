@@ -11,9 +11,11 @@ import static jext.math.Mathx.div;
 import static jext.math.Mathx.log2;
 import static jext.math.Mathx.sq;
 import static jext.math.Mathx.sqrt;
+import static jext.math.Mathx.sum;
 
 public class ContingencyMatrix {
 
+    private int k;
     private int kd;
     private int kt;
     private int[][] m;
@@ -25,15 +27,15 @@ public class ContingencyMatrix {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ContingencyMatrix() {
-
-    }
+    public ContingencyMatrix() { }
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
     public <V> ContingencyMatrix init(ClusteringAlgorithm.Clustering<V> truth, ClusteringAlgorithm.Clustering<V> other) {
+        this.k = other.getNumberClusters();
+
         this.kt = truth.getNumberClusters();
         this.kd = other.getNumberClusters();
         this.m = LinAlg.intMatrix(kt, kd);
@@ -83,6 +85,37 @@ public class ContingencyMatrix {
     // ----------------------------------------------------------------------
     // Metrics
     // ----------------------------------------------------------------------
+
+    /**
+     * n: n vertices
+     * k: n clusters
+     * nj: n vertices cluster j
+     *
+     * 2020 - Analysis of a parallel MCMC algorithm for graph coloring with nearly uniform balancing
+     * eq (8)
+     */
+    public double getUnbalancingIndex() {
+        // int[] i = new int[1];
+        // int k = getNumberClusters();
+        // int[] nj = new int[k];
+        //
+        // clustering.getClusters().forEach(cluster -> {
+        //     int csize = cluster.size();
+        //     nj[i[0]] = csize;
+        //     i[0] += 1;
+        // });
+
+        double n = sum(mj);
+        double nk = n/k;
+
+        double ui = 0;
+        for (int j=0; j<k; ++j) {
+            ui += sq(mj[j] - nk);
+        }
+        ui = Math.sqrt(ui/k);
+
+        return ui;
+    }
 
     public double getPurity() {
         double num = 0;

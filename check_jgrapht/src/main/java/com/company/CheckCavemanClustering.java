@@ -46,14 +46,14 @@ public class CheckCavemanClustering extends JFrame {
         // inter -> tra
         // intra -> dentro
 
-        int N = 1000;               // order, n of vertices
-        // int E = 50000;              // size,  n of edges
-        int C = 10;                 // n of communities
-        // double betweenProb = .2;    // between communities
-        // double insideProb  = .9;    // inside  communities
-        double communityWeightMean = 0.3;   // peso DENTRO il cluster
+        int N = 1000;                           // order, n of vertices
+        // int E = 50000;                       // size,  n of edges
+        int C = 10;                             // n of communities
+        // double betweenProb = .2;             // between communities
+        // double insideProb  = .9;             // inside  communities
+        double communityWeightMean = 0.3;       // peso DENTRO il cluster   -> POCO dissimili
         // double communityWeightSdev = 0.1;
-        double betweenWeightMean = 0.5;     // peso TRA cluster
+        double betweenWeightMean = 0.5;         // peso TRA cluster         -> TANTO dissimili
         // double betweenWeightSdev = 0.1;
 
         int meanSize = N/C;
@@ -197,8 +197,12 @@ public class CheckCavemanClustering extends JFrame {
 
         int id = 100;
         int[] EList = {10000, 50000, 100000};
-        double[] betweenProbList = new double[]{ .2, .02 };
-        double[] insideProbList = new double[]{ .9 };
+
+        double[] betweenProbList = new double[]{ .9 };          // external edges
+        double[] insideProbList = new double[]{ .2, .02 };      // internal edges
+        // double[] betweenProbList = new double[]{ .2, .02 };
+        // double[] insideProbList = new double[]{ .9 };
+
         // double[] communityWeightSdevList = new double[]{ .1 };
         // double[] betweenWeightSdevList = new double []{ .1 };
         double[][] weightsSdevList= new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
