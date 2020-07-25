@@ -14,7 +14,8 @@ public class Main {
         Properties props = new Properties();
         File projectDir = new File(
                 // "D:\\Projects\\java\\apache-ant-1.10.8"
-                "D:\\Projects\\java\\mallet-2.0.8"
+                // "D:\\Projects\\java\\mallet-2.0.8"
+                "D:\\Projects.github\\other_projects\\eclipse.platform.releng.aggregator"
         );
 
         Project p = ProjectFactory.newProject(projectDir, props);

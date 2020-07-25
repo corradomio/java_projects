@@ -82,6 +82,7 @@ public class FastJavaParser {
         // package <namespace>;
         int sep = line.indexOf(' ');
         int end = line.indexOf(';');
+        if (end == -1) end = line.length();
         return line.substring(sep+1, end).trim();
     }
 
@@ -91,6 +92,7 @@ public class FastJavaParser {
         // import static <namespace>.<name>.<symbol>;
         int end = line.indexOf(';');
         int sep = line.lastIndexOf(' ', end);
+        if (end == -1) end = line.length();
         String symbol = line.substring(sep+1, end).trim();
         return new ObjectName(symbol);
     }
@@ -107,13 +109,21 @@ public class FastJavaParser {
     private static File parseRoot(String namespace, File sourceFile) {
         String path = FileUtils.getAbsolutePath(sourceFile.getParentFile());
         String relativePath = namespace.replace(".", "/");
-        if (!path.endsWith(relativePath))
-            return null;
-        int sep = path.indexOf(relativePath);
+        // if (!path.endsWith(relativePath))
+        //     return null;
+        if (namespace.isEmpty())
+            return sourceFile.getParentFile();
+        int sep = path.lastIndexOf(relativePath);
         if (sep == -1)
-            return null;
+            return parentByCount(sourceFile, namespace.split("\\.").length);
         else
             return new File(path.substring(0, sep-1));
+    }
+
+    private static File parentByCount(File file, int components) {
+        for(int i=0; i<components; ++i)
+            file = file.getParentFile();
+        return file;
     }
 
     public Name getType() {
