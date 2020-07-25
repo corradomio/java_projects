@@ -8,6 +8,5 @@ public class SimpleModule extends BaseModule {
 
     public SimpleModule(File moduleDir, SimpleProject project) {
         super(moduleDir, project);
-
     }
 }

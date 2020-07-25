@@ -6,9 +6,7 @@ import jext.buildtools.Source;
 import jext.buildtools.Sources;
 import jext.buildtools.java.JavaSource;
 import jext.util.FileUtils;
-import org.checkerframework.checker.interning.qual.UsesObjectEquals;
 
-import javax.sound.midi.spi.SoundbankReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;

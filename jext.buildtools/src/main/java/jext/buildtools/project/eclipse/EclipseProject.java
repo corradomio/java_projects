@@ -1,7 +1,6 @@
 package jext.buildtools.project.eclipse;
 
 import jext.buildtools.Module;
-import jext.buildtools.project.maven.MavenModule;
 import jext.buildtools.util.BaseProject;
 import jext.util.FileUtils;
 

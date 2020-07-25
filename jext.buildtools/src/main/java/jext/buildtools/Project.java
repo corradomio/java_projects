@@ -9,6 +9,7 @@ public interface Project {
     String PROJECT_TYPE = "project.type";
 
     String getName();
+    String getType();
 
     File getDirectory();
 

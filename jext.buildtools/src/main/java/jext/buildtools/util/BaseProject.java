@@ -37,6 +37,13 @@ public abstract class BaseProject implements Project {
     }
 
     @Override
+    public String getType() {
+        String type = getClass().getSimpleName();
+        type = type.substring(0, type.length()-7).toLowerCase();
+        return type;
+    }
+
+    @Override
     public Properties getProperties() {
         return properties;
     }
