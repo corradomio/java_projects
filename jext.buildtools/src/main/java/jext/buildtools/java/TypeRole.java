@@ -1,4 +1,9 @@
 package jext.buildtools.java;
 
-public class TypeRole {
+public enum TypeRole {
+    UNKNOWN,
+    CLASS,
+    INTERFACE,
+    ENUM,
+    ANNOTATION
 }

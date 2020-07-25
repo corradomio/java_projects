@@ -1,4 +1,4 @@
 package jext.buildtools;
 
-public interface Library {
+public interface Library extends Named {
 }

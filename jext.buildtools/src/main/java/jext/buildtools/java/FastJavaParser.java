@@ -1,7 +1,7 @@
-package jext.java;
+package jext.buildtools.java;
 
-import jext.name.Name;
-import jext.name.ObjectName;
+import jext.buildtools.Name;
+import jext.buildtools.util.ObjectName;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -122,5 +122,9 @@ public class FastJavaParser {
 
     public List<Name> getNamedImports() {
         return namedImports;
+    }
+
+    public File getRoot() {
+        return sourceRoot;
     }
 }

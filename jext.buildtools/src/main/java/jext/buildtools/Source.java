@@ -1,17 +1,10 @@
 package jext.buildtools;
 
-public interface Source {
+import jext.buildtools.Module;
 
-    Name getName();
-
-    String getPath();
+public interface Source extends Named {
 
     Module getModule();
 
-    String getDigest();
-
-    String getLanguage();
-
-    boolean isValid();
-
+    Name getRoot();
 }

@@ -4,89 +4,58 @@ import jext.buildtools.Name;
 
 public class PathName implements Name {
 
-    public static PathName empty() {
-        return new PathName("");
-    }
-
-    // ----------------------------------------------------------------------
-    // Private fields
-    // ----------------------------------------------------------------------
-
     private String path;
 
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
-
-
     public PathName(String path) {
-        this.path = PathUtils.normalize(path);
+        this.path = path.replace('\\', '/');
     }
-
-    public PathName(String ns, String name) {
-        this.path = PathUtils.concat(ns, name);
-    }
-
-    public PathName(Name parent, String name) {
-        this.path = PathUtils.concat(parent.getFullName(), name);
-    }
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
 
     @Override
     public String getName() {
-        return PathUtils.getName(path);
-    }
-
-    @Override
-    public Name getParent() {
-        return new PathName(PathUtils.getParent(path));
+        int sep = path.lastIndexOf('/');
+        if (sep != -1)
+            return path.substring(sep+1);
+        else
+            return path;
     }
 
     @Override
     public String getParentName() {
-        return getParent().getFullName();
+        int sep = path.lastIndexOf('/');
+        if (sep != -1)
+            return path.substring(0, sep);
+        else
+            return null;
     }
 
     @Override
-    public String getFullName() {
+    public Name getParent() {
+        String pname = getParentName();
+        if (pname != null)
+            return new PathName(pname);
+        else
+            return null;
+    }
+
+    @Override
+    public String getFullname() {
         return path;
     }
 
     @Override
-    public boolean isRoot() {
-        return path.length() == 0;
-    }
-
-    // ----------------------------------------------------------------------
-    // Operations
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // public Name compose(String name) {
-    //     return new PathName(path, name);
-    // }
-
-    // ----------------------------------------------------------------------
-    // Override
-    // ----------------------------------------------------------------------
-
-    @Override
-    public int compareTo(Name that) {
-        return getFullName().compareTo(that.getFullName());
+    public int hashCode() {
+        return getFullname().hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         Name that = (Name) obj;
-        return getFullName().equals(that.getFullName());
+        return getFullname().equals(that.getFullname());
     }
 
     @Override
-    public int hashCode() {
-        return getFullName().hashCode();
+    public int compareTo(Name that) {
+        return getFullname().compareTo(that.getFullname());
     }
 
     @Override

@@ -62,6 +62,10 @@ public class FileUtils {
     //
     // ----------------------------------------------------------------------
 
+    public static boolean isParent(File parent, File path) {
+        return path.getAbsolutePath().startsWith(parent.getAbsolutePath());
+    }
+
     /**
      * Check if the path is absolute:
      *

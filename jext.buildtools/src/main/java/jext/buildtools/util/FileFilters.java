@@ -1,4 +1,9 @@
 package jext.buildtools.util;
 
-public class FileFIlters {
+import java.io.File;
+import java.io.FileFilter;
+
+public class FileFilters {
+
+    public static final FileFilter IS_JAVA = file -> file.getName().endsWith(".java");
 }

@@ -1,9 +1,6 @@
 package jext.buildtools;
 
-/**
- * An object with a name
- */
-public interface Named extends Comparable<Named> {
+public interface Named {
 
     Name getName();
 

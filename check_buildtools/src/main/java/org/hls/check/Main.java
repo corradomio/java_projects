@@ -1,17 +1,23 @@
 package org.hls.check;
 
-import jext.buildtools.maven.Version;
+
+import jext.buildtools.Project;
+import jext.buildtools.ProjectFactory;
+import jext.buildtools.util.ProjectDump;
+
+import java.io.File;
+import java.util.Properties;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println(Version.of("1.2.1"));
-        System.out.println(Version.of("1.2"));
-        System.out.println(Version.of("1.2.1-1"));
-        System.out.println(Version.of("1.2.1-1-1"));
-        System.out.println(Version.of("1.2-alpha"));
-        System.out.println(Version.of("1.2-beta-1"));
-        System.out.println(Version.of("1.2.3.4"));
+        Properties props = new Properties();
+        File projectDir = new File(
+                // "D:\\Projects\\java\\apache-ant-1.10.8"
+                "D:\\Projects\\java\\mallet-2.0.8"
+        );
 
+        Project p = ProjectFactory.newProject(projectDir, props);
+        ProjectDump.dump(p);
     }
 }
