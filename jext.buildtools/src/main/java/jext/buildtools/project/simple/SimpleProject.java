@@ -1,4 +1,4 @@
-package jext.buildtools.simple;
+package jext.buildtools.project.simple;
 
 import jext.buildtools.Module;
 import jext.buildtools.util.BaseProject;
@@ -6,7 +6,6 @@ import jext.buildtools.util.BaseProject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;

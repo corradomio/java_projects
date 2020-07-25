@@ -1,4 +1,4 @@
-package jext.buildtools.simple;
+package jext.buildtools.project.simple;
 
 import jext.buildtools.Module;
 import jext.buildtools.Project;

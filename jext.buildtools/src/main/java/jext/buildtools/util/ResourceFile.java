@@ -1,13 +1,14 @@
 package jext.buildtools.util;
 
+import jext.buildtools.Module;
 import jext.buildtools.Resource;
 
 import java.io.File;
 
-public class FileResource extends BaseResource implements Resource {
+public class ResourceFile extends BaseResource implements Resource {
 
-    public FileResource(File resourceFile, BaseModule module) {
+    public ResourceFile(File resourceFile, Module module) {
         super(resourceFile, module);
-
     }
+
 }

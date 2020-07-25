@@ -1,6 +1,5 @@
-package jext.buildtools.simple;
+package jext.buildtools.project.simple;
 
-import jext.buildtools.Resources;
 import jext.buildtools.util.BaseModule;
 
 import java.io.File;

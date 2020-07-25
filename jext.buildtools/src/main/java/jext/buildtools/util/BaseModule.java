@@ -1,13 +1,19 @@
 package jext.buildtools.util;
 
+import jext.buildtools.Libraries;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Project;
+import jext.buildtools.Resources;
 import jext.buildtools.Sources;
+import jext.buildtools.project.simple.SimpleProject;
 import jext.util.FileUtils;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseModule implements Module {
@@ -20,15 +26,27 @@ public abstract class BaseModule implements Module {
     protected File moduleDir;
     protected Name name;
 
+    protected Sources sources;
+    protected Libraries libraries;
+    protected Resources resources;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected BaseModule(File moduleDir,Project project) {
+    protected BaseModule(File moduleDir, Project project) {
         this.moduleDir = moduleDir;
         this.project = project;
         String rpath = FileUtils.relativePath(project.getDirectory(), moduleDir);
         this.name = new PathName(rpath);
+
+        this.sources = new JavaSources(this);
+        this.libraries = new JarLibraries(this);
+        this.resources = new FileResources(this);
+
+        String exts = project.getProperties().getProperty(SimpleProject.PROJECT_RESOURCES, ".xml,.properties");
+        Set<String> extensions = new HashSet<>(Arrays.asList(exts.split(",")));
+        ((FileResources)this.resources).setExtension(extensions);
     }
 
     // ----------------------------------------------------------------------
@@ -52,7 +70,17 @@ public abstract class BaseModule implements Module {
 
     @Override
     public Sources getSources() {
-        return new JavaSources(this);
+        return sources; //new JavaSources(this);
+    }
+
+    @Override
+    public Libraries getLibraries() {
+        return libraries; // new JarLibraries(this);
+    }
+
+    @Override
+    public Resources getResources() {
+        return resources; //new FileResources(this);
     }
 
     // ----------------------------------------------------------------------

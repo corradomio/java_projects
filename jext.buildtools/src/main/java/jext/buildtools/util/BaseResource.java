@@ -4,6 +4,7 @@ import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Named;
 import jext.util.FileUtils;
+import jext.util.MimeTypes;
 
 import java.io.File;
 
@@ -27,6 +28,18 @@ public class BaseResource implements Named {
     @Override
     public Name getName() {
         return name;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public String getDigest() {
+        return FileUtils.digest(file);
+    }
+
+    public String getMimeType() {
+        return MimeTypes.guessMimeType(file);
     }
 
 }

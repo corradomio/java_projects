@@ -1,14 +1,25 @@
 package jext.buildtools.util;
 
+import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Project;
-import jext.buildtools.Module;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public abstract class BaseProject implements Project {
+
+    public final String PROJECT_MODULE = "project.module";
+    public static final String MODULE_FILE = "build.xml";
 
     protected File projectDir;
     protected Properties properties;
@@ -16,7 +27,8 @@ public abstract class BaseProject implements Project {
 
     protected BaseProject(File projectDir, Properties properties){
         this.projectDir = projectDir;
-        this.properties = properties;
+        this.properties = new Properties();
+        this.properties.putAll(properties);
     }
 
     @Override
@@ -52,5 +64,39 @@ public abstract class BaseProject implements Project {
         return null;
     }
 
+    // @Override
+    // public List<Module> getModules() {
+    //     throw new UnsupportedOperationException();
+    // }
 
+    @Override
+    public List<Module> getModules() {
+        if (modules != null)
+            return modules;
+
+        String moduleFile = getProperties().getProperty(PROJECT_MODULE, MODULE_FILE);
+        List<File> moduleDirs = new ArrayList<>();
+        try {
+            Files.walkFileTree(projectDir.toPath(), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
+                    File dir = path.toFile();
+                    File isModule = new File(dir, moduleFile);
+                    if (isModule.exists())
+                        moduleDirs.add(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) { }
+
+        modules = moduleDirs.stream()
+                .map(moduleDir -> newModule(moduleDir))
+                .collect(Collectors.toList());
+
+        return modules;
+    }
+
+    protected Module newModule(File moduleDir) {
+        throw new UnsupportedOperationException();
+    }
 }

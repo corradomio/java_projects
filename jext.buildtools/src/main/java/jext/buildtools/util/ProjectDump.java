@@ -20,6 +20,18 @@ public class ProjectDump {
                     Console.printf("        %s (%d)\n", root, m.getSources().getSources(root).size());
                 });
             }
+            if (!m.getLibraries().isEmpty()) {
+                Console.printf("      libraries (%d):\n", m.getLibraries().size());
+                m.getLibraries().getRoots().forEach(root -> {
+                    Console.printf("        %s (%d)\n", root, m.getLibraries().getLibraries(root).size());
+                });
+            }
+            if (!m.getResources().isEmpty()) {
+                Console.printf("      resources (%d):\n", m.getResources().size());
+                m.getResources().getRoots().forEach(root -> {
+                    Console.printf("        %s (%d)\n", root, m.getResources().getResources(root).size());
+                });
+            }
         });
     }
 }

@@ -1,4 +1,15 @@
 package jext.buildtools.project.gradle;
 
-public class GradleModule {
+import jext.buildtools.Project;
+import jext.buildtools.project.maven.MavenProject;
+import jext.buildtools.util.BaseModule;
+
+import java.io.File;
+
+public class GradleModule extends BaseModule {
+
+    public GradleModule(File moduleDir, Project project) {
+        super(moduleDir, project);
+
+    }
 }
