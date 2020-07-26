@@ -1,4 +1,48 @@
 package jext.buildtools.util;
 
-public class BaseLibraries {
+import jext.buildtools.Libraries;
+import jext.buildtools.Library;
+import jext.buildtools.Name;
+import jext.buildtools.Module;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public abstract class BaseLibraries implements Libraries {
+
+    protected BaseModule module;
+    protected List<Library> libraries;
+
+    protected BaseLibraries(Module module) {
+        this.module = (BaseModule) module;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getLibraries().isEmpty();
+    }
+
+    @Override
+    public int size() {
+        return getLibraries().size();
+    }
+
+    @Override
+    public Set<Name> getRoots() {
+        Set<Name> roots = new HashSet<>();
+        getLibraries().forEach(library -> {
+            Name root = library.getName().getParent();
+            roots.add(root);
+        });
+        return roots;
+    }
+
+    @Override
+    public List<Library> getLibraries(Name root) {
+        return getLibraries().stream()
+                .filter(library -> library.getName().getFullname().startsWith(root.getFullname()))
+                .collect(Collectors.toList());
+    }
 }
