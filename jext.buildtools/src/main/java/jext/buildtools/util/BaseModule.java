@@ -6,6 +6,7 @@ import jext.buildtools.Name;
 import jext.buildtools.Project;
 import jext.buildtools.Resources;
 import jext.buildtools.Sources;
+import jext.buildtools.Types;
 import jext.buildtools.project.simple.SimpleProject;
 import jext.util.FileUtils;
 
@@ -29,6 +30,7 @@ public abstract class BaseModule implements Module {
     protected Sources sources;
     protected Libraries libraries;
     protected Resources resources;
+    protected Types types;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -43,6 +45,7 @@ public abstract class BaseModule implements Module {
         this.sources = new JavaSources(this);
         this.libraries = new JarLibraries(this);
         this.resources = new FileResources(this);
+        this.types = new SourcesTypes(this);
 
         String exts = project.getProperties().getProperty(SimpleProject.PROJECT_RESOURCES, ".xml,.properties");
         Set<String> extensions = new HashSet<>(Arrays.asList(exts.split(",")));
@@ -70,17 +73,22 @@ public abstract class BaseModule implements Module {
 
     @Override
     public Sources getSources() {
-        return sources; //new JavaSources(this);
+        return sources;
     }
 
     @Override
     public Libraries getLibraries() {
-        return libraries; // new JarLibraries(this);
+        return libraries;
     }
 
     @Override
     public Resources getResources() {
-        return resources; //new FileResources(this);
+        return resources;
+    }
+
+    @Override
+    public Types getTypes() {
+        return types;
     }
 
     // ----------------------------------------------------------------------

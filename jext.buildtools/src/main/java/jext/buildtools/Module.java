@@ -13,4 +13,6 @@ public interface Module extends Named {
     Libraries getLibraries();
 
     Resources getResources();
+
+    Types getTypes();
 }

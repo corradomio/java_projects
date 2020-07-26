@@ -6,7 +6,9 @@ import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FastJavaParser {
 
@@ -14,8 +16,8 @@ public class FastJavaParser {
     private File sourceRoot;
     private Name type;
     private TypeRole role = TypeRole.UNKNOWN;
-    private List<Name> starImports = new ArrayList<>();
-    private List<Name> namedImports = new ArrayList<>();
+    private Set<Name> starImports = new HashSet<>();
+    private Set<Name> namedImports = new HashSet<>();
     private boolean parsed;
 
     public FastJavaParser(File sourceFile) {
@@ -130,7 +132,7 @@ public class FastJavaParser {
         return type;
     }
 
-    public List<Name> getNamedImports() {
+    public Set<Name> getNamedImports() {
         return namedImports;
     }
 
