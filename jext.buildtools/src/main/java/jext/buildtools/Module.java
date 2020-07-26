@@ -1,6 +1,7 @@
 package jext.buildtools;
 
 import java.io.File;
+import java.util.List;
 
 public interface Module extends Named {
 
@@ -15,4 +16,6 @@ public interface Module extends Named {
     Resources getResources();
 
     Types getTypes();
+
+    List<Module> getDependencies();
 }

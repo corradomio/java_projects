@@ -5,12 +5,15 @@ import jext.buildtools.util.ObjectName;
 import jext.util.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class FastJavaParser {
+
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
 
     private File sourceFile;
     private File sourceRoot;
@@ -20,9 +23,37 @@ public class FastJavaParser {
     private Set<Name> namedImports = new HashSet<>();
     private boolean parsed;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public FastJavaParser(File sourceFile) {
         this.sourceFile = sourceFile;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public Name getType() {
+        return type;
+    }
+
+    public Set<Name> getNamedImports() {
+        return namedImports;
+    }
+
+    public Set<Name> getStarImports() {
+        return starImports;
+    }
+
+    public File getRoot() {
+        return sourceRoot;
+    }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
 
     public FastJavaParser parse() {
         if (parsed)
@@ -128,15 +159,4 @@ public class FastJavaParser {
         return file;
     }
 
-    public Name getType() {
-        return type;
-    }
-
-    public Set<Name> getNamedImports() {
-        return namedImports;
-    }
-
-    public File getRoot() {
-        return sourceRoot;
-    }
 }

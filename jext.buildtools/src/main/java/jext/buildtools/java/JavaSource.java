@@ -27,7 +27,11 @@ public class JavaSource extends BaseSource {
 
     @Override
     public Set<Name> getTypes() {
-        return Collections.singleton(parser.getType());
+        Name type = parser.getType();
+        if (type == null)
+            return Collections.emptySet();
+        else
+            return Collections.singleton(type);
     }
 
     @Override
@@ -37,6 +41,6 @@ public class JavaSource extends BaseSource {
 
     @Override
     public Set<Name> getImportedNamespaces() {
-        return parser.getNamedImports();
+        return parser.getStarImports();
     }
 }

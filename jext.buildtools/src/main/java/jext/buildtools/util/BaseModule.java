@@ -9,8 +9,10 @@ import jext.buildtools.Sources;
 import jext.buildtools.Types;
 import jext.buildtools.project.simple.SimpleProject;
 import jext.util.FileUtils;
+import jext.util.SetUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +33,7 @@ public abstract class BaseModule implements Module {
     protected Libraries libraries;
     protected Resources resources;
     protected Types types;
+    protected List<Module> dependencies;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -90,6 +93,28 @@ public abstract class BaseModule implements Module {
     public Types getTypes() {
         return types;
     }
+
+    @Override
+    public List<Module> getDependencies() {
+        if (dependencies != null)
+            return dependencies;
+
+        dependencies = new ArrayList<>();
+        Types types = getTypes();
+
+        for(Module dmodule : project.getModules()) {
+            Types dtypes = dmodule.getTypes();
+
+            Set<Name> itypes  = SetUtils.intersection(types.getImportedTypes(), dtypes.getDefinedTypes());
+            Set<Name> ispaces = SetUtils.intersection(types.getImportedNamespaces(), dtypes.getDefinedNamespaces());
+
+            if ((itypes.size() + ispaces.size()) > 0)
+                dependencies.add(dmodule);
+        }
+
+        return dependencies;
+    }
+
 
     // ----------------------------------------------------------------------
     // Implementations
