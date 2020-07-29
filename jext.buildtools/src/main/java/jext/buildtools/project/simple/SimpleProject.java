@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class SimpleProject extends BaseProject {
 
     public static final String TYPE = "simple";
-    public static final String PROJECT_RESOURCES = "project.resources";
 
     public SimpleProject(File projectDir, Properties properties) {
         super(projectDir, properties);

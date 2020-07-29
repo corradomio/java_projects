@@ -23,7 +23,8 @@ public class AntProject extends BaseProject {
 
     public AntProject(File projectDir, Properties properties) {
         super(projectDir, properties);
-        this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
+        if (!properties.containsKey(PROJECT_MODULE))
+            this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
     }
 
     @Override

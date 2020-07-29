@@ -8,6 +8,8 @@ import jext.buildtools.Resources;
 import jext.buildtools.Sources;
 import jext.buildtools.Types;
 import jext.buildtools.project.simple.SimpleProject;
+import jext.buildtools.resource.FileResources;
+import jext.buildtools.source.java.JavaSources;
 import jext.util.FileUtils;
 import jext.util.SetUtils;
 
@@ -125,7 +127,7 @@ public abstract class BaseModule implements Module {
     // Implementations
     // ----------------------------------------------------------------------
 
-    protected List<File> listDirectories() {
+    public List<File> listDirectories() {
         return FileUtils.asList(moduleDir.listFiles(File::isDirectory))
                 .stream()
                 .filter(this::isValid)

@@ -1,4 +1,4 @@
-package jext.buildtools.java;
+package jext.buildtools.source.java;
 
 import java.util.Arrays;
 import java.util.HashMap;

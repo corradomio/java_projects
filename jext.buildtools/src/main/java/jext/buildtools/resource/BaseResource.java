@@ -1,8 +1,9 @@
-package jext.buildtools.util;
+package jext.buildtools.resource;
 
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Named;
+import jext.buildtools.util.PathName;
 import jext.util.FileUtils;
 import jext.util.MimeTypes;
 

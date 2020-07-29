@@ -1,4 +1,4 @@
-package jext.buildtools.java;
+package jext.buildtools.source.java;
 
 public enum TypeRole {
     UNKNOWN,

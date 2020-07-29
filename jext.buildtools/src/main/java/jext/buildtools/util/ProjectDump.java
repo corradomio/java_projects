@@ -17,7 +17,7 @@ public class ProjectDump {
             if (!m.getDependencies().isEmpty()) {
                 Console.printf("      dependencies (%d):\n", m.getDependencies().size());
                 m.getDependencies().forEach(d -> {
-                    Console.printf("        %s\n", d.getName());
+                    Console.printf("        '%s'\n", d.getName());
                 });
             }
             if (!m.getSources().isEmpty()) {

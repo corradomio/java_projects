@@ -1,8 +1,9 @@
-package jext.buildtools.util;
+package jext.buildtools.source.java;
 
 import jext.buildtools.Module;
 import jext.buildtools.Source;
-import jext.buildtools.java.JavaSource;
+import jext.buildtools.source.BaseSources;
+import jext.buildtools.util.FileFilters;
 import jext.util.FileUtils;
 
 import java.io.File;

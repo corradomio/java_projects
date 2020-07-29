@@ -1,9 +1,10 @@
-package jext.buildtools.util;
+package jext.buildtools.source;
 
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Source;
 import jext.buildtools.Sources;
+import jext.buildtools.util.BaseModule;
 
 import java.util.HashSet;
 import java.util.List;

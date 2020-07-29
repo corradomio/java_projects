@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 public abstract class BaseProject implements Project {
 
-    public final String PROJECT_MODULE = "project.module";
     public static final String MODULE_FILE = "build.xml";
 
     protected File projectDir;
@@ -64,7 +63,6 @@ public abstract class BaseProject implements Project {
     @Override
     public Module findModule(String name) {
         for (Module module : getModules()) {
-            
             if (module.getId().equals(name)
                     || module.getName().getFullname().equals(name)
                     || module.getName().getName().equals(name))
