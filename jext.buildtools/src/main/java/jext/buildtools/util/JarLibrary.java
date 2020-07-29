@@ -21,6 +21,11 @@ public class JarLibrary implements Library {
     }
 
     @Override
+    public String getId() {
+        return String.valueOf(name.toString().hashCode());
+    }
+
+    @Override
     public Name getName() {
         return name;
     }

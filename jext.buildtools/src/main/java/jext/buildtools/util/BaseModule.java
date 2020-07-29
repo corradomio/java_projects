@@ -60,13 +60,18 @@ public abstract class BaseModule implements Module {
     // ----------------------------------------------------------------------
 
     @Override
-    public Project getProject(){
-        return project;
+    public String getId() {
+        return String.valueOf(name.toString().hashCode());
     }
 
     @Override
     public Name getName() {
         return name;
+    }
+
+    @Override
+    public Project getProject(){
+        return project;
     }
 
     @Override

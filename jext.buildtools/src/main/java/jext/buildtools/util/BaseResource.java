@@ -30,6 +30,10 @@ public class BaseResource implements Named {
         return name;
     }
 
+    public String getId() {
+        return String.valueOf(name.toString().hashCode());
+    }
+
     public File getFile() {
         return file;
     }

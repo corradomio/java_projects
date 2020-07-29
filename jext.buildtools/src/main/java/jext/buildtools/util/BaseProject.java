@@ -64,8 +64,10 @@ public abstract class BaseProject implements Project {
     @Override
     public Module findModule(String name) {
         for (Module module : getModules()) {
-            Name moduleName = module.getName();
-            if (moduleName.getFullname().equals(name) || moduleName.getName().equals(name))
+            
+            if (module.getId().equals(name)
+                    || module.getName().getFullname().equals(name)
+                    || module.getName().getName().equals(name))
                 return module;
         }
         return null;
