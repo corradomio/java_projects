@@ -4,6 +4,7 @@ import jext.buildtools.Library;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.util.FileUtils;
+import jext.util.StringUtils;
 
 import java.io.File;
 
@@ -22,7 +23,7 @@ public class JarLibrary implements Library {
 
     @Override
     public String getId() {
-        return String.valueOf(name.toString().hashCode());
+        return StringUtils.digest(name.toString());
     }
 
     @Override

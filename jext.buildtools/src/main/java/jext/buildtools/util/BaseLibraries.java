@@ -2,10 +2,10 @@ package jext.buildtools.util;
 
 import jext.buildtools.Libraries;
 import jext.buildtools.Library;
-import jext.buildtools.Name;
 import jext.buildtools.Module;
-import jext.buildtools.Resource;
+import jext.buildtools.Name;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +46,24 @@ public abstract class BaseLibraries implements Libraries {
         return getLibraries().stream()
                 .filter(library -> library.getName().getFullname().startsWith(root.getFullname()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Library> getLibraries() {
+        if (libraries != null)
+            return libraries;
+
+        libraries = new ArrayList<>();
+
+        module.listLocalLibraries().forEach(libraryFile -> {
+            libraries.add(new JarLibrary(libraryFile, module));
+        });
+
+        module.listMavenLibraries().forEach(coords -> {
+            libraries.add(new MavenLibrary(coords, module));
+        });
+
+        return libraries;
     }
 
     @Override

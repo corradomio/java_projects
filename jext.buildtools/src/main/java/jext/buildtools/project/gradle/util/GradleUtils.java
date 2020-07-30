@@ -1,4 +1,4 @@
-package jext.buildtools.gradle.util;
+package jext.buildtools.project.gradle.util;
 
 import jext.buildtools.Name;
 

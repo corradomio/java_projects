@@ -1,6 +1,5 @@
 package jext.buildtools.maven;
 
-import jext.buildtools.maven.MavenPom;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.exception.InvalidValueException;

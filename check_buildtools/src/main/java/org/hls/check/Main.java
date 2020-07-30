@@ -5,6 +5,7 @@ import jext.buildtools.Project;
 import jext.buildtools.ProjectFactory;
 import jext.buildtools.project.ant.AntProject;
 import jext.buildtools.util.ProjectDump;
+import jext.logging.Logger;
 
 import java.io.File;
 import java.util.Properties;
@@ -12,6 +13,8 @@ import java.util.Properties;
 public class Main {
 
     public static void main(String[] args) {
+        Logger.configure();
+
         Properties props = new Properties();
         // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
@@ -23,7 +26,8 @@ public class Main {
                 // "D:\\Projects.github\\other_projects\\gradle"
                 // "D:\\Projects.test\\BTProjects\\FieldPlan"
                 // "D:\\Projects.test\\BTProjects\\Image-Detection-Samples"
-                "D:\\Bahar\\keycloak-quickstarts-9.0.3"
+                // "D:\\Bahar\\keycloak-quickstarts-9.0.3"
+                "D:\\Projects.test\\BTProjects\\ForSalwa"
         );
 
         Project p = ProjectFactory.newProject(projectDir, props);

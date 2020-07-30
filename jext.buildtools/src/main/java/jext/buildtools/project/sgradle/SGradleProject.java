@@ -7,9 +7,9 @@ import jext.util.FileUtils;
 import java.io.File;
 import java.util.Properties;
 
-public class GradleProject extends BaseProject {
+public class SGradleProject extends BaseProject {
 
-    public static final String TYPE = "gradle";
+    public static final String TYPE = "sgradle";
     public static final String MODULE_FILE = "build.gradle";
 
     public static boolean isProject(File projectDir) {
@@ -21,13 +21,13 @@ public class GradleProject extends BaseProject {
         return false;
     }
 
-    public GradleProject(File projectDir, Properties properties) {
+    public SGradleProject(File projectDir, Properties properties) {
         super(projectDir, properties);
         this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
     }
 
     @Override
     protected Module newModule(File moduleDir) {
-        return new GradleModule(moduleDir, this);
+        return new SGradleModule(moduleDir, this);
     }
 }

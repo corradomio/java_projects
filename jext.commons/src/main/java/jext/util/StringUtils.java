@@ -112,7 +112,13 @@ public class StringUtils {
             md.update(data, 0, data.length);
 
             byte[] digest = md.digest();
-            return DatatypeConverter.printHexBinary(digest);
+            int k = digest.length/4;
+
+            byte[] smalld = new byte[k];
+            for (int i=0; i< smalld.length; ++i)
+                smalld[i] = (byte)(digest[i] ^ digest[k+i] ^ digest[2*k+i] ^ digest[3*k+i]);
+
+            return DatatypeConverter.printHexBinary(smalld);
         }
         catch (Exception e) {
             logger.error(e, e);

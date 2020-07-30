@@ -1,7 +1,8 @@
-package jext.buildtools.project.eclipse;
+package jext.buildtools.project.eclipse.util;
 
 import jext.buildtools.Module;
 import jext.buildtools.Source;
+import jext.buildtools.project.eclipse.EclipseModule;
 import jext.buildtools.source.BaseSources;
 import jext.buildtools.source.java.JavaSource;
 import jext.buildtools.util.FileFilters;
@@ -16,7 +17,7 @@ public class EclipseSources extends BaseSources {
 
     private ClasspathFile classpathFile;
 
-    protected EclipseSources(Module module) {
+    public EclipseSources(Module module) {
         super(module);
         this.classpathFile = ((EclipseModule)module).getClasspathFile();
     }

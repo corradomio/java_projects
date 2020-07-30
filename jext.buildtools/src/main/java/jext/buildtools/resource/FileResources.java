@@ -4,8 +4,6 @@ import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Resource;
 import jext.buildtools.Resources;
-import jext.buildtools.Source;
-import jext.buildtools.resource.ResourceFile;
 import jext.buildtools.util.BaseModule;
 import jext.util.FileUtils;
 
@@ -21,14 +19,14 @@ public class FileResources implements Resources {
 
     private BaseModule module;
     private List<Resource> resources;
-    private Set<String> extensions;
+    private Set<String> extensions = new HashSet<>();
 
     public FileResources(Module module) {
         this.module = (BaseModule) module;
     }
 
     public void setExtension(Set<String> extensions) {
-        this.extensions = extensions;
+        this.extensions.addAll(extensions);
     }
 
     @Override

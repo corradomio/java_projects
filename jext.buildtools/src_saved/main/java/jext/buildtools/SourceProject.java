@@ -70,7 +70,7 @@ public class SourceProject implements Project {
         if (modules != null)
             return modules;
 
-        // Parallel.forEach(analyzers, jext.buildtools.Project::initialize);
+        // Parallel.forEach(analyzers, Project::initialize);
         analyzers.forEach(ProjectAnalyzer::initialize);
 
         // module names
@@ -142,7 +142,7 @@ public class SourceProject implements Project {
     // ----------------------------------------------------------------------
 
     public static void dump(ProjectAnalyzer project) {
-        System.out.printf("jext.buildtools.Project %s\n", project.getName());
+        System.out.printf("Project %s\n", project.getName());
         project.getModules().forEach(module -> {
             System.out.printf("Module %s (%s)\n", module.getName(), module.isValid());
             System.out.println("... dmodules");

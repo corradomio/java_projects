@@ -6,6 +6,7 @@ import jext.buildtools.Named;
 import jext.buildtools.util.PathName;
 import jext.util.FileUtils;
 import jext.util.MimeTypes;
+import jext.util.StringUtils;
 
 import java.io.File;
 
@@ -32,7 +33,7 @@ public class BaseResource implements Named {
     }
 
     public String getId() {
-        return String.valueOf(name.toString().hashCode());
+        return StringUtils.digest(name.toString());
     }
 
     public File getFile() {

@@ -5,9 +5,9 @@ import jext.buildtools.util.BaseModule;
 
 import java.io.File;
 
-public class GradleModule extends BaseModule {
+public class SGradleModule extends BaseModule {
 
-    public GradleModule(File moduleDir, Project project) {
+    public SGradleModule(File moduleDir, Project project) {
         super(moduleDir, project);
     }
 }

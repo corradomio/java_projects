@@ -7,15 +7,18 @@ import jext.buildtools.Project;
 import jext.buildtools.Resources;
 import jext.buildtools.Sources;
 import jext.buildtools.Types;
+import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.project.simple.SimpleProject;
 import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.java.JavaSources;
 import jext.util.FileUtils;
 import jext.util.SetUtils;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +66,8 @@ public abstract class BaseModule implements Module {
 
     @Override
     public String getId() {
-        return String.valueOf(name.toString().hashCode());
+        //return String.valueOf(name.toString().hashCode());
+        return StringUtils.digest(name.toString());
     }
 
     @Override
@@ -132,6 +136,19 @@ public abstract class BaseModule implements Module {
                 .stream()
                 .filter(this::isValid)
                 .collect(Collectors.toList());
+    }
+
+    public List<File> listLocalLibraries() {
+        List<File> libraryFiles = new ArrayList<>();
+
+        listDirectories().forEach(dir ->{
+            FileUtils.listFiles(libraryFiles, dir, FileFilters.IS_JAR);
+        });
+        return libraryFiles;
+    }
+
+    public List<MavenCoords> listMavenLibraries() {
+        return Collections.emptyList();
     }
 
     private boolean isValid(File directory) {
