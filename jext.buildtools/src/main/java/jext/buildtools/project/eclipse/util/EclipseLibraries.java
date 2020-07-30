@@ -7,6 +7,7 @@ import jext.buildtools.util.JarLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EclipseLibraries extends BaseLibraries {
 
@@ -22,10 +23,9 @@ public class EclipseLibraries extends BaseLibraries {
         if (libraries != null)
             return libraries;
 
-        libraries = new ArrayList<>();
-        classpathFile.getLocalLibraries().forEach(jarFile -> {
-            libraries.add(new JarLibrary(jarFile, module));
-        });
+        libraries = module.listLibraries().stream()
+                .map(libraryFile -> new JarLibrary(libraryFile, module))
+                .collect(Collectors.toList());
 
         return libraries;
     }

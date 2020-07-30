@@ -2,8 +2,8 @@ package jext.buildtools.project.eclipse;
 
 import jext.buildtools.Module;
 import jext.buildtools.Source;
-import jext.buildtools.source.java.JavaSource;
 import jext.buildtools.source.BaseSources;
+import jext.buildtools.source.java.JavaSource;
 import jext.buildtools.util.FileFilters;
 import jext.util.FileUtils;
 
