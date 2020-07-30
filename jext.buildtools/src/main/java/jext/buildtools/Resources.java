@@ -2,6 +2,7 @@ package jext.buildtools;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public interface Resources {
 
@@ -12,4 +13,6 @@ public interface Resources {
 
     List<Resource> getResources();
     List<Resource> getResources(Name root);
+
+    void forEach(Consumer<Resource> consumer);
 }

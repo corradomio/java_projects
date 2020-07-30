@@ -73,17 +73,6 @@ public class ClasspathFile {
         return Collections.emptyList();
     }
 
-    public List<String> getMavenLibraries() {
-        List<String> mavenLibs = new ArrayList<>();
-        XPathUtils.selectNodes(elt, "classpathentry[@kind='var']")
-                .forEach(elib -> {
-                    String path = XPathUtils.getValue(elib, "@path", "");
-                    if (!path.startsWith("M2_REPO/")) return;
-                    mavenLibs.add(path.substring(8));
-                });
-        return mavenLibs;
-    }
-
     public List<String> getModuleDependencies() {
         List<String> dmodules = new ArrayList<>();
         XPathUtils.selectNodes(elt, "classpathentry[@kind='src']")
@@ -96,6 +85,17 @@ public class ClasspathFile {
                         dmodules.add(path);
                 });
         return dmodules;
+    }
+
+    public List<String> getMavenLibraries() {
+        List<String> mavenLibs = new ArrayList<>();
+        XPathUtils.selectNodes(elt, "classpathentry[@kind='var']")
+                .forEach(elib -> {
+                    String path = XPathUtils.getValue(elib, "@path", "");
+                    if (!path.startsWith("M2_REPO/")) return;
+                    mavenLibs.add(path.substring(8));
+                });
+        return mavenLibs;
     }
 
     public List<File> getLocalLibraries() {

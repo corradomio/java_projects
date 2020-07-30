@@ -2,6 +2,7 @@ package jext.buildtools;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public interface Libraries {
 
@@ -12,4 +13,6 @@ public interface Libraries {
 
     List<Library> getLibraries();
     List<Library> getLibraries(Name root);
+
+    void forEach(Consumer<Library> consumer);
 }

@@ -4,10 +4,12 @@ import jext.buildtools.Libraries;
 import jext.buildtools.Library;
 import jext.buildtools.Name;
 import jext.buildtools.Module;
+import jext.buildtools.Resource;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public abstract class BaseLibraries implements Libraries {
@@ -44,5 +46,10 @@ public abstract class BaseLibraries implements Libraries {
         return getLibraries().stream()
                 .filter(library -> library.getName().getFullname().startsWith(root.getFullname()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void forEach(Consumer<Library> consumer) {
+        getLibraries().forEach(consumer);
     }
 }

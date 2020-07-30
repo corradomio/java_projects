@@ -65,7 +65,8 @@ public abstract class BaseProject implements Project {
         for (Module module : getModules()) {
             if (module.getId().equals(name)
                     || module.getName().getFullname().equals(name)
-                    || module.getName().getName().equals(name))
+                    || module.getName().getName().equals(name)
+                    || module.getDirectory().getAbsolutePath().equals(name))
                 return module;
         }
         return null;

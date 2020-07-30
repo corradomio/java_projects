@@ -16,7 +16,7 @@ public class GradleProject extends BaseProject {
         File projectFile = new File(projectDir, MODULE_FILE);
         if (projectFile.exists())
             return true;
-        if (FileUtils.listFiles(projectDir, file -> file.getName().equals(MODULE_FILE)).isEmpty())
+        if (FileUtils.listFiles(projectDir, file -> file.getName().equals(MODULE_FILE)).size() > 0)
             return true;
         return false;
     }

@@ -4,6 +4,7 @@ import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Resource;
 import jext.buildtools.Resources;
+import jext.buildtools.Source;
 import jext.buildtools.resource.ResourceFile;
 import jext.buildtools.util.BaseModule;
 import jext.util.FileUtils;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class FileResources implements Resources {
@@ -72,5 +74,10 @@ public class FileResources implements Resources {
         return getResources().stream()
                 .filter(resource -> resource.getName().getFullname().startsWith(root.getFullname()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void forEach(Consumer<Resource> consumer) {
+        getResources().forEach(consumer);
     }
 }
