@@ -1,4 +1,4 @@
-package jext.buildtools.scan.util;
+package jext.io.file;
 
 import jext.logging.Logger;
 import jext.util.FileUtils;

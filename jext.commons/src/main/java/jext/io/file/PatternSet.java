@@ -1,9 +1,16 @@
-package jext.buildtools.scan.util;
+package jext.io.file;
 
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 
 import java.io.File;
+
+/*
+    <parent>
+        <filename name="_pattern1_"/>
+        <filename name="_pattern2_"/>
+    </parent>
+ */
 
 public class PatternSet {
 

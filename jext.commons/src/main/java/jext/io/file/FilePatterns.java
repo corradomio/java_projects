@@ -1,4 +1,4 @@
-package jext.buildtools.scan.util;
+package jext.io.file;
 
 import java.io.File;
 import java.util.ArrayList;

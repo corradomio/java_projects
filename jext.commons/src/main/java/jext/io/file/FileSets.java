@@ -1,4 +1,4 @@
-package jext.buildtools.scan.util;
+package jext.io.file;
 
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -7,6 +7,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+/*
+    <parent>
+        <directory ...>...</directory>
+        <filename  ...>...</filename>
+    </parent>
+ */
 
 public class FileSets {
 

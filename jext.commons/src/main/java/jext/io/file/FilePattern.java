@@ -1,4 +1,4 @@
-package jext.buildtools.scan.util;
+package jext.io.file;
 
 import jext.util.FileUtils;
 import jext.util.Wildcard;
