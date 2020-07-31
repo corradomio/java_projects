@@ -2,6 +2,8 @@ package org.hls.check;
 
 import jext.buildtools.Project;
 import jext.buildtools.ProjectFactory;
+import jext.buildtools.project.ant.AntProject;
+import jext.buildtools.project.eclipse.EclipseProject;
 import jext.buildtools.util.ProjectDump;
 import jext.logging.Logger;
 import jext.util.PropertiesUtils;
@@ -12,13 +14,13 @@ import java.util.Properties;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Logger.configure();
 
-        Properties btprops = PropertiesUtils.load("buildtools.properties");
+        Properties props = PropertiesUtils.load("buildtools.properties");
 
-        Properties props = new Properties(btprops);
         // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
+        props.setProperty(Project.PROJECT_TYPE, EclipseProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
 
         File projectDir = new File(
@@ -29,7 +31,9 @@ public class Main {
                 // "D:\\Projects.test\\BTProjects\\FieldPlan"
                 // "D:\\Projects.test\\BTProjects\\Image-Detection-Samples"
                 // "D:\\Bahar\\keycloak-quickstarts-9.0.3"
-                "D:\\Projects.test\\BTProjects\\ForSalwa"
+                // "D:\\Projects.test\\BTProjects\\ForSalwa"
+                // "D:\\Projects.test\\BTProjects\\bookstore"
+                "D:\\Projects.test\\BTProjects\\jpcap-x64-master"
         );
 
         Project p = ProjectFactory.newProject(projectDir, props);

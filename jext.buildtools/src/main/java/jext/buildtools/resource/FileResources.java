@@ -8,7 +8,12 @@ import jext.buildtools.util.BaseModule;
 import jext.util.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,14 +24,19 @@ public class FileResources implements Resources {
 
     private BaseModule module;
     private List<Resource> resources;
-    private Set<String> extensions = new HashSet<>();
+    private Set<String> resourceNames = new HashSet<>();
 
     public FileResources(Module module) {
         this.module = (BaseModule) module;
+        this.resourceNames.add(".xml");
+        this.resourceNames.add(".properties");
+        this.resourceNames.add(".gradle");
+        this.resourceNames.add("resources");
+        this.resourceNames.add("webapps");
     }
 
-    public void setExtension(Set<String> extensions) {
-        this.extensions.addAll(extensions);
+    public void setResourceNames(Collection<String> resourceNames) {
+        this.resourceNames.addAll(resourceNames);
     }
 
     @Override
@@ -54,10 +64,16 @@ public class FileResources implements Resources {
         if (resources != null)
             return resources;
 
-        List<File> resourceFiles = new ArrayList<>();
+        Set<File> resourceFiles = new HashSet<>();
 
-        module.listDirectories().forEach(dir ->{
-            FileUtils.listFiles(resourceFiles, dir, file -> extensions.contains(FileUtils.getExtension(file)));
+        module.listDirectories().forEach(resourceDir ->{
+            for (String resourceName : resourceNames) {
+                if (resourceName.startsWith("."))
+                    addResourceFiles(resourceFiles, resourceDir, resourceName);
+                else
+                    addResourceDirs(resourceFiles, resourceDir, resourceName);
+            }
+
         });
 
         resources = resourceFiles.stream()
@@ -65,6 +81,25 @@ public class FileResources implements Resources {
                 .collect(Collectors.toList());
 
         return resources;
+    }
+
+    private void addResourceFiles(Set<File> resourceFiles, File resourceDir, String resourceExt){
+        FileUtils.listFiles(resourceFiles, resourceDir, file -> resourceExt.equals(FileUtils.getExtension(file)));
+    }
+
+    private void addResourceDirs(Set<File> resourceFiles, File resourceDir, String dirName) {
+        try {
+            Files.walkFileTree(resourceDir.toPath(), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    File resourceDir = dir.toFile();
+                    if (dirName.equals(resourceDir.getName()))
+                        FileUtils.listFiles(resourceFiles, resourceDir);
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+            });
+        }
+        catch(IOException e) { }
     }
 
     @Override

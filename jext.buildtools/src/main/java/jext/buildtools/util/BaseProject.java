@@ -100,7 +100,7 @@ public abstract class BaseProject implements Project {
         } catch (IOException e) { }
 
         modules = moduleDirs.stream()
-                .map(moduleDir -> newModule(moduleDir))
+                .map(this::newModule)
                 .collect(Collectors.toList());
 
         return modules;

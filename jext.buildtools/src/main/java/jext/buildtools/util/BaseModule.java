@@ -12,14 +12,13 @@ import jext.buildtools.project.simple.SimpleProject;
 import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.java.JavaSources;
 import jext.util.FileUtils;
+import jext.util.PropertiesUtils;
 import jext.util.SetUtils;
 import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,10 +54,8 @@ public abstract class BaseModule implements Module {
         this.resources = new FileResources(this);
         this.types = new SourcesTypes(this);
 
-        String exts = project.getProperties().getProperty(SimpleProject.MODULE_RESOURCES,
-                ".xml,.properties,.gradle");
-        Set<String> extensions = new HashSet<>(Arrays.asList(exts.split(",")));
-        ((FileResources)this.resources).setExtension(extensions);
+        List<String> resourceNames = PropertiesUtils.getValues(project.getProperties(), SimpleProject.MODULE_RESOURCES);
+        ((FileResources)this.resources).setResourceNames(resourceNames);
     }
 
     // ----------------------------------------------------------------------
@@ -115,6 +112,10 @@ public abstract class BaseModule implements Module {
         Types types = getTypes();
 
         for(Module dmodule : project.getModules()) {
+            // skip the dependencies with itself
+            if (dmodule.getName().equals(this.getName()))
+                continue;
+
             Types dtypes = dmodule.getTypes();
 
             Set<Name> itypes  = SetUtils.intersection(types.getImportedTypes(), dtypes.getDefinedTypes());
@@ -126,7 +127,6 @@ public abstract class BaseModule implements Module {
 
         return dependencies;
     }
-
 
     // ----------------------------------------------------------------------
     // Implementations

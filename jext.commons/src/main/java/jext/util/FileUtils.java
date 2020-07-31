@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -162,11 +163,16 @@ public class FileUtils {
     }
 
     // Recursive!
-    public static void listFiles(List<File> collectedFiles, File directory, FileFilter filter) {
+    public static void listFiles(Collection<File> collectedFiles, File directory, FileFilter filter) {
         if (directory == null) return;
         collectedFiles.addAll(asList(directory.listFiles(file -> file.isFile() && filter.accept(file))));
         asList(directory.listFiles(File::isDirectory))
                 .forEach(sundir -> listFiles(collectedFiles, sundir, filter));
+    }
+
+    // Recursive!
+    public static void listFiles(Collection<File> collectedFiles, File directory) {
+        listFiles(collectedFiles, directory, pathname -> true);
     }
 
     // ----------------------------------------------------------------------
