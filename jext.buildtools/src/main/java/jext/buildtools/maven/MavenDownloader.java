@@ -5,6 +5,7 @@ import jext.cache.CacheManager;
 import jext.exception.InvalidValueException;
 import jext.logging.Logger;
 import jext.util.FileUtils;
+import jext.util.PropertiesUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -39,6 +41,34 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MavenDownloader implements MavenConst {
+
+    private static final long CHECK_TIMEOUT = 24*60*60*1000;
+    private static final long DOWNLOAD_TIMEOUT = 500;
+    public static final String DEFAULT_REPOSITORY = "https://repo.maven.apache.org/maven2";
+
+    /**
+     *
+     * @param properties
+     *      maven.download=.m2/repository
+     *      maven.repository.1=https://repo.maven.apache.org/maven2
+     *      maven.checkTimeout=1d
+     *      maven.downloadTimeout=.5
+     * @return
+     */
+    public static MavenDownloader getDownloader(Properties properties) {
+        MavenDownloader downloader = new MavenDownloader();
+        String download = properties.getProperty("maven.download",".m2/repository");
+        downloader.setDownload(new File(download));
+        downloader.addRepositories(PropertiesUtils.getValues(properties, "maven.repository"));
+        downloader.setCheckTimeout(PropertiesUtils.getTimeoutMillis(properties, "maven.checkTimeout", CHECK_TIMEOUT));
+        downloader.setDownloadTimeout(PropertiesUtils.getTimeoutMillis(properties, "maven.downloadTimeout", DOWNLOAD_TIMEOUT));
+        return downloader;
+    }
+
+    public static MavenDownloader getDownloader() {
+        Properties properties = PropertiesUtils.load("maven.properties");
+        return getDownloader(properties);
+    }
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -55,10 +85,10 @@ public class MavenDownloader implements MavenConst {
     private File downloadDir = new File(".m2/repository");
 
     /** wait a little between two consecutive downloads (milliseconds) */
-    private long downloadTimeout = 500;
+    private long downloadTimeout = DOWNLOAD_TIMEOUT;
 
     /** time between two checks of the same file (metadata & versions) (milliseconds) */
-    private long checkTimeout = 24*60*60*1000;
+    private long checkTimeout = CHECK_TIMEOUT;
 
     // ----------------------------------------------------------------------
 
@@ -75,7 +105,7 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
 
     public MavenDownloader() {
-        repoUrls.add("https://repo.maven.apache.org/maven2");
+        repoUrls.add(DEFAULT_REPOSITORY);
     }
 
     public MavenDownloader newDownloader() {

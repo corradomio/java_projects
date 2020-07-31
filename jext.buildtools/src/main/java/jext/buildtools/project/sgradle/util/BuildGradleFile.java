@@ -1,2 +1,4 @@
-package jext.buildtools.project.sgradle.util;public class BuildGradleFile {
+package jext.buildtools.project.sgradle.util;
+
+public class BuildGradleFile {
 }

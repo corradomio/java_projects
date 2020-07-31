@@ -3,6 +3,7 @@ package jext.buildtools.util;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Project;
+import jext.buildtools.maven.MavenDownloader;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ public abstract class BaseProject implements Project {
     protected File projectDir;
     protected Properties properties;
     protected List<Module> modules;
+    protected MavenDownloader downloader;
 
     protected BaseProject(File projectDir, Properties properties){
         this.projectDir = projectDir;
@@ -102,6 +104,16 @@ public abstract class BaseProject implements Project {
                 .collect(Collectors.toList());
 
         return modules;
+    }
+
+    @Override
+    public void setDownloader(MavenDownloader downloader) {
+        this.downloader = downloader;
+    }
+
+    @Override
+    public MavenDownloader getDownloader() {
+        return downloader;
     }
 
     protected Module newModule(File moduleDir) {

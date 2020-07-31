@@ -55,7 +55,8 @@ public abstract class BaseModule implements Module {
         this.resources = new FileResources(this);
         this.types = new SourcesTypes(this);
 
-        String exts = project.getProperties().getProperty(SimpleProject.PROJECT_RESOURCES, ".xml,.properties");
+        String exts = project.getProperties().getProperty(SimpleProject.MODULE_RESOURCES,
+                ".xml,.properties,.gradle");
         Set<String> extensions = new HashSet<>(Arrays.asList(exts.split(",")));
         ((FileResources)this.resources).setExtension(extensions);
     }

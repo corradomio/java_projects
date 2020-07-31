@@ -1,5 +1,7 @@
 package jext.util;
 
+import jext.logging.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,7 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -20,15 +25,19 @@ public class PropertiesUtils {
     // Load properties
     // ----------------------------------------------------------------------
 
-    public static Properties load(String path) throws IOException {
+    public static Properties load(String path) {
         return load(new File(path));
     }
 
-    public static Properties load(File propertiesFile) throws IOException {
+    public static Properties load(File propertiesFile) {
         try(InputStream iStream = new FileInputStream(propertiesFile)) {
             Properties properties = new Properties();
             properties.load(iStream);
             return properties;
+        }
+        catch (IOException e) {
+            Logger.getLogger(PropertiesUtils.class).error(e, e);
+            return new Properties();
         }
     }
 
@@ -115,6 +124,72 @@ public class PropertiesUtils {
     public static URI getURI(Properties properties, String name) throws URISyntaxException {
         String value = properties.getProperty(name);
         return new URI(value);
+    }
+    
+    public static List<String> getValues(Properties properties, String name) {
+        return getValues(properties, name, ",");
+    }
+
+    public static List<String> getValues(Properties properties, String prefix, String sep) {
+        List<String> pvalues = new ArrayList<>(); 
+        for(String name : properties.stringPropertyNames()){
+            if (name.startsWith(prefix)) {
+                String value = properties.getProperty(name);
+                String[] values = value.split(sep);
+                pvalues.addAll(Arrays.asList(values));
+            }
+        }
+        return pvalues;
+    }
+    
+    public static long getTimeoutMillis(Properties props, String name, long defvalue) {
+        String value = props.getProperty(name, null);
+        if (value == null)
+            return defvalue;
+        
+        int end = value.length()-1;
+        double seconds = 0.;
+        // 10s
+        if (value.endsWith("s"))
+            seconds = Double.parseDouble(value.substring(0, end));
+        // 10m
+        else if (value.endsWith("m"))
+            seconds = Double.parseDouble(value.substring(0, end))*60;
+        // 10h
+        else if (value.endsWith("h"))
+            seconds = Double.parseDouble(value.substring(0, end))*60*60;
+        // 10d
+        else if (value.endsWith("d"))
+            seconds = Double.parseDouble(value.substring(0, end))*24*60*60;
+        // dd:hh:mm:ss
+        else if (value.indexOf(':') != -1) {
+            String[] parts = value.split(":");
+            switch (parts.length) {
+                case 2:
+                    seconds = Double.parseDouble(parts[0])*60 
+                            + Double.parseDouble(parts[1]);
+                    break;
+                case 3:
+                    seconds = Double.parseDouble(parts[0])*60*60
+                            + Double.parseDouble(parts[1])*60
+                            + Double.parseDouble(parts[2]);
+                    break;
+                case 4:
+                    seconds = Double.parseDouble(parts[0])*24*60*60
+                            + Double.parseDouble(parts[1])*60*60
+                            + Double.parseDouble(parts[2])*60
+                            + Double.parseDouble(parts[3]);
+                    break;
+                default:
+                    seconds = Double.parseDouble(parts[0]);
+                    break;
+            }
+        }
+        else {
+            seconds = Double.parseDouble(value)/1000.;
+        }
+        
+        return (long)(seconds*1000);
     }
 
     // ----------------------------------------------------------------------

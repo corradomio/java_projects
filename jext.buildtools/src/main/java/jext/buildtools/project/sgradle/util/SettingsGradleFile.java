@@ -1,2 +1,4 @@
-package jext.buildtools.project.sgradle.util;public class SettingsFile {
+package jext.buildtools.project.sgradle.util;
+
+public class SettingsGradleFile {
 }

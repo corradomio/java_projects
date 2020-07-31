@@ -28,8 +28,6 @@ public class EclipseSources extends BaseSources {
             return sources;
 
         List<File> sourceFiles = new ArrayList<>();
-        File moduleDir = module.getDirectory();
-
         classpathFile.getSourceDirs().forEach(sdir -> {
             FileUtils.listFiles(sourceFiles, sdir, FileFilters.IS_JAVA);
         });

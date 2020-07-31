@@ -1,21 +1,23 @@
 package org.hls.check;
 
-
 import jext.buildtools.Project;
 import jext.buildtools.ProjectFactory;
-import jext.buildtools.project.ant.AntProject;
 import jext.buildtools.util.ProjectDump;
 import jext.logging.Logger;
+import jext.util.PropertiesUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Logger.configure();
 
-        Properties props = new Properties();
+        Properties btprops = PropertiesUtils.load("buildtools.properties");
+
+        Properties props = new Properties(btprops);
         // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
 
