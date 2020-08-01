@@ -5,9 +5,8 @@ import java.util.regex.Pattern;
 //  ?       [^/]
 //  *       [^/]*
 //  **      ([^/]*/)*
-//  .../**/...  .../**
 //  *   **  **/..
-//  **/...  .../**  .../**/...  .../**
+//  **/...  .../**  .../**/...
 //
 //  Regexp special chars    \ ^ $ . | ? * + ( ) [ ] { }
 public class Wildcard {
@@ -23,9 +22,9 @@ public class Wildcard {
         compile();
     }
 
-    public boolean accept(String text) {
-        text = text.replace("\\", "/");
-        return compiled.matcher(text).matches();
+    public boolean accept(String path) {
+        path = path.replace("\\", "/");
+        return compiled.matcher(path).matches();
     }
 
     private void compile() {

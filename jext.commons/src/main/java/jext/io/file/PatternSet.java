@@ -7,8 +7,8 @@ import java.io.File;
 
 /*
     <parent>
-        <filename name="_pattern1_"/>
-        <filename name="_pattern2_"/>
+        <filename name="_pattern_1_"/>
+        <filename name="_pattern_2_"/>
     </parent>
  */
 

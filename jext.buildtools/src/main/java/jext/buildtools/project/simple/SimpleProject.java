@@ -48,6 +48,9 @@ public class SimpleProject extends BaseProject {
                 .map(moduleDir -> new SimpleModule(moduleDir, this))
                 .collect(Collectors.toList());
 
+        if (modules.isEmpty())
+            modules.add(new SimpleModule(projectDir, this));
+
         return modules;
     }
 }
