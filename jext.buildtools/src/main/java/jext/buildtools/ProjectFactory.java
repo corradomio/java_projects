@@ -15,18 +15,20 @@ public class ProjectFactory {
     public static Project newProject(File projectDir, Properties properties) {
         String projectType = properties.getProperty(Project.PROJECT_TYPE, null);
         if (projectType == null) {
-            if (MavenProject.isProject(projectDir))
-                projectType =  MavenProject.TYPE;
-            else if (GradleProject.isProject(projectDir))
+            if (GradleProject.isProject(projectDir))
                 projectType =  GradleProject.TYPE;
-            else if (SGradleProject.isProject(projectDir))
-                projectType =  SGradleProject.TYPE;
-            else if (AntProject.isProject(projectDir))
-                projectType =  AntProject.TYPE;
+            else if (MavenProject.isProject(projectDir))
+                projectType =  MavenProject.TYPE;
             else if (EclipseProject.isProject(projectDir))
                 projectType =  EclipseProject.TYPE;
+            // else if (SGradleProject.isProject(projectDir))
+            //     projectType =  SGradleProject.TYPE;
+            // else if (AntProject.isProject(projectDir))
+            //     projectType =  AntProject.TYPE;
+            // else
+            //     projectType =  SimpleProject.TYPE;
             else
-                projectType =  SimpleProject.TYPE;
+                projectType = AntProject.TYPE;
         }
         if (AntProject.TYPE.equals(projectType))
             return new AntProject(projectDir, properties);

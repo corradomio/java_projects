@@ -11,6 +11,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,7 @@ public class ItemSet {
     protected boolean selectDirs;
 
     public ItemSet() {
+        this.relativeDir = "";
         this.selectFiles = true;
         this.selectDirs = true;
     }
@@ -99,6 +101,25 @@ public class ItemSet {
                 add("*", false);
     }
 
+    public void addPattern(String pattern, boolean exclude) {
+        if (isExtension(pattern))
+            add("**/*" + pattern, exclude);
+        else if (isName(pattern))
+            add("**/" + pattern + "/**", exclude);
+        else
+            add(pattern, exclude);
+    }
+
+    private static boolean isExtension(String pattern) {
+        return pattern.startsWith(".");
+    }
+
+    private static boolean isName(String pattern) {
+        return !(pattern.contains("/") ||
+                 pattern.contains("?") ||
+                 pattern.contains("*"));
+    }
+
     private void add(String pattern, boolean exclude) {
         if (pattern.isEmpty())
             return;
@@ -141,7 +162,7 @@ public class ItemSet {
         List<File> selected = new ArrayList<>();
 
         try {
-            Files.walkFileTree(baseDir.toPath(), new FileVisitor<Path>() {
+            Files.walkFileTree(baseDir.toPath(), new SimpleFileVisitor<Path>() {
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
@@ -162,20 +183,8 @@ public class ItemSet {
                     }
                     return FileVisitResult.CONTINUE;
                 }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
             });
-        } catch (IOException e) {
-            logger.error(e, e);
-        }
+        } catch (IOException e) { }
 
         return selected;
     }

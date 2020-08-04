@@ -41,7 +41,7 @@ public class ModuleScan {
         List<File> moduleDirs = new ArrayList<>();
         // Scan the current directory
         try {
-            Files.walkFileTree(baseDir.toPath(), new FileVisitor<Path>() {
+            Files.walkFileTree(baseDir.toPath(), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     File directory = dir.toFile();
@@ -56,25 +56,8 @@ public class ModuleScan {
 
                     return FileVisitResult.CONTINUE;
                 }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
             });
-        } catch (IOException e) {
-            logger.error(e, e);
-        }
+        } catch (IOException e) { }
 
         return moduleDirs;
     }

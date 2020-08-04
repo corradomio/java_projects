@@ -62,7 +62,7 @@ public class EclipseProject implements ProjectAnalyzer {
         modules = new ArrayList<>();
 
         try {
-            Files.walkFileTree(projectDir.toPath(), new FileVisitor<Path>() {
+            Files.walkFileTree(projectDir.toPath(), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     File moduleDir = dir.toFile();
@@ -71,25 +71,8 @@ public class EclipseProject implements ProjectAnalyzer {
                         modules.add(new EclipseModule(moduleDir, EclipseProject.this));
                     return FileVisitResult.CONTINUE;
                 }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
             });
-        } catch (IOException e) {
-            logger.error(e, e);
-        }
+        } catch (IOException e) { }
 
         return modules;
     }

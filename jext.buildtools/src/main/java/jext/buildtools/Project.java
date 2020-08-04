@@ -14,13 +14,22 @@ public interface Project {
      *  - project.type: project type ('ant', 'maven', 'gradle', 'eclipse', 'simple')
      *  - project.module: relative path used to identify a module. Can be the name of a file
      *                  ('build.gradle') or a relative path as, for example, 'build/build.xml'
-     *  - module.resources: list of file extensions used to select the resources
-     *                  '.xml,.properties,.gradle'
+     *  - module.resources: list of
+         *                  - file extensions ('.xml')
+         *                  - directories ('webapp')
+         *                  - file pattrens ('webapp/**')
+     *                  used to select the resources
+     *                  default: '.xml,.properties,.gradle'
      *  - maven.libraries: file(s) (separated by ',') used to extract list of maven libraries
+     *  - module.exclude: list of
+     *                      - directories ('test')
+     *                      - file patterns ('** /test/**')
+     *                  to exclude
      */
     String PROJECT_TYPE = "project.type";
     String PROJECT_MODULE = "project.module";
     String MODULE_RESOURCES = "module.resources";
+    String MODULE_EXCLUDE = "module.exclude";
     String MAVEN_LIBRARIES = "maven.libraries";
 
     String getName();

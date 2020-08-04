@@ -132,7 +132,7 @@ public class FileSet {
         List<File> selected = new ArrayList<>();
 
         try {
-            Files.walkFileTree(baseDir.toPath(), new FileVisitor<Path>() {
+            Files.walkFileTree(baseDir.toPath(), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     return FileVisitResult.CONTINUE;
@@ -143,16 +143,6 @@ public class FileSet {
                     File file = path.toFile();
                     if (accept(baseDir, file))
                         selected.add(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
             });
