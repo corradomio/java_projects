@@ -1,36 +1,36 @@
 https://ant.apache.org/manual/conceptstypeslist.html
 
 widcards:
-    *       any seq ofchars
+    *       any seq of chars
     ?       any char
     **      any seq of directories/files
 
-
-
 dirset:     group of directories
 
-    <dirset dir="${build.dir}">
-      <include name="apps/**/classes"/>
-      <exclude name="apps/**/*Test*"/>
+    <dirset dir="${dir}">
+        <include name="apps/**/classes"/>
+        <exclude name="apps/**/*Test*"/>
     </dirset>
 
 fileset:    group of files
 
-    <fileset dir="${server.src}" casesensitive="yes">
-      <include name="**/*.java"/>
-      <exclude name="**/*Test*"/>
+    <fileset dir="${dir}">
+        <include name="**/*.java"/>
+        <exclude name="**/*Test*"/>
     </fileset>
-
 
 multirootfileset:   group of files & directories
 
-    <multirootfileset basedirs="${build.dir},${other.project.dir}">
-      <include name="apps/**/classes"/>
-      <exclude name="apps/**/*Test*"/>
+    <multirootfileset basedirs="${dir1},${dir2}">
+        <basedir file="${dir1}"/>
+        <basedir file="${dir2}"/>
+        <include name="apps/**/classes"/>
+        <exclude name="apps/**/*Test*"/>
     </multirootfileset>
 
 
 --------------------------------------------------------------
+
 Wildcard
     FilePattern : Wildcard + recursiveFlag
         FilePatterns : List[FilePattern]

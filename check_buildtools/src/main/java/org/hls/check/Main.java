@@ -26,13 +26,13 @@ public class Main {
                 // "D:\\Projects\\java\\mallet-2.0.8"
                 // "D:\\Projects.github\\other_projects\\eclipse.platform.releng.aggregator"
                 // "D:\\Projects.github\\other_projects\\gradle"
-                // "D:\\Projects.test\\BTProjects\\FieldPlan"
+                "D:\\Projects.test\\BTProjects\\FieldPlan"
                 // "D:\\Bahar\\keycloak-quickstarts-9.0.3"
                 // "D:\\Projects.test\\BTProjects\\ForSalwa"
                 // "D:\\Projects.test\\BTProjects\\bookstore"
                 // "D:\\Projects.test\\BTProjects\\jpcap-x64-master"
                 // "D:\\Projects.test\\BTProjects\\Image-Detection-Samples"
-                "D:\\Projects.test\\BTProjects\\__Project_Packet-Sniffer-Project-Java"
+                // "D:\\Projects.test\\BTProjects\\__Project_Packet-Sniffer-Project-Java"
         );
 
         Project p = ProjectFactory.newProject(projectDir, props);

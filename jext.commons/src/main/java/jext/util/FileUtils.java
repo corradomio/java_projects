@@ -17,7 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -193,6 +196,42 @@ public class FileUtils {
         if (pos != -1)
             return name.substring(pos);
         return "";
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    /**
+     * Remove all files that are a 'subfile' of other files: in
+     *
+     *      { 'd:/a/b/c', 'd:/a/b/c/d/e'}
+     *
+     * it removes 'd:/a/b/c/d/e'
+     */
+    public static Set<File> simplify(Collection<File> files) {
+        List<File> simplified = new ArrayList<>(files);
+        simplified.sort((o1, o2) -> (o2.getAbsolutePath().length() - o1.getAbsolutePath().length()));
+
+        boolean update = true;
+        while (update) {
+            update = false;
+            int n = simplified.size();
+
+            loop: for (int i=0; i<n; ++i) {
+                File o1 = simplified.get(i);
+                for (int j=i+1; j<n; ++j) {
+                    File o2 = simplified.get(j);
+                    if (FileUtils.isParent(o2, o1)) {
+                        simplified.remove(i);
+                        update = true;
+                        break loop;
+                    }
+                }
+            }
+        }
+
+        return new HashSet<>(simplified);
     }
 
     // ----------------------------------------------------------------------
