@@ -1,0 +1,2 @@
+package jext.buildtools.project.ant.util;public class LibrariesFinder {
+}
