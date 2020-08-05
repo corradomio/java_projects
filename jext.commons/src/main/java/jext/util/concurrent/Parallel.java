@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public class Parallel {
 
-    private static class Task<T> implements Callable<Boolean> {
+    public static class Task<T> implements Callable<Boolean> {
         private T t;
         private Consumer<T> body;
 
@@ -49,7 +49,7 @@ public class Parallel {
         }
     }
 
-    private static class IntTask implements Callable<Boolean> {
+    public static class IntTask implements Callable<Boolean> {
         private int t;
         private IntConsumer body;
 
@@ -95,7 +95,7 @@ public class Parallel {
 
     // ----------------------------------------------------------------------
 
-    private static void invokeAll(List<Callable<Boolean>> tasks) {
+    public static void invokeAll(List<Callable<Boolean>> tasks) {
         checkUsage(true);
 
         List<Future<Boolean>> results = Collections.emptyList();

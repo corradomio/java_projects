@@ -20,6 +20,7 @@ public class HashSet<E> extends java.util.HashSet<E> implements Set<E> {
         super(initialCapacity);
     }
 
+    @Override
     public HashSet<E> add_(E e) {
         super.add(e);
         return this;

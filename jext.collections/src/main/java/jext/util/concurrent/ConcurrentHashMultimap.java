@@ -1,4 +1,7 @@
-package jext.util;
+package jext.util.concurrent;
+
+import jext.util.HashMultimap;
+import jext.util.HashSet;
 
 import java.util.Set;
 

@@ -80,11 +80,13 @@ public class Properties extends java.util.Properties {
         return this;
     }
 
+    @Override
     public String getProperty(String name) {
         String value = super.getProperty(name);
         return resolveValue(value);
     }
 
+    @Override
     public String getProperty(String name, String defaultValue) {
         String value = super.getProperty(name, defaultValue);
         return resolveValue(value);
