@@ -9,7 +9,6 @@ import org.w3c.dom.Element;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -218,7 +217,6 @@ public class CacheManager {
             throw new CacheException("CacheManager not configured");
 
         synchronized (caches) {
-
             if (!caches.containsKey(name)) {
                 CacheConfig cconfig = getCacheConfig(name);
 
