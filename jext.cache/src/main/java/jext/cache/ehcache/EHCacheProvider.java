@@ -2,6 +2,7 @@ package jext.cache.ehcache;
 
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
+import jext.time.TimeUtils;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -31,13 +32,13 @@ public class EHCacheProvider implements CacheProvider {
         CacheConfigurationBuilder<K, V> cacheConfigurationBuilder = (CacheConfigurationBuilder<K, V>) CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.heap(capacity));
 
-        if (properties.contains(EXPIRE_AFTER_WRITE)) {
-            long millis = Long.parseLong(properties.getProperty(EXPIRE_AFTER_WRITE));
+        if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
+            long millis = TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_WRITE));
             cacheConfigurationBuilder.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofMillis(millis)));
         }
 
-        if (properties.contains(EXPIRE_AFTER_ACCESS)) {
-            long millis = Long.parseLong(properties.getProperty(EXPIRE_AFTER_ACCESS));
+        if (properties.containsKey(EXPIRE_AFTER_ACCESS)) {
+            long millis = TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_ACCESS));
             cacheConfigurationBuilder.withExpiry(ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofMillis(millis)));
         }
 

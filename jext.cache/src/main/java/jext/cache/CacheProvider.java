@@ -4,9 +4,17 @@ import java.util.Properties;
 
 public interface CacheProvider {
 
+    /** Maximum capacity (number of entries) */
     String CAPACITY = "capacity";
-    String EXPIRE_AFTER_ACCESS = "expireAfterAccess";
+
+    /** Expiry policy based on the first 'put': after the specified timeout */
     String EXPIRE_AFTER_WRITE = "expireAfterWrite";
+
+    /** Expiry policy based on the last 'put'/'get': after the specified timeout */
+    String EXPIRE_AFTER_ACCESS = "expireAfterAccess";
+
+    /** If a value is wrapped by a WeakReference (boolean) */
+    String WEAK_VALUES = "weakValues";
 
     /**
      * Create a cache with th specified name and properties

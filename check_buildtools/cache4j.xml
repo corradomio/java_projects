@@ -8,6 +8,7 @@
             value4="jext.cache.jcs.JCSCacheProvider"
             value5="jext.cache.weak.WeakCacheProvider"
             value6="jext.cache.ehcache.EHCacheProvider"
+            value="jext.cache.caffeine.CaffeineCacheProvider"
     />
 
     <!--

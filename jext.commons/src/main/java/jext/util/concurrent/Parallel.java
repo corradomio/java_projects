@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public class Parallel {
 
-    public static class Task<T> implements Callable<Boolean> {
+    static class Task<T> implements Callable<Boolean> {
         private T t;
         private Consumer<T> body;
 
@@ -49,7 +49,7 @@ public class Parallel {
         }
     }
 
-    public static class IntTask implements Callable<Boolean> {
+    static class IntTask implements Callable<Boolean> {
         private int t;
         private IntConsumer body;
 

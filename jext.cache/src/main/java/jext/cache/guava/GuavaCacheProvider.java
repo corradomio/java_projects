@@ -15,15 +15,15 @@ public class GuavaCacheProvider implements CacheProvider {
     public <K, V> Cache<K, V> createCache(String name, Properties properties) {
         CacheBuilder<?,?> builder = CacheBuilder.newBuilder();
 
-        if(properties.contains(CAPACITY)) {
+        if(properties.containsKey(CAPACITY)) {
             long capacity = PropertiesUtils.getInt(properties, CAPACITY, 128);
             builder.maximumSize(capacity);
         }
-        if (properties.contains(EXPIRE_AFTER_ACCESS)) {
+        if (properties.containsKey(EXPIRE_AFTER_ACCESS)) {
             long duration = TimeUtils.toMillis(PropertiesUtils.getString(properties, EXPIRE_AFTER_ACCESS));
             builder.expireAfterAccess(duration, TimeUnit.MILLISECONDS);
         }
-        if (properties.contains(EXPIRE_AFTER_WRITE)) {
+        if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
             long duration = TimeUtils.toMillis(PropertiesUtils.getString(properties, EXPIRE_AFTER_WRITE));
             builder.expireAfterWrite(duration, TimeUnit.MILLISECONDS);
         }

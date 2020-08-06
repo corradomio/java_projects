@@ -71,7 +71,7 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache {
 
     @Override
     public void close() {
-        manager.remove(this);
+        manager.removeCache(this);
         innerCache.clear();
     }
 

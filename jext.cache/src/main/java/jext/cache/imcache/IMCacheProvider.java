@@ -4,6 +4,7 @@ import com.cetsoft.imcache.cache.builder.HeapCacheBuilder;
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
 import com.cetsoft.imcache.cache.builder.CacheBuilder;
+import jext.time.TimeUtils;
 
 import java.util.Properties;
 
@@ -17,10 +18,10 @@ public class IMCacheProvider implements CacheProvider {
             cacheBulder.capacity(Integer.parseInt(properties.getProperty(CAPACITY)));
         }
         if (properties.containsKey(EXPIRE_AFTER_ACCESS)) {
-            cacheBulder.expiry(Long.parseLong(properties.getProperty(EXPIRE_AFTER_ACCESS)));
+            cacheBulder.expiry(TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_ACCESS)));
         }
         if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
-            cacheBulder.expiry(Long.parseLong(properties.getProperty(EXPIRE_AFTER_WRITE)));
+            cacheBulder.expiry(TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_WRITE)));
         }
 
         com.cetsoft.imcache.cache.Cache<K, V> innerCache = cacheBulder.build();

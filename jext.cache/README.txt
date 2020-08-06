@@ -1,6 +1,7 @@
 JSR 107
 https://www.baeldung.com/jcache
 https://docs.oracle.com/cd/B14099_19/web.1012/b14012/objcache.htm
+https://java-source.net/open-source/cache-solutions
 
 https://github.com/apache/commons-jcs
 https://github.com/cache2k/cache2k
@@ -8,6 +9,7 @@ https://github.com/google/guava
     https://github.com/google/guava/wiki
 https://github.com/Cetsoft/imcache
 https://github.com/ehcache
+https://github.com/ben-manes/caffeine
 
 
 
