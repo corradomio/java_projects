@@ -97,7 +97,7 @@ public class CacheManager {
     }
 
     private CacheConfig getCacheConfig(String name) {
-        CacheConfig cconfig = defaultConfig;
+        CacheConfig cconfig = getDefaultConfig();
 
         for (CacheConfig cc : configurations) {
             // found a cache with the exact name
@@ -110,6 +110,13 @@ public class CacheManager {
                 cconfig = cc;
         }
         return cconfig;
+    }
+
+    private CacheConfig getDefaultConfig() {
+        for (CacheConfig cc : configurations)
+            if (cc.name.isEmpty())
+                return cc;
+        return defaultConfig;
     }
 
     private <K,V> Cache<K, V> retrieveCache(String name){

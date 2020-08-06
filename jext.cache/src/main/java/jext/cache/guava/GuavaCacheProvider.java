@@ -4,7 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
 import jext.util.PropertiesUtils;
-import jext.util.TimeUtils;
+import jext.time.TimeUtils;
 
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;

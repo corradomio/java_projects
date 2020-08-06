@@ -3,7 +3,7 @@ package jext.cache.cache2k;
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
 import jext.util.PropertiesUtils;
-import jext.util.TimeUtils;
+import jext.time.TimeUtils;
 import org.cache2k.Cache2kBuilder;
 
 import java.util.Properties;
@@ -13,7 +13,7 @@ public class Cache2kCacheProvider implements CacheProvider {
 
     @Override
     public <K, V> Cache<K, V> createCache(String name, Properties properties) {
-        Cache2kBuilder builder = Cache2kBuilder.forUnknownTypes();
+        Cache2kBuilder<K, V> builder = Cache2kBuilder.forUnknownTypes();
 
         if (properties.containsKey(CAPACITY)) {
             long capacity = PropertiesUtils.getInt(properties, CAPACITY, 128);

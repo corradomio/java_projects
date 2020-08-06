@@ -24,4 +24,13 @@
         <property name="expireAfterWrite" value="1000"/>
         -->
     </cache>
+    <cache name="c">
+        <property name="capacity" value="2048"/>
+        <!--
+        expiry policies in milliseconds
+
+        <property name="expireAfterAccess" value="1000"/>
+        <property name="expireAfterWrite" value="1000"/>
+        -->
+    </cache>
 </configuration>
