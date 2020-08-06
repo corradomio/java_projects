@@ -39,7 +39,25 @@
     <cache name="">
         <property name="capacity" value="1024"/>
     </cache>
-    <cache name="c">
+    <cache name="cache2k">
         <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="caffeine">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="ehcache">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="guava">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="imcache">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="jcs">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="weak">
+        <!-- no configurations -->
     </cache>
 </configuration>

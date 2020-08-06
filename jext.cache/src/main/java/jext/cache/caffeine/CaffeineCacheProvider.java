@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class CaffeineCacheProvider implements CacheProvider {
 
     @Override
-    public <K, V> Cache<K, V> createCache(String name, Properties properties) {
+    public <K, V> Cache<K, V> createCache(String name, Class<K> kclass, Class<V> vclass, Properties properties) {
 
         Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
 

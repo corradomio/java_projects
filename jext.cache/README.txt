@@ -5,10 +5,12 @@ https://java-source.net/open-source/cache-solutions
 
 https://github.com/apache/commons-jcs
 https://github.com/cache2k/cache2k
+    https://cache2k.org/
+    https://cache2k.org/docs/latest/user-guide.html
 https://github.com/google/guava
     https://github.com/google/guava/wiki
 https://github.com/Cetsoft/imcache
-https://github.com/ehcache
+https://github.com/ehcache/ehcache3
 https://github.com/ben-manes/caffeine
 
 

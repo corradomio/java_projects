@@ -26,5 +26,5 @@ public interface CacheProvider {
      * @param <V> value type
      * @return a new cache object
      */
-    <K, V> Cache<K, V> createCache(String name, Properties properties);
+    <K, V> Cache<K, V> createCache(String name, Class<K> kclass, Class<V> vclass, Properties properties);
 }

@@ -11,20 +11,17 @@ import java.util.Properties;
 public class IMCacheProvider implements CacheProvider {
 
     @Override
-    public <K, V> Cache<K, V> createCache(String name, Properties properties) {
+    public <K, V> Cache<K, V> createCache(String name, Class<K> kclass, Class<V> vclass, Properties properties) {
         HeapCacheBuilder cacheBulder = CacheBuilder.heapCache();
 
         if (properties.containsKey(CAPACITY)) {
             cacheBulder.capacity(Integer.parseInt(properties.getProperty(CAPACITY)));
         }
-        if (properties.containsKey(EXPIRE_AFTER_ACCESS)) {
-            cacheBulder.expiry(TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_ACCESS)));
-        }
         if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
             cacheBulder.expiry(TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_WRITE)));
         }
 
-        com.cetsoft.imcache.cache.Cache<K, V> innerCache = cacheBulder.build();
+        com.cetsoft.imcache.cache.Cache<K, V> innerCache = cacheBulder.build(name);
         return new IMCache<>(name, innerCache);
     }
 }

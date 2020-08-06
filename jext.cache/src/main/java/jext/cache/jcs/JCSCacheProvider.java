@@ -13,7 +13,7 @@ public class JCSCacheProvider implements CacheProvider {
     public static final String UNNAMED = "";
 
     @Override
-    public <K, V> Cache<K, V> createCache(String name, Properties properties) {
+    public <K, V> Cache<K, V> createCache(String name, Class<K> kclass, Class<V> vclass, Properties properties) {
         JCS.setConfigProperties(properties);
 
         CacheAccess<K, V> cacheAccess = getInstance(name);

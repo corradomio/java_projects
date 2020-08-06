@@ -7,6 +7,9 @@ import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,12 +55,12 @@ public class CacheManager {
         instance.configureUsing(configurationFile);
     }
 
-    public static void configure(Properties properties) {
+    public static void configure(Properties properties) throws Exception {
         instance.configureUsing(properties);
     }
 
     public static <K, V> Cache<K, V> getCache(String name, Class<K> kclass, Class<V> vclass) {
-        return instance.getCache(name);
+        return instance.retrieveCache(name, kclass, vclass);
     }
 
     public static void shutdown() {
@@ -118,28 +121,19 @@ public class CacheManager {
     }
 
     private void configureUsing(File configurationsFile) {
-
-        // default cache provider
         try {
-            Element configuration = XPathUtils.parse(configurationsFile).getDocumentElement();
-
-            String name = "";
-            Properties properties;
-            for(Element cache : XPathUtils.selectNodes(configuration, "cache")) {
-                try {
-                    name = XPathUtils.getValue(cache, "@name");
-                    properties = XPathUtils.getProperties(cache);
-
-                    CacheConfig cconfig = new CacheConfig(name, properties);
-                    configurations.add(cconfig);
-                }
-                catch (Exception e) {
-                    logger.errorf("Unable to configure '%s': %s", name, e);
-                }
+            if (configurationsFile.getName().endsWith(".xml")) {
+                Element configuration = XPathUtils.parse(configurationsFile).getDocumentElement();
+                configureUsing(configuration);
             }
-
-            String providerClass = XPathUtils.getValue(configuration, "provider/@value", DEFAULT_CACHE_PROVIDER);
-            cacheProvider = (CacheProvider) Class.forName(providerClass).getConstructor().newInstance();
+            if (configurationsFile.getName().endsWith(".properties")) {
+                Properties properties = new Properties();
+                try (InputStream stream = new FileInputStream(configurationsFile)) {
+                    properties.load(stream);
+                }
+                configureUsing(properties);
+            }
+            throw new UnsupportedOperationException("Invalid file format " + configurationsFile.toString());
         }
         catch (Throwable t) {
             logger.error(t, t);
@@ -147,26 +141,40 @@ public class CacheManager {
         }
     }
 
-    private void configureUsing(Properties properties) {
-        try {
-            for(String key : properties.stringPropertyNames()) {
-                if (key.equals(CACHE_PROVIDER) || !key.startsWith(CACHE_PREFIX))
-                    continue;
+    private void configureUsing(Element configuration) throws Exception {
+        String name = "";
+        Properties properties;
+        for(Element cache : XPathUtils.selectNodes(configuration, "cache")) {
+            try {
+                name = XPathUtils.getValue(cache, "@name");
+                properties = XPathUtils.getProperties(cache);
 
-                String name = nameOf(key);
-                String cckey = keyOf(key);
-
-                CacheConfig cconfig = createCacheConfig(name);
-                cconfig.properties.put(cckey, properties.getProperty(key));
+                CacheConfig cconfig = new CacheConfig(name, properties);
+                configurations.add(cconfig);
             }
+            catch (Exception e) {
+                logger.errorf("Unable to configure '%s': %s", name, e);
+            }
+        }
 
-            String providerClass = properties.getProperty("jext.cache.cacheProvider", DEFAULT_CACHE_PROVIDER);
-            cacheProvider = (CacheProvider) Class.forName(providerClass).getConstructor().newInstance();
+        String providerClass = XPathUtils.getValue(configuration, "provider/@value", DEFAULT_CACHE_PROVIDER);
+        cacheProvider = (CacheProvider) Class.forName(providerClass).getConstructor().newInstance();
+    }
+
+    private void configureUsing(Properties properties) throws Exception {
+        for(String key : properties.stringPropertyNames()) {
+            if (key.equals(CACHE_PROVIDER) || !key.startsWith(CACHE_PREFIX))
+                continue;
+
+            String name = nameOf(key);
+            String cckey = keyOf(key);
+
+            CacheConfig cconfig = createCacheConfig(name);
+            cconfig.properties.put(cckey, properties.getProperty(key));
         }
-        catch (Throwable t) {
-            logger.error(t, t);
-            cacheProvider = new GuavaCacheProvider();
-        }
+
+        String providerClass = properties.getProperty("jext.cache.cacheProvider", DEFAULT_CACHE_PROVIDER);
+        cacheProvider = (CacheProvider) Class.forName(providerClass).getConstructor().newInstance();
     }
 
     private CacheConfig createCacheConfig(String name) {
@@ -205,7 +213,7 @@ public class CacheManager {
     // Private operations
     // ----------------------------------------------------------------------
 
-    private <K,V> Cache<K, V> getCache(String name){
+    private <K,V> Cache<K, V> retrieveCache(String name, Class<K> kclass, Class<V> vclass){
         if (cacheProvider == null)
             throw new CacheException("CacheManager not configured");
 
@@ -214,7 +222,7 @@ public class CacheManager {
             if (!caches.containsKey(name)) {
                 CacheConfig cconfig = getCacheConfig(name);
 
-                Cache<K, V> cache = cacheProvider.createCache(name, cconfig.properties);
+                Cache<K, V> cache = cacheProvider.createCache(name, kclass, vclass, cconfig.properties);
                 ((ManagedCache)cache).setManager(this);
 
                 caches.put(name, cache);

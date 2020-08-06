@@ -23,28 +23,25 @@ public class EHCacheProvider implements CacheProvider {
     }
 
     @Override
-    public <K, V> Cache<K, V> createCache(String name, Properties properties) {
+    public <K, V> Cache<K, V> createCache(String name, Class<K> kclass, Class<V> vclass, Properties properties) {
         int capacity = Integer.parseInt(properties.getProperty(CAPACITY, "1024"));
 
-        // CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build();
-        // cacheManager.init();
-
-        CacheConfigurationBuilder<K, V> cacheConfigurationBuilder = (CacheConfigurationBuilder<K, V>) CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.heap(capacity));
+        CacheConfigurationBuilder<K, V> configurationBuilder = CacheConfigurationBuilder
+                .newCacheConfigurationBuilder(kclass, vclass, ResourcePoolsBuilder.heap(capacity));
 
         if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
             long millis = TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_WRITE));
-            cacheConfigurationBuilder.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofMillis(millis)));
+            configurationBuilder.withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofMillis(millis)));
         }
-
         if (properties.containsKey(EXPIRE_AFTER_ACCESS)) {
             long millis = TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_ACCESS));
-            cacheConfigurationBuilder.withExpiry(ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofMillis(millis)));
+            configurationBuilder.withExpiry(ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofMillis(millis)));
         }
 
-        CacheConfiguration<K, V> cacheConfiguration = cacheConfigurationBuilder.build();
+        CacheConfiguration<K, V> cacheConfiguration = configurationBuilder.build();
 
         org.ehcache.Cache<K, V> innerCache = cacheManager.createCache(name, cacheConfiguration);
+
         return new EHCache<>(name, innerCache, this);
     }
 
