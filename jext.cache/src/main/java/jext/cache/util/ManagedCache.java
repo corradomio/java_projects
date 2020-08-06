@@ -5,8 +5,7 @@ import jext.cache.CacheManager;
 /**
  * Used internally
  */
-public interface ConfiguredCache {
+public interface ManagedCache {
 
-    void setConfigurator(CacheManager configurator);
-
+    void setManager(CacheManager manager);
 }

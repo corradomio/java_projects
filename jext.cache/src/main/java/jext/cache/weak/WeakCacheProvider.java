@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.WeakHashMap;
 
 public class WeakCacheProvider implements CacheProvider {
+
     @Override
     public <K, V> Cache<K, V> createCache(String name, Properties properties) {
         WeakHashMap<K, V> innerCache = new WeakHashMap<>();

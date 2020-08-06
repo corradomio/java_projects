@@ -2,16 +2,16 @@ package jext.cache.weak;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.cache.util.ConfiguredCache;
+import jext.cache.util.ManagedCache;
 
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-public class WeakCache<K, V> implements Cache<K, V>, ConfiguredCache {
+public class WeakCache<K, V> implements Cache<K, V>, ManagedCache {
 
     private final String name;
-    private CacheManager configurator;
+    private CacheManager manager;
     private WeakHashMap<K, V> innerCache;
 
     WeakCache(String name, WeakHashMap<K, V> innerCache) {
@@ -71,12 +71,12 @@ public class WeakCache<K, V> implements Cache<K, V>, ConfiguredCache {
 
     @Override
     public void close() {
-        clear();
-        this.configurator.detach(this);
+        manager.detach(this);
+        innerCache.clear();
     }
 
     @Override
-    public void setConfigurator(CacheManager configurator) {
-        this.configurator = configurator;
+    public void setManager(CacheManager manager) {
+        this.manager = manager;
     }
 }

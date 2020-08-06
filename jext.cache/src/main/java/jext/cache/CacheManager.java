@@ -1,9 +1,8 @@
 package jext.cache;
 
 import jext.cache.guava.GuavaCacheProvider;
-import jext.cache.util.ConfiguredCache;
+import jext.cache.util.ManagedCache;
 import jext.logging.Logger;
-import jext.util.StringUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 
@@ -49,7 +48,7 @@ public class CacheManager {
     private static Logger logger = Logger.getLogger(CacheManager.class);
     private final CacheConfig defaultConfig = new CacheConfig();
     private final List<CacheConfig> configurations = new ArrayList<>();
-    private final Map<String, Cache> caches = new HashMap<>();
+    private final Map<String, Cache<?,?>> caches = new HashMap<>();
     private CacheProvider cacheProvider;
 
     public CacheManager() {
@@ -72,10 +71,8 @@ public class CacheManager {
         // default cache provider
         try {
             Element configuration = XPathUtils.parse(configurationsFile).getDocumentElement();
-            String providerClass = XPathUtils.getValue(configuration, "provider/@value", "jext.cache.guava.GuavaCacheProvider");
-            cacheProvider = (CacheProvider) Class.forName(providerClass).getConstructor().newInstance();
 
-            String name = StringUtils.empty();
+            String name = "";
             Properties properties;
             for(Element cache : XPathUtils.selectNodes(configuration, "cache")) {
                 try {
@@ -86,9 +83,12 @@ public class CacheManager {
                     configurations.add(cconfig);
                 }
                 catch (Exception e) {
-                    logger.errorf("Unable to configure %s: %s", name, e);
+                    logger.errorf("Unable to configure '%s': %s", name, e);
                 }
             }
+
+            String providerClass = XPathUtils.getValue(configuration, "provider/@value", "jext.cache.guava.GuavaCacheProvider");
+            cacheProvider = (CacheProvider) Class.forName(providerClass).getConstructor().newInstance();
         }
         catch (Throwable t) {
             logger.error(t, t);
@@ -100,7 +100,7 @@ public class CacheManager {
         CacheConfig cconfig = defaultConfig;
 
         for (CacheConfig cc : configurations) {
-            // found a chache with the exact name
+            // found a cache with the exact name
             if (name.equals(cc.name))
                 return cc;
 
@@ -113,19 +113,20 @@ public class CacheManager {
     }
 
     private <K,V> Cache<K, V> retrieveCache(String name){
+        if (cacheProvider == null)
+            throw new CacheException("CacheManager not configured");
+
         synchronized (caches) {
-            if (name == null)
-                name = StringUtils.empty();
 
             if (!caches.containsKey(name)) {
                 CacheConfig cconfig = getCacheConfig(name);
 
                 Cache<K, V> cache = cacheProvider.createCache(name, cconfig.properties);
-                ((ConfiguredCache)cache).setConfigurator(this);
+                ((ManagedCache)cache).setManager(this);
 
                 caches.put(name, cache);
             }
-            return caches.get(name);
+            return (Cache<K, V>) caches.get(name);
         }
     }
 

@@ -11,10 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 public class GuavaCacheProvider implements CacheProvider {
 
-    private static final String CAPACITY = "capacity";
-    private static final String EXPIRE_AFTER_ACCESS = "expireAfterAccess";
-    private static final String EXPIRE_AFTER_WRITE = "expireAfterWrite";
-
     @Override
     public <K, V> Cache<K, V> createCache(String name, Properties properties) {
         CacheBuilder<?,?> builder = CacheBuilder.newBuilder();

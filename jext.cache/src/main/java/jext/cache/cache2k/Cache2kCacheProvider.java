@@ -10,9 +10,6 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class Cache2kCacheProvider implements CacheProvider {
-    private static final String CAPACITY = "capacity";
-    private static final String EXPIRE_AFTER_WRITE = "expireAfterWrite";
-
 
     @Override
     public <K, V> Cache<K, V> createCache(String name, Properties properties) {

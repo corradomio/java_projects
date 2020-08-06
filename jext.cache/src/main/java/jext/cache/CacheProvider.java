@@ -4,6 +4,10 @@ import java.util.Properties;
 
 public interface CacheProvider {
 
+    String CAPACITY = "capacity";
+    String EXPIRE_AFTER_ACCESS = "expireAfterAccess";
+    String EXPIRE_AFTER_WRITE = "expireAfterWrite";
+
     /**
      * Create a cache with th specified name and properties
      * Note: the list of properties depends on the cache provider

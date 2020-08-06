@@ -2,15 +2,15 @@ package jext.cache.guava;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.cache.util.ConfiguredCache;
+import jext.cache.util.ManagedCache;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-public class GuavaCache<K, V> implements Cache<K, V>, ConfiguredCache {
+public class GuavaCache<K, V> implements Cache<K, V>, ManagedCache {
 
     private final String name;
-    private CacheManager configurator;
+    private CacheManager manager;
     private final com.google.common.cache.Cache<K,V> innerCache;
 
     GuavaCache(String name, com.google.common.cache.Cache<K, V> innerCache) {
@@ -50,12 +50,12 @@ public class GuavaCache<K, V> implements Cache<K, V>, ConfiguredCache {
 
     @Override
     public void close() {
-        configurator.detach(this);
+        manager.detach(this);
         innerCache.cleanUp();
     }
 
     @Override
-    public void setConfigurator(CacheManager configurator) {
-        this.configurator = configurator;
+    public void setManager(CacheManager manager) {
+        this.manager = manager;
     }
 }

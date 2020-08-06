@@ -30,7 +30,8 @@ Cache.getCache(name) -> Cache
         get(K) -> V or null
         get(K, ()->V)  -> V
         put(K,V)
-        evict(K)
-        evictAll(Collection<K>)
-        evictAll()
+        remove(K)
+        clear()
         close()
+
+        evictAll(Collection<K>)

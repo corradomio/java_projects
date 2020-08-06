@@ -9,7 +9,7 @@
         with these parameters
       -->
     <cache name="">
-        <property name="capacity" value="1000"/>
+        <property name="capacity" value="1024"/>
         <property name="expiryMode" value="capacity"/>
         <property name="expiryTimeout" value="0"/>
     </cache>
