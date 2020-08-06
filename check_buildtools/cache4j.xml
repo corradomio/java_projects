@@ -7,7 +7,7 @@
             value3="jext.cache.imcache.IMCacheProvider"
             value4="jext.cache.jcs.JCSCacheProvider"
             value5="jext.cache.weak.WeakCacheProvider"
-            value="jext.cache.ehcache.EHCacheProvider"
+            value6="jext.cache.ehcache.EHCacheProvider"
     />
 
     <!--
@@ -17,7 +17,11 @@
       -->
     <cache name="">
         <property name="capacity" value="1024"/>
-        <property name="expiryMode" value="capacity"/>
-        <property name="expiryTimeout" value="0"/>
+        <!--
+        expiry policies in milliseconds
+
+        <property name="expireAfterAccess" value="1000"/>
+        <property name="expireAfterWrite" value="1000"/>
+        -->
     </cache>
 </configuration>

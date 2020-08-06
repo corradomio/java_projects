@@ -1,51 +1,64 @@
-package jext.util;
+package jext.time;
 
 public class DurationUtils {
 
     /**
      *
-     *      HH:MM:SS[.CCC]
+     *      DD:HH:MM:SS[.CCC]
      *         MM:SS[.CCC]
-     *            SS[.CCC]
-     *      10.0h' | '10.0m' | '10.0s'
+     *            SS.[CCC]  (WITH dot)
+     *      '10.d' | '10.0h' | '10.0m' | '10.0s' == '10.'
+     *      '10' -> in milliseconds
      *
-     *
-     * @param duration (default seconds)
+     * @param duration (default milliseconds)
      * @return duration in milliseconds
      */
     public static long parse(String duration) {
         int l = duration.length();
-        double millis = 0;
+        double seconds = 0;
         if (duration.contains(":")) {
             String[] parts = duration.split(":");
+            int at=0;
             switch(parts.length) {
+                //  DD:HH:MM:SS.CCC
+                case 4:
+                    seconds += Long.parseLong(parts[at++])*24*60*60;
+                    // seconds += Long.parseLong(parts[1])*60*60;
+                    // seconds += Long.parseLong(parts[2])*60;
+                    // seconds += (long)(Double.parseDouble(parts[3]));
+                    // break;
+                //  HH:MM:SS.CCC
                 case 3:
-                    millis += Long.parseLong(parts[0])*60*60;
-                    millis += Long.parseLong(parts[1])*60;
-                    millis += (long)(Double.parseDouble(parts[2]));
-                    break;
+                    seconds += Long.parseLong(parts[at++])*60*60;
+                    // seconds += Long.parseLong(parts[1])*60;
+                    // seconds += (long)(Double.parseDouble(parts[2]));
+                    // break;
+                // MM:SS.CCC
                 case 2:
-                    millis += Long.parseLong(parts[0])*60;
-                    millis += (long)(Double.parseDouble(parts[1]));
-                    break;
-                default:
-                    millis += (long)(Double.parseDouble(parts[0]));
+                    seconds += Long.parseLong(parts[at++])*60;
+                    seconds += (long)(Double.parseDouble(parts[at]));
                     break;
             }
         }
         else if (duration.endsWith("s")) {
-            millis = Double.parseDouble(duration.substring(0, l-1));
+            seconds = Double.parseDouble(duration.substring(0, l-1));
         }
         else if (duration.endsWith("m")) {
-            millis = Double.parseDouble(duration.substring(0, l-1))*60;
+            seconds = Double.parseDouble(duration.substring(0, l-1))*60;
         }
         else if (duration.endsWith("h")) {
-            millis = Double.parseDouble(duration.substring(0, l-1))*60*60;
+            seconds = Double.parseDouble(duration.substring(0, l-1))*60*60;
+        }
+        else if (duration.endsWith("d")) {
+            seconds = Double.parseDouble(duration.substring(0, l-1))*24*60*60;
+        }
+        else if (duration.contains(".")) {
+            seconds = Double.parseDouble(duration);
         }
         else {
-            millis = Double.parseDouble(duration);
+            seconds = Double.parseDouble(duration)/1000.;
         }
 
-        return (int)(millis*1000);
+        return (long)(seconds*1000);
     }
 }
