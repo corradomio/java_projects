@@ -13,12 +13,12 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache {
 
     private String name;
     private CacheManager manager;
-    private CacheAccess<K, V> cacheAccess;
+    private CacheAccess<K, V> innerCache;
     private Unique<K> uniqueKeys = new Unique<>();
 
-    JCSCache(String name, CacheAccess<K, V> cacheAccess) {
+    JCSCache(String name, CacheAccess<K, V> innerCache) {
         this.name = name;
-        this.cacheAccess = cacheAccess;
+        this.innerCache = innerCache;
     }
 
     @Override
@@ -28,20 +28,20 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache {
 
     @Override
     public V get(K key) {
-        return cacheAccess.get(key);
+        return innerCache.get(key);
     }
 
     @Override
     public V get(K key, Callable<V> callable) throws ExecutionException {
         K unique = uniqueKeys.get(key);
         synchronized (unique) {
-            V value = cacheAccess.get(unique);
+            V value = innerCache.get(unique);
             if (value == null)
             try {
                 value = callable.call();
                 if (value == null)
                     throw new NullPointerException();
-                cacheAccess.put(unique, value);
+                innerCache.put(unique, value);
             } catch (Exception e) {
                 throw new ExecutionException(e);
             }
@@ -51,25 +51,25 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache {
 
     @Override
     public void put(K key, V value) {
-        cacheAccess.put(key, value);
+        innerCache.put(key, value);
     }
 
     @Override
     public void remove(K key) {
-        cacheAccess.remove(key);
+        innerCache.remove(key);
         uniqueKeys.removeUnique(key);
     }
 
     @Override
     public void clear() {
         uniqueKeys.clear();
-        cacheAccess.clear();
+        innerCache.clear();
     }
 
     @Override
     public void close() {
-        manager.detach(this);
-        cacheAccess.clear();
+        manager.remove(this);
+        innerCache.clear();
     }
 
     @Override

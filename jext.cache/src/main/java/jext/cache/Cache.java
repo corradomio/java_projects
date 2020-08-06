@@ -15,7 +15,7 @@ public interface Cache<K, V> extends AutoCloseable {
      * If the cache doesn't contain the key, the value is computed
      * calling the callable
      * @param key key
-     * @param callable used to create the value. It CAN BE NOT null
+     * @param callable used to create the value. It MUST BE NOT null
      * @return the value
      * @throws ExecutionException
      */

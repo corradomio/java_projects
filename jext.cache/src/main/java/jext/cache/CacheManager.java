@@ -15,6 +15,10 @@ import java.util.Properties;
 
 public class CacheManager {
 
+    // ----------------------------------------------------------------------
+    // Static methods
+    // ----------------------------------------------------------------------
+
     private static CacheManager instance = new CacheManager();
 
     public static void configure() {
@@ -28,6 +32,10 @@ public class CacheManager {
     public static <K, V> Cache<K, V> getCache(String name, Class<K> kclass, Class<V> vclass) {
         return instance.retrieveCache(name);
     }
+
+    // ----------------------------------------------------------------------
+    // Private Fields
+    // ----------------------------------------------------------------------
 
     private static class CacheConfig {
         String name;
@@ -46,23 +54,26 @@ public class CacheManager {
     }
 
     private static Logger logger = Logger.getLogger(CacheManager.class);
-    private final CacheConfig defaultConfig = new CacheConfig();
     private final List<CacheConfig> configurations = new ArrayList<>();
     private final Map<String, Cache<?,?>> caches = new HashMap<>();
-    private CacheProvider cacheProvider;
+    private CacheProvider cacheProvider = new GuavaCacheProvider();
 
-    public CacheManager() {
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    private CacheManager() {
 
     }
+
+    // ----------------------------------------------------------------------
+    // Private operations
+    // ----------------------------------------------------------------------
 
     private void defaultConfiguration() {
         File configurations = new File("cache4j.xml");
         if (configurations.exists()) {
-            try {
-                configureUsing(configurations);
-            } catch (Exception e) {
-                logger.error(e, e);
-            }
+            configureUsing(configurations);
         }
     }
 
@@ -116,7 +127,7 @@ public class CacheManager {
         for (CacheConfig cc : configurations)
             if (cc.name.isEmpty())
                 return cc;
-        return defaultConfig;
+        return new CacheConfig();
     }
 
     private <K,V> Cache<K, V> retrieveCache(String name){
@@ -137,9 +148,14 @@ public class CacheManager {
         }
     }
 
-    public <K,V> void detach(Cache<K, V> cache) {
+    public <K,V> void remove(Cache<K, V> cache) {
         synchronized (caches) {
             caches.remove(cache.getName());
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Done
+    // ----------------------------------------------------------------------
+
 }

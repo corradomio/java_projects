@@ -12,11 +12,11 @@ public interface CacheProvider {
      * Create a cache with th specified name and properties
      * Note: the list of properties depends on the cache provider
      *
-     * @param name
-     * @param properties
-     * @param <K>
-     * @param <V>
-     * @return
+     * @param name cache name
+     * @param properties cache configuration properties
+     * @param <K> key type
+     * @param <V> value type
+     * @return a new cache object
      */
     <K, V> Cache<K, V> createCache(String name, Properties properties);
 }

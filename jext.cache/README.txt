@@ -1,5 +1,6 @@
 JSR 107
 https://www.baeldung.com/jcache
+https://docs.oracle.com/cd/B14099_19/web.1012/b14012/objcache.htm
 
 https://github.com/apache/commons-jcs
 https://github.com/cache2k/cache2k

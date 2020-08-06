@@ -72,7 +72,7 @@ public class EHCache<K, V> implements Cache<K, V>, ManagedCache {
     @Override
     public void close() {
         provider.removeCache(this);
-        manager.detach(this);
+        manager.remove(this);
         innerCache.clear();
     }
 
