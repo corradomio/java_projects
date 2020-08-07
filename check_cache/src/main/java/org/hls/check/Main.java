@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.cache.Cache;
-import jext.cache.CacheConfigurator;
+import jext.cache.CacheManager;
 import jext.logging.Logger;
 
 import java.util.concurrent.ExecutionException;
@@ -10,9 +10,9 @@ public class Main {
 
     public static void main(String[] args) throws ExecutionException {
         Logger.configure();
-        CacheConfigurator.configure();
+        CacheManager.configure();
 
-        Cache<String, Integer> cache = CacheConfigurator.getCache("org.hls.default", String.class, Integer.class);
+        Cache<String, Integer> cache = CacheManager.getCache("org.hls.default", String.class, Integer.class);
 
         System.out.println(cache.get("zero"));
 

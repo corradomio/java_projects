@@ -6,6 +6,7 @@ import jext.buildtools.project.ant.AntProject;
 import jext.buildtools.util.ProjectDump;
 import jext.logging.Logger;
 import jext.util.PropertiesUtils;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.Properties;
@@ -17,17 +18,21 @@ public class Main {
 
         Properties props = PropertiesUtils.load("buildtools.properties");
 
-        props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
+        // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
         // props.setProperty(Project.PROJECT_TYPE, EclipseProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
 
         File projectDir = new File(
-                "D:\\Projects\\java\\apache-ant-1.10.8"
+                // "D:\\Projects\\java\\apache-ant-1.10.8"
                 // "D:\\Projects\\java\\mallet-2.0.8"
-                // "D:\\Projects.github\\other_projects\\eclipse.platform.releng.aggregator"
+
                 // "D:\\Projects.github\\other_projects\\gradle"
+                // "D:\\Projects.github\\other_projects\\deeplearning4j"
+                "D:\\Projects.github\\other_projects\\eclipse.platform.releng.aggregator"
+                // "D:\\Projects.github\\other_projects\\jgit"
+                // "D:\\Projects.github\\other_projects\\spring-framework"
+
                 // "D:\\Projects.test\\BTProjects\\FieldPlan"
-                // "D:\\Bahar\\keycloak-quickstarts-9.0.3"
                 // "D:\\Projects.test\\BTProjects\\ForSalwa"
                 // "D:\\Projects.test\\BTProjects\\bookstore"
                 // "D:\\Projects.test\\BTProjects\\jpcap-x64-master"

@@ -15,14 +15,15 @@ import java.util.regex.Pattern;
 
 public class StringUtils {
 
+    private static final String EMPTY_STRING = "";
+    private static final String[] EMPTY_ARRAY = new String[0];
     private static Logger logger = Logger.getLogger(StringUtils.class) ;
 
-    private static final String EMPTY_STRING = "";
+
     public static String empty() {
         return EMPTY_STRING;
     }
 
-    private static final String[] EMPTY_ARRAY = new String[0];
     public static String[] emptyArray() { return EMPTY_ARRAY; }
 
     public static boolean isEmpty(String s) {
@@ -31,7 +32,7 @@ public class StringUtils {
 
     public static String compose(String[] v, String sep) {
         if (v == null || v.length == 0)
-            return "";
+            return EMPTY_STRING;
 
         StringBuilder sb = new StringBuilder();
         sb.append(v[0]);
@@ -46,7 +47,7 @@ public class StringUtils {
      * Inside the string 'template', replace the variables '${varname}' with the value
      * presents in 'params'.
      *
-     * If 'varname' is not present in 'params', it will not replaces
+     * If 'varname' is not present in 'params', it will not replaced
      *
      * @param template template string
      * @param params parameters
@@ -105,24 +106,49 @@ public class StringUtils {
     }
 
     public static String digest(String s) {
+        return Integer.toHexString(s.hashCode());
+        // try {
+        //     MessageDigest md = MessageDigest.getInstance("MD5");
+        //     byte[] data = s.getBytes();
+        //
+        //     md.update(data, 0, data.length);
+        //
+        //     byte[] digest = md.digest();
+        //     int k = digest.length/2;
+        //
+        //     byte[] smalld = new byte[k];
+        //     for (int i=0; i< smalld.length; ++i)
+        //         smalld[i] = (byte)(digest[i] ^ digest[k+i]);// ^ digest[2*k+i] ^ digest[3*k+i]);
+        //
+        //     return DatatypeConverter.printHexBinary(smalld);
+        // }
+        // catch (Exception e) {
+        //     return "0";
+        // }
+    }
+
+    public static long digest64(String s){
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] data = s.getBytes();
 
-            md.update(data, 0, data.length);
+            for(int i=0; i<s.length(); ++i) {
+                char ch = s.charAt(i);
+                md.update((byte)((ch     ) & 0xFF));
+                md.update((byte)((ch >> 8) & 0xFF));
+            }
 
             byte[] digest = md.digest();
-            int k = digest.length/4;
-
-            byte[] smalld = new byte[k];
+            long[] smalld = new long[4];
             for (int i=0; i< smalld.length; ++i)
-                smalld[i] = (byte)(digest[i] ^ digest[k+i] ^ digest[2*k+i] ^ digest[3*k+i]);
+                smalld[i] = (digest[i] ^ digest[4+i]);
 
-            return DatatypeConverter.printHexBinary(smalld);
+            return (smalld[0] <<  8) |
+                         (smalld[1] << 16) |
+                         (smalld[2] << 32) |
+                         (smalld[3] << 48);
         }
         catch (Exception e) {
-            logger.error(e, e);
-            return "0";
+            return 0L;
         }
     }
 

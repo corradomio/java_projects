@@ -64,7 +64,6 @@ public abstract class BaseModule implements Module {
 
     @Override
     public String getId() {
-        //return String.valueOf(name.toString().hashCode());
         return StringUtils.digest(name.toString());
     }
 

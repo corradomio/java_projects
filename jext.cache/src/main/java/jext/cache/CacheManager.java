@@ -125,14 +125,15 @@ public class CacheManager {
                 Element configuration = XPathUtils.parse(configurationsFile).getDocumentElement();
                 configureUsing(configuration);
             }
-            if (configurationsFile.getName().endsWith(".properties")) {
+            else if (configurationsFile.getName().endsWith(".properties")) {
                 Properties properties = new Properties();
                 try (InputStream stream = new FileInputStream(configurationsFile)) {
                     properties.load(stream);
                 }
                 configureUsing(properties);
             }
-            throw new UnsupportedOperationException("Invalid file format " + configurationsFile.toString());
+            else
+                throw new UnsupportedOperationException("Invalid file format " + configurationsFile.toString());
         }
         catch (Throwable t) {
             logger.error(t, t);

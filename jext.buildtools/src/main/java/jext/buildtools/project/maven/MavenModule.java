@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MavenModule extends BaseModule {
+
     private MavenPom pom;
 
     public MavenModule(File moduleDir, Project project) {
