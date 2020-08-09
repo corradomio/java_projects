@@ -5,7 +5,9 @@ import jext.buildtools.Name;
 import jext.buildtools.Source;
 import jext.buildtools.Sources;
 import jext.buildtools.util.BaseModule;
+import jext.io.file.FileSet;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,9 +18,11 @@ public abstract class BaseSources implements Sources {
 
     protected BaseModule module;
     protected List<Source> sources;
+    protected FileSet selector = new FileSet();
 
     protected BaseSources(Module module) {
         this.module = (BaseModule) module;
+        selector.add(".java");
     }
 
     @Override
@@ -30,6 +34,17 @@ public abstract class BaseSources implements Sources {
     public int size() {
         return getSources().size();
     }
+
+    @Override
+    public void setIncludes(Collection<String> includes) {
+        selector.addAll(includes, false);
+    }
+
+    @Override
+    public void setExcludes(Collection<String> excludes) {
+        selector.addAll(excludes, true);
+    }
+
 
     @Override
     public Set<Name> getRoots() {

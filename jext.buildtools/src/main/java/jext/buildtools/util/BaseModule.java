@@ -8,9 +8,9 @@ import jext.buildtools.Resources;
 import jext.buildtools.Sources;
 import jext.buildtools.Types;
 import jext.buildtools.maven.MavenCoords;
-import jext.buildtools.project.simple.SimpleProject;
 import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.java.JavaSources;
+import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import jext.util.SetUtils;
@@ -39,6 +39,8 @@ public abstract class BaseModule implements Module {
     protected Types types;
     protected List<Module> dependencies;
 
+    protected Logger logger;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -49,13 +51,19 @@ public abstract class BaseModule implements Module {
         String rpath = FileUtils.relativePath(project.getDirectory(), moduleDir);
         this.name = new PathName(rpath);
 
+        this.logger = Logger.getLogger(getClass(), name.toString().replace('/', '.'));
+
         this.sources = new JavaSources(this);
-        this.libraries = new JarLibraries(this);
         this.resources = new FileResources(this);
+        this.libraries = new JarLibraries(this);
         this.types = new SourcesTypes(this);
 
-        List<String> resourceNames = PropertiesUtils.getValues(project.getProperties(), SimpleProject.MODULE_RESOURCES);
-        ((FileResources)this.resources).setResourceNames(resourceNames);
+        List<String> includes = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_RESOURCES);
+        List<String> excludes  = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_EXCLUDE);
+
+        this.resources.setIncludes(includes);
+        this.resources.setExcludes(excludes);
+        this.sources.setExcludes(excludes);
     }
 
     // ----------------------------------------------------------------------

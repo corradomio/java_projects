@@ -2,9 +2,8 @@ package jext.io.file;
 
 public class FileSet extends ItemSet {
 
-    protected FileSet() {
+    public FileSet() {
         super();
         this.selectDirs = false;
     }
-
 }

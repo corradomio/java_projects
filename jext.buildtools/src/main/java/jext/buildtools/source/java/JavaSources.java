@@ -24,8 +24,9 @@ public class JavaSources extends BaseSources {
 
         List<File> sourceFiles = new ArrayList<>();
 
-        module.listDirectories().forEach(dir ->{
-            FileUtils.listFiles(sourceFiles, dir, FileFilters.IS_JAVA);
+        module.listDirectories().forEach(sourceDir ->{
+            // FileUtils.listFiles(sourceFiles, dir, FileFilters.IS_JAVA);
+            sourceFiles.addAll(selector.getFiles(sourceDir));
         });
 
         sources = sourceFiles.stream()

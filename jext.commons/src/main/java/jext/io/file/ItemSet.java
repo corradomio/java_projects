@@ -8,12 +8,12 @@ import org.w3c.dom.Element;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +29,10 @@ import java.util.stream.Collectors;
 
 public class ItemSet {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private final Logger logger = Logger.getLogger(FileSet.class);
 
     private String relativeDir;
@@ -39,11 +43,19 @@ public class ItemSet {
     protected boolean selectFiles;
     protected boolean selectDirs;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public ItemSet() {
         this.relativeDir = "";
         this.selectFiles = true;
         this.selectDirs = true;
     }
+
+    // ----------------------------------------------------------------------
+    // Configure using XML
+    // ----------------------------------------------------------------------
 
     public void configure(Element elt) {
         directory = elt.getTagName().equals("directory");
@@ -56,7 +68,7 @@ public class ItemSet {
     private void configureFilename(Element elt) {
         relativeDir = "";
         String pattern = XPathUtils.getValue(elt, "@name");
-        add(pattern, false);
+        addPattern(pattern, false);
     }
 
     private void configureDirectory(Element elt) {
@@ -70,22 +82,22 @@ public class ItemSet {
         inline = XPathUtils.getValue(elt, "@includes", "");
         patterns = inline.split("[, ]");
         for(String pattern : patterns)
-            add(pattern, false);
+            addPattern(pattern, false);
         inline = XPathUtils.getValue(elt, "@excludes", "");
         patterns = inline.split("[, ]");
         for(String pattern : patterns)
-            add(pattern, true);
+            addPattern(pattern, true);
 
         XPathUtils.selectNodes(elt, "include")
                 .forEach(incl -> {
                     String pattern = XPathUtils.getValue(incl, "@name");
-                    add(pattern, false);
+                    addPattern(pattern, false);
                 });
 
         XPathUtils.selectNodes(elt, "exclude")
                 .forEach(incl -> {
                     String pattern = XPathUtils.getValue(incl, "@name");
-                    add(pattern, true);
+                    addPattern(pattern, true);
                 });
 
         // add default
@@ -96,19 +108,36 @@ public class ItemSet {
         // if it is specified only <exclude name="..."/>
         if (includes.isEmpty())
             if (directory)
-                add("**", false);
+                addPattern("**", false);
             else
-                add("*", false);
+                addPattern("*", false);
     }
 
-    public void addPattern(String pattern, boolean exclude) {
-        if (isExtension(pattern))
-            add("**/*" + pattern, exclude);
-        else if (isName(pattern))
-            add("**/" + pattern + "/**", exclude);
-        else
+    // ----------------------------------------------------------------------
+    // Configure by code
+    // ----------------------------------------------------------------------
+
+    public void addAll(Collection<String> paterns, boolean exclude) {
+        for (String pattern : paterns)
             add(pattern, exclude);
     }
+
+    public void add(String pattern) {
+        add(pattern, false);
+    }
+
+    public void add(String pattern, boolean exclude) {
+        if (isExtension(pattern))
+            addPattern("**/*" + pattern, exclude);
+        else if (isName(pattern))
+            addPattern("**/" + pattern + "/**", exclude);
+        else
+            addPattern(pattern, exclude);
+    }
+
+    // ----------------------------------------------------------------------
+    // Configure by code
+    // ----------------------------------------------------------------------
 
     private static boolean isExtension(String pattern) {
         return pattern.startsWith(".");
@@ -120,7 +149,7 @@ public class ItemSet {
                  pattern.contains("*"));
     }
 
-    private void add(String pattern, boolean exclude) {
+    private void addPattern(String pattern, boolean exclude) {
         if (pattern.isEmpty())
             return;
         FilePattern fpat = new FilePattern(pattern);
@@ -130,6 +159,10 @@ public class ItemSet {
             includes.add(fpat);
         recursive |= fpat.recursive;
     }
+
+    // ----------------------------------------------------------------------
+    // Get files
+    // ----------------------------------------------------------------------
 
     public String getDir() {
         return relativeDir;

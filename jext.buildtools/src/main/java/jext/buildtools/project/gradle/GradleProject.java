@@ -8,19 +8,31 @@ import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Queue;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GradleProject extends BaseProject {
 
     public static final String TYPE = "gradle";
+    private static final String MODULE_FILE = "build.gradle";
+    private static final String MODULE_FILE_KTS = "build.gradle.kts";
 
     public static boolean isProject(File projectDir) {
-        File buildGradle = new File(projectDir, "build.gradle");
-        File buildGradleKts = new File(projectDir, "build.gradle.kts");
+        File buildGradle = new File(projectDir, MODULE_FILE);
+        File buildGradleKts = new File(projectDir, MODULE_FILE_KTS);
 
         return buildGradle.exists() || buildGradleKts.exists();
     }
@@ -35,30 +47,82 @@ public class GradleProject extends BaseProject {
 
     private GradleConnector connector;
     private final GradleModule rootModule;
+    private Set<GradleModule> gradleModules;
 
     public GradleProject(File projectDir, Properties properties) {
         super(projectDir, properties);
+        if (!properties.containsKey(PROJECT_MODULE))
+            this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
         this.rootModule = new GradleModule(this);
         connect();
     }
+
+    // @Override
+    // public List<Module> getModules() {
+    //     if (modules != null)
+    //         return modules;
+    //
+    //     modules = new ArrayList<>();
+    //     Queue<GradleModule> toVisit = new LinkedList<>();
+    //     toVisit.add(rootModule);
+    //
+    //     while(!toVisit.isEmpty()) {
+    //         GradleModule module = toVisit.remove();
+    //         modules.add(module);
+    //
+    //         toVisit.addAll(module.getModules());
+    //     }
+    //
+    //     return modules;
+    // }
 
     @Override
     public List<Module> getModules() {
         if (modules != null)
             return modules;
 
-        modules = new ArrayList<>();
+        findModulesByConfig();
+        findModulesByGradle();
+
+        return modules;
+    }
+
+    private void findModulesByConfig() {
+        List<File> moduleDirs = new ArrayList<>();
+        try {
+            Files.walkFileTree(projectDir.toPath(), new SimpleFileVisitor<Path>(){
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    File moduleDir = dir.toFile();
+                    File buildGradle = new File(moduleDir, MODULE_FILE);
+                    File buildGradleKts = new File(moduleDir, MODULE_FILE_KTS);
+                    File buildGradleDir = new File(moduleDir, moduleDir.getName() + ".gradle");
+                    if (buildGradle.exists() || buildGradleKts.exists() || buildGradleDir.exists())
+                        moduleDirs.add(moduleDir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+        catch (IOException e) { }
+
+        modules = moduleDirs.stream().map(this::newModule)
+                .collect(Collectors.toList());
+    }
+
+    public void findModulesByGradle() {
+        // if (modules != null)
+        //     return modules;
+
+        gradleModules = new HashSet<>();
         Queue<GradleModule> toVisit = new LinkedList<>();
         toVisit.add(rootModule);
 
         while(!toVisit.isEmpty()) {
             GradleModule module = toVisit.remove();
-            modules.add(module);
+            gradleModules.add(module);
 
             toVisit.addAll(module.getModules());
         }
-
-        return modules;
     }
 
     @Override
@@ -72,19 +136,6 @@ public class GradleProject extends BaseProject {
         }
         return null;
     }
-
-    // private void analyzeStructure() {
-    //     try {
-    //         connect();
-    //         getModules().forEach(GradleModule::analyzeStructure);
-    //     }
-    //     catch (Throwable t) {
-    //         logger.error(t, t);
-    //     }
-    //     finally {
-    //         close();
-    //     }
-    // }
 
     private void connect() {
         connector = GradleConnector.newConnector().forProjectDirectory(projectDir);
@@ -121,38 +172,30 @@ public class GradleProject extends BaseProject {
                 connector.useBuildDistribution();
         }
 
-        else if (hasGradleWrapper()) {
-
+        else {
+            connector.useGradleVersion("6.0");
         }
-
-        // connection = connector.connect();
-        // uncloseable = new UncloseableProjectConnection(connection);
     }
 
     ProjectConnection getConnection() {
         return connector.connect();
-        // return uncloseable;
     }
 
-    private boolean hasGradleWrapper() {
-        return new File(projectDir, "gradle/wrapper").exists();
+    void addGradleModule(GradleModule module) {
+        modules.add(module);
     }
 
-    // public void dump() {
-    //
-    //     getModules().forEach(module -> {
-    //         System.out.printf("Module %s (%s)\n", module.getName(), module.isValid());
-    //         System.out.println("... dmodules");
-    //         module.getModuleDependencies()
-    //                 .forEach(dep -> {
-    //                     System.out.printf("... ... %s\n", dep);
-    //                 });
-    //         System.out.println("... dependencies");
-    //         module.getDependencies()
-    //                 .forEach(dep -> {
-    //                     System.out.printf("... ... %s\n", dep);
-    //                 });
-    //     });
-    //     System.out.println("Done");
+    boolean isGradleModule(GradleModule module) {
+        return gradleModules.contains(module);
+
+    }
+
+    // private boolean hasGradleWrapper() {
+    //     return new File(projectDir, "gradle/wrapper").exists();
     // }
+
+    @Override
+    protected Module newModule(File moduleDir) {
+        return new GradleModule(moduleDir, this);
+    }
 }

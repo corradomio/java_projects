@@ -5,6 +5,7 @@ import jext.buildtools.Name;
 import jext.buildtools.Resource;
 import jext.buildtools.Resources;
 import jext.buildtools.util.BaseModule;
+import jext.io.file.FileSet;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -24,19 +25,25 @@ public class FileResources implements Resources {
 
     private BaseModule module;
     private List<Resource> resources;
-    private Set<String> resourceNames = new HashSet<>();
+    private FileSet selector = new FileSet();
 
     public FileResources(Module module) {
         this.module = (BaseModule) module;
-        this.resourceNames.add(".xml");
-        this.resourceNames.add(".properties");
-        this.resourceNames.add(".gradle");
-        this.resourceNames.add("resources");
-        this.resourceNames.add("webapps");
+        this.selector.add(".xml");
+        this.selector.add(".properties");
+        this.selector.add(".gradle");
+        this.selector.add("resources");
+        this.selector.add("webapps");
     }
 
-    public void setResourceNames(Collection<String> resourceNames) {
-        this.resourceNames.addAll(resourceNames);
+    @Override
+    public void setIncludes(Collection<String> includes) {
+        this.selector.addAll(includes, false);
+    }
+
+    @Override
+    public void setExcludes(Collection<String> excludes) {
+        this.selector.addAll(excludes, true);
     }
 
     @Override
@@ -67,13 +74,14 @@ public class FileResources implements Resources {
         Set<File> resourceFiles = new HashSet<>();
 
         module.listDirectories().forEach(resourceDir ->{
-            for (String resourceName : resourceNames) {
-                if (resourceName.startsWith("."))
-                    addResourceFiles(resourceFiles, resourceDir, resourceName);
-                else
-                    addResourceDirs(resourceFiles, resourceDir, resourceName);
-            }
+            // for (String resourceName : resourceNames) {
+            //     if (resourceName.startsWith("."))
+            //         addResourceFiles(resourceFiles, resourceDir, resourceName);
+            //     else
+            //         addResourceDirs(resourceFiles, resourceDir, resourceName);
+            // }
 
+            resourceFiles.addAll(selector.getFiles(resourceDir));
         });
 
         resources = resourceFiles.stream()

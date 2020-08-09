@@ -2,8 +2,6 @@ package jext.buildtools.project.gradle;
 
 import jext.buildtools.Name;
 import jext.buildtools.Named;
-import jext.buildtools.Resources;
-import jext.buildtools.Sources;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.project.gradle.collectors.DependenciesCollector;
 import jext.buildtools.project.gradle.collectors.ErrorsCollector;
@@ -14,6 +12,7 @@ import jext.buildtools.project.gradle.util.GradleSources;
 import jext.buildtools.project.gradle.util.GradleUtils;
 import jext.buildtools.util.BaseModule;
 import jext.logging.Logger;
+import org.gradle.tooling.BuildException;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
@@ -24,19 +23,22 @@ import java.util.stream.Collectors;
 
 public class GradleModule extends BaseModule {
 
-    private Logger logger;
-
     private List<GradleModule> modules;
     private List<Name> dmodules;
     private List<MavenCoords> dcoords;
 
     public GradleModule(GradleProject project) {
         super(project.getDirectory(), project);
-
         this.sources = new GradleSources(this);
         this.resources = new GradleResources(this);
-        this.logger = Logger.getLogger(GradleModule.class, this.name.toString());
     }
+
+    public GradleModule(File moduleDir, GradleProject project) {
+        super(moduleDir, project);
+        this.sources = new GradleSources(this);
+        this.resources = new GradleResources(this);
+    }
+
 
     public GradleModule(String name, GradleModule parent) {
         super(new File(parent.getDirectory(), name), parent.getProject());
@@ -89,6 +91,11 @@ public class GradleModule extends BaseModule {
                 .setStandardError(err)
                 .run();
         }
+        catch (BuildException e) {
+            String message = e.getCause().getMessage();
+            if (!message.contains("not found in root project"))
+                logger.error(e, e);
+        }
         catch (Throwable t) {
             logger.error(t, t);
         }
@@ -98,7 +105,12 @@ public class GradleModule extends BaseModule {
         }
 
         projects.forEach(name -> {
-            modules.add(new GradleModule(name, this));
+            GradleModule module = (GradleModule) project.findModule(name);
+            if (module == null) {
+                module = new GradleModule(name, this);
+                getGradleProject().addGradleModule(module);
+            }
+            modules.add(module);
         });
     }
 
@@ -116,6 +128,11 @@ public class GradleModule extends BaseModule {
                 // .setStandardOutput(logcoll)
                 .setStandardError(err)
                 .run();
+        }
+        catch (BuildException e) {
+            String message = e.getCause().getMessage();
+            if (!message.contains("not found in root project"))
+                logger.error(e, e);
         }
         catch (Throwable t) {
             logger.error(t, t);
@@ -141,14 +158,6 @@ public class GradleModule extends BaseModule {
 
     private GradleProject getGradleProject() {
         return (GradleProject) getProject();
-    }
-
-    public Sources getSources() {
-        return sources;
-    }
-
-    public Resources getResources() {
-        return resources;
     }
 
 }

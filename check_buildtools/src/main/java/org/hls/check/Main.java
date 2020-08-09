@@ -21,6 +21,7 @@ public class Main {
         // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
         // props.setProperty(Project.PROJECT_TYPE, EclipseProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
+        props.setProperty(Project.MODULE_EXCLUDE, "**/test/**");
 
         File projectDir = new File(
                 // "D:\\Projects\\java\\apache-ant-1.10.8"
@@ -28,9 +29,10 @@ public class Main {
 
                 // "D:\\Projects.github\\other_projects\\gradle"
                 // "D:\\Projects.github\\other_projects\\deeplearning4j"
-                "D:\\Projects.github\\other_projects\\eclipse.platform.releng.aggregator"
+                // "D:\\Projects.github\\other_projects\\eclipse.platform.releng.aggregator"
                 // "D:\\Projects.github\\other_projects\\jgit"
                 // "D:\\Projects.github\\other_projects\\spring-framework"
+                "D:\\Projects.github\\other_projects\\hibernate-orm"
 
                 // "D:\\Projects.test\\BTProjects\\FieldPlan"
                 // "D:\\Projects.test\\BTProjects\\ForSalwa"

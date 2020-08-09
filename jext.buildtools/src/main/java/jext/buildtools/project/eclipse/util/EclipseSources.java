@@ -28,8 +28,9 @@ public class EclipseSources extends BaseSources {
             return sources;
 
         List<File> sourceFiles = new ArrayList<>();
-        classpathFile.getSourceDirs().forEach(sdir -> {
-            FileUtils.listFiles(sourceFiles, sdir, FileFilters.IS_JAVA);
+        classpathFile.getSourceDirs().forEach(sourceDir -> {
+            //FileUtils.listFiles(sourceFiles, sourceDir, FileFilters.IS_JAVA);
+            sourceFiles.addAll(selector.getFiles(sourceDir));
         });
 
         sources = sourceFiles.stream()

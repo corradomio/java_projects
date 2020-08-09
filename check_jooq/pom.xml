@@ -21,6 +21,15 @@
     </build>
 
     <dependencies>
+        <!-- Use org.jooq            for the Open Source Edition
+                 org.jooq.pro        for commercial editions,
+                 org.jooq.pro-java-8 for commercial editions with Java 8 support,
+                 org.jooq.pro-java-6 for commercial editions with Java 6 support,
+                 org.jooq.trial      for the free trial edition
+
+             Note: Only the Open Source Edition is hosted on Maven Central.
+                   Import the others manually from your distribution -->
+
         <!-- https://mvnrepository.com/artifact/org.jooq/jooq -->
         <dependency>
             <groupId>org.jooq</groupId>
