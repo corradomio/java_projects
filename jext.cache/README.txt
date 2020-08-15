@@ -14,6 +14,10 @@ https://github.com/ehcache/ehcache3
 https://github.com/ben-manes/caffeine
 
 
+https://hazelcast.com/
+    https://www.baeldung.com/java-hazelcast
+http://www.mapdb.org/
+
 
 CachingProvider -> List[CacheManager]
     CacheManager -> List[Cache]
