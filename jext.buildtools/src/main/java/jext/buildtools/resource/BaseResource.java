@@ -32,6 +32,7 @@ public class BaseResource implements Named {
         return name;
     }
 
+    @Override
     public String getId() {
         return StringUtils.digest(name.toString());
     }

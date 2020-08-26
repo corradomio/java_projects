@@ -1,9 +1,11 @@
 package jext.buildtools;
 
 public interface Name extends Comparable<Name> {
-    String getName();
 
     Name getParent();
+
+    String getName();
+
     String getParentName();
 
     String getFullname();
