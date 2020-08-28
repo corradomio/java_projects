@@ -3,8 +3,6 @@ package jext.buildtools.source.java;
 import jext.buildtools.Module;
 import jext.buildtools.Source;
 import jext.buildtools.source.BaseSources;
-import jext.buildtools.util.FileFilters;
-import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,8 +22,7 @@ public class JavaSources extends BaseSources {
 
         List<File> sourceFiles = new ArrayList<>();
 
-        module.listDirectories().forEach(sourceDir ->{
-            // FileUtils.listFiles(sourceFiles, dir, FileFilters.IS_JAVA);
+        module.getDirectories().forEach(sourceDir ->{
             sourceFiles.addAll(selector.getFiles(sourceDir));
         });
 

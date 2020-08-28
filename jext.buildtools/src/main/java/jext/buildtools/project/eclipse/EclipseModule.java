@@ -28,11 +28,11 @@ public class EclipseModule extends BaseModule {
         return classpathFile;
     }
 
-    public List<File> listLocalLibraries() {
+    public List<File> getLocalLibraries() {
         return classpathFile.getLocalLibraries();
     }
 
-    public List<MavenCoords> listMavenLibraries() {
+    public List<MavenCoords> getMavenLibraries() {
         return classpathFile.getMavenLibraries()
                 .stream()
                 .map(MavenCoords::new)

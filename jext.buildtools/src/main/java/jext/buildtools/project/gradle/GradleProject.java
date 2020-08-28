@@ -9,6 +9,7 @@ import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
@@ -56,25 +56,6 @@ public class GradleProject extends BaseProject {
         this.rootModule = new GradleModule(this);
         connect();
     }
-
-    // @Override
-    // public List<Module> getModules() {
-    //     if (modules != null)
-    //         return modules;
-    //
-    //     modules = new ArrayList<>();
-    //     Queue<GradleModule> toVisit = new LinkedList<>();
-    //     toVisit.add(rootModule);
-    //
-    //     while(!toVisit.isEmpty()) {
-    //         GradleModule module = toVisit.remove();
-    //         modules.add(module);
-    //
-    //         toVisit.addAll(module.getModules());
-    //     }
-    //
-    //     return modules;
-    // }
 
     @Override
     public List<Module> getModules() {
@@ -129,7 +110,7 @@ public class GradleProject extends BaseProject {
     public Module findModule(String name) {
         for (Module module : getModules()) {
             if (module.getId().equals(name)
-                    || module.getName().getFullname().equals(name)
+                    || module.getName().getFullName().equals(name)
                     || module.getName().getName().equals(name)
                     || module.getDirectory().getAbsolutePath().equals(name))
                 return module;
@@ -156,10 +137,10 @@ public class GradleProject extends BaseProject {
             connector.useInstallation(gradleHome);
         }
 
-        // else if (properties.containsKey(GRADLE_URI)) {
-        //     URI gradleDistribution = PropertiesUtils.getURI(properties, GRADLE_URI);
-        //     connector.useDistribution(gradleDistribution);
-        // }
+        else if (properties.containsKey(GRADLE_URI)) {
+            URI gradleDistribution = PropertiesUtils.getURI(properties, GRADLE_URI);
+            connector.useDistribution(gradleDistribution);
+        }
 
         else if (properties.containsKey(GRADLE_HOMEDIR)) {
             File gradleUserHomeDir = PropertiesUtils.getFile(properties, GRADLE_HOMEDIR);

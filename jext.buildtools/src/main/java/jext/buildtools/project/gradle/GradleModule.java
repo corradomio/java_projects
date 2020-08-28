@@ -7,9 +7,8 @@ import jext.buildtools.project.gradle.collectors.DependenciesCollector;
 import jext.buildtools.project.gradle.collectors.ErrorsCollector;
 import jext.buildtools.project.gradle.collectors.LoggerCollector;
 import jext.buildtools.project.gradle.collectors.ProjectsCollector;
-import jext.buildtools.project.gradle.util.GradleResources;
-import jext.buildtools.project.gradle.util.GradleSources;
-import jext.buildtools.project.gradle.util.GradleUtils;
+import jext.buildtools.resource.FileResources;
+import jext.buildtools.source.java.JavaSources;
 import jext.buildtools.util.BaseModule;
 import jext.logging.Logger;
 import org.gradle.tooling.BuildException;
@@ -29,59 +28,32 @@ public class GradleModule extends BaseModule {
 
     public GradleModule(GradleProject project) {
         super(project.getDirectory(), project);
-        this.sources = new GradleSources(this);
-        this.resources = new GradleResources(this);
+        this.sources = new JavaSources(this);
+        this.resources = new FileResources(this);
     }
 
     public GradleModule(File moduleDir, GradleProject project) {
         super(moduleDir, project);
-        this.sources = new GradleSources(this);
-        this.resources = new GradleResources(this);
+        this.sources = new JavaSources(this);
+        this.resources = new FileResources(this);
     }
 
 
     public GradleModule(String name, GradleModule parent) {
         super(new File(parent.getDirectory(), name), parent.getProject());
 
-        this.logger = Logger.getLogger(GradleModule.class, this.name.toString());
+        this.logger = Logger.getLogger(GradleModule.class, this.getName().toString());
     }
 
     public List<GradleModule> getModules(){
-        if (modules == null) {
-            retrieveModules();
-            retrieveDependencies();
-        }
-        return modules;
-    }
+        if (modules != null)
+            return modules;
 
-    // public List<Name> getModuleDependencies() {
-    //     if (dmodules == null)
-    //         retrieveDependencies();
-    //     return dmodules;
-    // }
-
-    // public List<MavenCoords> getMavenLibraries() {
-    //     if (dcoords == null)
-    //         retrieveDependencies();
-    //     return dcoords;
-    // }
-
-    // public List<File> getLocalLibraries() {
-    //     return Collections.emptyList();
-    // }
-
-    public List<MavenCoords> listMavenLibraries() {
-        if (dcoords == null)
-            retrieveDependencies();
-        return dcoords;
-    }
-
-    private void retrieveModules() {
         logger.debugf("retrieveModules", getName());
 
         modules = new ArrayList<>();
 
-        String projectsTask = GradleUtils.toTask(name, "projects");
+        String projectsTask = toTask(getName(), "projects");
         ErrorsCollector err = new ErrorsCollector(logger);
         ProjectsCollector projects = new ProjectsCollector();
         try(ProjectConnection connection = getGradleProject().getConnection()) {
@@ -112,12 +84,33 @@ public class GradleModule extends BaseModule {
             }
             modules.add(module);
         });
+
+        return modules;
     }
 
-    private void retrieveDependencies() {
+    // public List<Name> getModuleDependencies() {
+    //     if (dmodules == null)
+    //         retrieveDependencies();
+    //     return dmodules;
+    // }
+
+    // public List<MavenCoords> getMavenLibraries() {
+    //     if (dcoords == null)
+    //         retrieveDependencies();
+    //     return dcoords;
+    // }
+
+    // public List<File> getLocalLibraries() {
+    //     return Collections.emptyList();
+    // }
+
+    public List<MavenCoords> getMavenLibraries() {
+        if (dcoords != null)
+            return dcoords;
+
         logger.debugf("retrieveDependencies");
 
-        String dependenciesTask = GradleUtils.toTask(name, "dependencies");
+        String dependenciesTask = toTask(getName(), "dependencies");
         ErrorsCollector err = new ErrorsCollector(logger);
         DependenciesCollector collector = new DependenciesCollector();
         LoggerCollector logcoll = new LoggerCollector(logger, collector);
@@ -154,10 +147,19 @@ public class GradleModule extends BaseModule {
             .stream()
             .map(MavenCoords::new)
             .collect(Collectors.toList());
+
+        return dcoords;
     }
 
     private GradleProject getGradleProject() {
         return (GradleProject) getProject();
     }
 
+    private static String toTask(Name name, String taskName) {
+        String moduleName = name.toString().replace('/',':');
+        if (moduleName.isEmpty())
+            return taskName;
+        else
+            return String.format("%s:%s", moduleName, taskName);
+    }
 }

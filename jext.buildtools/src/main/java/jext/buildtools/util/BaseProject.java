@@ -66,7 +66,7 @@ public abstract class BaseProject implements Project {
     public Module findModule(String name) {
         for (Module module : getModules()) {
             if (module.getId().equals(name)
-                    || module.getName().getFullname().equals(name)
+                    || module.getName().getFullName().equals(name)
                     || module.getName().getName().equals(name)
                     || module.getDirectory().getAbsolutePath().equals(name))
                 return module;

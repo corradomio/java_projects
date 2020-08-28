@@ -4,6 +4,7 @@ import jext.buildtools.Libraries;
 import jext.buildtools.Library;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
+import jext.buildtools.library.JarLibrary;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public abstract class BaseLibraries implements Libraries {
     @Override
     public List<Library> getLibraries(Name root) {
         return getLibraries().stream()
-                .filter(library -> library.getName().getFullname().startsWith(root.getFullname()))
+                .filter(library -> library.getName().getFullName().startsWith(root.getFullName()))
                 .collect(Collectors.toList());
     }
 
@@ -55,11 +56,11 @@ public abstract class BaseLibraries implements Libraries {
 
         libraries = new ArrayList<>();
 
-        module.listLocalLibraries().forEach(libraryFile -> {
+        module.getLocalLibraries().forEach(libraryFile -> {
             libraries.add(new JarLibrary(libraryFile, module));
         });
 
-        module.listMavenLibraries().forEach(coords -> {
+        module.getMavenLibraries().forEach(coords -> {
             libraries.add(new MavenLibrary(coords, module));
         });
 

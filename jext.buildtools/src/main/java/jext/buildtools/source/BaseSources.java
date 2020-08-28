@@ -58,7 +58,7 @@ public abstract class BaseSources implements Sources {
     @Override
     public List<Source> getSources(Name root) {
         return getSources().stream()
-                .filter(source -> source.getName().getFullname().startsWith(root.getFullname()))
+                .filter(source -> source.getName().getFullName().startsWith(root.getFullName()))
                 .collect(Collectors.toList());
     }
 

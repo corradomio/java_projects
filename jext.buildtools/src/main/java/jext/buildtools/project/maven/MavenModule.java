@@ -34,7 +34,7 @@ public class MavenModule extends BaseModule {
     //     return children;
     // }
 
-    public List<MavenCoords> listMavenLibraries() {
+    public List<MavenCoords> getMavenLibraries() {
         return pom.getDependencyCoords()
                 .stream()
                 .filter(this::isLibrary)
@@ -44,4 +44,5 @@ public class MavenModule extends BaseModule {
     private boolean isLibrary(MavenCoords coords) {
         return project.findModule(coords.toString()) == null;
     }
+
 }

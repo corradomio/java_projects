@@ -73,7 +73,7 @@ public class FileResources implements Resources {
 
         Set<File> resourceFiles = new HashSet<>();
 
-        module.listDirectories().forEach(resourceDir ->{
+        module.getDirectories().forEach(resourceDir ->{
             // for (String resourceName : resourceNames) {
             //     if (resourceName.startsWith("."))
             //         addResourceFiles(resourceFiles, resourceDir, resourceName);
@@ -113,7 +113,7 @@ public class FileResources implements Resources {
     @Override
     public List<Resource> getResources(Name root) {
         return getResources().stream()
-                .filter(resource -> resource.getName().getFullname().startsWith(root.getFullname()))
+                .filter(resource -> resource.getName().getFullName().startsWith(root.getFullName()))
                 .collect(Collectors.toList());
     }
 

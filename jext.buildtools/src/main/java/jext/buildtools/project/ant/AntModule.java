@@ -28,7 +28,7 @@ public class AntModule extends BaseModule {
                 .collect(Collectors.toList());
     }
 
-    public List<MavenCoords> listMavenLibraries(){
+    public List<MavenCoords> getMavenLibraries(){
         if (ivyFiles.isEmpty())
             return Collections.emptyList();
 

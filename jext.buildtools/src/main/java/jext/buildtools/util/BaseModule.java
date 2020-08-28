@@ -7,6 +7,7 @@ import jext.buildtools.Project;
 import jext.buildtools.Resources;
 import jext.buildtools.Sources;
 import jext.buildtools.Types;
+import jext.buildtools.library.JarLibraries;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.java.JavaSources;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class BaseModule implements Module {
+public abstract class BaseModule extends NamedObject implements Module {
 
     // ----------------------------------------------------------------------
     // Protected fields
@@ -31,7 +32,6 @@ public abstract class BaseModule implements Module {
 
     protected Project project;
     protected File moduleDir;
-    protected Name name;
 
     protected Sources sources;
     protected Libraries libraries;
@@ -46,17 +46,18 @@ public abstract class BaseModule implements Module {
     // ----------------------------------------------------------------------
 
     protected BaseModule(File moduleDir, Project project) {
+        super(null);
         this.moduleDir = moduleDir;
         this.project = project;
         String rpath = FileUtils.relativePath(project.getDirectory(), moduleDir);
-        this.name = new PathName(rpath);
+        setName(new PathName(rpath));
 
-        this.logger = Logger.getLogger(getClass(), name.toString().replace('/', '.'));
+        this.logger = Logger.getLogger(getClass(), getName().toString().replace('/', '.'));
 
         this.sources = new JavaSources(this);
         this.resources = new FileResources(this);
         this.libraries = new JarLibraries(this);
-        this.types = new SourcesTypes(this);
+        this.types = new SourceTypes(this);
 
         List<String> includes = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_RESOURCES);
         List<String> excludes  = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_EXCLUDE);
@@ -69,16 +70,6 @@ public abstract class BaseModule implements Module {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
-
-    @Override
-    public String getId() {
-        return StringUtils.digest(name.toString());
-    }
-
-    @Override
-    public Name getName() {
-        return name;
-    }
 
     @Override
     public Project getProject(){
@@ -139,23 +130,23 @@ public abstract class BaseModule implements Module {
     // Implementations
     // ----------------------------------------------------------------------
 
-    public List<File> listDirectories() {
+    public List<File> getDirectories() {
         return FileUtils.asList(moduleDir.listFiles(File::isDirectory))
                 .stream()
                 .filter(this::isValid)
                 .collect(Collectors.toList());
     }
 
-    public List<File> listLocalLibraries() {
+    public List<File> getLocalLibraries() {
         List<File> libraryFiles = new ArrayList<>();
 
-        listDirectories().forEach(dir ->{
+        getDirectories().forEach(dir ->{
             FileUtils.listFiles(libraryFiles, dir, FileFilters.IS_JAR);
         });
         return libraryFiles;
     }
 
-    public List<MavenCoords> listMavenLibraries() {
+    public List<MavenCoords> getMavenLibraries() {
         return Collections.emptyList();
     }
 

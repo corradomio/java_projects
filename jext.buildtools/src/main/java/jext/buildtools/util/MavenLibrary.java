@@ -6,27 +6,17 @@ import jext.buildtools.Name;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.maven.MavenDownloader;
 
-public class MavenLibrary implements Library {
+public class MavenLibrary extends NamedObject implements Library {
 
     private MavenCoords coords;
     private MavenDownloader downloader;
     private Module module;
-    private Name name;
 
     public MavenLibrary(MavenCoords coords, Module module) {
+        super(null);
         this.coords = coords;
         this.module = module;
-        this.name = new PathName(coords.getArtifact().replace(':', '/'));
-    }
-
-    @Override
-    public String getId() {
-        return coords.toString();
-    }
-
-    @Override
-    public Name getName() {
-        return name;
+        setName(new PathName(coords.getArtifact().replace(':', '/')));
     }
 
     @Override

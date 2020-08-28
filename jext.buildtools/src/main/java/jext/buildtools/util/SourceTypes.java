@@ -2,9 +2,9 @@ package jext.buildtools.util;
 
 import jext.buildtools.Module;
 
-public class SourcesTypes extends BaseTypes {
+public class SourceTypes extends BaseTypes {
 
-    public SourcesTypes(Module module) {
+    public SourceTypes(Module module) {
         super(module);
     }
 }

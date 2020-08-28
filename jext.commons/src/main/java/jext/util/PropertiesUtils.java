@@ -121,9 +121,13 @@ public class PropertiesUtils {
         return new File(value);
     }
 
-    public static URI getURI(Properties properties, String name) throws URISyntaxException {
+    public static URI getURI(Properties properties, String name) {
         String value = properties.getProperty(name);
-        return new URI(value);
+        try {
+            return new URI(value);
+        } catch (URISyntaxException e) {
+            return null;
+        }
     }
     
     public static List<String> getValues(Properties properties, String name) {

@@ -8,5 +8,5 @@ public interface Name extends Comparable<Name> {
 
     String getParentName();
 
-    String getFullname();
+    String getFullName();
 }

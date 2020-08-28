@@ -38,24 +38,24 @@ public class PathName implements Name {
     }
 
     @Override
-    public String getFullname() {
+    public String getFullName() {
         return path;
     }
 
     @Override
     public int hashCode() {
-        return getFullname().hashCode();
+        return getFullName().hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         Name that = (Name) obj;
-        return getFullname().equals(that.getFullname());
+        return getFullName().equals(that.getFullName());
     }
 
     @Override
     public int compareTo(Name that) {
-        return getFullname().compareTo(that.getFullname());
+        return getFullName().compareTo(that.getFullName());
     }
 
     @Override

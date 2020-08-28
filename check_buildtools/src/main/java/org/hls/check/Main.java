@@ -32,7 +32,8 @@ public class Main {
                 // "D:\\Projects.github\\other_projects\\eclipse.platform.releng.aggregator"
                 // "D:\\Projects.github\\other_projects\\jgit"
                 // "D:\\Projects.github\\other_projects\\spring-framework"
-                "D:\\Projects.github\\other_projects\\hibernate-orm"
+                // "D:\\Projects.github\\other_projects\\hibernate-orm"
+                "D:\\splproject\\example_repo\\hibernate-orm-master"
 
                 // "D:\\Projects.test\\BTProjects\\FieldPlan"
                 // "D:\\Projects.test\\BTProjects\\ForSalwa"
