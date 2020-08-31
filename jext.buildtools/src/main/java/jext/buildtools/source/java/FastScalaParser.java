@@ -1,9 +1,6 @@
-package jext.buildtools.source.scala;
+package jext.buildtools.source.java;
 
 import jext.buildtools.Name;
-import jext.buildtools.source.java.FastJavaParser;
-import jext.buildtools.source.java.JavaUtils;
-import jext.buildtools.source.java.TypeRole;
 import jext.buildtools.util.ObjectName;
 import jext.util.FileUtils;
 

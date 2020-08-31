@@ -1,10 +1,12 @@
-package jext.buildtools.util;
+package jext.buildtools.library;
 
 import jext.buildtools.Library;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.maven.MavenDownloader;
+import jext.buildtools.util.NamedObject;
+import jext.buildtools.util.PathName;
 
 public class MavenLibrary extends NamedObject implements Library {
 

@@ -5,9 +5,11 @@ import java.util.List;
 
 public interface Module extends Named {
 
+    Project getProject();
+
     File getDirectory();
 
-    Project getProject();
+    List<Module> getDependencies(boolean recursive);
 
     Sources getSources();
 
@@ -17,5 +19,4 @@ public interface Module extends Named {
 
     Types getTypes();
 
-    List<Module> getDependencies();
 }

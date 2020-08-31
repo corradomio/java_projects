@@ -3,7 +3,7 @@ package jext.buildtools.project.ant;
 import jext.buildtools.Module;
 import jext.buildtools.project.ant.util.LibrariesFinder;
 import jext.buildtools.project.ant.util.SourcesFinder;
-import jext.buildtools.util.BaseProject;
+import jext.buildtools.project.BaseProject;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -14,6 +14,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AntProject extends BaseProject {
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public static final String TYPE = "ant";
     public static final String MODULE_FILE = "build.xml";
@@ -27,11 +31,19 @@ public class AntProject extends BaseProject {
         return false;
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public AntProject(File projectDir, Properties properties) {
-        super(projectDir, properties);
+        super(projectDir, properties, TYPE);
         if (!properties.containsKey(PROJECT_MODULE))
             this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     protected Module newModule(File moduleDir) {

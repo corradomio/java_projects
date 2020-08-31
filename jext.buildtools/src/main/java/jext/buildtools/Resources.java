@@ -19,4 +19,5 @@ public interface Resources {
     void setExcludes(Collection<String> excludes);
 
     void forEach(Consumer<Resource> consumer);
+
 }

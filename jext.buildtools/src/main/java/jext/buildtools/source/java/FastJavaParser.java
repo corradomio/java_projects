@@ -47,7 +47,7 @@ public class FastJavaParser {
         return starImports;
     }
 
-    public File getRoot() {
+    public File getSourceRoot() {
         return sourceRoot;
     }
 

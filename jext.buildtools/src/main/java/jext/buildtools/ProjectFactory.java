@@ -12,6 +12,7 @@ public class ProjectFactory {
 
     public static Project newProject(File projectDir, Properties properties) {
         String projectType = properties.getProperty(Project.PROJECT_TYPE, null);
+
         if (projectType == null) {
             if (GradleProject.isProject(projectDir))
                 projectType =  GradleProject.TYPE;
@@ -22,6 +23,7 @@ public class ProjectFactory {
             else
                 projectType = AntProject.TYPE;
         }
+
         if (AntProject.TYPE.equals(projectType))
             return new AntProject(projectDir, properties);
         if (MavenProject.TYPE.equals(projectType))

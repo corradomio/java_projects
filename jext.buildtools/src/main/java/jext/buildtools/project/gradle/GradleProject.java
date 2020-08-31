@@ -1,8 +1,7 @@
 package jext.buildtools.project.gradle;
 
 import jext.buildtools.Module;
-import jext.buildtools.util.BaseProject;
-import jext.logging.Logger;
+import jext.buildtools.project.BaseProject;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
@@ -26,6 +25,10 @@ import java.util.stream.Collectors;
 
 public class GradleProject extends BaseProject {
 
+    // ----------------------------------------------------------------------
+    // Static operations
+    // ----------------------------------------------------------------------
+
     public static final String TYPE = "gradle";
     private static final String MODULE_FILE = "build.gradle";
     private static final String MODULE_FILE_KTS = "build.gradle.kts";
@@ -37,7 +40,9 @@ public class GradleProject extends BaseProject {
         return buildGradle.exists() || buildGradleKts.exists();
     }
 
-    private static Logger logger = Logger.getLogger(GradleProject.class);
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
 
     public static final String GRADLE_VERSION = "gradle.version";
     public static final String GRADLE_INSTALLATION = "gradle.installation";
@@ -47,15 +52,22 @@ public class GradleProject extends BaseProject {
 
     private GradleConnector connector;
     private final GradleModule rootModule;
-    private Set<GradleModule> gradleModules;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public GradleProject(File projectDir, Properties properties) {
-        super(projectDir, properties);
+        super(projectDir, properties, TYPE);
         if (!properties.containsKey(PROJECT_MODULE))
             this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
         this.rootModule = new GradleModule(this);
         connect();
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public List<Module> getModules() {
@@ -91,19 +103,22 @@ public class GradleProject extends BaseProject {
     }
 
     public void findModulesByGradle() {
-        // if (modules != null)
-        //     return modules;
-
-        gradleModules = new HashSet<>();
+        Set<GradleModule> gmodules = new HashSet<>();
         Queue<GradleModule> toVisit = new LinkedList<>();
         toVisit.add(rootModule);
 
         while(!toVisit.isEmpty()) {
-            GradleModule module = toVisit.remove();
-            gradleModules.add(module);
+            GradleModule gmodule = toVisit.remove();
+            if (gmodules.contains(gmodule))
+                continue;
 
-            toVisit.addAll(module.getModules());
+            gmodules.add(gmodule);
+
+            toVisit.addAll(gmodule.getModules());
         }
+
+        for (GradleModule gmodule : gmodules)
+            addGradleModule(gmodule);
     }
 
     @Override
@@ -117,6 +132,15 @@ public class GradleProject extends BaseProject {
         }
         return null;
     }
+
+    @Override
+    protected Module newModule(File moduleDir) {
+        return new GradleModule(moduleDir, this);
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private void connect() {
         connector = GradleConnector.newConnector().forProjectDirectory(projectDir);
@@ -162,21 +186,12 @@ public class GradleProject extends BaseProject {
         return connector.connect();
     }
 
-    void addGradleModule(GradleModule module) {
-        modules.add(module);
+    void addGradleModule(GradleModule gmodule) {
+        for (Module module : modules)
+            if (module.getName().equals(gmodule.getName()))
+                return;
+
+        modules.add(gmodule);
     }
 
-    boolean isGradleModule(GradleModule module) {
-        return gradleModules.contains(module);
-
-    }
-
-    // private boolean hasGradleWrapper() {
-    //     return new File(projectDir, "gradle/wrapper").exists();
-    // }
-
-    @Override
-    protected Module newModule(File moduleDir) {
-        return new GradleModule(moduleDir, this);
-    }
 }

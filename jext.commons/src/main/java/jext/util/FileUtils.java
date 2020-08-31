@@ -66,10 +66,6 @@ public class FileUtils {
     //
     // ----------------------------------------------------------------------
 
-    public static boolean isParent(File parent, File path) {
-        return path.getAbsolutePath().startsWith(parent.getAbsolutePath());
-    }
-
     /**
      * Check if the path is absolute:
      *
@@ -201,6 +197,10 @@ public class FileUtils {
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
+
+    public static boolean isParent(File parent, File path) {
+        return path.getAbsolutePath().startsWith(parent.getAbsolutePath());
+    }
 
     /**
      * Remove all files that are a 'subfile' of other files: in

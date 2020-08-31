@@ -1,4 +1,4 @@
-package jext.buildtools.util;
+package jext.buildtools.project;
 
 import jext.buildtools.Module;
 import jext.buildtools.Name;
@@ -19,18 +19,32 @@ import java.util.stream.Collectors;
 
 public abstract class BaseProject implements Project {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public static final String MODULE_FILE = "build.xml";
 
     protected File projectDir;
     protected Properties properties;
     protected List<Module> modules;
     protected MavenDownloader downloader;
+    protected String projectType;
 
-    protected BaseProject(File projectDir, Properties properties){
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    protected BaseProject(File projectDir, Properties properties, String projectType){
         this.projectDir = projectDir;
         this.properties = new Properties();
         this.properties.putAll(properties);
+        this.projectType = projectType;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public String getName() {
@@ -39,9 +53,7 @@ public abstract class BaseProject implements Project {
 
     @Override
     public String getType() {
-        String type = getClass().getSimpleName();
-        type = type.substring(0, type.length()-7).toLowerCase();
-        return type;
+        return projectType;
     }
 
     @Override
@@ -54,29 +66,7 @@ public abstract class BaseProject implements Project {
         return projectDir;
     }
 
-    @Override
-    public Module getModule(Name name) {
-        for (Module module : getModules())
-            if (module.getName().equals(name))
-                return module;
-        return null;
-    }
-
-    @Override
-    public Module findModule(String name) {
-        for (Module module : getModules()) {
-            if (module.getId().equals(name)
-                    || module.getName().getFullName().equals(name)
-                    || module.getName().getName().equals(name))
-                return module;
-        }
-        return null;
-    }
-
-    // @Override
-    // public List<Module> getModules() {
-    //     throw new UnsupportedOperationException();
-    // }
+    // -- Modules
 
     @Override
     public List<Module> getModules() {
@@ -99,11 +89,36 @@ public abstract class BaseProject implements Project {
         } catch (IOException e) { }
 
         modules = moduleDirs.stream()
-                .map(this::newModule)
-                .collect(Collectors.toList());
+            .map(this::newModule)
+            .collect(Collectors.toList());
 
         return modules;
     }
+
+    @Override
+    public Module getModule(Name name) {
+        for (Module module : getModules())
+            if (module.getName().equals(name))
+                return module;
+        return null;
+    }
+
+    @Override
+    public Module findModule(String name) {
+        for (Module module : getModules()) {
+            if (module.getId().equals(name)
+                    || module.getName().getFullName().equals(name)
+                    || module.getName().getName().equals(name))
+                return module;
+        }
+        return null;
+    }
+
+    protected abstract Module newModule(File moduleDir);
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public void setDownloader(MavenDownloader downloader) {
@@ -115,7 +130,4 @@ public abstract class BaseProject implements Project {
         return downloader;
     }
 
-    protected Module newModule(File moduleDir) {
-        throw new UnsupportedOperationException();
-    }
 }

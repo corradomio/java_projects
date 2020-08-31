@@ -1,10 +1,10 @@
-package jext.buildtools.util;
+package jext.buildtools.library;
 
 import jext.buildtools.Libraries;
 import jext.buildtools.Library;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
-import jext.buildtools.library.JarLibrary;
+import jext.buildtools.project.BaseModule;
 
 import java.util.ArrayList;
 import java.util.HashSet;

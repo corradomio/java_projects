@@ -12,5 +12,4 @@ public interface Source extends Named {
 
     Set<Name> getTypes();
     Set<Name> getImportedTypes();
-    Set<Name> getImportedNamespaces();
 }

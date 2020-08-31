@@ -2,7 +2,6 @@ package jext.buildtools.project.ant.util;
 
 import jext.buildtools.project.ant.AntProject;
 import jext.buildtools.source.java.FastJavaParser;
-import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,12 +15,24 @@ import java.util.Set;
 
 public class SourcesFinder {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private AntProject project;
     private Set<File> roots = new HashSet<>();
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public SourcesFinder(AntProject project) {
         this.project = project;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public void findSources() {
         try {
@@ -30,7 +41,7 @@ public class SourcesFinder {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
                     File javaFile = path.toFile();
                     if (javaFile.getName().endsWith(".java"))
-                        roots.add(getRoot(javaFile));
+                        roots.add(getSourceRoot(javaFile));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -38,9 +49,9 @@ public class SourcesFinder {
         catch (IOException e) { }
     }
 
-    private File getRoot(File javaFile) {
+    private File getSourceRoot(File javaFile) {
         FastJavaParser jp = new FastJavaParser(javaFile).parse();
-        return jp.getRoot().getParentFile();
+        return jp.getSourceRoot().getParentFile();
     }
 
     public Set<File> getRoots() {

@@ -1,4 +1,4 @@
-package jext.buildtools.util;
+package jext.buildtools.source;
 
 import jext.buildtools.Module;
 

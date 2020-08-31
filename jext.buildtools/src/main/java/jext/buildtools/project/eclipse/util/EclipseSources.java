@@ -15,12 +15,24 @@ import java.util.stream.Collectors;
 
 public class EclipseSources extends BaseSources {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private ClasspathFile classpathFile;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public EclipseSources(Module module) {
         super(module);
         this.classpathFile = ((EclipseModule)module).getClasspathFile();
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public List<Source> getSources() {

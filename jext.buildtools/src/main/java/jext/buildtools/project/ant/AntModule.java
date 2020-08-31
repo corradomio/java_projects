@@ -3,7 +3,7 @@ package jext.buildtools.project.ant;
 import jext.buildtools.Project;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.project.ant.util.IvyFile;
-import jext.buildtools.util.BaseModule;
+import jext.buildtools.project.BaseModule;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -14,7 +14,15 @@ import java.util.stream.Collectors;
 
 public class AntModule extends BaseModule {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private List<IvyFile> ivyFiles;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public AntModule(File moduleDir, Project project) {
         super(moduleDir, project);
@@ -27,6 +35,10 @@ public class AntModule extends BaseModule {
                 .map(IvyFile::new)
                 .collect(Collectors.toList());
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     public List<MavenCoords> getMavenLibraries(){
         if (ivyFiles.isEmpty())

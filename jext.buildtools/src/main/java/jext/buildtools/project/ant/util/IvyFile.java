@@ -11,8 +11,16 @@ import java.util.List;
 
 public class IvyFile {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private File ivyFile;
     private Element module;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public IvyFile(File ivyFile) {
         this.ivyFile = ivyFile;
@@ -28,6 +36,10 @@ public class IvyFile {
         }
         catch (Exception e) { }
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public List<MavenCoords> getDependencyCoords() {
         List<MavenCoords> dependencies = new ArrayList<>();

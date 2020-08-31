@@ -42,7 +42,9 @@ import java.util.regex.Matcher;
 
 public class DependenciesCollector extends LineOutputStream /*implements Iterable<String>*/ {
 
-    private static Logger logger = Logger.getLogger(DependenciesCollector.class);
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private static final int STATE_CONFIGURATIONS = 1;
     private static final int  STATE_DEPENDENCIES = 2;
@@ -50,6 +52,10 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     private final LogDigester digester;
     private final Set<String> libraries = new TreeSet<>();
     private final Set<String> projects = new TreeSet<>();
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     /**
      *
@@ -71,6 +77,10 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         digester.addRule(STATE_CONFIGURATIONS, "A web-based.*", LogDigester.STATE_DONE);
         digester.addRule(STATE_DEPENDENCIES, "A web-based.*", LogDigester.STATE_DONE);
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public void consume(String line) {
         digester.consume(line);

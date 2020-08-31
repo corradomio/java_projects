@@ -48,12 +48,20 @@ import java.util.regex.Pattern;
 
 public class Version implements Comparable<Version> {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public static Version NO_VERSION = new Version();
     public static Version empty() { return NO_VERSION; }
 
     public static Version of(String version) {
         return (version != null && version.length() > 0) ? new Version(version) : NO_VERSION;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private enum Scheme {
         Generic,
@@ -82,6 +90,10 @@ public class Version implements Comparable<Version> {
     private int patch;
     private int build;
     private String qualifier;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private Version() {
         this.version = "";
@@ -146,6 +158,10 @@ public class Version implements Comparable<Version> {
             this.scheme = Scheme.Generic;
         }
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public int compareTo(Version that) {

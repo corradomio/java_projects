@@ -9,7 +9,7 @@ import jext.buildtools.project.gradle.collectors.LoggerCollector;
 import jext.buildtools.project.gradle.collectors.ProjectsCollector;
 import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.java.JavaSources;
-import jext.buildtools.util.BaseModule;
+import jext.buildtools.project.BaseModule;
 import jext.logging.Logger;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.ProjectConnection;
@@ -22,9 +22,17 @@ import java.util.stream.Collectors;
 
 public class GradleModule extends BaseModule {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private List<GradleModule> modules;
     private List<Name> dmodules;
     private List<MavenCoords> dcoords;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public GradleModule(GradleProject project) {
         super(project.getDirectory(), project);
@@ -38,12 +46,15 @@ public class GradleModule extends BaseModule {
         this.resources = new FileResources(this);
     }
 
-
     public GradleModule(String name, GradleModule parent) {
         super(new File(parent.getDirectory(), name), parent.getProject());
 
         this.logger = Logger.getLogger(GradleModule.class, this.getName().toString());
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public List<GradleModule> getModules(){
         if (modules != null)
@@ -63,13 +74,15 @@ public class GradleModule extends BaseModule {
                 .setStandardError(err)
                 .run();
         }
-        catch (BuildException e) {
+        // catch (BuildException e) {
+        //     String message = e.getCause().getMessage();
+        //     if (!message.contains("not found in root project"))
+        //         logger.error(e);
+        // }
+        catch (Throwable e) {
             String message = e.getCause().getMessage();
             if (!message.contains("not found in root project"))
-                logger.error(e, e);
-        }
-        catch (Throwable t) {
-            logger.error(t, t);
+                logger.error(e);
         }
         finally {
             projects.close();
@@ -122,13 +135,15 @@ public class GradleModule extends BaseModule {
                 .setStandardError(err)
                 .run();
         }
-        catch (BuildException e) {
+        // catch (BuildException e) {
+        //     String message = e.getCause().getMessage();
+        //     if (!message.contains("not found in root project"))
+        //         logger.error(e);
+        // }
+        catch (Throwable e) {
             String message = e.getCause().getMessage();
             if (!message.contains("not found in root project"))
-                logger.error(e, e);
-        }
-        catch (Throwable t) {
-            logger.error(t, t);
+                logger.error(e);
         }
         finally {
             logcoll.close();

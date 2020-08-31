@@ -14,11 +14,18 @@ package jext.buildtools.maven;
 
 public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public String groupId;
     public String artifactId;
     public String version;
     private String toString;
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public MavenCoords(String coords) {
         if (coords.contains(":"))
@@ -100,6 +107,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
             toString = String.format("%s:%s", groupId, artifactId);
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public String getName() {
         if (hasVersion())
             return String.format("%s-%s", artifactId, version).replace('.', '_');
@@ -137,6 +148,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         return new MavenCoords(gid, aid, v);
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     @Override
     public String toString() {
         return toString;
@@ -158,6 +173,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         MavenCoords that = (MavenCoords) obj;
         return toString.equals(that.toString);
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public boolean isValid() {
         return isValid(groupId) && isValid(artifactId);

@@ -11,8 +11,16 @@ import java.io.File;
 
 public class BaseResource extends NamedObject implements Resource {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     protected File file;
     protected Module module;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     protected BaseResource(File file, Module module) {
         super(null);
@@ -21,6 +29,10 @@ public class BaseResource extends NamedObject implements Resource {
         String rpath = FileUtils.relativePath(module.getDirectory(), file);
         setName(new PathName(rpath));
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public Module getModule() {
         return module;

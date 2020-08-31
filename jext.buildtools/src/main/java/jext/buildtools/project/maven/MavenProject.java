@@ -1,13 +1,17 @@
 package jext.buildtools.project.maven;
 
 import jext.buildtools.Module;
-import jext.buildtools.util.BaseProject;
+import jext.buildtools.project.BaseProject;
 import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.Properties;
 
 public class MavenProject extends BaseProject {
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public static final String TYPE = "maven";
     public static final String MODULE_FILE = "pom.xml";
@@ -21,13 +25,23 @@ public class MavenProject extends BaseProject {
         return false;
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public MavenProject(File projectDir, Properties properties) {
-        super(projectDir, properties);
-        this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
+        super(projectDir, properties, TYPE);
+        if (!properties.containsKey(PROJECT_MODULE))
+            this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     protected Module newModule(File moduleDir) {
         return new MavenModule(moduleDir, this);
     }
+
 }

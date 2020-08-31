@@ -12,8 +12,16 @@ import java.io.File;
 
 public class JarLibrary extends NamedObject implements Library {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private File jarFile;
     private Module module;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public JarLibrary(File jarFile, Module module) {
         super(null);
@@ -22,6 +30,10 @@ public class JarLibrary extends NamedObject implements Library {
         String rpath = FileUtils.relativePath(module.getDirectory(), jarFile);
         setName(new PathName(rpath));
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public Module getModule() {

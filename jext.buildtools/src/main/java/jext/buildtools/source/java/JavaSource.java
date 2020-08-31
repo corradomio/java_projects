@@ -10,11 +10,11 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Set;
 
-public class JavaSourceCode extends BaseSource {
+public class JavaSource extends BaseSource {
 
     private FastJavaParser parser;
 
-    public JavaSourceCode(File sourceFile, Module module) {
+    public JavaSource(File sourceFile, Module module) {
         super(sourceFile, module);
         this.parser = new FastJavaParser(sourceFile).parse();
     }
@@ -39,8 +39,8 @@ public class JavaSourceCode extends BaseSource {
         return parser.getNamedImports();
     }
 
-    @Override
-    public Set<Name> getImportedNamespaces() {
-        return parser.getStarImports();
-    }
+    // @Override
+    // public Set<Name> getImportedNamespaces() {
+    //     return parser.getStarImports();
+    // }
 }

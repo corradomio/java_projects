@@ -6,6 +6,7 @@ import jext.buildtools.Resource;
 import java.io.File;
 
 public class ResourceFactory {
+
     public static Resource newResource(File resourceFile, Module module) {
         String name = resourceFile.getName();
         if (name.endsWith(".xml"))

@@ -33,8 +33,6 @@ public class ItemSet {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private final Logger logger = Logger.getLogger(FileSet.class);
-
     private String relativeDir;
     private FilePatterns includes = new FilePatterns();
     private FilePatterns excludes = new FilePatterns();

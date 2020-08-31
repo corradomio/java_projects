@@ -4,7 +4,7 @@ import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Resource;
 import jext.buildtools.Resources;
-import jext.buildtools.util.BaseModule;
+import jext.buildtools.project.BaseModule;
 import jext.io.file.FileSet;
 import jext.util.FileUtils;
 
@@ -23,9 +23,17 @@ import java.util.stream.Collectors;
 
 public class FileResources implements Resources {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private BaseModule module;
     private List<Resource> resources;
     private FileSet selector = new FileSet();
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public FileResources(Module module) {
         this.module = (BaseModule) module;
@@ -35,6 +43,10 @@ public class FileResources implements Resources {
         this.selector.add("resources");
         this.selector.add("webapps");
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public void setIncludes(Collection<String> includes) {

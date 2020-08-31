@@ -20,9 +20,9 @@ public class ProjectDump {
 
         p.getModules().forEach(m -> {
             Console.printf("    '%s' (%s)\n", m.getName(), m.getId());
-            if (!m.getDependencies().isEmpty()) {
-                Console.printf("      dependencies (%d):\n", m.getDependencies().size());
-                m.getDependencies().forEach(d -> {
+            if (!m.getDependencies(false).isEmpty()) {
+                Console.printf("      dependencies (%d):\n", m.getDependencies(false).size());
+                m.getDependencies(false).forEach(d -> {
                     Console.printf("        '%s'\n", d.getName());
                 });
             }

@@ -20,9 +20,10 @@ public class JavaUtils {
     public static final String IMPORT_STATIC = "import static ";
     public static final String IMPORT = "import ";
     public static final String PUBLIC = "public ";
-    public static final String CLASS = " class ";
-    public static final String INTERFACE = " interface ";
-    public static final String ENUM = " enum ";
+    public static final String CLASS = "class ";
+    public static final String INTERFACE = "interface ";
+    public static final String ENUM = "enum ";
+    public static final String OBJECT = "object ";
     public static final String ANNOTATION = " @interface ";
 
     /*

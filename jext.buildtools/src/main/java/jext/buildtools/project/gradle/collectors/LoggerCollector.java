@@ -5,13 +5,25 @@ import jext.logging.Logger;
 
 public class LoggerCollector extends LineOutputStream {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private Logger logger;
     private LineOutputStream delegate;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public LoggerCollector(Logger logger, LineOutputStream delegate) {
         this.logger = logger;
         this.delegate = delegate;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public void close() {

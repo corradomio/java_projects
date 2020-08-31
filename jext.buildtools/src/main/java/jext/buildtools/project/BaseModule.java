@@ -1,4 +1,4 @@
-package jext.buildtools.util;
+package jext.buildtools.project;
 
 import jext.buildtools.Libraries;
 import jext.buildtools.Module;
@@ -10,7 +10,11 @@ import jext.buildtools.Types;
 import jext.buildtools.library.JarLibraries;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.resource.FileResources;
+import jext.buildtools.source.SourceTypes;
 import jext.buildtools.source.java.JavaSources;
+import jext.buildtools.util.FileFilters;
+import jext.buildtools.util.NamedObject;
+import jext.buildtools.util.PathName;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;

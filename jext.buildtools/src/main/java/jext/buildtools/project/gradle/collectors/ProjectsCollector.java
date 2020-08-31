@@ -37,11 +37,19 @@ import java.util.regex.Matcher;
 
 public class ProjectsCollector extends LineOutputStream implements Iterable<String> {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private String rootProject;
     private List<String> projects = new ArrayList<>();
     private LogDigester digester;
 
     private static final int ANALYZING = 1;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public ProjectsCollector() {
         digester = new LogDigester();
@@ -60,6 +68,10 @@ public class ProjectsCollector extends LineOutputStream implements Iterable<Stri
         projects.add(project);
         return 0;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public void consume(String line) {

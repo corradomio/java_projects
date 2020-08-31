@@ -24,6 +24,10 @@ import java.util.List;
 
 public class ClasspathFile {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private static final Logger logger = Logger.getLogger(ClasspathFile.class);
 
     private static final String EMPTY_CLASSPATH = "" +
@@ -33,6 +37,10 @@ public class ClasspathFile {
     private File moduleDir;
     private File classpath;
     private Element elt;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public ClasspathFile(File classpath) {
         if (classpath.isDirectory())
@@ -52,6 +60,10 @@ public class ClasspathFile {
                 logger.errorf("Unable to parse embedded classpath: %s", e);
             }
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public boolean exists() {
         return classpath.exists();

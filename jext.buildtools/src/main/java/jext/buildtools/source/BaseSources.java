@@ -4,7 +4,7 @@ import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Source;
 import jext.buildtools.Sources;
-import jext.buildtools.util.BaseModule;
+import jext.buildtools.project.BaseModule;
 import jext.io.file.FileSet;
 
 import java.util.Collection;
