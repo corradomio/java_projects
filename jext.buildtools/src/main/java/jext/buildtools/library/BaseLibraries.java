@@ -15,12 +15,24 @@ import java.util.stream.Collectors;
 
 public abstract class BaseLibraries implements Libraries {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     protected BaseModule module;
     protected List<Library> libraries;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     protected BaseLibraries(Module module) {
         this.module = (BaseModule) module;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isEmpty() {

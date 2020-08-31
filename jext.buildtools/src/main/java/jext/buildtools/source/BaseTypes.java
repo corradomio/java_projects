@@ -12,9 +12,9 @@ public abstract class BaseTypes implements Types {
 
     protected Module module;
     private Set<Name> importedTypes;
-    private Set<Name> importedNamespaces;
+    // private Set<Name> importedNamespaces;
     private Set<Name> definedTypes;
-    private Set<Name> definedNamespaces;
+    // private Set<Name> definedNamespaces;
 
     protected BaseTypes(Module module) {
         this.module = module;
@@ -30,24 +30,24 @@ public abstract class BaseTypes implements Types {
         return definedTypes;
     }
 
-    @Override
-    public Set<Name> getDefinedNamespaces() {
-        if (definedNamespaces != null)
-            return definedNamespaces;
-
-        retrieveDefinedTypes();
-
-        return definedNamespaces;
-    }
+    // @Override
+    // public Set<Name> getDefinedNamespaces() {
+    //     if (definedNamespaces != null)
+    //         return definedNamespaces;
+    //
+    //     retrieveDefinedTypes();
+    //
+    //     return definedNamespaces;
+    // }
 
     private void retrieveDefinedTypes() {
         definedTypes = new HashSet<>();
-        definedNamespaces = new HashSet<>();
+        // definedNamespaces = new HashSet<>();
 
         module.getSources().forEach(source -> {
             source.getTypes().forEach(type -> {
                 definedTypes.add(type);
-                definedNamespaces.add(type.getParent());
+                // definedNamespaces.add(type.getParent());
             });
         });
     }
@@ -62,23 +62,23 @@ public abstract class BaseTypes implements Types {
         return importedTypes;
     }
 
-    @Override
-    public Set<Name> getImportedNamespaces() {
-        if (importedNamespaces != null)
-            return importedNamespaces;
-
-        retrieveImportedTypes();
-
-        return importedNamespaces;
-    }
+    // @Override
+    // public Set<Name> getImportedNamespaces() {
+    //     if (importedNamespaces != null)
+    //         return importedNamespaces;
+    //
+    //     retrieveImportedTypes();
+    //
+    //     return importedNamespaces;
+    // }
 
     private void retrieveImportedTypes() {
         importedTypes = new HashSet<>();
-        importedNamespaces = new HashSet<>();
+        // importedNamespaces = new HashSet<>();
 
         module.getSources().forEach(source -> {
             importedTypes.addAll(source.getImportedTypes());
-            importedNamespaces.addAll(source.getImportedNamespaces());
+            // importedNamespaces.addAll(source.getImportedNamespaces());
         });
     }
 }

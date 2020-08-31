@@ -55,9 +55,9 @@ public abstract class BaseProject implements Project {
     }
 
     @Override
-    public Module getModule(Name moduleName) {
+    public Module getModule(Name name) {
         for (Module module : getModules())
-            if (module.getName().equals(moduleName))
+            if (module.getName().equals(name))
                 return module;
         return null;
     }
@@ -67,8 +67,7 @@ public abstract class BaseProject implements Project {
         for (Module module : getModules()) {
             if (module.getId().equals(name)
                     || module.getName().getFullName().equals(name)
-                    || module.getName().getName().equals(name)
-                    || module.getDirectory().getAbsolutePath().equals(name))
+                    || module.getName().getName().equals(name))
                 return module;
         }
         return null;

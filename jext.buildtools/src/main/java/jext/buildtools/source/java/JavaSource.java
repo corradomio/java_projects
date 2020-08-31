@@ -10,18 +10,18 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Set;
 
-public class JavaSource extends BaseSource {
+public class JavaSourceCode extends BaseSource {
 
     private FastJavaParser parser;
 
-    public JavaSource(File sourceFile, Module module) {
+    public JavaSourceCode(File sourceFile, Module module) {
         super(sourceFile, module);
         this.parser = new FastJavaParser(sourceFile).parse();
     }
 
     @Override
     public Name getRoot() {
-        String rpath = FileUtils.relativePath(module.getDirectory(), parser.getRoot());
+        String rpath = FileUtils.relativePath(module.getDirectory(), parser.getSourceRoot());
         return new PathName(rpath);
     }
 

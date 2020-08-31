@@ -15,7 +15,6 @@ import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import jext.util.SetUtils;
-import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,10 +48,11 @@ public abstract class BaseModule extends NamedObject implements Module {
         super(null);
         this.moduleDir = moduleDir;
         this.project = project;
+
         String rpath = FileUtils.relativePath(project.getDirectory(), moduleDir);
         setName(new PathName(rpath));
 
-        this.logger = Logger.getLogger(getClass(), getName().toString().replace('/', '.'));
+        this.logger = Logger.getLogger(getClass(), getName().getName());
 
         this.sources = new JavaSources(this);
         this.resources = new FileResources(this);
@@ -60,7 +60,7 @@ public abstract class BaseModule extends NamedObject implements Module {
         this.types = new SourceTypes(this);
 
         List<String> includes = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_RESOURCES);
-        List<String> excludes  = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_EXCLUDE);
+        List<String> excludes = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_EXCLUDE);
 
         this.resources.setIncludes(includes);
         this.resources.setExcludes(excludes);
@@ -102,7 +102,7 @@ public abstract class BaseModule extends NamedObject implements Module {
     }
 
     @Override
-    public List<Module> getDependencies() {
+    public List<Module> getDependencies(boolean recursive) {
         if (dependencies != null)
             return dependencies;
 
@@ -117,9 +117,9 @@ public abstract class BaseModule extends NamedObject implements Module {
             Types dtypes = dmodule.getTypes();
 
             Set<Name> itypes  = SetUtils.intersection(types.getImportedTypes(), dtypes.getDefinedTypes());
-            Set<Name> ispaces = SetUtils.intersection(types.getImportedNamespaces(), dtypes.getDefinedNamespaces());
+            //Set<Name> ispaces = SetUtils.intersection(types.getImportedNamespaces(), dtypes.getDefinedNamespaces());
 
-            if ((itypes.size() + ispaces.size()) > 0)
+            if ((itypes.size() /*+ ispaces.size()*/) > 0)
                 dependencies.add(dmodule);
         }
 
