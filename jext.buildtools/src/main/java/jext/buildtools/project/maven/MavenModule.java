@@ -1,8 +1,8 @@
 package jext.buildtools.project.maven;
 
 import jext.buildtools.Project;
-import jext.buildtools.maven.MavenCoords;
-import jext.buildtools.maven.MavenPom;
+import jext.maven.MavenCoords;
+import jext.maven.MavenPom;
 import jext.buildtools.project.BaseModule;
 
 import java.io.File;

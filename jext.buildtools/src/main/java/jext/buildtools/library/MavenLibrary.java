@@ -3,8 +3,8 @@ package jext.buildtools.library;
 import jext.buildtools.Library;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
-import jext.buildtools.maven.MavenCoords;
-import jext.buildtools.maven.MavenDownloader;
+import jext.maven.MavenCoords;
+import jext.maven.MavenDownloader;
 import jext.buildtools.util.NamedObject;
 import jext.buildtools.util.PathName;
 

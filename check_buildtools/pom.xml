@@ -25,6 +25,7 @@
         <module>../jext.cache</module>
         <module>../jext.collections</module>
         <module>../jext.commons</module>
+        <module>../jext.maven</module>
         <module>../jext.buildtools</module>
     </modules>
 

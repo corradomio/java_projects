@@ -1,5 +1,6 @@
 package org.hls.check;
 
+import jext.cache.Caches;
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
@@ -9,9 +10,47 @@ import jext.util.concurrent.Parallel;
 
 import java.io.File;
 
-public class Main {
+public class MainMaven {
 
     public static void main(String[] args) {
+
+    }
+
+    public static void main5(String[] args) {
+        Logger.configure();
+        Caches.configure();
+
+        MavenDownloader md = new MavenDownloader()
+            .addRepository("https://repo1.maven.org/maven2")
+            .addRepository("http://repository.primefaces.org")
+            ;
+        MavenPom pom = new MavenPom(new File("C:\\Users\\Corrado Mio\\.spl\\.extlib\\org\\nd4j\\nd4j-api\\1.0.0-beta7\\nd4j-api-1.0.0-beta7.pom"), md);
+
+        pom.getDependencies().forEach(dep -> {
+            System.out.println(dep);
+        });
+
+    }
+
+    public static void main4(String[] args) {
+        Logger.configure();
+        Caches.configure();
+
+        MavenDownloader md = new MavenDownloader()
+            .addRepository("https://repo1.maven.org/maven2")
+            .addRepository("http://repository.primefaces.org")
+            ;
+
+        // MavenCoords mc = new MavenCoords("org.bytedeco", "opencv");
+        MavenCoords mc = new MavenCoords("joda-time:joda-time:2.2");
+        mc = md.getVersioned(mc);
+        System.out.println(mc);
+
+        File avro = md.getArtifact(mc);
+        System.out.println(avro.exists());
+    }
+
+    public static void main3(String[] args) {
 
         MavenDownloader downloader = new MavenDownloader();
         MavenPom pom = new MavenPom(

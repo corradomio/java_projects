@@ -1,7 +1,7 @@
 package jext.buildtools.project.ant;
 
 import jext.buildtools.Project;
-import jext.buildtools.maven.MavenCoords;
+import jext.maven.MavenCoords;
 import jext.buildtools.project.ant.util.IvyFile;
 import jext.buildtools.project.BaseModule;
 import jext.util.FileUtils;

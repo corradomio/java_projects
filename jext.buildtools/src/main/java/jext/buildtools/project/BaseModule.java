@@ -8,7 +8,7 @@ import jext.buildtools.Resources;
 import jext.buildtools.Sources;
 import jext.buildtools.Types;
 import jext.buildtools.library.JarLibraries;
-import jext.buildtools.maven.MavenCoords;
+import jext.maven.MavenCoords;
 import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.SourceTypes;
 import jext.buildtools.source.java.JavaSources;

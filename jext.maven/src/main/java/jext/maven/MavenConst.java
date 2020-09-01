@@ -1,4 +1,4 @@
-package jext.buildtools.maven;
+package jext.maven;
 
 public interface MavenConst {
     String PARENT = "parent";
@@ -6,12 +6,14 @@ public interface MavenConst {
     String GROUP_ID = "groupId";
     String ARTIFACT_ID = "artifactId";
     String VERSION = "version";
-    String NO_VERSION = "";
+        String NO_VERSION = "";
 
     String PACKAGING = "packaging";
-    String PACKAGING_TYPES = "jar,pom,maven-plugin,ejb,war,ear,rar";
-    String PACKAGING_POM = "pom";
+        String PACKAGING_TYPES = "jar,pom,maven-plugin,ejb,war,ear,rar";
+        String PACKAGING_POM = "pom";
 
     String SCOPE = "scope";
-    String SCOPE_COMPILE = "compile";
+        String SCOPE_COMPILE = "compile";
+        String SCOPE_PROVIDED = "provided";
+    String OPTIONAL = "optional";
 }

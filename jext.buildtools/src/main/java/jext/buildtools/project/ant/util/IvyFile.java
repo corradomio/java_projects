@@ -1,6 +1,6 @@
 package jext.buildtools.project.ant.util;
 
-import jext.buildtools.maven.MavenCoords;
+import jext.maven.MavenCoords;
 import jext.logging.Logger;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;

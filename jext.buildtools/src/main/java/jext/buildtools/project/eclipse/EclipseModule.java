@@ -1,7 +1,7 @@
 package jext.buildtools.project.eclipse;
 
 import jext.buildtools.Project;
-import jext.buildtools.maven.MavenCoords;
+import jext.maven.MavenCoords;
 import jext.buildtools.project.eclipse.util.ClasspathFile;
 import jext.buildtools.project.eclipse.util.EclipseSources;
 import jext.buildtools.project.BaseModule;

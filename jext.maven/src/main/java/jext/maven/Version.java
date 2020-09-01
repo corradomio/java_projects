@@ -1,4 +1,4 @@
-package jext.buildtools.maven;
+package jext.maven;
 
 /*
     https://docs.oracle.com/middleware/1212/core/MAVEN/maven_version.htm#MAVEN400

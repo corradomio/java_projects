@@ -166,4 +166,17 @@ public class StringUtils {
         else
             return Arrays.asList(a);
     }
+
+    public static String substring(String s, int start, int end) {
+        if (start < 0)
+            start = s.length() + start;
+        if (end < 0)
+            end = s.length() + end;
+        if (start > end) {
+            int t = start;
+            start = end;
+            end = t;
+        }
+        return s.substring(start, end);
+    }
 }

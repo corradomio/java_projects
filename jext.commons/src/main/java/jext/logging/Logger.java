@@ -6,6 +6,9 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Logger {
 
@@ -201,4 +204,46 @@ public class Logger {
         return logger.isInfoEnabled();
     }
 
+    // counted warn/error
+    // it generate ONLY a specified number of messages
+
+    // counted logs
+    private static int minCount = 1;
+    private static int maxCount = 100;
+    private Map<Level, Map<String, AtomicInteger>> lcounts;
+
+    public void warnc(String category, String format, Object... args) {
+        int count = incrCategory(Level.WARN, category);
+        if (count <= minCount) {
+            String message = String.format(format, args);
+            logger.warn(message);
+        }
+        else if (count % maxCount == 0) {
+            String message = String.format(format, args);
+            logger.warn(message + String.format(" (%d times)", count));
+        }
+    }
+
+    public void errorc(String category, String format, Object... args) {
+        int count = incrCategory(Level.ERROR, category);
+        if (count <= minCount) {
+            String message = String.format(format, args);
+            logger.error(message);
+        }
+        else if (count % maxCount == 0) {
+            String message = String.format(format, args);
+            logger.error(message + String.format(" (%d times)", count));
+        }
+    }
+
+    private int incrCategory(Level level, String category) {
+        if (lcounts == null)
+            lcounts = new HashMap<>();
+        if (!lcounts.containsKey(level))
+            lcounts.put(level, new HashMap<>());
+        Map<String, AtomicInteger> counts = lcounts.get(level);
+        if (!counts.containsKey(category))
+            counts.put(category, new AtomicInteger());
+        return counts.get(category).incrementAndGet();
+    }
 }

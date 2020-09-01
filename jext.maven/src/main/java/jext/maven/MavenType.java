@@ -1,4 +1,4 @@
-package jext.buildtools.maven;
+package jext.maven;
 
 public enum MavenType {
     METADATA,       // maven-metadata.xml

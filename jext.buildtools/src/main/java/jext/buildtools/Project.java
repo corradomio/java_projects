@@ -1,6 +1,6 @@
 package jext.buildtools;
 
-import jext.buildtools.maven.MavenDownloader;
+import jext.maven.MavenDownloader;
 
 import java.io.File;
 import java.util.List;

@@ -3,7 +3,7 @@ package jext.buildtools.project;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Project;
-import jext.buildtools.maven.MavenDownloader;
+import jext.maven.MavenDownloader;
 
 import java.io.File;
 import java.io.IOException;

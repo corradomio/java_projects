@@ -104,7 +104,7 @@ public class CacheManager {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private CacheManager() {
+    protected CacheManager() {
 
     }
 

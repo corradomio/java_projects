@@ -2,7 +2,7 @@ package jext.buildtools.project.gradle;
 
 import jext.buildtools.Name;
 import jext.buildtools.Named;
-import jext.buildtools.maven.MavenCoords;
+import jext.maven.MavenCoords;
 import jext.buildtools.project.gradle.collectors.DependenciesCollector;
 import jext.buildtools.project.gradle.collectors.ErrorsCollector;
 import jext.buildtools.project.gradle.collectors.LoggerCollector;

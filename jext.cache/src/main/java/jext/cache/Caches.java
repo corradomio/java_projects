@@ -1,2 +1,4 @@
-package jext.cache;public class Caches {
+package jext.cache;
+
+public class Caches extends CacheManager {
 }
