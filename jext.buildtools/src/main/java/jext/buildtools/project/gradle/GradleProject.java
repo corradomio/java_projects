@@ -66,6 +66,8 @@ public class GradleProject extends BaseProject {
         super(projectDir, properties, TYPE);
         if (!properties.containsKey(PROJECT_MODULE))
             this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
+        this.properties.setProperty(PROJECT_MODULE_RESOURCES, ".gradle,.kts");
+
         this.rootModule = new GradleModule(this);
 
         List<String> excludes = PropertiesUtils.getValues(this.getProperties(), MODULE_EXCLUDE);

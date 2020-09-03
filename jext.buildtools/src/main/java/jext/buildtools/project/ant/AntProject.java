@@ -20,7 +20,7 @@ public class AntProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     public static final String TYPE = "ant";
-    public static final String MODULE_FILE = "build.xml";
+    private static final String MODULE_FILE = "build.xml";
 
     public static boolean isProject(File projectDir) {
         File projectFile = new File(projectDir, MODULE_FILE);

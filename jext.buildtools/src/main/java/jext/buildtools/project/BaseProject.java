@@ -31,10 +31,11 @@ public abstract class BaseProject implements Project {
 
     public static final String MODULE_FILE = "build.xml";
 
-    private static final String GLOBAL_MODULE_EXCLUDE = "module.exclude.$";
-    private static final String GLOBAL_MODULE_RESOURCES = "module.resources.$";
+    protected static final String GLOBAL_MODULE_EXCLUDE = "module.exclude.$";
+    protected static final String GLOBAL_MODULE_RESOURCES = "module.resources.$";
+    protected static final String PROJECT_MODULE_RESOURCES = "module.resources.config";
     private static final String DEFAULT_EXCLUDES = "target,build,out,.*";
-    private static final String DEFAULT_RESOURCES = ".xml,.properties,.json,.yaml";
+    private static final String DEFAULT_RESOURCES = ".xml,.properties,.json,.gradle,.project,.classpath";
 
     protected File projectDir;
     protected Properties properties;

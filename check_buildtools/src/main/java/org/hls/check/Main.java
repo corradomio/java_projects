@@ -21,7 +21,7 @@ public class Main {
 
         // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
-        props.setProperty(Project.PROJECT_TYPE, EclipseProject.TYPE);
+        // props.setProperty(Project.PROJECT_TYPE, EclipseProject.TYPE);
         props.setProperty(Project.MODULE_EXCLUDE, "test*,examples");
         // props.setProperty(GradleProject.GRADLE_VERSION, "4.10.3");
         // props.setProperty(GradleProject.GRADLE_URI, "file:///Projects.github/java_projects/jext.buildtools/gradle_distribution/gradle-6.4.1-bin.zip");

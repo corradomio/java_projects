@@ -14,7 +14,7 @@ public class MavenProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     public static final String TYPE = "maven";
-    public static final String MODULE_FILE = "pom.xml";
+    private static final String MODULE_FILE = "pom.xml";
 
     public static boolean isProject(File projectDir) {
         File projectFile = new File(projectDir, MODULE_FILE);

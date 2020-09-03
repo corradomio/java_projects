@@ -14,7 +14,7 @@ public class EclipseProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     public static final String TYPE = "eclipse";
-    public static final String MODULE_FILE = ".project";
+    private static final String MODULE_FILE = ".project";
 
     // ----------------------------------------------------------------------
     //
@@ -37,6 +37,7 @@ public class EclipseProject extends BaseProject {
         super(projectDir, properties, TYPE);
         if (!properties.containsKey(PROJECT_MODULE))
             this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
+        this.properties.setProperty(PROJECT_MODULE_RESOURCES, ".project,.classpath");
     }
 
     // ----------------------------------------------------------------------
