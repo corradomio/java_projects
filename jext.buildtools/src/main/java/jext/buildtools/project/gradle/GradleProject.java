@@ -156,30 +156,27 @@ public class GradleProject extends BaseProject {
             connector.useGradleVersion(gradleVersion);
         }
 
-        else if (properties.containsKey(GRADLE_INSTALLATION)) {
+        if (properties.containsKey(GRADLE_INSTALLATION)) {
             File gradleHome = PropertiesUtils.getFile(properties, GRADLE_INSTALLATION);
             connector.useInstallation(gradleHome);
         }
 
-        else if (properties.containsKey(GRADLE_URI)) {
+        if (properties.containsKey(GRADLE_URI)) {
             URI gradleDistribution = PropertiesUtils.getURI(properties, GRADLE_URI);
             connector.useDistribution(gradleDistribution);
         }
 
-        else if (properties.containsKey(GRADLE_HOMEDIR)) {
+        if (properties.containsKey(GRADLE_HOMEDIR)) {
             File gradleUserHomeDir = PropertiesUtils.getFile(properties, GRADLE_HOMEDIR);
             connector.useGradleUserHomeDir(gradleUserHomeDir);
         }
 
-        else if (properties.containsKey(GRADLE_BUILD)) {
+        if (properties.containsKey(GRADLE_BUILD)) {
             boolean gradleBluild = PropertiesUtils.getBoolean(properties, GRADLE_BUILD, false);
             if (gradleBluild)
                 connector.useBuildDistribution();
         }
 
-        else {
-            connector.useGradleVersion("6.0");
-        }
     }
 
     ProjectConnection getConnection() {

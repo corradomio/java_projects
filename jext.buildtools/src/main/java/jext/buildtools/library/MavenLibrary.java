@@ -18,7 +18,7 @@ public class MavenLibrary extends NamedObject implements Library {
         super(null);
         this.coords = coords;
         this.module = module;
-        setName(new PathName(coords.getArtifact().replace(':', '/')));
+        setName(new PathName(coords.getName()));
     }
 
     @Override

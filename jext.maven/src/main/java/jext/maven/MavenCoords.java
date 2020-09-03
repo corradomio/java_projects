@@ -112,10 +112,7 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     // ----------------------------------------------------------------------
 
     public String getName() {
-        if (hasVersion())
-            return String.format("%s-%s", artifactId, version).replace('.', '_');
-        else
-            return artifactId;
+        return String.format("%s/%s", groupId, artifactId);
     }
 
     public String getArtifact() {

@@ -3,6 +3,7 @@ package org.hls.check;
 import jext.buildtools.Project;
 import jext.buildtools.ProjectFactory;
 import jext.buildtools.project.ant.AntProject;
+import jext.buildtools.project.gradle.GradleProject;
 import jext.buildtools.util.ProjectDump;
 import jext.logging.Logger;
 import jext.util.PropertiesUtils;
@@ -15,13 +16,14 @@ public class Main {
 
     public static void main(String[] args) {
         Logger.configure();
-
         Properties props = PropertiesUtils.load("buildtools.properties");
 
         // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
         // props.setProperty(Project.PROJECT_TYPE, EclipseProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
         props.setProperty(Project.MODULE_EXCLUDE, "**/test/**");
+        // props.setProperty(GradleProject.GRADLE_VERSION, "4.10.3");
+        // props.setProperty(GradleProject.GRADLE_URI, "file:///Projects.github/java_projects/jext.buildtools/gradle_distribution/gradle-6.4.1-bin.zip");
 
         File projectDir = new File(
                 // "D:\\Projects\\java\\apache-ant-1.10.8"
@@ -33,8 +35,9 @@ public class Main {
                 // "D:\\Projects.github\\other_projects\\jgit"
                 // "D:\\Projects.github\\other_projects\\spring-framework"
                 // "D:\\Projects.github\\other_projects\\hibernate-orm"
-                // "D:\\splproject\\example_repo\\hibernate-orm-master"
-            "D:\\splproject\\example_repo\\deeplearning4j"
+
+                "D:\\splproject\\example_repo\\hibernate-orm-master"
+                // "D:\\splproject\\example_repo\\deeplearning4j"
 
                 // "D:\\Projects.test\\BTProjects\\FieldPlan"
                 // "D:\\Projects.test\\BTProjects\\ForSalwa"

@@ -13,7 +13,7 @@ public interface Project {
      *
      *  - project.type: project type ('ant', 'maven', 'gradle', 'eclipse', 'simple')
      *  - project.module: relative path used to identify a module. Can be the name of a file
-     *                  ('build.gradle') or a relative path as, for example, 'build/build.xml'
+     *                  ('build.gradle') or a relative path ('build/build.xml')
      *  - module.resources: comma separated list of
      *                  - file extensions ('.xml')
      *                  - directories ('webapp')
@@ -34,29 +34,37 @@ public interface Project {
     String MODULE_EXCLUDE = "module.exclude";
     String MAVEN_LIBRARIES = "maven.libraries";
 
+    /** Project name */
     String getName();
 
+    /** Project type */
     String getType();
 
+    /** Project home directory */
     File getDirectory();
 
+    /** Project properties */
     Properties getProperties();
 
+    /** Flat list of project modules */
     List<Module> getModules();
 
+    /** Retrieve the module with the specified name */
     Module getModule(Name name);
 
     /**
      * Find a module by id, full name or name
-     * @param name
-     * @return
      */
     Module findModule(String name);
 
     // ----------------------------------------------------------------------
+    // MavenDownloader
+    // ----------------------------------------------------------------------
 
+    /** Set the MavenDownloader */
     void setDownloader(MavenDownloader downloader);
 
+    /** Retrieve the maven downloader */
     MavenDownloader getDownloader();
 
 }
