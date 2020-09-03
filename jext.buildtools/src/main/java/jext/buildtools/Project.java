@@ -38,7 +38,7 @@ public interface Project {
     String getName();
 
     /** Project type */
-    String getType();
+    String getProjectType();
 
     /** Project home directory */
     File getDirectory();
@@ -49,8 +49,8 @@ public interface Project {
     /** Flat list of project modules */
     List<Module> getModules();
 
-    /** Retrieve the module with the specified name */
-    Module getModule(Name name);
+    // /** Retrieve the module with the specified name */
+    // Module getModule(Name name);
 
     /**
      * Find a module by id, full name or name
@@ -66,5 +66,11 @@ public interface Project {
 
     /** Retrieve the maven downloader */
     MavenDownloader getDownloader();
+
+    // ----------------------------------------------------------------------
+    // Directories
+    // ----------------------------------------------------------------------
+
+    List<File> getDirectories(File baseDir);
 
 }

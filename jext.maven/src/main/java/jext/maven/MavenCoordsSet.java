@@ -23,7 +23,7 @@ public class MavenCoordsSet {
     }
 
     public void add(MavenCoords coords) {
-        String artifact = coords.getArtifact();
+        String artifact = coords.getName();
         if (!artifacts.containsKey(artifact))
             artifacts.put(artifact, coords);
         else if (mode == Mode.FIRST)
@@ -33,7 +33,7 @@ public class MavenCoordsSet {
     }
 
     public boolean contains(MavenCoords coords) {
-        String artifact = coords.getArtifact();
+        String artifact = coords.getName();
         if (!artifacts.containsKey(artifact))
             return false;
         if (mode == Mode.FIRST)

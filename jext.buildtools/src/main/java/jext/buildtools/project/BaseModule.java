@@ -4,10 +4,14 @@ import jext.buildtools.Libraries;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Project;
+import jext.buildtools.Resource;
 import jext.buildtools.Resources;
 import jext.buildtools.Sources;
 import jext.buildtools.Types;
 import jext.buildtools.library.JarLibraries;
+import jext.buildtools.project.gradle.GradleModule;
+import jext.io.file.FilePatterns;
+import jext.io.file.FileSet;
 import jext.maven.MavenCoords;
 import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.SourceTypes;
@@ -16,14 +20,25 @@ import jext.buildtools.util.FileFilters;
 import jext.buildtools.util.NamedObject;
 import jext.buildtools.util.PathName;
 import jext.logging.Logger;
+import jext.nio.file.FilteredFileVisitor;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import jext.util.SetUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,11 +51,12 @@ public abstract class BaseModule extends NamedObject implements Module {
     protected Project project;
     protected File moduleDir;
 
+    protected List<File> directories;
     protected Sources sources;
     protected Libraries libraries;
-    protected Resources resources;
-    protected Types types;
     protected List<Module> dependencies;
+
+    protected Types types;
 
     protected Logger logger;
 
@@ -59,15 +75,15 @@ public abstract class BaseModule extends NamedObject implements Module {
         this.logger = Logger.getLogger(getClass(), getName().getName());
 
         this.sources = new JavaSources(this);
-        this.resources = new FileResources(this);
+        // this.resources = new FileResources(this);
         this.libraries = new JarLibraries(this);
         this.types = new SourceTypes(this);
 
-        List<String> includes = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_RESOURCES);
+        List<String> resources = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_RESOURCES);
         List<String> excludes = PropertiesUtils.getValues(project.getProperties(), Project.MODULE_EXCLUDE);
 
-        this.resources.setIncludes(includes);
-        this.resources.setExcludes(excludes);
+        // this.resources.setIncludes(resources);
+        // this.resources.setExcludes(excludes);
         this.sources.setExcludes(excludes);
     }
 
@@ -85,19 +101,13 @@ public abstract class BaseModule extends NamedObject implements Module {
         return moduleDir;
     }
 
+    // ----------------------------------------------------------------------
+    // Collections
+    // ----------------------------------------------------------------------
+
     @Override
     public Sources getSources() {
         return sources;
-    }
-
-    @Override
-    public Libraries getLibraries() {
-        return libraries;
-    }
-
-    @Override
-    public Resources getResources() {
-        return resources;
     }
 
     @Override
@@ -105,8 +115,41 @@ public abstract class BaseModule extends NamedObject implements Module {
         return types;
     }
 
+    // ----------------------------------------------------------------------
+    // Resources
+    // ----------------------------------------------------------------------
+
+    @Override
+    public List<Resource> getResources() {
+
+        // local resources
+        List<Resource> resources = new ArrayList<>();
+
+        resources.addAll(getBaseProject().getResources(moduleDir, this));
+
+        // sub resources
+        getDirectories().forEach(dir -> {
+            List<Resource> reslist = getBaseProject().getResources(dir, this);
+            resources.addAll(reslist);
+        });
+
+        return resources;
+    }
+
+    // ----------------------------------------------------------------------
+    // Dependencies
+    // ----------------------------------------------------------------------
+
     @Override
     public List<Module> getDependencies(boolean recursive) {
+        if (!recursive)
+            return getDependencies();
+        else
+            return getRecursiveDependencies();
+    }
+
+    protected List<Module> getDependencies() {
+
         if (dependencies != null)
             return dependencies;
 
@@ -130,15 +173,30 @@ public abstract class BaseModule extends NamedObject implements Module {
         return dependencies;
     }
 
+    private List<Module> getRecursiveDependencies() {
+        Queue<Module> toVisit = new LinkedList<>(getDependencies(false));
+
+        Set<Module> visited = new HashSet<>();
+
+        while (!toVisit.isEmpty()) {
+            Module dmodule = toVisit.remove();
+            if (visited.contains(dmodule))
+                continue;
+
+            visited.add(dmodule);
+            toVisit.addAll(dmodule.getDependencies(false));
+        }
+
+        return new ArrayList<>(visited);
+    }
+
     // ----------------------------------------------------------------------
-    // Implementations
+    // Libraries
     // ----------------------------------------------------------------------
 
-    public List<File> getDirectories() {
-        return FileUtils.asList(moduleDir.listFiles(File::isDirectory))
-                .stream()
-                .filter(this::isValid)
-                .collect(Collectors.toList());
+    @Override
+    public Libraries getLibraries() {
+        return libraries;
     }
 
     public List<File> getLocalLibraries() {
@@ -150,17 +208,20 @@ public abstract class BaseModule extends NamedObject implements Module {
         return libraryFiles;
     }
 
-    public List<MavenCoords> getMavenLibraries() {
-        return Collections.emptyList();
+    public abstract List<MavenCoords> getMavenLibraries();
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
+    public List<File> getDirectories() {
+        if (directories == null)
+            directories = getBaseProject().getDirectories(moduleDir);
+        return directories;
     }
 
-    private boolean isValid(File directory) {
-        if (directory.getName().startsWith("."))
-            return false;
-        for (Module module : project.getModules())
-            if (FileUtils.isParent(directory, module.getDirectory()))
-                return false;
-        return true;
+    private BaseProject getBaseProject() {
+        return (BaseProject) project;
     }
 
 }

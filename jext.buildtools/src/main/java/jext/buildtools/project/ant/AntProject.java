@@ -50,34 +50,35 @@ public class AntProject extends BaseProject {
         return new AntModule(moduleDir, this);
     }
 
-    @Override
-    public List<Module> getModules() {
-        if (modules != null)
-            return modules;
-
-        SourcesFinder sfinder = new SourcesFinder(this);
-        LibrariesFinder lfinder = new LibrariesFinder(this);
-
-        sfinder.findSources();
-        lfinder.findLibraries();
-
-        Set<File> moduleDirs = new HashSet<>();
-        moduleDirs.addAll(sfinder.getRoots());
-        moduleDirs.addAll(lfinder.getRoots());
-
-        if (moduleDirs.contains(getDirectory())) {
-            moduleDirs.remove(getDirectory());
-            moduleDirs = FileUtils.simplify(moduleDirs);
-            moduleDirs.add(getDirectory());
-        }
-        else {
-            moduleDirs = FileUtils.simplify(moduleDirs);
-        }
-
-        modules = moduleDirs.stream()
-                .map(moduleDir -> new AntModule(moduleDir, this))
-                .collect(Collectors.toList());
-
-        return modules;
-    }
+    // @Override
+    // public List<Module> getModules() {
+    //     if (modules != null)
+    //         return modules;
+    //
+    //     SourcesFinder sfinder = new SourcesFinder(this);
+    //     LibrariesFinder lfinder = new LibrariesFinder(this);
+    //
+    //     sfinder.findSources();
+    //     lfinder.findLibraries();
+    //
+    //     Set<File> moduleDirs = new HashSet<>();
+    //     moduleDirs.addAll(sfinder.getRoots());
+    //     moduleDirs.addAll(lfinder.getRoots());
+    //
+    //     if (moduleDirs.contains(getDirectory())) {
+    //         moduleDirs.remove(getDirectory());
+    //         moduleDirs = FileUtils.simplify(moduleDirs);
+    //         moduleDirs.add(getDirectory());
+    //     }
+    //     else {
+    //         moduleDirs = FileUtils.simplify(moduleDirs);
+    //     }
+    //
+    //     modules = moduleDirs.stream()
+    //         .map(moduleDir -> new AntModule(moduleDir, this))
+    //         .sorted()
+    //         .collect(Collectors.toList());
+    //
+    //     return modules;
+    // }
 }

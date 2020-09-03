@@ -1,7 +1,11 @@
 package jext.buildtools.project.gradle;
 
 import jext.buildtools.Module;
+import jext.buildtools.Named;
+import jext.buildtools.Project;
 import jext.buildtools.project.BaseProject;
+import jext.io.file.FilePatterns;
+import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
@@ -15,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +67,10 @@ public class GradleProject extends BaseProject {
         if (!properties.containsKey(PROJECT_MODULE))
             this.properties.setProperty(PROJECT_MODULE, MODULE_FILE);
         this.rootModule = new GradleModule(this);
+
+        List<String> excludes = PropertiesUtils.getValues(this.getProperties(), MODULE_EXCLUDE);
+        this.excludes = new FilePatterns().addAll(excludes);
+
         connect();
     }
 
@@ -77,6 +86,7 @@ public class GradleProject extends BaseProject {
         findModulesByConfig();
         findModulesByGradle();
 
+        modules.sort(Comparator.comparing(Named::getName));
         return modules;
     }
 
@@ -87,6 +97,10 @@ public class GradleProject extends BaseProject {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     File moduleDir = dir.toFile();
+
+                    if (excludes.accept(moduleDir.getName()) || excludes.accept(FileUtils.getAbsolutePath(moduleDir)))
+                        return FileVisitResult.SKIP_SUBTREE;
+
                     File buildGradle = new File(moduleDir, MODULE_FILE);
                     File buildGradleKts = new File(moduleDir, MODULE_FILE_KTS);
                     File buildGradleDir = new File(moduleDir, moduleDir.getName() + ".gradle");
@@ -139,7 +153,7 @@ public class GradleProject extends BaseProject {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Connector
     // ----------------------------------------------------------------------
 
     private void connect() {

@@ -30,6 +30,7 @@ public class IvyFile {
         } catch (Exception e) {
             Logger.getLogger(IvyFile.class).errorf("Unable to parse %s: %s", ivyFile, e);
         }
+
         if (module == null)
         try {
             module = XPathUtils.parse("<ivy-module/>").getDocumentElement();

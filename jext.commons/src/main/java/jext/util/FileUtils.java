@@ -199,7 +199,12 @@ public class FileUtils {
     // ----------------------------------------------------------------------
 
     public static boolean isParent(File parent, File path) {
-        return path.getAbsolutePath().startsWith(parent.getAbsolutePath());
+        String dbase = normalize(path.getAbsolutePath());
+        String child = normalize(parent.getAbsolutePath());
+        if (dbase.equals(child))
+            return false;
+        else
+            return child.startsWith(dbase);
     }
 
     /**

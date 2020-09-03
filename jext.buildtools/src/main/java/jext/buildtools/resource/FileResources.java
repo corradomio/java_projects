@@ -14,6 +14,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -37,11 +38,6 @@ public class FileResources implements Resources {
 
     public FileResources(Module module) {
         this.module = (BaseModule) module;
-        this.selector.add(".xml");
-        this.selector.add(".properties");
-        this.selector.add(".gradle");
-        this.selector.add("resources");
-        this.selector.add("webapps");
     }
 
     // ----------------------------------------------------------------------
@@ -83,16 +79,11 @@ public class FileResources implements Resources {
         if (resources != null)
             return resources;
 
-        Set<File> resourceFiles = new HashSet<>();
+        List<File> resourceFiles = new ArrayList<>(
+            selector.getFiles(module.getDirectory())
+        );
 
         module.getDirectories().forEach(resourceDir ->{
-            // for (String resourceName : resourceNames) {
-            //     if (resourceName.startsWith("."))
-            //         addResourceFiles(resourceFiles, resourceDir, resourceName);
-            //     else
-            //         addResourceDirs(resourceFiles, resourceDir, resourceName);
-            // }
-
             resourceFiles.addAll(selector.getFiles(resourceDir));
         });
 

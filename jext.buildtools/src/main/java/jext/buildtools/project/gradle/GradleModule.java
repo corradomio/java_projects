@@ -2,16 +2,14 @@ package jext.buildtools.project.gradle;
 
 import jext.buildtools.Name;
 import jext.buildtools.Named;
-import jext.maven.MavenCoords;
+import jext.buildtools.project.BaseModule;
 import jext.buildtools.project.gradle.collectors.DependenciesCollector;
 import jext.buildtools.project.gradle.collectors.ErrorsCollector;
 import jext.buildtools.project.gradle.collectors.LoggerCollector;
 import jext.buildtools.project.gradle.collectors.ProjectsCollector;
-import jext.buildtools.resource.FileResources;
 import jext.buildtools.source.java.JavaSources;
-import jext.buildtools.project.BaseModule;
 import jext.logging.Logger;
-import org.gradle.tooling.BuildException;
+import jext.maven.MavenCoords;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
@@ -37,13 +35,11 @@ public class GradleModule extends BaseModule {
     public GradleModule(GradleProject project) {
         super(project.getDirectory(), project);
         this.sources = new JavaSources(this);
-        this.resources = new FileResources(this);
     }
 
     public GradleModule(File moduleDir, GradleProject project) {
         super(moduleDir, project);
         this.sources = new JavaSources(this);
-        this.resources = new FileResources(this);
     }
 
     public GradleModule(String name, GradleModule parent) {
@@ -60,7 +56,7 @@ public class GradleModule extends BaseModule {
         if (modules != null)
             return modules;
 
-        logger.debugf("retrieveModules", getName());
+        logger.debugf("retrieveModules %s", getName());
 
         modules = new ArrayList<>();
 
@@ -101,26 +97,44 @@ public class GradleModule extends BaseModule {
         return modules;
     }
 
-    // public List<Name> getModuleDependencies() {
+    // public List<Module> getDependencies(boolean recursive) {
+    //     Queue<Name> dnames = new LinkedList<>(getModuleDependencies());
+    //
+    //     if (!recursive)
+    //         return dnames.stream().map(name -> project.getModule(name))
+    //             .filter(Objects::nonNull)
+    //             .collect(Collectors.toList());
+    //
+    //     Set<Name> visited = new HashSet<>();
+    //     while (!dnames.isEmpty()) {
+    //         Name dname = dnames.remove();
+    //         if (visited.contains(dname))
+    //             continue;
+    //
+    //         visited.add(dname);
+    //         GradleModule dmodule = (GradleModule) project.getModule(dname);
+    //         if (dmodule != null)
+    //             dnames.addAll(dmodule.getModuleDependencies());
+    //     }
+    //
+    //     return visited.stream().map(name -> project.getModule(name))
+    //         .filter(Objects::nonNull)
+    //         .collect(Collectors.toList());
+    // }
+
+    // protected List<Name> getDependencies() {
     //     if (dmodules == null)
     //         retrieveDependencies();
     //     return dmodules;
     // }
 
-    // public List<MavenCoords> getMavenLibraries() {
-    //     if (dcoords == null)
-    //         retrieveDependencies();
-    //     return dcoords;
-    // }
-
-    // public List<File> getLocalLibraries() {
-    //     return Collections.emptyList();
-    // }
-
     public List<MavenCoords> getMavenLibraries() {
-        if (dcoords != null)
-            return dcoords;
+        if (dcoords == null)
+            retrieveDependencies();
+        return dcoords;
+    }
 
+    private void retrieveDependencies() {
         logger.debugf("retrieveDependencies");
 
         String dependenciesTask = toTask(getName(), "dependencies");
@@ -156,14 +170,14 @@ public class GradleModule extends BaseModule {
             .map(name -> project.findModule(name))
             .filter(Objects::nonNull)
             .map(Named::getName)
+            .sorted()
             .collect(Collectors.toList());
 
         dcoords = collector.getLibraries()
             .stream()
             .map(MavenCoords::new)
+            .sorted()
             .collect(Collectors.toList());
-
-        return dcoords;
     }
 
     private GradleProject getGradleProject() {

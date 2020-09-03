@@ -131,10 +131,10 @@ public class PropertiesUtils {
     }
     
     public static List<String> getValues(Properties properties, String name) {
-        return getValues(properties, name, ",");
+        return getValues(properties, name, ",", null);
     }
 
-    public static List<String> getValues(Properties properties, String prefix, String sep) {
+    public static List<String> getValues(Properties properties, String prefix, String sep, String defval) {
         List<String> pvalues = new ArrayList<>(); 
         for(String name : properties.stringPropertyNames()){
             if (name.startsWith(prefix)) {
@@ -143,6 +143,11 @@ public class PropertiesUtils {
                 pvalues.addAll(Arrays.asList(values));
             }
         }
+        if (pvalues.isEmpty() && defval != null) {
+            String[] values = defval.split(sep);
+            pvalues.addAll(Arrays.asList(values));
+        }
+
         return pvalues;
     }
     

@@ -18,6 +18,9 @@ public class Wildcard {
 
 
     public Wildcard(String pattern) {
+        if (isExt(pattern))
+            pattern = "*" + pattern;
+
         this.pattern = pattern;
         compile();
     }
@@ -97,5 +100,12 @@ public class Wildcard {
 
     private char charAt(int i) {
         return (i<0 || i>= pattern.length()) ? 0 : pattern.charAt(i);
+    }
+
+    private static boolean isExt(String pattern) {
+        return pattern.startsWith(".") &&
+            !pattern.contains("*") &&
+            !pattern.contains("?") &&
+            !pattern.contains("/");
     }
 }

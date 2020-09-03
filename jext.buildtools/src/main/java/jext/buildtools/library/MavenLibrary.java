@@ -30,4 +30,9 @@ public class MavenLibrary extends NamedObject implements Library {
         this.downloader = downloader;
     }
 
+    @Override
+    public String toString() {
+        return coords.toString();
+    }
+
 }

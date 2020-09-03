@@ -138,7 +138,9 @@ public class ItemSet {
     // ----------------------------------------------------------------------
 
     private static boolean isExtension(String pattern) {
-        return pattern.startsWith(".");
+        return pattern.startsWith(".") &&
+                !pattern.contains("*") &&
+                !pattern.contains("?");
     }
 
     private static boolean isName(String pattern) {

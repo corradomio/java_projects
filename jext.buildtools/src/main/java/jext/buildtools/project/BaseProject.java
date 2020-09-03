@@ -3,7 +3,13 @@ package jext.buildtools.project;
 import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Project;
+import jext.buildtools.Resource;
+import jext.buildtools.resource.ResourceFile;
+import jext.io.file.FilePatterns;
 import jext.maven.MavenDownloader;
+import jext.nio.file.FilteredFileVisitor;
+import jext.util.FileUtils;
+import jext.util.PropertiesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,11 +31,20 @@ public abstract class BaseProject implements Project {
 
     public static final String MODULE_FILE = "build.xml";
 
+    private static final String GLOBAL_MODULE_EXCLUDE = "module.exclude.$";
+    private static final String GLOBAL_MODULE_RESOURCES = "module.resources.$";
+    private static final String DEFAULT_EXCLUDES = "target,build,out,.*";
+    private static final String DEFAULT_RESOURCES = ".xml,.properties,.json,.yaml";
+
     protected File projectDir;
     protected Properties properties;
     protected List<Module> modules;
-    protected MavenDownloader downloader;
     protected String projectType;
+
+    protected FilePatterns excludes;
+    protected FilePatterns resources;
+
+    protected MavenDownloader downloader;
 
     // ----------------------------------------------------------------------
     //
@@ -40,6 +55,20 @@ public abstract class BaseProject implements Project {
         this.properties = new Properties();
         this.properties.putAll(properties);
         this.projectType = projectType;
+
+        if (!this.properties.containsKey(PROJECT_TYPE))
+            this.properties.put(PROJECT_TYPE, getProjectType());
+        if (!this.properties.containsKey(GLOBAL_MODULE_EXCLUDE))
+            this.properties.put(GLOBAL_MODULE_EXCLUDE, DEFAULT_EXCLUDES);
+        if (!this.properties.containsKey(GLOBAL_MODULE_RESOURCES))
+            this.properties.put(GLOBAL_MODULE_RESOURCES, DEFAULT_RESOURCES);
+
+
+        List<String> excludes = PropertiesUtils.getValues(this.getProperties(), MODULE_EXCLUDE);
+        List<String> resources = PropertiesUtils.getValues(this.getProperties(), MODULE_RESOURCES);
+
+        this.excludes = new FilePatterns().addAll(excludes);
+        this.resources = new FilePatterns().addAll(resources);
     }
 
     // ----------------------------------------------------------------------
@@ -52,7 +81,7 @@ public abstract class BaseProject implements Project {
     }
 
     @Override
-    public String getType() {
+    public String getProjectType() {
         return projectType;
     }
 
@@ -80,9 +109,14 @@ public abstract class BaseProject implements Project {
                 @Override
                 public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                     File dir = path.toFile();
+
+                    if (excludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
+                        return FileVisitResult.SKIP_SUBTREE;
+
                     File isModule = new File(dir, moduleFile);
                     if (isModule.exists())
                         moduleDirs.add(dir);
+
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -90,18 +124,19 @@ public abstract class BaseProject implements Project {
 
         modules = moduleDirs.stream()
             .map(this::newModule)
+            .sorted()
             .collect(Collectors.toList());
 
         return modules;
     }
 
-    @Override
-    public Module getModule(Name name) {
-        for (Module module : getModules())
-            if (module.getName().equals(name))
-                return module;
-        return null;
-    }
+    // @Override
+    // public Module getModule(Name name) {
+    //     for (Module module : getModules())
+    //         if (module.getName().equals(name))
+    //             return module;
+    //     return null;
+    // }
 
     @Override
     public Module findModule(String name) {
@@ -128,6 +163,62 @@ public abstract class BaseProject implements Project {
     @Override
     public MavenDownloader getDownloader() {
         return downloader;
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    @Override
+    public List<File> getDirectories(File baseDirectory) {
+
+        List<File> moduleDirs = new ArrayList<>();
+
+        try {
+            Files.walkFileTree(baseDirectory.toPath(), new FilteredFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
+                    File dir = path.toFile();
+
+                    if (dir.equals(baseDirectory))
+                        return FileVisitResult.CONTINUE;
+
+                    if (excludes.accept(baseDirectory, dir))
+                        return FileVisitResult.SKIP_SUBTREE;
+
+                    if (isModuleDir(dir))
+                        return FileVisitResult.SKIP_SUBTREE;
+
+                    moduleDirs.add(dir);
+
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) { }
+
+        return moduleDirs;
+    }
+
+    private boolean isModuleDir(File directory) {
+        if (directory.equals(projectDir))
+            return false;
+        for (Module module : this.getModules())
+            if (directory.equals(module.getDirectory()))
+                return true;
+        return false;
+    }
+
+    // ----------------------------------------------------------------------
+    // Resources
+    // ----------------------------------------------------------------------
+
+    public List<Resource> getResources(File dir, Module module) {
+        File moduleDir = module.getDirectory();
+        return FileUtils.asList(dir.listFiles(resource ->
+            resources.accept(moduleDir, resource))
+        ).stream()
+            .map(file -> new ResourceFile(file, module))
+            .collect(Collectors.toList());
     }
 
 }

@@ -127,30 +127,30 @@ public class StringUtils {
         // }
     }
 
-    public static long digest64(String s){
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-
-            for(int i=0; i<s.length(); ++i) {
-                char ch = s.charAt(i);
-                md.update((byte)((ch     ) & 0xFF));
-                md.update((byte)((ch >> 8) & 0xFF));
-            }
-
-            byte[] digest = md.digest();
-            long[] smalld = new long[4];
-            for (int i=0; i< smalld.length; ++i)
-                smalld[i] = (digest[i] ^ digest[4+i]);
-
-            return (smalld[0] <<  8) |
-                         (smalld[1] << 16) |
-                         (smalld[2] << 32) |
-                         (smalld[3] << 48);
-        }
-        catch (Exception e) {
-            return 0L;
-        }
-    }
+    // public static long digest64(String s){
+    //     try {
+    //         MessageDigest md = MessageDigest.getInstance("MD5");
+    //
+    //         for(int i=0; i<s.length(); ++i) {
+    //             char ch = s.charAt(i);
+    //             md.update((byte)((ch     ) & 0xFF));
+    //             md.update((byte)((ch >> 8) & 0xFF));
+    //         }
+    //
+    //         byte[] digest = md.digest();
+    //         long[] smalld = new long[4];
+    //         for (int i=0; i< smalld.length; ++i)
+    //             smalld[i] = (digest[i] ^ digest[4+i]);
+    //
+    //         return (smalld[0] <<  8) |
+    //                      (smalld[1] << 16) |
+    //                      (smalld[2] << 32) |
+    //                      (smalld[3] << 48);
+    //     }
+    //     catch (Exception e) {
+    //         return 0L;
+    //     }
+    // }
 
     private static Pattern LOWERCASE = Pattern.compile(
         "[a-z0-9.$]+"

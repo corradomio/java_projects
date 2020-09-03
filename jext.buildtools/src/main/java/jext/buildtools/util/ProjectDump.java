@@ -10,16 +10,17 @@ public class ProjectDump {
     }
 
     private void dumpProject(Project p) {
-        Console.printf("Project '%s'::%s  [%s]\n", p.getName(), p.getType(), p.getDirectory());
+        Console.printf("Project '%s'::%s  [%s]\n", p.getName(), p.getProjectType(), p.getDirectory());
+
+        Console.printf("  modules (%d):\n", p.getModules().size());
         p.getModules().forEach(m -> {
-            Console.printf("  '%s' (%s)\n", m.getName(), m.getId());
+            Console.printf("    module '%s' (%s)\n", m.getName(), m.getId());
         });
 
-        Console.printf("  modules:\n");
-
-
+        Console.printf("  module details:\n", p.getModules().size());
         p.getModules().forEach(m -> {
-            Console.printf("    '%s' (%s)\n", m.getName(), m.getId());
+            Console.printf("    module '%s' (%s)\n", m.getName(), m.getId());
+            Console.printf("           '%s'\n", m.getDirectory());
             if (!m.getDependencies(false).isEmpty()) {
                 Console.printf("      dependencies (%d):\n", m.getDependencies(false).size());
                 m.getDependencies(false).forEach(d -> {
@@ -28,22 +29,24 @@ public class ProjectDump {
             }
             if (!m.getSources().isEmpty()) {
                 Console.printf("      sources (%d):\n", m.getSources().size());
-                m.getSources().getRoots().forEach(root -> {
-                    Console.printf("        %s (%d)\n", root, m.getSources().getSources(root).size());
-                });
+                // m.getSources().getRoots().forEach(root -> {
+                //     Console.printf("        %s (%d)\n", root, m.getSources().getSources(root).size());
+                // });
             }
             if (!m.getLibraries().isEmpty()) {
                 Console.printf("      libraries (%d):\n", m.getLibraries().size());
-                m.getLibraries().getRoots().forEach(root -> {
-                    Console.printf("        %s (%d)\n", root, m.getLibraries().getLibraries(root).size());
+                m.getLibraries().forEach(library -> {
+                    Console.printf("        %s\n", library);
                 });
             }
-            // if (!m.getResources().isEmpty()) {
-            //     Console.printf("      resources (%d):\n", m.getResources().size());
-            //     m.getResources().getRoots().forEach(root -> {
-            //         Console.printf("        %s (%d)\n", root, m.getResources().getResources(root).size());
-            //     });
-            // }
+            if (!m.getResources().isEmpty()) {
+                Console.printf("      resources (%d):\n", m.getResources().size());
+                m.getResources().forEach(resource -> {
+                    Console.printf("        %s\n", resource);
+                });
+            }
         });
+
+        Console.printf("end\n");
     }
 }

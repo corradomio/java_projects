@@ -2,6 +2,7 @@ package jext.io.file;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class FilePatterns {
@@ -12,10 +13,16 @@ public class FilePatterns {
         return patterns.isEmpty();
     }
 
-    public boolean add(String pattern) {
+    public FilePatterns addAll(Collection<String> patterns) {
+        for(String pattern : patterns)
+            add(pattern);
+        return this;
+    }
+
+    public FilePatterns add(String pattern) {
         FilePattern fpat = new FilePattern(pattern);
         patterns.add(fpat);
-        return fpat.recursive;
+        return this;
     }
 
     public void add(FilePattern pattern) {
@@ -35,4 +42,9 @@ public class FilePatterns {
                 return true;
         return false;
     }
+
+    public boolean accept(String stext, String ltext) {
+        return (accept(ltext) || accept(stext));
+    }
+
 }

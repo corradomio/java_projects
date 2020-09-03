@@ -32,9 +32,36 @@
             <url>https://m2.objectdb.com</url>
         </repository>
 
+        <repository>
+            <id>geomajas</id>
+            <name>Db4o Repository</name>
+            <url>http://maven.geomajas.org/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.db4o/db4o-core-java5 - ->
+        <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>db4o-core-java5</artifactId>
+            <version>8.0.184.15484</version>
+        </dependency>
+        <!- - https://mvnrepository.com/artifact/com.db4o/com.db4o.nativequery - ->
+        <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>com.db4o.nativequery</artifactId>
+            <version>7.7.67</version>
+        </dependency>
+        <!- - https://mvnrepository.com/artifact/com.db4o/com.springsource.com.db4o.java5 - ->
+        <dependency>
+            <groupId>com.db4o</groupId>
+            <artifactId>com.springsource.com.db4o.java5</artifactId>
+            <version>7.2.54.11278</version>
+        </dependency>
+        -->
+
+
         <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
         <dependency>
             <groupId>org.mapdb</groupId>
@@ -42,6 +69,7 @@
             <version>3.0.8</version>
         </dependency>
 
+        <!-- microstream -->
         <dependency>
             <groupId>one.microstream</groupId>
             <artifactId>storage.embedded</artifactId>
@@ -53,6 +81,7 @@
             <version>03.00.00-MS-GA</version>
         </dependency>
 
+        <!-- objectdb -->
         <dependency>
             <groupId>com.objectdb</groupId>
             <artifactId>objectdb</artifactId>
@@ -98,6 +127,7 @@
             <artifactId>joor-java-8</artifactId>
             <version>0.9.13</version>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <!--        <dependency>-->
         <!--            <groupId>mysql</groupId>-->

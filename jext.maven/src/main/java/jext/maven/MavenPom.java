@@ -98,13 +98,10 @@ public class MavenPom implements MavenConst {
         }
 
         if (this.project == null)
-            try {
-                this.project = XPathUtils.parse(EMPTY_POM).getDocumentElement();
-            }
-            catch (Exception e) {
-                logger.error(e, e);
-            }
-
+        try {
+            this.project = XPathUtils.parse(EMPTY_POM).getDocumentElement();
+        }
+        catch (Exception e) { }
     }
 
     private void readMavenProps() {

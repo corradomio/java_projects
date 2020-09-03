@@ -47,6 +47,8 @@ public class ClasspathFile {
             classpath = new File(classpath, ".classpath");
         this.classpath = classpath;
         this.moduleDir = classpath.getParentFile();
+
+        if (classpath.exists())
         try {
             this.elt = XPathUtils.parse(classpath).getDocumentElement();
         } catch (Exception e) {
@@ -54,11 +56,11 @@ public class ClasspathFile {
         }
 
         if (this.elt == null)
-            try {
-                this.elt = XPathUtils.parse(EMPTY_CLASSPATH).getDocumentElement();
-            } catch (Exception e) {
-                logger.errorf("Unable to parse embedded classpath: %s", e);
-            }
+        try {
+            this.elt = XPathUtils.parse(EMPTY_CLASSPATH).getDocumentElement();
+        } catch (Exception e) {
+            logger.errorf("Unable to parse embedded classpath: %s", e);
+        }
     }
 
     // ----------------------------------------------------------------------
