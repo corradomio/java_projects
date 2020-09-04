@@ -30,9 +30,9 @@ public interface Project {
      */
     String PROJECT_TYPE = "project.type";
     String PROJECT_MODULE = "project.module";
+    String MODULE_SOURCES = "module.sources";
     String MODULE_RESOURCES = "module.resources";
     String MODULE_EXCLUDE = "module.exclude";
-    String MAVEN_LIBRARIES = "maven.libraries";
 
     /** Project name */
     String getName();
@@ -66,11 +66,5 @@ public interface Project {
 
     /** Retrieve the maven downloader */
     MavenDownloader getDownloader();
-
-    // ----------------------------------------------------------------------
-    // Directories
-    // ----------------------------------------------------------------------
-
-    List<File> getDirectories(File baseDir);
 
 }

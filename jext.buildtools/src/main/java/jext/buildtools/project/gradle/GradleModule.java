@@ -34,18 +34,14 @@ public class GradleModule extends BaseModule {
 
     public GradleModule(GradleProject project) {
         super(project.getDirectory(), project);
-        this.sources = new JavaSources(this);
     }
 
     public GradleModule(File moduleDir, GradleProject project) {
         super(moduleDir, project);
-        this.sources = new JavaSources(this);
     }
 
     public GradleModule(String name, GradleModule parent) {
         super(new File(parent.getDirectory(), name), parent.getProject());
-
-        this.logger = Logger.getLogger(GradleModule.class, this.getName().toString());
     }
 
     // ----------------------------------------------------------------------
@@ -97,36 +93,11 @@ public class GradleModule extends BaseModule {
         return modules;
     }
 
-    // public List<Module> getDependencies(boolean recursive) {
-    //     Queue<Name> dnames = new LinkedList<>(getModuleDependencies());
-    //
-    //     if (!recursive)
-    //         return dnames.stream().map(name -> project.getModule(name))
-    //             .filter(Objects::nonNull)
-    //             .collect(Collectors.toList());
-    //
-    //     Set<Name> visited = new HashSet<>();
-    //     while (!dnames.isEmpty()) {
-    //         Name dname = dnames.remove();
-    //         if (visited.contains(dname))
-    //             continue;
-    //
-    //         visited.add(dname);
-    //         GradleModule dmodule = (GradleModule) project.getModule(dname);
-    //         if (dmodule != null)
-    //             dnames.addAll(dmodule.getModuleDependencies());
-    //     }
-    //
-    //     return visited.stream().map(name -> project.getModule(name))
-    //         .filter(Objects::nonNull)
-    //         .collect(Collectors.toList());
-    // }
-
-    // protected List<Name> getDependencies() {
-    //     if (dmodules == null)
-    //         retrieveDependencies();
-    //     return dmodules;
-    // }
+    public List<Name> getGradleDependencies() {
+        if (dmodules == null)
+            retrieveDependencies();
+        return dmodules;
+    }
 
     public List<MavenCoords> getMavenLibraries() {
         if (dcoords == null)

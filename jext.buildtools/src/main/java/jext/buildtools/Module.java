@@ -11,7 +11,9 @@ public interface Module extends Named {
 
     List<Module> getDependencies(boolean recursive);
 
-    Sources getSources();
+    List<Source> getSources();
+
+    // Sources getSources();
 
     Libraries getLibraries();
 

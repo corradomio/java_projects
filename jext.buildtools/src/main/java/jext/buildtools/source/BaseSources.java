@@ -22,7 +22,7 @@ public abstract class BaseSources implements Sources {
 
     protected BaseSources(Module module) {
         this.module = (BaseModule) module;
-        selector.add(".java");
+        // selector.add(".java");
     }
 
     @Override
@@ -44,7 +44,6 @@ public abstract class BaseSources implements Sources {
     public void setExcludes(Collection<String> excludes) {
         selector.addAll(excludes, true);
     }
-
 
     @Override
     public Set<Name> getRoots() {

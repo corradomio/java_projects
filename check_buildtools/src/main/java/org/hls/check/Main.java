@@ -22,8 +22,9 @@ public class Main {
         // props.setProperty(Project.PROJECT_TYPE, AntProject.TYPE);
         // props.setProperty(Project.PROJECT_MODULE, "build/build.xml");
         // props.setProperty(Project.PROJECT_TYPE, EclipseProject.TYPE);
-        props.setProperty(Project.MODULE_EXCLUDE, "test*,examples");
+        props.setProperty(Project.MODULE_EXCLUDE, "*test*,examples");
         // props.setProperty(GradleProject.GRADLE_VERSION, "4.10.3");
+        props.setProperty(GradleProject.GRADLE_VERSION, "6.0");
         // props.setProperty(GradleProject.GRADLE_URI, "file:///Projects.github/java_projects/jext.buildtools/gradle_distribution/gradle-6.4.1-bin.zip");
 
         File projectDir = new File(
@@ -48,8 +49,8 @@ public class Main {
             // "D:\\Projects.test\\BTProjects\\jpcap-x64-master"
             // "D:\\Projects.test\\BTProjects\\Image-Detection-Samples"
             // "D:\\Projects.test\\BTProjects\\__Project_Packet-Sniffer-Project-Java"
-
-            "D:\\Projects.github\\eclipse_projects\\org.eclipse.bpel"
+            // "D:\\Projects.github\\eclipse_projects\\org.eclipse.bpel"
+            "D:\\Projects.github\\other_projects\\elasticsearch"
         );
 
         Project p = ProjectFactory.newProject(projectDir, props);
