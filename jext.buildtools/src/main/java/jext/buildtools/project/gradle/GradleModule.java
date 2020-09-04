@@ -1,5 +1,6 @@
 package jext.buildtools.project.gradle;
 
+import jext.buildtools.Module;
 import jext.buildtools.Name;
 import jext.buildtools.Named;
 import jext.buildtools.project.BaseModule;
@@ -7,15 +8,15 @@ import jext.buildtools.project.gradle.collectors.DependenciesCollector;
 import jext.buildtools.project.gradle.collectors.ErrorsCollector;
 import jext.buildtools.project.gradle.collectors.LoggerCollector;
 import jext.buildtools.project.gradle.collectors.ProjectsCollector;
-import jext.buildtools.source.java.JavaSources;
-import jext.logging.Logger;
 import jext.maven.MavenCoords;
+import jext.util.OrderedHashSet;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GradleModule extends BaseModule {
@@ -45,6 +46,41 @@ public class GradleModule extends BaseModule {
     }
 
     // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    @Override
+    protected List<Module> getDependencies() {
+        //
+        // Override 'BaseModule::getDependencies()' to reorder the
+        // dependencies based on the 'building system configuration file'
+        //
+
+        Set<Module> dependencies = new OrderedHashSet<>();
+        List<Name> dnames = getGradleDependencies();
+
+        // speedup: dnames is empty
+        if (dnames.isEmpty())
+            return super.getDependencies();
+
+        dnames.forEach(dname -> {
+            Module dmodule = project.getModule(dname.toString());
+            if (dmodule != null)
+                dependencies.add(dmodule);
+        });
+
+        // speedup: Gradle dependencies is empty
+        if (dependencies.isEmpty())
+            return super.getDependencies();
+
+        // add the missing dependencies based on the module types intersection
+        dependencies.addAll(super.getDependencies());
+
+        // return a list
+        return new ArrayList<>(dependencies);
+    }
+
+    // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
@@ -56,7 +92,7 @@ public class GradleModule extends BaseModule {
 
         modules = new ArrayList<>();
 
-        String projectsTask = toTask(getName(), "projects");
+        String projectsTask = toTask("projects");
         ErrorsCollector err = new ErrorsCollector(logger);
         ProjectsCollector projects = new ProjectsCollector();
         try(ProjectConnection connection = getGradleProject().getConnection()) {
@@ -82,7 +118,7 @@ public class GradleModule extends BaseModule {
         }
 
         projects.forEach(name -> {
-            GradleModule module = (GradleModule) project.findModule(name);
+            GradleModule module = (GradleModule) project.getModule(name);
             if (module == null) {
                 module = new GradleModule(name, this);
                 getGradleProject().addGradleModule(module);
@@ -108,7 +144,7 @@ public class GradleModule extends BaseModule {
     private void retrieveDependencies() {
         logger.debugf("retrieveDependencies");
 
-        String dependenciesTask = toTask(getName(), "dependencies");
+        String dependenciesTask = toTask("dependencies");
         ErrorsCollector err = new ErrorsCollector(logger);
         DependenciesCollector collector = new DependenciesCollector();
         LoggerCollector logcoll = new LoggerCollector(logger, collector);
@@ -138,7 +174,7 @@ public class GradleModule extends BaseModule {
 
         dmodules = collector.getProjects()
             .stream()
-            .map(name -> project.findModule(name))
+            .map(name -> project.getModule(name))
             .filter(Objects::nonNull)
             .map(Named::getName)
             .sorted()
@@ -155,8 +191,8 @@ public class GradleModule extends BaseModule {
         return (GradleProject) getProject();
     }
 
-    private static String toTask(Name name, String taskName) {
-        String moduleName = name.toString().replace('/',':');
+    private String toTask(String taskName) {
+        String moduleName = getName().toString().replace('/',':');
         if (moduleName.isEmpty())
             return taskName;
         else

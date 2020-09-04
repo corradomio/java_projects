@@ -40,7 +40,7 @@ public class NamedObject implements Named, Comparable<Named> {
 
     @Override
     public String toString() {
-        return String.format("%s[%s]", getClass().getSimpleName(), name.getFullName());
+        return String.format("%s[%s, %s]", getClass().getSimpleName(), name.getFullName(), getId());
     }
 
     //

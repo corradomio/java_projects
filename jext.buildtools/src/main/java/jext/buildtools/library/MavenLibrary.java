@@ -10,9 +10,17 @@ import jext.buildtools.util.PathName;
 
 public class MavenLibrary extends NamedObject implements Library {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private MavenCoords coords;
     private MavenDownloader downloader;
     private Module module;
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public MavenLibrary(MavenCoords coords, Module module) {
         super(null);
@@ -21,10 +29,18 @@ public class MavenLibrary extends NamedObject implements Library {
         setName(new PathName(coords.getName()));
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     @Override
     public Module getModule() {
         return module;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public void setDownloader(MavenDownloader downloader) {
         this.downloader = downloader;

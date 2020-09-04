@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class LineOutputStream extends OutputStream {
 
-    private static final int BUFFER_SIZE = 256;
+    private static final int BUFFER_SIZE = 1024;
 
     private final Charset charset;
     private byte[] buffer = new byte[BUFFER_SIZE];

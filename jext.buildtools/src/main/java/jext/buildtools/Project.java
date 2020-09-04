@@ -55,7 +55,7 @@ public interface Project {
     /**
      * Find a module by id, full name or name
      */
-    Module findModule(String name);
+    Module getModule(String name);
 
     // ----------------------------------------------------------------------
     // MavenDownloader

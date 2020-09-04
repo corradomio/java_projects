@@ -42,7 +42,7 @@ public class MavenModule extends BaseModule {
     }
 
     private boolean isLibrary(MavenCoords coords) {
-        return project.findModule(coords.toString()) == null;
+        return project.getModule(coords.toString()) == null;
     }
 
 }

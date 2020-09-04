@@ -141,7 +141,7 @@ public abstract class BaseProject implements Project {
     }
 
     @Override
-    public Module findModule(String name) {
+    public Module getModule(String name) {
         for (Module module : getModules()) {
             if (module.getId().equals(name)
                     || module.getName().getFullName().equals(name)
