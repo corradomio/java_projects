@@ -1,5 +1,5 @@
 // Generated from Java9.g4 by ANTLR 4.7.2
-package jext.antlr.java;
+package jext.antlr.v4.java;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**

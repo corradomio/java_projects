@@ -1,5 +1,5 @@
 // Generated from KotlinParser.g4 by ANTLR 4.7.2
-package jext.antlr.kotlin;
+package jext.antlr.v4.kotlin;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
