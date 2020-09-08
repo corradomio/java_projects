@@ -50,7 +50,8 @@ public class Main {
             // "D:\\Projects.test\\BTProjects\\Image-Detection-Samples"
             // "D:\\Projects.test\\BTProjects\\__Project_Packet-Sniffer-Project-Java"
             // "D:\\Projects.github\\eclipse_projects\\org.eclipse.bpel"
-            "D:\\Projects.github\\other_projects\\elasticsearch"
+            // "D:\\Projects.github\\other_projects\\elasticsearch"
+                "D:\\Projects.github\\other_projects\\pro-spring-5"
         );
 
         Project p = ProjectFactory.newProject(projectDir, props);

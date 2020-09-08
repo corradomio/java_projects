@@ -110,7 +110,7 @@ public class GradleModule extends BaseModule {
         catch (Throwable e) {
             String message = e.getCause().getMessage();
             if (!message.contains("not found in root project"))
-                logger.error(e);
+                logger.error(e, e);
         }
         finally {
             projects.close();
@@ -164,7 +164,7 @@ public class GradleModule extends BaseModule {
         catch (Throwable e) {
             String message = e.getCause().getMessage();
             if (!message.contains("not found in root project"))
-                logger.error(e);
+                logger.error(e, e);
         }
         finally {
             logcoll.close();
