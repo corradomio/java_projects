@@ -2,7 +2,9 @@ package jext.util.concurrent;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,9 +67,9 @@ public class Parallel {
         }
     }
 
-    private static ExecutorService parallels;
-
-    private static boolean inUse;
+    private static int nthreads;
+    private static List<ExecutorService> running;
+    private static Queue<ExecutorService> waiting;
 
     // ----------------------------------------------------------------------
 
@@ -99,42 +101,69 @@ public class Parallel {
         checkUsage(true);
 
         List<Future<Boolean>> results = Collections.emptyList();
+        ExecutorService executor = newExecutorService();
         try {
-            results = parallels.invokeAll(tasks);
+            results = executor.invokeAll(tasks);
+            while (results.stream().anyMatch(f -> !f.isDone())) {
+                sleep(500);
+            }
         } catch (InterruptedException e) {
 
-        }
-        while (results.stream().anyMatch(f -> !f.isDone())) {
-            sleep(500);
+        } finally {
+            parkExecutorService(executor);
         }
 
-        inUse = false;
+    }
+
+    private static synchronized ExecutorService newExecutorService() {
+        ExecutorService executor;
+        if (waiting.isEmpty())
+            waiting.add(Executors.newFixedThreadPool(nthreads));
+
+        executor = waiting.remove();
+        running.add(executor);
+
+        return executor;
+    }
+
+    private static synchronized void parkExecutorService(ExecutorService executor) {
+        if (executor == null) return;
+        running.remove(executor);
+        waiting.add(executor);
     }
 
     public static void setup() {
         checkUsage(false);
     }
 
-    public static void shutdown() {
-        inUse = false;
-        if (parallels == null)
-            return;
+    public static synchronized int shutdown() {
+        int usedThreads = 0;
 
-        parallels.shutdownNow();
-        parallels = null;
+        if (running != null) {
+            running.forEach(ExecutorService::shutdownNow);
+            usedThreads += running.size();
+            running = null;
+        }
+        if (waiting != null) {
+            waiting.forEach(ExecutorService::shutdownNow);
+            usedThreads += waiting.size();
+            waiting = null;
+        }
+
+        return usedThreads*nthreads;
     }
 
     private static synchronized void checkUsage(boolean toUse) {
-        if (toUse && inUse)
-            throw new RuntimeException("Parallel in use");
-        if (toUse)
-            inUse = true;
+        if (toUse && running == null)
+            throw new RuntimeException("Parallel not initialized. Call 'Parallel.setup()'");
 
-        if (parallels != null)
+        if (running != null)
             return;
 
-        int nthreads = Runtime.getRuntime().availableProcessors() - 1;
-        parallels = Executors.newFixedThreadPool(nthreads);
+        nthreads = Runtime.getRuntime().availableProcessors() - 1;
+        if (nthreads < 3) nthreads = 3;
+        running = new LinkedList<>();
+        waiting = new LinkedList<>();
     }
 
     private static void sleep(long millis) {
