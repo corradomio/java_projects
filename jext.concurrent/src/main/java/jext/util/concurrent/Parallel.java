@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 public class Parallel {
 
-    static class Task<T> implements Callable<Boolean> {
+    private static class Task<T> implements Callable<Boolean> {
         private T t;
         private Consumer<T> body;
 
@@ -51,7 +51,7 @@ public class Parallel {
         }
     }
 
-    static class IntTask implements Callable<Boolean> {
+    private static class IntTask implements Callable<Boolean> {
         private int t;
         private IntConsumer body;
 
@@ -72,6 +72,8 @@ public class Parallel {
     private static Queue<ExecutorService> waiting;
 
     // ----------------------------------------------------------------------
+
+    // IntConsumer === Consumer<int>
 
     public static void forEach(int first, int last, IntConsumer body) {
         List<Callable<Boolean>> tasks = new ArrayList<>();
@@ -94,6 +96,10 @@ public class Parallel {
         List<Callable<Boolean>> tasks = s.mapToObj(t -> new IntTask(t, body)).collect(Collectors.toList());
         invokeAll(tasks);
     }
+
+    // ----------------------------------------------------------------------
+
+
 
     // ----------------------------------------------------------------------
 
