@@ -8,21 +8,43 @@
     <artifactId>check_jfr</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>jetbrains3dparty</id>
+            <name>JetBrains 3rdParty Repository</name>
+            <url>https://dl.bintray.com/jetbrains/intellij-third-party-dependencies/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.oracle</groupId>-->
+<!--            <artifactId>jmc-common</artifactId>-->
+<!--            <version>8.0.0-1</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/jmc-common-8.0.0-1.jar</systemPath>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.oracle</groupId>-->
+<!--            <artifactId>jmc-flightrecorder</artifactId>-->
+<!--            <version>8.0.0-1</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/lib/jmc-flightrecorder-8.0.0-1.jar</systemPath>-->
+<!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.jetbrains.intellij.deps/jmc-common -->
         <dependency>
-            <groupId>com.oracle</groupId>
+            <groupId>org.jetbrains.intellij.deps</groupId>
             <artifactId>jmc-common</artifactId>
             <version>8.0.0-1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jmc-common-8.0.0-1.jar</systemPath>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jetbrains.intellij.deps/jmc-flightrecorder -->
         <dependency>
-            <groupId>com.oracle</groupId>
+            <groupId>org.jetbrains.intellij.deps</groupId>
             <artifactId>jmc-flightrecorder</artifactId>
             <version>8.0.0-1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jmc-flightrecorder-8.0.0-1.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/net.jpountz.lz4/lz4 -->

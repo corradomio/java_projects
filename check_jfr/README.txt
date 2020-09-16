@@ -4,6 +4,11 @@ API:
 
 
 
+Libraries offered by jetbrains
+
+    https://mvnrepository.com/artifact/org.jetbrains.intellij.deps
+    https://mvnrepository.com/repos/bt-jetbrains-intellij-third-party-dependencies
+
 
 https://docs.oracle.com/javacomponents/jmc-5-4/jfr-runtime-guide/run.htm#JFRUH176
 To enable FileRecording
