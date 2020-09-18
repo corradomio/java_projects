@@ -1,4 +1,4 @@
-package jext.jgrapht.weigts;
+package jext.jgrapht.weights;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;

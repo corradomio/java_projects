@@ -1,4 +1,4 @@
-package jext.jgrapht.weigts;
+package jext.jgrapht.weights;
 
 public interface ClusteringWeights<V, E> {
 

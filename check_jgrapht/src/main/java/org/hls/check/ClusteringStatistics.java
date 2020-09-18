@@ -84,12 +84,18 @@ public class ClusteringStatistics {
             "weighMode",
             "threshold",
             "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
-            "size", "components", "density", "graphWeight", "minWeight", "maxWeight", "meanWeight", "sdevWeight",
+            "size", "components", "density",
+            "graphWeight", "minWeight", "maxWeight", "meanWeight", "sdevWeight",
             "numClusters", "minCsize", "maxCsize", "meanCsize", "sdevCsize",
-            "unbalancingIndex",  "modularity", "louvainModularity",
-            "dunnIndex", "daviesBouldinIndex", "purity", "giniIndex", "entropy",
+
+            "unbalancingIndex",
+            "purity", "giniIndex", "entropy",
             "randIndex", "adjustedRandIndex", "fowlkesMallowsIndex", "jaccardCoefficient",
-            "normalizedGamma"
+            "normalizedGamma",
+
+            "modularity", "louvainModularity",
+            "dunnIndex", "daviesBouldinIndex"
+
     );
 
     public void addStats(double threshold,
@@ -147,14 +153,8 @@ public class ClusteringStatistics {
             cs.mean,
             cs.standardDeviation,
 
-            // Indices
+            // contingency matrix
             cmt.getUnbalancingIndex(),
-            cm.getModularity(),
-            cm.getLouvainModularity(),
-            cm.getDunnIndex(),
-            cm.getDaviesBouldinIndex(),
-
-            // cluster comparison
             cmt.getPurity(),
             cmt.getGiniIndex(),
             cmt.getEntropy(),
@@ -162,7 +162,15 @@ public class ClusteringStatistics {
             cmt.getAdjustedRandIndex(),
             cmt.getFowlkesMallowsIndex(),
             cmt.getJaccardCoefficient(),
-            cmt.getNormalizedGamma()
+            cmt.getNormalizedGamma(),
+
+            // similarity
+            cm.getModularity(),
+            cm.getLouvainModularity(),
+
+            // dissimilarity == distance
+            cm.getDunnIndex(),
+            cm.getDaviesBouldinIndex()
         );
 
         statistics.add(stats);

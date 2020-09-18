@@ -147,7 +147,17 @@ public class CheckCavemanClustering2 {
 
             stats.addStats(0., g, groundTrue);
 
-            for (double threshold = 0.0; ; threshold += 0.02) {
+            double init, delta;
+            if (weighType == WeightType.SIMILARITY){
+                init = transform.getMaxWeight()*1.01;
+                delta = -0.02;
+            }
+            else {
+                init = 0;
+                delta = .02;
+            }
+
+            for (double threshold = init; ; threshold += delta) {
 
                 if (weighType == WeightType.SIMILARITY)
                     t = transform.lowerThresholdGraph(threshold);

@@ -1,14 +1,9 @@
-package jext.jgrapht.weigts;
+package jext.jgrapht.weights;
 
-import jext.jgrapht.util.LinAlg;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
-import java.util.Set;
-
 import static java.lang.Math.max;
-import static jext.math.Mathx.div;
 import static jext.math.Mathx.sq;
 
 public class SimilarityWeights<V, E> extends AbstractClusteringWeights<V, E> {

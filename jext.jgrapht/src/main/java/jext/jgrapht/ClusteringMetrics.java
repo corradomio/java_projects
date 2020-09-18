@@ -1,11 +1,11 @@
 package jext.jgrapht;
 
-import jext.jgrapht.weigts.ClusterWeights;
+import jext.jgrapht.weights.ClusterWeights;
 import jext.jgrapht.util.ContingencyMatrix;
 import jext.jgrapht.util.Statistics;
-import jext.jgrapht.weigts.ClusteringWeights;
-import jext.jgrapht.weigts.DissimilarityWeights;
-import jext.jgrapht.weigts.SimilarityWeights;
+import jext.jgrapht.weights.ClusteringWeights;
+import jext.jgrapht.weights.DissimilarityWeights;
+import jext.jgrapht.weights.SimilarityWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
