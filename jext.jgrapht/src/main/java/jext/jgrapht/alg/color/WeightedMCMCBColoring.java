@@ -11,23 +11,22 @@ public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
 
     private ColorAdjacentMatrix cam;
     private ColorAdjacentMatrix futureCam;
-    private WeightMode type = WeightMode.MEAN;
-
+    private WeightMode mode = WeightMode.MEAN;
 
     public WeightedMCMCBColoring(Graph<V,E> graph) {
         super(graph);
     }
 
-    public WeightedMCMCBColoring<V, E> weightType(WeightMode type) {
-        this.type = type;
+    public WeightedMCMCBColoring<V, E> weightMode(WeightMode mode) {
+        this.mode = mode;
         return this;
     }
 
     protected void initAlgorithm() {
         super.initAlgorithm();
 
-        cam = new ColorAdjacentMatrix(super.colorRange, type);
-        futureCam = new ColorAdjacentMatrix(super.colorRange, type);
+        cam = new ColorAdjacentMatrix(super.colorRange, mode);
+        futureCam = new ColorAdjacentMatrix(super.colorRange, mode);
     }
 
     protected long findConflicts() {

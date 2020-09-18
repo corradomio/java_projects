@@ -39,6 +39,12 @@ public class ClusterWeights<V, E> extends AbstractClusteringWeights<V, E> {
         super.init();
     }
 
+    @Override
+    protected void add(E e) {
+        double weight = graph.getEdgeWeight(e);
+        add(e, weight, weight);
+    }
+
     // ----------------------------------------------------------------------
 
     /**
@@ -86,12 +92,12 @@ public class ClusterWeights<V, E> extends AbstractClusteringWeights<V, E> {
     public double getLouvainModularity() {
         double lmod = 0.;
         double[] vprod = vprod();
-        double m = graphWeight;
+        double m = sgraphWeight;
 
         // clusterWeights[c][c] == 2*sum(edge weights in cluster c)
 
         for(int c=0; c<k; ++c)
-            lmod += m*clusterWeights[c][c] - vprod[c];
+            lmod += m* sclusterWeights[c][c] - vprod[c];
 
         return div(lmod, sq(2*m));
     }
@@ -116,7 +122,7 @@ public class ClusterWeights<V, E> extends AbstractClusteringWeights<V, E> {
             int cj = clusterOf(vj);
 
             if (ci == cj) {
-                vprod[ci] += vertexWeights[i]*vertexWeights[j];
+                vprod[ci] += svertexWeights[i]* svertexWeights[j];
             }
         });
 
@@ -208,12 +214,12 @@ public class ClusterWeights<V, E> extends AbstractClusteringWeights<V, E> {
     private double[][] distances() {
         double[][] d = LinAlg.newMatrix(k);
         for (int c=0; c<k; ++c)
-            d[c][c] = div(clusterWeights[c][c], clusterSizes[c]*(clusterSizes[c]-1));
+            d[c][c] = div(sclusterWeights[c][c], clusterSizes[c]*(clusterSizes[c]-1));
 
         for (int ci=0; ci<k; ++ci)
             for (int cj=0; cj<k; ++cj)
                 if (ci != cj)
-                    d[ci][cj] = div(clusterWeights[ci][cj], clusterSizes[ci]*clusterSizes[cj]);
+                    d[ci][cj] = div(sclusterWeights[ci][cj], clusterSizes[ci]*clusterSizes[cj]);
 
         return d;
     }

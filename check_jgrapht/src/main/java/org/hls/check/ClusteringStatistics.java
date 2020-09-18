@@ -2,6 +2,7 @@ package org.hls.check;
 
 import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.GraphMetrics;
+import jext.jgrapht.WeightType;
 import jext.jgrapht.util.ContingencyMatrix;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
@@ -20,59 +21,67 @@ public class ClusteringStatistics {
 
     private Graph<Integer, DefaultWeightedEdge> g;
     private ClusteringAlgorithm.Clustering<Integer> groundTrue;
+    private WeightType weighType;
+
     private GraphMetrics<Integer, DefaultWeightedEdge> gMetrics;
     private double emax;
 
     private int id;
-    private int N, E, C;
+    // private int N, E, C;
     private double betweenProb;
     private double insideProb;
     private Distrib communityWeights;
     private Distrib betweenWeights;
-    private WeightMode weighType;
+    private WeightMode weighMode;
 
 
     public ClusteringStatistics() {
 
     }
 
-    public ClusteringStatistics setGroundTrue(Graph<Integer, DefaultWeightedEdge> g, ClusteringAlgorithm.Clustering<Integer> groundTrue) {
+    public ClusteringStatistics setGroundTrue(
+            Graph<Integer, DefaultWeightedEdge> g,
+            ClusteringAlgorithm.Clustering<Integer> groundTrue,
+            WeightType weighType) {
         this.g = g;
         this.groundTrue = groundTrue;
         this.gMetrics = new GraphMetrics<>(g);
-        this.emax = gMetrics.getEdgeStatistics().max;
+        // this.emax = gMetrics.getEdgeStatistics().max;
+        this.weighType = weighType;
         return this;
     }
 
     public void setParameters(
             int id,
-            int N,
-            int E,
-            int C,
+            // int N,
+            // int E,
+            // int C,
             double insideProb,
             double betweenProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightMode weighType)
+            WeightMode weighMode)
     {
         this.id = id;
-        this.N = N;
-        this.E = E;
-        this.C = C;
+        // this.N = N;
+        // this.E = E;
+        // this.C = C;
         this.insideProb = insideProb;
         this.betweenProb = betweenProb;
         this.communityWeights = communityWeights;
         this.betweenWeights = betweenWeights;
-        this.weighType = weighType;
+        this.weighMode = weighMode;
     }
 
     private List header = Arrays.asList(
-            "id", "N", "E", "C",
+            "id",
+            // "N", "E", "C",
             "insideProb",
             "betweenProb",
             "communityWeightsMean", "communityWeightsSdev",
             "betweenWeightsMean", "betweenWeightsSdev",
             "weighType",
+            "weighMode",
             "threshold",
             "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
             "size", "components", "density", "graphWeight", "minWeight", "maxWeight", "meanWeight", "sdevWeight",
@@ -101,7 +110,7 @@ public class ClusteringStatistics {
             id,
 
             // configuration
-            N, E, C,
+            // N, E, C,
             insideProb,
             betweenProb,
             communityWeights.mean(),
@@ -109,6 +118,7 @@ public class ClusteringStatistics {
             betweenWeights.mean(),
             betweenWeights.sdev(),
             weighType.toString(),
+            weighMode.toString(),
 
             // threshold
             threshold,

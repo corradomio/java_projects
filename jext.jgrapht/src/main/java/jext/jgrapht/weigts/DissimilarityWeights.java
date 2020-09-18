@@ -13,33 +13,11 @@ public class DissimilarityWeights<V, E> extends AbstractClusteringWeights<V, E> 
         super(graph, clustering);
     }
 
-    // ----------------------------------------------------------------------
-    // Metrics
-    // ----------------------------------------------------------------------
-
     @Override
-    public double getModularity() {
-        return 0;
-    }
-
-    @Override
-    public double getLouvainModularity() {
-        return 0;
-    }
-
-    @Override
-    public double getSilhouette(V v) {
-        return 0;
-    }
-
-    @Override
-    public double getDaviesBouldinIndex() {
-        return 0;
-    }
-
-    @Override
-    public double getDunnIndex() {
-        return 0;
+    protected void add(E e) {
+        double dweight = graph.getEdgeWeight(e);
+        double sweight = fWeight*maxWeight - dweight;
+        add(e, sweight, dweight);
     }
 
     // ----------------------------------------------------------------------

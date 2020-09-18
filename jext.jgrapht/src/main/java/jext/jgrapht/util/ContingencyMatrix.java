@@ -38,7 +38,7 @@ public class ContingencyMatrix {
 
         this.kt = truth.getNumberClusters();
         this.kd = other.getNumberClusters();
-        this.m = LinAlg.intMatrix(kt, kd);
+        this.m  = LinAlg.intMatrix(kt, kd);
         this.ni = LinAlg.intVector(kt);
         this.mj = LinAlg.intVector(kd);
 

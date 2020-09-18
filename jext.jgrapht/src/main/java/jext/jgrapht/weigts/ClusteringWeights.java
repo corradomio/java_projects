@@ -16,15 +16,17 @@ public interface ClusteringWeights<V, E> {
 
     double getExternalWeight(int c);
 
-    // --
+    // -- similarity
 
     double getModularity();
 
-    double getDaviesBouldinIndex();
+    double getLouvainModularity();
+
+    // -- distance == dissimilarity
 
     double getDunnIndex();
 
-    double getLouvainModularity();
+    double getDaviesBouldinIndex();
 
     // --
 

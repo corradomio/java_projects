@@ -1,8 +1,11 @@
 package jext.jgrapht.util;
 
 public enum WeightMode {
-    VALUE,
+    RANDOM,
     MIN,
     MAX,
-    MEAN
+    MEAN,
+    // GREEDY_MIN,
+    // GREEDY_MAX,
+    // GREEDY_MEAN
 }

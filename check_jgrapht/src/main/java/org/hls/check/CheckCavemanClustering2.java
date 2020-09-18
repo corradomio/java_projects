@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
+import jext.jgrapht.WeightType;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
@@ -55,7 +56,6 @@ public class CheckCavemanClustering2 {
             new FileExporter<>(dotexp)
                     .exportGraph(g, new File(graphName));
         }
-
     }
 
     static RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> generateGraph(
@@ -112,7 +112,8 @@ public class CheckCavemanClustering2 {
             double betweenProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightMode[] weighTypes,
+            WeightType weighType,
+            WeightMode[] weightModes,
             ClusteringStatistics stats
     )
     {
@@ -121,7 +122,6 @@ public class CheckCavemanClustering2 {
         Graph<Integer, DefaultWeightedEdge> h, u;
 
         TransformGraph<Integer, DefaultWeightedEdge> transform;
-        double maxWeight;
 
         ClusteringAlgorithm.Clustering<Integer> groundTrue;
         ClusteringAlgorithm.Clustering<Integer> clustering;
@@ -136,10 +136,12 @@ public class CheckCavemanClustering2 {
 
         groundTrue = ggen.getClustering();
 
-        for(WeightMode weighType : weighTypes) {
+        for(WeightMode weightMode : weightModes) {
 
-            stats.setParameters(id, N, E, C, insideProb, betweenProb, communityWeights, betweenWeights, weighType);
-            stats.setGroundTrue(g, groundTrue);
+            stats.setGroundTrue(g, groundTrue, weighType);
+            stats.setParameters(id,
+                    // N, E, C,
+                    insideProb, betweenProb, communityWeights, betweenWeights, weightMode);
 
             System.out.print("-- [groundTruth] --------------------\n");
 
@@ -147,7 +149,11 @@ public class CheckCavemanClustering2 {
 
             for (double threshold = 0.0; ; threshold += 0.02) {
 
-                t = transform.upperThresholdGraph(threshold);
+                if (weighType == WeightType.SIMILARITY)
+                    t = transform.lowerThresholdGraph(threshold);
+                else
+                    t = transform.upperThresholdGraph(threshold);
+
                 if (t.edgeSet().isEmpty())
                     break;
 
@@ -156,7 +162,7 @@ public class CheckCavemanClustering2 {
                 System.out.print("-- cluster\n" );
                 clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(
                         //new ParallelBMCColoring<>(t)
-                        new WeightedMCMCBColoring<>(t).weightType(weighType)
+                        new WeightedMCMCBColoring<>(t).weightMode(weightMode)
                 ).getClustering();
 
                 stats.addStats(threshold, t, clustering);
@@ -169,8 +175,6 @@ public class CheckCavemanClustering2 {
         Logger.configure();
 
         new File("generated/relaxcave2-stats.csv").delete();
-
-        ClusteringStatistics stats = new ClusteringStatistics();
 
         int id = 100;                                           // is used to save the graph in a file
 
@@ -185,7 +189,14 @@ public class CheckCavemanClustering2 {
         //
         double[][] weightsMeanList = new double[][]{ {.5, .3}, {.3, .5} };
         double[][] weightsSdevList = new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
-        WeightMode[] weightModeList = { WeightMode.MEAN, WeightMode.MIN, WeightMode.MAX };
+        // WeightType weighType = WeightType.SIMILARITY;
+        WeightMode[] weightModeList = {
+                WeightMode.RANDOM,
+                WeightMode.MIN, WeightMode.MAX,
+                // WeightMode.GREEDY_MIN, WeightMode.GREEDY_MAX
+        };
+
+        ClusteringStatistics stats = new ClusteringStatistics();
 
         for (int N : Nlist)
         for (int E : Elist)
@@ -200,9 +211,11 @@ public class CheckCavemanClustering2 {
                     betweenProb,
                     new NormalDistrib(weightsMean[0], weightsSdev[0]).minValue(0.001),
                     new NormalDistrib(weightsMean[1], weightsSdev[1]).minValue(0.001),
+                    weightsMean[0] > weightsMean[1]
+                            ? WeightType.SIMILARITY
+                            : WeightType.DISSIMILARITY,
                     weightModeList,
                     stats
             );
-
     }
 }

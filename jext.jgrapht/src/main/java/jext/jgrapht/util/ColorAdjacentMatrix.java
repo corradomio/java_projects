@@ -7,7 +7,7 @@ import jext.jgrapht.util.atomic.AtomicValue;
 
 public class ColorAdjacentMatrix {
 
-    public static class ColorWeight implements Comparable<ColorWeight> {
+    private static class ColorWeight implements Comparable<ColorWeight> {
         public int color;
         public float weight;
 
@@ -30,29 +30,29 @@ public class ColorAdjacentMatrix {
     private ColorWeight[] cw;
     private SlotFloat[][] weights;
     private int ncolors;
+    private WeightMode weightMode;
 
-    public ColorAdjacentMatrix(int ncolors, WeightMode type) {
+    public ColorAdjacentMatrix(int ncolors, WeightMode weightMode) {
 
-        //  []
-        //  [][]
-        //  [][][]
+        this.weightMode = weightMode;
         this.ncolors = ncolors;
-        weights = new SlotFloat[ncolors][];
+
+        this.weights = new SlotFloat[ncolors][];
         for (int i=0; i<ncolors; ++i) {
-            weights[i] = new SlotFloat[i + 1];
+            this.weights[i] = new SlotFloat[i + 1];
             for (int j=0; j<=i; ++j) {
                 // weights[i][j] = new AtomicFloat();
-                switch(type) {
-                    case MIN: weights[i][j] = new AtomicMin(); break;
-                    case MAX: weights[i][j] = new AtomicMax(); break;
-                    case MEAN: weights[i][j] = new AtomicMean(); break;
-                    default: weights[i][j] = new AtomicValue(); break;
+                switch(weightMode) {
+                    case MIN:  this.weights[i][j] = new AtomicMin(); break;
+                    case MAX:  this.weights[i][j] = new AtomicMax(); break;
+                    case MEAN: this.weights[i][j] = new AtomicMean(); break;
+                    default:   this.weights[i][j] = new AtomicValue(); break;
                 }
             }
         }
-        cw = new ColorWeight[ncolors];
+        this.cw = new ColorWeight[ncolors];
         for (int i=0; i<ncolors; ++i)
-            cw[i] = new ColorWeight();
+            this.cw[i] = new ColorWeight();
     }
 
     public int size() { return ncolors; }
@@ -78,17 +78,6 @@ public class ColorAdjacentMatrix {
         return at(i, j).get();
     }
 
-    // public ColorWeight[] getColors(int color, int numberColors, int[] usableColors) {
-    //     // int index=0;
-    //     // for(int j=0; j<ncolors; ++j) {
-    //     //     cw[j].color = j;
-    //     //     cw[j].weight = at(i, j).get();
-    //     // }
-    //     //
-    //     // Arrays.sort(cw, ColorWeight::compareTo);
-    //     // return cw;
-    // }
-
     public ColorAdjacentMatrix swap(ColorAdjacentMatrix cam) {
         ColorWeight[] cw = this.cw;
         SlotFloat[][] weights = this.weights;
@@ -106,17 +95,84 @@ public class ColorAdjacentMatrix {
     }
 
     public int randomColor(float r, int color, int numberColors, int[] usableColors) {
+        // compute the discrete distribution between 'usableColors'
         float total = 0;
-        for (int i=0; i<numberColors; ++i) {
-            total += at(color, usableColors[i]).get();
-        }
         float partial = 0;
-        float f = 1.f/(numberColors-1);
+        // float f = 1.f/(numberColors-1);
+
+        boolean isZero = false;
         for (int i=0; i<numberColors; ++i) {
-            partial += f*(1 - at(color, usableColors[i]).get()/total);
-            if (r <= partial)
-                return usableColors[i];
+            float value = at(color, usableColors[i]).get();
+            isZero = isZero || (value == 0);
+            total += value;
         }
+
+        if (isZero)
+            return usableColors[(int)(r*numberColors)];
+
+        switch (weightMode) {
+            case RANDOM:
+                return usableColors[(int)(r*numberColors)];
+            case MAX:
+                for (int i=0; i<numberColors; ++i) {
+                    partial += (at(color, usableColors[i]).get()/total);
+                    if (r <= partial)
+                        return usableColors[i];
+                }
+                break;
+            case MIN:
+                for (int i=0; i<numberColors; ++i) {
+                    partial += (1 - at(color, usableColors[i]).get()/total);
+                    if (r <= partial)
+                        return usableColors[i];
+                }
+                break;
+            // case GREEDY_MIN:
+            //     if (r >= f) {
+            //         selected = usableColors[0];
+            //         cweight  = at(color, usableColors[0]).get();
+            //         for (int i=0; i<numberColors; ++i) {
+            //             if (at(color, usableColors[i]).get() < cweight) {
+            //                 selected = usableColors[i];
+            //                 cweight  = at(color, usableColors[i]).get();
+            //             }
+            //         }
+            //         return selected;
+            //     }
+            //     break;
+            // case GREEDY_MAX:
+            //     if (r >= f) {
+            //         selected = usableColors[0];
+            //         cweight  = at(color, usableColors[0]).get();
+            //         for (int i=0; i<numberColors; ++i) {
+            //             if (at(color, usableColors[i]).get() > cweight) {
+            //                 selected = usableColors[i];
+            //                 cweight  = at(color, usableColors[i]).get();
+            //             }
+            //         }
+            //         return selected;
+            //     }
+            //     break;
+            // case GREEDY_MEAN:
+            //     if (r >= f) {
+            //         partial = 0;
+            //         for (int i=0; i<numberColors; ++i) {
+            //             partial += at(color, usableColors[i]).get();
+            //             if (2*partial >= total) {
+            //                 return usableColors[i];
+            //             }
+            //         }
+            //     }
+            //     break;
+            default:
+                for (int i=0; i<numberColors; ++i) {
+                    partial += (at(color, usableColors[i]).get()/total);
+                    if (r <= partial && partial < 1)
+                        return usableColors[i];
+                }
+                break;
+        }
+
         return usableColors[(int)(r*numberColors)];
     }
 }

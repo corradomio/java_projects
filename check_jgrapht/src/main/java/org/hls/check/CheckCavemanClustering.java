@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
+import jext.jgrapht.WeightType;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
@@ -110,7 +111,8 @@ public class CheckCavemanClustering extends JFrame {
             double insideProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightMode[] weighTypes,
+            WeightType weightType,
+            WeightMode[] weightModes,
             ClusteringStatistics disStats,
             ClusteringStatistics simStats
     )
@@ -141,13 +143,17 @@ public class CheckCavemanClustering extends JFrame {
 
         groundTrue = ggen.getClustering();
 
-        for(WeightMode weighType : weighTypes) {
+        for(WeightMode weightMode : weightModes) {
 
-            disStats.setParameters(id, N, E, C, betweenProb, insideProb, communityWeights, betweenWeights, weighType);
-            disStats.setGroundTrue(g, groundTrue);
+            disStats.setParameters(id,
+                    // N, E, C,
+                    betweenProb, insideProb, communityWeights, betweenWeights, weightMode);
+            disStats.setGroundTrue(g, groundTrue, weightType);
 
-            simStats.setParameters(id, N, E, C, betweenProb, insideProb, communityWeights, betweenWeights, weighType);
-            simStats.setGroundTrue(h, groundTrue);
+            simStats.setParameters(id,
+                    // N, E, C,
+                    betweenProb, insideProb, communityWeights, betweenWeights, weightMode);
+            simStats.setGroundTrue(h, groundTrue, weightType);
 
             System.out.print("-- [groundTruth] --------------------\n");
 
@@ -166,7 +172,7 @@ public class CheckCavemanClustering extends JFrame {
                 System.out.print("-- cluster\n" );
                 clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(
                         //new ParallelBMCColoring<>(t)
-                        new WeightedMCMCBColoring<>(t).weightType(weighType)
+                        new WeightedMCMCBColoring<>(t).weightMode(weightMode)
                 ).getClustering();
 
                 disStats.addStats(threshold, t, clustering);
@@ -198,7 +204,8 @@ public class CheckCavemanClustering extends JFrame {
 
         double[][] weightsMeanList = new double[][]{ {.5, .3}, {.3, .5} };
         double[][] weightsSdevList= new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
-        WeightMode[] weightModeList = { WeightMode.MEAN, WeightMode.MIN, WeightMode.MAX };
+        WeightType weightType = WeightType.DISSIMILARITY;
+        WeightMode[] weightModeList = { WeightMode.RANDOM, WeightMode.MEAN, WeightMode.MIN, WeightMode.MAX };
 
         for (int N : Nlist)
         for (int E : Elist)
@@ -210,6 +217,7 @@ public class CheckCavemanClustering extends JFrame {
             analyzeGraph(++id, N, E, C, betweenProb, insideProb,
                     new NormalDistrib(weightsMean[0], weightsSdev[0]).minValue(0.001),
                     new NormalDistrib(weightsMean[1], weightsSdev[1]).minValue(0.001),
+                    weightType,
                     weightModeList,
                     disStats, simStats);
 

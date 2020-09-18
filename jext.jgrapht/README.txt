@@ -17,10 +17,14 @@ Semantica delle metriche
         louvainModularity       -> sim
             it measures the density of links inside communities compared to links between communities.
             maximize ration between weights inside community/total weight
+
+
+    Note:   (euclidean) distance == dissimilarity
+
         dunnIndex               -> disim
             the distance between two data points is based on an Euclidean/Mathattan Distance.
             Two point are very similar if their distance is very small
-        daviesBouldinIndex      ->disim
+        daviesBouldinIndex      -> disim
 
         siluette                > sim
 

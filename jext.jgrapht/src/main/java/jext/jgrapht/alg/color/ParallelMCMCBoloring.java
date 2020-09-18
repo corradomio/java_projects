@@ -71,7 +71,7 @@ public class ParallelMCMCBoloring<V, E>
     /** % of non-dominant colors to remove in a single step (minimum 1 color)  */
     private double factorToRemove;
     /** Max graph degree */
-    int maxDegree;
+    protected int maxDegree;
 
     /** Caches to speedup usable colors in recoloring */
     protected int[] usableColors;
