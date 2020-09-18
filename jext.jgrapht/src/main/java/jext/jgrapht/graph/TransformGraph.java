@@ -48,7 +48,7 @@ public class TransformGraph<V, E> {
                 .filter(e -> graph.getEdgeWeight(e) < threshold)
                 .collect(Collectors.toSet());
 
-        return new AsSubgraph<>(graph, graph.vertexSet(), edgeSet);
+        return new AsSubgraph<>(graph, null, edgeSet);
     }
 
 
@@ -89,16 +89,6 @@ public class TransformGraph<V, E> {
      *
      */
     public Graph<V, E> invertWeights(double maxWeight) {
-        // search the maximum edge weight
-        // double maxWeight = graph.edgeSet()
-        //         .parallelStream()
-        //         .map(e -> graph.getEdgeWeight(e))
-        //         .max((o1, o2) -> {
-        //             double v1 = o1;
-        //             double v2 = o2;
-        //             return Double.compare(v1, v2);
-        //         }).orElseGet(() -> (double) 0)*factor;
-
         Graph<V, E> flipped = Graphs.newGraph(graph);
         graph.vertexSet().forEach(flipped::addVertex);
 
