@@ -1,5 +1,6 @@
 package jext.jgrapht.util;
 
+import jext.jgrapht.WeightType;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
@@ -25,6 +26,8 @@ public class ClusterWeights<V, E> {
     private Graph<V, E> graph;
     // graph clustering
     private ClusteringAlgorithm.Clustering<V> clustering;
+    // weight semantic
+    private WeightMode weightMode;
 
     // n of clusters
     private int k;
@@ -46,9 +49,10 @@ public class ClusterWeights<V, E> {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ClusterWeights(Graph<V, E> g, ClusteringAlgorithm.Clustering<V> clustering){
+    public ClusterWeights(Graph<V, E> g, ClusteringAlgorithm.Clustering<V> clustering, WeightType weightType){
         this.graph = g;
         this.clustering = clustering;
+        this.weightMode = weightMode;
         init();
     }
 

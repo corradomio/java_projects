@@ -11,6 +11,7 @@ import jext.jgrapht.util.WeightType;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.jgrapht.util.distrib.UnifomDistrib;
 import jext.logging.Logger;
+
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
