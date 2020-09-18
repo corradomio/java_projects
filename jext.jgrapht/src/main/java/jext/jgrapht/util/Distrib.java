@@ -6,5 +6,9 @@ public interface Distrib {
 
     Distrib random(Random random);
 
+    double mean();
+
+    double sdev();
+
     double nextValue();
 }

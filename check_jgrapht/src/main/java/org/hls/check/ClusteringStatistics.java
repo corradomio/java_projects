@@ -1,9 +1,10 @@
-package com.company;
+package org.hls.check;
 
 import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.util.ContingencyMatrix;
-import jext.jgrapht.util.WeightType;
+import jext.jgrapht.util.Distrib;
+import jext.jgrapht.util.WeightMode;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -23,11 +24,12 @@ public class ClusteringStatistics {
     private double emax;
 
     private int id;
+    private int N, E, C;
     private double betweenProb;
     private double insideProb;
-    private double communityWeightSdev;
-    private double betweenWeightSdev;
-    private WeightType weighType;
+    private Distrib communityWeights;
+    private Distrib betweenWeights;
+    private WeightMode weighType;
 
 
     public ClusteringStatistics() {
@@ -44,23 +46,33 @@ public class ClusteringStatistics {
 
     public void setParameters(
             int id,
-            double betweenProb,
+            int N,
+            int E,
+            int C,
             double insideProb,
-            double communityWeightSdev,
-            double betweenWeightSdev,
-            WeightType weighType)
+            double betweenProb,
+            Distrib communityWeights,
+            Distrib betweenWeights,
+            WeightMode weighType)
     {
         this.id = id;
-        this.betweenProb = betweenProb;
+        this.N = N;
+        this.E = E;
+        this.C = C;
         this.insideProb = insideProb;
-        this.communityWeightSdev = communityWeightSdev;
-        this.betweenWeightSdev = betweenWeightSdev;
+        this.betweenProb = betweenProb;
+        this.communityWeights = communityWeights;
+        this.betweenWeights = betweenWeights;
         this.weighType = weighType;
     }
 
     private List header = Arrays.asList(
-            "id",
-            "betweenProb", "insideProb", "communityWeightSdev", "betweenWeightSdev", "weighType",
+            "id", "N", "E", "C",
+            "insideProb",
+            "betweenProb",
+            "communityWeightsMean", "communityWeightsSdev",
+            "betweenWeightsMean", "betweenWeightsSdev",
+            "weighType",
             "threshold",
             "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
             "size", "components", "density", "graphWeight", "minWeight", "maxWeight", "meanWeight", "sdevWeight",
@@ -89,10 +101,13 @@ public class ClusteringStatistics {
             id,
 
             // configuration
-            betweenProb,
+            N, E, C,
             insideProb,
-            communityWeightSdev,
-            betweenWeightSdev,
+            betweenProb,
+            communityWeights.mean(),
+            communityWeights.sdev(),
+            betweenWeights.mean(),
+            betweenWeights.sdev(),
             weighType.toString(),
 
             // threshold

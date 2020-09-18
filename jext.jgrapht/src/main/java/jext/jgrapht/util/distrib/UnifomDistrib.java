@@ -3,7 +3,9 @@ package jext.jgrapht.util.distrib;
 import jext.jgrapht.util.Distrib;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+import java.lang.Math;
+import jext.math.Mathx;
+
 
 public class UnifomDistrib implements Distrib {
 
@@ -18,6 +20,16 @@ public class UnifomDistrib implements Distrib {
     public UnifomDistrib(double min, double max) {
         this.min = min;
         this.delta = max-min;
+    }
+
+    @Override
+    public double mean() {
+        return (min + delta)/2;
+    }
+
+    @Override
+    public double sdev() {
+        return Math.sqrt(Mathx.sq(delta)/12.);
     }
 
     public UnifomDistrib random(Random rnd) {

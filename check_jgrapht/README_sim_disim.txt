@@ -2,8 +2,9 @@ Caveman Graph
     10 cluster.
     
     intra   STESSO CLUSTER
-    inter   CLUSTER DIVERSI
-    
+    inter   TRA CLUSTERS
+
+
 similarita' -> [0,1]
     0: per nulla simili  (-> differenti)
     1: totalmente simili (uguali)
@@ -17,21 +18,23 @@ dissimilarita' -> [0,1]
 dissimilarita':  1 - similarita'
 
 
-Definizione standard di clustering: i pesi rappresentano la 'similarita'
+Definizione standard di clustering:
+    i pesi rappresentano la 'similarita'
 
-    MOLTI archi 'simili' intra cluster
-    POCHI archi 'simili' inter cluster
+    MOLTI archi 'simili' intra cluster   (STESSO CLUSTER)
+    POCHI archi 'simili' inter cluster   (TRA CLUSTERS)
 
     90% degli archi intra cluster   (STESSO CLUSTER)
     20% degli archi inter cluster   (TRA CLUSTERS) 
 
 Se usiamo la 'dissimilarita':
 
-    POCHI archi 'dissimili' intra cluster
-    MOLTI archi 'dissimili' inter cluster
+    POCHI archi 'dissimili' intra cluster   (STESSO CLUSTER)
+    MOLTI archi 'dissimili' inter cluster   (TRA CLUSTERS)
 
 
 -----------------------------------------------------
+
 Per poter generare un grafo usando una limitata quantita' di 
 memoria e potenza di calcolo, bisogna necessaramente usare
 la rappresentazione che usa meno oggetti.
@@ -84,4 +87,42 @@ Problema:
 
     Consideriamo il numero di archi mancanti:
     
-    cluster di n nodi ->  
+    cluster di n nodi ->
+
+
+-------------------------------------------------------
+
+Semantica delle metriche
+
+
+    https://en.wikipedia.org/wiki/Modularity_(networks)
+    https://en.wikipedia.org/wiki/Louvain_modularity
+    https://en.wikipedia.org/wiki/Dunn_index
+    https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
+    https://en.wikipedia.org/wiki/Silhouette_(clustering)
+
+    based on edge weights
+
+        modularity              -> sim
+        louvainModularity       -> sim
+            it measures the density of links inside communities compared to links between communities.
+            maximize ration between weights inside community/total weight
+        dunnIndex               -> disim
+            the distance between two data points is based on an Euclidean/Mathattan Distance.
+            Two point are very similar if their distance is very small
+        daviesBouldinIndex      ->disim
+
+    based on vertex counts
+
+        unbalancingIndex
+        purity
+        giniIndex
+        entropy
+        randIndex
+        adjustedRandIndex
+        fowlkesMallowsIndex
+        jaccardCoefficient
+        normalizedGamma
+
+
+

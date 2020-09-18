@@ -1,29 +1,55 @@
 package jext.jgrapht;
 
-import jext.jgrapht.util.ClusterWeights;
+import jext.jgrapht.weigts.ClusterWeights;
 import jext.jgrapht.util.ContingencyMatrix;
 import jext.jgrapht.util.Statistics;
-import jext.math.Mathx;
+import jext.jgrapht.weigts.ClusteringWeights;
+import jext.jgrapht.weigts.DissimilarityWeights;
+import jext.jgrapht.weigts.SimilarityWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
-import static java.lang.Math.sqrt;
 import static jext.math.Mathx.sq;
 import static jext.math.Mathx.sum;
 
 public class ClusteringMetrics<V, E> {
 
-    private final Graph<V, E> graph;
-    private final ClusteringAlgorithm.Clustering<V> clustering;
-    private ClusterWeights<V, E> clusterWeight;
+    private Graph<V, E> graph;
+    private ClusteringAlgorithm.Clustering<V> clustering;
+    private ClusteringWeights<V, E> clusterWeight;
+    private WeightType weightType = WeightType.SIMILARITY;
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
+    public ClusteringMetrics() {
+
+    }
+
     public ClusteringMetrics(Graph<V, E> graph, ClusteringAlgorithm.Clustering<V> clustering) {
+        this(graph, clustering, WeightType.SIMILARITY);
+    }
+
+    public ClusteringMetrics(Graph<V, E> graph, ClusteringAlgorithm.Clustering<V> clustering, WeightType weightType) {
         this.graph = graph;
         this.clustering = clustering;
+        this.weightType = weightType;
+    }
+
+    public ClusteringMetrics<V, E> setGraph(Graph<V, E> graph) {
+        this.graph = graph;
+        return this;
+    }
+
+    public ClusteringMetrics<V, E> setClustering(ClusteringAlgorithm.Clustering<V> clustering) {
+        this.clustering = clustering;
+        return this;
+    }
+
+    public ClusteringMetrics<V, E> setWeightType(WeightType weightType) {
+        this.weightType = weightType;
+        return this;
     }
 
     // ----------------------------------------------------------------------
@@ -33,7 +59,6 @@ public class ClusteringMetrics<V, E> {
     public int getNumberClusters() {
         return clustering.getNumberClusters();
     }
-
 
     // ----------------------------------------------------------------------
     //
@@ -62,11 +87,21 @@ public class ClusteringMetrics<V, E> {
     //
     // ----------------------------------------------------------------------
 
-    public ClusterWeights<V, E> getClusterWeights() {
+    public ClusteringWeights<V, E> getClusterWeights() {
         if (clusterWeight != null)
             return clusterWeight;
 
-        clusterWeight = new ClusterWeights<>(graph, clustering);
+        switch (weightType) {
+            case SIMILARITY:
+                clusterWeight = new SimilarityWeights<>(graph, clustering);
+                break;
+            case DISSIMILARITY:
+                clusterWeight = new DissimilarityWeights<>(graph, clustering);
+                break;
+            default:
+                clusterWeight = new ClusterWeights<>(graph, clustering);
+        }
+
         return clusterWeight;
     }
 

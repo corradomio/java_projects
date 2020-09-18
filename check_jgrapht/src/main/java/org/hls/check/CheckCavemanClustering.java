@@ -1,4 +1,4 @@
-package com.company;
+package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.alg.clustering.ColoringClustering;
@@ -7,7 +7,8 @@ import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.FileExporter;
 import jext.jgrapht.nio.clustering.ClusteringExporter;
-import jext.jgrapht.util.WeightType;
+import jext.jgrapht.util.Distrib;
+import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.jgrapht.util.distrib.UnifomDistrib;
 import jext.logging.Logger;
@@ -29,50 +30,12 @@ import java.util.Map;
 
 public class CheckCavemanClustering extends JFrame {
 
-    static RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> generateGraph(
-            int id,
-            int E,
-            double betweenProb,
-            double insideProb,
-            double communityWeightSdev,
-            double betweenWeightSdev
-    ) {
-        Graph<Integer, DefaultWeightedEdge> g = new SimpleGraph<>(
-                SupplierUtil.createIntegerSupplier(),
-                SupplierUtil.createDefaultWeightedEdgeSupplier(),
-                true
-        );
+    static void save(int id, RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg) {
 
-        // similarita' / dissimilarita'
-        // inter -> tra
-        // intra -> dentro
+        Graph<Integer, DefaultWeightedEdge> g = gg.getGraph();
 
-        int N = 1000;                           // order, n of vertices
-        // int E = 50000;                       // size,  n of edges
-        int C = 10;                             // n of communities
-        // double betweenProb = .2;             // between communities
-        // double insideProb  = .9;             // inside  communities
-        double communityWeightMean = 0.3;       // peso DENTRO il cluster   -> POCO dissimili
-        // double communityWeightSdev = 0.1;
-        double betweenWeightMean = 0.5;         // peso TRA cluster         -> TANTO dissimili
-        // double betweenWeightSdev = 0.1;
-
-        int meanSize = N/C;
-        int deltaSize = meanSize/10;
-
-        // p : betweenCommunities
-        // q : in community
-        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg
-                = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
-                N, E, C, betweenProb, insideProb)
-                .communitySizes(  new UnifomDistrib().centered(meanSize, deltaSize))
-                .communityWeights(new NormalDistrib(communityWeightMean, communityWeightSdev).minValue(0.01))
-                .betweenWeights(  new NormalDistrib(betweenWeightMean, betweenWeightSdev).minValue(0.01));
-
-        gg.generateGraph(g);
-
-        String clustName = String.format("generated/relaxcave-groundTruth-%d.json", id);
-        String graphName = String.format("generated/relaxcave-%d.json", id);
+        String clustName = String.format("generated/relaxcave2-groundTruth-%d.json", id);
+        String graphName = String.format("generated/relaxcave2-%d.json", id);
 
         // export clustering
         {
@@ -94,16 +57,43 @@ public class CheckCavemanClustering extends JFrame {
                     .exportGraph(g, new File(graphName));
         }
 
-        // Import
-        // {
-        //     DOTImporter<Integer, DefaultWeightedEdge> dotimp = new DOTImporter<>();
-        //     dotimp.addEdgeAttributeConsumer((e, a) -> {
-        //         System.out.printf("%s: %s", e, a);
-        //     });
-        //
-        //     new FileImporter<>(dotimp)
-        //             .importGraph(g, new File("relaxcave.dot"));
-        // }
+    }
+
+    static RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> generateGraph(
+            int id,
+            int N,
+            int E,
+            int C,
+            double betweenProb,
+            double insideProb,
+            Distrib communityWeights,
+            Distrib betweenWeights
+    ) {
+        Graph<Integer, DefaultWeightedEdge> g = new SimpleGraph<>(
+                SupplierUtil.createIntegerSupplier(),
+                SupplierUtil.createDefaultWeightedEdgeSupplier(),
+                true
+        );
+
+        // similarita' / dissimilarita'
+        // inter -> tra
+        // intra -> dentro
+
+        int meanSize = N/C;
+        int deltaSize = meanSize/10;
+
+        // p : betweenCommunities
+        // q : in community
+        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg
+                = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
+                N, E, C, betweenProb, insideProb)
+                .communitySizes(  new UnifomDistrib().centered(meanSize, deltaSize))
+                .communityWeights(communityWeights)
+                .betweenWeights(  betweenWeights);
+
+        gg.generateGraph(g);
+
+        save(id, gg);
 
         new GraphMetrics<>(g).getVertexStatistics().print();
         new GraphMetrics<>(g).getEdgeStatistics().print();
@@ -113,12 +103,14 @@ public class CheckCavemanClustering extends JFrame {
 
     static void analyzeGraph(
             int id,
+            int N,
             int E,
+            int C,
             double betweenProb,
             double insideProb,
-            double communityWeightSdev,
-            double betweenWeightSdev,
-            WeightType[] weighTypes,
+            Distrib communityWeights,
+            Distrib betweenWeights,
+            WeightMode[] weighTypes,
             ClusteringStatistics disStats,
             ClusteringStatistics simStats
     )
@@ -134,7 +126,7 @@ public class CheckCavemanClustering extends JFrame {
         ClusteringAlgorithm.Clustering<Integer> clustering;
 
         // generate the caveman graph
-        ggen = generateGraph(id, E, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev);
+        ggen = generateGraph(id, N, E, C, betweenProb, insideProb, communityWeights, betweenWeights);
 
         // select the graph
         g = ggen.getGraph();
@@ -149,12 +141,12 @@ public class CheckCavemanClustering extends JFrame {
 
         groundTrue = ggen.getClustering();
 
-        for(WeightType weighType : weighTypes) {
+        for(WeightMode weighType : weighTypes) {
 
-            disStats.setParameters(id, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev, weighType);
+            disStats.setParameters(id, N, E, C, betweenProb, insideProb, communityWeights, betweenWeights, weighType);
             disStats.setGroundTrue(g, groundTrue);
 
-            simStats.setParameters(id, betweenProb, insideProb, communityWeightSdev, betweenWeightSdev, weighType);
+            simStats.setParameters(id, N, E, C, betweenProb, insideProb, communityWeights, betweenWeights, weighType);
             simStats.setGroundTrue(h, groundTrue);
 
             System.out.print("-- [groundTruth] --------------------\n");
@@ -197,25 +189,28 @@ public class CheckCavemanClustering extends JFrame {
         ClusteringStatistics simStats = new ClusteringStatistics();
 
         int id = 100;
-        int[] EList = {10000, 50000, 100000};
+        int[] Nlist = {1000};
+        int[] Elist = {10000, 50000, 100000};
+        int[] Clist = {10};
 
-        double[] betweenProbList = new double[]{ .9 };          // external edges
         double[] insideProbList = new double[]{ .2, .02 };      // internal edges
-        // double[] betweenProbList = new double[]{ .2, .02 };
-        // double[] insideProbList = new double[]{ .9 };
+        double[] betweenProbList = new double[]{ .9 };          // external edges
 
-        // double[] communityWeightSdevList = new double[]{ .1 };
-        // double[] betweenWeightSdevList = new double []{ .1 };
+        double[][] weightsMeanList = new double[][]{ {.5, .3}, {.3, .5} };
         double[][] weightsSdevList= new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
-        WeightType[] weightTypeList = { WeightType.MEAN, WeightType.MIN, WeightType.MAX };
+        WeightMode[] weightModeList = { WeightMode.MEAN, WeightMode.MIN, WeightMode.MAX };
 
-        for (int E : EList)
+        for (int N : Nlist)
+        for (int E : Elist)
+        for (int C : Clist)
         for (double betweenProb : betweenProbList)
         for (double insideProb  : insideProbList)
-        // for (double communityWeightSdev:communityWeightSdevList)
-        // for (double betweenWeightSdev:betweenWeightSdevList)
+        for (double[] weightsMean : weightsMeanList)
         for (double[] weightsSdev : weightsSdevList)
-            analyzeGraph(++id, E, betweenProb, insideProb, weightsSdev[0], weightsSdev[1], weightTypeList,
+            analyzeGraph(++id, N, E, C, betweenProb, insideProb,
+                    new NormalDistrib(weightsMean[0], weightsSdev[0]).minValue(0.001),
+                    new NormalDistrib(weightsMean[1], weightsSdev[1]).minValue(0.001),
+                    weightModeList,
                     disStats, simStats);
 
         //stats.saveCsv("relaxcave-stats.csv");

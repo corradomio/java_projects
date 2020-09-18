@@ -59,8 +59,10 @@ public class TransformGraph<V, E> {
      */
     public Graph<V, E> complementGraph(long nEdges) {
         int n = graph.vertexSet().size();
+
         V[] vertices = (V[]) new Object[n];
         graph.vertexSet().toArray(vertices);
+
         Graph<V, E> complement = new GraphBuilder<>(graph).build();
         graph.vertexSet().forEach(complement::addVertex);
         while(complement.edgeSet().size() != nEdges) {

@@ -1,6 +1,6 @@
 package jext.jgrapht.util;
 
-public enum WeightType {
+public enum WeightMode {
     VALUE,
     MIN,
     MAX,

@@ -15,3 +15,4 @@ trovare parametri ideali per la clusterizzazione
 trovare un competitor sui dati sintetici.
 
 scalare a grafi di grandi dimensioni
+    sospendere alla prossima isse

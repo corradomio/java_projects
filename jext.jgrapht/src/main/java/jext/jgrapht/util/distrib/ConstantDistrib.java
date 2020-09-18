@@ -16,9 +16,21 @@ public class ConstantDistrib implements Distrib {
         this.p = p;
     }
 
+    @Override
     public ConstantDistrib random(Random rnd) {
         return this;
     }
+
+    @Override
+    public double mean() {
+        return p;
+    }
+
+    @Override
+    public double sdev() {
+        return 0;
+    }
+
 
     @Override
     public double nextValue() {

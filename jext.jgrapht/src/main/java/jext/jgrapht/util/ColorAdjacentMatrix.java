@@ -31,7 +31,7 @@ public class ColorAdjacentMatrix {
     private SlotFloat[][] weights;
     private int ncolors;
 
-    public ColorAdjacentMatrix(int ncolors, WeightType type) {
+    public ColorAdjacentMatrix(int ncolors, WeightMode type) {
 
         //  []
         //  [][]

@@ -1,2 +1,6 @@
-package jext.jgrapht;public class WeightSemantic {
+package jext.jgrapht;
+
+public enum WeightType {
+    SIMILARITY,
+    DISSIMILARITY
 }

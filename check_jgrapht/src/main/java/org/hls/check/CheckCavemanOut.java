@@ -1,4 +1,4 @@
-package com.company;
+package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;

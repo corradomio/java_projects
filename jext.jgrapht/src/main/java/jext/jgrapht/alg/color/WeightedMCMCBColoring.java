@@ -2,7 +2,7 @@ package jext.jgrapht.alg.color;
 
 import jext.jgrapht.util.ColorAdjacentMatrix;
 import jext.jgrapht.util.VertexInfo;
-import jext.jgrapht.util.WeightType;
+import jext.jgrapht.util.WeightMode;
 import org.jgrapht.Graph;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,14 +11,14 @@ public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
 
     private ColorAdjacentMatrix cam;
     private ColorAdjacentMatrix futureCam;
-    private WeightType type = WeightType.MEAN;
+    private WeightMode type = WeightMode.MEAN;
 
 
     public WeightedMCMCBColoring(Graph<V,E> graph) {
         super(graph);
     }
 
-    public WeightedMCMCBColoring<V, E> weightType(WeightType type) {
+    public WeightedMCMCBColoring<V, E> weightType(WeightMode type) {
         this.type = type;
         return this;
     }

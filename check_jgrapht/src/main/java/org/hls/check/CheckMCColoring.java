@@ -1,4 +1,4 @@
-package com.company;
+package org.hls.check;
 
 import jext.jgrapht.util.GraphDump;
 import jext.jgrapht.alg.color.ColoringTests;

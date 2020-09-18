@@ -3,7 +3,6 @@ package jext.jgrapht.util.distrib;
 import jext.jgrapht.util.Distrib;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class NormalDistrib implements Distrib {
 
@@ -22,6 +21,23 @@ public class NormalDistrib implements Distrib {
         this.standardDeviation = sdev;
     }
 
+    public NormalDistrib(double m, double sdev, double minValue) {
+        this.mean = m;
+        this.standardDeviation = sdev;
+        this.minValue = minValue;
+    }
+
+    @Override
+    public double mean() {
+        return mean;
+    }
+
+    @Override
+    public double sdev() {
+        return standardDeviation;
+    }
+
+    @Override
     public NormalDistrib random(Random rnd) {
         this.rnd = rnd;
         return this;
