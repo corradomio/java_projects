@@ -170,6 +170,12 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
     // Internal/external clusters count/weight
     // ----------------------------------------------------------------------
 
+    @Override
+    public int getGraphSize() {
+        return graph.edgeSet().size();
+    }
+
+    @Override
     public int getClustersCount(int ci, int cj) {
         if (ci == cj)
             return clusterCounts[ci][cj]/2;
@@ -177,21 +183,26 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
             return clusterCounts[ci][cj];
     }
 
+    @Override
     public int getInternalCount(int c) {
         return clusterCounts[c][c]/2;
     }
 
+    @Override
     public int getExternalCount(int c) {
-        int extCount = 0;
+        int ecount = 0;
         for (int cj=0; cj<k; ++cj)
             if (c != cj)
-                extCount += clusterCounts[c][cj];
-        return extCount;
+                ecount += clusterCounts[c][cj];
+        return ecount;
     }
 
+
+    // ----------------------------------------------------------------------
     //
-    //
-    //
+    // ----------------------------------------------------------------------
+
+    @Override
     public double getGraphWeight(WeightType weightType) {
         if (weightType == WeightType.DISSIMILARITY)
             return dgraphWeight;
@@ -199,33 +210,7 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
             return sgraphWeight;
     }
 
-    public double getClusteringWeight(WeightType weightType) {
-        double cweight = 0;
-        for(int ci=0; ci<k; ++ci)
-            for (int cj=ci; cj<k; ++cj)
-                cweight += getClustersWeight(ci, cj, weightType);
-        return cweight;
-    }
-
-    public double getInternalExternalWeight(WeightType weightType) {
-        double iweight = 0;
-        double eweight = 0;
-        for(int c=0; c<k; ++c) {
-            iweight += getInternalWeight(c, weightType);
-            eweight += getExternalWeight(c, weightType);
-        }
-        return iweight + eweight/2;
-    }
-
-    // ----------------------------------------------------------------------
-
-    private double[][] getClusterWeights(WeightType weightType) {
-        if (weightType == WeightType.DISSIMILARITY)
-            return dclusterWeights;
-        else
-            return sclusterWeights;
-    }
-
+    @Override
     public double getClustersWeight(int ci, int cj, WeightType weightType) {
         double[][] clusterWeights = getClusterWeights(weightType);
         if (ci == cj)
@@ -234,10 +219,13 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
             return clusterWeights[ci][cj];
     }
 
+    @Override
     public double getInternalWeight(int c, WeightType weightType) {
-        return getClustersWeight(c, c, weightType);
+        double[][] clusterWeights = getClusterWeights(weightType);
+        return clusterWeights[c][c]/2;
     }
 
+    @Override
     public double getExternalWeight(int c, WeightType weightType) {
         double[][] clusterWeights = getClusterWeights(weightType);
         double eweight = 0;
@@ -245,6 +233,13 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
             if (cj != c)
                 eweight += clusterWeights[c][cj];
         return eweight;
+    }
+
+    private double[][] getClusterWeights(WeightType weightType) {
+        if (weightType == WeightType.DISSIMILARITY)
+            return dclusterWeights;
+        else
+            return sclusterWeights;
     }
 
     // ----------------------------------------------------------------------

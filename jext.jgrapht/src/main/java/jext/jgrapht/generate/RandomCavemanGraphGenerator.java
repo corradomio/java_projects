@@ -37,7 +37,7 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     private Distrib betweenWeights;
     // if to select the community to update or to select
     // a random one
-    private boolean randomCommunity;
+    private boolean updateRandomly;
 
     // random generator used with the edges
     private Random rnd = new Random();
@@ -65,8 +65,9 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
      * @param insideProb probability of an edge to be connected into the community
      */
     public RandomCavemanGraphGenerator(
-            int order, int size,
-            int nCommunities,
+            int order,              // n vertices
+            int size,               // n edges
+            int nCommunities,       // n communities
             double betweenProb,
             double insideProb) {
         this.order = order;         // n vertices
@@ -74,6 +75,7 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
         this.n = nCommunities;      // n communities
         this.p = betweenProb;       // between communities
         this.q = insideProb;        // inside community
+
         this.communitySizes = new ConstantDistrib((0.+order)/nCommunities);
         this.betweenWeights = new ConstantDistrib(1);
         this.communityWeights = new ConstantDistrib(1);
@@ -99,18 +101,21 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
         return this;
     }
 
-
     /**
-     * If to select the community to update
+     * When the communities are create using a random generator, it is possible
+     * to crate not enough or too vertices.
+     * If there are not enough vertices, the smallest communities are expanded
+     * If there are too vertices, the largest communities are reduced.
+     * This parameter specify that the community to update is selected randomly
+     * @return itself
      */
-    public RandomCavemanGraphGenerator<V, E> randomCommunity(boolean useRandom) {
-        randomCommunity = useRandom;
+    public RandomCavemanGraphGenerator<V, E> updateRandomly(boolean useRandom) {
+        updateRandomly = useRandom;
         return this;
     }
 
-
     /**
-     * Weight distribution to use with community edges
+     * Weight distribution to use with edges inside communities
      * @param distrib distribution
      * @return itself
      */
@@ -134,6 +139,7 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
         this.graph = target;
 
         initAlgorithm();
+
         computeCommunitySizes();
         computeCommunityStarts();
 
@@ -211,7 +217,7 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     }
 
     private int findSmallest() {
-        if (randomCommunity)
+        if (updateRandomly)
             return rnd.nextInt(n);
 
         int selected = 0;
@@ -226,7 +232,7 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     }
 
     private int findLargest() {
-        if (randomCommunity)
+        if (updateRandomly)
             return rnd.nextInt(n);
 
         int selected = 0;

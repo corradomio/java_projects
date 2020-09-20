@@ -14,7 +14,7 @@ public class CheckCavemanGen {
 
     public static void main(String[] args) {
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen
-                = new RandomCavemanGraphGenerator<>(1000, 50000, 10, .02, .9);
+                = new RandomCavemanGraphGenerator<>(1_0000, 50_000, 10, .02, .9);
 
         Graph<Integer, DefaultWeightedEdge> g = new SimpleGraph<>(
                 SupplierUtil.createIntegerSupplier(),
@@ -28,13 +28,12 @@ public class CheckCavemanGen {
         g = ggen.getGraph();
         c = ggen.getClustering();
 
-        ClusteringMetrics<Integer, DefaultWeightedEdge> cm = new ClusteringMetrics<>(g, c);
+        ClusteringMetrics<Integer, DefaultWeightedEdge> cm =
+                new ClusteringMetrics<>(g, c)
+                // .setWeightType(WeightType.DISSIMILARITY)
+                ;
         ClusteringWeights<Integer, DefaultWeightedEdge> cw = cm.getClusterWeights();
 
-        System.out.println(cw.getGraphWeight(WeightType.SIMILARITY));
-        System.out.println(cw.getClusteringWeight(WeightType.SIMILARITY));
-        System.out.println(cw.getInternalExternalWeight(WeightType.SIMILARITY));
-
-
+        System.out.println(cw.getModularity());
     }
 }

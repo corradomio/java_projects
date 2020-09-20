@@ -4,6 +4,8 @@ import jext.jgrapht.WeightType;
 
 public interface ClusteringWeights<V, E> {
 
+    int getGraphSize();
+
     int getClustersCount(int ci, int cj);
 
     int getInternalCount(int c);
@@ -13,11 +15,6 @@ public interface ClusteringWeights<V, E> {
     // --
 
     double getGraphWeight(WeightType weightType);
-
-    double getClusteringWeight(WeightType weightType);  // for check
-
-    double getInternalExternalWeight(WeightType weightType);
-
 
     double getClustersWeight(int ci, int cj, WeightType weightType);
 
