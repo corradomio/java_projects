@@ -101,17 +101,6 @@ Semantica delle metriche
     https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
     https://en.wikipedia.org/wiki/Silhouette_(clustering)
 
-    based on edge weights
-
-        modularity              -> sim
-        louvainModularity       -> sim
-            it measures the density of links inside communities compared to links between communities.
-            maximize ration between weights inside community/total weight
-        dunnIndex               -> disim
-            the distance between two data points is based on an Euclidean/Mathattan Distance.
-            Two point are very similar if their distance is very small
-        daviesBouldinIndex      ->disim
-
     based on vertex counts
 
         unbalancingIndex
@@ -123,6 +112,17 @@ Semantica delle metriche
         fowlkesMallowsIndex
         jaccardCoefficient
         normalizedGamma
+
+    based on edge weights
+
+        modularity              -> sim
+        louvainModularity       -> sim
+            it measures the density of links inside communities compared to links between communities.
+            maximize ration between weights inside community/total weight
+        dunnIndex               -> disim
+            the distance between two data points is based on an Euclidean/Mathattan Distance.
+            Two point are very similar if their distance is very small
+        daviesBouldinIndex      ->disim
 
 
 

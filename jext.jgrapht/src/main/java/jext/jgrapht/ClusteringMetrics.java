@@ -1,16 +1,13 @@
 package jext.jgrapht;
 
-import jext.jgrapht.weights.ClusterWeights;
 import jext.jgrapht.util.ContingencyMatrix;
 import jext.jgrapht.util.Statistics;
+import jext.jgrapht.weights.ClusterWeights;
 import jext.jgrapht.weights.ClusteringWeights;
 import jext.jgrapht.weights.DissimilarityWeights;
 import jext.jgrapht.weights.SimilarityWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
-
-import static jext.math.Mathx.sq;
-import static jext.math.Mathx.sum;
 
 public class ClusteringMetrics<V, E> {
 
@@ -28,7 +25,7 @@ public class ClusteringMetrics<V, E> {
     }
 
     public ClusteringMetrics(Graph<V, E> graph, ClusteringAlgorithm.Clustering<V> clustering) {
-        this(graph, clustering, WeightType.SIMILARITY);
+        this(graph, clustering, WeightType.UNDEFINED);
     }
 
     public ClusteringMetrics(Graph<V, E> graph, ClusteringAlgorithm.Clustering<V> clustering, WeightType weightType) {
@@ -105,37 +102,6 @@ public class ClusteringMetrics<V, E> {
         return clusterWeight;
     }
 
-    // /**
-    //  * n: n vertices
-    //  * k: n clusters
-    //  * nj: n vertices cluster j
-    //  *
-    //  * 2020 - Analysis of a parallel MCMC algorithm for graph coloring with nearly uniform balancing
-    //  * eq (8)
-    //  */
-    // public double getUnbalancingIndex() {
-    //     int[] i = new int[1];
-    //     int k = getNumberClusters();
-    //     int[] nj = new int[k];
-    //
-    //     clustering.getClusters().forEach(cluster -> {
-    //         int csize = cluster.size();
-    //         nj[i[0]] = csize;
-    //         i[0] += 1;
-    //     });
-    //
-    //     double n = sum(nj);
-    //     double nk = n/k;
-    //
-    //     double ui = 0;
-    //     for (int j=0; j<k; ++j) {
-    //         ui += sq(nj[j] - nk);
-    //     }
-    //     ui = sqrt(ui/k);
-    //
-    //     return ui;
-    // }
-
     /**
      *
      * 2007 - Survey Graph Clustering, pag 44
@@ -144,16 +110,16 @@ public class ClusteringMetrics<V, E> {
         return getClusterWeights().getModularity();
     }
 
+    public double getLouvainModularity() {
+        return getClusterWeights().getLouvainModularity();
+    }
+
     public double getDaviesBouldinIndex() {
         return getClusterWeights().getDaviesBouldinIndex();
     }
 
     public double getDunnIndex() {
         return getClusterWeights().getDunnIndex();
-    }
-
-    public double getLouvainModularity() {
-        return getClusterWeights().getLouvainModularity();
     }
 
     // ----------------------------------------------------------------------

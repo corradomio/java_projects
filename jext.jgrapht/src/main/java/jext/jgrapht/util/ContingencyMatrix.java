@@ -55,7 +55,7 @@ public class ContingencyMatrix {
         }
 
         // sum by columns (ni)/rows (mj
-        for(int ci=0; ci<kt; ++ci) {
+        for(int ci = 0; ci < kt; ++ci) {
             for (int cj=0; cj<kd; ++cj) {
                 int nij = m[ci][cj];
                 ni[ci] += nij;

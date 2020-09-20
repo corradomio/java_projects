@@ -60,17 +60,23 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
      *
      * @param order n of vertices
      * @param size n of edges
-     * @param n n of communities
-     * @param p probability of an edge to be connected between communities
-     * @param q probability of an edge to be connected into the community
+     * @param nCommunities n of communities
+     * @param betweenProb probability of an edge to be connected between communities
+     * @param insideProb probability of an edge to be connected into the community
      */
-    public RandomCavemanGraphGenerator(int order, int size, int n, double p, double q) {
-        this.order = order; // n vertices
-        this.size = size;   // n edges
-        this.n = n;         // n communities
-        this.p = p;
-        this.q = q;
-        this.communitySizes = new ConstantDistrib((0.+order)/n);
+    public RandomCavemanGraphGenerator(
+            int order, int size,
+            int nCommunities,
+            double betweenProb,
+            double insideProb) {
+        this.order = order;         // n vertices
+        this.size = size;           // n edges
+        this.n = nCommunities;      // n communities
+        this.p = betweenProb;       // between communities
+        this.q = insideProb;        // inside community
+        this.communitySizes = new ConstantDistrib((0.+order)/nCommunities);
+        this.betweenWeights = new ConstantDistrib(1);
+        this.communityWeights = new ConstantDistrib(1);
     }
 
     /**

@@ -50,23 +50,15 @@ public abstract class Graphs extends org.jgrapht.Graphs {
 
     public static <V, E> Graph<V, E> newGraph(Graph<V, E> graph) {
         GraphType gtype = graph.getType();
-        Supplier<E> supplier = graph.getEdgeSupplier();
-        Graph<V, E> cloned = newGraph(gtype.isDirected(), gtype.isAllowingSelfLoops(), gtype.isAllowingMultipleEdges(),
+        return newGraph(
+                gtype.isDirected(),
+                gtype.isAllowingSelfLoops(),
+                gtype.isAllowingMultipleEdges(),
                 gtype.isWeighted(),
-                supplier);
-
-        return cloned;
+                graph.getEdgeSupplier());
     }
 
     public static <V, E> Set<V> predecessorSetOf(Graph<V, E> g, V vertex) {
-        // Set<V> predecessors = new HashSet<>();
-        // Set<? extends E> edges = g.incomingEdgesOf(vertex);
-        //
-        // for (E e : edges) {
-        //     predecessors.add(getOppositeVertex(g, e, vertex));
-        // }
-        //
-        // return predecessors;
         return g.incomingEdgesOf(vertex)
                 .stream()
                 .map(e -> getOppositeVertex(g, e, vertex))
@@ -74,14 +66,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     }
 
     public static <V, E> Set<V> successorSetOf(Graph<V, E> g, V vertex) {
-        // Set<V> successors = new HashSet<>();
-        // Set<? extends E> edges = g.outgoingEdgesOf(vertex);
-        //
-        // for (E e : edges) {
-        //     successors.add(getOppositeVertex(g, e, vertex));
-        // }
-        //
-        // return successors;
         return g.outgoingEdgesOf(vertex)
                 .stream()
                 .map(e -> getOppositeVertex(g, e, vertex))

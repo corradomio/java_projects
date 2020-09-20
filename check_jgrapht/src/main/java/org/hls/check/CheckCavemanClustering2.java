@@ -6,60 +6,51 @@ import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.graph.TransformGraph;
-import jext.jgrapht.nio.adjacent.FileExporter;
-import jext.jgrapht.nio.clustering.ClusteringExporter;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.jgrapht.util.distrib.UnifomDistrib;
 import jext.logging.Logger;
-
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.AttributeType;
-import org.jgrapht.nio.DefaultAttribute;
-import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.util.SupplierUtil;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CheckCavemanClustering2 {
 
-    static void save(int id, RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg) {
-
-        Graph<Integer, DefaultWeightedEdge> g = gg.getGraph();
-
-        String clustName = String.format("generated/relaxcave2-groundTruth-%d.json", id);
-        String graphName = String.format("generated/relaxcave2-%d.json", id);
-
-        // export clustering
-        {
-            ClusteringExporter<Integer> cexp = new ClusteringExporter<>();
-            cexp.exportClustering(gg.getClustering(), new File(clustName));
-        }
-
-        // export graph
-        {
-            DOTExporter<Integer, DefaultWeightedEdge> dotexp = new DOTExporter<Integer, DefaultWeightedEdge>();
-            dotexp.setEdgeAttributeProvider((e) -> {
-                Map<String, Attribute> atts = new HashMap<>();
-                double weight = g.getEdgeWeight(e);
-                atts.put("weight", new DefaultAttribute<>(weight, AttributeType.DOUBLE));
-                return atts;
-            });
-
-            new FileExporter<>(dotexp)
-                    .exportGraph(g, new File(graphName));
-        }
-    }
+    // static void save(int id, RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> gg) {
+    //
+    //     Graph<Integer, DefaultWeightedEdge> g = gg.getGraph();
+    //
+    //     String clustName = String.format("generated/relaxcave2-groundTruth-%d.json", id);
+    //     String graphName = String.format("generated/relaxcave2-%d.json", id);
+    //
+    //     // export clustering
+    //     {
+    //         ClusteringExporter<Integer> cexp = new ClusteringExporter<>();
+    //         cexp.exportClustering(gg.getClustering(), new File(clustName));
+    //     }
+    //
+    //     // export graph
+    //     {
+    //         DOTExporter<Integer, DefaultWeightedEdge> dotexp = new DOTExporter<Integer, DefaultWeightedEdge>();
+    //         dotexp.setEdgeAttributeProvider((e) -> {
+    //             Map<String, Attribute> atts = new HashMap<>();
+    //             double weight = g.getEdgeWeight(e);
+    //             atts.put("weight", new DefaultAttribute<>(weight, AttributeType.DOUBLE));
+    //             return atts;
+    //         });
+    //
+    //         new FileExporter<>(dotexp)
+    //                 .exportGraph(g, new File(graphName));
+    //     }
+    // }
 
     static RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> generateGraph(
-            int id,
+            // int id,
             int N,
             int E,
             int C,
@@ -119,7 +110,6 @@ public class CheckCavemanClustering2 {
     {
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen;
         Graph<Integer, DefaultWeightedEdge> g, t;
-        Graph<Integer, DefaultWeightedEdge> h, u;
 
         TransformGraph<Integer, DefaultWeightedEdge> transform;
 
@@ -127,7 +117,9 @@ public class CheckCavemanClustering2 {
         ClusteringAlgorithm.Clustering<Integer> clustering;
 
         // generate the caveman graph
-        ggen = generateGraph(id, N, E, C, insideProb, betweenProb, communityWeights, betweenWeights);
+        ggen = generateGraph(
+                // id,
+                N, E, C, insideProb, betweenProb, communityWeights, betweenWeights);
 
         // select the graph
         g = ggen.getGraph();
@@ -158,7 +150,6 @@ public class CheckCavemanClustering2 {
             }
 
             for (double threshold = init; ; threshold += delta) {
-
                 if (weighType == WeightType.SIMILARITY)
                     t = transform.lowerThresholdGraph(threshold);
                 else
@@ -184,7 +175,8 @@ public class CheckCavemanClustering2 {
     public static void main(String[] args) {
         Logger.configure();
 
-        new File("generated/relaxcave2-stats.csv").delete();
+        if(new File("generated/relaxcave2-stats.csv").delete())
+            System.out.println();
 
         int id = 100;                                           // is used to save the graph in a file
 

@@ -1,5 +1,6 @@
 package jext.jgrapht.weights;
 
+import jext.jgrapht.WeightType;
 import jext.jgrapht.util.LinAlg;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -129,7 +130,7 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         int ci = clusterOf(source);
         int cj = clusterOf(target);
 
-        clusterCounts [ci][cj]  += 1;
+        clusterCounts [ci][cj] += 1;
         clusterCounts [cj][ci] += 1;
 
         int vi = vidx.get(source);
@@ -173,7 +174,7 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         if (ci == cj)
             return clusterCounts[ci][cj]/2;
         else
-            return clusterCounts[ci][cj]/2;
+            return clusterCounts[ci][cj];
     }
 
     public int getInternalCount(int c) {
@@ -181,32 +182,69 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
     }
 
     public int getExternalCount(int c) {
-        int extCount = -clusterCounts[c][c];
+        int extCount = 0;
         for (int cj=0; cj<k; ++cj)
-            extCount += clusterCounts[c][cj];
-        return extCount/2;
+            if (c != cj)
+                extCount += clusterCounts[c][cj];
+        return extCount;
     }
 
     //
     //
     //
-
-    public double getClustersWeight(int ci, int cj) {
-        if (ci == cj)
-            return sclusterWeights[ci][cj]/2;
+    public double getGraphWeight(WeightType weightType) {
+        if (weightType == WeightType.DISSIMILARITY)
+            return dgraphWeight;
         else
-            return sclusterWeights[ci][cj];
+            return sgraphWeight;
     }
 
-    public double getInternalWeight(int c) {
-        return sclusterWeights[c][c]/2;
+    public double getClusteringWeight(WeightType weightType) {
+        double cweight = 0;
+        for(int ci=0; ci<k; ++ci)
+            for (int cj=ci; cj<k; ++cj)
+                cweight += getClustersWeight(ci, cj, weightType);
+        return cweight;
     }
 
-    public double getExternalWeight(int c) {
-        double eweight = -sclusterWeights[c][c];
-        for (int cj=0; cj<k; ++cj)
-            eweight += sclusterWeights[c][cj];
-        return eweight/2;
+    public double getInternalExternalWeight(WeightType weightType) {
+        double iweight = 0;
+        double eweight = 0;
+        for(int c=0; c<k; ++c) {
+            iweight += getInternalWeight(c, weightType);
+            eweight += getExternalWeight(c, weightType);
+        }
+        return iweight + eweight/2;
+    }
+
+    // ----------------------------------------------------------------------
+
+    private double[][] getClusterWeights(WeightType weightType) {
+        if (weightType == WeightType.DISSIMILARITY)
+            return dclusterWeights;
+        else
+            return sclusterWeights;
+    }
+
+    public double getClustersWeight(int ci, int cj, WeightType weightType) {
+        double[][] clusterWeights = getClusterWeights(weightType);
+        if (ci == cj)
+            return clusterWeights[ci][cj]/2;
+        else
+            return clusterWeights[ci][cj];
+    }
+
+    public double getInternalWeight(int c, WeightType weightType) {
+        return getClustersWeight(c, c, weightType);
+    }
+
+    public double getExternalWeight(int c, WeightType weightType) {
+        double[][] clusterWeights = getClusterWeights(weightType);
+        double eweight = 0;
+        for (int cj = 0; cj < k; ++cj)
+            if (cj != c)
+                eweight += clusterWeights[c][cj];
+        return eweight;
     }
 
     // ----------------------------------------------------------------------
@@ -222,11 +260,11 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
 
         // sum the internal weights
         for (int c=0; c<k; ++c)
-            modularity += getInternalWeight(c);
+            modularity += getInternalWeight(c, WeightType.SIMILARITY);
 
         // subtract the external weights
         for (int c=0; c<k; ++c)
-            modularity -= getExternalWeight(c);
+            modularity -= getExternalWeight(c, WeightType.SIMILARITY);
 
         return modularity;
     }

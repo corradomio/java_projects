@@ -1,5 +1,6 @@
 package jext.jgrapht.weights;
 
+import jext.jgrapht.WeightType;
 import jext.jgrapht.util.LinAlg;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -56,11 +57,11 @@ public class ClusterWeights<V, E> extends AbstractClusteringWeights<V, E> {
 
         // sum the internal weights
         for (int c=0; c<k; ++c)
-            modularity += getInternalWeight(c);
+            modularity += getInternalWeight(c, WeightType.UNDEFINED);
 
         // subtract the external weights
         for (int c=0; c<k; ++c)
-            modularity -= getExternalWeight(c);
+            modularity -= getExternalWeight(c, WeightType.UNDEFINED);
 
         return modularity;
     }
