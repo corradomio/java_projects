@@ -20,10 +20,8 @@ public class ClusteringStatistics {
 
     private List<List> statistics = new ArrayList<>();
 
-    private Graph<Integer, DefaultWeightedEdge> g;
+    private Graph<Integer, DefaultWeightedEdge> graph;
     private ClusteringAlgorithm.Clustering<Integer> groundTrue;
-
-    private GraphMetrics<Integer, DefaultWeightedEdge> gMetrics;
 
     private int id;
     // private int N, E, C;
@@ -42,9 +40,8 @@ public class ClusteringStatistics {
     public ClusteringStatistics setGroundTrue(
             Graph<Integer, DefaultWeightedEdge> g,
             ClusteringAlgorithm.Clustering<Integer> groundTrue) {
-        this.g = g;
+        this.graph = g;
         this.groundTrue = groundTrue;
-        this.gMetrics = new GraphMetrics<>(g);
         return this;
     }
 
@@ -108,7 +105,7 @@ public class ClusteringStatistics {
         GraphMetrics.VertexStatistics vs = gm.getVertexStatistics();
         GraphMetrics.EdgeStatistics   es = gm.getEdgeStatistics();
 
-        ClusteringMetrics<Integer, DefaultWeightedEdge> cm = new ClusteringMetrics<>(g, clustering);
+        ClusteringMetrics<Integer, DefaultWeightedEdge> cm = new ClusteringMetrics<>(graph, clustering);
         ClusteringMetrics.ClusterStatistics cs = cm.getStatistics();
 
         ContingencyMatrix cmt = cm.getContingencyMatrix(groundTrue);
@@ -134,8 +131,8 @@ public class ClusteringStatistics {
 
             // vertices
             vs.order,
-            (int)vs.min,
-            (int)vs.max,
+            vs.min,
+            vs.max,
             vs.mean,
             vs.standardDeviation,
 
