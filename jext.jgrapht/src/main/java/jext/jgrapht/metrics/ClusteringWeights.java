@@ -21,6 +21,10 @@ public interface ClusteringWeights{
 
     double getExternalWeight(int c);
 
+    double getInternalWeight();
+
+    double getExternalWeight();
+
     // -- similarity
 
     /*

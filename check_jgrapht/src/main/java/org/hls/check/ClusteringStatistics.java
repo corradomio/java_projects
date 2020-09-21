@@ -82,10 +82,14 @@ public class ClusteringStatistics {
             "weighMode",
             "weighType",
             "threshold",
-            "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
-            "size", "components", "density",
-            "graphWeight", "minWeight", "maxWeight", "meanWeight", "sdevWeight",
-            "numClusters", "minCsize", "maxCsize", "meanCsize", "sdevCsize",
+
+            "order", "minVertexDegree", "maxVertexDegree", "meanVertexDegree", "sdevVertexDegree",
+            "size",  "graphWeight", "minEdgeWeight", "maxEdgeWeight", "meanEdgeWeight", "sdevEdgeWeight",
+            "numComponents", "density",
+
+            "numClusters", "minClusterSize", "maxClusterSize", "meanClusterSize", "sdevClusterSize",
+
+            "insideWeight", "betweenWeight",
 
             "unbalancingIndex",
             "purity", "giniIndex", "entropy",
@@ -137,13 +141,15 @@ public class ClusteringStatistics {
 
             // edges
             es.size,
-            es.components,
-            es.density,
             es.count*es.mean,
             es.min,
             es.max,
             es.mean,
             es.standardDeviation,
+
+            // 
+            es.components,
+            es.density,
 
             // cluster properties
             cs.numClusters,
@@ -151,6 +157,10 @@ public class ClusteringStatistics {
             cs.max,
             cs.mean,
             cs.standardDeviation,
+
+            // clusters weights
+            cw.getInternalWeight(),
+            cw.getExternalWeight(),
 
             // contingency matrix
             cmt.getUnbalancingIndex(),

@@ -210,6 +210,22 @@ public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
         return eweight;
     }
 
+    @Override
+    public double getInternalWeight() {
+        double iweight = 0;
+        for (int c=0; c<k; ++c)
+            iweight += getInternalWeight(c);
+        return iweight;
+    }
+
+    @Override
+    public double getExternalWeight() {
+        double eweight = 0;
+        for (int c=0; c<k; ++c)
+            eweight += getExternalWeight(c);
+        return eweight;
+    }
+
     // ----------------------------------------------------------------------
     // Metrics similarity
     // ----------------------------------------------------------------------
