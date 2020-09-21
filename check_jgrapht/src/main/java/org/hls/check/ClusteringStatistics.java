@@ -69,7 +69,7 @@ public class ClusteringStatistics {
         this.weighType = weighType;
     }
 
-    private List header = Arrays.asList(
+    private List<String> header = Arrays.asList(
             "id",
             // "N", "E", "C",
             "insideProb",
