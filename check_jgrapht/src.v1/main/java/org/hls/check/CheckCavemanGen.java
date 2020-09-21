@@ -3,7 +3,7 @@ package org.hls.check;
 import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.WeightType;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
-import jext.jgrapht.weights.ClusteringWeights;
+import jext.jgrapht.metrics.ClusteringWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;

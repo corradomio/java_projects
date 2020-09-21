@@ -1,5 +1,6 @@
-package jext.jgrapht.util;
+package jext.jgrapht.metrics;
 
+import jext.jgrapht.util.LinAlg;
 import jext.util.SetUtils;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
@@ -13,7 +14,7 @@ import static jext.math.Mathx.sq;
 import static jext.math.Mathx.sqrt;
 import static jext.math.Mathx.sum;
 
-public class ContingencyMatrix<V> {
+public class ContingencyMatrixImpl<V> implements ContingencyMatrix {
 
     ClusteringAlgorithm.Clustering<V> truth;
 
@@ -29,7 +30,7 @@ public class ContingencyMatrix<V> {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ContingencyMatrix(ClusteringAlgorithm.Clustering<V> truth) {
+    public ContingencyMatrixImpl(ClusteringAlgorithm.Clustering<V> truth) {
         this.truth = truth;
     }
 
@@ -38,7 +39,7 @@ public class ContingencyMatrix<V> {
     //
     // ----------------------------------------------------------------------
 
-    public ContingencyMatrix<V> using(ClusteringAlgorithm.Clustering<V> other) {
+    public ContingencyMatrixImpl<V> using(ClusteringAlgorithm.Clustering<V> other) {
         this.k = other.getNumberClusters();
 
         this.kt = truth.getNumberClusters();
@@ -198,10 +199,6 @@ public class ContingencyMatrix<V> {
     }
 
     public double getJaccardIndex() {
-        return getJaccardCoefficient();
-    }
-
-    public double getJaccardCoefficient() {
         compute();
 
         double num = a;

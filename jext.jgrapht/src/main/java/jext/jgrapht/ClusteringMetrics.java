@@ -1,9 +1,10 @@
 package jext.jgrapht;
 
-import jext.jgrapht.util.ContingencyMatrix;
+import jext.jgrapht.metrics.ContingencyMatrix;
+import jext.jgrapht.metrics.ContingencyMatrixImpl;
 import jext.jgrapht.util.Statistics;
-import jext.jgrapht.weights.ClusteringWeightsImpl;
-import jext.jgrapht.weights.ClusteringWeights;
+import jext.jgrapht.metrics.ClusteringWeightsImpl;
+import jext.jgrapht.metrics.ClusteringWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
@@ -83,7 +84,7 @@ public class ClusteringMetrics<V, E> {
         // ContingencyMatrix cm = new ContingencyMatrix();
         // cm.init(clustering, other);
         // return cm;
-        return new ContingencyMatrix<>(clustering).using(other);
+        return new ContingencyMatrixImpl<>(clustering).using(other);
     }
 
     // ----------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package jext.jgrapht.weights;
+package jext.jgrapht.metrics;
 
 import jext.jgrapht.WeightType;
 import jext.jgrapht.util.LinAlg;

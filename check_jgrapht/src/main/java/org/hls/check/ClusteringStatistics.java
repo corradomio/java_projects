@@ -2,10 +2,11 @@ package org.hls.check;
 
 import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.GraphMetrics;
-import jext.jgrapht.util.ContingencyMatrix;
+import jext.jgrapht.WeightType;
+import jext.jgrapht.metrics.ContingencyMatrix;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
-import jext.jgrapht.weights.ClusteringWeights;
+import jext.jgrapht.metrics.ClusteringWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -31,6 +32,7 @@ public class ClusteringStatistics {
     private Distrib communityWeights;
     private Distrib betweenWeights;
     private WeightMode weighMode;
+    private WeightType weighType;
 
 
     public ClusteringStatistics() {
@@ -55,7 +57,8 @@ public class ClusteringStatistics {
             double betweenProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightMode weighMode)
+            WeightMode weighMode,
+            WeightType weighType)
     {
         this.id = id;
         // this.N = N;
@@ -66,6 +69,7 @@ public class ClusteringStatistics {
         this.communityWeights = communityWeights;
         this.betweenWeights = betweenWeights;
         this.weighMode = weighMode;
+        this.weighType = weighType;
     }
 
     private List header = Arrays.asList(
@@ -76,6 +80,7 @@ public class ClusteringStatistics {
             "communityWeightsMean", "communityWeightsSdev",
             "betweenWeightsMean", "betweenWeightsSdev",
             "weighMode",
+            "weighType",
             "threshold",
             "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
             "size", "components", "density",
@@ -84,7 +89,7 @@ public class ClusteringStatistics {
 
             "unbalancingIndex",
             "purity", "giniIndex", "entropy",
-            "randIndex", "adjustedRandIndex", "fowlkesMallowsIndex", "jaccardCoefficient",
+            "randIndex", "adjustedRandIndex", "fowlkesMallowsIndex", "jaccardIndex",
             "normalizedGamma",
 
             "modularity", "louvainModularity",
@@ -119,6 +124,7 @@ public class ClusteringStatistics {
             betweenWeights.mean(),
             betweenWeights.sdev(),
             weighMode.toString(),
+            weighType.toString(),
 
             // threshold
             threshold,
@@ -155,7 +161,7 @@ public class ClusteringStatistics {
             cmt.getRandIndex(),
             cmt.getAdjustedRandIndex(),
             cmt.getFowlkesMallowsIndex(),
-            cmt.getJaccardCoefficient(),
+            cmt.getJaccardIndex(),
             cmt.getNormalizedGamma(),
 
             // similarity

@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
+import jext.jgrapht.WeightType;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
@@ -111,6 +112,7 @@ public class CheckCavemanClustering extends JFrame {
             Distrib communityWeights,
             Distrib betweenWeights,
             WeightMode[] weightModes,
+            WeightType weightType,
             ClusteringStatistics disStats,
             ClusteringStatistics simStats
     )
@@ -145,12 +147,12 @@ public class CheckCavemanClustering extends JFrame {
 
             disStats.setParameters(id,
                     // N, E, C,
-                    betweenProb, insideProb, communityWeights, betweenWeights, weightMode);
+                    betweenProb, insideProb, communityWeights, betweenWeights, weightMode, weightType);
             disStats.setGroundTrue(g, groundTrue);
 
             simStats.setParameters(id,
                     // N, E, C,
-                    betweenProb, insideProb, communityWeights, betweenWeights, weightMode);
+                    betweenProb, insideProb, communityWeights, betweenWeights, weightMode, weightType);
             simStats.setGroundTrue(h, groundTrue);
 
             System.out.print("-- [groundTruth] --------------------\n");
@@ -215,8 +217,7 @@ public class CheckCavemanClustering extends JFrame {
                     new NormalDistrib(weightsMean[0], weightsSdev[0]).minValue(0.001),
                     new NormalDistrib(weightsMean[1], weightsSdev[1]).minValue(0.001),
                     weightModeList,
+                    weightsMean[0] > weightsMean[1] ? WeightType.SIMILARITY : WeightType.DISSIMILARITY,
                     disStats, simStats);
-
-        //stats.saveCsv("relaxcave-stats.csv");
     }
 }

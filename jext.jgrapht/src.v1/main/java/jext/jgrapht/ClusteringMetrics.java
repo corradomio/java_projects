@@ -2,10 +2,10 @@ package jext.jgrapht;
 
 import jext.jgrapht.util.ContingencyMatrix;
 import jext.jgrapht.util.Statistics;
-import jext.jgrapht.weights.ClusterWeights;
-import jext.jgrapht.weights.ClusteringWeights;
-import jext.jgrapht.weights.DissimilarityWeights;
-import jext.jgrapht.weights.SimilarityWeights;
+import jext.jgrapht.metrics.ClusterWeights;
+import jext.jgrapht.metrics.ClusteringWeights;
+import jext.jgrapht.metrics.DissimilarityWeights;
+import jext.jgrapht.metrics.SimilarityWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
