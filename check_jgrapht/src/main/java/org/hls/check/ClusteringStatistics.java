@@ -2,10 +2,10 @@ package org.hls.check;
 
 import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.GraphMetrics;
-import jext.jgrapht.WeightType;
 import jext.jgrapht.util.ContingencyMatrix;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
+import jext.jgrapht.weights.ClusteringWeights;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -21,10 +21,8 @@ public class ClusteringStatistics {
 
     private Graph<Integer, DefaultWeightedEdge> g;
     private ClusteringAlgorithm.Clustering<Integer> groundTrue;
-    private WeightType weighType;
 
     private GraphMetrics<Integer, DefaultWeightedEdge> gMetrics;
-    private double emax;
 
     private int id;
     // private int N, E, C;
@@ -41,13 +39,10 @@ public class ClusteringStatistics {
 
     public ClusteringStatistics setGroundTrue(
             Graph<Integer, DefaultWeightedEdge> g,
-            ClusteringAlgorithm.Clustering<Integer> groundTrue,
-            WeightType weighType) {
+            ClusteringAlgorithm.Clustering<Integer> groundTrue) {
         this.g = g;
         this.groundTrue = groundTrue;
         this.gMetrics = new GraphMetrics<>(g);
-        // this.emax = gMetrics.getEdgeStatistics().max;
-        this.weighType = weighType;
         return this;
     }
 
@@ -80,7 +75,6 @@ public class ClusteringStatistics {
             "betweenProb",
             "communityWeightsMean", "communityWeightsSdev",
             "betweenWeightsMean", "betweenWeightsSdev",
-            "weighType",
             "weighMode",
             "threshold",
             "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
@@ -110,6 +104,7 @@ public class ClusteringStatistics {
         ClusteringMetrics.ClusterStatistics cs = cm.getStatistics();
 
         ContingencyMatrix cmt = cm.getContingencyMatrix(groundTrue);
+        ClusteringWeights cw  = cm.getClusterWeights();
 
         List<?> stats = Arrays.asList(
             // id
@@ -123,7 +118,6 @@ public class ClusteringStatistics {
             communityWeights.sdev(),
             betweenWeights.mean(),
             betweenWeights.sdev(),
-            weighType.toString(),
             weighMode.toString(),
 
             // threshold
@@ -165,12 +159,12 @@ public class ClusteringStatistics {
             cmt.getNormalizedGamma(),
 
             // similarity
-            cm.getModularity(),
-            cm.getLouvainModularity(),
+            cw.getModularity(),
+            cw.getLouvainModularity(),
 
             // dissimilarity == distance
-            cm.getDunnIndex(),
-            cm.getDaviesBouldinIndex()
+            cw.getDunnIndex(),
+            cw.getDaviesBouldinIndex()
         );
 
         statistics.add(stats);
@@ -178,6 +172,8 @@ public class ClusteringStatistics {
 
 
     public void saveCsv(String filepath) {
+
+        int nStats = statistics.size();
 
         try(FileWriter w = new FileWriter(filepath)) {
             w.write(toString(header));

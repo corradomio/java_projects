@@ -1,7 +1,6 @@
 package org.hls.check;
 
 import jext.jgrapht.ClusteringMetrics;
-import jext.jgrapht.WeightType;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.weights.ClusteringWeights;
 import org.jgrapht.Graph;
@@ -14,7 +13,12 @@ public class CheckCavemanGen {
 
     public static void main(String[] args) {
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen
-                = new RandomCavemanGraphGenerator<>(1_0000, 50_000, 10, .02, .9);
+                = new RandomCavemanGraphGenerator<>(
+                1_0000,
+                50_000,
+                10,
+                .02,
+                .9);
 
         Graph<Integer, DefaultWeightedEdge> g = new SimpleGraph<>(
                 SupplierUtil.createIntegerSupplier(),
@@ -30,10 +34,12 @@ public class CheckCavemanGen {
 
         ClusteringMetrics<Integer, DefaultWeightedEdge> cm =
                 new ClusteringMetrics<>(g, c)
-                // .setWeightType(WeightType.DISSIMILARITY)
                 ;
-        ClusteringWeights<Integer, DefaultWeightedEdge> cw = cm.getClusterWeights();
+        ClusteringWeights cw = cm.getClusterWeights();
 
         System.out.println(cw.getModularity());
+        System.out.println(cw.getLouvainModularity());
+        System.out.println(cw.getDunnIndex());
+        System.out.println(cw.getDaviesBouldinIndex());
     }
 }

@@ -1,7 +1,6 @@
 package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
-import jext.jgrapht.WeightType;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
@@ -103,7 +102,7 @@ public class CheckCavemanClustering2 {
             double betweenProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightType weighType,
+            boolean fromTop,
             WeightMode[] weightModes,
             ClusteringStatistics stats
     )
@@ -130,7 +129,7 @@ public class CheckCavemanClustering2 {
 
         for(WeightMode weightMode : weightModes) {
 
-            stats.setGroundTrue(g, groundTrue, weighType);
+            stats.setGroundTrue(g, groundTrue);
             stats.setParameters(id,
                     // N, E, C,
                     insideProb, betweenProb, communityWeights, betweenWeights, weightMode);
@@ -140,7 +139,7 @@ public class CheckCavemanClustering2 {
             stats.addStats(0., g, groundTrue);
 
             double init, delta;
-            if (weighType == WeightType.SIMILARITY){
+            if (fromTop){
                 init = transform.getMaxWeight()*1.01;
                 delta = -0.02;
             }
@@ -150,7 +149,7 @@ public class CheckCavemanClustering2 {
             }
 
             for (double threshold = init; ; threshold += delta) {
-                if (weighType == WeightType.SIMILARITY)
+                if (fromTop)
                     t = transform.lowerThresholdGraph(threshold);
                 else
                     t = transform.upperThresholdGraph(threshold);
@@ -191,10 +190,8 @@ public class CheckCavemanClustering2 {
         //
         double[][] weightsMeanList = new double[][]{ {.5, .3}, {.3, .5} };
         double[][] weightsSdevList = new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
-        // WeightType weighType = WeightType.SIMILARITY;
         WeightMode[] weightModeList = {
-                WeightMode.RANDOM,
-                WeightMode.MIN, WeightMode.MAX,
+                WeightMode.RANDOM, WeightMode.MIN, WeightMode.MAX, WeightMode.MEAN
                 // WeightMode.GREEDY_MIN, WeightMode.GREEDY_MAX
         };
 
@@ -213,9 +210,7 @@ public class CheckCavemanClustering2 {
                     betweenProb,
                     new NormalDistrib(weightsMean[0], weightsSdev[0]).minValue(0.001),
                     new NormalDistrib(weightsMean[1], weightsSdev[1]).minValue(0.001),
-                    weightsMean[0] > weightsMean[1]
-                            ? WeightType.SIMILARITY
-                            : WeightType.DISSIMILARITY,
+                    weightsMean[0] > weightsMean[1],
                     weightModeList,
                     stats
             );

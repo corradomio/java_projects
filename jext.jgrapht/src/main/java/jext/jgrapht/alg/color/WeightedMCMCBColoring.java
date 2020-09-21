@@ -11,7 +11,7 @@ public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
 
     private ColorAdjacentMatrix cam;
     private ColorAdjacentMatrix futureCam;
-    private WeightMode mode = WeightMode.MEAN;
+    private WeightMode mode = WeightMode.RANDOM;
 
     public WeightedMCMCBColoring(Graph<V,E> graph) {
         super(graph);
@@ -38,6 +38,7 @@ public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
         vi.einfos.forEach(ei -> {
             futureCam.accumulate(vi.color, ei.ui.color, ei.weight);
         });
+
         super.analyzeVertex(vi, isdominant);
     }
 

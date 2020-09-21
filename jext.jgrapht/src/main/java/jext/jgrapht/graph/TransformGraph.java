@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class TransformGraph<V, E> {
 
-    private Random rnd = new Random();
+    // private Random rnd = new Random();
     private Graph<V, E> graph;
 
     public TransformGraph(Graph<V, E> graph) {
@@ -52,40 +52,34 @@ public class TransformGraph<V, E> {
     }
 
 
-    /**
-     * Random complement graph
-     * @param nEdges n of edges to generate
-     * @return a complement graph than original graph
-     */
-    public Graph<V, E> complementGraph(long nEdges) {
-        int n = graph.vertexSet().size();
-
-        V[] vertices = (V[]) new Object[n];
-        graph.vertexSet().toArray(vertices);
-
-        Graph<V, E> complement = new GraphBuilder<>(graph).build();
-        graph.vertexSet().forEach(complement::addVertex);
-        while(complement.edgeSet().size() != nEdges) {
-            V source = vertices[rnd.nextInt(n)];
-            V target = vertices[rnd.nextInt(n)];
-            if (!graph.containsEdge(source, target))
-                complement.addEdge(source, target);
-        }
-        return complement;
-    }
+    // /**
+    //  * Random complement graph
+    //  * @param nEdges n of edges to generate
+    //  * @return a complement graph than original graph
+    //  */
+    // public Graph<V, E> complementGraph(long nEdges) {
+    //     int n = graph.vertexSet().size();
+    //
+    //     V[] vertices = (V[]) new Object[n];
+    //     graph.vertexSet().toArray(vertices);
+    //
+    //     Graph<V, E> complement = new GraphBuilder<>(graph).build();
+    //     graph.vertexSet().forEach(complement::addVertex);
+    //     while(complement.edgeSet().size() != nEdges) {
+    //         V source = vertices[rnd.nextInt(n)];
+    //         V target = vertices[rnd.nextInt(n)];
+    //         if (!graph.containsEdge(source, target))
+    //             complement.addEdge(source, target);
+    //     }
+    //     return complement;
+    // }
 
 
     /**
      * Create a new graph with same vertices and edges but with the
      * edge weights computed as:
      *
-     *      factor*maxWeight - edgeWeight
-     *
-     * Note: with factor=1, the edges with weight = maxWeight will be
-     * converted in an edge with weight = 0. It is better to use values
-     * as
-     *
-     *      1 + eps   with eps > 0
+     *      maxWeight - edgeWeight
      *
      */
     public Graph<V, E> invertWeights(double maxWeight) {
@@ -108,11 +102,8 @@ public class TransformGraph<V, E> {
         return graph.edgeSet()
                 .parallelStream()
                 .map(e -> graph.getEdgeWeight(e))
-                .max((o1, o2) -> {
-                    double v1 = o1;
-                    double v2 = o2;
-                    return Double.compare(v1, v2);
-                }).orElseGet(() -> (double) 0);
+                .max(Double::compare)
+                .orElseGet(() -> (double) 0);
     }
 
 }

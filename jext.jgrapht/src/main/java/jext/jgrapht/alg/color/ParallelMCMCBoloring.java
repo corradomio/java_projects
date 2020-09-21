@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
  * @param <V>
  * @param <E>
  */
-public class ParallelMCMCBoloring<V, E>
-        implements VertexColoringAlgorithm<V>
+public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
 {
     private final Logger logger = Logger.getLogger(getClass());
 
@@ -329,8 +328,6 @@ public class ParallelMCMCBoloring<V, E>
             // assign the new color to a conflict node
             vi.color = this.selectColor(vi);
             // broadcast to the neighborhoods that this node is changed
-            // vi.ninfos.forEach(ni -> ni.changed = true);
-            // vi.changed = true;
         });
     }
 
@@ -383,15 +380,6 @@ public class ParallelMCMCBoloring<V, E>
 
         // create the list of vertices with conflicts
         vinfos.parallelStream()
-                // .peek(vi -> {
-                //     if (vi.ncolors.cardinality() == isdominant)
-                //         futureDominants.set(vi.color);
-                // })
-                // .filter(vi -> vi.ncolors.get(vi.color))
-                // .forEach(vi -> {
-                //     conflictColors.set(vi.color);
-                //     conflicts.add(vi);
-                // });
                 .forEach(vi -> this.analyzeVertex(vi, isdominant));
 
         return conflicts.size();
@@ -407,31 +395,6 @@ public class ParallelMCMCBoloring<V, E>
         }
     }
 
-    // private void checkDominantColors() {
-    //     int isdominant = availableColors.cardinality() - 1;
-    //     // current number of dominant colors
-    //     int ndominants = dominantColors.cardinality();
-    //
-    //     SharedBitSet dominantColors = this.dominantColors;
-    //
-    //     // scan to search for new dominant colors
-    //     vinfos.parallelStream()
-    //             .forEach(vi -> {
-    //                 // save the current VALID color for rollback operations
-    //                 vi.saved = vi.color;
-    //                 // check if the color is dominant (in PARALLEL)
-    //                 // with a readwrite lock, to read is FASTER than to write
-    //                 if (vi.ncolors.cardinality() == isdominant && !dominantColors.get(vi.color))
-    //                     dominantColors.set(vi.color);
-    //             });
-    //
-    //     // if new dominant colors are found ...
-    //     if (dominantColors.cardinality() != ndominants)
-    //         logger.debugf("Found %d/%d dominant colors",
-    //                 dominantColors.cardinality(),
-    //                 availableColors.cardinality());
-    // }
-
     private void rollbackColors() {
         long conflicts = this.conflicts.size();
         int ccolors = conflictColors.cardinality();
@@ -441,8 +404,7 @@ public class ParallelMCMCBoloring<V, E>
         vinfos.parallelStream().forEach(vi -> vi.color = vi.saved);
 
         // reduce the number of colors to remove
-        // factorToRemove *= 0.5;
-        factorToRemove *= reductionFactor; //(1. - ((float)ccolors)/numberColors);
+        factorToRemove *= reductionFactor;
     }
 
     // ----------------------------------------------------------------------
@@ -450,8 +412,6 @@ public class ParallelMCMCBoloring<V, E>
     private boolean selectUsableColors() {
         // select the list of usable colors as a little integer vector
         // this speedup the generation of a new "available" random color
-        // int numberColors = availableColors.cardinality() - removedColors.cardinality();
-        // int[] usableColors = new int[numberColors];
         numberColors = availableColors.cardinality() - removingColors.cardinality();
         int index = 0;
 
@@ -499,8 +459,6 @@ public class ParallelMCMCBoloring<V, E>
                 .filter(vi -> removingColors.get(vi.color))
                 .forEach(vi -> {
                     vi.color = usableColors[ThreadLocalRandom.current().nextInt(numberColors)];
-                    // vi.ninfos.forEach(ni -> ni.changed = true);
-                    // vi.changed = true;
                 });
     }
 
@@ -523,7 +481,6 @@ public class ParallelMCMCBoloring<V, E>
     private void packColors() {
         // pack the colors in the range [0...#dominantColors-1]
         int maxColor = dominantColors.maxSetBit();
-        //int[] usableColors = new int[maxColor+1];
 
         int index = 0;
         for (int i=0; i <= maxColor; ++i) {
@@ -555,19 +512,5 @@ public class ParallelMCMCBoloring<V, E>
     private int countColors() {
         return availableColors.cardinality();
     }
-
-    // private void checkColors() {
-    //     BitSet availableColors = new BitSet();
-    //     availableColors.or(this.availableColors);
-    //     availableColors.andNot(this.removedColors);
-    //
-    //     long invalidColors = vinfos
-    //             .parallelStream()
-    //             .filter(vi -> !availableColors.get(vi.color) )
-    //             .count();
-    //
-    //     if (invalidColors > 0)
-    //         logger.errorf("Found %d nnodes with invalid colors", invalidColors);
-    // }
 
 }

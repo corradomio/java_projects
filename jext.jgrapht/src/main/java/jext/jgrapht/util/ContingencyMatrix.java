@@ -13,7 +13,9 @@ import static jext.math.Mathx.sq;
 import static jext.math.Mathx.sqrt;
 import static jext.math.Mathx.sum;
 
-public class ContingencyMatrix {
+public class ContingencyMatrix<V> {
+
+    ClusteringAlgorithm.Clustering<V> truth;
 
     private int k;
     private int kd;
@@ -27,13 +29,16 @@ public class ContingencyMatrix {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ContingencyMatrix() { }
+    public ContingencyMatrix(ClusteringAlgorithm.Clustering<V> truth) {
+        this.truth = truth;
+    }
+
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
-    public <V> ContingencyMatrix init(ClusteringAlgorithm.Clustering<V> truth, ClusteringAlgorithm.Clustering<V> other) {
+    public ContingencyMatrix<V> using(ClusteringAlgorithm.Clustering<V> other) {
         this.k = other.getNumberClusters();
 
         this.kt = truth.getNumberClusters();
@@ -67,13 +72,13 @@ public class ContingencyMatrix {
         return this;
     }
 
-    private <V> Set<V> verticesOf(ClusteringAlgorithm.Clustering<V> clustering) {
+    private Set<V> verticesOf(ClusteringAlgorithm.Clustering<V> clustering) {
         Set<V> vertices = new HashSet<>();
         clustering.getClusters().forEach(vertices::addAll);
         return vertices;
     }
 
-    private <V> int clusterOf(V v, ClusteringAlgorithm.Clustering<V> clustering) {
+    private int clusterOf(V v, ClusteringAlgorithm.Clustering<V> clustering) {
         int k = clustering.getNumberClusters();
         List<Set<V>> clusters = clustering.getClusters();
         for (int i=0; i<k; ++i)
@@ -282,20 +287,24 @@ public class ContingencyMatrix {
 
     // ----------------------------------------------------------------------
 
-    private boolean done;
+    private double n2;          // n^2
     private double nij1;        // nij(nij-1)
     private double nij2;        // nij^2
     private double ni2;         // ni^2
     private double mj2;         // mj^2
     private double a,b,c,d;
+    private boolean done;
 
     private void compute() {
-        if (done) return;
-        done = true;
+        if (done)
+            return;
+        else
+            done = true;
 
-        double n2 = sq(n);
+        // n^2
+        n2 = sq(n);
 
-        // nij(nij-1), nij^2
+        // SUM nij(nij-1), SUM nij^2
         nij1 = 0;
         nij2 = 0;
         for (int i=0; i<kt; ++i)
@@ -305,16 +314,17 @@ public class ContingencyMatrix {
                 nij2 += sq(nij);
             }
 
-        // ni^2
+        // SUM ni^2
         ni2 = 0;
         for (int i=0; i<kt; ++i)
             ni2 += sq(ni[i]);
 
-        // mj^2
+        // SUM mj^2
         mj2 = 0;
         for (int j=0; j<kd; ++j)
             mj2 += sq(mj[j]);
 
+        // coefficients
         a = nij1/2;
         b = (mj2 - nij2)/2;
         c = (ni2 - nij2)/2;

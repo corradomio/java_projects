@@ -1,7 +1,6 @@
 package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
-import jext.jgrapht.WeightType;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
@@ -111,7 +110,6 @@ public class CheckCavemanClustering extends JFrame {
             double insideProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightType weightType,
             WeightMode[] weightModes,
             ClusteringStatistics disStats,
             ClusteringStatistics simStats
@@ -148,12 +146,12 @@ public class CheckCavemanClustering extends JFrame {
             disStats.setParameters(id,
                     // N, E, C,
                     betweenProb, insideProb, communityWeights, betweenWeights, weightMode);
-            disStats.setGroundTrue(g, groundTrue, weightType);
+            disStats.setGroundTrue(g, groundTrue);
 
             simStats.setParameters(id,
                     // N, E, C,
                     betweenProb, insideProb, communityWeights, betweenWeights, weightMode);
-            simStats.setGroundTrue(h, groundTrue, weightType);
+            simStats.setGroundTrue(h, groundTrue);
 
             System.out.print("-- [groundTruth] --------------------\n");
 
@@ -204,8 +202,7 @@ public class CheckCavemanClustering extends JFrame {
 
         double[][] weightsMeanList = new double[][]{ {.5, .3}, {.3, .5} };
         double[][] weightsSdevList= new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
-        WeightType weightType = WeightType.DISSIMILARITY;
-        WeightMode[] weightModeList = { WeightMode.RANDOM, WeightMode.MEAN, WeightMode.MIN, WeightMode.MAX };
+        WeightMode[] weightModeList = { WeightMode.RANDOM, WeightMode.MIN, WeightMode.MAX };
 
         for (int N : Nlist)
         for (int E : Elist)
@@ -217,7 +214,6 @@ public class CheckCavemanClustering extends JFrame {
             analyzeGraph(++id, N, E, C, betweenProb, insideProb,
                     new NormalDistrib(weightsMean[0], weightsSdev[0]).minValue(0.001),
                     new NormalDistrib(weightsMean[1], weightsSdev[1]).minValue(0.001),
-                    weightType,
                     weightModeList,
                     disStats, simStats);
 

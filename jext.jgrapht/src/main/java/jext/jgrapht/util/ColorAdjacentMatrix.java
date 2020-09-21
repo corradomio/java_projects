@@ -98,7 +98,8 @@ public class ColorAdjacentMatrix {
         // compute the discrete distribution between 'usableColors'
         float total = 0;
         float partial = 0;
-        // float f = 1.f/(numberColors-1);
+        // used to invert the propabilities
+        float f = 1.f/(numberColors-1);
 
         boolean isZero = false;
         for (int i=0; i<numberColors; ++i) {
@@ -121,49 +122,15 @@ public class ColorAdjacentMatrix {
                 }
                 break;
             case MIN:
+                // REMEMBER: inverting the probabilities it is necessary
+                // to divide by (n-1). This is 'f'
                 for (int i=0; i<numberColors; ++i) {
-                    partial += (1 - at(color, usableColors[i]).get()/total);
+                    partial += f*(1 - at(color, usableColors[i]).get()/total);
                     if (r <= partial)
                         return usableColors[i];
                 }
                 break;
-            // case GREEDY_MIN:
-            //     if (r >= f) {
-            //         selected = usableColors[0];
-            //         cweight  = at(color, usableColors[0]).get();
-            //         for (int i=0; i<numberColors; ++i) {
-            //             if (at(color, usableColors[i]).get() < cweight) {
-            //                 selected = usableColors[i];
-            //                 cweight  = at(color, usableColors[i]).get();
-            //             }
-            //         }
-            //         return selected;
-            //     }
-            //     break;
-            // case GREEDY_MAX:
-            //     if (r >= f) {
-            //         selected = usableColors[0];
-            //         cweight  = at(color, usableColors[0]).get();
-            //         for (int i=0; i<numberColors; ++i) {
-            //             if (at(color, usableColors[i]).get() > cweight) {
-            //                 selected = usableColors[i];
-            //                 cweight  = at(color, usableColors[i]).get();
-            //             }
-            //         }
-            //         return selected;
-            //     }
-            //     break;
-            // case GREEDY_MEAN:
-            //     if (r >= f) {
-            //         partial = 0;
-            //         for (int i=0; i<numberColors; ++i) {
-            //             partial += at(color, usableColors[i]).get();
-            //             if (2*partial >= total) {
-            //                 return usableColors[i];
-            //             }
-            //         }
-            //     }
-            //     break;
+            case MEAN:
             default:
                 for (int i=0; i<numberColors; ++i) {
                     partial += (at(color, usableColors[i]).get()/total);

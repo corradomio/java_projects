@@ -1,8 +1,7 @@
 package jext.jgrapht.weights;
 
-import jext.jgrapht.WeightType;
 
-public interface ClusteringWeights<V, E> {
+public interface ClusteringWeights{
 
     int getGraphSize();
 
@@ -14,13 +13,13 @@ public interface ClusteringWeights<V, E> {
 
     // --
 
-    double getGraphWeight(WeightType weightType);
+    double getGraphWeight();
 
-    double getClustersWeight(int ci, int cj, WeightType weightType);
+    double getClustersWeight(int ci, int cj);
 
-    double getInternalWeight(int c, WeightType weightType);
+    double getInternalWeight(int c);
 
-    double getExternalWeight(int c, WeightType weightType);
+    double getExternalWeight(int c);
 
     // -- similarity
 
@@ -48,5 +47,5 @@ public interface ClusteringWeights<V, E> {
 
     // --
 
-    double getSilhouette(V v);
+    // double getSilhouette(V v);
 }

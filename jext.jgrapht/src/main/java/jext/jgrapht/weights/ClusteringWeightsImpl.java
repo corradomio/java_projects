@@ -2,7 +2,6 @@ package jext.jgrapht.weights;
 
 import jext.jgrapht.util.LinAlg;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.util.HashMap;
@@ -10,11 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.lang.Math.max;
 import static jext.math.Mathx.div;
 import static jext.math.Mathx.sq;
 
-public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeights {
+public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
 
     // ----------------------------------------------------------------------
     // Graph & Clustering
@@ -37,6 +35,8 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
     protected int[][] clusterCounts;
     // vertices degrees
     protected int[] vertexDegrees;
+    //
+    protected int edgesCount;
 
     // ----------------------------------------------------------------------
     // Clusters weights
@@ -59,7 +59,7 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
     // Constructor
     // ----------------------------------------------------------------------
 
-    public AbstractClusteringWeights(Graph<V, E> graph, ClusteringAlgorithm.Clustering<V> clustering) {
+    public ClusteringWeightsImpl(Graph<V, E> graph, ClusteringAlgorithm.Clustering<V> clustering) {
         this.graph = graph;
         this.clustering = clustering;
         init();
@@ -114,6 +114,8 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         int ci = clusterOf(source);
         int cj = clusterOf(target);
 
+        edgesCount += 1;
+
         clusterCounts[ci][cj] += 1;
         clusterCounts[cj][ci] += 1;
 
@@ -144,23 +146,25 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
     // ----------------------------------------------------------------------
     // Internal/external clusters counts
     // ----------------------------------------------------------------------
+    // Note: the edges counted 2 times
 
     @Override
     public int getGraphSize() {
-        return graph.edgeSet().size();
+        return edgesCount;
     }
 
     @Override
     public int getClustersCount(int ci, int cj) {
-        if (ci == cj)
-            return clusterCounts[ci][cj]/2;
-        else
+        // if (ci == cj)
+        //     return clusterCounts[ci][cj]/2;
+        // else
             return clusterCounts[ci][cj];
     }
 
     @Override
     public int getInternalCount(int c) {
-        return clusterCounts[c][c]/2;
+        // return clusterCounts[c][c]/2;
+        return clusterCounts[c][c];
     }
 
     @Override
@@ -168,7 +172,8 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         int ecount = 0;
         for (int cj=0; cj<k; ++cj)
             if (c != cj)
-                ecount += clusterCounts[c][cj];
+                // ecount += clusterCounts[c][cj];
+                ecount += clusterCounts[c][cj] + clusterCounts[cj][c] ;
         return ecount;
     }
 
@@ -183,15 +188,16 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
 
     @Override
     public double getClustersWeight(int ci, int cj) {
-        if (ci == cj)
-            return clusterWeights[ci][cj]/2;
-        else
+        // if (ci == cj)
+        //     return clusterWeights[ci][cj]/2;
+        // else
             return clusterWeights[ci][cj];
     }
 
     @Override
     public double getInternalWeight(int c) {
-        return clusterWeights[c][c]/2;
+        // return clusterWeights[c][c]/2;
+        return clusterWeights[c][c];
     }
 
     @Override
@@ -199,7 +205,8 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         double eweight = 0;
         for (int cj = 0; cj < k; ++cj)
             if (cj != c)
-                eweight += clusterWeights[c][cj];
+                // eweight += clusterWeights[c][cj];
+                eweight += clusterWeights[c][cj] + clusterWeights[cj][c];
         return eweight;
     }
 
@@ -216,7 +223,7 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
 
         // sum the internal weights
         for (int c=0; c<k; ++c)
-            modularity += 2*getInternalWeight(c);
+            modularity += getInternalWeight(c);
 
         // subtract the external weights
         for (int c=0; c<k; ++c)
@@ -246,12 +253,12 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
      *  delta: 1 if c_i == c_j else 0
      */
     public double getLouvainModularity() {
-        double lmod = 0.;
         double[] vprod = vprod();
         double m = graphWeight;
+        double lmod = 0.;
 
         for(int c=0; c<k; ++c)
-            lmod += m* 2*getInternalWeight(c) - vprod[c];
+            lmod += m* getInternalWeight(c) - vprod[c];
 
         return div(lmod, sq(2*m));
     }
@@ -264,66 +271,66 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         double[] vprod = LinAlg.newVector(k);
 
         graph.edgeSet().forEach(e -> {
-            V vi = graph.getEdgeSource(e);
-            V vj = graph.getEdgeTarget(e);
+            V source = graph.getEdgeSource(e);
+            V target = graph.getEdgeTarget(e);
 
             // vertex -> vertexIndex
-            int i = vidx.get(vi);
-            int j = vidx.get(vj);
+            int vi = vidx.get(source);
+            int vj = vidx.get(target);
 
             // vertex -> cluster
-            int ci = clusterOf(vi);
-            int cj = clusterOf(vj);
+            int ci = clusterOf(source);
+            int cj = clusterOf(target);
 
             if (ci == cj) {
-                vprod[ci] += vertexWeights[i]*vertexWeights[j];
+                vprod[ci] += vertexWeights[vi]*vertexWeights[vj];
             }
         });
 
         return vprod;
     }
 
-    /**
-     *
-     * https://en.wikipedia.org/wiki/Silhouette_(clustering)
-     */
-    public double getSilhouette(V v) {
-        int c = clusterOf(v);
-        if (clustering.getClusters().get(c).size() == 1)
-            return 0;
+    // /**
+    //  *
+    //  * https://en.wikipedia.org/wiki/Silhouette_(clustering)
+    //  */
+    // public double getSilhouette(V v) {
+    //     int c = clusterOf(v);
+    //     if (clustering.getClusters().get(c).size() == 1)
+    //         return 0;
+    //
+    //     double ai = getMeanWeight(v);
+    //     double bi = getSmallestWeight(v);
+    //
+    //     return div(bi - ai, max(bi, ai));
+    // }
 
-        double ai = getMeanWeight(v);
-        double bi = getSmallestWeight(v);
+    // private double getMeanWeight(V source) {
+    //     int c = clusterOf(source);
+    //     Set<V> cluster = clustering.getClusters().get(c);
+    //
+    //     double weight = 0.;
+    //     for (V target : cluster) {
+    //         E e = graph.getEdge(source, target);
+    //         if (e == null) continue;
+    //         weight += graph.getEdgeWeight(e);
+    //     }
+    //     return div(weight, cluster.size()-1);
+    // }
 
-        return div(bi - ai, max(bi, ai));
-    }
-
-    private double getMeanWeight(V source) {
-        int c = clusterOf(source);
-        Set<V> cluster = clustering.getClusters().get(c);
-
-        double weight = 0.;
-        for (V target : cluster) {
-            E e = graph.getEdge(source, target);
-            if (e == null) continue;
-            weight += graph.getEdgeWeight(e);
-        }
-        return div(weight, cluster.size()-1);
-    }
-
-    private double getSmallestWeight(V source) {
-        int ci = clusterOf(source);
-        double minWeight = Double.MAX_VALUE;
-        Set<V> neighbors = Graphs.neighborSetOf(graph, source);
-        for (V target : neighbors) {
-            int cj = clusterOf(target);
-            if (ci == cj) continue;
-            E e = graph.getEdge(source, target);
-            double weight = graph.getEdgeWeight(e);
-            minWeight = Math.min(weight, minWeight);
-        }
-        return minWeight;
-    }
+    // private double getSmallestWeight(V source) {
+    //     int ci = clusterOf(source);
+    //     double minWeight = Double.MAX_VALUE;
+    //     Set<V> neighbors = Graphs.neighborSetOf(graph, source);
+    //     for (V target : neighbors) {
+    //         int cj = clusterOf(target);
+    //         if (ci == cj) continue;
+    //         E e = graph.getEdge(source, target);
+    //         double weight = graph.getEdgeWeight(e);
+    //         minWeight = Math.min(weight, minWeight);
+    //     }
+    //     return minWeight;
+    // }
 
     // ----------------------------------------------------------------------
     // Metrics dissimilarity == distance
@@ -349,8 +356,9 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         for (int ci=0; ci<k; ++ci) {
             double maxj = -Double.MAX_VALUE;
             for (int cj=0; cj<k; ++cj) {
-                if (ci == cj) continue;
-                double ratio = div(d[ci][ci] + d[cj][cj], d[ci][cj]);
+                if (ci == cj)
+                    continue;
+                double ratio = div(d[ci][ci] + d[cj][cj], d[ci][cj] + d[cj][ci]);
                 if (ratio > maxj)
                     maxj = ratio;
             }
@@ -372,8 +380,9 @@ public abstract class AbstractClusteringWeights<V, E> implements ClusteringWeigh
         double minda = Double.MAX_VALUE;
         for (int ci=0; ci<k; ++ci) {
             for (int cj = 0; cj<k; ++cj) {
-                if (ci == cj) continue;
-                double daij = d[ci][cj];
+                if (ci == cj)
+                    continue;
+                double daij = d[ci][cj] + d[cj][ci];
                 if (daij > 0 && daij < minda)
                     minda = daij;
             }
