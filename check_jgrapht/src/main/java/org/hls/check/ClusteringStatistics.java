@@ -94,7 +94,6 @@ public class ClusteringStatistics {
 
             "modularity", "louvainModularity",
             "dunnIndex", "daviesBouldinIndex"
-
     );
 
     public void addStats(double threshold,
