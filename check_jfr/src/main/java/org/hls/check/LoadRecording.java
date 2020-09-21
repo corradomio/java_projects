@@ -26,8 +26,10 @@ public class LoadRecording {
 
     public static void main3(String[] args) throws Exception {
         JfrEvents events = JfrEvents.loadEvents(
-            new File("jfr_files/flight_recording_180241orgapachecatalinastartupBootstrapstart15784.jfr")
+            new File("jfr_files/flight_recording_180241orgapachecatalinastartupBootstrapstart11876.jfr")
         );
+
+        System.out.println(events.getThreadDumps().size());
 
         // events.getThreadDumps()
         //     .getDumps().forEach(dump -> {

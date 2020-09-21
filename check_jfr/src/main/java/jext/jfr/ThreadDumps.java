@@ -74,6 +74,14 @@ public class ThreadDumps {
     //
     // ----------------------------------------------------------------------
 
+    public int size() {
+        int[] size = new int[1];
+        threadDumps.forEach(tdump -> {
+            size[0] += tdump.getItemCount();
+        });
+        return size[0];
+    }
+
     public List<ThreadDump> getDumps() {
         analyze();
         return dumps;
