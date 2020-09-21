@@ -165,7 +165,7 @@ public class CheckCavemanClustering2 {
                         new WeightedMCMCBColoring<>(t).weightMode(weightMode)
                 ).getClustering();
 
-                stats.addStats(threshold, t, clustering);
+                stats.addStats(threshold, g, clustering);
                 stats.saveCsv("generated/relaxcave2-stats.csv");
             }
         }
