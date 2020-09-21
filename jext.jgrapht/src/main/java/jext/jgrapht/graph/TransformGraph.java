@@ -82,6 +82,10 @@ public class TransformGraph<V, E> {
      *      maxWeight - edgeWeight
      *
      */
+    public Graph<V, E> invertWeights() {
+        return invertWeights(getMaxWeight()*1.001);
+    }
+
     public Graph<V, E> invertWeights(double maxWeight) {
         Graph<V, E> flipped = Graphs.newGraph(graph);
         graph.vertexSet().forEach(flipped::addVertex);

@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import jext.jgrapht.GraphMetrics;
+import jext.jgrapht.Graphs;
 import jext.jgrapht.WeightType;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
@@ -9,7 +10,6 @@ import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.util.distrib.NormalDistrib;
-import jext.jgrapht.util.distrib.UnifomDistrib;
 import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
@@ -106,10 +106,9 @@ public class CheckCavemanClustering2 {
             ClusteringStatistics stats
     )
     {
-        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen;
-        Graph<Integer, DefaultWeightedEdge> g, t;
-
         TransformGraph<Integer, DefaultWeightedEdge> transform;
+        RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen;
+        Graph<Integer, DefaultWeightedEdge> g, i, t;
 
         ClusteringAlgorithm.Clustering<Integer> groundTrue;
         ClusteringAlgorithm.Clustering<Integer> clustering;
@@ -124,15 +123,21 @@ public class CheckCavemanClustering2 {
 
         transform = new TransformGraph<>(g);
 
+        // graph with inverted weight
+        i = transform.invertWeights();
+
+        // constructed clustering
         groundTrue = ggen.getClustering();
 
         for(WeightMode weightMode : weightModes) {
 
-            stats.setGroundTrue(g, groundTrue);
+            // graph, inverted weights graph, ground truth clustering
+            stats.setGroundTrue(g, i, groundTrue);
+            // configuration parameters used to generate graph & clustering
             stats.setParameters(id,
                     // N, E, C,
-                    insideProb, betweenProb, communityWeights, betweenWeights, weightMode,
-                    weightType);
+                    insideProb, betweenProb, communityWeights, betweenWeights,
+                    weightMode, weightType);
 
             System.out.print("-- [groundTruth] --------------------\n");
 
@@ -145,16 +150,20 @@ public class CheckCavemanClustering2 {
             }
             else {
                 init = 0;
-                delta = .02;
+                delta = +0.02;
             }
 
-            for (double threshold = init; ; threshold += delta) {
+            for (double threshold = init; true ; threshold += delta) {
+
                 if (weightType == WeightType.SIMILARITY)
+                    // from top to bottom, keep below
                     t = transform.lowerThresholdGraph(threshold);
                 else
+                    // from bottom to top, keep above
                     t = transform.upperThresholdGraph(threshold);
 
-                if (t.edgeSet().isEmpty())
+                // exit on null graph
+                if (Graphs.isNull(t))
                     break;
 
                 System.out.printf("-- [%.1f] --------------------\n", threshold);
@@ -162,8 +171,8 @@ public class CheckCavemanClustering2 {
                 System.out.print("-- cluster\n" );
                 clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(
                         //new ParallelBMCColoring<>(t)
-                        new WeightedMCMCBColoring<>(t).weightMode(weightMode)
-                ).getClustering();
+                        new WeightedMCMCBColoring<>(t).weightMode(weightMode))
+                        .getClustering();
 
                 stats.addStats(threshold, t, clustering);
                 stats.saveCsv("generated/relaxcave2-stats.csv");

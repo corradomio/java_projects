@@ -18,9 +18,10 @@ import java.util.List;
 
 public class ClusteringStatistics {
 
-    private List<List> statistics = new ArrayList<>();
+    private List<List<?>> statistics = new ArrayList<>();
 
     private Graph<Integer, DefaultWeightedEdge> graph;
+    private Graph<Integer, DefaultWeightedEdge> invtg;
     private ClusteringAlgorithm.Clustering<Integer> groundTrue;
 
     private int id;
@@ -41,6 +42,17 @@ public class ClusteringStatistics {
             Graph<Integer, DefaultWeightedEdge> g,
             ClusteringAlgorithm.Clustering<Integer> groundTrue) {
         this.graph = g;
+        this.invtg = g;
+        this.groundTrue = groundTrue;
+        return this;
+    }
+
+    public ClusteringStatistics setGroundTrue(
+            Graph<Integer, DefaultWeightedEdge> g,
+            Graph<Integer, DefaultWeightedEdge> i,
+            ClusteringAlgorithm.Clustering<Integer> groundTrue) {
+        this.graph = g;
+        this.invtg = i;
         this.groundTrue = groundTrue;
         return this;
     }
@@ -101,15 +113,24 @@ public class ClusteringStatistics {
             Graph<Integer, DefaultWeightedEdge> t,
             ClusteringAlgorithm.Clustering<Integer> clustering)
     {
-        GraphMetrics<Integer, DefaultWeightedEdge> gm = new GraphMetrics<>(t);
-        GraphMetrics.VertexStatistics vs = gm.getVertexStatistics();
-        GraphMetrics.EdgeStatistics   es = gm.getEdgeStatistics();
+        // similarity graph
+        GraphMetrics<Integer, DefaultWeightedEdge> tm = new GraphMetrics<>(t);
 
-        ClusteringMetrics<Integer, DefaultWeightedEdge> cm = new ClusteringMetrics<>(graph, clustering);
-        ClusteringMetrics.ClusterStatistics cs = cm.getStatistics();
+        GraphMetrics.VertexStatistics vs = tm.getVertexStatistics();
+        GraphMetrics.EdgeStatistics   es = tm.getEdgeStatistics();
 
-        ContingencyMatrix cmt = cm.getContingencyMatrix(groundTrue);
-        ClusteringWeights cw  = cm.getClusterWeights();
+        // clustering metrics\ on "similarity"
+        ClusteringMetrics<Integer, DefaultWeightedEdge>
+                cmsim = new ClusteringMetrics<>(graph, clustering);
+        ClusteringMetrics<Integer, DefaultWeightedEdge>
+                cmdis = new ClusteringMetrics<>(invtg, clustering);
+
+        // clustering statistics
+        ClusteringMetrics.ClusterStatistics cs = cmsim.getStatistics();
+        // contingency matrix with the ground truth
+        ContingencyMatrix cmt = cmsim.getContingencyMatrix(groundTrue);
+        // clustering weights
+        ClusteringWeights cw  = cmsim.getClusterWeights();
 
         List<?> stats = Arrays.asList(
             // id
@@ -129,14 +150,14 @@ public class ClusteringStatistics {
             // threshold
             threshold,
 
-            // vertices
+            // vertices on threshold graph
             vs.order,
             vs.min,
             vs.max,
             vs.mean,
             vs.standardDeviation,
 
-            // edges
+            // edges on threshold graph
             es.size,
             es.count*es.mean,
             es.min,
@@ -144,7 +165,7 @@ public class ClusteringStatistics {
             es.mean,
             es.standardDeviation,
 
-            // 
+            // connectivity & density on threshold graph
             es.components,
             es.density,
 

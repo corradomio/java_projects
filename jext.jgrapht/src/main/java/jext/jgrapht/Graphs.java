@@ -164,6 +164,18 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     }
 
     /**
+     * Check if the graph is 'null' (without edges)
+     *
+     * @param g   the graph
+     * @param <V> the graph vertex type
+     * @param <E> the graph edge type
+     * @return if the graph is null
+     */
+    public static <V, E> boolean isNull(Graph<V, E> g) {
+        return g.edgeSet().isEmpty();
+    }
+
+    /**
      * Check if the graph is connected
      *
      * @param g   the graph
