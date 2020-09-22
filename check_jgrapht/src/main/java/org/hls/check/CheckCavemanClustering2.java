@@ -11,6 +11,7 @@ import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.logging.Logger;
+import jext.util.ArrayList;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -18,6 +19,7 @@ import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.util.SupplierUtil;
 
 import java.io.File;
+import java.util.List;
 
 public class CheckCavemanClustering2 {
 
@@ -177,6 +179,8 @@ public class CheckCavemanClustering2 {
                 stats.addStats(threshold, t, clustering);
                 stats.saveCsv("generated/relaxcave2-stats.csv");
             }
+            stats.addStatsEnd();
+            stats.saveCsv("generated/relaxcave2-stats.csv");
         }
     }
 

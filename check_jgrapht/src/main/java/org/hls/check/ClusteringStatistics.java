@@ -208,6 +208,13 @@ public class ClusteringStatistics {
         statistics.add(stats);
     }
 
+    public void addStatsEnd() {
+        int n = header.size();
+        List<String> sep = new jext.util.ArrayList<>();
+        for(int s=0; s<n; ++s) sep.add("--");
+        statistics.add(sep);
+    }
+
 
     public void saveCsv(String filepath) {
 
