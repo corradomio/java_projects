@@ -189,7 +189,7 @@ public class CheckCavemanClustering2 {
         int id = 100;                                           // is used to save the graph in a file
 
         int[] Nlist = {1000};
-        int[] Elist = {10000, 50000, 100000};
+        int[] Elist = {10000, 100000};
         int[] Clist = {5, 10};
 
         double[] insideProbList    = new double[]{ .9 };        // internal edges
@@ -197,7 +197,7 @@ public class CheckCavemanClustering2 {
         //
         // [ communityWeight, betweenWeight ]
         //
-        double[][] weightsMeanList = new double[][]{ {.5, .3}, {.3, .5} };
+        double[][] weightsMeanList = new double[][]{ {.5, .3}/*, {.3, .5}*/ };
         double[][] weightsSdevList = new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
         WeightMode[] weightModeList = {
                 WeightMode.RANDOM, WeightMode.MIN, WeightMode.MAX, WeightMode.MEAN

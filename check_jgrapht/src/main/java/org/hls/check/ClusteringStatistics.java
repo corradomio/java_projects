@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 public class ClusteringStatistics {
 
     private List<List<?>> statistics = new ArrayList<>();
@@ -98,15 +100,15 @@ public class ClusteringStatistics {
 
             "numClusters", "minClusterSize", "maxClusterSize", "meanClusterSize", "sdevClusterSize",
 
-            "insideWeight", "betweenWeight",
+            "insideWeight/sim", "betweenWeight/sim", "insideWeight/disim", "betweenWeight/disim",
 
             "unbalancingIndex",
             "purity", "giniIndex", "entropy",
             "randIndex", "adjustedRandIndex", "fowlkesMallowsIndex", "jaccardIndex",
             "normalizedGamma",
 
-            "modularity", "louvainModularity",
-            "dunnIndex", "daviesBouldinIndex"
+            "modularity/sim", "louvainModularity/sim",
+            "dunnIndex/disim", "daviesBouldinIndex/disim"
     );
 
     public void addStats(double threshold,
@@ -130,7 +132,8 @@ public class ClusteringStatistics {
         // contingency matrix with the ground truth
         ContingencyMatrix cmt = cmsim.getContingencyMatrix(groundTrue);
         // clustering weights
-        ClusteringWeights cw  = cmsim.getClusterWeights();
+        ClusteringWeights cwsim  = cmsim.getClusterWeights();
+        ClusteringWeights cwdis  = cmdis.getClusterWeights();
 
         List<?> stats = Arrays.asList(
             // id
@@ -177,8 +180,10 @@ public class ClusteringStatistics {
             cs.standardDeviation,
 
             // clusters weights
-            cw.getInternalWeight(),
-            cw.getExternalWeight(),
+            cwsim.getInternalWeight(),
+            cwsim.getExternalWeight(),
+            cwdis.getInternalWeight(),
+            cwdis.getExternalWeight(),
 
             // contingency matrix
             cmt.getUnbalancingIndex(),
@@ -192,12 +197,12 @@ public class ClusteringStatistics {
             cmt.getNormalizedGamma(),
 
             // similarity
-            cw.getModularity(),
-            cw.getLouvainModularity(),
+            cwsim.getModularity(),
+            cwsim.getLouvainModularity(),
 
             // dissimilarity == distance
-            cw.getDunnIndex(),
-            cw.getDaviesBouldinIndex()
+            cwdis.getDunnIndex(),
+            cwdis.getDaviesBouldinIndex()
         );
 
         statistics.add(stats);
@@ -237,11 +242,17 @@ public class ClusteringStatistics {
             }
             else if (e instanceof Double) {
                 double d = (Double)e;
-                sb.append(String.format("%.4f", d));
+                if (0.0000001 < abs(d) && abs(d) < 0.001)
+                    sb.append(String.format("%.4e", d));
+                else
+                    sb.append(String.format("%.4f", d));
             }
             else if (e instanceof Float) {
                 double d = (Float)e;
-                sb.append(String.format("%.4f", d));
+                if (0.0000001 < abs(d) && abs(d) < 0.001)
+                    sb.append(String.format("%.4e", d));
+                else
+                    sb.append(String.format("%.4f", d));
             }
         }
         return sb.toString();

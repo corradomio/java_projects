@@ -111,14 +111,25 @@ public class ContingencyMatrixImpl<V> implements ContingencyMatrix {
         //     i[0] += 1;
         // });
 
-        double n = sum(mj);
-        double nk = n/k;
+        // double n = sum(mj);
+        // double nk = n/k;
+        //
+        // double ui = 0;
+        // for (int j=0; j<k; ++j) {
+        //     ui += sq(mj[j] - nk);
+        // }
+        // ui = Math.sqrt(ui/k);
+        //
+        // return ui;
+
+        double n = sum(ni);
+        double nkt = n/kt;
 
         double ui = 0;
-        for (int j=0; j<k; ++j) {
-            ui += sq(mj[j] - nk);
+        for (int i=0; i<kt; ++i) {
+            ui += sq(ni[i] - nkt);
         }
-        ui = Math.sqrt(ui/k);
+        ui = Math.sqrt(ui/kt);
 
         return ui;
     }

@@ -378,6 +378,8 @@ public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
                 if (ratio > maxj)
                     maxj = ratio;
             }
+            if (maxj == -Double.MAX_VALUE)
+                maxj = 0;
             sum += maxj;
         }
         return div(sum, k);
@@ -406,7 +408,7 @@ public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
         if (minda == Double.MAX_VALUE)
             minda = 0;
 
-        double maxsa = -Double.MAX_VALUE;
+        double maxsa = d[0][0];
         for(int c=0; c<k; ++c) {
             double sai = d[c][c];
             if (sai > maxsa)
