@@ -12,7 +12,7 @@ public class CheckSpringConfiguration {
 
     @Bean
     // @Scope("singleton")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    // @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public Database database() {
         return new DatabaseImpl();
     }
