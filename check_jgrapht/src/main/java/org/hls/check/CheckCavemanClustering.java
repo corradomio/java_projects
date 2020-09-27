@@ -176,10 +176,10 @@ public class CheckCavemanClustering extends JFrame {
                 ).getClustering();
 
                 disStats.addStats(threshold, t, clustering);
-                disStats.saveCsv("generated/relaxcave-dis-stats.csv");
+                disStats.saveCsv();
 
                 simStats.addStats(threshold, t, clustering);
-                simStats.saveCsv("generated/relaxcave-sim-stats.csv");
+                simStats.saveCsv();
             }
         }
     }
@@ -187,12 +187,14 @@ public class CheckCavemanClustering extends JFrame {
     public static void main(String[] args) {
         Logger.configure();
 
-        new File("generated/relaxcave-dis-stats.csv").delete();
-        new File("generated/relaxcave-sim-stats.csv").delete();
+        File disFile = new File("generated/relaxcave-dis-stats.csv");
+        disFile.delete();
+        File simFile = new File("generated/relaxcave-sim-stats.csv");
+        simFile.delete();
 
         // Clustering statistics (dissimilarity, similarity)
-        ClusteringStatistics disStats = new ClusteringStatistics();
-        ClusteringStatistics simStats = new ClusteringStatistics();
+        ClusteringStatistics disStats = new ClusteringStatistics(disFile);
+        ClusteringStatistics simStats = new ClusteringStatistics(simFile);
 
         int id = 100;
         int[] Nlist = {1000};

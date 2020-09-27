@@ -11,6 +11,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,10 +35,11 @@ public class ClusteringStatistics {
     private Distrib betweenWeights;
     private WeightMode weighMode;
     private WeightType weighType;
+    private File statFile;
 
 
-    public ClusteringStatistics() {
-
+    public ClusteringStatistics(File statFile) {
+        this.statFile = statFile;
     }
 
     public ClusteringStatistics setGroundTrue(
@@ -215,12 +217,16 @@ public class ClusteringStatistics {
         statistics.add(sep);
     }
 
+    public void delete() {
+        if (statFile.delete())
+            ;
+    }
 
-    public void saveCsv(String filepath) {
+    public void saveCsv() {
 
         int nStats = statistics.size();
 
-        try(FileWriter w = new FileWriter(filepath)) {
+        try(FileWriter w = new FileWriter(statFile)) {
             w.write(toString(header));
             w.write("\n");
 

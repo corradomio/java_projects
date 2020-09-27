@@ -11,7 +11,6 @@ import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.logging.Logger;
-import jext.util.ArrayList;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -19,7 +18,6 @@ import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.util.SupplierUtil;
 
 import java.io.File;
-import java.util.List;
 
 public class CheckCavemanClustering2 {
 
@@ -177,18 +175,19 @@ public class CheckCavemanClustering2 {
                         .getClustering();
 
                 stats.addStats(threshold, t, clustering);
-                stats.saveCsv("generated/relaxcave2-stats.csv");
+                stats.saveCsv();
             }
             stats.addStatsEnd();
-            stats.saveCsv("generated/relaxcave2-stats.csv");
+            stats.saveCsv();
         }
     }
 
     public static void main(String[] args) {
         Logger.configure();
 
-        if(new File("generated/relaxcave2-stats.csv").delete())
-            System.out.println();
+        File statFile = new File("generated/relaxcave3-stats.csv");
+
+        statFile.delete();
 
         int id = 100;                                           // is used to save the graph in a file
 
@@ -197,7 +196,7 @@ public class CheckCavemanClustering2 {
         int[] Clist = {5, 10};
 
         double[] insideProbList    = new double[]{ .9 };        // internal edges
-        double[] betweenProbList   = new double[]{ .002, .02, .2 };   // external edges
+        double[] betweenProbList   = new double[]{ .02, .2 };   // external edges
         //
         // [ communityWeight, betweenWeight ]
         //
@@ -208,13 +207,13 @@ public class CheckCavemanClustering2 {
                 // WeightMode.GREEDY_MIN, WeightMode.GREEDY_MAX
         };
 
-        ClusteringStatistics stats = new ClusteringStatistics();
+        ClusteringStatistics stats = new ClusteringStatistics(statFile);
 
         for (int N : Nlist)
         for (int E : Elist)
         for (int C : Clist)
-        for (double betweenProb : betweenProbList)
         for (double insideProb  : insideProbList)
+        for (double betweenProb : betweenProbList)
         for (double[] weightsMean : weightsMeanList)
         for (double[] weightsSdev : weightsSdevList)
             analyzeGraph(++id,
