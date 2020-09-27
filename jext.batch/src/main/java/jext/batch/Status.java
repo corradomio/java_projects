@@ -1,2 +1,14 @@
-package jext.batch;public class Status {
+package jext.batch;
+
+public enum Status {
+    CREATED,
+    WAITING,
+
+    RUNNING,
+
+    ABORTED,
+    SUCCESS,
+    FAILED,
+
+    DONE
 }
