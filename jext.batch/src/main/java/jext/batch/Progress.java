@@ -15,7 +15,10 @@ public class Progress {
 
         public int getCurrent() { return current; }
         public int getTotal(){ return todo != null ? todo.length : 0; }
-        public double getDone() { return current/((double)getTotal()); }
+        public double getDone() {
+            double total = getTotal();
+            return total != 0. ? current/total : 0.;
+        }
 
         Optional<T> get() { return todo == null || todo.length == 0
                 ? Optional.empty()
@@ -39,21 +42,12 @@ public class Progress {
         this.steps.todo = steps.toArray(NO_STEPS);
     }
 
-    public boolean hasNextTask() {
-        return tasks.hasNext();
+    public ToDo<Task> tasks() {
+        return tasks;
     }
 
-    public Task nextTask() {
-        steps = new ToDo<>();
-        return tasks.next();
-    }
-
-    public boolean hasNextStep() {
-        return steps.hasNext();
-    }
-
-    public Step nextStep() {
-        return steps.next();
+    public ToDo<Step> steps() {
+        return steps;
     }
 
     public Optional<Step> get() {

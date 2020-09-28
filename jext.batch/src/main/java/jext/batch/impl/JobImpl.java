@@ -11,16 +11,7 @@ public class JobImpl implements Job {
 
     protected List<Task> tasks = new ArrayList<>();
 
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void done() {
-
-    }
-
+    // ----------------------------------------------------------------------
 
     @Override
     public List<Task> getTasks() {

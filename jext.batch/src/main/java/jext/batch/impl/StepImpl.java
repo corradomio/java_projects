@@ -9,7 +9,7 @@ public class StepImpl implements Step {
     protected volatile boolean aborted;
 
     @Override
-    public void init(Task task) {
+    public void onInit(Task task) {
         this.task = task;
     }
 
@@ -29,7 +29,7 @@ public class StepImpl implements Step {
     }
 
     @Override
-    public void done() {
+    public void onDone() {
 
     }
 }

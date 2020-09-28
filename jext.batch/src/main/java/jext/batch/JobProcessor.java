@@ -42,9 +42,8 @@ public class JobProcessor implements Runnable {
 
         try {
             runner.running(this);
-            setStatus(Status.RUNNING);
 
-            job.init();
+            setStatus(Status.RUNNING);
 
             doTasks();
         }
@@ -59,8 +58,6 @@ public class JobProcessor implements Runnable {
             else
                 setStatus(Status.SUCCESS);
 
-            try { job.done(); } catch(Throwable t) { }
-
             setStatus(Status.DONE);
             runner.done(this);
         }
@@ -69,17 +66,17 @@ public class JobProcessor implements Runnable {
 
     private void doTasks() throws Exception {
         p.setTasks(job.getTasks());
-        while (p.hasNextTask() && !aborted) {
-            Task task = p.nextTask();
+        while (p.tasks().hasNext() && !aborted) {
+            Task task = p.tasks().next();
             job.onProgress(getProgress());
 
             try {
-                task.init(job);
+                task.onInit(job);
 
                 doSteps(task);
             }
             finally {
-                task.done();
+                task.onDone();
             }
             p.setTasks(job.getTasks());
         }
@@ -87,17 +84,17 @@ public class JobProcessor implements Runnable {
 
     private void doSteps(Task task) throws Exception {
         p.setSteps(task.getSteps());
-        while (p.hasNextStep() && !aborted) {
-            Step step = p.nextStep();
+        while (p.steps().hasNext() && !aborted) {
+            Step step = p.steps().next();
             job.onProgress(getProgress());
 
             try {
-                step.init(task);
+                step.onInit(task);
 
                 step.run();
 
             } finally {
-                step.done();
+                step.onDone();
             }
             p.setSteps(task.getSteps());
         }

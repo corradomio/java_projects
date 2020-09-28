@@ -13,11 +13,12 @@ public class TaskImpl implements Task {
     protected List<Step> steps = new ArrayList<>();
 
     @Override
-    public void init(Job job) {
+    public void onInit(Job job) {
         this.job = job;
     }
+
     @Override
-    public void done() {
+    public void onDone() {
 
     }
 

@@ -7,7 +7,7 @@ public interface Step {
     /**
      * Initialization of the step
      */
-    void init(Task task);
+    void onInit(Task task);
 
     /**
      * Execute the step.
@@ -24,6 +24,6 @@ public interface Step {
     /**
      * Called at the end (also after abort or exception)
      */
-    void done();
+    void onDone();
 
 }

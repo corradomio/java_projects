@@ -14,8 +14,8 @@ public class ExampleTask extends TaskImpl {
     }
 
     @Override
-    public void init(Job job) {
-        super.init(job);
+    public void onInit(Job job) {
+        super.onInit(job);
 
         for (int i=0; i<count; ++i)
             addStep(new ExampleStep(t, i+1));

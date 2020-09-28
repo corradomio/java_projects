@@ -4,6 +4,11 @@ import java.util.List;
 
 public interface Job {
 
+    // ----------------------------------------------------------------------
+    //                      failed
+    //  init -> progress -> success -> done
+    //                      aborted
+
     /**
      * Initialization of the job.
      * This step creates the list of tasks to execute.
@@ -11,12 +16,7 @@ public interface Job {
      * It is possible to add extra tasks at the END of the current tasks list
      * 'getTasks()' is called at the end of each task completed
      */
-    void init();
-
-    /**
-     * Called at the end (also after abort or exception)
-     */
-    void done();
+    void onInit();
 
     /**
      * List of ALL tasks (already executed, running and to execute).
@@ -24,14 +24,10 @@ public interface Job {
      */
     List<Task> getTasks();
 
-    // ----------------------------------------------------------------------
-    //                                  failed
-    //  create -> waiting -> running -> success -> done
-    //                                  aborted
-    //
-
-    void onInit();
-
+    /**
+     * Called at the begin of a new task and new step
+     * AFTER onInit()
+     */
     void onProgress(Progress progress);
 
     void onSuccess();
@@ -40,5 +36,8 @@ public interface Job {
 
     void onAborted();
 
+    /**
+     * Called at the end (also after abort or exception)
+     */
     void onDone();
 }
