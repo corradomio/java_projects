@@ -27,4 +27,9 @@ public class StepImpl implements Step {
     public void run() {
 
     }
+
+    @Override
+    public void done() {
+
+    }
 }

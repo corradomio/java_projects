@@ -1,7 +1,4 @@
-package jext.batch.util;
-
-import jext.batch.Step;
-import jext.batch.Task;
+package jext.batch;
 
 import java.util.Iterator;
 import java.util.List;

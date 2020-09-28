@@ -13,6 +13,11 @@ public interface Task {
      */
     void init(Job job);
 
+    /**
+     * Called at the end (also after abort or exception)
+     */
+    void done();
+
     Job getJob();
 
     /**

@@ -1,29 +1,22 @@
 package jext.batch;
 
-import jext.batch.util.Done;
-
 public class JobProcessor implements Runnable {
 
-    private static Task[] NO_TASKS = new Task[0];
-    private static Step[] NO_STEPS = new Step[0];
+    private final JobRunner runner;
+    private final Long id;
 
-    private JobRunner runner;
+    private final Job job;
+    private final Progress p;
+
     private Status status = Status.CREATED;
-    private Long id;
     private volatile boolean aborted;
-
-    private Job job;
-    private Task[] tasks;
-    private Step[] steps;
-    private int itask;
-    private int istep;
-
     private Throwable exception;
 
     public JobProcessor(JobRunner runner, Job job) {
         this.runner = runner;
         this.job = job;
         this.id = System.currentTimeMillis();
+        this.p = new Progress();
         setStatus(Status.WAITING);
     }
 
@@ -35,48 +28,25 @@ public class JobProcessor implements Runnable {
         return status;
     }
 
-    public Done getTasksDone() {
-        return new Done(itask, tasks != null ? tasks.length : 0);
-    }
-
-    public Done getStepsDone() {
-        return new Done(istep, steps != null ? steps.length : 0);
+    public Progress getProgress() {
+        return p;
     }
 
     public void abort() {
         aborted = true;
-        steps[istep].abort();
+        p.get().ifPresent(Step::abort);
     }
 
     @Override
     public void run() {
 
-        if(!aborted)
         try {
-            setStatus(Status.RUNNING);
             runner.running(this);
+            setStatus(Status.RUNNING);
 
             job.init();
 
-            tasks = job.getTasks().toArray(NO_TASKS);
-            itask = 0;
-            while (itask < tasks.length && !aborted) {
-                Task task = tasks[itask++];
-
-                task.init(job);
-
-                steps = task.getSteps().toArray(NO_STEPS);
-                istep = 0;
-                while (istep < steps.length && !aborted) {
-                    Step step = steps[istep++];
-
-                    step.init(task);
-
-                    step.run();
-
-                    steps = task.getSteps().toArray(NO_STEPS);
-                }
-            }
+            doTasks();
         }
         catch (Throwable e) {
             exception = e;
@@ -89,25 +59,61 @@ public class JobProcessor implements Runnable {
             else
                 setStatus(Status.SUCCESS);
 
-            runner.done(this);
+            try { job.done(); } catch(Throwable t) { }
+
             setStatus(Status.DONE);
+            runner.done(this);
         }
 
+    }
+
+    private void doTasks() throws Exception {
+        p.setTasks(job.getTasks());
+        while (p.hasNextTask() && !aborted) {
+            Task task = p.nextTask();
+            job.onProgress(getProgress());
+
+            try {
+                task.init(job);
+
+                doSteps(task);
+            }
+            finally {
+                task.done();
+            }
+            p.setTasks(job.getTasks());
+        }
+    }
+
+    private void doSteps(Task task) throws Exception {
+        p.setSteps(task.getSteps());
+        while (p.hasNextStep() && !aborted) {
+            Step step = p.nextStep();
+            job.onProgress(getProgress());
+
+            try {
+                step.init(task);
+
+                step.run();
+
+            } finally {
+                step.done();
+            }
+            p.setSteps(task.getSteps());
+        }
     }
 
     private void setStatus(Status status) {
         this.status = status;
         switch (status) {
             case CREATED:
-                job.onCreate();
                 break;
 
             case WAITING:
-                job.onWaiting();
                 break;
 
             case RUNNING:
-                job.onRunning();
+                job.onInit();
                 break;
 
             case SUCCESS:

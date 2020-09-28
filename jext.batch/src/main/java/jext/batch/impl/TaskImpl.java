@@ -16,6 +16,10 @@ public class TaskImpl implements Task {
     public void init(Job job) {
         this.job = job;
     }
+    @Override
+    public void done() {
+
+    }
 
     @Override
     public Job getJob() {

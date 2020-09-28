@@ -14,16 +14,25 @@ public interface Job {
     void init();
 
     /**
+     * Called at the end (also after abort or exception)
+     */
+    void done();
+
+    /**
      * List of ALL tasks (already executed, running and to execute).
      * It is called multiple time
      */
     List<Task> getTasks();
 
-    void onCreate();
+    // ----------------------------------------------------------------------
+    //                                  failed
+    //  create -> waiting -> running -> success -> done
+    //                                  aborted
+    //
 
-    void onWaiting();
+    void onInit();
 
-    void onRunning();
+    void onProgress(Progress progress);
 
     void onSuccess();
 

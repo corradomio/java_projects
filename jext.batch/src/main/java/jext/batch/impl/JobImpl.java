@@ -1,6 +1,7 @@
 package jext.batch.impl;
 
 import jext.batch.Job;
+import jext.batch.Progress;
 import jext.batch.Task;
 
 import java.util.ArrayList;
@@ -16,6 +17,12 @@ public class JobImpl implements Job {
     }
 
     @Override
+    public void done() {
+
+    }
+
+
+    @Override
     public List<Task> getTasks() {
         return tasks;
     }
@@ -25,19 +32,15 @@ public class JobImpl implements Job {
         return this;
     }
 
+    // ----------------------------------------------------------------------
 
     @Override
-    public void onCreate() {
+    public void onInit() {
 
     }
 
     @Override
-    public void onWaiting() {
-
-    }
-
-    @Override
-    public void onRunning() {
+    public void onProgress(Progress progress) {
 
     }
 
