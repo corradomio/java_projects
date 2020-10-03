@@ -21,7 +21,7 @@ public class ClusteringStatistics {
 
     private Graph<Integer, DefaultWeightedEdge> g;
     private ClusteringAlgorithm.Clustering<Integer> groundTrue;
-    private WeightType weighType;
+    private WeightType weightType;
 
     private GraphMetrics<Integer, DefaultWeightedEdge> gMetrics;
 
@@ -31,7 +31,7 @@ public class ClusteringStatistics {
     private double insideProb;
     private Distrib communityWeights;
     private Distrib betweenWeights;
-    private WeightMode weighMode;
+    private WeightMode weightMode;
 
 
     public ClusteringStatistics() {
@@ -41,11 +41,11 @@ public class ClusteringStatistics {
     public ClusteringStatistics setGroundTrue(
             Graph<Integer, DefaultWeightedEdge> g,
             ClusteringAlgorithm.Clustering<Integer> groundTrue,
-            WeightType weighType) {
+            WeightType weightType) {
         this.g = g;
         this.groundTrue = groundTrue;
         this.gMetrics = new GraphMetrics<>(g);
-        this.weighType = weighType;
+        this.weightType = weightType;
         return this;
     }
 
@@ -58,7 +58,7 @@ public class ClusteringStatistics {
             double betweenProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightMode weighMode)
+            WeightMode weightMode)
     {
         this.id = id;
         // this.N = N;
@@ -68,7 +68,7 @@ public class ClusteringStatistics {
         this.betweenProb = betweenProb;
         this.communityWeights = communityWeights;
         this.betweenWeights = betweenWeights;
-        this.weighMode = weighMode;
+        this.weightMode = weightMode;
     }
 
     private List header = Arrays.asList(
@@ -78,8 +78,8 @@ public class ClusteringStatistics {
             "betweenProb",
             "communityWeightsMean", "communityWeightsSdev",
             "betweenWeightsMean", "betweenWeightsSdev",
-            "weighType",
-            "weighMode",
+            "weightType",
+            "weightMode",
             "threshold",
             "order", "minDegree", "maxDegree", "meanDegree", "sdevDegree",
             "size", "components", "density",
@@ -121,8 +121,8 @@ public class ClusteringStatistics {
             communityWeights.sdev(),
             betweenWeights.mean(),
             betweenWeights.sdev(),
-            weighType.toString(),
-            weighMode.toString(),
+            weightType.toString(),
+            weightMode.toString(),
 
             // threshold
             threshold,

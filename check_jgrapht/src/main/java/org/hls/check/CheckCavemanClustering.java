@@ -104,6 +104,7 @@ public class CheckCavemanClustering extends JFrame {
 
     static void analyzeGraph(
             int id,
+            int r,
             int N,
             int E,
             int C,
@@ -145,12 +146,12 @@ public class CheckCavemanClustering extends JFrame {
 
         for(WeightMode weightMode : weightModes) {
 
-            disStats.setParameters(id,
+            disStats.setParameters(id, r,
                     // N, E, C,
                     betweenProb, insideProb, communityWeights, betweenWeights, weightMode, weightType);
             disStats.setGroundTrue(g, groundTrue);
 
-            simStats.setParameters(id,
+            simStats.setParameters(id, r,
                     // N, E, C,
                     betweenProb, insideProb, communityWeights, betweenWeights, weightMode, weightType);
             simStats.setGroundTrue(h, groundTrue);
@@ -215,7 +216,7 @@ public class CheckCavemanClustering extends JFrame {
         for (double insideProb  : insideProbList)
         for (double[] weightsMean : weightsMeanList)
         for (double[] weightsSdev : weightsSdevList)
-            analyzeGraph(++id, N, E, C, betweenProb, insideProb,
+            analyzeGraph(++id, 0, N, E, C, betweenProb, insideProb,
                     new NormalDistrib(weightsMean[0], weightsSdev[0]).minValue(0.001),
                     new NormalDistrib(weightsMean[1], weightsSdev[1]).minValue(0.001),
                     weightModeList,

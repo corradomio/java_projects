@@ -28,13 +28,14 @@ public class ClusteringStatistics {
     private ClusteringAlgorithm.Clustering<Integer> groundTrue;
 
     private int id;
+    private int r;
     // private int N, E, C;
     private double betweenProb;
     private double insideProb;
     private Distrib communityWeights;
     private Distrib betweenWeights;
-    private WeightMode weighMode;
-    private WeightType weighType;
+    private WeightMode weightMode;
+    private WeightType weightType;
     private File statFile;
 
 
@@ -62,7 +63,7 @@ public class ClusteringStatistics {
     }
 
     public void setParameters(
-            int id,
+            int id, int r,
             // int N,
             // int E,
             // int C,
@@ -70,10 +71,11 @@ public class ClusteringStatistics {
             double betweenProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightMode weighMode,
-            WeightType weighType)
+            WeightMode weightMode,
+            WeightType weightType)
     {
         this.id = id;
+        this.r = r;
         // this.N = N;
         // this.E = E;
         // this.C = C;
@@ -81,19 +83,19 @@ public class ClusteringStatistics {
         this.betweenProb = betweenProb;
         this.communityWeights = communityWeights;
         this.betweenWeights = betweenWeights;
-        this.weighMode = weighMode;
-        this.weighType = weighType;
+        this.weightMode = weightMode;
+        this.weightType = weightType;
     }
 
     private List<String> header = Arrays.asList(
-            "id",
+            "id", "r",
             // "N", "E", "C",
             "insideProb",
             "betweenProb",
             "communityWeightsMean", "communityWeightsSdev",
             "betweenWeightsMean", "betweenWeightsSdev",
-            "weighMode",
-            "weighType",
+            "weightMode",
+            "weightType",
             "threshold",
 
             "order", "minVertexDegree", "maxVertexDegree", "meanVertexDegree", "sdevVertexDegree",
@@ -138,8 +140,9 @@ public class ClusteringStatistics {
         ClusteringWeights cwdis  = cmdis.getClusterWeights();
 
         List<?> stats = Arrays.asList(
-            // id
+            // id, r
             id,
+            r,
 
             // configuration
             // N, E, C,
@@ -149,8 +152,8 @@ public class ClusteringStatistics {
             communityWeights.sdev(),
             betweenWeights.mean(),
             betweenWeights.sdev(),
-            weighMode.toString(),
-            weighType.toString(),
+            weightMode.toString(),
+            weightType.toString(),
 
             // threshold
             threshold,
@@ -212,7 +215,7 @@ public class ClusteringStatistics {
 
     public void addStatsEnd() {
         int n = header.size();
-        List<String> sep = new jext.util.ArrayList<>();
+        List<String> sep = new ArrayList<>();
         for(int s=0; s<n; ++s) sep.add("--");
         statistics.add(sep);
     }

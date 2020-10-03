@@ -103,7 +103,7 @@ public class CheckCavemanClustering2 {
             double betweenProb,
             Distrib communityWeights,
             Distrib betweenWeights,
-            WeightType weighType,
+            WeightType weightType,
             WeightMode[] weightModes,
             ClusteringStatistics stats
     )
@@ -130,7 +130,7 @@ public class CheckCavemanClustering2 {
 
         for(WeightMode weightMode : weightModes) {
 
-            stats.setGroundTrue(g, groundTrue, weighType);
+            stats.setGroundTrue(g, groundTrue, weightType);
             stats.setParameters(id,
                     // N, E, C,
                     insideProb, betweenProb, communityWeights, betweenWeights, weightMode);
@@ -140,7 +140,7 @@ public class CheckCavemanClustering2 {
             stats.addStats(0., g, groundTrue);
 
             double init, delta;
-            if (weighType == WeightType.SIMILARITY){
+            if (weightType == WeightType.SIMILARITY){
                 init = transform.getMaxWeight()*1.01;
                 delta = -0.02;
             }
@@ -150,7 +150,7 @@ public class CheckCavemanClustering2 {
             }
 
             for (double threshold = init; ; threshold += delta) {
-                if (weighType == WeightType.SIMILARITY)
+                if (weightType == WeightType.SIMILARITY)
                     t = transform.lowerThresholdGraph(threshold);
                 else
                     t = transform.upperThresholdGraph(threshold);
@@ -191,7 +191,7 @@ public class CheckCavemanClustering2 {
         //
         double[][] weightsMeanList = new double[][]{ {.5, .3}, {.3, .5} };
         double[][] weightsSdevList = new double[][]{ {.1, .1}, {.04, .04}, {.1, .04}, {.04, .1} };
-        // WeightType weighType = WeightType.SIMILARITY;
+        // WeightType weightType = WeightType.SIMILARITY;
         WeightMode[] weightModeList = {
                 WeightMode.RANDOM,
                 WeightMode.MIN, WeightMode.MAX,
