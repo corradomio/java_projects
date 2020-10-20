@@ -6,18 +6,21 @@ import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import jext.javaparser.JavaParserPool;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class JavaParserPoolTypeSolver extends BaseTypeSolver {
 
     private JavaParserPool pool;
+    private Set<String> unresolved = new HashSet<>();
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public JavaParserPoolTypeSolver(JavaParserPool pool) {
-        this("Default", pool);
+        this("Pool", pool);
     }
 
     public JavaParserPoolTypeSolver(String name, JavaParserPool pool) {
@@ -30,10 +33,29 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
 
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-        Optional<TypeDeclaration<?>> astTypeDeclaration = pool.tryToSolveType(name);
-        return astTypeDeclaration
-                .map(typeDeclaration -> SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(typeDeclaration)))
-                .orElseGet(() -> SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class));
+
+        // speedup
+        if (unresolved.contains(name))
+            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+
+        try {
+            Optional<TypeDeclaration<?>> astTypeDeclaration = pool.tryToSolveType(name);
+            if (astTypeDeclaration.isPresent()) {
+                return SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(astTypeDeclaration.get()));
+            } else {
+                unresolved.add(name);   // speedup
+                return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+            }
+        }
+        catch (com.google.common.util.concurrent.UncheckedExecutionException e) {
+            logger.error(e.getMessage());
+        }
+        catch (Throwable t) {
+            logger.error(t, t);
+        }
+        // }
+
+        return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
     }
 
 }

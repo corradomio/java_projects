@@ -5,10 +5,16 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.MethodAmbiguityException;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
@@ -16,11 +22,15 @@ import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
+import jext.javaparser.resolution.ReferenceConstructorDeclaration;
+import jext.javaparser.resolution.ReferencedMethodDeclaration;
 import jext.javaparser.symbolsolver.namespacemodel.NamespaceDeclaration;
+import jext.logging.Logger;
+import jext.util.FileUtils;
 import jext.java.JavaUtils;
-import jext.util.PathUtils;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +44,12 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // Private Fields
     // ----------------------------------------------------------------------
 
+    private static Logger logsolver = Logger.getLogger("symbolsolver");
+
     private static final String JAVA_LANG = "java.lang";
 
     private CompilationUnit cu;
+    private File filename;
     private final Map<String, String> imports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
     private String namespace;
@@ -80,10 +93,17 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      */
     public ContextTypeSolver addImport(ImportDeclaration n) {
         String importName = n.getNameAsString();
-        if (n.isAsterisk())
-            this.starImports.add(this.starImports.size(), namespaceOf(importName));
-        if (!n.isStatic())
-            this.imports.put(nameOf(importName), importName);
+        if (n.isStatic()) {
+            importName = JavaUtils.namespaceOf(importName);
+            this.imports.put(JavaUtils.nameOf(importName), importName);
+        }
+        else if (n.isAsterisk()) {
+            // '*' already stripped
+            this.starImports.add(importName);
+        }
+        else {
+            this.imports.put(JavaUtils.nameOf(importName), importName);
+        }
         return this;
     }
 
@@ -110,7 +130,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     public ContextTypeSolver setCu(CompilationUnit cu) {
         this.cu = cu;
         cu.getStorage().ifPresent(storage -> {
-            this.name = PathUtils.getNameWithoutExt(storage.getFileName());
+            this.filename = storage.getPath().toFile();
+            this.name = FileUtils.getNameWithoutExt(this.filename);
         });
         setSymbolResolver(cu);
         setContext();
@@ -121,7 +142,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      * Detach the typeSolver from the compilationUnit
      */
     public void detach() {
-        cu.removeData(Node.SYMBOL_RESOLVER_KEY);
+        if (cu != null)
+            cu.removeData(Node.SYMBOL_RESOLVER_KEY);
     }
 
     private void setSymbolResolver(CompilationUnit cu) {
@@ -158,12 +180,12 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // resolve
+    // resolve type
     // ----------------------------------------------------------------------
 
     /**
      * Try to solve the type using the standard library. If the library is not
-     * able to solve it, it is tried a 'direct' method
+     * able to solve it, tries a 'direct' method
      * @param n type to solve
      * @return a resolved type with full qualified name or null
      */
@@ -172,15 +194,19 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         try {
             return n.resolve();
         }
-        catch(UnsolvedSymbolException | UnsupportedOperationException e) {
-
+        catch (RuntimeException e) {
+            // logger.error(e, e);
         }
-        return resolve(n.toString(), n);
+
+        if (n.isClassOrInterfaceType())
+            return resolve(n.asClassOrInterfaceType().getNameAsString(), n);
+        else
+            return null;
     }
 
     /**
      * Try to solve the name expression as a type using the standard library.
-     * If the library is not able to solve it, it is tried a 'direct' method
+     * If the library is not able to solve it, tries a 'direct' method
      * @param n name to solve as type
      * @return a resolved type with full qualified name or null
      */
@@ -190,8 +216,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             ResolvedValueDeclaration rvd = n.resolve();
             return rvd.getType();
         }
-        catch(UnsolvedSymbolException | UnsupportedOperationException e) {
-
+        catch (UnsolvedSymbolException | UnsupportedOperationException e) {
+            // logger.error(e, e);
         }
         return resolve(n.getName().asString(), n);
     }
@@ -206,7 +232,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     public ResolvedType resolve(String symbol, Node context) {
         setContext();
 
-        String stripped = strip(symbol);
+        String stripped = JavaUtils.toPlainSignature(symbol);
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         solved = tryToSolveUsingContext(stripped, context);
@@ -225,7 +251,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      * This method is used to speedup the resolution of a symbol when it is sure that
      * the symbol 'can be' a namespace.
      *
-     * The 'namespaces' is filled ONLY if there are resolved symbols.
+     * The data structure 'namespaces' is filled ONLY if there are resolved symbols.
      *
      * @param symbol symbol to check
      * @return is the symbol is a 'package name'
@@ -235,11 +261,178 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // ----------------------------------------------------------------------
+    // resolve method declaration
+    // ----------------------------------------------------------------------
+
+    @Nullable
+    public ResolvedMethodDeclaration resolve(MethodCallExpr mce) {
+        try {
+            return mce.resolve();
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException
+            | IllegalArgumentException | IndexOutOfBoundsException e) {
+            ;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
+        }
+        catch (Throwable t) {
+            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
+        }
+
+        // If scope it is not present, this means that the class is the CURRENT class
+        // (I hope!)
+        if (!mce.getScope().isPresent())
+            return null;
+
+        try {
+            ResolvedType rt = mce.getScope().get().calculateResolvedType();
+            String typeName = rt.describe();
+
+            int nArguments = mce.getArguments().size();
+            String methodName = mce.getNameAsString();
+
+            return new ReferencedMethodDeclaration(typeName, methodName, nArguments);
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException e) {
+            ;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            // Throwable cause = e.getCause();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
+        }
+        catch (Throwable t) {
+            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
+        }
+
+        logsolver.warnf("Unable to solve call %s", mce.toString());
+
+        return null;
+    }
+
+    @Nullable
+    public ResolvedConstructorDeclaration resolve(ObjectCreationExpr oce) {
+        try {
+            return oce.resolve();
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException
+            | IllegalArgumentException | IndexOutOfBoundsException e) {
+            ;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), oce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
+        }
+        catch (Throwable t) {
+            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
+        }
+
+        // If scope it is not present, this means that the class is the CURRENT class
+        // (I hope!)
+        if (!oce.getScope().isPresent())
+            return null;
+
+        try {
+            ResolvedType rt = oce.getScope().get().calculateResolvedType();
+            String typeName = rt.describe();
+
+            int nArguments = oce.getArguments().size();
+            String methodName = oce.getTypeAsString();
+
+            return new ReferenceConstructorDeclaration(typeName, methodName, nArguments);
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException e) {
+            ;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            // Throwable cause = e.getCause();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), oce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
+        }
+        catch (Throwable t) {
+            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
+        }
+
+        logsolver.warnf("Unable to solve call %s", oce.toString());
+
+        return null;
+    }
+
+    @Nullable
+    public ResolvedMethodDeclaration resolve(MethodReferenceExpr mre) {
+        try {
+            return mre.resolve();
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException
+            | IllegalArgumentException | IndexOutOfBoundsException e) {
+            ;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mre.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mre.toString(), e.getMessage(), filename);
+        }
+        catch (Throwable t) {
+            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mre.toString(), t.getMessage(), filename);
+        }
+
+        logsolver.warnf("Unable to solve call %s", mre.toString());
+
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
     // tryToSolveType
     // ----------------------------------------------------------------------
 
     /**
-     * Try to resolve 'name, a 'full qualified symbol', using the registered solvers
+     * Try to resolve 'name', a 'full qualified symbol', using the registered solvers
      *
      * @param name full qualified symbol to resolve
      * @return a reference to the resolved symbol
@@ -247,46 +440,46 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
 
-        SymbolReference<ResolvedReferenceTypeDeclaration> solved
-                = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        // Sometimes, the typesolver try to solve a generic type (with "<...>").
+        // This step remove the "<...>"
+        if (!JavaUtils.isPlainSignature(name))
+            name = JavaUtils.toPlainSignature(name);
 
         // 0) if already solved
         if (alreadySolved.containsKey(name))
             return alreadySolved.get(name);
 
-        // 1) skip it is a namespace
+        // 1) skip if it is a namespace
         if (namespaces.containsKey(name))
-            return solved;
+            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
         // 2) try to solve using the standard methods
-        //SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveUsingSolvers(name);
-        // first, check standard solvers
-        for(TypeSolver typeSolver : elements) {
-            solved = typeSolver.tryToSolveType(name);
-            if (solved.isSolved())
-                break;
-        }
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveUsingSolvers(name);
 
         // 3) it is not possible to solve the symbol using the context HERE
         //    because we must use NOT only the imports but also the definitions of
         //    the inner classes
 
-        // 4) register the solved symbol AND the namespaces
+        // 4) register the solved symbol AND the namespaces (IF solved)
         addSolved(name, solved);
 
         return solved;
     }
 
     private void addSolved(String name, SymbolReference<ResolvedReferenceTypeDeclaration> solved) {
-        if (!solved.isSolved() || alreadySolved.containsKey(name))
-            return;
+        if (!solved.isSolved()) return;
+        if (alreadySolved.containsKey(name)) return;
 
+        // register the solved symbol
         alreadySolved.put(name, solved);
 
+        // register the namespaces
+        // Warn: there is a problem with the 'inner classes' BUT, because it is not simple
+        // to understand if a qualified name is a namespace OR a class, FOR NOW we suppose
+        // that this approach is good enough
         String namespace = JavaUtils.namespaceOf(name);
         while(namespace.length() > 0) {
-            if (namespaces.containsKey(namespace))
-                break;
+            if (namespaces.containsKey(namespace)) break;
             namespaces.put(namespace, new NamespaceDeclaration(namespace));
             namespace = JavaUtils.namespaceOf(namespace);
         }
@@ -299,7 +492,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // Default implementation using the registered typeSolvers
     private SymbolReference<ResolvedReferenceTypeDeclaration>
     tryToSolveUsingSolvers(String namespace, String name) {
-        return tryToSolveUsingSolvers(String.format("%s.%s", namespace, name));
+        return tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
     }
 
     // Default implementation using the registered typeSolvers
@@ -307,13 +500,15 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     tryToSolveUsingSolvers(String name) {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
-        if (namespaces.containsKey(name))
-            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        // 0) check if it is a namespace -> skip
+        // if (namespaces.containsKey(name))
+        //     return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
-        if (alreadySolved.containsKey(name))
-            return alreadySolved.get(name);
+        // 1) speedup: check if the symbol was already solved
+        // if (alreadySolved.containsKey(name))
+        //     return alreadySolved.get(name);
 
-        // first, check standard solvers
+        // 2) check using the registered solvers
         for(TypeSolver typeSolver : elements) {
             solved = typeSolver.tryToSolveType(name);
             if (solved.isSolved())
@@ -336,7 +531,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // 1) try to solve using the full imports
         if (imports.containsKey(name))
             return tryToSolveUsingSolvers(imports.get(name));
-            // return SymbolReference.solved(new SymbolOnlyDeclaration(imports.get(name)));
 
         // 2) try to resolve using startImports (it contains also the current package
         //    AND "java.lang")
@@ -347,6 +541,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         }
 
         // 3) try to resolve using current namespaces stack (inner classes)
+        //    TODO: this part MUST BE IMPROVED
         Stack<String> contextStack = getContextStack(context);
         for(String namespace : contextStack) {
             solved = tryToSolveUsingSolvers(namespace, name);
@@ -379,29 +574,15 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // ----------------------------------------------------------------------
+    // resolve method declaration
+    // ----------------------------------------------------------------------
 
-    private static String namespaceOf(String fullName) {
-        int pos = fullName.lastIndexOf('.');
-        return pos > 0 ? fullName.substring(0, pos) : "";
-    }
-
-    private static String nameOf(String fullName) {
-        int pos = fullName.lastIndexOf('.');
-        return fullName.substring(pos+1);
-    }
-
-    private static String strip(String signature) {
-        while (signature.contains("<")) {
-            int pos = signature.lastIndexOf("<");
-            int end = signature.indexOf(">", pos);
-            signature = signature.substring(0, pos) + signature.substring(end+1);
-        }
-        while (signature.contains("[")) {
-            int pos = signature.lastIndexOf("[");
-            int end = signature.indexOf("]", pos);
-            signature = signature.substring(0, pos) + signature.substring(end+1);
-        }
-        return signature;
+    public String getTypeAsString(String name) {
+        if (imports.containsKey(name))
+            return imports.get(name);
+        if (!starImports.isEmpty())
+            return String.format("%s.%s", starImports.toString(), name);
+        return name;
     }
 
 }

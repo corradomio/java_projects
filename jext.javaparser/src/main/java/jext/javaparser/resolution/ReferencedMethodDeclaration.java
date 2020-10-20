@@ -1,13 +1,12 @@
 package jext.javaparser.resolution;
 
 import com.github.javaparser.ast.AccessSpecifier;
-import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 
 import java.util.Collections;
 import java.util.List;

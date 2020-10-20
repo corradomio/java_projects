@@ -38,13 +38,9 @@ public class JavaUtils {
         [       array
      */
     public static final Set<String> PRIMITIVE_TYPES =
-            new HashSet<>(Arrays.asList("boolean", "byte", "char", "short", "int", "long", "float", "double", "void"));
+        new HashSet<>(Arrays.asList("boolean", "byte", "char", "short", "int", "long", "float", "double", "void"));
 
-    public static boolean isPrimitiveType(String typeName) {
-        return PRIMITIVE_TYPES.contains(typeName);
-    }
-
-    private static final Map<String, String> PRIMITIVE_MAP = new HashMap<String, String>(){{
+    private static final Map<String, String> PRIMITIVE_SIGNATURE = new HashMap<String, String>(){{
         put("B", "byte");
         put("C", "char");
         put("D", "double");
@@ -55,6 +51,13 @@ public class JavaUtils {
         put("V", "void");
         put("Z", "boolean");
     }};
+
+    public static String signature(String type) {
+        if (PRIMITIVE_SIGNATURE.containsKey(type))
+            return PRIMITIVE_SIGNATURE.get(type);
+        else
+            return String.format("L%s;", type);
+    }
 
     public static String fullName(String namespace, String name) {
         return fullName(namespace, name, false);
@@ -69,43 +72,7 @@ public class JavaUtils {
             return String.format("%s.%s", namespace, name);
     }
 
-    public static boolean isInner(String fullName) {
-        return fullName.contains("$");
-    }
-
-    public static String callName(String namespace, String name) {
-        return String.format("%s:%s", namespace, name);
-    }
-
-    public static boolean isFullName(String typeName) {
-        return typeName.contains(".");
-    }
-
     // ----------------------------------------------------------------------
-
-    // public static String lastOf(String fullName) {
-    //     int pos = fullName.lastIndexOf(".");
-    //     if (pos != -1)
-    //         return fullName.substring(pos+1);
-    //     else
-    //         return fullName;
-    // }
-
-    // public static String headOf(String fullName) {
-    //     int pos = fullName.indexOf(".");
-    //     if (pos != -1)
-    //         return fullName.substring(0, pos);
-    //     else
-    //         return fullName;
-    // }
-
-    // public static String restOf(String fullName) {
-    //     int pos = fullName.indexOf(".");
-    //     if (pos != -1)
-    //         return fullName.substring(pos+1);
-    //     else
-    //         return "";
-    // }
 
     public static String namespaceOf(String fullName) {
         int pos = fullName.lastIndexOf(".");
@@ -124,11 +91,6 @@ public class JavaUtils {
 
     private static Pattern NAMESPACE = Pattern.compile("([a-z]+)(\\.[a-z]+)+");
 
-    public static boolean isNamespace(String symbol) {
-        // <name>.<name>... with <name> in lowercase
-        // a generic identifier starting with a lowercase letter
-        return NAMESPACE.matcher(symbol).matches();
-    }
 
     private static Pattern IDENTIFIER = Pattern.compile("[a-z_$][A-Z0-9a-z_$]*");
 
@@ -140,21 +102,88 @@ public class JavaUtils {
 
     // ----------------------------------------------------------------------
 
-    public static boolean isSignature(String symbol) {
-        return symbol.contains("<") || symbol.contains("[");
-    }
+    /**
+     * The string is a class. Can be a generics. It strip the generic part.
+     * Sometime, it can be a method call:
+     *
+     *      [type].method(...)
+     *
+     * it strip also the 'method part'
+     *
+     * @param signature
+     * @return
+     */
 
-    public static String stripSignature(String signature) {
-        while (signature.contains("<")) {
-            int end = signature.lastIndexOf('>');
-            int bgn = signature.lastIndexOf('<');
-            signature = signature.substring(0, bgn) + signature.substring(end+1);
+    public static String toPlainSignature(String signature) {
+        int d;
+        char ch;
+        StringBuilder sb;
+
+        // string "... .method(...)"
+        if (signature.contains("(")) {
+            int pos = signature.indexOf('(');
+            int end = signature.lastIndexOf('.', pos-1);
+
+            if (end == -1)
+                signature = signature.substring(0, pos);
+            else
+                signature = signature.substring(0, end);
         }
-        while (signature.contains("[")) {
-            int end = signature.lastIndexOf(']');
-            int bgn = signature.lastIndexOf('[');
-            signature = signature.substring(0, bgn) + signature.substring(end+1);
+
+        if (!signature.contains("<"))
+            return signature;
+
+        // strip <...>
+        d = 0;
+        sb = new StringBuilder();
+        for (int i=0; i<signature.length(); ++i) {
+            ch = signature.charAt(i);
+            if (ch == '<') {
+                d++;
+                continue;
+            }
+            else if (ch == '>') {
+                d--;
+                continue;
+            }
+            else if (d > 0) {
+                continue;
+            }
+            else {
+                sb.append(ch);
+            }
         }
+
+        signature = sb.toString();
+
+        // strip [...]
+        d = 0;
+        sb = new StringBuilder();
+        for (int i=0; i<signature.length(); ++i) {
+            ch = signature.charAt(i);
+            if (ch == '[') {
+                d++;
+                continue;
+            }
+            else if (ch == ']') {
+                d--;
+                continue;
+            }
+            else if (d > 0) {
+                continue;
+            }
+            else {
+                sb.append(ch);
+            }
+        }
+
+        signature = sb.toString();
+
         return signature;
     }
+
+    public static boolean isPlainSignature(String signature) {
+        return !signature.contains("<") && !signature.contains("(");
+    }
+
 }

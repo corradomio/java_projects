@@ -7,28 +7,20 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
-import jext.javassist.ClasspathsTypeSolver;
-import jext.javassist.ClasspathsTypeSolvers;
 import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collections;
 
 public class Check {
 
-    private static ClasspathsTypeSolvers cptss = new ClasspathsTypeSolvers();
+    private static CombinedTypeSolver cptss = new CombinedTypeSolver();
 
     public static void main(String[] args) throws Exception {
 
@@ -71,11 +63,11 @@ public class Check {
             // ts.add(new JavaParserTypeSolver(new File("data\\bookstore\\src\\main\\java")));
             ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
             // ts.add(new JavaParserTypeSolver(new File("src_only")));
-            // ts.add(new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8")));
+            ts.add(new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8")));
             // ts.add(new ReflectionTypeSolver());
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\rt.jar")));
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\alt-rt.jar")));
-            ts.add(cptss.getTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8")));
+            // ts.add(cptss.getTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8")));
 
             JPUtils.setTypeSolver(cu, ts);
 

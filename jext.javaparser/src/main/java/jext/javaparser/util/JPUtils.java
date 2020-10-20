@@ -10,13 +10,18 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
+import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.java.JavaUtils;
+import jext.logging.Logger;
 
 import java.util.Optional;
 
 public class JPUtils {
+
+    private static Logger logger = Logger.getLogger(JPUtils.class);
 
     private static final Class<?> INITIALIZER_DECLARATION = InitializerDeclaration.class;
     private static final Class<?> METHOD_DECLARATION = MethodDeclaration.class;
@@ -208,4 +213,51 @@ public class JPUtils {
         return Optional.of(JavaUtils.fullName(oqname.get(), name));
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public static String getSignature(ConstructorDeclaration cd) {
+        String signature = cd.getSignature().asString();
+        return signature;
+    }
+
+    public static String getSignature(MethodDeclaration md) {
+        String signature = md.getSignature().asString();
+        return signature;
+    }
+
+    public static String getSignature(ResolvedMethodDeclaration rmd) {
+        try {
+            String signature = rmd.getSignature();
+            return signature;
+        }
+        catch (UnsupportedOperationException e) {
+
+        }
+        catch (Throwable t) {
+            logger.error(t, t);
+        }
+        return rmd.getQualifiedName();
+    }
+
+    public static String getSignature(ResolvedConstructorDeclaration rcd) {
+        try {
+            // A signature with a ".../n" is the constructor for a anonymous class
+            String signature = rcd.getSignature();
+            if (signature.contains("/")) {
+                int pos = signature.lastIndexOf('/');
+                int bgn = signature.lastIndexOf('.');
+                signature = signature.substring(0, pos) + signature.substring(bgn, pos);
+            }
+            return signature;
+        }
+        catch (UnsupportedOperationException e) {
+
+        }
+        catch (Throwable t) {
+            logger.error(t, t);
+        }
+        return rcd.getQualifiedName();
+    }
 }
