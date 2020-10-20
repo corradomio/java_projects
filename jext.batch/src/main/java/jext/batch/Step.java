@@ -1,25 +1,41 @@
 package jext.batch;
 
+import java.util.Optional;
+
 public interface Step {
 
+    /**
+     * Parent task
+     */
     Task getTask();
 
+    /** Task status */
+    Status getStatus();
+
     /**
-     * Initialization of the step
+     * If terminated for exception
      */
-    void onInit(Task task);
+    Optional<Throwable> getException();
 
     /**
      * Execute the step.
      *
      * If the step is aborted, it can throws an AbortedException
      */
-    void run() throws Exception;
+    void run();
 
     /**
      * Request to abort this step
      */
     void abort();
+
+    /**
+     * Initialization of the step
+     */
+    void onInit(Task task);
+
+
+    void onRun() throws Exception;
 
     /**
      * Called at the end (also after abort or exception)
