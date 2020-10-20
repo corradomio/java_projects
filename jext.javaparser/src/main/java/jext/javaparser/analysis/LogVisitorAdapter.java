@@ -12,10 +12,24 @@ import com.github.javaparser.ast.expr.ThisExpr;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import jext.logging.Logger;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
+
+    private static Class<?>[] SKIPPED_CLASSES = new Class[]{
+        Name.class,
+        SimpleName.class,
+        Modifier.class,
+        NameExpr.class,
+        MarkerAnnotationExpr.class,
+        ThisExpr.class,
+        ReturnStmt.class
+    };
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -25,6 +39,7 @@ public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
 
     protected CompilationUnit cu;
     protected String fileName;
+    protected List<Class<?>> skippedClasses = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -32,6 +47,16 @@ public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
 
     public LogVisitorAdapter() {
 
+    }
+
+    public LogVisitorAdapter<A> skipDefaultClasses() {
+        skippedClasses.addAll(Arrays.asList(SKIPPED_CLASSES));
+        return this;
+    }
+
+    public LogVisitorAdapter<A> skipClass(Class<?>... clazzes) {
+        skippedClasses.addAll(Arrays.asList(clazzes));
+        return this;
     }
 
     // ----------------------------------------------------------------------
@@ -54,20 +79,10 @@ public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
     // Overrides
     // ----------------------------------------------------------------------
 
-    private static Class<?>[] SKIPED_CLASSES = new Class[]{
-            Name.class,
-            SimpleName.class,
-            Modifier.class,
-            NameExpr.class,
-            MarkerAnnotationExpr.class,
-            ThisExpr.class,
-            ReturnStmt.class
-    };
-
     // ----------------------------------------------------------------------
 
     public void defaultAction(Node n, A arg) {
-        for (Class<?> clazz : SKIPED_CLASSES)
+        for (Class<?> clazz : skippedClasses)
             if (clazz.isInstance(n)) return;
         // if (n instanceof Name) return;
         // if (n instanceof SimpleName) return;

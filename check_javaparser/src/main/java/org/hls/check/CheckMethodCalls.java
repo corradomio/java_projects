@@ -2,10 +2,16 @@ package org.hls.check;
 
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVisitorAdapter;
+import jext.javaparser.analysis.MethodCallsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
@@ -27,10 +33,12 @@ public class CheckMethodCalls {
 
         FileUtils.listFiles(
             //new File("data\\bookstore\\src\\main\\java"),
-            new File("src_only"),
+            new File("D:\\Projects.github\\java_projects\\jext.cache"),
             pathname -> true)
+            .stream()
+            .filter(file -> file.getName().endsWith(".java"))
             .forEach(file -> {
-                System.out.printf("== %s ==\n", file.getName());
+                System.out.printf("==\n== %s ==\n==\n", file.getName());
                 // ParseResult<CompilationUnit> result = pool.parse(file);
                 ParseResult<CompilationUnit> result = parse(file);
                 result.ifSuccessful(CheckMethodCalls::analyze);
@@ -48,7 +56,7 @@ public class CheckMethodCalls {
 
         JPUtils.setTypeSolver(cu, ts);
 
-        LogVisitorAdapter<Void> lva = new LogVisitorAdapter<>();
+        MethodCallsVisitor lva = new MethodCallsVisitor();
         lva.analyze(cu);
     }
 }
