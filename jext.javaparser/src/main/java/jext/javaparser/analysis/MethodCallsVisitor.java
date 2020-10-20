@@ -4,7 +4,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.stmt.BlockStmt;
 
 public class MethodCallsVisitor extends BaseVisitorAdapter {
 
