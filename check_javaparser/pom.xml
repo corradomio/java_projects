@@ -29,6 +29,23 @@
     </modules>
 
     <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.javaparser</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.java</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
 <!--        <dependency>-->
 <!--            <groupId>com.github.javaparser</groupId>-->

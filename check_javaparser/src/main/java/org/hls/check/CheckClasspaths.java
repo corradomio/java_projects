@@ -1,8 +1,6 @@
 package org.hls.check;
 
 import javassist.NotFoundException;
-import jext.javassist.ClasspathElements;
-import jext.javassist.Classpaths;
 
 import java.io.File;
 
@@ -26,11 +24,5 @@ public class CheckClasspaths {
         //     System.out.println(cc.get(classname).getName());
         // });
 
-        Classpaths cp = new Classpaths();
-
-        ClasspathElements cpe = cp.getClasspathElements(new File("D:\\Java\\MiniJdk\\Jdk14"));
-        cpe.keySet().forEach(className -> {
-            System.out.println(cpe.get(className).getName());
-        });
     }
 }
