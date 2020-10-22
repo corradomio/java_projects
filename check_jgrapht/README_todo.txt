@@ -1,18 +1,24 @@
-Ci sono delle misure negative da ricontrollare
+D:\Dropbox\Dottorato di Ricerca Post\Graph Coloring & Clustering
+    
+    2008 - A Graph b-coloring Framework for Data Clustering
 
-Cambiare qualcosa sulla semantica
 
-Elencare parametri usati
-    in google doc colorare di rosso
+Confrontare il nostro apporccio con quello dell'articolo 2008 - ...
 
-Ricontrollare i risultati
 
-Esperimenti con altri dataset
+===============================================================
+
+    Demsar_Statistical Comparisons of Classifiers over Multiple Data Sets
+
+Usare le metriche descritte sopra per fare dei confronti con il 
+nostro approccio.
+
+
+===============================================================
+
+esperimenti con altri dataset
     sospendere alla prossima isse
 
-
-trovare parametri ideali per la clusterizzazione
-trovare un competitor sui dati sintetici.
 
 scalare a grafi di grandi dimensioni
     sospendere alla prossima isse
