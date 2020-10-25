@@ -1,2 +1,4 @@
-package org.hls.check.main;public class Project {
+package org.hls.check.main;
+
+public class Project {
 }

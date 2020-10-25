@@ -1,4 +1,4 @@
-package org.hls.check.check_spring_paginate;
+package org.hls.check.main;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
