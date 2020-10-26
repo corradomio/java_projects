@@ -1,17 +1,22 @@
-package org.hls.check.data;
+package org.hls.check.check_spring_paginate.data;
 
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
 
-@NodeEntity
+import java.util.List;
+
+@NodeEntity(label = "project")
 public class Project {
 
     @Id
     @GeneratedValue
-    private Long id;
+    public Long id;
 
-    private String fullname;
+    @Property(name = "fullname")
+    private String fullName;
     private String name;
     private String repository;
     private String reason;
@@ -20,6 +25,29 @@ public class Project {
     private Long timestamp;
     private String type;
 
+    // @Relationship(type = "memberOf", direction = Relationship.INCOMING)
+    // public List<Module> modules;
+
     public Project() { }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    // public List<Module> getModules() {
+    //     return modules;
+    // }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

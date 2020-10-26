@@ -12,7 +12,7 @@ public class Main {
         try (Connection con = DriverManager.getConnection("jdbc:neo4j:bolt://localhost", "neo4j", "password")) {
 
             // Querying
-            String query = "MATCH (p:project)--(m:module) WHERE p.name = {1} RETURN p.name, m.name";
+            String query = "MATCH (p:project)--(m:module) WHERE p.name = ? RETURN p.name, m.name";
             try (PreparedStatement stmt = con.prepareStatement(query)) {
                 stmt.setString(1,"spl26");
 

@@ -1,20 +1,23 @@
 package jext.springframework.data.neo4j.repository.support;
 
 import jext.springframework.data.neo4j.domain.Specification;
+import jext.springframework.data.neo4j.repository.Neo4jRepository;
 import org.neo4j.ogm.session.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-public class SimpleNeo4jRepository<T, ID extends Serializable>
+@Repository
+public class ExtendedNeo4jRepository<T, ID extends Serializable>
     extends org.springframework.data.neo4j.repository.support.SimpleNeo4jRepository<T, ID>
-    implements Neo4jRepositoryImplementation<T, ID> {
+    implements Neo4jRepository<T, ID> {
 
-    public SimpleNeo4jRepository(Class<T> domainClass, Session session) {
+    public ExtendedNeo4jRepository(Class<T> domainClass, Session session) {
         super(domainClass, session);
     }
 

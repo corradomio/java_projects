@@ -1,10 +1,10 @@
-package org.hls.check.data;
+package org.hls.check.check_spring_paginate.data;
 
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 
-@NodeEntity
+@NodeEntity(label = "module")
 public class Module {
 
     @Id
@@ -18,4 +18,17 @@ public class Module {
     private String type;
 
     public Module() { }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
