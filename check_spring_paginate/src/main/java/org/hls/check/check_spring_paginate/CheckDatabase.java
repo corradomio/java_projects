@@ -20,6 +20,7 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 @SpringBootApplication
 @EnableNeo4jRepositories
 @ComponentScan(value = "jext.springframework")
+@ComponentScan(value = "org.hls.check.check_spring_paginate")
 public class CheckDatabase {
 
     private final static Logger log = LoggerFactory.getLogger(CheckDatabase.class);
@@ -55,38 +56,38 @@ public class CheckDatabase {
     //     };
     // }
 
-    @Bean
-    CommandLineRunner demo(AtmRepository repository) {
-        return args -> {
-            repository.findAll( PageRequest.of(1, 10))
-                    .forEach(atm -> {
-                        System.out.printf("%s: %s\n", atm.getId(), atm.getName());
-                    });
-        };
-    }
+    // @Bean
+    // CommandLineRunner demo(AtmRepository repository) {
+    //     return args -> {
+    //         repository.findAll( PageRequest.of(1, 10))
+    //                 .forEach(atm -> {
+    //                     System.out.printf("%s: %s\n", atm.getId(), atm.getName());
+    //                 });
+    //     };
+    // }
 
-    @Bean
-    CommandLineRunner demo2(Neo4JConnector connector) {
-        return args -> {
-            try(Session session = connector.session()) {
-                Query query = new Query("MATCH (a:atm) RETURN a LIMIT 5");
-                Result result = session.run(query);
-                while(result.hasNext()){
-                    System.out.println(((Node)result.next().asMap().get("a")).getClass());
-                }
-            }
-        };
-    }
+    // @Bean
+    // CommandLineRunner demo2(Neo4JConnector connector) {
+    //     return args -> {
+    //         try(Session session = connector.session()) {
+    //             Query query = new Query("MATCH (a:atm) RETURN a LIMIT 5");
+    //             Result result = session.run(query);
+    //             while(result.hasNext()){
+    //                 System.out.println(((Node)result.next().asMap().get("a")).getClass());
+    //             }
+    //         }
+    //     };
+    // }
 
-    @Bean
-    CommandLineRunner demo3(BankOfficeRepository repository) {
-        return args -> {
-            repository.findAll( PageRequest.of(1, 10))
-                    .forEach(atm -> {
-                        System.out.printf("%s: %s\n", atm.getId(), atm.getName());
-                    });
-
-            repository.listAll();
-        };
-    }
+    // @Bean
+    // CommandLineRunner demo3(BankOfficeRepository repository) {
+    //     return args -> {
+    //         repository.findAll( PageRequest.of(1, 10))
+    //                 .forEach(atm -> {
+    //                     System.out.printf("%s: %s\n", atm.getId(), atm.getName());
+    //                 });
+    //
+    //         repository.listAll();
+    //     };
+    // }
 }
