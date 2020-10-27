@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+// @Repository
 public class ExtendedNeo4jRepository<T, ID extends Serializable>
     extends org.springframework.data.neo4j.repository.support.SimpleNeo4jRepository<T, ID>
     implements Neo4jRepository<T, ID> {

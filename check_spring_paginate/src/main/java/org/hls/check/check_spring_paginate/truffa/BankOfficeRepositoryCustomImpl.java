@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
-public class BankOfficeRepositoryImpl implements BankOfficeRepository {
+public class BankOfficeRepositoryCustomImpl implements BankOfficeRepositoryCustom {
 
     @Autowired
     private Neo4JConnector connector;
 
     @Override
-    public List<BankOffice> findAll() {
+    public List<BankOffice> listAll() {
         return Collections.emptyList();
     }
 }
