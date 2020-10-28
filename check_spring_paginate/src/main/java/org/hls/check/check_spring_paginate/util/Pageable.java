@@ -1,4 +1,4 @@
-package org.hls.check.check_spring_paginate;
+package org.hls.check.check_spring_paginate.util;
 
 public class Pageable {
     private int page = -1;

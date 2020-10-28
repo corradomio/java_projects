@@ -1,4 +1,4 @@
-package org.hls.check.check_spring_paginate;
+package org.hls.check.check_spring_paginate.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,5 +30,9 @@ public class Sort {
                 sb.append(order.toQueryParam());
 
         return sb.toString();
+    }
+
+    public String toString() {
+        return toQueryParams();
     }
 }
