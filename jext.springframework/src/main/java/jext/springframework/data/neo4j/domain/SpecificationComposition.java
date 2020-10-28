@@ -1,4 +1,4 @@
-package jext.springframework.neo4j.domain;
+package jext.springframework.data.neo4j.domain;
 
 import org.springframework.lang.Nullable;
 
@@ -16,7 +16,7 @@ class SpecificationComposition {
 
     @Nullable
     static <T> Specification<T> composed(@Nullable Specification<T> lhs, @Nullable Specification<T> rhs,
-                                                                             SpecificationComposition.Combiner combiner) {
+                                                                             Combiner combiner) {
 
         return (root, query, builder) -> {
 

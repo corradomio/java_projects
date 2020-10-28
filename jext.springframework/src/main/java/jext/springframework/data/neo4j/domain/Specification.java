@@ -1,4 +1,4 @@
-package jext.springframework.neo4j.domain;
+package jext.springframework.data.neo4j.domain;
 
 import org.springframework.lang.Nullable;
 
