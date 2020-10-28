@@ -1,4 +1,4 @@
-package jext.springframework.util;
+package jext.springframework.neo4j.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

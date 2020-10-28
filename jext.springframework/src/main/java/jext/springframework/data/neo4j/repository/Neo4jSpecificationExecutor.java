@@ -1,6 +1,6 @@
-package jext.springframework.data.neo4j.repository;
+package jext.springframework.neo4j.repository;
 
-import jext.springframework.data.neo4j.domain.Specification;
+import jext.springframework.neo4j.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

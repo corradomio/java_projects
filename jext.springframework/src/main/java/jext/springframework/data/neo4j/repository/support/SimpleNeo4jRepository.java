@@ -1,24 +1,32 @@
-package jext.springframework.data.neo4j.repository.support;
+package jext.springframework.neo4j.repository.support;
 
-import jext.springframework.data.neo4j.domain.Specification;
-import jext.springframework.data.neo4j.repository.Neo4jRepository;
+import jext.springframework.neo4j.domain.Specification;
+import jext.springframework.neo4j.repository.Neo4jRepository;
 import org.neo4j.ogm.session.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-// @Repository
-public class ExtendedNeo4jRepository<T, ID extends Serializable>
-    extends org.springframework.data.neo4j.repository.support.SimpleNeo4jRepository<T, ID>
-    implements Neo4jRepository<T, ID> {
 
-    public ExtendedNeo4jRepository(Class<T> domainClass, Session session) {
+// @Repository
+// @Transactional(readOnly = true)
+public class SimpleNeo4jRepository<T, ID extends Serializable>
+    extends org.springframework.data.neo4j.repository.support.SimpleNeo4jRepository<T, ID>
+    implements Neo4jRepository<T, ID>, Neo4jRepositoryImplementation<T, ID> {
+
+    private final Class<T> clazz;
+    private final Session session;
+
+    public SimpleNeo4jRepository(Class<T> domainClass, Session session) {
         super(domainClass, session);
+        this.clazz = domainClass;
+        this.session = session;
     }
 
     @Override

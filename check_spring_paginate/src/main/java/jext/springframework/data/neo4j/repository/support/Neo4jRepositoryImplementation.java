@@ -1,7 +1,7 @@
 package jext.springframework.data.neo4j.repository.support;
 
+import jext.springframework.data.neo4j.repository.Neo4jRepository;
 import jext.springframework.data.neo4j.repository.Neo4jSpecificationExecutor;
-import org.springframework.data.neo4j.repository.Neo4jRepository;
 
 import java.io.Serializable;
 

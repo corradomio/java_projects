@@ -1,4 +1,4 @@
-package jext.springframework.data.neo4j.repository;
+package jext.springframework.neo4j.repository;
 
 import org.springframework.data.repository.NoRepositoryBean;
 
