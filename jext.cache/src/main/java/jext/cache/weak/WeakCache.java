@@ -4,9 +4,11 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.cache.util.ManagedCache;
 
+import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 public class WeakCache<K, V> implements Cache<K, V>, ManagedCache {
 
@@ -25,14 +27,15 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache {
     }
 
     @Override
-    public V get(K key) {
+    public Optional<V> getIfPresent(K key) {
         synchronized (innerCache) {
-            return innerCache.getOrDefault(key, null);
+            V value = innerCache.getOrDefault(key, null);
+            return Optional.ofNullable(value);
         }
     }
 
     @Override
-    public V get(K key, Callable<V> callable) throws ExecutionException {
+    public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         synchronized (innerCache) {
             if (!innerCache.containsKey(key)) {
                 try {
@@ -45,6 +48,24 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache {
                 }
             }
             return innerCache.get(key);
+        }
+    }
+
+    @Override
+    public V get(K key, Callable<V> callable) {
+        try {
+            return getChecked(key, callable);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public V get(K key, Function<K, V> function) {
+        try {
+            return getChecked(key, () -> function.apply(key));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 

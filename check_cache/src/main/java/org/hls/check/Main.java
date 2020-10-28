@@ -14,19 +14,19 @@ public class Main {
 
         Cache<String, Integer> cache = CacheManager.getCache("org.hls.default", String.class, Integer.class);
 
-        System.out.println(cache.get("zero"));
+        System.out.println(cache.getIfPresent("zero"));
 
-        System.out.printf("%s\n", cache.get("one", () -> {
+        System.out.printf("%s\n", cache.getChecked("one", () -> {
             System.out.println("called callable 1\n");
             return 1;
         }));
 
-        System.out.printf("%s\n", cache.get("two", () -> {
+        System.out.printf("%s\n", cache.getChecked("two", () -> {
             System.out.println("called callable 2\n");
             return 2;
         }));
 
-        System.out.printf("%s\n", cache.get("two", () -> {
+        System.out.printf("%s\n", cache.getChecked("two", () -> {
             System.out.println("called callable 2\n");
             return 2;
         }));

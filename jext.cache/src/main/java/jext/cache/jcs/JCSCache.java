@@ -6,8 +6,10 @@ import jext.cache.util.ManagedCache;
 import jext.cache.util.Unique;
 import org.apache.commons.jcs.access.CacheAccess;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 public class JCSCache<K, V> implements Cache<K, V>, ManagedCache {
 
@@ -27,12 +29,13 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache {
     }
 
     @Override
-    public V get(K key) {
-        return innerCache.get(key);
+    public Optional<V> getIfPresent(K key) {
+        V value = innerCache.get(key);
+        return Optional.ofNullable(value);
     }
 
     @Override
-    public V get(K key, Callable<V> callable) throws ExecutionException {
+    public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         K unique = uniqueKeys.get(key);
         synchronized (unique) {
             V value = innerCache.get(unique);
@@ -46,6 +49,24 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache {
                 throw new ExecutionException(e);
             }
             return value;
+        }
+    }
+
+    @Override
+    public V get(K key, Callable<V> callable) {
+        try {
+            return getChecked(key, callable);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public V get(K key, Function<K, V> function) {
+        try {
+            return getChecked(key, () -> function.apply(key));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 

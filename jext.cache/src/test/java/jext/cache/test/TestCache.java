@@ -25,11 +25,11 @@ public class TestCache {
     void testCacheAccess() throws ExecutionException {
         Cache<Integer, Integer> cache = CacheManager.getCache("ii", Integer.class, Integer.class);
 
-        Assertions.assertNull(cache.get(1));
-        Assertions.assertNotNull(cache.get(2, () -> 22));
+        Assertions.assertNull(cache.getIfPresent(1));
+        Assertions.assertNotNull(cache.getChecked(2, () -> 22));
 
         cache.put(3, 33);
-        Assertions.assertNotNull(cache.get(3));
-        Assertions.assertEquals(33, cache.get(3));
+        Assertions.assertNotNull(cache.getIfPresent(3));
+        Assertions.assertEquals(33, cache.getIfPresent(3));
     }
 }

@@ -1,7 +1,9 @@
 package jext.cache;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 public interface Cache<K, V> extends AutoCloseable {
 
@@ -9,7 +11,7 @@ public interface Cache<K, V> extends AutoCloseable {
     String getName();
 
     /** The value in the cache, or null */
-    V get(K key);
+    Optional<V> getIfPresent(K key);
 
     /**
      * If the cache doesn't contain the key, the value is computed
@@ -19,7 +21,10 @@ public interface Cache<K, V> extends AutoCloseable {
      * @return the value
      * @throws ExecutionException
      */
-    V get(K key, Callable<V> callable) throws ExecutionException;
+    V getChecked(K key, Callable<V> callable) throws ExecutionException;
+
+    V get(K key, Callable<V> callable);
+    V get(K key, Function<K, V> function);
 
     /** Insert in the cache */
     void put(K key, V value);
