@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class Neo4JConnector {
 
-    @Autowired(required = true)
+    @Autowired
     private org.neo4j.driver.Driver driver;
 
     public Neo4JConnector(Driver driver) {

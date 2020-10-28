@@ -17,3 +17,10 @@ CypherQueryDSL neo4j-cypher-dsl
     https://github.com/neo4j-contrib/cypher-dsl
     https://neo4j-contrib.github.io/cypher-dsl/current/
     https://www.opencypher.org/
+
+SDN/RX (OLD) replaced by Spring Data for Neo4J
+    https://github.com/neo4j/sdn-rx
+
+Spring Data for Neo4J
+    https://github.com/spring-projects/spring-data-neo4j
+

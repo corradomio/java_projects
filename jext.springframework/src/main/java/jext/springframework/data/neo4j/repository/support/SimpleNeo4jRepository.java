@@ -6,8 +6,6 @@ import org.neo4j.ogm.session.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.query.EscapeCharacter;
-import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 
 import java.io.Serializable;
 import java.util.List;
@@ -53,13 +51,4 @@ public class SimpleNeo4jRepository<T, ID extends Serializable>
         return 0;
     }
 
-    @Override
-    public void setRepositoryMethodMetadata(CrudMethodMetadata crudMethodMetadata) {
-
-    }
-
-    @Override
-    public void setEscapeCharacter(EscapeCharacter escapeCharacter) {
-
-    }
 }
