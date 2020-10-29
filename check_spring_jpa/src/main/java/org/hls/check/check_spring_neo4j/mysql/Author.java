@@ -21,8 +21,14 @@ public class Author {
 
     public Author() { }
 
-    public String getId() {
-        return id.toString();
+    public Author(int i, String firstName, String lastName) {
+        this.id = Long.valueOf(i);
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
