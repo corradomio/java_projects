@@ -1,4 +1,4 @@
-package org.hls.check.check_spring_neo4j.truffa;
+package org.hls.check.check_neo4j_2.truffa;
 
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;

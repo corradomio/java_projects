@@ -1,6 +1,6 @@
-package org.hls.check.check_spring_neo4j.truffa;
+package org.hls.check.check_neo4j_2.truffa;
 
-import org.springframework.data.neo4j.repository.Neo4jRepository;
+import jext.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

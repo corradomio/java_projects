@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface BankOfficeRepositoryCustom {
 
-    List<BankOffice> listAll();
+    void test();
 }
