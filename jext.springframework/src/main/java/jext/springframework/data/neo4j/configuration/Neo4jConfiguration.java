@@ -4,7 +4,7 @@ import jext.springframework.data.neo4j.Neo4JConnector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+// @Configuration
 public class Neo4jConfiguration {
 
     @Bean

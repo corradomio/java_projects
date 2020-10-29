@@ -1,4 +1,4 @@
-package org.springframework.data.cypherdsl;
+package jext.springframework.data.cypherdsl;
 
 import org.neo4j.cypherdsl.core.ExposesReturning;
 import org.neo4j.cypherdsl.core.Statement;
