@@ -13,7 +13,7 @@ import java.util.Optional;
  *
  * @author Corrado Mio
  */
-public interface CypherdslPredicateExecutor<T> {
+public interface CypherdslStatementExecutor<T> {
 
     Optional<T> findOne(ExposesReturning noReturn, String variable);
 

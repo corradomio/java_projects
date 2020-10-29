@@ -1,5 +1,6 @@
 package jext.springframework.data.neo4j.repository.support;
 
+import jext.springframework.data.cypherdsl.Neo4jOgmSessionExecutor;
 import jext.springframework.data.neo4j.repository.Neo4jRepository;
 import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.ExposesReturning;
@@ -8,40 +9,86 @@ import org.neo4j.cypherdsl.core.FunctionInvocation;
 import org.neo4j.cypherdsl.core.Functions;
 import org.neo4j.cypherdsl.core.Statement;
 import org.neo4j.cypherdsl.core.renderer.Renderer;
+import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
-import jext.springframework.data.cypherdsl.CypherdslPredicateExecutor;
+import jext.springframework.data.cypherdsl.CypherdslStatementExecutor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.neo4j.repository.support.SimpleNeo4jRepository;
-import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 
 // @Repository
-public class CypherdslNeo4jRepository<T, ID extends Serializable> extends SimpleNeo4jRepository<T, ID>
-        implements CypherdslPredicateExecutor<T>, Neo4jRepository<T, ID> {
+public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleNeo4jRepository<T, ID>
+        implements Neo4jRepository<T, ID>,
+        CypherdslStatementExecutor<T>,
+        Neo4jOgmSessionExecutor<T, ID>
+{
+
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
 
     private static Renderer cypherRenderer = Renderer.getDefaultRenderer();
 
     private final Class<T> domainClass;
     private final Session session;
 
-    public CypherdslNeo4jRepository(Class<T> domainClass, Session session) {
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    public ExtendedNeo4jRepository(Class<T> domainClass, Session session) {
         super(domainClass, session);
 
         this.domainClass = domainClass;
         this.session = session;
     }
 
-    private Class<T> getDomainClass() {
+    // ----------------------------------------------------------------------
+    // Neo4jOgmSessionExecutor
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Class<T> getDomainClass() {
         return domainClass;
     }
 
-    // --
+    @Override
+    public Session getSession() {
+        return session;
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public <U> U queryForObject(Class<U> objectType, String cypher, Map<String, ?> parameters) {
+        return session.queryForObject(objectType, cypher, parameters);
+    }
+
+    @Override
+    public <U> Iterable<U> query(Class<U> objectType, String cypher, Map<String, ?> parameters) {
+        return session.query(objectType, cypher, parameters);
+    }
+
+    @Override
+    public Result query(String cypher, Map<String, ?> parameters) {
+        return session.query(cypher, parameters);
+    }
+
+    @Override
+    public Result query(String cypher, Map<String, ?> parameters, boolean readOnly) {
+        return session.query(cypher, parameters, readOnly);
+    }
+
+    // ----------------------------------------------------------------------
+    // CypherdslStatementExecutor
+    // ----------------------------------------------------------------------
 
     @Override
     public Optional<T> findOne(ExposesReturning noReturn, String variable) {
@@ -87,5 +134,9 @@ public class CypherdslNeo4jRepository<T, ID extends Serializable> extends Simple
     public boolean exists(ExposesReturning noReturn, String variable) {
         return count(noReturn, variable) > 0;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }
