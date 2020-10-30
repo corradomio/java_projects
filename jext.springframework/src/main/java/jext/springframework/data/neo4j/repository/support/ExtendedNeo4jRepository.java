@@ -13,12 +13,14 @@ import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 import jext.springframework.data.cypherdsl.CypherdslStatementExecutor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.neo4j.repository.support.SimpleNeo4jRepository;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,7 +53,7 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
     }
 
     // ----------------------------------------------------------------------
-    // Neo4jOgmSessionExecutor
+    // Neo4jOgmSessionExecutor<T, ID>
     // ----------------------------------------------------------------------
 
     @Override
@@ -118,7 +120,23 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
 
     @Override
     public Page<T> findAll(ExposesReturning noReturn, String variable, Pageable pageable) {
-        return null;
+        Expression orderBy = OrderBy.of(pageable.getSort());
+        Statement statement = noReturn.returning(variable)
+                .orderBy(orderBy)
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .build();
+        String cypher = cypherRenderer.render(statement);
+
+        List<T> content = PageContent.toList(session.query(getDomainClass(), cypher, Collections.emptyMap()));
+
+        FunctionInvocation count = Functions.count(Cypher.anyNode(variable));
+        statement = noReturn.returning(count).build();
+        cypher = cypherRenderer.render(statement);
+
+        long total = session.queryForObject(Long.class, cypher, Collections.emptyMap());
+
+        return new PageImpl<>(content, pageable, total);
     }
 
     @Override
@@ -127,7 +145,7 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
         Statement statement = noReturn.returning(count).build();
         String cypher = cypherRenderer.render(statement);
 
-        return (Long)session.queryForObject(getDomainClass(), cypher, Collections.emptyMap());
+        return session.queryForObject(Long.class, cypher, Collections.emptyMap());
     }
 
     @Override
