@@ -18,8 +18,12 @@ public class Main {
 
     public static void main(String[] args) {
         Node n = Cypher.anyNode().named("n");
-        SortItem si;
-        ;
+        SortItem[] si = new SortItem[2];
+
+        si[0] = Cypher.sort(n.property("x")).ascending();
+        si[0] = Cypher.sort(n.property("y")).descending();
+
+        Cypher.match(n).returning("n").orderBy(si).);
 
         dump(Cypher.match(n).returning(Functions.count(n)).build());
     }

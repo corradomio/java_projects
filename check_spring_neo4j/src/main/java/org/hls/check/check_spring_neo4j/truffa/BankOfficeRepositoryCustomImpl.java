@@ -18,6 +18,6 @@ public class BankOfficeRepositoryCustomImpl implements BankOfficeRepositoryCusto
         Node atm = Cypher.node("atm").named("a");
         ExposesReturning noReturn = Cypher.match(atm);
 
-        System.out.println(bo.count(noReturn, "a"));
+        // System.out.println(bo.count(noReturn, "a"));
     }
 }

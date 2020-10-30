@@ -26,4 +26,9 @@ public class Atm {
         return rg;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Atm[%s, %s]", getId(), getName());
+    }
+
 }

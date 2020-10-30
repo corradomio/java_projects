@@ -6,9 +6,9 @@ import org.springframework.data.domain.Sort;
 
 public class OrderBy {
 
-    public static Expression of(Sort sort) {
+    public static Expression of(Sort sort, String variable) {
 
-        Expression orderBy = null;
+        Expression orderBy = Cypher.o;
 
         for (Sort.Order order : sort) {
 
