@@ -1,19 +1,23 @@
 package org.hls.check.check_spring_neo4j;
 
 import jext.springframework.data.neo4j.repository.support.ExtendedNeo4jRepository;
+import jext.springframework.data.neo4j.util.SpringBeans;
 import org.hls.check.check_spring_neo4j.truffa.AtmRepository;
 import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.ExposesReturning;
 import org.neo4j.cypherdsl.core.Node;
 import org.neo4j.ogm.model.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 
+import javax.swing.*;
 import java.util.Collections;
 
 @SpringBootApplication
@@ -24,17 +28,27 @@ import java.util.Collections;
 @ComponentScan(value = "org.hls.check.check_spring_neo4j.truffa")
 @ComponentScan(value = "org.hls.check")
 public class CheckSpringNeo4jApplication {
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public static void main(String[] args) {
         SpringApplication.run(CheckSpringNeo4jApplication.class, args);
     }
 
     @Bean
+    CommandLineRunner demo0(AtmRepository repository) {
+        return args -> {
+            new SpringBeans(applicationContext).dumpBeans();
+        };
+    }
+
+
+    @Bean
     CommandLineRunner demo1(AtmRepository repository) {
         return args -> {
             repository.findAll( PageRequest.of(1, 10))
                     .forEach(atm -> {
-                        System.out.printf("Atm %s: %s\n", atm.getId(), atm.getName());
+                        System.out.printf("1 %s: %s\n", atm.getId(), atm.getName());
                     });
         };
     }

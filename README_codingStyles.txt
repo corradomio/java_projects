@@ -1,3 +1,8 @@
+REST Service
+
+    HATEOS  https://en.wikipedia.org/wiki/HATEOAS
+    HAL     https://en.wikipedia.org/wiki/Hypertext_Application_Language
+
 
     <object>.is<Type>
     <object>.as<Type>   SAME object but changing type (downcast)

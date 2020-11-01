@@ -8,7 +8,7 @@ public class OrderBy {
 
     public static Expression of(Sort sort, String variable) {
 
-        Expression orderBy = Cypher.o;
+        Expression orderBy;
 
         for (Sort.Order order : sort) {
 
