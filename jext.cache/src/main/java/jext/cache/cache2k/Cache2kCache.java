@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache {
 
+    private long lastAccess;
     private String name;
     private CacheManager manager;
     private org.cache2k.Cache<K, V> innerCache;
