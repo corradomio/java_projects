@@ -48,7 +48,7 @@ public class CheckSpringNeo4jApplication {
         return args -> {
             repository.findAll( PageRequest.of(1, 10))
                     .forEach(atm -> {
-                        System.out.printf("1 %s: %s\n", atm.getId(), atm.getName());
+                        System.out.printf("1: %s: %s\n", atm.getId(), atm.getName());
                     });
         };
     }
@@ -72,7 +72,7 @@ public class CheckSpringNeo4jApplication {
             // ritorna una lista di mappe {'a'-> Atm object !!!!}
             Result qr = repository.query("MATCH (a:atm) RETURN a SKIP 1 LIMIT 2", Collections.emptyMap());
             qr.forEach(result -> {
-                System.out.printf("2: %s\n", result);
+                System.out.printf("3: %s\n", result);
             });
         };
     }
@@ -88,15 +88,15 @@ public class CheckSpringNeo4jApplication {
 
             a = Cypher.node("atm").named("a");
             noReturn = Cypher.match(a);
-            System.out.printf("3: %d\n", repository.count(noReturn, "a"));
+            System.out.printf("4: %d\n", repository.count(noReturn, "a"));
 
             a = Cypher.node("atm").named("a");
             noReturn = Cypher.match(a);
-            System.out.printf("3: %s\n", repository.findOne(noReturn, "a").toString());
+            System.out.printf("4: %s\n", repository.findOne(noReturn, "a").toString());
 
             a = Cypher.node("atm").named("a");
             noReturn = Cypher.match(a).where(a.property("name").isEqualTo(Cypher.literalOf("Casa")));
-            System.out.printf("3: %s\n", repository.findOne(noReturn, "a"));
+            System.out.printf("4: %s\n", repository.findOne(noReturn, "a"));
 
 
         };

@@ -30,6 +30,7 @@ public class DBConfiguration {
     //     }
     //     return driver.session();
     // }
+
     @Bean
     @ConditionalOnMissingBean(Driver.class)
     @ConditionalOnProperty(prefix = "org.neo4j.driver", name = "uri")
