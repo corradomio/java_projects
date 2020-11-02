@@ -7,16 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class Neo4JConnector {
 
     @Autowired(required = false)
-    private org.neo4j.driver.Driver driver;
-
-    // public Neo4JConnector(Driver driver) {
-    //     this.driver = driver;
-    // }
+    private Driver driver;
 
     public Neo4JConnector() {
 
     }
 
+    // public Neo4JConnector(Driver driver) {
+    //     this.driver = driver;
+    // }
+
+<<<<<<< Updated upstream
+    public Neo4JConnector() {
+
+    }
+
+=======
+>>>>>>> Stashed changes
     public Session session() {
         return driver.session();
     }
