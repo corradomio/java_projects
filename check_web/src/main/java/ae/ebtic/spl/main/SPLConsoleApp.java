@@ -1,4 +1,4 @@
-package ae.ebtic.spl.web.app;
+package ae.ebtic.spl.main;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +21,6 @@ public class SPLConsoleApp {
     @GetMapping("/app")
     @ResponseBody
     public String test() {
-        return "app: " + (new File(".").getAbsolutePath());
+        return "/app: " + (new File(".").getAbsolutePath());
     }
 }

@@ -11,5 +11,49 @@
 
     <artifactId>spldata</artifactId>
 
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <spring.boot.version>2.3.4.RELEASE</spring.boot.version>
+        <cypherdsl.version>2020.1.1</cypherdsl.version>
+        <neo4j.driver.version>4.1.1.0</neo4j.driver.version>
+    </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-cypher-dsl -->
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-cypher-dsl</artifactId>
+            <version>${cypherdsl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j.driver</groupId>
+            <artifactId>neo4j-java-driver-spring-boot-starter</artifactId>
+            <version>${neo4j.driver.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

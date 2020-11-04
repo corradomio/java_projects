@@ -1,12 +1,9 @@
 package org.hls.check.check_spring_neo4j;
 
 import jext.springframework.data.neo4j.repository.support.ExtendedNeo4jRepository;
-<<<<<<< Updated upstream
 import jext.springframework.data.neo4j.util.SpringBeans;
-import org.hls.check.check_spring_neo4j.truffa.AtmRepository;
-=======
+// import org.hls.check.check_spring_neo4j.truffa.AtmRepository;
 import org.hls.check.check_spring_neo4j.spl.ProjectRepository;
->>>>>>> Stashed changes
 import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.ExposesReturning;
 import org.neo4j.cypherdsl.core.Node;
@@ -39,59 +36,35 @@ public class CheckSpringNeo4jApplication {
         SpringApplication.run(CheckSpringNeo4jApplication.class, args);
     }
 
-    @Bean
-<<<<<<< Updated upstream
-    CommandLineRunner demo0(AtmRepository repository) {
-        return args -> {
-            new SpringBeans(applicationContext).dumpBeans();
-        };
-    }
+    // @Bean
+    // CommandLineRunner demo0(AtmRepository repository) {
+    //     return args -> {
+    //         new SpringBeans(applicationContext).dumpBeans();
+    //     };
+    // }
 
 
+    // @Bean
+    // CommandLineRunner demo12(AtmRepository repository) {
+    //     return args -> {
+    //         repository.findAll(PageRequest.of(1, 10))
+    //                 .forEach(atm -> {
+    //                     System.out.printf("1: %s: %s\n", atm.getId(), atm.getName());
+    //                 });
+    //     };
+    // }
+
     @Bean
-    CommandLineRunner demo1(AtmRepository repository) {
-        return args -> {
-            repository.findAll( PageRequest.of(1, 10))
-                    .forEach(atm -> {
-                        System.out.printf("1: %s: %s\n", atm.getId(), atm.getName());
-                    });
-=======
     CommandLineRunner demo1(ProjectRepository repository) {
         return args -> {
             repository.findAll( )
                 .forEach(project -> {
                     System.out.printf("Project %s: %s\n", project.getId(), project.getName());
                 });
->>>>>>> Stashed changes
         };
     }
 
 
-<<<<<<< Updated upstream
-    @Bean
-    CommandLineRunner demo2(AtmRepository repository) {
-        return args -> {
-            // ritorna una lista di mappe {'a'-> Atm object !!!!}
-            Result qr = repository.query("MATCH (a:atm) RETURN a SKIP 1 LIMIT 2", Collections.emptyMap());
-            qr.forEach(result -> {
-                System.out.printf("2: %s\n", result);
-            });
-        };
-    }
-
-
-    @Bean
-    CommandLineRunner demo3(AtmRepository repository) {
-        return args -> {
-            // ritorna una lista di mappe {'a'-> Atm object !!!!}
-            Result qr = repository.query("MATCH (a:atm) RETURN a SKIP 1 LIMIT 2", Collections.emptyMap());
-            qr.forEach(result -> {
-                System.out.printf("3: %s\n", result);
-            });
-        };
-    }
-
-=======
     // @Bean
     // CommandLineRunner demo1(AtmRepository repository) {
     //     return args -> {
@@ -101,32 +74,31 @@ public class CheckSpringNeo4jApplication {
     //                 });
     //     };
     // }
->>>>>>> Stashed changes
     //
     //
-<<<<<<< Updated upstream
-    @Bean
-    CommandLineRunner demo4(AtmRepository repository) {
-        return args -> {
-            Node a;
-            ExposesReturning noReturn;
+    //
+    // @Bean
+    // CommandLineRunner demo4(AtmRepository repository) {
+    //     return args -> {
+    //         Node a;
+    //         ExposesReturning noReturn;
+    //
+    //         a = Cypher.node("atm").named("a");
+    //         noReturn = Cypher.match(a);
+    //         System.out.printf("4: %d\n", repository.count(noReturn, "a"));
+    //
+    //         a = Cypher.node("atm").named("a");
+    //         noReturn = Cypher.match(a);
+    //         System.out.printf("4: %s\n", repository.findOne(noReturn, "a").toString());
+    //
+    //         a = Cypher.node("atm").named("a");
+    //         noReturn = Cypher.match(a).where(a.property("name").isEqualTo(Cypher.literalOf("Casa")));
+    //         System.out.printf("4: %s\n", repository.findOne(noReturn, "a"));
+    //
+    //
+    //     };
+    // }
 
-            a = Cypher.node("atm").named("a");
-            noReturn = Cypher.match(a);
-            System.out.printf("4: %d\n", repository.count(noReturn, "a"));
-
-            a = Cypher.node("atm").named("a");
-            noReturn = Cypher.match(a);
-            System.out.printf("4: %s\n", repository.findOne(noReturn, "a").toString());
-
-            a = Cypher.node("atm").named("a");
-            noReturn = Cypher.match(a).where(a.property("name").isEqualTo(Cypher.literalOf("Casa")));
-            System.out.printf("4: %s\n", repository.findOne(noReturn, "a"));
-
-
-        };
-    }
-=======
     // @Bean
     // CommandLineRunner demo2(AtmRepository repository) {
     //     return args -> {
@@ -174,8 +146,6 @@ public class CheckSpringNeo4jApplication {
     //
     //     };
     // }
->>>>>>> Stashed changes
-
 
     // @Bean
     // CommandLineRunner demo3(BankOfficeRepository repository) {

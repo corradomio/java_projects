@@ -1,5 +1,6 @@
 package jext.springframework.data.neo4j;
 
+import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.SessionConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +14,6 @@ public class Neo4JConnector {
 
     }
 
-    // public Neo4JConnector(Driver driver) {
-    //     this.driver = driver;
-    // }
-
-<<<<<<< Updated upstream
-    public Neo4JConnector() {
-
-    }
-
-=======
->>>>>>> Stashed changes
     public Session session() {
         return driver.session();
     }
