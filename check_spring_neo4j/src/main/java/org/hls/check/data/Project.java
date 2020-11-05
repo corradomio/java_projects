@@ -1,4 +1,4 @@
-package org.hls.check.check_spring_neo4j.spl;
+package org.hls.check.data;
 
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
