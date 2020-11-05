@@ -10,13 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 
 @Configuration
-@EnableNeo4jRepositories(basePackages = {"ae.ebtic.spl.data"})
+@EnableNeo4jRepositories(basePackages = "ae.ebtic.spl.data")
+@EntityScan("ae.ebtic.spl.data")
+@ComponentScan("jext.springframework")
 @ComponentScan("ae.ebtic.spl.data")
 public class SPLDataConfig {
 

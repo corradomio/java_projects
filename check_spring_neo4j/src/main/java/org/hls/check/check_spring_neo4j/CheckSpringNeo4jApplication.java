@@ -1,33 +1,27 @@
 package org.hls.check.check_spring_neo4j;
 
-import jext.springframework.data.neo4j.repository.support.ExtendedNeo4jRepository;
-import jext.springframework.data.neo4j.util.SpringBeans;
+// import jext.springframework.data.neo4j.repository.support.ExtendedNeo4jRepository;
+// import jext.springframework.data.neo4j.util.SpringBeans;
 // import org.hls.check.check_spring_neo4j.truffa.AtmRepository;
-import org.hls.check.check_spring_neo4j.spl.ProjectRepository;
-import org.neo4j.cypherdsl.core.Cypher;
-import org.neo4j.cypherdsl.core.ExposesReturning;
-import org.neo4j.cypherdsl.core.Node;
-import org.neo4j.ogm.model.Result;
+import org.hls.check.data.Project;
+import org.hls.check.data.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 
-import javax.swing.*;
-import java.util.Collections;
-
 @SpringBootApplication
-@EnableNeo4jRepositories(repositoryBaseClass = ExtendedNeo4jRepository.class)
-// @EnableNeo4jRepositories(basePackageClasses = Neo4jRepository.class)
+// @EnableNeo4jRepositories(repositoryBaseClass = ExtendedNeo4jRepository.class)
+@EnableNeo4jRepositories(basePackageClasses = Project.class)
+@EntityScan("org.hls.check.data")
 // @EnableNeo4jRepositories()
-@ComponentScan(value = "jext.springframework")
-@ComponentScan(value = "org.hls.check.check_spring_neo4j")
-@ComponentScan(value = "org.hls.check")
+// @ComponentScan(value = "org.hls.check.check_spring_neo4j")
+// @ComponentScan(value = "org.hls.check")
+// @ComponentScan(value = "jext.springframework")
 public class CheckSpringNeo4jApplication {
     @Autowired
     private ApplicationContext applicationContext;

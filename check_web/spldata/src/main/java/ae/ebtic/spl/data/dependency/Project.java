@@ -1,9 +1,11 @@
 package ae.ebtic.spl.data.dependency;
 
+import lombok.Data;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 
+@Data
 @NodeEntity(label = "project")
 public class Project {
 
@@ -28,16 +30,16 @@ public class Project {
     //
     // ----------------------------------------------------------------------
 
-    public Project() {
-
-    }
-
-    public String getId() {
-        return projectId;
-    }
-
-    public String getName() {
-        return name;
-    }
+    // public Project() {
+    //
+    // }
+    //
+    // public String getId() {
+    //     return projectId;
+    // }
+    //
+    // public String getName() {
+    //     return name;
+    // }
 
 }
