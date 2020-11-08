@@ -33,8 +33,7 @@ public class SPLConfigApp {
 
     @PostConstruct
     void postConstruct(){
-        String[] activeProfiles = environment.getActiveProfiles();
-        logger.info("active profiles: {}", Arrays.toString(activeProfiles));
+        String[] activeProfiles = environment.getActiveProfiles();logger.info("active profiles: {}", Arrays.toString(activeProfiles));
     }
 
     // @Bean

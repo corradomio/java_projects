@@ -30,7 +30,7 @@ public class SPLDataConfig {
     }
 
     // @Autowired
-    private Driver driver;
+    // private Driver driver;
 
     // public DBConfiguration(Driver driver) {
     //     this.driver = driver;
