@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.FileSystemResource;
 
 @Configuration
 public class DBConfiguration {
@@ -29,6 +31,15 @@ public class DBConfiguration {
     //     }
     //     return driver.session();
     // }
+
+    @Bean
+    public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer properties =
+            new PropertySourcesPlaceholderConfigurer();
+        properties.setLocation(new FileSystemResource("D:\\Projects.github\\java_projects\\check_spring_neo4j\\src\\main\\resources\\application.properties"));
+        properties.setIgnoreResourceNotFound(false);
+        return properties;
+    }
 
     @Bean
     @ConditionalOnMissingBean(Driver.class)
