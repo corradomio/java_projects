@@ -36,7 +36,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
             boolean loop,
             boolean multiple,
             boolean weighted,
-            Supplier<E> edgeSupplier) {
+            Supplier<E> edgeSupplier,
+            Supplier<V> vertexSupplier) {
         GraphTypeBuilder<V, E> gtb = directed
                 ? GraphTypeBuilder.directed()
                 : GraphTypeBuilder.undirected();
@@ -45,6 +46,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 .allowingMultipleEdges(multiple)
                 .weighted(weighted)
                 .edgeSupplier(edgeSupplier)
+                .vertexSupplier(vertexSupplier)
                 .buildGraph();
     }
 
@@ -55,7 +57,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 gtype.isAllowingSelfLoops(),
                 gtype.isAllowingMultipleEdges(),
                 gtype.isWeighted(),
-                graph.getEdgeSupplier());
+                graph.getEdgeSupplier(),
+                graph.getVertexSupplier());
     }
 
     public static <V, E> Set<V> predecessorSetOf(Graph<V, E> g, V vertex) {
@@ -227,4 +230,11 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return new AsSubgraph<>(g, selected[0]);
     }
 
+    // ----------------------------------------------------------------------
+    // Dump graph
+    // ----------------------------------------------------------------------
+
+    public static <V, E> void describe(Graph<V, E> g) {
+        System.out.println("Graph: |V|=%d, |E|=%d\n");
+    }
 }

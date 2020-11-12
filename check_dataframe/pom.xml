@@ -7,30 +7,96 @@
     <groupId>org.hls.check</groupId>
     <artifactId>check_dataframe</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <repositories>
-        <repository>
-            <id>JCentre</id>
-            <url> https://bintray.com/bintray/jcenter</url>
-        </repository>
-    </repositories>
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
+
+    <modules>
+        <module>../jext.csv</module>
+    </modules>
+
+    <!--<repositories>-->
+    <!--    <repository>-->
+    <!--        <id>JCentre</id>-->
+    <!--        <url> https://bintray.com/bintray/jcenter</url>-->
+    <!--    </repository>-->
+    <!--</repositories>-->
 
     <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.csv</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/de.unknownreality/dataframe -->
         <dependency>
             <groupId>de.unknownreality</groupId>
             <artifactId>dataframe</artifactId>
             <version>0.7.6</version>
         </dependency>
-        <dependency>
-            <groupId>joinery</groupId>
-            <artifactId>joinery-dataframe</artifactId>
-            <version>1.9</version>
-        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core -->
         <dependency>
             <groupId>tech.tablesaw</groupId>
             <artifactId>tablesaw-core</artifactId>
             <version>0.38.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/it.unimi.dsi/fastutil -->
+        <!--<dependency>-->
+        <!--    <groupId>it.unimi.dsi</groupId>-->
+        <!--    <artifactId>fastutil</artifactId>-->
+        <!--    <version>8.4.3</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
+        <!--<dependency>-->
+        <!--    <groupId>com.ibm.icu</groupId>-->
+        <!--    <artifactId>icu4j</artifactId>-->
+        <!--    <version>68.1</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
+        <!--<dependency>-->
+        <!--    <groupId>io.github.classgraph</groupId>-->
+        <!--    <artifactId>classgraph</artifactId>-->
+        <!--    <version>4.8.90</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.univocity/univocity-parsers -->
+        <!--<dependency>-->
+        <!--    <groupId>com.univocity</groupId>-->
+        <!--    <artifactId>univocity-parsers</artifactId>-->
+        <!--    <version>2.9.0</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <!--<dependency>-->
+        <!--    <groupId>org.slf4j</groupId>-->
+        <!--    <artifactId>slf4j-api</artifactId>-->
+        <!--    <version>1.7.30</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <!--<dependency>-->
+        <!--    <groupId>org.slf4j</groupId>-->
+        <!--    <artifactId>slf4j-simple</artifactId>-->
+        <!--    <version>1.7.30</version>-->
+        <!--    &lt;!&ndash;<scope>test</scope>&ndash;&gt;-->
+        <!--</dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+        <!--<dependency>-->
+        <!--    <groupId>org.apache.commons</groupId>-->
+        <!--    <artifactId>commons-math3</artifactId>-->
+        <!--    <version>3.6.1</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 

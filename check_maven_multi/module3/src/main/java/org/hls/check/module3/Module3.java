@@ -1,2 +1,4 @@
-package org.hls.check.module3;public class Module3 {
+package org.hls.check.module3;
+
+public class Module3 {
 }

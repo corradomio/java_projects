@@ -18,8 +18,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <spring.boot.version>2.3.4.RELEASE</spring.boot.version>
         <cypherdsl.version>2020.1.1</cypherdsl.version>
-        <neo4j.driver.version>4.1.1.0</neo4j.driver.version>
-        <neo4j.jdbc.driver.version>4.0.1</neo4j.jdbc.driver.version>
+        <!--<neo4j.driver.version>4.1.1.0</neo4j.driver.version>-->
+        <!--<neo4j.jdbc.driver.version>4.0.1</neo4j.jdbc.driver.version>-->
     </properties>
 
     <dependencies>
@@ -42,18 +42,18 @@
             <version>${cypherdsl.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.neo4j.driver</groupId>
-            <artifactId>neo4j-java-driver-spring-boot-starter</artifactId>
-            <version>${neo4j.driver.version}</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.neo4j.driver</groupId>-->
+        <!--    <artifactId>neo4j-java-driver-spring-boot-starter</artifactId>-->
+        <!--    <version>${neo4j.driver.version}</version>-->
+        <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-jdbc-driver -->
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-jdbc-driver</artifactId>
-            <version>${neo4j.jdbc.driver.version}</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.neo4j</groupId>-->
+        <!--    <artifactId>neo4j-jdbc-driver</artifactId>-->
+        <!--    <version>${neo4j.jdbc.driver.version}</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.hls</groupId>

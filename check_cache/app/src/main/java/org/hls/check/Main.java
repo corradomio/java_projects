@@ -17,17 +17,17 @@ public class Main {
         System.out.println(cache.getIfPresent("zero"));
 
         System.out.printf("%s\n", cache.getChecked("one", () -> {
-            System.out.println("called callable 1\n");
+            System.out.println("called callable 1");
             return 1;
         }));
 
         System.out.printf("%s\n", cache.getChecked("two", () -> {
-            System.out.println("called callable 2\n");
+            System.out.println("called callable 2");
             return 2;
         }));
 
         System.out.printf("%s\n", cache.getChecked("two", () -> {
-            System.out.println("called callable 2\n");
+            System.out.println("called callable 2");
             return 2;
         }));
     }

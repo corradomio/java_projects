@@ -1,4 +1,4 @@
-package org.hls.check;
+package org.hls.check.generate;
 
 import jext.jgrapht.util.GraphDump;
 import jext.jgrapht.alg.color.ColoringTests;
@@ -46,7 +46,7 @@ public class CheckMCColoring {
                 // .skipLines(2).importGraph(g, new File("ca-hollywood-2009.zip"))
                 // .comment("%").importGraph(g, new File("actor-collaboration/out.actor-collaboration"))
                 .weighted(true)
-                .skipLines(2)
+                .withSkipLines(2)
                 //.importGraph(g, new File("D:\\Projects\\java\\check_jgrapht\\weighted\\out.opsahl-usairport"));
         ;
 

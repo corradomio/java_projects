@@ -1,4 +1,4 @@
-package org.hls.check;
+package org.hls.check.generate;
 
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.WeightType;
@@ -14,6 +14,7 @@ import jext.jgrapht.util.distrib.NormalDistrib;
 import jext.jgrapht.util.distrib.UnifomDistrib;
 import jext.logging.Logger;
 
+import org.hls.check.ClusteringStatistics;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;

@@ -16,8 +16,6 @@ public class ClusteringExporter<V> {
             new ObjectMapper()
                     .writerWithDefaultPrettyPrinter()
                     .writeValue(w, clustering);
-            // Jsonb jsonb = JsonbBuilder.create();
-            // jsonb.toJson(clustering);
         }
         catch (IOException e) {
             throw  new RuntimeException(e);

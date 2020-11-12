@@ -16,6 +16,12 @@ import java.util.Map;
  *              1 2\n
  *              2 4\n
  *
+ * if weighted
+ *
+ *              1 2 w12\n
+ *              2 4 w24\n
+ *
+ * Sepataror can be space, comma, etc.
  * @param <V>
  * @param <E>
  */
@@ -33,17 +39,17 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
 
     public AdjacentImporter() { }
 
-    public AdjacentImporter<V, E> separators(String sep) {
+    public AdjacentImporter<V, E> withSeparator(String sep) {
         this.separators = sep;
         return this;
     }
 
-    public AdjacentImporter<V, E> comment(String comments) {
+    public AdjacentImporter<V, E> withComment(String comments) {
         this.comment = comments;
         return this;
     }
 
-    public AdjacentImporter<V, E> skipLines(int nLines) {
+    public AdjacentImporter<V, E> withSkipLines(int nLines) {
         this.skipLines = nLines;
         return this;
     }

@@ -1,4 +1,4 @@
-package org.hls.check;
+package org.hls.check.generate;
 
 import jext.jgrapht.ClusteringMetrics;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
