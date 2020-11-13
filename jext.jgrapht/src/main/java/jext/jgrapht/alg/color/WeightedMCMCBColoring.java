@@ -17,7 +17,7 @@ public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
         super(graph);
     }
 
-    public WeightedMCMCBColoring<V, E> weightMode(WeightMode mode) {
+    public WeightedMCMCBColoring<V, E> withWeightMode(WeightMode mode) {
         this.mode = mode;
         return this;
     }

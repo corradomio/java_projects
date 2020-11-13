@@ -26,7 +26,7 @@ public class MapClustering<K, V> implements ClusteringAlgorithm.Clustering<V> {
     }
 
     public MapClustering<K, V> addVertex(K cluster, V vertex) {
-        if (clustering.containsKey(cluster))
+        if (!clustering.containsKey(cluster))
             clustering.put(cluster, new HashSet<>());
         clustering.get(cluster).add(vertex);
         return this;

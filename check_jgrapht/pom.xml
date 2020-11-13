@@ -30,7 +30,7 @@
         <module>../jext.commons</module>
         <module>../jext.collections</module>
         <module>../jext.jgrapht</module>
-        <module>../jext.embedding</module>
+        <module>../jext.concurrent</module>
     </modules>
 
     <dependencies>
@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.embedding</artifactId>
+            <artifactId>jext.concurrent</artifactId>
             <version>1.0</version>
         </dependency>
 

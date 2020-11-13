@@ -16,8 +16,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
+import jext.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,8 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
 
     /** % of non-dominant colors to remove in a single step (minimum 1 color)  */
     private double factorToRemove;
+    /** minimum value of factorToRemove (=1/num_vertices) */
+    private double minFactor;
     /** Max graph degree */
     protected int maxDegree;
 
@@ -97,17 +100,17 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
     // Configuration
     // ----------------------------------------------------------------------
 
-    public ParallelMCMCBoloring<V, E> epsilon(float e) {
+    public ParallelMCMCBoloring<V, E> withEpsilon(float e) {
         epsilon = e;
         return this;
     }
 
-    public ParallelMCMCBoloring<V, E> reductionFactor(float reductionFactor) {
+    public ParallelMCMCBoloring<V, E> withReductionFactor(float reductionFactor) {
         this.reductionFactor = reductionFactor;
         return this;
     }
 
-    public ParallelMCMCBoloring<V, E> numRetries(int numRetries) {
+    public ParallelMCMCBoloring<V, E> withNumRetries(int numRetries) {
         this.numRetries = numRetries;
         return this;
     }
@@ -132,7 +135,9 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         // loop until all available colors are also dominant colors
         int iretry = 0;
         int numRemovingColors = maxDegree;
-        while (availableColors.cardinality() != dominantColors.cardinality()) {
+        while (availableColors.cardinality() != dominantColors.cardinality()
+                && numRemovingColors > 0)
+        {
             long lconflicts = vinfos.size();    // last conflicts
             long cconflicts = findConflicts();  // current conflicts
 
@@ -149,7 +154,7 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
             }
 
             if (cconflicts == 0) {
-                // no conflicts: it was possible to remove ALL "removedColors"
+                // no conflicts: it is possible to remove ALL "removedColors"
                 // - save the current colors (used for rollback)
                 updateAvailableColors();
                 // checkDominantColors();
@@ -159,11 +164,11 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
                 // conflicts: it is NOT possible to remove ALL "removedColors"
                 // - rollback
                 // - half the number of colors to remove (minimum 1)
-                rollbackColors();
+                rollbackColors(iretry%2 == 0);
                 iretry += 1;
             }
 
-            if(cconflicts > 0 && numRemovingColors == 1 && iretry > numRetries) {
+            if(cconflicts > 0 && numRemovingColors <= 1 && iretry > numRetries) {
                 logger.errorf("Unable to find other dominant colors after %d retries", numRetries);
                 break;
             }
@@ -227,8 +232,10 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         if (maxDegree < 8) colorRange = 8;
         // start removing the HALF of the available colors
         factorToRemove = reductionFactor;
+        // min factor to use, equals to 1 vertex
+        minFactor = 1./graph.vertexSet().size();
         // REAL epsilon value to use
-        eps = epsilon/ maxDegree;
+        eps = epsilon / maxDegree;
         // list of dominant colors. Update concurrently
         dominantColors = new SharedBitSet(colorRange);
         futureDominants = new SharedBitSet(colorRange);
@@ -293,8 +300,7 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         // ALL vertices are scanned
         vinfos.parallelStream().forEach(vi -> {
             vi.color = ThreadLocalRandom.current().nextInt(colorRange);
-            // vi.ninfos.forEach(ni -> ni.changed = true);
-            // vi.changed = true;
+            vi.saved = vi.color;
         });
     }
 
@@ -332,7 +338,7 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
     }
 
     private int selectColor(VertexInfo<V> vi) {
-        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+        Random rnd = ThreadLocalRandom.current();
         int ccolor = vi.color;              // current color
         int ncolor = vi.color;              // next color
         BitSet ncolors = vi.ncolors;        // neighbour colors
@@ -368,7 +374,7 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
     }
 
     protected int randomColor(int ccolor) {
-        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+        Random rnd = ThreadLocalRandom.current();
         return usableColors[rnd.nextInt(numberColors)];
     }
 
@@ -395,7 +401,7 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         }
     }
 
-    private void rollbackColors() {
+    private void rollbackColors(boolean updateFactor) {
         long conflicts = this.conflicts.size();
         int ccolors = conflictColors.cardinality();
         logger.debugf("  !!! Found %d conflicts on %d colors: rollback", conflicts, ccolors);
@@ -404,7 +410,8 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         vinfos.parallelStream().forEach(vi -> vi.color = vi.saved);
 
         // reduce the number of colors to remove
-        factorToRemove *= reductionFactor;
+        if (updateFactor && factorToRemove > minFactor)
+            factorToRemove *= reductionFactor;
     }
 
     // ----------------------------------------------------------------------
@@ -438,7 +445,7 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         if (!removingColors.isEmpty())
             logger.debugf("Try to remove %d colors", removingColors.cardinality());
 
-        return colorsToRemove;
+        return removingColors.cardinality();
     }
 
     private void recolorRemovingColors() {

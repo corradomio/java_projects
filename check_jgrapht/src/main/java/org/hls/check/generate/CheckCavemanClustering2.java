@@ -111,7 +111,7 @@ public class CheckCavemanClustering2 {
         RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge> ggen;
         Graph<Integer, DefaultWeightedEdge> g, i, t;
 
-        ClusteringAlgorithm.Clustering<Integer> groundTrue;
+        ClusteringAlgorithm.Clustering<Integer> gtruth;
         ClusteringAlgorithm.Clustering<Integer> clustering;
 
         // generate the caveman graph
@@ -128,10 +128,10 @@ public class CheckCavemanClustering2 {
         i = transform.invertWeights();
 
         // constructed clustering
-        groundTrue = ggen.getClustering();
+        gtruth = ggen.getClustering();
 
         // graph, inverted weights graph, ground truth clustering
-        stats.setGroundTrue(g, i, groundTrue);
+        stats.setGroundTruth(g, i, gtruth);
         // configuration parameters used to generate graph & clustering
         stats.setParameters(id, r,
                 // N, E, C,
@@ -140,7 +140,7 @@ public class CheckCavemanClustering2 {
 
         System.out.print("-- [groundTruth] --------------------\n");
 
-        stats.addStats(0., g, groundTrue);
+        stats.addStats(0., g, gtruth);
 
         double init, delta;
         if (weightType == WeightType.SIMILARITY){
@@ -171,7 +171,7 @@ public class CheckCavemanClustering2 {
             System.out.print("-- cluster\n" );
             clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(
                     //new ParallelBMCColoring<>(t)
-                    new WeightedMCMCBColoring<>(t).weightMode(weightMode))
+                    new WeightedMCMCBColoring<>(t).withWeightMode(weightMode))
                     .getClustering();
 
             stats.addStats(threshold, t, clustering);

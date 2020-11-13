@@ -21,7 +21,11 @@
     </repositories>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.collections</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

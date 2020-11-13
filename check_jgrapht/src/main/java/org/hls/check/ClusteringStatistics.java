@@ -7,6 +7,7 @@ import jext.jgrapht.metrics.ContingencyMatrix;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.metrics.ClusteringWeights;
+import jext.jgrapht.util.distrib.ConstantDistrib;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -43,7 +44,7 @@ public class ClusteringStatistics {
         this.statFile = statFile;
     }
 
-    public ClusteringStatistics setGroundTrue(
+    public ClusteringStatistics setGroundTruth(
             Graph<Integer, DefaultWeightedEdge> g,
             ClusteringAlgorithm.Clustering<Integer> groundTrue) {
         this.graph = g;
@@ -52,7 +53,7 @@ public class ClusteringStatistics {
         return this;
     }
 
-    public ClusteringStatistics setGroundTrue(
+    public ClusteringStatistics setGroundTruth(
             Graph<Integer, DefaultWeightedEdge> g,
             Graph<Integer, DefaultWeightedEdge> i,
             ClusteringAlgorithm.Clustering<Integer> groundTrue) {
@@ -60,6 +61,14 @@ public class ClusteringStatistics {
         this.invtg = i;
         this.groundTrue = groundTrue;
         return this;
+    }
+
+    public void initParameters() {
+        setParameters(0, 0, 0, 0,
+                new ConstantDistrib(0),
+                new ConstantDistrib(0),
+                WeightMode.CONST,
+                WeightType.DISSIMILARITY);
     }
 
     public void setParameters(
