@@ -8,7 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-public class ClusteringExporter<V> {
+/**
+ * Export a clustering in JSON format
+ *
+ * @param <V>
+ */
+public class JSONClusteringExporter<V> {
 
     public void exportClustering(ClusteringAlgorithm.Clustering<V> clustering, File file) {
 

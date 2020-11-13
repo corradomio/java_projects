@@ -19,11 +19,11 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public class FileExporter<V, E> implements GraphExporter<V, E> {
+public class FileGraphExporter<V, E> implements GraphExporter<V, E> {
 
     private GraphExporter<V, E> exporter;
 
-    public FileExporter(GraphExporter<V, E> exporter) {
+    public FileGraphExporter(GraphExporter<V, E> exporter) {
         this.exporter = exporter;
     }
 

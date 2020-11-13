@@ -15,11 +15,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class FileImporter<V, E> implements GraphImporter<V, E> {
+public class FileGraphImporter<V, E> implements GraphImporter<V, E> {
 
     private GraphImporter<V, E> importer;
 
-    public FileImporter(GraphImporter<V, E> importer) {
+    public FileGraphImporter(GraphImporter<V, E> importer) {
         this.importer = importer;
     }
 
