@@ -3,11 +3,10 @@ package jext.jgrapht.alg.color;
 import jext.jgrapht.util.ColorAdjacentMatrix;
 import jext.jgrapht.util.VertexInfo;
 import jext.jgrapht.util.WeightMode;
+import jext.util.concurrent.ThreadLocalRandom;
 import org.jgrapht.Graph;
 
-import java.util.concurrent.ThreadLocalRandom;
-
-public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
+public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBColoring<V,E> {
 
     private ColorAdjacentMatrix cam;
     private ColorAdjacentMatrix futureCam;
@@ -47,12 +46,9 @@ public class WeightedMCMCBColoring<V,E> extends ParallelMCMCBoloring<V,E> {
         super.updateAvailableColors();
     }
 
-    protected int randomColor(int color) {
-        ThreadLocalRandom tlr = ThreadLocalRandom.current();
-        int numberColors = super.numberColors;
-        int[] usableColors = super.usableColors;
-        float r = tlr.nextFloat();
-        return futureCam.randomColor(r, color, numberColors, usableColors);
+    protected int nextColor(int color) {
+        float r = ThreadLocalRandom.current().nextFloat();
+        return futureCam.randomColor(r, color, usableColors);
     }
 
 }

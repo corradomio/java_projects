@@ -2,10 +2,10 @@ package jext.jgrapht.alg.color;
 
 import jext.jgrapht.util.EdgeInfo;
 import jext.jgrapht.util.VertexInfo;
+import jext.jgrapht.Graphs;
 import jext.logging.Logger;
 import jext.util.concurrent.SharedBitSet;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexColoringAlgorithm;
 
 import java.util.ArrayList;
@@ -29,8 +29,50 @@ import java.util.stream.Collectors;
  * @param <V>
  * @param <E>
  */
-public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
+public class ParallelMCMCBColoring<V, E> implements VertexColoringAlgorithm<V>
 {
+    public static class UsableColors {
+        public int[] colors;
+        public int ncolors;
+
+        UsableColors(int maxColors) {
+            colors = new int[maxColors+1];
+        }
+
+        int nextColor() {
+            Random rnd = ThreadLocalRandom.current();
+            return colors[rnd.nextInt(ncolors)];
+        }
+
+        void clear() {
+            ncolors = 0;
+        }
+
+        void add(int c) {
+            colors[ncolors++] = c;
+            colors[ncolors] = -1;
+        }
+
+        void set(int i, int c) {
+            colors[i] = c;
+        }
+
+        public int get(int i) {
+            return colors[i];
+        }
+
+        public int get(double r) {
+            return colors[(int)(r*(ncolors-1))];
+        }
+
+        public BitSet toBitSet() {
+            BitSet bs = new BitSet(colors.length);
+            for (int i=0; i<ncolors; ++i)
+                bs.set(colors[i]);
+            return bs;
+        }
+    }
+
     private final Logger logger = Logger.getLogger(getClass());
 
     /** The colors are integers starting from 0 */
@@ -40,10 +82,10 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
     private Graph<V, E> graph;
 
     /** Probability to change an invalid color */
-    private float epsilon = 0;
+    private float epsilon = 0.f;
 
     /** Reduction factor */
-    private double reductionFactor = 0.5;
+    private float reductionFactor = 0.5f;
 
     /** N of retries with conflicts */
     private int numRetries = 3;
@@ -69,30 +111,31 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
     private BitSet removingColors;
 
     /** % of non-dominant colors to remove in a single step (minimum 1 color)  */
-    private double factorToRemove;
+    private float factorToRemove;
+
     /** minimum value of factorToRemove (=1/num_vertices) */
-    private double minFactor;
+    private float minFactor;
+
     /** Max graph degree */
     protected int maxDegree;
 
     /** Caches to speedup usable colors in recoloring */
-    protected int[] usableColors;
-    protected int numberColors;
+    protected UsableColors usableColors;
 
     /** List of vertices that requires a recoloring for conflicts */
-    private List<VertexInfo<V>> conflicts;
+    private List<VertexInfo<V>> conflictVertices;
 
     /** List of conflicting colors */
     private SharedBitSet conflictColors;
 
     /** Potential dominant colors */
-    private SharedBitSet futureDominants;
+    // private SharedBitSet futureDominants;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ParallelMCMCBoloring(Graph<V, E> graph) {
+    public ParallelMCMCBColoring(Graph<V, E> graph) {
         this.graph = graph;
     }
 
@@ -100,17 +143,17 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
     // Configuration
     // ----------------------------------------------------------------------
 
-    public ParallelMCMCBoloring<V, E> withEpsilon(float e) {
-        epsilon = e;
+    public ParallelMCMCBColoring<V, E> withEpsilon(double e) {
+        epsilon = (float) e;
         return this;
     }
 
-    public ParallelMCMCBoloring<V, E> withReductionFactor(float reductionFactor) {
-        this.reductionFactor = reductionFactor;
+    public ParallelMCMCBColoring<V, E> withReductionFactor(double reductionFactor) {
+        this.reductionFactor = (float) reductionFactor;
         return this;
     }
 
-    public ParallelMCMCBoloring<V, E> withNumRetries(int numRetries) {
+    public ParallelMCMCBColoring<V, E> withNumRetries(int numRetries) {
         this.numRetries = numRetries;
         return this;
     }
@@ -125,58 +168,73 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
 
     @Override
     public Coloring<V> getColoring() {
+        int iretry = 0;
+        // loop until all available colors are also dominant colors
+        int numRemovingColors = maxDegree;
 
         initAlgorithm();
-
-        // initial random coloring
+        selectUsableColors();
         initColoring();
-        updateNeighbors();
+        updateNColors();
 
-        // loop until all available colors are also dominant colors
-        int iretry = 0;
-        int numRemovingColors = maxDegree;
-        while (availableColors.cardinality() != dominantColors.cardinality()
-                && numRemovingColors > 0)
+        while (availableColors.cardinality() != dominantColors.cardinality())
         {
             long lconflicts = vinfos.size();    // last conflicts
             long cconflicts = findConflicts();  // current conflicts
 
             // loop until:
             //   1) conflicts > 0 &&
-            //   2) the number of conflicts decrease
-            while (cconflicts > 0 && (cconflicts < lconflicts)) {
+            //   2) the number of conflicts decrease &&
+            //   3) retry < n retries
+            int cretry = 0;
+            while (cconflicts > 0 /*&& (cconflicts < lconflicts)*/ && cretry < numRetries) {
                 // update ONLY vertices with conflict
                 findColoring();
-                updateNeighbors();
+                updateNColors();
+                findConflicts();
 
                 lconflicts = cconflicts;
-                cconflicts = findConflicts();
+                cconflicts = conflictVertices.size();
+
+                if (cconflicts < lconflicts)
+                    cretry = 0;
+                else
+                    cretry += 1;
             }
 
             if (cconflicts == 0) {
                 // no conflicts: it is possible to remove ALL "removedColors"
                 // - save the current colors (used for rollback)
+                saveColors();
+                // update the available colors
                 updateAvailableColors();
-                // checkDominantColors();
+                updateDominantColors();
                 iretry = 0;
             }
             else {
                 // conflicts: it is NOT possible to remove ALL "removedColors"
                 // - rollback
                 // - half the number of colors to remove (minimum 1)
-                rollbackColors(iretry%2 == 0);
+                rollbackColors();
                 iretry += 1;
             }
 
             if(cconflicts > 0 && numRemovingColors <= 1 && iretry > numRetries) {
-                logger.errorf("Unable to find other dominant colors after %d retries", numRetries);
+                logger.errorf("Unable to find other dominant colors after %d retries: %d conflicts", numRetries, cconflicts);
                 break;
             }
 
             // select the colors to remove
-            numRemovingColors = selectRemovingColors();
-            // recolor the "removingColors" with 'random' other colors
-            recolorRemovingColors();
+            selectRemovingColors();
+            // select the colors to use
+            selectUsableColors();
+
+            if (!removingColors.isEmpty())
+                // recolor the "removingColors" with 'random' other colors
+                recolorRemovingColors();
+            else
+                // no colors to remove
+                break;
         }
 
         // pack the colors in range [0, #dominantColors-1]
@@ -200,8 +258,8 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         boolean weighted = graph.getType().isWeighted();
         AtomicInteger index = new AtomicInteger(-1);
 
-        VertexInfo<V>[] viarr = new VertexInfo[graph.vertexSet().size()];
-        Map<V, Integer> vmap = new ConcurrentHashMap<>();
+        VertexInfo<V>[] viarr = new VertexInfo[Graphs.order(graph)];
+        Map<V, Integer> vidx = new ConcurrentHashMap<>();
 
         // 1) create the data structure used to speedup the operations
         graph.vertexSet()
@@ -214,8 +272,8 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
                     vi.neighbor = Graphs.neighborSetOf(graph, v);
                     vi.degree = vi.neighbor.size();
                     vi.color = NO_COLOR;
-                    viarr[idx] = vi;         // save vi in the array
-                    vmap.put(v, idx);       // register the index of this vertex
+                    viarr[idx] = vi;            // save vi in the array
+                    vidx.put(v, idx);           // register the index of this vertex
                 });
 
         // fast access to the list of VertexInfo's
@@ -232,13 +290,13 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         if (maxDegree < 8) colorRange = 8;
         // start removing the HALF of the available colors
         factorToRemove = reductionFactor;
-        // min factor to use, equals to 1 vertex
-        minFactor = 1./graph.vertexSet().size();
+        // min factor to use, equals to 1/nVertices
+        minFactor = 1.f/Graphs.order(graph);
         // REAL epsilon value to use
         eps = epsilon / maxDegree;
         // list of dominant colors. Update concurrently
-        dominantColors = new SharedBitSet(colorRange);
-        futureDominants = new SharedBitSet(colorRange);
+        dominantColors  = new SharedBitSet(colorRange);
+        // futureDominants = new SharedBitSet(colorRange);
         // list of available colors
         availableColors = new BitSet(colorRange);
         availableColors.set(0, colorRange);
@@ -246,11 +304,11 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         removingColors = new BitSet();
 
         // cache used for usable colors (recoloring & packing)
-        usableColors = new int[colorRange];
+        usableColors = new UsableColors(colorRange);
         // cache used to analyze the number of color conflicts
         conflictColors = new SharedBitSet(colorRange);
-        // list of conflicts
-        conflicts = Collections.synchronizedList(new ArrayList<>());
+        // list of vertices with conflicts
+        conflictVertices = Collections.synchronizedList(new ArrayList<>());
 
         // 2) create the data structure used to speedup the operations
         vinfos.parallelStream().forEach(vi -> {
@@ -259,24 +317,21 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
             // bitset with the colors of the neighbour vertices
             vi.ncolors = new BitSet(colorRange);
             // neighbour vertex infos
-            vi.ninfos = vi.neighbor
-                    .stream()
-                    .map(n -> viarr[vmap.get(n)])
+            vi.ninfos = vi.neighbor.stream()
+                    .map(vj -> viarr[vidx.get(vj)])
                     .collect(Collectors.toList());
             // if the graph is weighted
             if (weighted) {
                 // incident edge infos
-                vi.einfos = vi.neighbor
-                        .stream()
+                vi.einfos = vi.neighbor.stream()
                         .map(u -> {
                             // edge (v, u)
-                            E e = graph.getEdge(vi.vertex, u);
-                            //V t = Graphs.getOppositeVertex(graph, e, v);
+                            E e = graph.getEdge(v, u);
 
                             // edge info
                             EdgeInfo<V> ei = new EdgeInfo<>();
                             // u - vertex info
-                            ei.ui = viarr[vmap.get(u)];
+                            ei.ui = viarr[vidx.get(u)];
                             // edge weight
                             ei.weight = (float)graph.getEdgeWeight(e);
                             return ei;
@@ -293,116 +348,129 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
     private void initColoring() {
         logger.debugf("Init coloring");
 
-        int colorRange = this.colorRange;
-
         // assign a random color to all vertices
-        // note: it is not necessary to set the flag 'update', because
-        // ALL vertices are scanned
         vinfos.parallelStream().forEach(vi -> {
-            vi.color = ThreadLocalRandom.current().nextInt(colorRange);
+            vi.color = usableColors.nextColor();
             vi.saved = vi.color;
         });
     }
 
-    private void updateNeighbors() {
-        // update the LOCAL data structure with the colors of the neighborhoods
-        // but ONLY on vertices with changes in the neighborhoods
+    private void updateNColors() {
+        // update the LOCAL data structure with the colors of the neighbors
         vinfos.parallelStream()
-                // .filter(vi -> vi.changed)
-                .forEach(vi -> {
-                    vi.ncolors.clear();
-                    vi.ninfos.forEach(ni -> {
-                        vi.ncolors.set(ni.color);
-                    });
-                });
-
-        // reset the 'changed' flags
-        // vinfos.parallelStream()
-        //         .filter(vi -> vi.changed)
-        //         .forEach(vi -> {
-        //             vi.changed = false;
-        //         });
+                .forEach(VertexInfo::updateNColors);
     }
 
     private void findColoring() {
         logger.debugft("Find coloring");
 
         // list of usable colors. The vector speedup the selection of random colors
-        selectUsableColors();
+        // selectUsableColors();
 
-        conflicts.forEach(vi -> {
+        if (conflictVertices.size() < 16) {
+            findHackColoring();
+            findConflicts();
+            return;
+        }
+
+        conflictVertices.parallelStream().forEach(vi -> {
             // assign the new color to a conflict node
             vi.color = this.selectColor(vi);
-            // broadcast to the neighborhoods that this node is changed
         });
     }
 
-    private int selectColor(VertexInfo<V> vi) {
-        Random rnd = ThreadLocalRandom.current();
-        int ccolor = vi.color;              // current color
-        int ncolor = vi.color;              // next color
-        BitSet ncolors = vi.ncolors;        // neighbour colors
-        int nc = ncolors.cardinality();     // n of neighbour colors
-        float r = rnd.nextFloat();          // random number
-
-        // there are not enough colors to recolor
-        if (nc >= numberColors)
-            return ccolor;
-
-        if (ncolors.get(ccolor)) {
-            // conflict: there is a neighbor with the same current color
-            if (r < nc * eps) {
-                // select an invalid color
-                do {
-                    ncolor = randomColor(ccolor);
-                }
-                while (!ncolors.get(ncolor));   // retry if not used
-            } else {
-                // select a valid color
-                do {
-                    ncolor = randomColor(ccolor);
-                }
-                while (ncolors.get(ncolor));    // retry if already used
-            }
-        } else {
-            // no conflicts
-            if (r < eps)
-                // change color
-                ncolor = randomColor(ccolor);
+    private void findHackColoring() {
+        for (VertexInfo<V> vi : conflictVertices) {
+            vi.color = this.selectColor(vi);
+            vi.ninfos.forEach(VertexInfo::updateNColors);
         }
-        return ncolor;
     }
 
-    protected int randomColor(int ccolor) {
-        Random rnd = ThreadLocalRandom.current();
-        return usableColors[rnd.nextInt(numberColors)];
+    private int selectColor(VertexInfo<V> vi) {
+        int currc = vi.color;                           // current color
+        int nextc = vi.color;                           // next color
+        BitSet ncolors = vi.ncolors;                    // neighbour colors
+        int nc = ncolors.cardinality();                 // n of neighbour colors
+
+        // there are not enough colors to recolor
+        if (nc >= usableColors.ncolors)
+            return currc;
+
+        do {
+            nextc = nextColor(currc);
+        }
+        while (ncolors.get(nextc));    // retry if already used
+
+        // Random rnd = ThreadLocalRandom.current();
+        // float r = rnd.nextFloat();                   // random number
+        // if (ncolors.get(currc)) {
+        //     // conflict: there is a neighbor with the same current color
+        //     if (r < /*nc * eps*/ epsilon) {
+        //         // select an invalid color
+        //         do {
+        //             nextc = nextColor(currc);
+        //         }
+        //         while (!ncolors.get(nextc));   // retry if not used
+        //     } else {
+        //         // select a valid color
+        //         do {
+        //             nextc = nextColor(currc);
+        //         }
+        //         while (ncolors.get(nextc));    // retry if already used
+        //     }
+        // } else {
+        //     // no conflicts
+        //     if (r < eps)
+        //         nextc = nextColor(currc);
+        // }
+
+        return nextc;
+    }
+
+    protected int nextColor(int color) {
+        return usableColors.nextColor();
     }
 
     protected long findConflicts() {
+        // isdominant: n of neighbor colors necessary to have a dominant color
+        //        n available colors
+        //  MINUS n of colors to remove
+        //  MINUS the color of the current vertex
         int isdominant = availableColors.cardinality() - removingColors.cardinality() - 1;
-        conflicts.clear();
+
+        // list of vertices with conflicts
         conflictColors.clear();
-        futureDominants.clear();
+        // list of colors generating conflics
+        conflictVertices.clear();
+        // possible dominant colors
+        // futureDominants.clear();
 
         // create the list of vertices with conflicts
-        vinfos.parallelStream()
-                .forEach(vi -> this.analyzeVertex(vi, isdominant));
+        vinfos
+            .parallelStream()
+            .forEach(vi -> this.analyzeVertex(vi, isdominant));
 
-        return conflicts.size();
+        return conflictVertices.size();
     }
 
     protected void analyzeVertex(VertexInfo<V> vi, int isdominant) {
-        if (vi.ncolors.cardinality() == isdominant) {
-            this.futureDominants.set(vi.color);
-        }
+        // check if the current color can be dominant
+        // if (vi.ncolors.cardinality() == isdominant) {
+        //     this.futureDominants.set(vi.color);
+        // }
+        // check if some neighbor has the same color
         if(vi.ncolors.get(vi.color)) {
             this.conflictColors.set(vi.color);
-            this.conflicts.add(vi);
+            this.conflictVertices.add(vi);
         }
     }
 
-    private void rollbackColors(boolean updateFactor) {
-        long conflicts = this.conflicts.size();
+    private void saveColors() {
+        vinfos.parallelStream().forEach(vi -> vi.saved = vi.color);
+    }
+
+    private void rollbackColors() {
+        long conflicts = this.conflictVertices.size();
         int ccolors = conflictColors.cardinality();
         logger.debugf("  !!! Found %d conflicts on %d colors: rollback", conflicts, ccolors);
 
@@ -410,22 +478,31 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         vinfos.parallelStream().forEach(vi -> vi.color = vi.saved);
 
         // reduce the number of colors to remove
-        if (updateFactor && factorToRemove > minFactor)
+        if (factorToRemove > minFactor)
             factorToRemove *= reductionFactor;
     }
 
     // ----------------------------------------------------------------------
 
-    private boolean selectUsableColors() {
+    private int selectUsableColors() {
         // select the list of usable colors as a little integer vector
         // this speedup the generation of a new "available" random color
-        numberColors = availableColors.cardinality() - removingColors.cardinality();
-        int index = 0;
+
+        // list of usable colors for recoloring are:
+        //
+        //       list of available colors
+        // MINUS list of removing colors
+        // MINUS list of dominant colors   NO!!!
+        //      there is no reason to do not reuse a dominant color to recolor
+        //      another node
+
+        usableColors.clear();
 
         for (int c = 0; c < colorRange; ++ c)
             if (availableColors.get(c) && !removingColors.get(c))
-                usableColors[index++] = c;
-        return numberColors > 0;
+                usableColors.add(c);
+
+        return usableColors.ncolors;
     }
 
     private int selectRemovingColors() {
@@ -453,26 +530,18 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         // At this stage, it is not useful to analyze the neighborhoods, because
         // this step is similar to the random initialization
 
-        // there are usable colors?
-        if(!selectUsableColors())
-            return;
-
-        BitSet removingColors = this.removingColors;
-        int[] usableColors = this.usableColors;
-        int numberColors = this.numberColors;
-
         // recolor
         vinfos.parallelStream()
                 .filter(vi -> removingColors.get(vi.color))
                 .forEach(vi -> {
-                    vi.color = usableColors[ThreadLocalRandom.current().nextInt(numberColors)];
+                    vi.color = usableColors.nextColor();
                 });
     }
 
     protected void updateAvailableColors() {
         // update the available colors removing the "removed" colors
         availableColors.andNot(removingColors);
-        dominantColors.set(futureDominants);;
+        // dominantColors.set(futureDominants);
 
         // logging
         logger.debugf("  Removed %d colors: %d available",
@@ -485,6 +554,19 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         colorRange = availableColors.previousSetBit(colorRange) + 1;
     }
 
+    protected void updateDominantColors() {
+        // a color is dominant if the n of neighborhoods colors
+        // is n available colors - 1 (the color of the node)
+        int ncolors = availableColors.cardinality()-1;
+        dominantColors.clear();
+
+        vinfos.parallelStream()
+                .forEach(vi -> {
+                    if (vi.ncolors.cardinality() == ncolors)
+                        dominantColors.set(vi.color);
+                });
+    }
+
     private void packColors() {
         // pack the colors in the range [0...#dominantColors-1]
         int maxColor = dominantColors.maxSetBit();
@@ -493,11 +575,11 @@ public class ParallelMCMCBoloring<V, E> implements VertexColoringAlgorithm<V>
         for (int i=0; i <= maxColor; ++i) {
             if (!dominantColors.get(i))
                 continue;
-            usableColors[i] = index++;
+            usableColors.set(i, index++);
         }
 
         vinfos.parallelStream()
-                .forEach(vi ->  vi.color = usableColors[vi.color]);
+                .forEach(vi ->  vi.color = usableColors.get(vi.color));
     }
 
     // ----------------------------------------------------------------------

@@ -3,6 +3,7 @@ package org.hls.check.datauci;
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.clustering.ColoringClustering;
+import jext.jgrapht.alg.color.ParallelMCMCBColoring;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;
@@ -59,6 +60,10 @@ public class CheckDataUCI {
     }
 
     static void checkGraph(String name) {
+        System.out.println("=========================================");
+        System.out.printf("= %s\n", name);
+        System.out.println("=========================================");
+
         Info<Integer, DefaultWeightedEdge> info = loadInfo(name);
         TransformGraph<Integer, DefaultWeightedEdge> transform;
         Graph<Integer, DefaultWeightedEdge> g, i, t;
@@ -101,13 +106,19 @@ public class CheckDataUCI {
                 break;
 
             System.out.printf("-- [%.2f] --------------------\n", threshold);
+            System.out.printf("--   vertices: %d\n", Graphs.order(t));
+            System.out.printf("--      edges: %d\n", Graphs.size(t));
+            System.out.printf("-- components: %s\n", Graphs.components(t).size());
+            System.out.printf("--    density: %.6f\n", Graphs.density(t));
 
             System.out.print("-- cluster\n" );
             clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(
-                    //new ParallelBMCColoring<>(t)
-                    new WeightedMCMCBColoring<>(t)
-                            .withWeightMode(WeightMode.MEAN)
-                            .withNumRetries(6))
+                    new ParallelMCMCBColoring<>(t)
+                    // new WeightedMCMCBColoring<>(t)
+                    //         .withWeightMode(WeightMode.MEAN)
+                            .withNumRetries(6)
+                            .withEpsilon(0.1)
+                    )
                     .getClustering();
 
             stats.addStats(threshold, t, clustering);

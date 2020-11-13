@@ -1,5 +1,6 @@
 package jext.jgrapht.util;
 
+import jext.jgrapht.alg.color.ParallelMCMCBColoring;
 import jext.jgrapht.util.atomic.AtomicMax;
 import jext.jgrapht.util.atomic.AtomicMean;
 import jext.jgrapht.util.atomic.AtomicMin;
@@ -94,8 +95,9 @@ public class ColorAdjacentMatrix {
         return this;
     }
 
-    public int randomColor(float r, int color, int numberColors, int[] usableColors) {
+    public int randomColor(float r, int color, ParallelMCMCBColoring.UsableColors usableColors) {
         // compute the discrete distribution between 'usableColors'
+        int numberColors = usableColors.ncolors;
         float total = 0;
         float partial = 0;
         // used to invert the propabilities
@@ -103,43 +105,43 @@ public class ColorAdjacentMatrix {
 
         boolean isZero = false;
         for (int i=0; i<numberColors; ++i) {
-            float value = at(color, usableColors[i]).get();
+            float value = at(color, usableColors.get(i)).get();
             isZero = isZero || (value == 0);
             total += value;
         }
 
         if (isZero)
-            return usableColors[(int)(r*numberColors)];
+            return usableColors.get(r);
 
         switch (weightMode) {
             case RANDOM:
-                return usableColors[(int)(r*numberColors)];
+                return usableColors.get(r);
             case MAX:
                 for (int i=0; i<numberColors; ++i) {
-                    partial += (at(color, usableColors[i]).get()/total);
+                    partial += (at(color, usableColors.get(i)).get()/total);
                     if (r <= partial)
-                        return usableColors[i];
+                        return usableColors.get(i);
                 }
                 break;
             case MIN:
                 // REMEMBER: inverting the probabilities it is necessary
                 // to divide by (n-1). This is 'f'
                 for (int i=0; i<numberColors; ++i) {
-                    partial += f*(1 - at(color, usableColors[i]).get()/total);
+                    partial += f*(1 - at(color, usableColors.get(i)).get()/total);
                     if (r <= partial)
-                        return usableColors[i];
+                        return usableColors.get(i);
                 }
                 break;
             case MEAN:
             default:
                 for (int i=0; i<numberColors; ++i) {
-                    partial += (at(color, usableColors[i]).get()/total);
+                    partial += (at(color, usableColors.get(i)).get()/total);
                     if (r <= partial && partial < 1)
-                        return usableColors[i];
+                        return usableColors.get(i);
                 }
                 break;
         }
 
-        return usableColors[(int)(r*numberColors)];
+        return usableColors.get(r);
     }
 }

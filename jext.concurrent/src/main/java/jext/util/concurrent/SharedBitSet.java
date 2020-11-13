@@ -72,9 +72,11 @@ public class SharedBitSet {
     public String toString() {
         if (cardinality() == 0)
             return "{}";
-        StringBuffer sb = new StringBuffer("{");
+        StringBuilder sb = new StringBuilder("{");
         int nbits = bits.length;
         for (int i=0;i < nbits; ++i) {
+            if (!bits[i])
+                continue;
             if (sb.length()> 1)
                 sb.append(", ");
             sb.append(i);

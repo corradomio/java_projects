@@ -12,15 +12,19 @@ public class VertexInfo<V> {
     public int degree = -1;             // vertex degree
     public Set<V> neighbor;             // neighborhood
     public List<VertexInfo<V>> ninfos;  // neighbor vertex infos
-    public List<EdgeInfo<V>> einfos;
+    public List<EdgeInfo<V>>   einfos;  // neighbor edges infos
 
     // changing values
     public int color;                   // vertex color
+    public int saved;                   // saved color
     public BitSet ncolors;              // neighbor colors
 
-    // mini local cache
-    public int saved;                   // saved color
-    // public boolean changed;             // if the vertex color is changed
+    public void updateNColors() {
+        ncolors.clear();
+        ninfos.forEach(v -> {
+            ncolors.set(v.color);
+        });
+    }
 
     @Override
     public int hashCode() {
@@ -29,8 +33,8 @@ public class VertexInfo<V> {
 
     @Override
     public boolean equals(Object obj) {
-        VertexInfo other = (VertexInfo) obj;
-        return vertex.equals(other.vertex);
+        VertexInfo<V> that = (VertexInfo<V>) obj;
+        return this.vertex.equals(that.vertex);
     }
 
     @Override
