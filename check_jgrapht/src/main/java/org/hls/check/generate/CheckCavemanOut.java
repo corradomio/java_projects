@@ -2,7 +2,7 @@ package org.hls.check.generate;
 
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
-import jext.jgrapht.nio.adjacent.FileExporter;
+import jext.jgrapht.nio.adjacent.FileGraphExporter;
 import jext.jgrapht.util.distrib.NormalDistrib;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.GraphGenerator;
@@ -51,7 +51,7 @@ public class CheckCavemanOut {
             return atts;
         });
 
-        new FileExporter<>(dotexp)
+        new FileGraphExporter<>(dotexp)
                 .exportGraph(g, new File("relaxcave.dot"));
 
         new GraphMetrics<>(g).getVertexStatistics().print();

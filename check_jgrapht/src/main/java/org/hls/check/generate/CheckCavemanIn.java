@@ -1,7 +1,7 @@
 package org.hls.check.generate;
 
 import jext.jgrapht.GraphMetrics;
-import jext.jgrapht.nio.adjacent.FileImporter;
+import jext.jgrapht.nio.adjacent.FileGraphImporter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -29,7 +29,7 @@ public class CheckCavemanIn {
             }
         });
 
-        new FileImporter<>(dotimp)
+        new FileGraphImporter<>(dotimp)
                 .importGraph(g, new File("relaxcave.dot.zip"));
 
         new GraphMetrics<>(g).getVertexStatistics().print();

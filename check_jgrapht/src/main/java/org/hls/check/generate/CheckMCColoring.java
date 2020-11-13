@@ -4,7 +4,7 @@ import jext.jgrapht.util.GraphDump;
 import jext.jgrapht.alg.color.ColoringTests;
 import jext.jgrapht.alg.color.ParallelMCMCBoloring;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;
-import jext.jgrapht.nio.adjacent.FileImporter;
+import jext.jgrapht.nio.adjacent.FileGraphImporter;
 import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.VertexColoringAlgorithm;
@@ -36,7 +36,7 @@ public class CheckMCColoring {
 
         new AdjacentImporter<String, DefaultWeightedEdge>()
                 // .importGraph(g, new File("email-Eu-core.txt"))
-                // .importGraph(g,new File("roadNet-CA.txt"))
+                // .importGraph(g, new File("roadNet-CA.txt"))
                 // .importGraph(g, new File("Slashdot0902.zip"))
                 // .importGraph(g, new File("sx-stackoverflow-a2q.txt"))
                 // .importGraph(g, new File("sx-stackoverflow-a2q.txt.gz"))
@@ -45,7 +45,6 @@ public class CheckMCColoring {
                 // .skipLines(2).importGraph(g, new File("ca-coauthors-dblp.zip"))
                 // .skipLines(2).importGraph(g, new File("ca-hollywood-2009.zip"))
                 // .comment("%").importGraph(g, new File("actor-collaboration/out.actor-collaboration"))
-                .weighted(true)
                 .withSkipLines(2)
                 //.importGraph(g, new File("D:\\Projects\\java\\check_jgrapht\\weighted\\out.opsahl-usairport"));
         ;
@@ -54,7 +53,7 @@ public class CheckMCColoring {
                 SupplierUtil.createStringSupplier(),
                 SupplierUtil.createDefaultWeightedEdgeSupplier(), true);
 
-        new FileImporter<>(
+        new FileGraphImporter<>(
                 // new AdjacentImporter<String, DefaultWeightedEdge>()
                 // .weighted(true)
                 // .skipLines(2)

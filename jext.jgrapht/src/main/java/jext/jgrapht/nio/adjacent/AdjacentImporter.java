@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Import a graph defined by a list of adjacent nodes:
@@ -28,14 +29,13 @@ import java.util.Map;
 public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
 
     private static Logger logger = Logger.getLogger(AdjacentImporter.class);
-    private Map<String, V> map = new HashMap<>();
     private Graph<V, E> g;
     private long vcount = 0;
     private long ecount = 0;
     private String separators = "\\s+";
     private String comment = "#";
     private int skipLines = 0;
-    private boolean weighted;
+    private Function<String, V> toVertex;
 
     public AdjacentImporter() { }
 
@@ -54,8 +54,13 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
         return this;
     }
 
-    public AdjacentImporter<V, E> weighted(boolean weighted) {
-        this.weighted = weighted;
+    /**
+     * Function used to convert a string in a vertex of type V
+     * @param toVertex function String->V
+     * @return self
+     */
+    public AdjacentImporter<V, E> withToVertex(Function<String, V> toVertex) {
+        this.toVertex = toVertex;
         return this;
     }
 
@@ -94,18 +99,18 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
         this.g = g;
 
         BufferedReader rdr = new BufferedReader(in);
-        // LineNumberReader rdr = new LineNumberReader(in);
         String line;
-        int lineNumber = 0;
+        int iLine = 0;
+        boolean weighted = g.getType().isWeighted();
 
         while (true) {
             try {
-                ++lineNumber;
+                ++iLine;
                 line = rdr.readLine();
                 if (line == null)
                     break;
 
-                if (lineNumber <= skipLines)
+                if (iLine <= skipLines)
                     continue;
 
                 // line = line.trim();
@@ -119,9 +124,11 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
                 V targetVertex = addVertex(parts[1]);
                 E e = null;
 
+                // NO LOOPS
                 if (!sourceVertex.equals(targetVertex))
                     e = g.addEdge(sourceVertex, targetVertex);
 
+                // is weighted?
                 if (weighted && e != null) {
                     double weight = Double.parseDouble(parts[2]);
                     g.setEdgeWeight(e, weight);
@@ -138,12 +145,9 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
     }
 
     private V addVertex(String t) {
-        if (!map.containsKey(t)){
-            V v = g.addVertex();
-            map.put(t, v);
-
-            ++vcount;
-        }
-        return map.get(t);
+        V v = toVertex.apply(t);
+        g.addVertex(v);
+        ++vcount;
+        return v;
     }
 }

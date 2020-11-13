@@ -5,6 +5,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,12 +43,21 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 ? GraphTypeBuilder.directed()
                 : GraphTypeBuilder.undirected();
 
+        if (edgeSupplier == null)
+            edgeSupplier = weighted
+                    ? (Supplier<E>) SupplierUtil.createDefaultWeightedEdgeSupplier()
+                    : (Supplier<E>) SupplierUtil.createDefaultEdgeSupplier();
+
         return gtb.allowingSelfLoops(loop)
                 .allowingMultipleEdges(multiple)
                 .weighted(weighted)
                 .edgeSupplier(edgeSupplier)
                 .vertexSupplier(vertexSupplier)
                 .buildGraph();
+    }
+
+    public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted) {
+        return newGraph(directed, false, false, weighted, null, null);
     }
 
     public static <V, E> Graph<V, E> newGraph(Graph<V, E> graph) {

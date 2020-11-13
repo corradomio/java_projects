@@ -6,8 +6,8 @@ import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.graph.TransformGraph;
-import jext.jgrapht.nio.adjacent.FileExporter;
-import jext.jgrapht.nio.clustering.ClusteringExporter;
+import jext.jgrapht.nio.adjacent.FileGraphExporter;
+import jext.jgrapht.nio.clustering.JSONClusteringExporter;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.util.distrib.NormalDistrib;
@@ -41,7 +41,7 @@ public class CheckCavemanClustering extends JFrame {
 
         // export clustering
         {
-            ClusteringExporter<Integer> cexp = new ClusteringExporter<>();
+            JSONClusteringExporter<Integer> cexp = new JSONClusteringExporter<>();
             cexp.exportClustering(gg.getClustering(), new File(clustName));
         }
 
@@ -55,7 +55,7 @@ public class CheckCavemanClustering extends JFrame {
                 return atts;
             });
 
-            new FileExporter<>(dotexp)
+            new FileGraphExporter<>(dotexp)
                     .exportGraph(g, new File(graphName));
         }
 

@@ -6,27 +6,54 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
 
-public abstract class CSVClusteringImporter<V> {
+/**
+ * Import a clustering from a CSV file with the structure
+ *
+ *          vertex,cluster      (header: optional)
+ *          v1, c1 \n
+ *          ...
+ *
+ * @param <V>
+ */
+public class CSVClusteringImporter<V> {
 
-    private int skipLines;
     private boolean header;
+    private Function<String, V> toVertex;
 
     public CSVClusteringImporter() {
 
     }
 
+    /**
+     * If the file has a header to skip
+     * @param hdr if it is present a header
+     * @return self
+     */
     public CSVClusteringImporter<V> withHeader(boolean hdr) {
         this.header = header;
         return this;
     }
 
+    /**
+     * Function used to convert a string in a vertex of type V
+     * @param toVertex Function String->V
+     * @return self
+     */
+    public CSVClusteringImporter<V> withToVertex(Function<String, V> toVertex) {
+        this.toVertex = toVertex;
+        return this;
+    }
+
+    /**
+     * Import the clustering from the specified file
+     *
+     * @param file file to read
+     * @return the clustering
+     */
     public ClusteringAlgorithm.Clustering<V> importClustering(File file) {
-        Map<String, Set<V>> clusters = new HashMap<>();
+        MapClustering<String, V> clustering = new MapClustering<>();
 
         try(BufferedReader rdr = new BufferedReader(new FileReader(file))) {
             int iLine = 0;
@@ -39,21 +66,16 @@ public abstract class CSVClusteringImporter<V> {
 
                 String[] parts = line.split(",");
 
-                V vertex = toVertex(parts[0]);
+                V vertex = toVertex.apply(parts[0]);
                 String c = parts[1];
 
-                if (!clusters.containsKey(c))
-                    clusters.put(c, new HashSet<>());
-
-                clusters.get(c).add(vertex);
+                clustering.addVertex(c, vertex);
             }
 
-            return new GraphClustering<V>().setClusters(clusters);
+            return clustering;
         }
         catch (IOException e) {
             throw  new RuntimeException(e);
         }
     }
-
-    protected abstract V toVertex(String v);
 }
