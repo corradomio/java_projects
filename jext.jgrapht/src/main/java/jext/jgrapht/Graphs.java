@@ -241,6 +241,27 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     }
 
     // ----------------------------------------------------------------------
+    // Other
+    // ----------------------------------------------------------------------
+
+    public static <V, E> int order(Graph<V, E> g) {
+        return g.vertexSet().size();
+    }
+
+    public static <V, E> int size(Graph<V, E> g) {
+        return g.edgeSet().size();
+    }
+
+    public static <V, E> double density(Graph<V, E> g) {
+        long nv = g.vertexSet().size();
+
+        if (g.getType().isDirected())
+            return (0.+g.edgeSet().size())/(nv*nv);
+        else
+            return (2.*g.edgeSet().size())/(nv*(nv-1.));
+    }
+
+    // ----------------------------------------------------------------------
     // Dump graph
     // ----------------------------------------------------------------------
 
