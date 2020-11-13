@@ -77,8 +77,8 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
      * Density: number of edges divided by the number of edges of a clique
      */
     public double getDensity() {
-        long nVertices = graph.vertexSet().size();
-        double nEdges = graph.edgeSet().size();
+        long nVertices = getOrder();
+        double nEdges = getSize();
         double tEdges = sq(nVertices);
 
         // maximum number of edges:
@@ -220,7 +220,7 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     }
 
     public long[] getVerticesDegree(EdgeType edgeType){
-        int n = graph.vertexSet().size();
+        int n = getOrder();
         long[] degrees = new long[n];
 
         int[] i = new int[1];
@@ -252,7 +252,7 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
     public VertexStatistics getVertexStatistics() {
         VertexStatistics ds = new VertexStatistics();
-        ds.order = graph.vertexSet().size();
+        ds.order = getOrder();
 
         graph.vertexSet()
                 .stream()
