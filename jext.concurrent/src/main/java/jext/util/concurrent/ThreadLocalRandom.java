@@ -11,7 +11,7 @@ public class ThreadLocalRandom {
     public static synchronized Random current() {
         long threadId = Thread.currentThread().getId();
         if (!randomMap.containsKey(threadId))
-            randomMap.put(threadId, new Random(System.currentTimeMillis() + threadId));
+            randomMap.put(threadId, new Random());
         return randomMap.get(threadId);
     }
 }
