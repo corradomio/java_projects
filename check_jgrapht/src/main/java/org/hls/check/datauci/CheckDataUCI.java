@@ -113,9 +113,9 @@ public class CheckDataUCI {
 
             System.out.print("-- cluster\n" );
             clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(
-                    new ParallelMCMCBColoring<>(t)
-                    // new WeightedMCMCBColoring<>(t)
-                    //         .withWeightMode(WeightMode.MEAN)
+                    // new ParallelMCMCBColoring<>(t)
+                    new WeightedMCMCBColoring<>(t)
+                            .withWeightMode(WeightMode.MIN)
                             .withNumRetries(6)
                             .withEpsilon(0.1)
                     )

@@ -62,7 +62,7 @@ public class ParallelMCMCBColoring<V, E> implements VertexColoringAlgorithm<V>
         }
 
         public int get(double r) {
-            return colors[(int)(r*(ncolors-1))];
+            return colors[(int)(r*(ncolors))];
         }
 
         public BitSet toBitSet() {
