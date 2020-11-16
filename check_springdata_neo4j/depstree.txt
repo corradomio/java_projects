@@ -1,0 +1,84 @@
+Maven (mvn)
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] check_springdata_neo4j                                             [pom]
+[INFO] data-access                                                        [jar]
+[INFO] 
+[INFO] ----------------< org.hls.check:check_springdata_neo4j >----------------
+[INFO] Building check_springdata_neo4j 1.0-SNAPSHOT                       [1/2]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ check_springdata_neo4j ---
+[INFO] org.hls.check:check_springdata_neo4j:pom:1.0-SNAPSHOT
+[INFO] \- org.springframework.boot:spring-boot-starter:jar:2.3.5.RELEASE:compile
+[INFO]    +- org.springframework.boot:spring-boot:jar:2.3.5.RELEASE:compile
+[INFO]    |  \- org.springframework:spring-context:jar:5.2.10.RELEASE:compile
+[INFO]    |     +- org.springframework:spring-aop:jar:5.2.10.RELEASE:compile
+[INFO]    |     +- org.springframework:spring-beans:jar:5.2.10.RELEASE:compile
+[INFO]    |     \- org.springframework:spring-expression:jar:5.2.10.RELEASE:compile
+[INFO]    +- org.springframework.boot:spring-boot-autoconfigure:jar:2.3.5.RELEASE:compile
+[INFO]    +- org.springframework.boot:spring-boot-starter-logging:jar:2.3.5.RELEASE:compile
+[INFO]    |  +- ch.qos.logback:logback-classic:jar:1.2.3:compile
+[INFO]    |  |  +- ch.qos.logback:logback-core:jar:1.2.3:compile
+[INFO]    |  |  \- org.slf4j:slf4j-api:jar:1.7.25:compile
+[INFO]    |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.13.3:compile
+[INFO]    |  |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
+[INFO]    |  \- org.slf4j:jul-to-slf4j:jar:1.7.30:compile
+[INFO]    +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO]    +- org.springframework:spring-core:jar:5.2.10.RELEASE:compile
+[INFO]    |  \- org.springframework:spring-jcl:jar:5.2.10.RELEASE:compile
+[INFO]    \- org.yaml:snakeyaml:jar:1.26:compile
+[INFO] 
+[INFO] ---------------------< org.hls.check:data-access >----------------------
+[INFO] Building data-access 1.0-SNAPSHOT                                  [2/2]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ data-access ---
+[INFO] org.hls.check:data-access:jar:1.0-SNAPSHOT
+[INFO] +- org.springframework:spring-core:jar:5.3.0:compile
+[INFO] |  \- org.springframework:spring-jcl:jar:5.3.0:compile
+[INFO] +- org.springframework.data:spring-data-neo4j:jar:5.3.5.RELEASE:compile
+[INFO] |  +- org.springframework:spring-tx:jar:5.2.10.RELEASE:compile
+[INFO] |  +- org.springframework:spring-context:jar:5.2.10.RELEASE:compile
+[INFO] |  |  +- org.springframework:spring-aop:jar:5.2.10.RELEASE:compile
+[INFO] |  |  \- org.springframework:spring-expression:jar:5.2.10.RELEASE:compile
+[INFO] |  +- org.springframework:spring-beans:jar:5.2.10.RELEASE:compile
+[INFO] |  +- org.springframework.data:spring-data-commons:jar:2.3.5.RELEASE:compile
+[INFO] |  +- org.neo4j:neo4j-ogm-core:jar:3.2.17:compile
+[INFO] |  |  +- org.apache.commons:commons-lang3:jar:3.8:compile
+[INFO] |  |  \- io.github.classgraph:classgraph:jar:4.8.86:compile
+[INFO] |  +- org.neo4j:neo4j-ogm-api:jar:3.2.17:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.9.9:compile
+[INFO] |  |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.9.0:compile
+[INFO] |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.9.9:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.9.9:compile
+[INFO] |  |  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.9.9:compile
+[INFO] |  +- org.neo4j:neo4j-ogm-bolt-driver:jar:3.2.17:compile
+[INFO] |  |  \- org.neo4j.driver:neo4j-java-driver:jar:4.0.2:compile
+[INFO] |  |     \- org.reactivestreams:reactive-streams:jar:1.0.3:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.26:compile
+[INFO] +- org.projectlombok:lombok:jar:1.18.16:provided
+[INFO] \- org.springframework.boot:spring-boot-starter:jar:2.3.5.RELEASE:compile
+[INFO]    +- org.springframework.boot:spring-boot:jar:2.3.5.RELEASE:compile
+[INFO]    +- org.springframework.boot:spring-boot-autoconfigure:jar:2.3.5.RELEASE:compile
+[INFO]    +- org.springframework.boot:spring-boot-starter-logging:jar:2.3.5.RELEASE:compile
+[INFO]    |  +- ch.qos.logback:logback-classic:jar:1.2.3:compile
+[INFO]    |  |  \- ch.qos.logback:logback-core:jar:1.2.3:compile
+[INFO]    |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.13.3:compile
+[INFO]    |  |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
+[INFO]    |  \- org.slf4j:jul-to-slf4j:jar:1.7.30:compile
+[INFO]    +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO]    \- org.yaml:snakeyaml:jar:1.26:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for check_springdata_neo4j 1.0-SNAPSHOT:
+[INFO] 
+[INFO] check_springdata_neo4j ............................. SUCCESS [  1.197 s]
+[INFO] data-access ........................................ SUCCESS [  0.268 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.916 s
+[INFO] Finished at: 2020-11-16T12:59:22+04:00
+[INFO] ------------------------------------------------------------------------
