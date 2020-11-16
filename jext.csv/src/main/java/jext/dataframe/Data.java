@@ -1,2 +1,4 @@
-package jext.dataframe;public interface Data {
+package jext.dataframe;
+
+public interface Data<D> {
 }

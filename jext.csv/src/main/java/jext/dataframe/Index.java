@@ -1,4 +1,4 @@
-package jext.csv;
+package jext.dataframe;
 
-public interface Index {
+public interface Index<I> {
 }

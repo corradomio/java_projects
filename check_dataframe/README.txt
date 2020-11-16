@@ -19,6 +19,9 @@ https://github.com/nRo/DataFrame            (Jan 2020)
         <version>0.7.6</version>
     </dependency>
 
+    Non e' un gran che: la parte di espressioni viene modellata mediante una stringa
+    e non mediante un DSL/struttura dati/lambda espressione
+
 https://github.com/zavtech/morpheus-core    (Nov 2018)
     <!-- https://mvnrepository.com/artifact/com.zavtech/morpheus-core -->
     <dependency>

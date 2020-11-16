@@ -9,54 +9,80 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-api -->
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-api</artifactId>
-            <version>1.0.0-beta7</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native -->
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native</artifactId>
-            <version>1.0.0-beta7</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native-platform -->
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native-platform</artifactId>
-            <version>1.0.0-beta7</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native-api -->
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native-api</artifactId>
-            <version>1.0.0-beta7</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-common -->
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-common</artifactId>
-            <version>1.0.0-beta7</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-cuda-10.2-platform -->
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-cuda-10.2-platform</artifactId>
-            <version>1.0.0-beta7</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.nd4j</groupId>-->
+        <!--    <artifactId>nd4j-native</artifactId>-->
+        <!--    <version>1.0.0-beta7</version>-->
+        <!--</dependency>-->
         <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-cuda-10.2 -->
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-cuda-10.2</artifactId>
             <version>1.0.0-beta7</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-api -->
+        <!--<dependency>-->
+        <!--    <groupId>org.nd4j</groupId>-->
+        <!--    <artifactId>nd4j-api</artifactId>-->
+        <!--    <version>1.0.0-beta7</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native-platform -->
+        <!--<dependency>-->
+        <!--    <groupId>org.nd4j</groupId>-->
+        <!--    <artifactId>nd4j-native-platform</artifactId>-->
+        <!--    <version>1.0.0-beta7</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native-api -->
+        <!--<dependency>-->
+        <!--    <groupId>org.nd4j</groupId>-->
+        <!--    <artifactId>nd4j-native-api</artifactId>-->
+        <!--    <version>1.0.0-beta7</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-common -->
+        <!--<dependency>-->
+        <!--    <groupId>org.nd4j</groupId>-->
+        <!--    <artifactId>nd4j-common</artifactId>-->
+        <!--    <version>1.0.0-beta7</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-cuda-10.2-platform -->
+        <!--<dependency>-->
+        <!--    <groupId>org.nd4j</groupId>-->
+        <!--    <artifactId>nd4j-cuda-10.2-platform</artifactId>-->
+        <!--    <version>1.0.0-beta7</version>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-cuda-10.2 -->
+        <!--<dependency>-->
+        <!--    <groupId>org.nd4j</groupId>-->
+        <!--    <artifactId>nd4j-cuda-10.2</artifactId>-->
+        <!--    <version>1.0.0-beta7</version>-->
+        <!--</dependency>-->
         <!-- https://mvnrepository.com/artifact/org.nd4j/guava -->
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>guava</artifactId>
             <version>1.0.0-beta7</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
         </dependency>
 
     </dependencies>

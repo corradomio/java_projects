@@ -199,10 +199,10 @@ def process_results(name, nclusters, e=ERR):
 
 
 def main():
-    process_results("auto", 6, .75)
-    process_results("disease", 2, .75)
-    process_results("wine", 3, .75)
-    process_results("zoo", 7, .75)
+    process_results("auto", 6, .5)
+    process_results("disease", 2, .5)
+    process_results("wine", 3, .5)
+    process_results("zoo", 7, .5)
 
 # end
 

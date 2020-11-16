@@ -1,2 +1,4 @@
-package jext.dataframe.index;public class CategoricalIndex {
+package jext.dataframe.index;
+
+public class CategoricalIndex {
 }
