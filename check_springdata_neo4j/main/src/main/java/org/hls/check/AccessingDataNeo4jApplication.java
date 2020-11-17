@@ -1,13 +1,18 @@
 package org.hls.check;
 
+import jext.springframework.core.env.EnvironmentUtils;
 import org.hls.check.data.component.ComponentRepository;
 import org.hls.check.data.dependency.ProjectRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
+
+import java.util.Properties;
 
 // @SpringBootApplication
 @ComponentScan
@@ -35,6 +40,14 @@ public class AccessingDataNeo4jApplication {
             componentRepository.findAll(PageRequest.of(1, 10)).forEach(c -> {
                 System.out.println(c);
             });
+        };
+    }
+
+    @Bean
+    CommandLineRunner demo3(final ApplicationContext ctx) {
+        return args -> {
+
+            Properties props = EnvironmentUtils.getProperties(ctx);
         };
     }
 
