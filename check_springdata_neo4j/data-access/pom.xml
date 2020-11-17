@@ -13,6 +13,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.springframework</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- -->
 
         <dependency>
@@ -45,6 +51,12 @@
             <version>5.3.5.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-rest-webmvc</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+
         <!--        <dependency>-->
         <!--            <groupId>jakarta.annotation</groupId>-->
         <!--            <artifactId>jakarta.annotation-api</artifactId>-->
@@ -61,20 +73,5 @@
         </dependency>
 
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </distributionManagement>
-
 
 </project>

@@ -9,9 +9,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 // @SpringBootApplication
@@ -48,6 +50,14 @@ public class AccessingDataNeo4jApplication {
         return args -> {
 
             Properties props = EnvironmentUtils.getProperties(ctx);
+            List<String> names = new ArrayList<>(props.stringPropertyNames());
+            names.sort(String::compareTo);
+
+            System.out.println("-------------------");
+            names.forEach(n -> {
+                System.out.printf("%s: %s\n", n, props.getProperty(n));
+            });
+            System.out.println("-------------------");
         };
     }
 
