@@ -4,28 +4,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 
 @Configuration
-public class SPLAppConfig {
+public class ApplicationConfig {
 
-    Logger logger = LogManager.getLogger(SPLAppConfig.class);
+    Logger logger = LogManager.getLogger(ApplicationConfig.class);
 
-    @Value("${spring.app.root}")
-    private String appRoot;
-
-    @Value("${ae.ebtic.spl.welcome}")
-    private String welcome;
-
-    public SPLAppConfig() {
+    public ApplicationConfig() {
         logger.info("constructor");
     }
 
     @PostConstruct
     private void init() {
-        logger.info(String.format("init: %s", welcome));
+        logger.info(String.format("init: %s", "welcome"));
     }
 
 }
