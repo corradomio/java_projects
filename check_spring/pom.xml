@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hls.check</groupId>
+    <artifactId>check_spring</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>webapp</module>
+        <module>sboot</module>
+        <module>controllers</module>
+    </modules>
+
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+
+        <spring.boot.version>2.4.0</spring.boot.version>
+        <spring.version>5.3.1</spring.version>
+        <spring.data.version>5.3.5.RELEASE</spring.data.version>
+        <spring.boot.version>2.4.0</spring.boot.version>
+        <log4j.version>2.13.3</log4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <lombok.version>1.18.16</lombok.version>
+        <cypherdsl.version>2020.1.1</cypherdsl.version>
+    </properties>
+
+</project>
