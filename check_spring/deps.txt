@@ -1,0 +1,32 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] check_spring                                                       [pom]
+[INFO] controllers                                                        [jar]
+[INFO] webapp                                                             [war]
+[INFO] sboot                                                              [jar]
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-metadata.xml
+Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/maven-metadata.xml
+Progress (1): 2.7/20 kBProgress (2): 2.7/20 kB | 2.7/14 kBProgress (2): 5.5/20 kB | 2.7/14 kBProgress (2): 5.5/20 kB | 5.5/14 kBProgress (2): 8.2/20 kB | 5.5/14 kBProgress (2): 8.2/20 kB | 8.2/14 kBProgress (2): 11/20 kB | 8.2/14 kB Progress (2): 11/20 kB | 11/14 kB Progress (2): 14/20 kB | 11/14 kBProgress (2): 16/20 kB | 11/14 kBProgress (2): 16/20 kB | 14/14 kBProgress (2): 16/20 kB | 14 kB   Progress (2): 19/20 kB | 14 kBProgress (2): 20 kB | 14 kB                              Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-metadata.xml (14 kB at 11 kB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/maven-metadata.xml (20 kB at 16 kB/s)
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for check_spring 1.0-SNAPSHOT:
+[INFO] 
+[INFO] check_spring ....................................... SKIPPED
+[INFO] controllers ........................................ SKIPPED
+[INFO] webapp ............................................. SKIPPED
+[INFO] sboot .............................................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.156 s
+[INFO] Finished at: 2020-12-11T14:01:23+04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] No plugin found for prefix 'depenency' in the current project and in the plugin groups [org.apache.maven.plugins, org.codehaus.mojo] available from the repositories [local (C:\Users\Corrado Mio\.m2\repository), central (https://repo.maven.apache.org/maven2)] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/NoPluginFoundForPrefixException
