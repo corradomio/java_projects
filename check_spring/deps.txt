@@ -1,4 +1,12 @@
 [INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.hls.check:controllers:jar:1.0-SNAPSHOT
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.springframework.data:spring-data-commons:jar -> duplicate declaration of version 2.4.1 @ line 22, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Build Order:
 [INFO] 
@@ -6,27 +14,131 @@
 [INFO] controllers                                                        [jar]
 [INFO] webapp                                                             [war]
 [INFO] sboot                                                              [jar]
-Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-metadata.xml
-Downloading from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/maven-metadata.xml
-Progress (1): 2.7/20 kBProgress (2): 2.7/20 kB | 2.7/14 kBProgress (2): 5.5/20 kB | 2.7/14 kBProgress (2): 5.5/20 kB | 5.5/14 kBProgress (2): 8.2/20 kB | 5.5/14 kBProgress (2): 8.2/20 kB | 8.2/14 kBProgress (2): 11/20 kB | 8.2/14 kB Progress (2): 11/20 kB | 11/14 kB Progress (2): 14/20 kB | 11/14 kBProgress (2): 16/20 kB | 11/14 kBProgress (2): 16/20 kB | 14/14 kBProgress (2): 16/20 kB | 14 kB   Progress (2): 19/20 kB | 14 kBProgress (2): 20 kB | 14 kB                              Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-metadata.xml (14 kB at 11 kB/s)
-Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/mojo/maven-metadata.xml (20 kB at 16 kB/s)
+[INFO] 
+[INFO] ---------------------< org.hls.check:check_spring >---------------------
+[INFO] Building check_spring 1.0-SNAPSHOT                                 [1/4]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ check_spring ---
+[INFO] org.hls.check:check_spring:pom:1.0-SNAPSHOT
+[INFO] 
+[INFO] ---------------------< org.hls.check:controllers >----------------------
+[INFO] Building controllers 1.0-SNAPSHOT                                  [2/4]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ controllers ---
+[INFO] org.hls.check:controllers:jar:1.0-SNAPSHOT
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
+[INFO] |  +- org.springframework:spring-core:jar:5.3.1:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-beans:jar:5.3.1:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.26:compile
+[INFO] +- org.springframework:spring-webmvc:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-context:jar:5.3.1:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.1:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.1:compile
+[INFO] +- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
+[INFO] |  \- com.jayway.jsonpath:json-path:jar:2.4.0:compile
+[INFO] |     \- net.minidev:json-smart:jar:2.3:compile
+[INFO] |        \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] |           \- org.ow2.asm:asm:jar:5.0.4:compile
+[INFO] +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.13.3:compile
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO] \- org.projectlombok:lombok:jar:1.18.16:provided
+[INFO] 
+[INFO] ------------------------< org.hls.check:webapp >------------------------
+[INFO] Building webapp 1.0-SNAPSHOT                                       [3/4]
+[INFO] --------------------------------[ war ]---------------------------------
+[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
+[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ webapp ---
+[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
+[INFO] org.hls.check:webapp:war:1.0-SNAPSHOT
+[INFO] +- org.hls.check:controllers:jar:1.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.1:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO] +- org.springframework:spring-webmvc:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-beans:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-context:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-core:jar:5.3.1:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.1:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.1:compile
+[INFO] +- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.4.0:compile
+[INFO] |  |  \- net.minidev:json-smart:jar:2.3:compile
+[INFO] |  |     \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] |  |        \- org.ow2.asm:asm:jar:5.0.4:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] \- org.apache.logging.log4j:log4j-core:jar:2.13.3:compile
+[INFO]    \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
+[INFO] 
+[INFO] ------------------------< org.hls.check:sboot >-------------------------
+[INFO] Building sboot 1.0-SNAPSHOT                                        [4/4]
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sboot ---
+[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
+[INFO] org.hls.check:sboot:jar:1.0-SNAPSHOT
+[INFO] +- org.hls.check:controllers:jar:1.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
+[INFO] |  |  +- org.springframework:spring-core:jar:5.3.1:compile
+[INFO] |  |  |  \- org.springframework:spring-jcl:jar:5.3.1:compile
+[INFO] |  |  +- org.springframework:spring-beans:jar:5.3.1:compile
+[INFO] |  |  \- org.slf4j:slf4j-api:jar:1.7.26:compile
+[INFO] |  +- org.springframework:spring-webmvc:jar:5.3.1:compile
+[INFO] |  |  +- org.springframework:spring-aop:jar:5.3.1:compile
+[INFO] |  |  +- org.springframework:spring-context:jar:5.3.1:compile
+[INFO] |  |  \- org.springframework:spring-expression:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.1:compile
+[INFO] |  +- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
+[INFO] |  |  \- com.jayway.jsonpath:json-path:jar:2.4.0:compile
+[INFO] |  |     \- net.minidev:json-smart:jar:2.3:compile
+[INFO] |  |        \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] |  |           \- org.ow2.asm:asm:jar:5.0.4:compile
+[INFO] |  +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] |  +- org.apache.logging.log4j:log4j-core:jar:2.13.3:compile
+[INFO] |  |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.4.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.4.0:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.4.0:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.4.0:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.27:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.4.0:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.11.3:compile
+[INFO] |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.11.3:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.11.3:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.11.3:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.11.3:compile
+[INFO] |  \- org.springframework.boot:spring-boot-starter-tomcat:jar:2.4.0:compile
+[INFO] |     +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.39:compile
+[INFO] |     +- org.glassfish:jakarta.el:jar:3.0.3:compile
+[INFO] |     \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.39:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-log4j2:jar:2.4.0:compile
+[INFO] |  +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.13.3:compile
+[INFO] |  +- org.apache.logging.log4j:log4j-jul:jar:2.13.3:compile
+[INFO] |  \- org.slf4j:jul-to-slf4j:jar:1.7.30:compile
+[INFO] +- io.github.classgraph:classgraph:jar:4.8.86:compile
+[INFO] \- javax.annotation:javax.annotation-api:jar:1.3.2:compile
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary for check_spring 1.0-SNAPSHOT:
 [INFO] 
-[INFO] check_spring ....................................... SKIPPED
-[INFO] controllers ........................................ SKIPPED
-[INFO] webapp ............................................. SKIPPED
-[INFO] sboot .............................................. SKIPPED
+[INFO] check_spring ....................................... SUCCESS [  0.955 s]
+[INFO] controllers ........................................ SUCCESS [  0.213 s]
+[INFO] webapp ............................................. SUCCESS [  0.059 s]
+[INFO] sboot .............................................. SUCCESS [  0.141 s]
 [INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
+[INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  3.156 s
-[INFO] Finished at: 2020-12-11T14:01:23+04:00
+[INFO] Total time:  1.641 s
+[INFO] Finished at: 2020-12-11T18:45:51+04:00
 [INFO] ------------------------------------------------------------------------
-[ERROR] No plugin found for prefix 'depenency' in the current project and in the plugin groups [org.apache.maven.plugins, org.codehaus.mojo] available from the repositories [local (C:\Users\Corrado Mio\.m2\repository), central (https://repo.maven.apache.org/maven2)] -> [Help 1]
-[ERROR] 
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR] 
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/NoPluginFoundForPrefixException
