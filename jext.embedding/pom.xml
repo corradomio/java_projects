@@ -10,13 +10,6 @@
 
     <packaging>jar</packaging>
 
-    <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </repositories>
-
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -25,12 +18,5 @@
     <dependencies>
 
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </distributionManagement>
 
 </project>

@@ -12,6 +12,12 @@
     <artifactId>controllers</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.springframework-core</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons -->
         <dependency>
             <groupId>org.springframework.data</groupId>

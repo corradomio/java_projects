@@ -12,6 +12,9 @@
         <module>webapp</module>
         <module>sboot</module>
         <module>controllers</module>
+        <!--<module>../jext.springframework</module>-->
+        <module>../jext.springframework-core</module>
+        <module>../jext.springframework-data</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -29,19 +32,5 @@
         <lombok.version>1.18.16</lombok.version>
         <cypherdsl.version>2020.1.1</cypherdsl.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </distributionManagement>
 
 </project>

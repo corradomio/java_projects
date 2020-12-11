@@ -9,13 +9,6 @@
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </repositories>
-
     <modules>
         <module>../jext.concurrent</module>
         <module>../jext.collections</module>

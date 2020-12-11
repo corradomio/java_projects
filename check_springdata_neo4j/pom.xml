@@ -62,20 +62,4 @@
 
     </build>
 
-    <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </distributionManagement>
-
-
-
 </project>

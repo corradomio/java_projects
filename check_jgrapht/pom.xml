@@ -14,13 +14,6 @@
         <module>../jext.util</module>
     </modules-->
 
-    <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </repositories>
-
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -95,12 +88,5 @@
         </dependency>
 
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>Local</id>
-            <url>file://jars/$targets</url>
-        </repository>
-    </distributionManagement>
 
 </project>

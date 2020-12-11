@@ -16,10 +16,6 @@
 
     <repositories>
         <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-        <repository>
             <id>GradleRepo</id>
             <name>Gradle repository</name>
             <url>https://repo.gradle.org/gradle/libs-releases-local/</url>

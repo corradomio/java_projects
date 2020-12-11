@@ -9,10 +9,7 @@
     <version>1.0</version>
 
     <repositories>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
+
         <repository>
             <id>JSR</id>
             <url>https://maven.onehippo.com/maven2/</url>
@@ -78,11 +75,4 @@
 
     </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </distributionManagement>
-    
 </project>
