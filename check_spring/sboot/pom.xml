@@ -41,11 +41,11 @@
             Utilities
           -->
         <!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-        <dependency>
+        <!-- dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
             <version>4.8.86</version>
-        </dependency>
+        </dependency -->
 
         <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
         <dependency>

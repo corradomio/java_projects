@@ -12,9 +12,9 @@
         <module>webapp</module>
         <module>sboot</module>
         <module>controllers</module>
-        <!--<module>../jext.springframework</module>-->
-        <module>../jext.springframework-core</module>
-        <module>../jext.springframework-data</module>
+        <!-- module>../jext.springframework-core</module>
+        <module>../jext.springframework-hateoas</module -->
+        <module>common</module>
     </modules>
 
     <packaging>pom</packaging>

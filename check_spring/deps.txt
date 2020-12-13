@@ -1,33 +1,20 @@
 [INFO] Scanning for projects...
-[WARNING] 
-[WARNING] Some problems were encountered while building the effective model for org.hls.check:controllers:jar:1.0-SNAPSHOT
-[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.springframework.data:spring-data-commons:jar -> duplicate declaration of version 2.4.1 @ line 22, column 21
-[WARNING] 
-[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
-[WARNING] 
-[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
-[WARNING] 
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Build Order:
 [INFO] 
+[INFO] jext.springframework-core                                          [jar]
 [INFO] check_spring                                                       [pom]
 [INFO] controllers                                                        [jar]
 [INFO] webapp                                                             [war]
 [INFO] sboot                                                              [jar]
+[INFO] jext.springframework-data                                          [jar]
 [INFO] 
-[INFO] ---------------------< org.hls.check:check_spring >---------------------
-[INFO] Building check_spring 1.0-SNAPSHOT                                 [1/4]
-[INFO] --------------------------------[ pom ]---------------------------------
-[INFO] 
-[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ check_spring ---
-[INFO] org.hls.check:check_spring:pom:1.0-SNAPSHOT
-[INFO] 
-[INFO] ---------------------< org.hls.check:controllers >----------------------
-[INFO] Building controllers 1.0-SNAPSHOT                                  [2/4]
+[INFO] -----------------< org.hls:jext.springframework-core >------------------
+[INFO] Building jext.springframework-core 1.0                             [1/6]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
-[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ controllers ---
-[INFO] org.hls.check:controllers:jar:1.0-SNAPSHOT
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ jext.springframework-core ---
+[INFO] org.hls:jext.springframework-core:jar:1.0
 [INFO] +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
 [INFO] |  +- org.springframework:spring-core:jar:5.3.1:compile
 [INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.1:compile
@@ -39,29 +26,70 @@
 [INFO] |  \- org.springframework:spring-expression:jar:5.3.1:compile
 [INFO] +- org.springframework:spring-web:jar:5.3.1:compile
 [INFO] +- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
+[INFO] |  +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
 [INFO] |  \- com.jayway.jsonpath:json-path:jar:2.4.0:compile
 [INFO] |     \- net.minidev:json-smart:jar:2.3:compile
 [INFO] |        \- net.minidev:accessors-smart:jar:1.2:compile
 [INFO] |           \- org.ow2.asm:asm:jar:5.0.4:compile
-[INFO] +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] \- com.fasterxml.jackson.core:jackson-databind:jar:2.11.3:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO]    \- com.fasterxml.jackson.core:jackson-core:jar:2.11.3:compile
+[INFO] 
+[INFO] ---------------------< org.hls.check:check_spring >---------------------
+[INFO] Building check_spring 1.0-SNAPSHOT                                 [2/6]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ check_spring ---
+[INFO] org.hls.check:check_spring:pom:1.0-SNAPSHOT
+[INFO] 
+[INFO] ---------------------< org.hls.check:controllers >----------------------
+[INFO] Building controllers 1.0-SNAPSHOT                                  [3/6]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ controllers ---
+[INFO] org.hls.check:controllers:jar:1.0-SNAPSHOT
+[INFO] +- org.hls:jext.springframework-core:jar:1.0:compile
+[INFO] |  \- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
+[INFO] |     +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] |     \- com.jayway.jsonpath:json-path:jar:2.4.0:compile
+[INFO] |        \- net.minidev:json-smart:jar:2.3:compile
+[INFO] |           \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] |              \- org.ow2.asm:asm:jar:5.0.4:compile
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
+[INFO] |  +- org.springframework:spring-core:jar:5.3.1:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-beans:jar:5.3.1:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.26:compile
+[INFO] +- org.springframework:spring-webmvc:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.1:compile
+[INFO] |  +- org.springframework:spring-context:jar:5.3.1:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.1:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.1:compile
 [INFO] +- org.apache.logging.log4j:log4j-core:jar:2.13.3:compile
 [INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
-[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
-[INFO] \- org.projectlombok:lombok:jar:1.18.16:provided
+[INFO] +- org.projectlombok:lombok:jar:1.18.16:provided
+[INFO] \- com.fasterxml.jackson.core:jackson-databind:jar:2.11.3:compile
+[INFO]    +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO]    \- com.fasterxml.jackson.core:jackson-core:jar:2.11.3:compile
 [INFO] 
 [INFO] ------------------------< org.hls.check:webapp >------------------------
-[INFO] Building webapp 1.0-SNAPSHOT                                       [3/4]
+[INFO] Building webapp 1.0-SNAPSHOT                                       [4/6]
 [INFO] --------------------------------[ war ]---------------------------------
-[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
-[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ webapp ---
-[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
 [INFO] org.hls.check:webapp:war:1.0-SNAPSHOT
 [INFO] +- org.hls.check:controllers:jar:1.0-SNAPSHOT:compile
-[INFO] |  +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
+[INFO] |  +- org.hls:jext.springframework-core:jar:1.0:compile
+[INFO] |  |  \- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
+[INFO] |  |     +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] |  |     \- com.jayway.jsonpath:json-path:jar:2.4.0:compile
+[INFO] |  |        \- net.minidev:json-smart:jar:2.3:compile
+[INFO] |  |           \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] |  |              \- org.ow2.asm:asm:jar:5.0.4:compile
 [INFO] |  +- org.springframework:spring-web:jar:5.3.1:compile
-[INFO] |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-databind:jar:2.11.3:compile
+[INFO] |     +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO] |     \- com.fasterxml.jackson.core:jackson-core:jar:2.11.3:compile
 [INFO] +- org.springframework:spring-webmvc:jar:5.3.1:compile
 [INFO] |  +- org.springframework:spring-aop:jar:5.3.1:compile
 [INFO] |  +- org.springframework:spring-beans:jar:5.3.1:compile
@@ -69,25 +97,25 @@
 [INFO] |  +- org.springframework:spring-core:jar:5.3.1:compile
 [INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.1:compile
 [INFO] |  \- org.springframework:spring-expression:jar:5.3.1:compile
-[INFO] +- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
-[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.4.0:compile
-[INFO] |  |  \- net.minidev:json-smart:jar:2.3:compile
-[INFO] |  |     \- net.minidev:accessors-smart:jar:1.2:compile
-[INFO] |  |        \- org.ow2.asm:asm:jar:5.0.4:compile
-[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.30:compile
-[INFO] +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.26:compile
 [INFO] \- org.apache.logging.log4j:log4j-core:jar:2.13.3:compile
 [INFO]    \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
 [INFO] 
 [INFO] ------------------------< org.hls.check:sboot >-------------------------
-[INFO] Building sboot 1.0-SNAPSHOT                                        [4/4]
+[INFO] Building sboot 1.0-SNAPSHOT                                        [5/6]
 [INFO] --------------------------------[ jar ]---------------------------------
-[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sboot ---
-[WARNING] The metadata C:\Users\Corrado Mio\.m2\repository\org\hls\check\controllers\1.0-SNAPSHOT\maven-metadata-local.xml is invalid: Snapshot information corrupted with remote repository data, please verify that no remote repository uses the id 'local'
 [INFO] org.hls.check:sboot:jar:1.0-SNAPSHOT
 [INFO] +- org.hls.check:controllers:jar:1.0-SNAPSHOT:compile
+[INFO] |  +- org.hls:jext.springframework-core:jar:1.0:compile
+[INFO] |  |  \- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
+[INFO] |  |     +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
+[INFO] |  |     \- com.jayway.jsonpath:json-path:jar:2.4.0:compile
+[INFO] |  |        \- net.minidev:json-smart:jar:2.3:compile
+[INFO] |  |           \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] |  |              \- org.ow2.asm:asm:jar:5.0.4:compile
 [INFO] |  +- org.springframework.data:spring-data-commons:jar:2.4.1:compile
 [INFO] |  |  +- org.springframework:spring-core:jar:5.3.1:compile
 [INFO] |  |  |  \- org.springframework:spring-jcl:jar:5.3.1:compile
@@ -98,15 +126,11 @@
 [INFO] |  |  +- org.springframework:spring-context:jar:5.3.1:compile
 [INFO] |  |  \- org.springframework:spring-expression:jar:5.3.1:compile
 [INFO] |  +- org.springframework:spring-web:jar:5.3.1:compile
-[INFO] |  +- org.springframework.hateoas:spring-hateoas:jar:1.2.1:compile
-[INFO] |  |  \- com.jayway.jsonpath:json-path:jar:2.4.0:compile
-[INFO] |  |     \- net.minidev:json-smart:jar:2.3:compile
-[INFO] |  |        \- net.minidev:accessors-smart:jar:1.2:compile
-[INFO] |  |           \- org.ow2.asm:asm:jar:5.0.4:compile
-[INFO] |  +- org.springframework.plugin:spring-plugin-core:jar:2.0.0.RELEASE:compile
 [INFO] |  +- org.apache.logging.log4j:log4j-core:jar:2.13.3:compile
 [INFO] |  |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
-[INFO] |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-databind:jar:2.11.3:compile
+[INFO] |     +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.3:compile
+[INFO] |     \- com.fasterxml.jackson.core:jackson-core:jar:2.11.3:compile
 [INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.4.0:compile
 [INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.4.0:compile
 [INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.4.0:compile
@@ -114,8 +138,6 @@
 [INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
 [INFO] |  |  \- org.yaml:snakeyaml:jar:1.27:compile
 [INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.4.0:compile
-[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.11.3:compile
-[INFO] |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.11.3:compile
 [INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.11.3:compile
 [INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.11.3:compile
 [INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.11.3:compile
@@ -129,16 +151,65 @@
 [INFO] |  \- org.slf4j:jul-to-slf4j:jar:1.7.30:compile
 [INFO] +- io.github.classgraph:classgraph:jar:4.8.86:compile
 [INFO] \- javax.annotation:javax.annotation-api:jar:1.3.2:compile
-[INFO] ------------------------------------------------------------------------
-[INFO] Reactor Summary for check_spring 1.0-SNAPSHOT:
 [INFO] 
-[INFO] check_spring ....................................... SUCCESS [  0.955 s]
-[INFO] controllers ........................................ SUCCESS [  0.213 s]
-[INFO] webapp ............................................. SUCCESS [  0.059 s]
-[INFO] sboot .............................................. SUCCESS [  0.141 s]
+[INFO] -----------------< org.hls:jext.springframework-data >------------------
+[INFO] Building jext.springframework-data 1.0                             [6/6]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ jext.springframework-data ---
+[INFO] org.hls:jext.springframework-data:jar:1.0
+[INFO] +- org.neo4j:neo4j-cypher-dsl:jar:2020.1.1:compile
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.0:compile
+[INFO] +- org.neo4j.driver:neo4j-java-driver-spring-boot-starter:jar:4.1.1.0:compile
+[INFO] |  +- org.neo4j.driver:neo4j-java-driver:jar:4.1.1:compile
+[INFO] |  |  \- org.reactivestreams:reactive-streams:jar:1.0.3:compile
+[INFO] |  \- org.neo4j.driver:neo4j-java-driver-spring-boot-autoconfigure:jar:4.1.1.0:compile
+[INFO] |     +- org.assertj:assertj-core:jar:3.16.1:compile
+[INFO] |     \- org.springframework.boot:spring-boot-autoconfigure:jar:2.3.2.RELEASE:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-data-neo4j:jar:2.3.5.RELEASE:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.3.5.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.3.5.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.3.5.RELEASE:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.3:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.3:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.13.3:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.13.3:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.30:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO] |  |  +- org.springframework:spring-core:jar:5.2.10.RELEASE:compile
+[INFO] |  |  |  \- org.springframework:spring-jcl:jar:5.2.10.RELEASE:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.26:compile
+[INFO] |  \- org.springframework.data:spring-data-neo4j:jar:5.3.5.RELEASE:compile
+[INFO] |     +- org.springframework:spring-tx:jar:5.2.10.RELEASE:compile
+[INFO] |     +- org.springframework:spring-context:jar:5.2.10.RELEASE:compile
+[INFO] |     |  +- org.springframework:spring-aop:jar:5.2.10.RELEASE:compile
+[INFO] |     |  \- org.springframework:spring-expression:jar:5.2.10.RELEASE:compile
+[INFO] |     +- org.springframework:spring-beans:jar:5.2.10.RELEASE:compile
+[INFO] |     +- org.springframework.data:spring-data-commons:jar:2.3.5.RELEASE:compile
+[INFO] |     +- org.neo4j:neo4j-ogm-core:jar:3.2.17:compile
+[INFO] |     |  +- org.apache.commons:commons-lang3:jar:3.8:compile
+[INFO] |     |  \- io.github.classgraph:classgraph:jar:4.8.86:compile
+[INFO] |     +- org.neo4j:neo4j-ogm-api:jar:3.2.17:compile
+[INFO] |     |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.9.9:compile
+[INFO] |     |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.9.0:compile
+[INFO] |     |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.9.9:compile
+[INFO] |     |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.9.9:compile
+[INFO] |     |  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.9.9:compile
+[INFO] |     +- org.neo4j:neo4j-ogm-bolt-driver:jar:3.2.17:compile
+[INFO] |     \- org.slf4j:slf4j-api:jar:1.7.26:compile
+[INFO] \- javax.persistence:javax.persistence-api:jar:2.2:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] jext.springframework-core 1.0 ...................... SUCCESS [  0.934 s]
+[INFO] check_spring 1.0-SNAPSHOT .......................... SUCCESS [  0.004 s]
+[INFO] controllers 1.0-SNAPSHOT ........................... SUCCESS [  0.042 s]
+[INFO] webapp 1.0-SNAPSHOT ................................ SUCCESS [  0.041 s]
+[INFO] sboot 1.0-SNAPSHOT ................................. SUCCESS [  0.110 s]
+[INFO] jext.springframework-data 1.0 ...................... SUCCESS [  0.262 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  1.641 s
-[INFO] Finished at: 2020-12-11T18:45:51+04:00
+[INFO] Total time:  1.652 s
+[INFO] Finished at: 2020-12-13T20:17:02+04:00
 [INFO] ------------------------------------------------------------------------

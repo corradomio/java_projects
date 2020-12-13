@@ -13,12 +13,11 @@
     <mvc:annotation-driven/>
     <mvc:resources mapping="/**" location="/" />
 
-    <mvc:annotation-driven>
+    <!-- mvc:annotation-driven>
         <mvc:message-converters>
             <bean class="jext.springframework.http.converter.json.HalHttpMessageConverter" />
         </mvc:message-converters>
-    </mvc:annotation-driven>
-
+    </mvc:annotation-driven -->
 
     <context:component-scan base-package="org.hls.check" />
 </beans>
