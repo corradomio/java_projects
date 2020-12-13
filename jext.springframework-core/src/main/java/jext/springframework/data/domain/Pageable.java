@@ -1,21 +1,43 @@
 package jext.springframework.data.domain;
 
+import org.springframework.data.domain.Sort;
+
 public class Pageable extends PageRequest {
 
+    // ----------------------------------------------------------------------
+    // Factory methods
+    // ----------------------------------------------------------------------
+
     public static org.springframework.data.domain.Pageable of(int page, int size) {
-        return new Pageable(page, size);
+        return of(page, size, Sort.unsorted());
     }
+
+    public static org.springframework.data.domain.Pageable of(int page, int size, Sort sort) {
+        return new Pageable(page, size, sort);
+    }
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public Pageable() {
 
     }
 
-    public Pageable(int p, int s) {
-        super(p, s);
+    public Pageable(int page, int size) {
+        super(page, size);
     }
 
+    public Pageable(int page, int size, Sort sort) {
+        super(page, size, sort);
+    }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
     @Override
-    protected org.springframework.data.domain.Pageable pageOf(int page, int size) {
-        return new Pageable(page, size);
+    protected PageRequest pageOf(int page) {
+        return new Pageable(page, size, sort);
     }
 }

@@ -103,11 +103,4 @@
 
     </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>Local</id>
-            <url>file:///jars</url>
-        </repository>
-    </distributionManagement>
-
 </project>
