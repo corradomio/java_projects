@@ -28,31 +28,20 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework.hateoas/spring-hateoas -->
-        <!-- dependency>
+        <dependency>
             <groupId>org.springframework.hateoas</groupId>
             <artifactId>spring-hateoas</artifactId>
             <version>1.2.1</version>
-        </dependency -->
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core -->
-        <!--dependency>
+        <dependency>
             <groupId>org.springframework.plugin</groupId>
             <artifactId>spring-plugin-core</artifactId>
             <version>2.0.0.RELEASE</version>
-        </dependency -->
-        <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-commons</artifactId>
-            <version>2.4.1</version>
         </dependency>
 
-        <!-- dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.13.3</version>
-            <scope>compile</scope>
-        </dependency -->
     </dependencies>
 
 

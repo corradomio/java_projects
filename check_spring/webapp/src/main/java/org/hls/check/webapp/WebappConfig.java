@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @EnableWebMvc
 @ComponentScan("org.hls")
-// @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class WebappConfig {
 
     private Logger logger = LogManager.getLogger(WebappConfig.class);

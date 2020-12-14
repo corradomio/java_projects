@@ -51,7 +51,7 @@ public class BooksController {
         return ResponseEntity.ok(model);
     }
 
-    @GetMapping("books")
+    @GetMapping(value = "books")
     public ResponseEntity<CollectionModel<BookModel>> getBooks(Pageable pageable) {
 
         if (pageable.isPaged()) {
