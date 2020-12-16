@@ -8,9 +8,9 @@ import java.io.Serializable;
 
 @NoRepositoryBean
 public interface Neo4jRepository<T, ID extends Serializable>
-        extends org.springframework.data.neo4j.repository.Neo4jRepository<T, ID>
-        , CypherdslStatementExecutor<T>
-        , Neo4jOgmSessionExecutor<T, ID>
+    extends org.springframework.data.neo4j.repository.Neo4jRepository<T, ID>
+    , CypherdslStatementExecutor<T>
+    , Neo4jOgmSessionExecutor<T>
 {
     /**
      * Just a method for test

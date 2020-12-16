@@ -1,5 +1,7 @@
 package jext.springframework.data.neo4j.repository.support;
 
+import jext.springframework.data.cypherdsl.CypherdslStatementExecutor;
+import jext.springframework.data.cypherdsl.Neo4jOgmSessionExecutor;
 import jext.springframework.data.neo4j.repository.Neo4jRepository;
 import org.neo4j.cypherdsl.core.Cypher;
 import org.neo4j.cypherdsl.core.ExposesReturning;
@@ -7,7 +9,6 @@ import org.neo4j.cypherdsl.core.Expression;
 import org.neo4j.cypherdsl.core.FunctionInvocation;
 import org.neo4j.cypherdsl.core.Functions;
 import org.neo4j.cypherdsl.core.Statement;
-import org.neo4j.cypherdsl.core.StatementBuilder;
 import org.neo4j.cypherdsl.core.renderer.Renderer;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
@@ -28,9 +29,9 @@ import java.util.Optional;
 
 // @Repository
 public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleNeo4jRepository<T, ID>
-        implements Neo4jRepository<T, ID>
-        // , CypherdslStatementExecutor<T>
-        // , Neo4jOgmSessionExecutor<T, ID>
+    implements Neo4jRepository<T, ID>
+    , CypherdslStatementExecutor<T>
+    , Neo4jOgmSessionExecutor<T>
 {
 
     // ----------------------------------------------------------------------
@@ -38,7 +39,7 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
     // ----------------------------------------------------------------------
 
     private static final String VERSION = "1.0.0";
-    private static Logger logger = LoggerFactory.getLogger(ExtendedNeo4jRepository.class);
+    private Logger logger;
     private static Renderer cypherRenderer = Renderer.getDefaultRenderer();
     private final Class<T> domainClass;
     private final Session session;
@@ -53,11 +54,14 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
         this.domainClass = domainClass;
         this.session = session;
 
-        logger.info("Created");
+        String loggerName = String.format("%s.%s", getClass().getName(), domainClass.getSimpleName());
+        this.logger = LoggerFactory.getLogger(loggerName);
+
+        logger.info("    Repository[" + domainClass.getSimpleName() + "]");
     }
 
     // ----------------------------------------------------------------------
-    // Neo4jRepository<T, ID>
+    // Version
     // ----------------------------------------------------------------------
 
     @Override
@@ -138,26 +142,26 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
         // ... RETURN n ORDER BY n.
         if (pageable.isPaged() && pageable.getSort().isSorted())
             statement = noReturn
-                    .returning(variable)
-                    .orderBy(OrderBy.of(pageable.getSort(), variable))
-                    .skip(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .build();
+                .returning(variable)
+                .orderBy(OrderBy.of(pageable.getSort(), variable))
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .build();
         else if (pageable.isPaged())
             statement = noReturn
-                    .returning(variable)
-                    .skip(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .build();
+                .returning(variable)
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .build();
         else if (pageable.getSort().isSorted())
             statement = noReturn
-                    .returning(variable)
-                    .orderBy(OrderBy.of(pageable.getSort(), variable))
-                    .skip(0)
-                    .build();
+                .returning(variable)
+                .orderBy(OrderBy.of(pageable.getSort(), variable))
+                .skip(0)
+                .build();
         else
             statement = noReturn.returning(variable)
-                    .build();
+                .build();
 
         String cypher = cypherRenderer.render(statement);
 

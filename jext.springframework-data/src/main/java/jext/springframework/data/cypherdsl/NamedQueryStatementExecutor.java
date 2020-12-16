@@ -15,5 +15,7 @@ public interface NamedQueryStatementExecutor<T> {
 
     Iterable<T> findAllUsing(String queryName, Map<String, ?> parameters);
 
+    Query<T> queryUsing(String queryName, Object ... args);
+
     Query<T> queryUsing(String queryName, Map<String, ?> parameters);
 }

@@ -7,7 +7,7 @@ import org.neo4j.ogm.session.Session;
 import java.io.Serializable;
 import java.util.Map;
 
-public interface Neo4jOgmSessionExecutor<T, ID extends Serializable> {
+public interface Neo4jOgmSessionExecutor<T> {
 
     /**
      * the concrete class returned by the queies
@@ -37,7 +37,7 @@ public interface Neo4jOgmSessionExecutor<T, ID extends Serializable> {
      * @param <U>        A domain object or scalar.
      * @return An instance of the objectType that matches the cypher and parameters. Null if no object
      * is matched
-     * @throws java.lang.RuntimeException If more than one object is found.
+     * @throws RuntimeException If more than one object is found.
      */
     <U> U queryForObject(Class<U> objectType, String cypher, Map<String, ?> parameters);
 

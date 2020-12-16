@@ -40,9 +40,9 @@ public interface Query<T> {
     String id();
     String id(String alias);
 
-    /**
-     * Return the values of SINGLE element
-     */
+    // /**
+    //  * Return the values of SINGLE element
+    //  */
     // Map<String, Object> values();
     // Map<String, Object> values(String alias);
 

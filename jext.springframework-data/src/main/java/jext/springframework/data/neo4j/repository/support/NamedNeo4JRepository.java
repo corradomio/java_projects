@@ -103,11 +103,6 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
         return session.query(getDomainClass(), cypher, parameters);
     }
 
-    public Query<T> queryUsing(String queryName, Map<String, ?> parameters)  {
-        String cypher = namedQueries.get(queryName);
-        return new PartialQuery<T, ID>(this, cypher, parameters);
-    }
-
     private Map<String, ?> toParameters(Object[] args) {
         if (args == null || args.length == 0)
             return Collections.emptyMap();
@@ -128,23 +123,34 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
     //
     // ----------------------------------------------------------------------
 
-    public long countUsingCypher(String cypher, Map<String, ?> parameters) {
+    public Query<T> queryUsing(String queryName, Object ... args)  {
+        return queryUsing(queryName, toParameters(args));
+    }
+
+    public Query<T> queryUsing(String queryName, Map<String, ?> parameters)  {
+        String cypher = namedQueries.get(queryName);
+        return new PartialQuery<T, ID>(this, cypher, parameters);
+    }
+
+    // ----------------------------------------------------------------------
+
+    long countUsingCypher(String cypher, Map<String, ?> parameters) {
         return session.queryForObject(Long.class, cypher, parameters);
     }
 
-    public String findIdUsingCypher(String cypher, Map<String, ?> parameters) {
+    String findIdUsingCypher(String cypher, Map<String, ?> parameters) {
         return session.queryForObject(String.class, cypher, parameters);
     }
 
-    public Iterable<String> findIdsUsingCypher(String cypher, Map<String, ?> parameters) {
+    Iterable<String> findIdsUsingCypher(String cypher, Map<String, ?> parameters) {
         return session.query(String.class, cypher, parameters);
     }
 
-    public Iterable<T> findAllUsingCypher(String cypher, Map<String, ?> parameters) {
+    Iterable<T> findAllUsingCypher(String cypher, Map<String, ?> parameters) {
         return session.query(getDomainClass(), cypher, parameters);
     }
 
-    public long deleteUsingCypher(String cypher, Map<String, ?> parameters) {
+    long deleteUsingCypher(String cypher, Map<String, ?> parameters) {
         Result result = session.query(cypher, parameters);
         return 0;
     }
