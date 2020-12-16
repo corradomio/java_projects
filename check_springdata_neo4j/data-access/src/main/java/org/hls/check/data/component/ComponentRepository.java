@@ -18,6 +18,5 @@ public interface ComponentRepository extends Neo4jRepository<Component, Long> {
     //@Query("match (c:component {refId:$refId}) return count(c)")
     //long countUsingName(String refId);
 
-    @Query("component.countUsingNamedQuery")
-    long countUsingNamedQuery(@Param("refId") String refId);
+    long checkUsingNamedQuery(@Param("refId") String refId);
 }
