@@ -40,17 +40,17 @@ public interface Query<T> {
     String id();
     String id(String alias);
 
-    // /**
-    //  * Return the values of SINGLE element
-    //  */
-    // Map<String, Object> values();
-    // Map<String, Object> values(String alias);
-
     /**
      * Return the id of the selected elements
      */
     Iterable<String> ids();
     Iterable<String> ids(String alias);
+
+    /**
+     * Return the value of a SINGLE element
+     */
+    T values();
+    T values(String alias);
 
     /**
      * Return the value of the selected elements

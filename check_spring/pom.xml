@@ -16,6 +16,8 @@
         <module>../jext.springframework-core</module>
         <module>../jext.springframework-data</module>
         <module>../jext.springframework-hateoas</module>
+        <module>../jext.commons</module>
+        <module>../jext.collections</module>
     </modules>
 
     <packaging>pom</packaging>

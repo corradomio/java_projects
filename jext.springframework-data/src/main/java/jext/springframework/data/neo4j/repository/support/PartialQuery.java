@@ -2,6 +2,8 @@ package jext.springframework.data.neo4j.repository.support;
 
 import jext.springframework.data.query.Limit;
 import jext.springframework.data.query.Query;
+import org.neo4j.ogm.model.Result;
+import org.neo4j.ogm.session.Session;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -62,7 +64,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
     @Override
     public long count(String alias) {
         String s = String.format("%s RETURN count(%s)", query, alias);
-        return repository.countUsingCypher(s, params);
+        return getSession().queryForObject(Long.class, s, params);
     }
 
     @Override
@@ -72,8 +74,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
 
     @Override
     public boolean exists(String alias) {
-        String s = String.format("%s RETURN count(%s)", query, alias);
-        return repository.countUsingCypher(s, params) > 0;
+        return count(alias) > 0;
     }
 
     @Override
@@ -89,7 +90,8 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
         else
             s = String.format("%s DELETE %s", query, alias);
 
-        return repository.deleteUsingCypher(s, params);
+        Result result = getSession().query(s, params);
+        return result.queryStatistics().getNodesDeleted();
     }
 
     @Override
@@ -99,8 +101,8 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
 
     @Override
     public String id(String alias) {
-        String s = String.format("%s RETURN id(%s)", query, alias);
-        return repository.findOneIdUsingCypher(s, params);
+        String s = String.format("%s RETURN toString(id(%s))", query, alias);
+        return getSession().queryForObject(String.class, s, params);
     }
 
     // @Override
@@ -122,12 +124,24 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
     public Iterable<String> ids(String alias) {
         String s;
         if (distinct)
-            s = String.format("%s RETURN DISTINCT id(%s)", query, alias);
+            s = String.format("%s RETURN DISTINCT toString(id(%s))", query, alias);
         else
-            s = String.format("%s RETURN id(%s)", query, alias);
+            s = String.format("%s RETURN toString(id(%s))", query, alias);
         s = setLimit(s);
-        return repository.findAllIdUsingCypher(s, params);
+        return getSession().query(String.class, s, params);
     }
+
+    @Override
+    public T values() {
+        return values(N);
+    }
+
+    @Override
+    public T values(String alias) {
+        String s = String.format("%s RETURN %s", query, alias);
+        return getSession().queryForObject(getDomainClass(), s, params);
+    }
+
 
     @Override
     public Iterable<T> allValues() {
@@ -142,7 +156,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
         else
             s = String.format("%s RETURN %s", query, alias);
         s = setLimit(s);
-        return repository.findAllUsingCypher(s, params);
+        return getSession().query(getDomainClass(), s, params);
     }
 
     @Override
@@ -157,6 +171,14 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
             return String.format("%s LIMIT %d", query, limit.count);
         else
             return String.format("%s LIMIT %d %d", query, limit.start, limit.count);
+    }
+
+    private Session getSession() {
+        return repository.getSession();
+    }
+
+    private Class<T> getDomainClass() {
+        return repository.getDomainClass();
     }
 
 }

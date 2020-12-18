@@ -145,30 +145,30 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
     //
     // ----------------------------------------------------------------------
 
-    long countUsingCypher(String cypher, Map<String, ?> parameters) {
-        return session.queryForObject(Long.class, cypher, parameters);
-    }
-
-    String findOneIdUsingCypher(String cypher, Map<String, ?> parameters) {
-        return session.queryForObject(String.class, cypher, parameters);
-    }
-
-    Iterable<String> findAllIdUsingCypher(String cypher, Map<String, ?> parameters) {
-        return session.query(String.class, cypher, parameters);
-    }
-
-    T findOneUsingCypher(String cypher, Map<String, ?> parameters) {
-        return session.queryForObject(getDomainClass(), cypher, parameters);
-    }
-
-    Iterable<T> findAllUsingCypher(String cypher, Map<String, ?> parameters) {
-        return session.query(getDomainClass(), cypher, parameters);
-    }
-
-    long deleteUsingCypher(String cypher, Map<String, ?> parameters) {
-        Result result = session.query(cypher, parameters);
-        return 0;
-    }
+    // long countUsingCypher(String cypher, Map<String, ?> parameters) {
+    //     return session.queryForObject(Long.class, cypher, parameters);
+    // }
+    //
+    // String findOneIdUsingCypher(String cypher, Map<String, ?> parameters) {
+    //     return session.queryForObject(String.class, cypher, parameters);
+    // }
+    //
+    // Iterable<String> findAllIdUsingCypher(String cypher, Map<String, ?> parameters) {
+    //     return session.query(String.class, cypher, parameters);
+    // }
+    //
+    // T findOneUsingCypher(String cypher, Map<String, ?> parameters) {
+    //     return session.queryForObject(getDomainClass(), cypher, parameters);
+    // }
+    //
+    // Iterable<T> findAllUsingCypher(String cypher, Map<String, ?> parameters) {
+    //     return session.query(getDomainClass(), cypher, parameters);
+    // }
+    //
+    // long deleteUsingCypher(String cypher, Map<String, ?> parameters) {
+    //     Result result = session.query(cypher, parameters);
+    //     return 0;
+    // }
 
     // ----------------------------------------------------------------------
     //

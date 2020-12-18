@@ -13,6 +13,7 @@ public class ComponentController {
 
     @GetMapping("")
     public ComponentModelEntity getModel() {
-        return modelRepo.findByRefId("abe112c1");
+        // return modelRepo.findByRefId("abe112c1");
+        return modelRepo.findByFullname("example_repo/spl26");
     }
 }

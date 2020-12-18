@@ -36,6 +36,12 @@
             <version>1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.collections</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework.hateoas/spring-hateoas -->
         <dependency>
             <groupId>org.springframework.hateoas</groupId>
