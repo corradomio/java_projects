@@ -12,17 +12,16 @@ import javax.annotation.PostConstruct;
 
 @Configuration
 @EnableHypermediaSupport(type={})
-@ComponentScan("org.hls")
 @ComponentScan("ae.ebtic")
 @PropertySource(value = "./config/application.properties",  ignoreResourceNotFound = true)
-public class ApplicationConfig {
+public class AppConfig {
 
-    private Logger logger = LogManager.getLogger(ApplicationConfig.class);
+    private Logger logger = LogManager.getLogger(AppConfig.class);
 
     @Value("${spring.app.root}")
     private String appRoot;
 
-    public ApplicationConfig() {
+    public AppConfig() {
         logger.info("new");
     }
 

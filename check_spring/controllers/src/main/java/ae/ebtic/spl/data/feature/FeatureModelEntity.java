@@ -1,9 +1,6 @@
 package ae.ebtic.spl.data.feature;
 
-import ae.ebtic.spl.analysis.graph.GraphConstants;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Setter;
 import org.neo4j.ogm.annotation.NodeEntity;
 
 import javax.persistence.GeneratedValue;

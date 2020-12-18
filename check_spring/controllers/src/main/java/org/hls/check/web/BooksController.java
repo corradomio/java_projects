@@ -24,8 +24,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
-@RestController()
-@RequestMapping(value = "")
+@RestController
+@RequestMapping(value = "/b")
 public class BooksController {
 
     @Autowired private BookAssembler bookAssembler;
@@ -37,21 +37,21 @@ public class BooksController {
         logger.info("new");
     }
 
-    @GetMapping("version")
+    @GetMapping("v")
     public Map getVersion() {
         return new HashMap() {{
             put("version", "v1.0");
         }};
     }
 
-    @GetMapping("/books/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<BookModel> getBook(@PathVariable("id") int id) {
         BookEntity entity = bookRepository.findById(id);
         BookModel  model  = bookAssembler.toModel(entity);
         return ResponseEntity.ok(model);
     }
 
-    @GetMapping(value = "books")
+    @GetMapping(value = "")
     public ResponseEntity<CollectionModel<BookModel>> getBooks(Pageable pageable) {
 
         if (pageable.isPaged()) {
