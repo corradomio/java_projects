@@ -10,7 +10,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
 
     private static final String N = "n";
 
-    private NamedNeo4JRepository<T, ID> session;
+    private NamedNeo4JRepository<T, ID> repository;
     private String query;
     private Map<String, ?> params;
     private Limit limit = new Limit(0);
@@ -18,7 +18,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
     private boolean edge;
 
     PartialQuery(NamedNeo4JRepository<T, ID> r, String query, Map<String, ?> p) {
-        this.session = r;
+        this.repository = r;
         this.query = query;
         this.params = p;
     }
@@ -62,7 +62,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
     @Override
     public long count(String alias) {
         String s = String.format("%s RETURN count(%s)", query, alias);
-        return session.countUsingCypher(s, params);
+        return repository.countUsingCypher(s, params);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
     @Override
     public boolean exists(String alias) {
         String s = String.format("%s RETURN count(%s)", query, alias);
-        return session.countUsingCypher(s, params) > 0;
+        return repository.countUsingCypher(s, params) > 0;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
         else
             s = String.format("%s DELETE %s", query, alias);
 
-        return session.deleteUsingCypher(s, params);
+        return repository.deleteUsingCypher(s, params);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
     @Override
     public String id(String alias) {
         String s = String.format("%s RETURN id(%s)", query, alias);
-        return session.findIdUsingCypher(s, params);
+        return repository.findOneIdUsingCypher(s, params);
     }
 
     // @Override
@@ -126,7 +126,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
         else
             s = String.format("%s RETURN id(%s)", query, alias);
         s = setLimit(s);
-        return session.findIdsUsingCypher(s, params);
+        return repository.findAllIdUsingCypher(s, params);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class PartialQuery<T, ID extends Serializable> implements Query<T> {
         else
             s = String.format("%s RETURN %s", query, alias);
         s = setLimit(s);
-        return session.findAllUsingCypher(s, params);
+        return repository.findAllUsingCypher(s, params);
     }
 
     @Override

@@ -3,6 +3,7 @@ package jext.springframework.data.neo4j.repository.support;
 import jext.springframework.data.NamedQueriesRegistry;
 import jext.springframework.data.cypherdsl.NamedQueryStatementExecutor;
 import jext.springframework.data.query.Query;
+import jext.springframework.data.query.QueryResult;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 import org.slf4j.Logger;
@@ -54,9 +55,9 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
     // ----------------------------------------------------------------------
 
     // @Override
-    public String getVersion() {
-        return VERSION;
-    }
+    // public String getVersion() {
+    //     return VERSION;
+    // }
 
     // ----------------------------------------------------------------------
     //
@@ -76,10 +77,47 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
     //
     // ----------------------------------------------------------------------
 
+    public Query<T> queryUsing(String queryName, Object ... args)  {
+        return queryUsing(queryName, toParameters(args));
+    }
+
+    public QueryResult executeUsing(String queryName, Object ... args)  {
+        return executeUsing(queryName, toParameters(args));
+    }
+
     public long countUsing(String queryName, Object ... args) {
-        String cypher = namedQueries.get(queryName);
         Map<String, ?> parameters = toParameters(args);
-        return session.queryForObject(Long.class, cypher, parameters);
+        return countUsing(queryName, parameters);
+    }
+
+    public boolean existsUsing(String queryName, Object ... args) {
+        Map<String, ?> parameters = toParameters(args);
+        return existsUsing(queryName, parameters);
+    }
+
+    public Optional<T> findOneUsing(String queryName, Object ... args) {
+        Map<String, ?> parameters = toParameters(args);
+        return findOneUsing(queryName, parameters);
+    }
+
+    public Iterable<T> findAllUsing(String queryName, Object ... args) {
+        Map<String, ?> parameters = toParameters(args);
+        return findAllUsing(queryName, parameters);
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public Query<T> queryUsing(String queryName, Map<String, ?> parameters)  {
+        String cypher = namedQueries.get(queryName);
+        return new PartialQuery<T, ID>(this, cypher, parameters);
+    }
+
+    public QueryResult executeUsing(String queryName, Map<String, ?> parameters)  {
+        String cypher = namedQueries.get(queryName);
+        Result result = session.query(cypher, parameters);
+        return new QueryResult(result);
     }
 
     public long countUsing(String queryName, Map<String, ?> parameters) {
@@ -103,47 +141,24 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
         return session.query(getDomainClass(), cypher, parameters);
     }
 
-    private Map<String, ?> toParameters(Object[] args) {
-        if (args == null || args.length == 0)
-            return Collections.emptyMap();
-        if (args.length %2 != 0)
-            throw new MalformedParametersException("Not an even number of parameters");
-
-        Map<String, Object> parameters = new HashMap<>();
-        for(int i=0; i<args.length; i+= 2) {
-            String name  = args[i].toString();
-            Object value = args[i+1];
-            parameters.put(name, value);
-        }
-
-        return parameters;
-    }
-
     // ----------------------------------------------------------------------
     //
-    // ----------------------------------------------------------------------
-
-    public Query<T> queryUsing(String queryName, Object ... args)  {
-        return queryUsing(queryName, toParameters(args));
-    }
-
-    public Query<T> queryUsing(String queryName, Map<String, ?> parameters)  {
-        String cypher = namedQueries.get(queryName);
-        return new PartialQuery<T, ID>(this, cypher, parameters);
-    }
-
     // ----------------------------------------------------------------------
 
     long countUsingCypher(String cypher, Map<String, ?> parameters) {
         return session.queryForObject(Long.class, cypher, parameters);
     }
 
-    String findIdUsingCypher(String cypher, Map<String, ?> parameters) {
+    String findOneIdUsingCypher(String cypher, Map<String, ?> parameters) {
         return session.queryForObject(String.class, cypher, parameters);
     }
 
-    Iterable<String> findIdsUsingCypher(String cypher, Map<String, ?> parameters) {
+    Iterable<String> findAllIdUsingCypher(String cypher, Map<String, ?> parameters) {
         return session.query(String.class, cypher, parameters);
+    }
+
+    T findOneUsingCypher(String cypher, Map<String, ?> parameters) {
+        return session.queryForObject(getDomainClass(), cypher, parameters);
     }
 
     Iterable<T> findAllUsingCypher(String cypher, Map<String, ?> parameters) {
@@ -153,6 +168,26 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
     long deleteUsingCypher(String cypher, Map<String, ?> parameters) {
         Result result = session.query(cypher, parameters);
         return 0;
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    private Map<String, ?> toParameters(Object[] args) {
+        if (args == null || args.length == 0)
+            return Collections.emptyMap();
+        if (args.length %2 != 0)
+            throw new MalformedParametersException("Not an even number of parameters");
+
+        Map<String, Object> parameters = new HashMap<>();
+        for(int i=0; i<args.length; i+=2) {
+            String name  = args[i].toString();
+            Object value = args[i+1];
+            parameters.put(name, value);
+        }
+
+        return parameters;
     }
 
 }
