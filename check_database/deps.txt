@@ -1,0 +1,17 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< org.hls.check:check_database >--------------------
+[INFO] Building check_database 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ check_database ---
+[INFO] org.hls.check:check_database:jar:1.0-SNAPSHOT
+[INFO] +- mysql:mysql-connector-java:jar:8.0.22:compile
+[INFO] |  \- com.google.protobuf:protobuf-java:jar:3.11.4:compile
+[INFO] \- org.neo4j:neo4j-jdbc-driver:jar:4.0.1:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.314 s
+[INFO] Finished at: 2020-12-19T12:12:08+04:00
+[INFO] ------------------------------------------------------------------------
