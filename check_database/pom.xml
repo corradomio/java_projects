@@ -23,7 +23,7 @@
         <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-jdbc -->
         <dependency>
             <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-jdbc</artifactId>
+            <artifactId>neo4j-jdbc-driver</artifactId>
             <version>4.0.1</version>
         </dependency>
 
