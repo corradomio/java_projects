@@ -2,7 +2,7 @@ package jext.cache.jcs;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.cache.util.ManagedCache;
+import jext.cache.ManagedCache;
 import jext.cache.util.Unique;
 import org.apache.commons.jcs.access.CacheAccess;
 
@@ -96,5 +96,10 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache {
     @Override
     public void setManager(CacheManager manager) {
         this.manager = manager;
+    }
+
+    @Override
+    public Object getInnerCache() {
+        return innerCache;
     }
 }

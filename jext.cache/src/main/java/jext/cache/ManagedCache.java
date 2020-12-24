@@ -1,4 +1,4 @@
-package jext.cache.util;
+package jext.cache;
 
 import jext.cache.CacheManager;
 
@@ -8,4 +8,6 @@ import jext.cache.CacheManager;
 public interface ManagedCache<K, V> {
 
     void setManager(CacheManager manager);
+
+    Object getInnerCache();
 }

@@ -2,7 +2,7 @@ package jext.cache.guava;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.cache.util.ManagedCache;
+import jext.cache.ManagedCache;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -78,5 +78,10 @@ public class GuavaCache<K, V> implements Cache<K, V>, ManagedCache {
     @Override
     public void setManager(CacheManager manager) {
         this.manager = manager;
+    }
+
+    @Override
+    public Object getInnerCache() {
+        return innerCache;
     }
 }

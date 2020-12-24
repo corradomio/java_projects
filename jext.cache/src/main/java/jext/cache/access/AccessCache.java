@@ -1,7 +1,6 @@
 package jext.cache.access;
 
 import jext.cache.Cache;
-import jext.cache.util.ManagedCache;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;

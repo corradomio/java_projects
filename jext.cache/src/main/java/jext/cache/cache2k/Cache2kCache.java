@@ -2,7 +2,7 @@ package jext.cache.cache2k;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.cache.util.ManagedCache;
+import jext.cache.ManagedCache;
 import jext.cache.util.Unique;
 
 import java.util.Optional;
@@ -100,5 +100,10 @@ public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache {
     @Override
     public void setManager(CacheManager manager) {
         this.manager = manager;
+    }
+
+    @Override
+    public Object getInnerCache() {
+        return innerCache;
     }
 }
