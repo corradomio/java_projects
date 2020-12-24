@@ -38,6 +38,10 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
     // Constructor
     // ----------------------------------------------------------------------
 
+    // public NamedNeo4JRepository(Neo4jOperations neo4jOperations, Neo4jEntityInformation<T, ID> entityInformation) {
+    //     super(neo4jOperations, entityInformation);
+    // }
+
     public NamedNeo4JRepository(Class<T> domainClass, Session session) {
         super(domainClass, session);
 
@@ -189,5 +193,43 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
 
         return parameters;
     }
+
+    // ----------------------------------------------------------------------
+    // Find by Example
+    // ----------------------------------------------------------------------
+
+    // @Override
+    // public <S extends T> Optional<S> findOne(Example<S> example) {
+    //     return Optional.empty();
+    // }
+    //
+    // @Override
+    // public <S extends T> List<S> findAll(Example<S> example) {
+    //     return Collections.emptyList();
+    // }
+    //
+    // @Override
+    // public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
+    //     return Collections.emptyList();
+    // }
+    //
+    // @Override
+    // public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
+    //     return Page.empty();
+    // }
+    //
+    // @Override
+    // public <S extends T> long count(Example<S> example) {
+    //     return 0;
+    // }
+    //
+    // @Override
+    // public <S extends T> boolean exists(Example<S> example) {
+    //     return false;
+    // }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }
