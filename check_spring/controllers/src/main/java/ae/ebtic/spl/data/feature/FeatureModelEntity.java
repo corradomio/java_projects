@@ -21,26 +21,13 @@ type: feature
  */
 
 @Data
-@NodeEntity(label="feature")
-public class FeatureModelEntity /*extends BaseEntity*/ {
+@NodeEntity(label="mfeature")
+public class FeatureModelEntity extends FeatureEntity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    // 'FEATURE' 'PROJECT'
-    private String role;
-    // 'feature' null
-    private String type;
-
-    private String name;
     private String repository;
-    private String fullname;
 
     private String status;
     private String reason;
     private Long timestamp;
 
-    // private String projectId; MISSING
-    private String refId;
 }

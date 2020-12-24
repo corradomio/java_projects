@@ -18,6 +18,9 @@
         <Logger name="org.apache.commons.beanutils" level="INFO" />
         <Logger name="org.neo4j.driver" level="INFO" />
 
+        <logger name="org.neo4j.ogm" level="INFO"/>
+        <logger name="org.neo4j.ogm.drivers.bolt.request.BoltRequest" level="DEBUG"/>
+
         <Logger name="jext.util" level="INFO" />
         <Logger name="jext.graph.neo4j" level="INFO" />
 

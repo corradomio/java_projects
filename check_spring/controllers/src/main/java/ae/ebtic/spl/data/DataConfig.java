@@ -5,6 +5,7 @@ import jext.springframework.data.neo4j.repository.support.ExtendedNeo4jRepositor
 import org.neo4j.ogm.config.ConfigurationSource;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactionManager;
 import java.io.File;
 
 @Configuration
+@EnableCaching
 @EnableNeo4jRepositories(repositoryBaseClass = ExtendedNeo4jRepository.class)
 @ComponentScan("jext.springframework")
 public class DataConfig {

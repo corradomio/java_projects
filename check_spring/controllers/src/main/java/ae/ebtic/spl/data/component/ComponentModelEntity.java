@@ -22,26 +22,13 @@ refId:abe112c1
  */
 
 @Data
-@NodeEntity(label="component")
-public class ComponentModelEntity {
+@NodeEntity(label="mcomponent")
+public class ComponentModelEntity extends ComponentEntity {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    // 'COMPONENT' 'TYPE' 'PROJECT'
-    private String role;
-    // 'type' 'component'
-    private String type;
-
-    private String name;
     private String repository;
-    private String fullname;
 
     private String status;
     private String reason;
     private Long timestamp;
 
-    // private String projectId; MISSING
-    private String refId;
 }
