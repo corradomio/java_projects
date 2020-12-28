@@ -1,7 +1,5 @@
 package jext.cache;
 
-import jext.cache.CacheManager;
-
 /**
  * Used internally
  */

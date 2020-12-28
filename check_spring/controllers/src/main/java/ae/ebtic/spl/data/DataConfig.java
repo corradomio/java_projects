@@ -15,7 +15,7 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactionManager;
 import java.io.File;
 
 @Configuration
-@EnableCaching
+@EnableCaching()
 @EnableNeo4jRepositories(repositoryBaseClass = ExtendedNeo4jRepository.class)
 @ComponentScan("jext.springframework")
 public class DataConfig {
