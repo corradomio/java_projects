@@ -11,8 +11,8 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <!--spring.boot.version>2.4.0</spring.boot.version-->
-        <spring.boot.version>2.3.5.RELEASE</spring.boot.version>
+<!--        <spring.boot.version>2.4.0</spring.boot.version>-->
+        <spring.boot.version>2.3.7.RELEASE</spring.boot.version>
         <cypherdsl.version>2020.1.1</cypherdsl.version>
         <neo4j.driver.version>4.1.1.0</neo4j.driver.version>
     </properties>

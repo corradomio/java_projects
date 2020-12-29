@@ -1,6 +1,5 @@
 package ae.ebtic.spl.data.feature;
 
-import jext.util.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
