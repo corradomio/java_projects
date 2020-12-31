@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30">
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="LogFile" fileName="/splserver-2.8.log" append="false">
+            <PatternLayout>
+                <Pattern>%d %p %c [%t] %m%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apache.http" level="INFO" />
+
+        <Logger name="org.springframework" level="INFO" />
+        <Logger name="org.springframework.web.socket.config" level="WARN" />
+        <Logger name="org.apache.commons.beanutils" level="INFO" />
+        <Logger name="org.neo4j.driver" level="INFO" />
+
+        <logger name="org.neo4j.ogm" level="INFO"/>
+        <logger name="org.neo4j.ogm.drivers.bolt.request.BoltRequest" level="DEBUG"/>
+
+        <Logger name="jext.util" level="INFO" />
+        <Logger name="jext.graph.neo4j" level="INFO" />
+        <Logger name="jext.graph.neo4j.Neo4JOnlineSession" level="DEBUG" />
+
+        <Logger name="ae.ebtic.spl.analysis.dependencyv2" level="INFO" />
+
+        <Root level="DEBUG">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="LogFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
