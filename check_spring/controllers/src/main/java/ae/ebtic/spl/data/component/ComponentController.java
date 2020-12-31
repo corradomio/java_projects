@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/c")
 public class ComponentController {
 
-    @Autowired ComponentModelRepository modelRepo;
+    @Autowired ComponentModelRepository repository;
 
     @GetMapping("")
     public ComponentModelEntity getModel() {
         // return modelRepo.findByRefId("abe112c1");
-        return modelRepo.findByFullname("example_repo/spl26");
+        return repository.findByFullname("example_repo/spl26");
     }
 }

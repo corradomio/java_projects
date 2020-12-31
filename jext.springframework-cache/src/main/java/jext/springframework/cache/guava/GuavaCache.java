@@ -29,7 +29,10 @@ public class GuavaCache implements Cache {
     @Override
     public ValueWrapper get(Object key) {
         Object value = this.cache.getIfPresent(key);
-        return new SimpleValueWrapper(value);
+        if (value != null)
+            return new SimpleValueWrapper(value);
+        else
+            return null;
     }
 
     @Override
@@ -59,6 +62,6 @@ public class GuavaCache implements Cache {
 
     @Override
     public void clear() {
-
+        this.cache.cleanUp();
     }
 }

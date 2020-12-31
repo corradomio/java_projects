@@ -31,8 +31,7 @@ public class NamedNeo4JRepository<T, ID extends Serializable> extends SimpleNeo4
     private final Class<T> domainClass;
     private final Session session;
 
-    @Autowired
-    private NamedQueriesRegistry namedQueries;
+    @Autowired private NamedQueriesRegistry namedQueries;
 
     // ----------------------------------------------------------------------
     // Constructor

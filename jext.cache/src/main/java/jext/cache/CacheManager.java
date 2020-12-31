@@ -112,13 +112,28 @@ public class CacheManager {
     // ----------------------------------------------------------------------
 
     private void defaultConfiguration() {
-        File configurations = new File("cache4j.xml");
+        String filename = System.getProperties().getProperty("cache.config", "cache4j.xml");
+        File configurations = new File(filename);
         if (configurations.exists()) {
             configureUsing(configurations);
+            return;
         }
+        configurations = new File("config/cache4j.xml");
+        if (configurations.exists()) {
+            configureUsing(configurations);
+            return;
+        }
+        configurations = new File("config/cache4j.properties");
+        if (configurations.exists()) {
+            configureUsing(configurations);
+            return;
+        }
+
+        throw new CacheException("Unable to configure CacheManager: no 'cache4j.xml' found");
     }
 
     private void configureUsing(File configurationsFile) {
+        logger.info(String.format("Configure using %s", configurationsFile.getAbsolutePath()));
         try {
             if (configurationsFile.getName().endsWith(".xml")) {
                 Element configuration = XPathUtils.parse(configurationsFile).getDocumentElement();
@@ -141,6 +156,11 @@ public class CacheManager {
     }
 
     private void configureUsing(Element configuration) throws Exception {
+        if (cacheProvider != null) {
+            logger.warn("Already configured");
+            return;
+        }
+
         String name = "";
         Properties properties;
         for(Element cache : XPathUtils.selectNodes(configuration, "cache")) {
@@ -161,6 +181,11 @@ public class CacheManager {
     }
 
     private void configureUsing(Properties properties) throws Exception {
+        if (cacheProvider != null) {
+            logger.warn("Already configured");
+            return;
+        }
+
         for(String key : properties.stringPropertyNames()) {
             if (key.equals(CACHE_PROVIDER) || !key.startsWith(CACHE_PREFIX))
                 continue;
@@ -205,7 +230,7 @@ public class CacheManager {
         for (Cache<?, ?> cache : caches)
             cache.close();
         configurations.clear();
-        cacheProvider = null;
+        // cacheProvider = null;
     }
 
     // ----------------------------------------------------------------------
