@@ -28,6 +28,18 @@ public class AccessCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public V getOrDefault(K key, V defaultValue) {
+        lastAccess = System.currentTimeMillis();
+        return innerCache.getOrDefault(key, defaultValue);
+    }
+
+    @Override
+    public boolean containsKey(K key) {
+        lastAccess = System.currentTimeMillis();
+        return innerCache.containsKey(key);
+    }
+
+    @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         lastAccess = System.currentTimeMillis();
         return innerCache.getChecked(key, callable);

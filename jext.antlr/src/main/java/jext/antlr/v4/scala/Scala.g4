@@ -725,7 +725,7 @@ fragment Plainid
 
 //
 // Unicode categories
-// https://github.com/antlr/grammars-v4/blob/master/stringtemplate/LexUnicode.g4
+// https://github.com/antlr/grammars-jext.antlr.v4/blob/master/stringtemplate/LexUnicode.g4
 //
 
 fragment UnicodeLetter

@@ -29,7 +29,7 @@
 
 /**
  * The Groovy grammar is based on the official grammar for Java:
- * https://github.com/antlr/grammars-v4/blob/master/java/Java.g4
+ * https://github.com/antlr/grammars-jext.antlr.v4/blob/master/java/Java.g4
  */
 parser grammar GroovyParser;
 
@@ -534,7 +534,7 @@ elementValuePairName
     |   keywords
     ;
 
-// TODO verify the potential performance issue because rule expression contains sub-rule assignments(https://github.com/antlr/grammars-v4/issues/215)
+// TODO verify the potential performance issue because rule expression contains sub-rule assignments(https://github.com/antlr/grammars-jext.antlr.v4/issues/215)
 elementValue
     :   elementValueArrayInitializer
     |   annotation

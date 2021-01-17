@@ -29,6 +29,17 @@ public class IMCache<K, V> implements Cache<K, V>, ManagedCache {
     }
 
     @Override
+    public boolean containsKey(K key) {
+        return innerCache.contains(key);
+    }
+
+    @Override
+    public V getOrDefault(K key, V defaultValue) {
+        V value = innerCache.get(key);
+        return value != null ? value : defaultValue;
+    }
+
+    @Override
     public Optional<V> getIfPresent(K key) {
         V value = innerCache.get(key);
         return Optional.ofNullable(value);

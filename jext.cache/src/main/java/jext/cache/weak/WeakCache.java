@@ -27,6 +27,18 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache {
     }
 
     @Override
+    public boolean containsKey(K key) {
+        return innerCache.containsKey(key);
+    }
+
+    @Override
+    public V getOrDefault(K key, V defaultValue) {
+        synchronized (innerCache) {
+            return innerCache.getOrDefault(key, defaultValue);
+        }
+    }
+
+    @Override
     public Optional<V> getIfPresent(K key) {
         synchronized (innerCache) {
             V value = innerCache.getOrDefault(key, null);

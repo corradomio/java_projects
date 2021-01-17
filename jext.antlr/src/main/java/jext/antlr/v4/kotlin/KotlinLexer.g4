@@ -1,5 +1,5 @@
 /**
- * Kotlin Grammar for ANTLR v4
+ * Kotlin Grammar for ANTLR jext.antlr.v4
  *
  * Based on:
  * http://jetbrains.github.io/kotlin-spec/#_grammars_and_parsing

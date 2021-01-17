@@ -34,7 +34,7 @@
  * chapter 19.
  *
  * NOTE: This grammar results in a generated parser that is much slower
- *       than the Java 7 grammar in the grammars-v4/java directory. This
+ *       than the Java 7 grammar in the grammars-jext.antlr.v4/java directory. This
  *     one is, however, extremely close to the spec.
  *
  * You can test with
@@ -44,21 +44,21 @@
  *  $ grun Java9 compilationUnit *.java
  *
  * Or,
-~/antlr/code/grammars-v4/java9 $ java Test .
-/Users/parrt/antlr/code/grammars-v4/java9/./Java9BaseListener.java
-/Users/parrt/antlr/code/grammars-v4/java9/./Java9Lexer.java
-/Users/parrt/antlr/code/grammars-v4/java9/./Java9Listener.java
-/Users/parrt/antlr/code/grammars-v4/java9/./Java9Parser.java
-/Users/parrt/antlr/code/grammars-v4/java9/./Test.java
+~/antlr/code/grammars-jext.antlr.v4/java9 $ java Test .
+/Users/parrt/antlr/code/grammars-jext.antlr.v4/java9/./Java9BaseListener.java
+/Users/parrt/antlr/code/grammars-jext.antlr.v4/java9/./Java9Lexer.java
+/Users/parrt/antlr/code/grammars-jext.antlr.v4/java9/./Java9Listener.java
+/Users/parrt/antlr/code/grammars-jext.antlr.v4/java9/./Java9Parser.java
+/Users/parrt/antlr/code/grammars-jext.antlr.v4/java9/./Test.java
 Total lexer+parser time 30844ms.
-~/antlr/code/grammars-v4/java9 $ java Test examples/module-info.java
-/home/kwong/projects/grammars-v4/java9/examples/module-info.java
+~/antlr/code/grammars-jext.antlr.v4/java9 $ java Test examples/module-info.java
+/home/kwong/projects/grammars-jext.antlr.v4/java9/examples/module-info.java
 Total lexer+parser time 914ms.
-~/antlr/code/grammars-v4/java9 $ java Test examples/TryWithResourceDemo.java
-/home/kwong/projects/grammars-v4/java9/examples/TryWithResourceDemo.java
+~/antlr/code/grammars-jext.antlr.v4/java9 $ java Test examples/TryWithResourceDemo.java
+/home/kwong/projects/grammars-jext.antlr.v4/java9/examples/TryWithResourceDemo.java
 Total lexer+parser time 3634ms.
-~/antlr/code/grammars-v4/java9 $ java Test examples/helloworld.java
-/home/kwong/projects/grammars-v4/java9/examples/helloworld.java
+~/antlr/code/grammars-jext.antlr.v4/java9 $ java Test examples/helloworld.java
+/home/kwong/projects/grammars-jext.antlr.v4/java9/examples/helloworld.java
 Total lexer+parser time 2497ms.
 
  */
