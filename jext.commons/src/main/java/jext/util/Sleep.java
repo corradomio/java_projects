@@ -1,5 +1,6 @@
 package jext.util;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class Sleep {
@@ -10,37 +11,23 @@ public class Sleep {
         sleep(SLEEP);
     }
 
-    public static void sleep(long millis) {
-        if (millis > 0)
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) { }
+    public static void sleep(long minTimeout, long maxTimeout, TimeUnit timeUnit) {
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+        rnd.setSeed(Thread.currentThread().getId());
+        long timeout = rnd.nextInt((int)(maxTimeout - minTimeout)) + minTimeout;
+        sleep(timeout, timeUnit);
     }
 
     public static void sleep(long timeout, TimeUnit timeUnit) {
-        switch (timeUnit) {
-            case NANOSECONDS:
-                sleep(timeout/1000000L);
-                break;
-            case MICROSECONDS:
-                sleep(timeout/1000L);
-                break;
-            case MILLISECONDS:
-                sleep(timeout);
-                break;
-            case SECONDS:
-                sleep(timeout*1000L);
-                break;
-            case MINUTES:
-                sleep(timeout*60L*1000L);
-                break;
-            case HOURS:
-                sleep(timeout*60L*60L*1000L);
-                break;
-            case DAYS:
-                sleep(timeout*24L*60L*60L*1000L);
-                break;
-        }
-
+        long millis = timeUnit.toMillis(timeout);
+        sleep(millis);
     }
+
+    public static void sleep(long millis) {
+        if (millis > 0)
+            try {
+                Thread.sleep(millis);
+            } catch (InterruptedException e) { }
+    }
+
 }

@@ -1,2 +1,85 @@
-package jext.util.concurrent;public class Executors {
+package jext.util.concurrent;
+
+import jext.util.concurrent.impl.CachedThreadPoolImpl;
+import jext.util.concurrent.impl.QueueExecutorServiceImpl;
+
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.Callable;
+
+public class Executors  {
+
+    private static java.util.concurrent.Executors executors;
+
+    private Executors() { }
+
+    // ----------------------------------------------------------------------
+
+    // public static ExecutorService newFixedThreadPool(int nThreads) {
+    //     return java.util.concurrent.Executors.newFixedThreadPool(nThreads);
+    // }
+    //
+    // public static ExecutorService newWorkStealingPool(int parallelism) {
+    //     return java.util.concurrent.Executors.newWorkStealingPool(parallelism);
+    // }
+    //
+    // public static ExecutorService newWorkStealingPool() {
+    //     return java.util.concurrent.Executors.newWorkStealingPool();
+    // }
+    //
+    // public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
+    //     return java.util.concurrent.Executors.newFixedThreadPool(nThreads, threadFactory);
+    // }
+    //
+    // public static ExecutorService newSingleThreadExecutor() {
+    //     return java.util.concurrent.Executors.newSingleThreadExecutor();
+    // }
+    //
+    // public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
+    //     return java.util.concurrent.Executors.newSingleThreadExecutor(threadFactory);
+    // }
+    //
+    // public static ExecutorService newCachedThreadPool() {
+    //     return java.util.concurrent.Executors.newCachedThreadPool();
+    // }
+    //
+    // public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+    //     return java.util.concurrent.Executors.newCachedThreadPool(threadFactory);
+    // }
+    //
+    // public static ExecutorService unconfigurableExecutorService(ExecutorService executor) {
+    //     return java.util.concurrent.Executors.unconfigurableExecutorService(executor);
+    // }
+    //
+    // public static ThreadFactory defaultThreadFactory() {
+    //     return java.util.concurrent.Executors.defaultThreadFactory();
+    // }
+
+    // ----------------------------------------------------------------------
+
+    public static ExecutorService newCachedThreadPool(int maximumPoolSize) {
+        return new CachedThreadPoolImpl(maximumPoolSize);
+    }
+
+    public static QueueExecutorService newQueueThreadPool(int maximumPoolSize) {
+        return new QueueExecutorServiceImpl(maximumPoolSize);
+    }
+
+    // ----------------------------------------------------------------------
+
+    public static <T> Callable<T> callable(Runnable task, T result) {
+        return java.util.concurrent.Executors.callable(task, result);
+    }
+
+    public static Callable<Object> callable(Runnable task) {
+        return java.util.concurrent.Executors.callable(task);
+    }
+
+    // public static Callable<Object> callable(final PrivilegedAction<?> action) {
+    //     return java.util.concurrent.Executors.callable(action);
+    // }
+
+    // public static Callable<Object> callable(final PrivilegedExceptionAction<?> action) {
+    //     return java.util.concurrent.Executors.callable(action);
+    // }
 }

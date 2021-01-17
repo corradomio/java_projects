@@ -1,11 +1,52 @@
+Extensions
+----------
+
+    ExecutorService extends java.util.concurrent.ExecutorService
+        - invokeAll(List<? extends Runnable> tasks)
+        - countWaiting()
+        - countRunning()
+        - isComplete()
+        - waitForCompletion()
+        - List<V> waitForResults()
+
+    Executors
+
+
+Parallel
+--------
+
+    Parallel.setup()
+    Parallel.shutdown()
+
+    Parallel.forEach(int first, int last, IntConsumer body)
+    Parallel.forEach(Iterable<T> it, Consumer<T> body)
+    Parallel.forEach(Stream<T> s, Consumer<T> body)
+    Parallel.forEach(IntStream s, IntConsumer body)
+
+    Parallel.invokeAll(List<Callable<Boolean>> tasks)
+
+
+Function
+--------
+
+
+
+
 Java
 ----
+
+    Runnable
+        - void run()
+
+    Callable<V>
+        - V call()
 
     Thread
     ThreadGroup
 
     Executor
         - execute(Runnable command)
+
         ExecutorService
             shutodown()
             shutdownNow() -> List<Runnable>
@@ -56,20 +97,3 @@ Java
 
     ThreadFactory
         - Thread newThread(Runnable r)
-
-Parallel
---------
-
-    Parallel.setup()
-    Parallel.shutdown()
-
-
-Parallel for
-------------
-
-    Parallel.forEach(int first, int last, IntConsumer body)
-    Parallel.forEach(Iterable<T> it, Consumer<T> body)
-    Parallel.forEach(Stream<T> s, Consumer<T> body)
-    Parallel.forEach(IntStream s, IntConsumer body)
-
-    Parallel.invokeAll(List<Callable<Boolean>> tasks)

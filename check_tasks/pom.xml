@@ -7,6 +7,7 @@
     <groupId>org.hls.check</groupId>
     <artifactId>check_tasks</artifactId>
     <version>1.0</version>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -17,10 +18,27 @@
         <module>../jext.tasks</module>
         <module>../jext.commons</module>
         <module>../jext.concurrent</module>
+        <module>../jext.collections</module>
     </modules>
 
     <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.concurrent</artifactId>
+            <version>1.0</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.collections</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 </project>
