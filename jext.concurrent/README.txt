@@ -35,20 +35,30 @@ Function
 Java
 ----
 
-    Runnable
+    java.lang.Thread
+    java.lang.ThreadGroup
+
+    java.lang.Runnable
         - void run()
 
-    Callable<V>
+    java.util.concurrent.Callable<V>
         - V call()
 
-    Thread
-    ThreadGroup
+    java.util.concurrent.Future<V>
+        - boolean cancel(boolean mayInterruptIfRunning)
+        - boolean isCancelled();
+        - boolean isDone();
+        - V get()
+        - V get(long timeout, TimeUnit unit)
+        java.util.concurrent.RunnableFuture<V> extends Runnable,Future<V>
+
+        java.util.concurrent.FutureTask
 
     Executor
         - execute(Runnable command)
 
         ExecutorService
-            shutodown()
+            shutdown()
             shutdownNow() -> List<Runnable>
             isShutdown()
             isTerminated()
