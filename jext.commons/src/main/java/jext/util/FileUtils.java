@@ -34,12 +34,12 @@ public class FileUtils {
 
     public static String digest(File file) {
         if (!file.exists())
-            return "";
+            return "0";
         try(InputStream in = new FileInputStream(file)) {
             return digest(in);
         } catch (Exception e) {
             logger.error(e, e);
-            return "";
+            return "0";
         }
     }
 
@@ -148,8 +148,23 @@ public class FileUtils {
 
     // NOT recursive
     public static List<File> listFiles(File directory, String ext) {
-        if (directory == null) return Collections.emptyList();
-        return asList(directory.listFiles((dir, name) -> name.endsWith(ext)));
+        if (directory == null)
+            return Collections.emptyList();
+        else
+            return asList(directory.listFiles((dir, name) -> name.endsWith(ext)));
+    }
+
+    // NOT recursive
+    public static List<File> listFiles(File directory, int depth, FileFilter filter) {
+        if (depth == 0)
+            return asList(directory.listFiles(filter));
+
+        List<File> files = new ArrayList<>();
+        asList(directory.listFiles(File::isDirectory))
+            .forEach(subdir -> {
+                files.addAll(listFiles(subdir, depth-1, filter));
+            });
+        return files;
     }
 
     // Recursive!
@@ -243,8 +258,7 @@ public class FileUtils {
     // ----------------------------------------------------------------------
 
     /** Read the content of a file as a string */
-    public static String toString(File file)
-    {
+    public static String toString(File file) {
         try {
             byte[] encoded = Files.readAllBytes(file.toPath());
             return new String(encoded, Charset.defaultCharset());
