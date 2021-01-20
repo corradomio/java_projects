@@ -3,6 +3,7 @@ package jext.util.concurrent.impl;
 import jext.util.ArrayList;
 import jext.util.concurrent.ExecutorService;
 import jext.util.concurrent.Executors;
+import jext.util.concurrent.Sleep;
 
 import java.util.Collection;
 import java.util.List;
@@ -83,7 +84,7 @@ public class CachedThreadPoolImpl extends ThreadPoolExecutor implements Executor
         //     awaitTermination(timeout, timeUnit);
         // } catch (InterruptedException e) { }
         while (!isCompleted())
-            sleep();
+            Sleep.sleep();
 
         shutdown();
         futures = new ArrayList<>();
@@ -103,12 +104,6 @@ public class CachedThreadPoolImpl extends ThreadPoolExecutor implements Executor
             catch(InterruptedException | ExecutionException e) { }
         }
         return results;
-    }
-
-    protected void sleep() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) { }
     }
 
     @Override
