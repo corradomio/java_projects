@@ -36,7 +36,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     }
 
     private void parseCoords(String coords) {
-        // <groupId>:<artifactId>[:<version>]
+        // <groupId>:<artifactId>
+        // <groupId>:<artifactId>:<packaging>
+        // <groupId>:<artifactId>:<version>
+        // <groupId>:<artifactId>:<packaging>:<version>
         String[] parts = coords.split(":");
         if (parts.length == 2) {
             groupId = parts[0];
@@ -54,6 +57,7 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         else {
             groupId = parts[0];
             artifactId = parts[1];
+            // packaging = parts[2]
             version = parts[3];
         }
     }
@@ -73,13 +77,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         artifactId = path.substring(sep+1);
         path = path.substring(0, sep);
         groupId = path.replace('/', '.');
-        path = null;
     }
 
     public MavenCoords(String gid, String aid) {
-        this.groupId = gid;
-        this.artifactId = aid;
-        this.version = NO_VERSION;
+        this(gid, aid, null);
         init();
     }
 
