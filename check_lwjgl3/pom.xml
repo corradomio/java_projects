@@ -20,6 +20,24 @@
             <artifactId>lwjgl</artifactId>
             <version>3.2.3</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.lwjgl/lwjgl-opengl -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-opengl</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.lwjgl/lwjgl-glfw -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-glfw</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.lwjgl/lwjgl-opengl -->
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-opengl</artifactId>
+            <version>3.2.3</version>
+        </dependency>
 
     </dependencies>
 
