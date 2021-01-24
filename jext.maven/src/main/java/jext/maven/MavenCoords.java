@@ -101,6 +101,8 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     }
 
     private void init() {
+        if (version.endsWith(SNAPSHOT))
+            version = version.substring(0, version.length()-SNAPSHOT.length());
         if(hasVersion())
             toString = String.format("%s:%s:%s", groupId, artifactId, version);
         else
@@ -112,15 +114,18 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     // ----------------------------------------------------------------------
 
     public String getName() {
-        return String.format("%s:%s", groupId, artifactId);
-    }
-
-    public boolean hasVersion() {
-        return !version.isEmpty() && !isRange(version);
+        if (hasVersion())
+            return String.format("%s:%s", artifactId, version);
+        else
+            return artifactId;
     }
 
     public Version getVersion() {
         return hasVersion() ? Version.of(version) : Version.NO_VERSION;
+    }
+
+    public boolean hasVersion() {
+        return !version.isEmpty() && !isRange(version);
     }
 
     public boolean isRange() {

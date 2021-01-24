@@ -3,7 +3,7 @@ package jext.maven;
 public enum MavenType {
     METADATA,       // maven-metadata.xml
     POM,            // <...>.pom
-    JAR,            // <...>.jar
+    ARTIFACT,       // <...>.jar | <...>.aar | <...>.<packaging>
 
     JAVADOC,        // <...>-javadoc.jar
     SOURCES,        // <...>-sources.jar

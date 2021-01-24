@@ -155,14 +155,14 @@ public class FileUtils {
     }
 
     // NOT recursive
-    public static List<File> listFiles(File directory, int depth, FileFilter filter) {
+    public static List<File> listFiles(File directory, int depth, FileFilter filter, FileFilter directoryFilter) {
         if (depth == 0)
             return asList(directory.listFiles(filter));
 
         List<File> files = new ArrayList<>();
-        asList(directory.listFiles(File::isDirectory))
+        asList(directory.listFiles(directoryFilter))
             .forEach(subdir -> {
-                files.addAll(listFiles(subdir, depth-1, filter));
+                files.addAll(listFiles(subdir, depth-1, filter, directoryFilter));
             });
         return files;
     }

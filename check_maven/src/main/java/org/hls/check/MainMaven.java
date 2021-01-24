@@ -13,7 +13,7 @@ import java.io.File;
 public class MainMaven {
 
     public static void main(String[] args) {
-
+        main5(args);
     }
 
     public static void main5(String[] args) {

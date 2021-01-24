@@ -4,11 +4,16 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.logging.Logger;
 import jext.util.FileUtils;
+import jext.util.JarUtils;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 import org.w3c.dom.Element;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,12 +23,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +63,9 @@ public class MavenDownloader implements MavenConst {
     /** time between two checks of the same file (metadata & versions) (seconds) */
     private long checkTimeout = 24*60*60;
 
+    /** parallel downloads */
+    private int parallelDownloads = 5;
+
     // ----------------------------------------------------------------------
 
     // <a href="2.0.0/" title="2.0.0/">2.0.0/</a> 2015-01-13 13:40         -
@@ -78,12 +84,16 @@ public class MavenDownloader implements MavenConst {
         repoUrls.add("https://repo.maven.apache.org/maven2");
     }
 
+    /**
+     * To use it to create a clone of the current downloader to add new custom repositories
+     */
     public MavenDownloader newDownloader() {
         return new MavenDownloader()
             .setDownload(downloadDir)
             .addRepositories(repoUrls)
             .setDownloadTimeout(downloadTimeout)
             .setCheckTimeout(checkTimeout)
+            .setParallelDownloads(parallelDownloads)
             ;
     }
 
@@ -97,8 +107,10 @@ public class MavenDownloader implements MavenConst {
     }
 
     public MavenDownloader addRepository(String repoUrl) {
+        // remove the last "/"
         if (repoUrl.endsWith("/"))
             repoUrl = StringUtils.substring(repoUrl,0, -1);
+        // check the protocol: for now it supports only "http(s)://"
         if (repoUrl.startsWith("http"))
             this.repoUrls.add(repoUrl);
         else
@@ -111,20 +123,37 @@ public class MavenDownloader implements MavenConst {
         return this;
     }
 
+    /**
+     * Timeout to wait before a connection starts
+     */
     public MavenDownloader setDownloadTimeout(long millis) {
         this.downloadTimeout = millis;
         return this;
     }
 
+    /**
+     * Sometimes a server doesn't works. In this case it is created a 'flag' file (*.invalid)
+     * to skip another check the next time. However the flag is not forever. It has a expiration time
+     * (for default 24 hours). After this time, it is deleted.
+     */
     public MavenDownloader setCheckTimeout(long seconds) {
         this.checkTimeout = seconds;
         return this;
     }
 
-    // public File getDownloadDir() {
-    //     return downloadDir;
-    // }
+    /**
+     * Parallel downloads permitted
+     * @param parallelDownloads
+     * @return
+     */
+    public MavenDownloader setParallelDownloads(int parallelDownloads) {
+        this.parallelDownloads = parallelDownloads;
+        return this;
+    }
 
+    /**
+     * Check if the download directory there exists.
+     */
     public MavenDownloader initialize() {
         if (!downloadDir.exists() && !downloadDir.mkdirs())
             logger.warnf("Unable to create directory %s", downloadDir);
@@ -135,11 +164,9 @@ public class MavenDownloader implements MavenConst {
     // Compatibility
     // ----------------------------------------------------------------------
 
-    public boolean isPomPackaging(MavenCoords coords) {
-        coords = normalize(coords);
-
+    private String getPackaging(MavenCoords coords) {
         MavenPom pom = getPom(coords);
-        return pom != null && pom.isPomPackaging();
+        return pom.getPackaging();
     }
 
     public File getPomFile(MavenCoords coords) {
@@ -151,13 +178,17 @@ public class MavenDownloader implements MavenConst {
         return pomFile;
     }
 
-    public File getJarFile(MavenCoords coords) {
+    public File getArtifact(MavenCoords coords) {
         coords = normalize(coords);
 
-        File jarFile = getFile(coords, MavenType.JAR);
-        if (!jarFile.exists())
-            downloadFile(coords, MavenType.JAR);
-        return jarFile;
+        File artifactFile = getFile(coords, MavenType.ARTIFACT);
+        if (!artifactFile.exists())
+            downloadFile(coords, MavenType.ARTIFACT);
+
+        if (artifactFile.getName().endsWith(".aar"))
+            artifactFile = JarUtils.extractJarFromAar(artifactFile);
+
+        return artifactFile;
     }
 
     // ----------------------------------------------------------------------
@@ -173,7 +204,7 @@ public class MavenDownloader implements MavenConst {
     }
 
     /** Relocate the coordinates */
-    public MavenCoords getRelocated(MavenCoords coords) {
+    private MavenCoords getRelocated(MavenCoords coords) {
         MavenPom pom = getPom_(coords);
         if (pom == null)
             return coords;
@@ -183,37 +214,35 @@ public class MavenDownloader implements MavenConst {
             return coords;
     }
 
+    /**
+     * Normalize the Maven coordinates.
+     * There are TWO things to check:
+     *
+     * 1) if 'coords' has the version attached
+     * 2) it 'coords' is relocated!
+     *
+     * For this reason it is necessary to normalize ALL 'coords'
+     */
     private MavenCoords normalize(MavenCoords coords) {
-        Cache<MavenCoords, MavenCoords> cache = CacheManager.getCache("maven.normalizedCoords", MavenCoords.class, MavenCoords.class);
-        try {
-            return cache.get(coords, () -> {
-                MavenCoords lcoords = coords;
-                if (!lcoords.hasVersion())
-                    lcoords = getVersioned(lcoords);
-                if (!lcoords.hasVersion())
-                    return lcoords;
-                lcoords = getRelocated(lcoords);
+        Cache<MavenCoords, MavenCoords> cache = CacheManager.getCache("maven.normalizedCoords",
+            MavenCoords.class, MavenCoords.class);
+        return cache.get(coords, () -> {
+            MavenCoords lcoords = coords;
+            if (!lcoords.hasVersion())
+                lcoords = getVersioned(lcoords);
+            if (!lcoords.hasVersion())
                 return lcoords;
-            });
-        }
-        catch (Throwable e) {
-            logger.error(e, e);
-            return coords;
-        }
-
-        // if (!coords.hasVersion())
-        //     coords = getVersioned(coords);
-        // if (!coords.hasVersion())
-        //     return coords;
-        // coords = getRelocated(coords);
-        // return coords;
+            lcoords = getRelocated(lcoords);
+            return lcoords;
+        });
     }
 
     // ----------------------------------------------------------------------
     // Components & Dependencies
     // ----------------------------------------------------------------------
 
-    static class Entry {
+    // Used to scan at a maximum depth
+    private static class Entry {
         final Entry parent;
         final MavenDependency dcoords;
         final int depth;
@@ -392,25 +421,15 @@ public class MavenDownloader implements MavenConst {
             if (pom.isPomPackaging())
                 continue;
 
-            File artifact = getArtifact(coords);
-            if (artifact.exists())
-                artifacts.add(artifact);
+            File artifactFile = getArtifact(coords);
+            if (artifactFile.exists())
+                artifacts.add(artifactFile);
             // else
             //     logger.warnf("Artifact for %s doesn't exists", coords);
         }
         return artifacts;
     }
 
-    public File getArtifact(MavenCoords coords) {
-        coords = normalize(coords);
-
-        File artifact = getFile(coords, MavenType.JAR);
-        if (!artifact.exists())
-            downloadFile(coords, MavenType.JAR);
-        return artifact;
-    }
-
-    @Nullable
     public MavenPom getPom(MavenCoords coords) {
         coords = normalize(coords);
         return getPom_(coords);
@@ -421,30 +440,31 @@ public class MavenDownloader implements MavenConst {
             return null;
 
         Cache<MavenCoords, MavenPom> cache = CacheManager.getCache("maven.pom", MavenCoords.class, MavenPom.class);
-        try {
-            MavenPom pom = cache.get(coords, () -> {
-                try {
-                    File pomFile = getFile(coords, MavenType.POM);
-                    if (!pomFile.exists())
-                        downloadFile(coords, MavenType.POM);
-                    if (!pomFile.exists()) {
-                        return MavenPom.invalid();
-                    }
-                    return new MavenPom(pomFile, this);
-                }
-                catch(Throwable t) {
-                    logger.error(t, t);
+        MavenPom pom = cache.get(coords, () -> {
+            try {
+                File pomFile = getFile(coords, MavenType.POM);
+                if (!pomFile.exists())
+                    downloadFile(coords, MavenType.POM);
+                if (!pomFile.exists()) {
                     return MavenPom.invalid();
                 }
-            });
+                return new MavenPom(pomFile, this);
+            }
+            catch(Throwable t) {
+                logger.error(t, t);
+                return MavenPom.invalid();
+            }
+        });
 
-            return pom == MavenPom.invalid() ? null : pom;
-        }
-        catch (Throwable e) {
-            logger.error(e, e);
-            return null;
-        }
+        return pom == MavenPom.invalid() ? null : pom;
+    }
 
+    public MavenCoords getLatest(MavenCoords coords) {
+        String latestVersion =  getLatestVersion(coords);
+        if (!latestVersion.isEmpty())
+            return new MavenCoords(coords, latestVersion);
+        else
+            return coords;
     }
 
     /**
@@ -498,6 +518,22 @@ public class MavenDownloader implements MavenConst {
      * @param coords maven coordinates
      */
     public Versions getVersions(MavenCoords coords) {
+        /*
+            <html>
+                ...
+
+            <a href="../">../</a>
+            <a href="0.1/" title="0.1/">0.1/</a>   2005-09-20 05:46         -
+            <a href="1.0/" title="1.0/">1.0/</a>   2005-09-20 05:46         -
+            <a href="1.1/" title="1.1/">1.1/</a>   2005-10-11 00:02         -
+            <a href="1.2/" title="1.2/">1.2/</a>   2006-03-20 01:31         -
+                ...
+            <a href="20030203.000550/" title="20030203.000550/">20030203.000550/</a>            -         -
+            <a href="maven-metadata.xml" title="maven-metadata.xml">maven-metadata.xml</a>      2020-09-09 14:28       847
+
+                ...
+            </html>
+         */
         Versions versions = new Versions();
 
         File versionsFile = getFile(coords, MavenType.VERSIONS);
@@ -512,12 +548,14 @@ public class MavenDownloader implements MavenConst {
                 String year = null;
                 Matcher m = HREF_VERSION.matcher(href);
 
+                // check for
+                //  <a href="0.1/" title="0.1/">0.1/</a>    2005-09-20 05:46         -
                 if (m.matches()) {
                     version = m.group(1);
                     year = m.group(2);
                 }
 
-                // skip the version if the year is "-"
+                // skip if year is "-"
                 if (MavenCoords.isValid(version) && MavenCoords.isValid(year))
                     versions.add(version, year);
             });
@@ -525,39 +563,11 @@ public class MavenDownloader implements MavenConst {
         return versions;
     }
 
-    // private String findVersionsVersion(File versionsFile) {
-    //     // convert the file in a list of string and parse each line to extract the version and the date.
-    //     //
-    //     // The version file has the structure:
-    //     //
-    //     //      ...
-    //     //      <a href="2.0.0/" title="2.0.0/">2.0.0/</a> 2015-01-13 13:40 ...
-    //     //
-    //     // The latest version is the last version in the file
-    //     //
-    //     String[] latestVersion = new String[]{ UNKNOWN_VERSION };
-    //
-    //     FileUtils.toStrings(versionsFile)
-    //         .forEach(href -> {
-    //             String version = null;
-    //             String year = null;
-    //             Matcher m = HREF_VERSION.matcher(href);
-    //             if (m.matches()) {
-    //                 version = m.group(1);
-    //                 year = m.group(2);
-    //             }
-    //             // skip the version if the year is "-"
-    //             if (version != null && version.length() > 0 && year != null && year.length() > 1)
-    //                 latestVersion[0] = version;
-    //         });
-    //
-    //     return latestVersion[0];
-    // }
-
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
 
+    // check the the file is expired
     private boolean recheck(File file) {
         long checkTimeoutMillis = this.checkTimeout*1000;
         return !file.exists() || (System.currentTimeMillis() - file.lastModified()) > checkTimeoutMillis;
@@ -590,10 +600,10 @@ public class MavenDownloader implements MavenConst {
                     artifactId,
                     version);
                 break;
-            case JAR:
-                relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.jar",
-                    groupId,
-                    artifactId, version);
+            case ARTIFACT:
+                relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.%4$s",
+                    groupId, artifactId, version,
+                    getPackaging(coords));
                 break;
             // case INVALID:
             //     relativePath = String.format("%s/%s/flag.invalid",
@@ -634,12 +644,11 @@ public class MavenDownloader implements MavenConst {
                     groupId,
                     artifactId,
                     version);
-            case JAR:
-                return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.jar",
+            case ARTIFACT:
+                return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.%5$s",
                     repoUrl,
-                    groupId,
-                    artifactId,
-                    version);
+                    groupId, artifactId, version,
+                    getPackaging(coords));
 
             default:
                 throw new UnsupportedOperationException(type.toString());
@@ -659,7 +668,7 @@ public class MavenDownloader implements MavenConst {
         File downloadedFile = getFile(coords, type);
 
         // if the ".pom" file defined a "downloadUrl", it downloads from this url
-        if (type == MavenType.JAR && hasDownloadUrl(coords)) {
+        if (type == MavenType.ARTIFACT && hasDownloadUrl(coords)) {
             // if the download is failed, try to download with the standard method
             if(!downloadUsingUrl(coords))
                 downloadFromRepositories(coords, type);
@@ -677,7 +686,6 @@ public class MavenDownloader implements MavenConst {
     private void downloadFromRepositories(MavenCoords coords, MavenType type) {
         File downloadedFile = getFile(coords, type);
         File tempFile = getTemp(downloadedFile);
-        // mkdirs(tempFile);
 
         for (String repoUrl : repoUrls) {
             try {
@@ -687,48 +695,58 @@ public class MavenDownloader implements MavenConst {
                     downloadFromUrl(downloadedFile, downloadUrl);
                 }
                 catch (FileNotFoundException e) {
+                    logger.errorf("FileNotFoundException %s", downloadUrl);
                     continue;
                 }
                 catch (UnknownHostException e) {
+                    logger.errorf("UnknownHostException %s", downloadUrl);
                     continue;
                 }
                 catch (IOException e) {
-                    String message = e.getMessage();
-                    if (message.contains(" 403 ")) continue;
-                    if (message.contains(" 401 ")) continue;
-                    if (message.contains(" 301 ")) continue;
-                    logger.errorf("%s: %s", downloadUrl, e);
+                    // String message = e.getMessage();
+                    // if (message.contains(" 403 ")) continue;
+                    // if (message.contains(" 401 ")) continue;
+                    // if (message.contains(" 301 ")) continue;
+                    logger.errorf("IOException %s: %s", downloadUrl, e.getMessage());
                     continue;
                 }
                 catch (Throwable t) {
-                    logger.errorf("%s: %s", downloadUrl, t);
+                    logger.errorf("Throwable %s: %s", downloadUrl, t);
                     break;
                 }
 
-                if (!isValidFile(tempFile, type))
+                // check if the downloaded file has the correct type
+                if (!isValidFileType(tempFile, type))
                     continue;
 
+                // update the previous downloaded file
                 renameTo(tempFile, downloadedFile);
 
                 break;
 
-            // }
-            // catch (MalformedURLException e) {
-            //     logger.error(e, e);
             }
             finally {
                 delete(tempFile);
             }
         }
+
+        // if the file exists and it is invalid because too old, this means
+        // that is was not possible to download the new one.
+        // In this case, keep it and update the timestamp until the next
+        // deadline
+        if (downloadedFile.exists() && !isInvalidType(coords, type))
+            touch(downloadedFile);
     }
 
+    // Some pom files contain the "downloadUrl", the "url" where to download
+    // the artifact
     private boolean hasDownloadUrl(MavenCoords coords) {
         MavenPom pom = getPom(coords);
         return pom != null && pom.hasDownloadUrl();
     }
 
     private boolean downloadUsingUrl(MavenCoords coords) {
-        MavenType type = MavenType.JAR;
+        MavenType type = MavenType.ARTIFACT;
         File downloadedFile = getFile(coords, type);
         File tempFile = getTemp(downloadedFile);
 
@@ -741,7 +759,8 @@ public class MavenDownloader implements MavenConst {
         try {
             downloadFromUrl(downloadedFile, downloadUrl);
 
-            if (!isValidFile(tempFile, type))
+            // check if it is downloaded the correct file type
+            if (!isValidFileType(tempFile, type))
                 return false;
 
             renameTo(tempFile, downloadedFile);
@@ -763,38 +782,42 @@ public class MavenDownloader implements MavenConst {
         mkdirs(tempFile);
         delete(tempFile);
 
-        // {
-        //     HttpClient httpClient = HttpClients.createDefault();
-        //     HttpGet httpget = new HttpGet(downloadUrl);
-        //     HttpResponse response = httpClient.execute(httpget);
-        //     if (response.getStatusLine().getStatusCode() >= 400) {
-        //         return;
-        //     }
-        //
-        //     HttpEntity entity = response.getEntity();
-        //
-        //     try (InputStream istream = entity.getContent()) {
-        //         try (OutputStream ostream = new FileOutputStream(tempFile)) {
-        //             byte[] buffer = new byte[1024];
-        //             for(int len = istream.read(buffer); len > 0; len = istream.read(buffer)) {
-        //                 ostream.write(buffer, 0, len);
-        //             }
-        //         }
-        //     }
-        // }
+        // HttpClient is able to handle '301 Moved Permanently' !!!
+        {
+            logger.debugft("Try to download from %s", downloadUrl);
 
-        try(ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
-            FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
-            FileChannel fileChannel = fileOutputStream.getChannel()) {
-            fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-            // it is NOT POSSIBLE to rename the file HERE because it is OPENED!!!!!
+            HttpClient httpClient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet(downloadUrl);
+            HttpResponse response = httpClient.execute(httpget);
+            if (response.getStatusLine().getStatusCode() >= 400) {
+                return;
+            }
+
+            HttpEntity entity = response.getEntity();
+
+            try (InputStream istream = entity.getContent()) {
+                try (OutputStream ostream = new FileOutputStream(tempFile)) {
+                    byte[] buffer = new byte[1024];
+                    for(int len = istream.read(buffer); len > 0; len = istream.read(buffer)) {
+                        ostream.write(buffer, 0, len);
+                    }
+                }
+            }
         }
+
+        // try(ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+        //     FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+        //     FileChannel fileChannel = fileOutputStream.getChannel()) {
+        //     fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+        // }
     }
 
     // ----------------------------------------------------------------------
     // Private Static methods
     // ----------------------------------------------------------------------
 
+    // Check if there is the flag '.invalid' for the specified Maven type and
+    // the validity interval of the flag hasn't expired.
     private boolean isInvalidType(MavenCoords coords, MavenType type) {
         File invalidFlagFile = getInvalidFlagFile(coords, type);
         if (!invalidFlagFile.exists())
@@ -819,8 +842,15 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
     // Private Static methods
     // ----------------------------------------------------------------------
+    // Filesystem utility methods with checks
+    //
 
-    private static boolean isValidFile(File file, MavenType type) {
+    // used to check that the file downloaded is of the correct type.
+    // Sometimes it is downloaded a file HTML without error cpdes
+    private static boolean isValidFileType(File file, MavenType type) {
+        if (file == null)
+            return false;
+
         // file not existent
         if (!file.exists())
             return false;
@@ -830,7 +860,7 @@ public class MavenDownloader implements MavenConst {
             return false;
 
         // not a jar
-        if (type == MavenType.JAR && !"PK".equals(getBytes(file, 2)))
+        if (type == MavenType.ARTIFACT && !"PK".equals(getBytes(file, 2)))
             return false;
 
         if (type == MavenType.POM) {
@@ -892,6 +922,10 @@ public class MavenDownloader implements MavenConst {
         fromFile.renameTo(toFile);
     }
 
+    private static void touch(File file) {
+        file.setLastModified(System.currentTimeMillis());
+    }
+
     private static String getBytes(File file, int len) {
         try(InputStream stream = new FileInputStream(file)) {
             byte[] b = new byte[len];
@@ -919,4 +953,21 @@ public class MavenDownloader implements MavenConst {
         }
         return lines;
     }
+
+    // ----------------------------------------------------------------------
+    // Check artifacts
+    // ----------------------------------------------------------------------
+
+    /**
+     * Try to download in parallel the artifacts:
+     *
+     *      [artifact].pom
+     *      [artifact].jar  if it exists
+     *
+     * @param coordList list of coordinates to check
+     */
+    public void checkArtifacts(List<MavenCoords> coordList) {
+
+    }
+
 }
