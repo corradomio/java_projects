@@ -10,11 +10,16 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RunnableFuture;
 
 
+/**
+ * Handle a primary queue, where the tasks are executed in parallel, and some
+ * extra queues, where the tasks are executed sequentially.
+ */
 public class QueueExecutorServiceImpl extends CachedThreadPoolImpl implements QueueExecutorService {
 
-    private Map<String, Queue<Callable<?>>> waitingQueues = new ConcurrentHashMap<>();
+    private Map<String, Queue<RunnableFuture<?>>> sequentialQueues = new ConcurrentHashMap<>();
 
     private class ProcessingQueueTask implements Runnable {
 
@@ -25,14 +30,12 @@ public class QueueExecutorServiceImpl extends CachedThreadPoolImpl implements Qu
         }
 
         public void run() {
-            Optional<Callable<?>> task = QueueExecutorServiceImpl.this.dequeue(this.queue);
+            Optional<RunnableFuture<?>> task = QueueExecutorServiceImpl.this.dequeue(this.queue);
             if (!task.isPresent())
                 return;
 
-            try {
-                Callable<?> callable = task.get();
-                Object result = callable.call();
-            } catch (Exception e) { }
+            RunnableFuture<?> callable = task.get();
+            callable.run();
 
             QueueExecutorServiceImpl.this.submit(new ProcessingQueueTask(this.queue));
         }
@@ -45,8 +48,8 @@ public class QueueExecutorServiceImpl extends CachedThreadPoolImpl implements Qu
     @Override
     public int countWaiting() {
         int[] total = new int[1];
-        synchronized (waitingQueues) {
-            waitingQueues.values()
+        synchronized (sequentialQueues) {
+            sequentialQueues.values()
                 .stream()
                 .map(Collection::size)
                 .forEach(count -> {
@@ -82,12 +85,14 @@ public class QueueExecutorServiceImpl extends CachedThreadPoolImpl implements Qu
             this.submit(queue, task);
     }
 
-    private <T> void enqueue(String queue, Callable<T> task) {
-        synchronized (waitingQueues) {
-            if (!waitingQueues.containsKey(queue))
-                waitingQueues.put(queue, new LinkedList<>());
+    private <T> void enqueue(String queue, Callable<T> callable) {
+        synchronized (sequentialQueues) {
+            if (!sequentialQueues.containsKey(queue))
+                sequentialQueues.put(queue, new LinkedList<>());
 
-            Queue<Callable<?>> waitingQueue = waitingQueues.get(queue);
+            Queue<RunnableFuture<?>> waitingQueue = sequentialQueues.get(queue);
+            RunnableFuture<?> task = newTaskFor(callable);
+
             if (waitingQueue.isEmpty()) {
                 waitingQueue.add(task);
                 super.submit(new ProcessingQueueTask(queue));
@@ -98,14 +103,16 @@ public class QueueExecutorServiceImpl extends CachedThreadPoolImpl implements Qu
         }
     }
 
-    private Optional<Callable<?>> dequeue(String queue) {
-        synchronized (waitingQueues) {
-            if (!waitingQueues.containsKey(queue))
+    private Optional<RunnableFuture<?>> dequeue(String queue) {
+        synchronized (sequentialQueues) {
+            if (!sequentialQueues.containsKey(queue))
                 return Optional.empty();
 
-            Queue<Callable<?>> waitingQueue = waitingQueues.get(queue);
-            if (waitingQueue.isEmpty())
+            Queue<RunnableFuture<?>> waitingQueue = sequentialQueues.get(queue);
+            if (waitingQueue.isEmpty()) {
+                sequentialQueues.remove(queue);
                 return Optional.empty();
+            }
             else
                 return Optional.of(waitingQueue.remove());
         }

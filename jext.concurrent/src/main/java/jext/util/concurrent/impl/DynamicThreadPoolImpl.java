@@ -25,12 +25,6 @@ public class DynamicThreadPoolImpl implements ExecutorService {
 
     private class ProcessTask implements Runnable {
 
-        private Throwable exception;
-
-        ProcessTask() {
-
-        }
-
         @Override
         public void run() {
             Thread thisThread = Thread.currentThread();
@@ -39,9 +33,6 @@ public class DynamicThreadPoolImpl implements ExecutorService {
 
                 FutureTask<?> future = DynamicThreadPoolImpl.this.waitingQueue.remove();
                 future.run();
-            }
-            catch (Throwable t) {
-                this.exception = t;
             }
             finally {
                 DynamicThreadPoolImpl.this.runningThreads.remove(thisThread.getId());
@@ -154,11 +145,10 @@ public class DynamicThreadPoolImpl implements ExecutorService {
     }
 
     private void startThreads() {
-        int runnableThreads = maximumPoolSize - countRunning();
-        int waitingLength = countWaiting();
-        int nThreads = Math.min(waitingLength, runnableThreads);
-        while (nThreads-- > 0)
-            new Thread(new ProcessTask()).start();
+        while (countRunning() < maximumPoolSize && countWaiting() > 0)
+            threadFactory
+                .newThread(new ProcessTask())
+                .start();
     }
 
     @Override
