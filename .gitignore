@@ -9,4 +9,10 @@ build
 *.suspended
 removed
 *.jfr
+*.zip
+*.dll
+*.pdf
+*.jar
+*.gz
+
 

@@ -7,15 +7,10 @@ import java.util.function.Function;
 
 public interface Cache<K, V> extends AutoCloseable {
 
-    /** name of the cache */
+    /** cache name */
     String getName();
 
-    /** The value in the cache, or null */
-    Optional<V> getIfPresent(K key);
-
     boolean containsKey(K key);
-
-    V getOrDefault(K key, V defaultValue);
 
     /**
      * If the cache doesn't contain the key, the value is computed
@@ -26,14 +21,19 @@ public interface Cache<K, V> extends AutoCloseable {
      * @throws ExecutionException
      */
     V getChecked(K key, Callable<V> callable) throws ExecutionException;
-
     V get(K key, Callable<V> callable);
     V get(K key, Function<K, V> function);
 
-    /** Insert in the cache */
+    /** The value in the cache, or null */
+    Optional<V> getIfPresent(K key);
+
+    /** the value in cache or the defaultValue */
+    V getOrDefault(K key, V defaultValue);
+
+    /** Insert into the cache */
     void put(K key, V value);
 
-    /** Remove fom the cache */
+    /** Remove from the cache */
     void remove(K key);
 
     /** Clear the cache */

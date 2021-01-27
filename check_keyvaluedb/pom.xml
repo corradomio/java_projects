@@ -6,11 +6,96 @@
 
     <groupId>org.hls.check</groupId>
     <artifactId>check_keyvaluedb</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>8</source><target>8</target><compilerArgs>--enable-preview</compilerArgs></configuration></plugin></plugins></build>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <modules>
+        <module>../jext.cache</module>
+        <module>../jext.commons</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>HaloDB Repository</id>
+            <url>https://dl.bintray.com/yahoo/maven/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>3.0.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.openhft/chronicle-map -->
+        <!--dependency>
+            <groupId>net.openhft</groupId>
+            <artifactId>chronicle-map</artifactId>
+            <version>3.21ea1</version>
+        </dependency-->
+        <!-- https://mvnrepository.com/artifact/berkeleydb/je (2008) -->
+        <!--dependency>
+            <groupId>berkeleydb</groupId>
+            <artifactId>je</artifactId>
+            <version>3.2.76</version>
+        </dependency-->
+        <!-- https://mvnrepository.com/artifact/com.oath.halodb/halodb -->
+        <dependency>
+            <groupId>com.oath.halodb</groupId>
+            <artifactId>halodb</artifactId>
+            <version>0.5.3</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava -->
+        <dependency>
+            <groupId>org.lmdbjava</groupId>
+            <artifactId>lmdbjava</artifactId>
+            <version>0.8.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava-native-windows-x86_64 -->
+        <dependency>
+            <groupId>org.lmdbjava</groupId>
+            <artifactId>lmdbjava-native-windows-x86_64</artifactId>
+            <version>0.9.24-1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.agrona/Agrona -->
+        <dependency>
+            <groupId>org.agrona</groupId>
+            <artifactId>Agrona</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.iq80.leveldb/leveldb -->
+        <dependency>
+            <groupId>org.iq80.leveldb</groupId>
+            <artifactId>leveldb</artifactId>
+            <version>0.12</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.openhft/chronicle-map -->
+        <dependency>
+            <groupId>net.openhft</groupId>
+            <artifactId>chronicle-map</artifactId>
+            <version>3.21ea1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/chronicle-map-3.21ea1.jar</systemPath>
+        </dependency>
+
+    </dependencies>
 
 </project>

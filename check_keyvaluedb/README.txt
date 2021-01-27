@@ -1,14 +1,22 @@
 Embedded key value databases
 
-    mapdb
+    mapdb (java)
         https://mapdb.org/
 
     chronicle map
         https://github.com/OpenHFT/Chronicle-Map
 
-    berkleydb
+    berkleydb java edition
         https://www.oracle.com/database/technologies/related/berkeleydb-downloads.html
         https://www.oracle.com/database/berkeley-db/java-edition.html
+
+    halodb
+        https://github.com/yahoo/HaloDB
+
+    Lmdbjava
+        https://github.com/lmdbjava/lmdbjava
+
+-----------------------------------------------------------------
 
     infinitydb (java, commercial)
         https://dbdb.io/db/infinitydb
@@ -18,9 +26,3 @@ Embedded key value databases
 
     boltdb (go)
         https://github.com/boltdb/bolt
-
-    halodb
-        https://github.com/yahoo/HaloDB
-
-    Lmdbjava
-        https://awesomeopensource.com/project/lmdbjava/lmdbjava
