@@ -4,8 +4,12 @@ import jext.util.Bag;
 import jext.util.Indexer;
 import jext.util.Pair;
 
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.LineNumberReader;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,15 +116,63 @@ public class App {
     }
 
     private static void tocsv(List<String[]> sentences) {
-        Indexer<String> idx = new Indexer<>();
 
-        for(String[] tokens : sentences)
-            for(String token : tokens)
-                idx.add(token);
+        try (PrintStream w = new PrintStream(new FileOutputStream("bt_type_apriori.csv"))) {
+            Indexer<String> idx = new Indexer<>();
 
+            for(String[] tokens : sentences)
+                for(String token : tokens)
+                    idx.add(token);
+
+            printh(w, idx.items());
+
+            for (String[] s : sentences)
+                prints(w, s, idx);
+
+        }
+        catch(Throwable t) {
+
+        }
+
+    }
+
+    private static void printh(PrintStream out, List<String> header) {
         // print header
+        boolean first = true;
+        for(String h : header) {
+            if (!first) out.print(",");
+            out.print(h);
+            first = false;
+        }
+        out.println();
+    }
 
-        System.out.println(idx.index("ciccio"));
+    private static void prints(PrintStream out, String[] tokens, Indexer<String> idx) {
+        int n = idx.size();
+        int[] flags = new int[n];
+        for (String token : tokens) {
+            int tok = idx.index(token);
+            flags[tok] = 1;
+        }
+
+        boolean first = true;
+        for (int i=0; i<n; ++i) {
+            if (!first) out.print(",");
+            out.print(flags[i]);
+            first = false;
+        }
+        out.println();
+    }
+
+    private static void countLengths() {
+        List<String[]> sentences = sentences();
+        Bag<Integer> sizes = new Bag<>();
+
+        for (String[] tokens : sentences)
+            sizes.add(tokens.length);
+
+        for (Pair<Integer, Integer> p : sizes.items())
+            System.out.printf("%s -> %s\n", p.getKey(), p.getValue());
     }
 
     public static void main(String[] args) {
@@ -128,8 +180,9 @@ public class App {
         // backward();
         // statistics();
         // apriori();
-        List<String[]> s = sentences();
-        tocsv(s);
+        countLengths();
+        // List<String[]> s = sentences();
+        // tocsv(s);
     }
 
     private static void invert(String[] tokens) {
