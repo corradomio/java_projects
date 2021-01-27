@@ -10,6 +10,7 @@ If we conside the sentences lengths, we have:
     4           -> 551
     3           -> 542
     5           -> 531
+    
     2           -> 372
     6           -> 228
     7           -> 122
