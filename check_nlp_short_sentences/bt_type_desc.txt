@@ -1,0 +1,131 @@
+The BT database contains 2515 "type" nodes (with role "type")
+
+The type's name follow the ""camel rule""
+If we split the type ""name"" in tokens, we can consider the token's list as a small sentence.
+
+If we conside the sentences lengths, we have:
+
+    sentence
+    length      -> count
+    4           -> 551
+    3           -> 542
+    5           -> 531
+    2           -> 372
+    6           -> 228
+    7           -> 122
+    1           -> 49
+    8           -> 46
+    10          -> 23
+    9           -> 19
+    11          -> 17
+    12          -> 10
+    13          -> 4
+    14          -> 1
+
+
+The longest class name is:
+
+    Query, Fulfillment, Entrys, With, Fulfillment, Order, Key, Type, Supplier, ID, And, Catalog, ID, Value
+
+
+We can order the sentences in a forward manner (from the first word to the last) or in the backward one
+(in the opposite direction). Both methods permit to obtain a hierarchical clustering.
+
+There are 693 different tokens. BUT, we can observe that
+
+    there are 249  tokens present 1 (ONE) time
+    there are 111  tokens present 2 (TWO) times
+    there are  83  tokens present 3       times
+               31                 4
+               26                 5
+               20                 6
+               12                 7
+               17                 8
+               13                 9
+                9                10
+               11                11
+              ...
+
+
+The most frequent tokens are (>= 50 times):
+
+    Order, 1133
+    Event, 456
+    Impl, 450
+    Fulfillment, 352
+    Service, 332
+    Value, 326
+    Bean, 270
+    Key, 259
+    Item, 244   
+    State, 240
+    Process, 226
+    Entity, 196
+    Factory, 188
+    
+    Goods, 174
+    Billing, 172
+    Total, 172
+    Query, 138
+    Response, 118
+    With, 113
+    Amendment, 108
+    JVT, 108
+    Home, 104
+    Supplier, 103
+    Request, 99
+    Feature, 98
+    Internaliser, 91
+    ID, 87
+    Subscriber, 86
+    Externaliser, 79
+    Exception, 77
+    Attribute, 74
+    Adapter, 73
+    Packager, 69
+    Start, 69
+    And, 62
+    Map, 59
+    Locking, 58
+    Orders, 57
+    Note, 56
+    Contact, 55
+    Roled, 55
+    Client, 53
+
+
+-------------------------------------------------------------------
+
+We can use "apriori" algorithm to identify common subsets of tokens. For example:
+
+    Request, Externaliser
+    Response, Internaliser
+
+
+There are several cases where there is a sequence of length L and another
+of lenth L+1 that differs from the previous only for an ""extra"" token
+
+    ADSL, Service, Exception, Event
+    ADSL, Service, Exception, Event, Impl
+
+---------------------------------------------------------------------
+
+Based on the token, we can observe that there are different token's types
+
+    a verb              Abort, Add, ...
+    a generic object    Event, Request, Response, ...
+    a business object   Billing, Order, Fulfillment
+    a name              ADSL, AIB, ...
+    a "modifier"        Impl
+
+
+---------------------------------------------------------------------
+
+Question: 
+    can we use Topic Modelling?
+    can we assign a ""semantic"" to the tokens?  (conceptNet)
+    can we use Google BERT? Or some its variant  (RoBERTa, DistilBERT, ALBERT, ...)? Or similar tools (XLNet, ELMo)?
+    can we use GloVe?
+    
+Problem: the token semantic must be something obtained in a different way, not from the code, because
+    it was a programmer's decision to use that specific token.
