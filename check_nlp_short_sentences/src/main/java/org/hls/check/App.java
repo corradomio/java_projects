@@ -1,5 +1,8 @@
 package org.hls.check;
 
+import ca.pfv.spmf.algorithms.frequentpatterns.apriori.AlgoApriori;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
+import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import jext.util.Bag;
 import jext.util.Indexer;
 import jext.util.Pair;
@@ -7,10 +10,12 @@ import jext.util.Pair;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 
 public class App {
@@ -111,24 +116,30 @@ public class App {
         return bag;
     }
 
-    private static void apriori() {
-
+    private static Indexer<String> indicize(List<String[]> sentences) {
+        Indexer<String> idx = new Indexer<>();
+        for(String[] tokens : sentences)
+            for(String tok : tokens)
+                idx.add(tok);
+        return idx;
     }
 
-    private static void tocsv(List<String[]> sentences) {
+    private static void apriori() {
+        List<String[]> sentences = sentences();
+        Indexer<String> idx = indicize(sentences);
+        printap(sentences, idx);
+        checkapriori(idx);
+    }
 
-        try (PrintStream w = new PrintStream(new FileOutputStream("bt_type_apriori.csv"))) {
-            Indexer<String> idx = new Indexer<>();
-
-            for(String[] tokens : sentences)
-                for(String token : tokens)
-                    idx.add(token);
-
-            printh(w, idx.items());
-
-            for (String[] s : sentences)
-                prints(w, s, idx);
-
+    private static void printap(List<String[]> sentences, Indexer<String> idx) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("bt_type_apriori.csv"))) {
+            for(String[] tokens : sentences) {
+                for (String token : tokens) {
+                    out.print(idx.get(token));
+                    out.print(" ");
+                }
+                out.println();
+            }
         }
         catch(Throwable t) {
 
@@ -136,33 +147,70 @@ public class App {
 
     }
 
-    private static void printh(PrintStream out, List<String> header) {
-        // print header
-        boolean first = true;
-        for(String h : header) {
-            if (!first) out.print(",");
-            out.print(h);
-            first = false;
+    public static void checkapriori(Indexer<String> idx) {
+        AlgoApriori ap = new AlgoApriori();
+        try {
+            Itemsets itemsets = ap.runAlgorithm(25./2515, "bt_type_apriori.csv", null);
+            for(List<Itemset> litemset : itemsets.getLevels()) {
+                for(Itemset itemset : litemset) {
+                    String[] tokens = idx.items(itemset.getItems(), String.class);
+
+                    print(tokens, itemset.getAbsoluteSupport());
+                }
+            }
+        } catch (IOException e) {
+
         }
-        out.println();
     }
 
-    private static void prints(PrintStream out, String[] tokens, Indexer<String> idx) {
-        int n = idx.size();
-        int[] flags = new int[n];
-        for (String token : tokens) {
-            int tok = idx.index(token);
-            flags[tok] = 1;
-        }
+    // private static void tocsv(List<String[]> sentences) {
+    //
+    //     try (PrintStream w = new PrintStream(new FileOutputStream("bt_type_apriori.csv"))) {
+    //         Indexer<String> idx = new Indexer<>();
+    //
+    //         for(String[] tokens : sentences)
+    //             for(String token : tokens)
+    //                 idx.add(token);
+    //
+    //         printh(w, idx.items());
+    //
+    //         for (String[] s : sentences)
+    //             prints(w, s, idx);
+    //
+    //     }
+    //     catch(Throwable t) {
+    //
+    //     }
+    //
+    // }
 
-        boolean first = true;
-        for (int i=0; i<n; ++i) {
-            if (!first) out.print(",");
-            out.print(flags[i]);
-            first = false;
-        }
-        out.println();
-    }
+    // private static void printh(PrintStream out, List<String> header) {
+    //     // print header
+    //     boolean first = true;
+    //     for(String h : header) {
+    //         if (!first) out.print(",");
+    //         out.print(h);
+    //         first = false;
+    //     }
+    //     out.println();
+    // }
+
+    // private static void prints(PrintStream out, String[] tokens, Indexer<String> idx) {
+    //     int n = idx.size();
+    //     int[] flags = new int[n];
+    //     for (String token : tokens) {
+    //         int tok = idx.index(token);
+    //         flags[tok] = 1;
+    //     }
+    //
+    //     boolean first = true;
+    //     for (int i=0; i<n; ++i) {
+    //         if (!first) out.print(",");
+    //         out.print(flags[i]);
+    //         first = false;
+    //     }
+    //     out.println();
+    // }
 
     private static void countLengths() {
         List<String[]> sentences = sentences();
@@ -179,8 +227,8 @@ public class App {
         // forward();
         // backward();
         // statistics();
-        // apriori();
-        countLengths();
+        apriori();
+        // countLengths();
         // List<String[]> s = sentences();
         // tocsv(s);
     }
@@ -204,6 +252,15 @@ public class App {
             System.out.print(tokens[i]);
         }
         System.out.println();
+    }
+
+    private static void print(String[] tokens, int count) {
+        System.out.print(tokens[0]);
+        for(int i=1; i<tokens.length; ++i) {
+            System.out.print(", ");
+            System.out.print(tokens[i]);
+        }
+        System.out.printf("\t: %d\n", count);
     }
 
     private static void print(Pair<String, Integer>[] tokens) {
