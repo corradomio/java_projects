@@ -4,27 +4,33 @@ import ca.pfv.spmf.algorithms.frequentpatterns.apriori.AlgoApriori;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemset;
 import ca.pfv.spmf.patterns.itemset_array_integers_with_count.Itemsets;
 import jext.util.Bag;
+import jext.util.FileUtils;
 import jext.util.Indexer;
 import jext.util.Pair;
+import jext.util.PathUtils;
 
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
 
 public class App {
+
+    private static String FILENAME =
+        // "bt_type_names.csv"
+        "bt_feature_names.csv"
+        ;
+
+
 
     private static List<String[]> sentences() {
 
         List<String[]> sentences = new ArrayList<>();
 
-        try (LineNumberReader r = new LineNumberReader(new FileReader("bt_type_names.csv"))) {
+        try (LineNumberReader r = new LineNumberReader(new FileReader(FILENAME))) {
             for(String line = r.readLine(); line != null; line = r.readLine()) {
                 // line = line.trim();
                 String name = line.substring(1, line.length() - 1);
@@ -45,7 +51,7 @@ public class App {
 
         int maxlen = 0;
         String[] maxtoks = null;
-        try (LineNumberReader r = new LineNumberReader(new FileReader("bt_type_names.csv"))) {
+        try (LineNumberReader r = new LineNumberReader(new FileReader(FILENAME))) {
             for(String line = r.readLine(); line != null; line = r.readLine()) {
                 // line = line.trim();
                 String name = line.substring(1, line.length() - 1);
@@ -70,7 +76,7 @@ public class App {
     private static void forward() {
         int maxlen = 0;
         String[] maxtoks = null;
-        try (LineNumberReader r = new LineNumberReader(new FileReader("bt_type_names.csv"))) {
+        try (LineNumberReader r = new LineNumberReader(new FileReader(FILENAME))) {
             for(String line = r.readLine(); line != null; line = r.readLine()) {
                 // line = line.trim();
                 String name = line.substring(1, line.length() - 1);
@@ -94,7 +100,7 @@ public class App {
     private static Bag<String> statistics() {
         Bag<String> bag = new Bag<>();
 
-        try (LineNumberReader r = new LineNumberReader(new FileReader("bt_type_names.csv"))) {
+        try (LineNumberReader r = new LineNumberReader(new FileReader(FILENAME))) {
             for(String line = r.readLine(); line != null; line = r.readLine()) {
                 // line = line.trim();
                 String name = line.substring(1, line.length() - 1);
@@ -132,7 +138,8 @@ public class App {
     }
 
     private static void printap(List<String[]> sentences, Indexer<String> idx) {
-        try (PrintStream out = new PrintStream(new FileOutputStream("bt_type_apriori.csv"))) {
+        String FILENAME_NO_EXT = PathUtils.getNameWithoutExt(FILENAME);
+        try (PrintStream out = new PrintStream(new FileOutputStream(FILENAME_NO_EXT + "_apriori.csv"))) {
             for(String[] tokens : sentences) {
                 for (String token : tokens) {
                     out.print(idx.get(token));
@@ -148,9 +155,10 @@ public class App {
     }
 
     public static void checkapriori(Indexer<String> idx) {
+        String FILENAME_NO_EXT = PathUtils.getNameWithoutExt(FILENAME);
         AlgoApriori ap = new AlgoApriori();
         try {
-            Itemsets itemsets = ap.runAlgorithm(25./2515, "bt_type_apriori.csv", null);
+            Itemsets itemsets = ap.runAlgorithm(.01, FILENAME_NO_EXT + "_apriori.csv", null);
             for(List<Itemset> litemset : itemsets.getLevels()) {
                 for(Itemset itemset : litemset) {
                     String[] tokens = idx.items(itemset.getItems(), String.class);
@@ -225,9 +233,9 @@ public class App {
 
     public static void main(String[] args) {
         // forward();
-        // backward();
+        backward();
         // statistics();
-        apriori();
+        // apriori();
         // countLengths();
         // List<String[]> s = sentences();
         // tocsv(s);
