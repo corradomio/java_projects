@@ -1,0 +1,79 @@
+Total	: 40
+Order	: 407
+Event	: 71
+Factory	: 47
+Impl	: 58
+Work	: 17
+Request	: 66
+Externaliser	: 72
+Fulfillment	: 105
+Bean	: 221
+Sales	: 16
+One	: 14
+Subscriber	: 79
+Query	: 59
+Billing	: 50
+Orders	: 25
+With	: 51
+Supplier	: 47
+ID	: 39
+State	: 69
+Resume	: 16
+Process	: 178
+Amendment	: 20
+Goods	: 45
+Item	: 54
+Roled	: 11
+Contact	: 11
+Service	: 155
+Entity	: 41
+Key	: 31
+JVT	: 63
+Adapter	: 55
+And	: 27
+Start	: 19
+Get	: 13
+Response	: 84
+Internaliser	: 86
+Action	: 32
+Note	: 11
+CISP	: 12
+Update	: 13
+Exception	: 16
+Client	: 24
+Check	: 23
+Locking	: 15
+PMF	: 11
+Home	: 14
+Attribute	: 19
+Property	: 14
+Descriptor	: 12
+Packager	: 62
+Generate	: 16
+Change	: 14
+Controller	: 14
+Product	: 21
+Open	: 12
+Reach	: 12
+Interface	: 14
+Value	: 34
+Added	: 12
+Card	: 15
+Timer	: 13
+Control	: 11
+Feature	: 29
+Status	: 16
+Total, Order	: 18
+Order, Item	: 14
+Fulfillment, Item	: 12
+Query, Orders	: 13
+Query, With	: 16
+Query, Entity	: 10
+Query, Key	: 11
+Query, Client	: 11
+Orders, With	: 13
+State, Entity	: 11
+JVT, Adapter	: 17
+Open, Reach	: 12
+Value, Added	: 10
+Query, Orders, With	: 13
