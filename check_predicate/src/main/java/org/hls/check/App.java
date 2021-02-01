@@ -8,8 +8,8 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(
-        TokensPredicate.parse("A?C;C,(!B(")
-            .test(Arrays.asList("ABC"))
+        TokensPredicate.parse("A,B")
+            .test(Arrays.asList("A", "B", "C"))
         );
 
     }

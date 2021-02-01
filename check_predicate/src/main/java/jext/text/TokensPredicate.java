@@ -3,7 +3,10 @@ package jext.text;
 import com.sun.org.apache.xpath.internal.operations.And;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -77,6 +80,39 @@ public class TokensPredicate implements Predicate<List<String>> {
         private void spaces() {
             while (at < len && text.charAt(at) == ' ')
                 at++;
+        }
+    }
+
+    private static class TruePredicate implements Predicate<List<String>> {
+
+        @Override
+        public boolean test(List<String> strings) {
+            return true;
+        }
+    }
+
+    private static class ContainsPredicate implements Predicate<List<String>> {
+
+        private Set<String> tokens;
+
+        ContainsPredicate(String[] tokens) {
+            this.tokens = new HashSet<>(Arrays.asList(tokens));
+        }
+
+        @Override
+        public boolean test(List<String> tokens) {
+            int count = 0;
+            for(String token : tokens)
+                if (this.tokens.contains(token))
+                    ++count;
+            return count == this.tokens.size();
+        }
+
+        static boolean isContains(String expr) {
+            return !expr.contains("(") &&
+                !expr.contains(";") &&
+                !expr.contains("!") &&
+                !expr.contains("|");
         }
     }
 
@@ -220,9 +256,19 @@ public class TokensPredicate implements Predicate<List<String>> {
     private Lex lex;
 
     private Predicate<List<String>> parseExpr(String expr) {
+        if (ContainsPredicate.isContains(expr))
+            return containsExpr(expr);
+
         lex = new Lex(expr);
         this.pred = expr();
         return this.pred;
+    }
+
+    private Predicate<List<String>> containsExpr(String expr) {
+        if (expr.length() == 0)
+            return new TruePredicate();
+        else
+            return new ContainsPredicate(expr.split(","));
     }
 
     private Predicate<List<String>> expr() {
