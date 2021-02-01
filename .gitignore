@@ -10,8 +10,7 @@ build
 removed
 *.jfr
 *.zip
-*.dll
-*.pdf
+dll
 *.jar
 *.gz
 *.bak

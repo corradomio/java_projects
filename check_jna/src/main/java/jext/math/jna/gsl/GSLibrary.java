@@ -1,4 +1,4 @@
-package jext.jna.gsl;
+package jext.math.jna.gsl;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -36,5 +36,10 @@ public interface GSLibrary extends Library {
 
     gsl_complex gsl_complex_rect(double x, double y);
     gsl_complex gsl_complex_polar(double ro, double alpha);
+
+    double gsl_complex_arg(gsl_complex z);
+    double gsl_complex_abs(gsl_complex z);
+    double gsl_complex_abs2(gsl_complex z);
+    double gsl_complex_logabs(gsl_complex z);
 
 }

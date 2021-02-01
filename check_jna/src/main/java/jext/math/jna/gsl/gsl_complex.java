@@ -1,9 +1,9 @@
-package jext.math.jna;
+package jext.math.jna.gsl;
 
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 
 @FieldOrder({"real", "imag"})
-public class Complex extends Structure implements Structure.ByValue {
+public class gsl_complex extends Structure implements Structure.ByValue {
     public double real, imag;
 }
