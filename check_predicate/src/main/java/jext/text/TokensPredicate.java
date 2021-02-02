@@ -1,7 +1,5 @@
 package jext.text;
 
-import com.sun.org.apache.xpath.internal.operations.And;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -61,6 +59,13 @@ public class TokensPredicate implements Predicate<List<String>> {
                 return SYNTAX.indexOf(text.charAt(at)) != -1;
         }
 
+        private boolean isSyntaxOrSpace() {
+            if (at >= len)
+                return true;
+            char ch = text.charAt(at);
+            return ch == ' ' || SYNTAX.indexOf(text.charAt(at)) != -1;
+        }
+
         private String syntax() {
             last = at;
             if (at >= len)
@@ -72,7 +77,7 @@ public class TokensPredicate implements Predicate<List<String>> {
         private String token() {
             int bgn = at;
             last = at;
-            while(!isSyntax())
+            while(!isSyntaxOrSpace())
                 at++;
             return text.substring(bgn, at);
         }
