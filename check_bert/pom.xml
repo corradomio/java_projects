@@ -13,14 +13,28 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-    <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.robrua.nlp/easy-bert -->
-        <dependency>
-            <groupId>com.robrua.nlp</groupId>
-            <artifactId>easy-bert</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+    <repositories>
+        <repository>
+            <id>tensorflow-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
+    <dependencies>
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.robrua.nlp/easy-bert &ndash;&gt;-->
+        <!--<dependency>-->
+        <!--    <groupId>com.robrua.nlp</groupId>-->
+        <!--    <artifactId>easy-bert</artifactId>-->
+        <!--    <version>1.0.3</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.tensorflow</groupId>
+            <artifactId>tensorflow-core-platform-mkl</artifactId>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 
 </project>
