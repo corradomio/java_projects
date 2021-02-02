@@ -23,11 +23,11 @@ public class TokensPredicate implements Predicate<List<String>> {
 
     private static class Lex {
 
-        private static String SYNTAX = "!,;|()";
+        private static final String SYNTAX = "!,;|()";
 
-        private String text;
+        private final String text;
+        private final int len;
         private int at;
-        private int len;
         private int last;
 
         Lex(String text) {
@@ -98,7 +98,7 @@ public class TokensPredicate implements Predicate<List<String>> {
 
     private static class ContainsPredicate implements Predicate<List<String>> {
 
-        private Set<String> tokens;
+        private final Set<String> tokens;
 
         ContainsPredicate(String[] tokens) {
             this.tokens = new HashSet<>(Arrays.asList(tokens));
@@ -123,7 +123,7 @@ public class TokensPredicate implements Predicate<List<String>> {
 
     private static class AndPredicate implements Predicate<List<String>> {
 
-        private List<Predicate<List<String>>> preds = new ArrayList<>();
+        private final List<Predicate<List<String>>> preds = new ArrayList<>();
 
         void add(Predicate<List<String>> pred) {
             preds.add(pred);
@@ -149,7 +149,7 @@ public class TokensPredicate implements Predicate<List<String>> {
 
     private static class OrPredicate implements Predicate<List<String>> {
 
-        private List<Predicate<List<String>>> preds = new ArrayList<>();
+        private final List<Predicate<List<String>>> preds = new ArrayList<>();
 
         void add(Predicate<List<String>> pred) {
             preds.add(pred);
@@ -176,7 +176,7 @@ public class TokensPredicate implements Predicate<List<String>> {
 
     private static class NotPredicate implements Predicate<List<String>> {
 
-        private Predicate<List<String>> pred;
+        private final Predicate<List<String>> pred;
 
         NotPredicate(Predicate<List<String>> pred) {
             this.pred = pred;
@@ -195,7 +195,7 @@ public class TokensPredicate implements Predicate<List<String>> {
 
     private static class ExprPredicate implements Predicate<List<String>> {
 
-        private Predicate<List<String>> pred;
+        private final Predicate<List<String>> pred;
 
         ExprPredicate(Predicate<List<String>> pred) {
             this.pred = pred;
@@ -213,7 +213,7 @@ public class TokensPredicate implements Predicate<List<String>> {
     }
 
     private static class EqualsPredicate implements Predicate<List<String>> {
-        private String text;
+        private final String text;
 
         EqualsPredicate(String text) {
             this.text = text;
@@ -229,7 +229,7 @@ public class TokensPredicate implements Predicate<List<String>> {
     }
 
     private static class RegexPredicate implements Predicate<List<String>> {
-        private Pattern pattern;
+        private final Pattern pattern;
 
         RegexPredicate(String regex) {
             regex = regex
