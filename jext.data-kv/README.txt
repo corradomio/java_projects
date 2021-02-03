@@ -1,4 +1,5 @@
 Embedded key value databases
+----------------------------
 
     mapdb (java) (2020)
         https://mapdb.org/
