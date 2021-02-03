@@ -22,15 +22,11 @@ public interface Cache<K, V> extends AutoCloseable {
     V get(K key, Callable<V> callable)    /*throws RuntimeException*/;
     V get(K key, Function<K, V> function) /*throws RuntimeException*/;
 
-    // Note: not useful
-    // V getChecked(K key, Callable<V> callable) throws ExecutionException;
-
-    /** The value in the cache, or null */
-    // Note: not useful
-    // Optional<V> getIfPresent(K key);
-
     /** the value in cache or the defaultValue */
     V getOrDefault(K key, V defaultValue);
+
+    // V getChecked(K key, Callable<V> callable) throws ExecutionException;
+    // Optional<V> getIfPresent(K key);
 
     /** Insert into the cache */
     void put(K key, V value);

@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class EHCache<K, V> implements Cache<K, V>, ManagedCache {
+public class EHCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private String name;
     private CacheManager manager;

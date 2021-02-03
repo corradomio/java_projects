@@ -22,6 +22,19 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb (2020) -->
         <dependency>
             <groupId>org.mapdb</groupId>

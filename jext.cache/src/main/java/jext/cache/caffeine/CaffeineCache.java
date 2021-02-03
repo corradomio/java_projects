@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class CaffeineCache<K, V> implements Cache<K, V>, ManagedCache {
+public class CaffeineCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private String name;
     private com.github.benmanes.caffeine.cache.Cache<K, V> innerCache;

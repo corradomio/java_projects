@@ -1,2 +1,7 @@
-package jext.data.kv;public enum OpenMode {
+package jext.data.kv;
+
+public enum OpenMode {
+    DEFAULT,
+    READ,
+    WRITE
 }

@@ -43,24 +43,49 @@ public class CacheManager {
     //  property names: 'capacity', 'expireAfterWrite', 'expireAfterAccess', 'weakValues'
     //
 
-    private static CacheManager instance = new CacheManager();
+    private static final CacheManager instance = new CacheManager();
 
+    /**
+     * Configure the cache manager.
+     * The configuratio tries:
+     *
+     *      1) read the value 'canche.config' from the system properties,
+     *         ad check if the file exists, otherwise it tries for the files
+     *      2) 'cache4j.xml'
+     *      3) 'cache4j.properties'
+     *      4) 'config/cache4j.xml'
+     *      5) 'config/cache4j.properties'
+     *      6) uses a the default configuration:
+     *          cache with 1024 entries without expiring
+     */
     public static void configure() {
         instance.defaultConfiguration();
     }
 
+    /** Configure the cache manager using a '.xml' or a '.properties' file */
     public static void configure(File configurationFile) {
         instance.configureUsing(configurationFile);
     }
 
+    /** Configure the cache manager using the list of properties */
     public static void configure(Properties properties) throws Exception {
         instance.configureUsing(properties);
     }
 
+    /**
+     * Retrieve the cacche with the speicified name.
+     * If the cache doesn't exists, it is created based on the configuration and
+     * the cache name.
+     *
+     * The cache name must be a qualified name as a Java namespace
+     */
     public static <K, V> Cache<K, V> getCache(String name, Class<K> kclass, Class<V> vclass) {
         return instance.retrieveCache(name, kclass, vclass);
     }
 
+    /**
+     * Destroy all caches and shutdown the cache manager
+     */
     public static void shutdown() {
         instance.clear();
     }
@@ -114,6 +139,11 @@ public class CacheManager {
     private void defaultConfiguration() {
         String filename = System.getProperties().getProperty("cache.config", "cache4j.xml");
         File configurations = new File(filename);
+        if (configurations.exists()) {
+            configureUsing(configurations);
+            return;
+        }
+        configurations = new File("cache4j.properties");
         if (configurations.exists()) {
             configureUsing(configurations);
             return;

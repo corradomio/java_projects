@@ -4,6 +4,9 @@ Embedded key value databases
     mapdb (java) (2020)
         https://mapdb.org/
 
+    rocksdb (java+native) (2021)
+        https://levelup.gitconnected.com/using-rocksdb-with-spring-boot-and-java-99cb1c43a834
+
     chronicle map
         https://github.com/OpenHFT/Chronicle-Map
 

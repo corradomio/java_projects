@@ -10,13 +10,13 @@ import swaydb.KeyVal;
 import swaydb.java.Map;
 import swaydb.java.Stream;
 import swaydb.java.memory.MemoryMap;
-import static swaydb.java.serializers.Default.intSerializer;
-import static swaydb.java.serializers.Default.stringSerializer;
 
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentMap;
+
+import static swaydb.java.serializers.Default.intSerializer;
 
 public class Main {
     public static void main(String[] args) {

@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class GuavaCache<K, V> implements Cache<K, V>, ManagedCache {
+public class GuavaCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private final String name;
     private CacheManager manager;

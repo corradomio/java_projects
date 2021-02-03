@@ -17,7 +17,7 @@ public interface CacheProvider {
     String WEAK_VALUES = "weakValues";
 
     /**
-     * Create a cache with th specified name and properties
+     * Create a cache with the specified name and properties
      * Note: the list of properties depends on the cache provider
      *
      * @param name cache name

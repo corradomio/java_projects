@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache {
+public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private long lastAccess;
     private String name;

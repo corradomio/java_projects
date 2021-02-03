@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE cache4j:configuration SYSTEM "kvstoragee4j.dtd" -->
+<configuration>
+    <provider
+        value="jext.data.kv.halodb.HaloDBStorageProvider"
+        value4="jext.data.kv.leveldb.LevelDBStorageProvider"
+        value3="jext.data.kv.rocksdb.RocketsDBStorageProvider"
+        value2="jext.data.kv.paldb.PalDBStorageProvider"
+        value1="jext.data.kv.mapdb.MapDBStorageProvider"
+    />
+</configuration>

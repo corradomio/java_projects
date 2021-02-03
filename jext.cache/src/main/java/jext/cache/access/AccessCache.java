@@ -1,13 +1,15 @@
 package jext.cache.access;
 
 import jext.cache.Cache;
+import jext.cache.CacheManager;
+import jext.cache.ManagedCache;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class AccessCache<K, V> implements Cache<K, V> {
+public class AccessCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private long lastAccess;
     private Cache<K, V> innerCache;
@@ -78,5 +80,15 @@ public class AccessCache<K, V> implements Cache<K, V> {
     @Override
     public void close() {
         innerCache.close();
+    }
+
+    @Override
+    public void setManager(CacheManager manager) {
+        ((ManagedCache)innerCache).setManager(manager);
+    }
+
+    @Override
+    public Object getInnerCache() {
+        return ((ManagedCache)innerCache).getInnerCache();
     }
 }
