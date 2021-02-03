@@ -85,6 +85,13 @@
             <version>0.16.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.pcollections/pcollections -->
+        <dependency>
+            <groupId>org.pcollections</groupId>
+            <artifactId>pcollections</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/berkeleydb/je (2008) -->
         <!--dependency>
             <groupId>berkeleydb</groupId>

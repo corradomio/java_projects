@@ -24,8 +24,17 @@ Embedded key value databases
         in memory, piu' una cache che un db
         http://swaydb.io/?language=scala
 
+    jdbm2 (2014)
+        https://mvnrepository.com/artifact/org.apache.directory.jdbm/apacheds-jdbm2
+
+    pcollections (2020)
+    NO solo data strutture
+        https://github.com/hrldcpr/pcollections
+
     Agrona NO: solo data strutture
         http://real-logic.github.io/agrona/
+
+
 
 -----------------------------------------------------------------
 
