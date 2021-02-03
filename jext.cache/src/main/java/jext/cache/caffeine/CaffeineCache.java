@@ -36,13 +36,13 @@ public class CaffeineCache<K, V> implements Cache<K, V>, ManagedCache {
         return value != null ? value : defaultValue;
     }
 
-    @Override
-    public Optional<V> getIfPresent(K key) {
-        V value = innerCache.getIfPresent(key);
-        return Optional.ofNullable(value);
-    }
+    // @Override
+    // public Optional<V> getIfPresent(K key) {
+    //     V value = innerCache.getIfPresent(key);
+    //     return Optional.ofNullable(value);
+    // }
 
-    @Override
+    // @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         try {
             return innerCache.get(key, k -> {

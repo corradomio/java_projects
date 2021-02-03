@@ -21,11 +21,11 @@ public class AccessCache<K, V> implements Cache<K, V> {
         return innerCache.getName();
     }
 
-    @Override
-    public Optional<V> getIfPresent(K key) {
-        lastAccess = System.currentTimeMillis();
-        return innerCache.getIfPresent(key);
-    }
+    // @Override
+    // public Optional<V> getIfPresent(K key) {
+    //     lastAccess = System.currentTimeMillis();
+    //     return innerCache.getIfPresent(key);
+    // }
 
     @Override
     public V getOrDefault(K key, V defaultValue) {
@@ -39,11 +39,11 @@ public class AccessCache<K, V> implements Cache<K, V> {
         return innerCache.containsKey(key);
     }
 
-    @Override
-    public V getChecked(K key, Callable<V> callable) throws ExecutionException {
-        lastAccess = System.currentTimeMillis();
-        return innerCache.getChecked(key, callable);
-    }
+    // @Override
+    // public V getChecked(K key, Callable<V> callable) throws ExecutionException {
+    //     lastAccess = System.currentTimeMillis();
+    //     return innerCache.getChecked(key, callable);
+    // }
 
     @Override
     public V get(K key, Callable<V> callable) {

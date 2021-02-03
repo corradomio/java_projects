@@ -38,15 +38,15 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache {
         }
     }
 
-    @Override
-    public Optional<V> getIfPresent(K key) {
-        synchronized (innerCache) {
-            V value = innerCache.getOrDefault(key, null);
-            return Optional.ofNullable(value);
-        }
-    }
+    // @Override
+    // public Optional<V> getIfPresent(K key) {
+    //     synchronized (innerCache) {
+    //         V value = innerCache.getOrDefault(key, null);
+    //         return Optional.ofNullable(value);
+    //     }
+    // }
 
-    @Override
+    // @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         synchronized (innerCache) {
             if (!innerCache.containsKey(key)) {

@@ -18,14 +18,16 @@ public interface Cache<K, V> extends AutoCloseable {
      * @param key key
      * @param callable used to create the value. The value MUST BE NOT null
      * @return the value
-     * @throws ExecutionException
      */
-    V getChecked(K key, Callable<V> callable) throws ExecutionException;
-    V get(K key, Callable<V> callable);
-    V get(K key, Function<K, V> function);
+    V get(K key, Callable<V> callable)    /*throws RuntimeException*/;
+    V get(K key, Function<K, V> function) /*throws RuntimeException*/;
+
+    // Note: not useful
+    // V getChecked(K key, Callable<V> callable) throws ExecutionException;
 
     /** The value in the cache, or null */
-    Optional<V> getIfPresent(K key);
+    // Note: not useful
+    // Optional<V> getIfPresent(K key);
 
     /** the value in cache or the defaultValue */
     V getOrDefault(K key, V defaultValue);

@@ -40,13 +40,13 @@ public class EHCache<K, V> implements Cache<K, V>, ManagedCache {
         return value != null ? value : defaultValue;
     }
 
-    @Override
-    public Optional<V> getIfPresent(K key) {
-        V value = innerCache.get(key);
-        return Optional.ofNullable(value);
-    }
+    // @Override
+    // public Optional<V> getIfPresent(K key) {
+    //     V value = innerCache.get(key);
+    //     return Optional.ofNullable(value);
+    // }
 
-    @Override
+    // @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         V value = innerCache.get(key);
         if (value != null)
