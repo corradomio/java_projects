@@ -1,5 +1,6 @@
 package org.hls.check;
 
+import jext.compress.Archives;
 import jext.data.kv.KVStorage;
 import jext.data.kv.KVStorageManager;
 import jext.data.kv.OpenMode;
@@ -19,7 +20,7 @@ public class App {
         KVStorage<String, float[]> storage = KVStorageManager.open(OpenMode.WRITE, new File("glove.6B.50d.db"), String.class, float[].class);
 
         int count = 0;
-        try(BufferedReader rdr = new BufferedReader(new FileReader(new File("E:\\Datasets\\GloVe\\glove.6B\\glove.6B.50d.txt")))) {
+        try(BufferedReader rdr = Archives.openText(new File("E:\\Datasets\\GloVe\\glove.6B\\glove.6B.50d.zip"), null)) {
             for(String line = rdr.readLine(); line != null; line = rdr.readLine()) {
                 String[] parts = line.split(" ");
                 String word = parts[0];

@@ -24,17 +24,130 @@
     </repositories>
 
     <dependencies>
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.robrua.nlp/easy-bert &ndash;&gt;-->
-        <!--<dependency>-->
-        <!--    <groupId>com.robrua.nlp</groupId>-->
-        <!--    <artifactId>easy-bert</artifactId>-->
-        <!--    <version>1.0.3</version>-->
-        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-cuda-10.2 -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-cuda-10.2</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-vertx -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-vertx</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-nlp -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-nlp</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-core -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-core</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-nn -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-nn</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-modelimport -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-modelimport</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-zoo -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-zoo</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-tsne -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-tsne</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-datasets -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-datasets</artifactId>
+            <version>1.0.0-beta7</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-datavec-iterators -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-datavec-iterators</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-manifold -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-manifold</artifactId>
+            <version>1.0.0-beta7</version>
+            <type>pom</type>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-data -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-data</artifactId>
+            <version>1.0.0-beta7</version>
+            <type>pom</type>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-api -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-api</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native</artifactId>
+            <version>1.0.0-beta7</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native-platform -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native-platform</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-native-api -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native-api</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.nd4j/nd4j-cuda-10.2-platform -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-cuda-10.2-platform</artifactId>
+            <version>1.0.0-beta7</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.nd4j/samediff -->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>samediff</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+
+
+        <!-- https://mvnrepository.com/artifact/org.tensorflow/tensorflow -->
         <dependency>
             <groupId>org.tensorflow</groupId>
-            <artifactId>tensorflow-core-platform-mkl</artifactId>
-            <version>0.2.0</version>
+            <artifactId>tensorflow</artifactId>
+            <version>1.15.0</version>
         </dependency>
+
     </dependencies>
 
 </project>
