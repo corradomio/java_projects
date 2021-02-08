@@ -18,7 +18,7 @@
         <module>../jext.commons</module>
         <!--<module>../jext.cache</module>-->
         <module>../jext.compress</module>
-        <module>../jext.data-kv</module>
+        <module>../jext.keyvalue</module>
     </modules>
 
     <repositories>
@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.data-kv</artifactId>
+            <artifactId>jext.keyvalue</artifactId>
             <version>1.0</version>
         </dependency>
 

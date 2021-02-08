@@ -106,11 +106,12 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/berkeleydb/je (2008) -->
-        <!--dependency>
+        <dependency>
             <groupId>berkeleydb</groupId>
             <artifactId>je</artifactId>
             <version>3.2.76</version>
-        </dependency-->
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.agrona/Agrona (2020) -->
         <!-- NO: solo data strutture -->

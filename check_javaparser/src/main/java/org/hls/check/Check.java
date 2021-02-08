@@ -7,12 +7,15 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import jext.io.util.FileFilters;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
+import jext.logging.Logger;
 import jext.util.FileUtils;
+import jext.util.concurrent.Parallel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,31 +26,38 @@ public class Check {
     private static CombinedTypeSolver cptss = new CombinedTypeSolver();
 
     public static void main(String[] args) throws Exception {
+        Parallel.setup();
+        Logger.configure();
 
         TypeSolver ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
         // System.out.println(ts.tryToSolveType("java.util.Collection"));
 
         JavaParserPool pool = JavaParserPool.getPool();
-        // pool.addSourceRoot(new File("data\\bookstore\\src\\main\\java"));
-        // pool.addSourceRoot(new File("src\\main\\java"));
+        pool.setCacheSizeLimit(1000);
 
-        FileUtils.listFiles(
-            //new File("data\\bookstore\\src\\main\\java"),
-            new File("src_only"),
-            pathname -> true)
-                .forEach(file -> {
-                    System.out.printf("== %s ==\n", file.getName());
-                    // ParseResult<CompilationUnit> result = pool.parse(file);
-                    ParseResult<CompilationUnit> result = parse(file);
-                    result.ifSuccessful(Check::analyze);
-                });
+        Parallel.forEach(FileUtils.listFiles(new File("D:\\Projects.github\\other_projects\\hibernate-orm"), FileFilters.IS_JAVA),
+            pool::parse);
+
+        // FileUtils.listFiles(
+        //     //new File("data\\bookstore\\src\\main\\java"),
+        //     new File("src_only"),
+        //     pathname -> true)
+        //         .forEach(file -> {
+        //             System.out.printf("== %s ==\n", file.getName());
+        //             // ParseResult<CompilationUnit> result = pool.parse(file);
+        //             ParseResult<CompilationUnit> result = parse(file);
+        //             result.ifSuccessful(Check::analyze);
+        //         });
+        Parallel.shutdown();
     }
 
-    private static ParseResult<CompilationUnit> parse(File file) {
+    private static void parse(File file) {
         try {
-            return new JavaParser().parse(file);
-        } catch (FileNotFoundException e) {
-            return new ParseResult<CompilationUnit>(null, Collections.emptyList(), null);
+            System.out.printf("== %s ==\n", file.getName());
+            //return new JavaParser().parse(file);
+            JavaParserPool.getPool().parse(file);
+        } catch (Exception e) {
+            Logger.getLogger("parse").error(e, e);
         }
     }
 

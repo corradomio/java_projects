@@ -13,6 +13,7 @@ Embedded key value databases
     berkleydb java edition  (2008)
         https://www.oracle.com/database/technologies/related/berkeleydb-downloads.html
         https://www.oracle.com/database/berkeley-db/java-edition.html
+        https://docs.oracle.com/cd/E17277_02/html/collections/tutorial/
 
     halodb (2019)
         https://github.com/yahoo/HaloDB

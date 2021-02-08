@@ -1,4 +1,4 @@
-package jext.data.kv.bdb;
+package jext.data.kv.berkleydb;
 
 import com.sleepycat.bind.serial.SerialBinding;
 import com.sleepycat.bind.serial.StoredClassCatalog;
@@ -63,6 +63,6 @@ public class BerkleyDBStorageProvider extends AbstractStorageProvider {
 
     @Override
     protected String getFileExtension() {
-        return ".bdb";
+        return ".berkleydb";
     }
 }

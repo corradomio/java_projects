@@ -1,4 +1,4 @@
-package jext.data.kv.bdb;
+package jext.data.kv.berkleydb;
 
 import com.sleepycat.bind.EntryBinding;
 import com.sleepycat.bind.serial.StoredClassCatalog;

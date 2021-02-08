@@ -154,35 +154,33 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
 
     public ParseResult<CompilationUnit> parse(File srcFile) {
-        synchronized (this/*getPool()*/) {
-            return parsePath(srcFile.toPath());
-        }
+        return parse(srcFile.toPath());
     }
 
-    private ParseResult<CompilationUnit> parsePath(Path srcFile) {
-        try {
-            return parsedFiles.get(srcFile.toAbsolutePath(), () -> {
-                ParseResult<CompilationUnit> result =
-                    new JavaParser(parserConfiguration)
-                        .parse(COMPILATION_UNIT, provider(srcFile));
-                result.ifSuccessful(cu -> {
-                    cu.setStorage(srcFile);
-                    cu.getPackageDeclaration().ifPresent(pdecl -> {
-                        addSourceRoot(srcFile, pdecl.getNameAsString());
-                    });
-                });
-                return result;
-            });
-        }
-        catch (Throwable e) {
-            return new ParseResult<>(
-                null,
-                new ArrayList<Problem>(){{
-                    add(new Problem(e.getMessage(), TokenRange.INVALID, e));
-                }},
-                new CommentsCollection());
-        }
-    }
+    // private ParseResult<CompilationUnit> parsePath(Path srcFile) {
+    //     try {
+    //         return parsedFiles.get(srcFile.toAbsolutePath(), () -> {
+    //             ParseResult<CompilationUnit> result =
+    //                 new JavaParser(parserConfiguration)
+    //                     .parse(COMPILATION_UNIT, provider(srcFile));
+    //             result.ifSuccessful(cu -> {
+    //                 cu.setStorage(srcFile);
+    //                 cu.getPackageDeclaration().ifPresent(pdecl -> {
+    //                     addSourceRoot(srcFile, pdecl.getNameAsString());
+    //                 });
+    //             });
+    //             return result;
+    //         });
+    //     }
+    //     catch (Throwable e) {
+    //         return new ParseResult<>(
+    //             null,
+    //             new ArrayList<Problem>(){{
+    //                 add(new Problem(e.getMessage(), TokenRange.INVALID, e));
+    //             }},
+    //             new CommentsCollection());
+    //     }
+    // }
 
     private ParseResult<CompilationUnit> parse(Path srcFile) {
         try {
@@ -191,13 +189,24 @@ public class JavaParserPool {
                     if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
                         return new ParseResult<>(
                             null,
-                            new ArrayList<Problem>(){{
+                            new ArrayList<Problem>() {{
                                 add(new Problem("FileNotFoundException", TokenRange.INVALID,
                                     new FileNotFoundException(srcFile.toString())));
                             }},
                             new CommentsCollection());
                     }
-                    return new JavaParser(parserConfiguration).parse(COMPILATION_UNIT, provider(srcFile));
+                    // return new JavaParser(parserConfiguration).parse(COMPILATION_UNIT, provider(srcFile));
+                    ParseResult<CompilationUnit> result =
+                        new JavaParser(parserConfiguration)
+                            .parse(COMPILATION_UNIT, provider(srcFile));
+                    result.ifSuccessful(cu -> {
+                        cu.setStorage(srcFile);
+                        cu.getPackageDeclaration().ifPresent(pdecl -> {
+                            addSourceRoot(srcFile, pdecl.getNameAsString());
+                        });
+                    });
+                    return result;
+
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException("Issue while parsing while type solving: " + srcFile.toAbsolutePath(), e);
                 }
@@ -213,15 +222,17 @@ public class JavaParserPool {
     }
 
     private void addSourceRoot(Path srcFile, String packageName) {
-        String subDir = packageName.replace('.', '/');
-        String srcHome = srcFile.getParent().toAbsolutePath().toString().replace('\\', '/');
+        synchronized (sourceRoots) {
+            String subDir = packageName.replace('.', '/');
+            String srcHome = srcFile.getParent().toAbsolutePath().toString().replace('\\', '/');
 
-        // check that the java file is the correct directory
-        if (!srcHome.endsWith(subDir))
-            return;
+            // check that the java file is the correct directory
+            if (!srcHome.endsWith(subDir))
+                return;
 
-        Path srcDir = Paths.get(srcHome.substring(0, srcHome.length() - subDir.length() - 1));
-        sourceRoots.add(srcDir);
+            Path srcDir = Paths.get(srcHome.substring(0, srcHome.length() - subDir.length() - 1));
+            sourceRoots.add(srcDir);
+        }
     }
 
     /**

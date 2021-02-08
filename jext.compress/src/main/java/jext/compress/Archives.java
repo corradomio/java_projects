@@ -1,8 +1,8 @@
 package jext.compress;
 
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-
+import jext.compress.nocomp.NoCompressInputStream;
 import jext.logging.Logger;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,81 +11,73 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 public class Archives {
 
     private static Logger logger = Logger.getLogger(Archives.class);
 
-    private static Map<String, Class<? extends ArchiveInputStream>> archivers = new HashMap<>();
+    private static Properties archivers = new Properties();
 
     static {
-        try (InputStream inp = Archives.class.getResourceAsStream("/jext/compress/archivers.properties")) {
-            Properties props = new Properties();
-            props.load(inp);
-
-            for(String atype: props.stringPropertyNames()) {
-                try {
-                    Class aclass = Class.forName(props.getProperty(atype));
-
-                    archivers.put(atype, aclass);
-                }
-                catch (Exception e) {
-                    logger.error(e, e);
-                }
-            }
+        try (InputStream inp = Archives.class.getResourceAsStream("/jext/compress/archives.properties")) {
+            archivers.load(inp);
         }
-        catch (Exception e) {
-            logger.error(e, e);
-        }
+        catch (Exception e) { }
     }
 
     public static InputStream open(File file) throws IOException {
         return open(file, true);
     }
 
-    public static InputStream open(File compressedFile, boolean useDefault)
+    public static ArchiveInputStream open(File compressedFile, boolean useDefault)
         throws IOException {
-        String atype = extensionOf(compressedFile).toLowerCase();
         try {
-            Class<?> aclass = archivers.getOrDefault(atype, null);
             InputStream istream = new FileInputStream(compressedFile);
-
-            if (aclass == null)
-                if (useDefault)
-                    return istream;
-                else
-                    throw new IOException(String.format("Unsupported archiver for file %s", compressedFile.getAbsolutePath()));
-
-            return (ArchiveInputStream) aclass.getConstructor(InputStream.class).newInstance(istream);
+            Class<? extends ArchiveInputStream> aclass = createArchiver(compressedFile);
+            return aclass.getConstructor(InputStream.class).newInstance(istream);
         }
-        catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new IOException(e);
+        catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException
+            | InstantiationException | ClassNotFoundException e) {
+            throw new IOException("Unable to open compressed file", e);
         }
     }
 
     public static BufferedReader openText(File compressedFile, String charset) throws IOException {
         if (charset == null)
             charset = "UTF-8";
-        InputStream istream = open(compressedFile, true);
+        ArchiveInputStream istream = open(compressedFile, true);
+        istream.getNextEntry();
         InputStreamReader rdr = new InputStreamReader(istream, charset);
         return new BufferedReader(rdr);
     }
 
+    private static Class<? extends ArchiveInputStream> createArchiver(File file) throws ClassNotFoundException {
+        String aclass = findArchiverClass(file);
+        if (aclass == null)
+            return NoCompressInputStream.class;
 
-    private static String extensionOf(File file) {
-        int pos;
+        return (Class) Class.forName(aclass);
+    }
+
+    private static String findArchiverClass(File file) {
+        String[] SPECIAL_HANDLING = new String[]{
+            ".tar.gz",
+            ".tar.xz"
+        };
+
         String name = file.getName();
 
-        // special handling for "name.tar.*"
-        if (name.contains(".tar."))
-            pos = name.lastIndexOf(".tar.");
-        else
-            pos = name.lastIndexOf('.');
-        return name.substring(pos+1);
+        // special handling for ".tar.gz"
+        for (String aext : SPECIAL_HANDLING)
+            if (name.endsWith(aext))
+                return archivers.getProperty(aext);
+
+        for(String aext : archivers.stringPropertyNames())
+            if (name.endsWith(aext))
+                return archivers.getProperty(aext);
+
+        return null;
     }
 
 }

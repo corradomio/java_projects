@@ -1,8 +1,5 @@
-package jext.data.kv.bdb;
+package jext.data.kv.berkleydb;
 
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
 import jext.data.kv.util.AbstractStorage;
 
 import java.io.File;

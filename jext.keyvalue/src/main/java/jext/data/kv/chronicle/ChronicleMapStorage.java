@@ -1,4 +1,4 @@
-package jext.data.kv.cmap;
+package jext.data.kv.chronicle;
 
 import jext.data.kv.util.AbstractStorage;
 import net.openhft.chronicle.map.ChronicleMap;

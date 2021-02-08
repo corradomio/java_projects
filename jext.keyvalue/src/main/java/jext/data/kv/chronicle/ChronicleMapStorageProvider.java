@@ -1,4 +1,4 @@
-package jext.data.kv.cmap;
+package jext.data.kv.chronicle;
 
 import jext.data.kv.KVStorage;
 import jext.data.kv.OpenMode;
