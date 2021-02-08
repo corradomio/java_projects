@@ -2,17 +2,19 @@
 <!-- DOCTYPE cache4j:configuration SYSTEM "kvstoragee4j.dtd" -->
 <configuration>
     <!--
-        halodb:  lento
-        mapdb:   lento
+        halodb:    lento
+        mapdb:     lento
         berkleydb: lento
+        lmdbjava:  lento
 
-        leveldb: veloce
-        rocksdb: veloce
-        paldb:   veloce
-        cmap:    veloce
+        leveldb:   veloce
+        rocksdb:   veloce
+        paldb:     veloce
+        cmap:      veloce
       -->
     <provider
-        value="jext.data.kv.berkleydb.BerkleyDBStorageProvider"
+        value8="jext.data.kv.lmdbjava.LmdbjavaStorageProvider"
+        value7="jext.data.kv.berkleydb.BerkleyDBStorageProvider"
         value6="jext.data.kv.chronicle.ChronicleMapStorageProvider"
         value5="jext.data.kv.halodb.HaloDBStorageProvider"
         value4="jext.data.kv.leveldb.LevelDBStorageProvider"

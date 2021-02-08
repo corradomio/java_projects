@@ -18,7 +18,8 @@ public class BerkleyDBStorageProvider extends AbstractStorageProvider {
     private static final String CLASS_CATALOG = "java_class_catalog";
 
     @Override
-    public <K, V> KVStorage<K, V> open(OpenMode mode, File storageFile, Class<K> kclass, Class<V> vclass, Properties properties) throws IOException {
+    public <K, V> KVStorage<K, V> open(OpenMode mode, File storageFile, Class<K> kclass, Class<V> vclass, Properties properties)
+        throws IOException {
         storageFile = toStorage(storageFile);
 
         if (!storageFile.exists() && !storageFile.mkdirs())

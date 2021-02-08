@@ -16,7 +16,6 @@ public class PalDBStorageProvider extends AbstractStorageProvider {
 
     @Override
     public <K, V> KVStorage<K, V> open(OpenMode mode, File storageFile, Class<K> kclass, Class<V> vclass, Properties properties) {
-
         storageFile = toStorage(storageFile);
 
         switch (mode) {

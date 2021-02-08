@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ChronicleMapStorageProvider extends AbstractStorageProvider {
+
     @Override
-    public <K, V> KVStorage<K, V> open(OpenMode mode, File storageFile, Class<K> kclass, Class<V> vclass, Properties properties) throws IOException {
+    public <K, V> KVStorage<K, V> open(OpenMode mode, File storageFile, Class<K> kclass, Class<V> vclass, Properties properties)
+        throws IOException {
         storageFile = toStorage(storageFile);
 
         ChronicleMap<K, V> cmap = ChronicleMapBuilder.of(kclass, vclass)
