@@ -1,3 +1,18 @@
+Speeds
+------
+
+    halodb:    lento
+    mapdb:     lento
+    berkleydb: lento
+    lmdbjava:  lento
+
+    leveldb:   veloce
+    rocksdb:   veloce
+    paldb:     veloce
+    chronicle: veloce
+
+
+
 Embedded key value databases
 ----------------------------
 
@@ -37,8 +52,6 @@ Embedded key value databases
 
     Agrona NO: solo data strutture
         http://real-logic.github.io/agrona/
-
-
 
 -----------------------------------------------------------------
 

@@ -29,7 +29,9 @@ public class Check {
         Parallel.setup();
         Logger.configure();
 
-        TypeSolver ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
+
+
+        // TypeSolver ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
         // System.out.println(ts.tryToSolveType("java.util.Collection"));
 
         JavaParserPool pool = JavaParserPool.getPool();

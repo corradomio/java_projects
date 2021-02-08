@@ -10,14 +10,14 @@
         leveldb:   veloce
         rocksdb:   veloce
         paldb:     veloce
-        cmap:      veloce
+        chronicle: veloce
       -->
     <provider
         value8="jext.data.kv.lmdbjava.LmdbjavaStorageProvider"
         value7="jext.data.kv.berkleydb.BerkleyDBStorageProvider"
         value6="jext.data.kv.chronicle.ChronicleMapStorageProvider"
         value5="jext.data.kv.halodb.HaloDBStorageProvider"
-        value4="jext.data.kv.leveldb.LevelDBStorageProvider"
+        value ="jext.data.kv.leveldb.LevelDBStorageProvider"
         value3="jext.data.kv.rocksdb.RocketsDBStorageProvider"
         value2="jext.data.kv.paldb.PalDBStorageProvider"
         value1="jext.data.kv.mapdb.MapDBStorageProvider"

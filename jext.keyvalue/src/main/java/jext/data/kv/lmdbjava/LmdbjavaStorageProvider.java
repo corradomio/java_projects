@@ -3,17 +3,14 @@ package jext.data.kv.lmdbjava;
 import jext.data.kv.KVStorage;
 import jext.data.kv.OpenMode;
 import jext.data.kv.util.AbstractStorageProvider;
+import org.lmdbjava.Dbi;
+import org.lmdbjava.Env;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Properties;
 
-import org.lmdbjava.Dbi;
-import org.lmdbjava.Env;
-import org.lmdbjava.Env.Builder;
-
-import static org.lmdbjava.ByteBufferProxy.PROXY_OPTIMAL;
 import static org.lmdbjava.DbiFlags.MDB_CREATE;
 import static org.lmdbjava.Env.create;
 
