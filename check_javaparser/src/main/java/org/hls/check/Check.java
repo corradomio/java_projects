@@ -1,5 +1,7 @@
 package org.hls.check;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Output;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
@@ -14,11 +16,16 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
+import jext.serialization.fst.FstSerializer;
+import jext.serialization.kryo.KryoSerializer;
+import jext.serialization.protostuff.ProtostuffSerializer;
 import jext.util.FileUtils;
+import jext.util.JSONUtils;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Collections;
 
 public class Check {
@@ -38,7 +45,7 @@ public class Check {
         pool.setCacheSizeLimit(1000);
 
         Parallel.forEach(FileUtils.listFiles(new File("D:\\Projects.github\\other_projects\\hibernate-orm"), FileFilters.IS_JAVA),
-            pool::parse);
+            Check::parse);
 
         // FileUtils.listFiles(
         //     //new File("data\\bookstore\\src\\main\\java"),
@@ -57,7 +64,18 @@ public class Check {
         try {
             System.out.printf("== %s ==\n", file.getName());
             //return new JavaParser().parse(file);
-            JavaParserPool.getPool().parse(file);
+            ParseResult<CompilationUnit> presult = JavaParserPool.getPool().parse(file);
+            if (presult.isSuccessful() && presult.getResult().isPresent()) {
+                // JSONUtils.save(new File(file.getParentFile(), file.getName() + ".json"), presult.getResult().get());
+
+                // File serialized = new File(file.getParentFile(), file.getName() + ".kryo");
+                // KryoSerializer.serialize(serialized, presult.getResult().get());
+                // File serialized = new File(file.getParentFile(), file.getName() + ".protostuff");
+                // ProtostuffSerializer.serialize(serialized, presult.getResult().get());
+                File serialized = new File(file.getParentFile(), file.getName() + ".fst");
+                FstSerializer.serialize(serialized, presult.getResult().get());
+            }
+
         } catch (Exception e) {
             Logger.getLogger("parse").error(e, e);
         }

@@ -63,6 +63,11 @@
             <artifactId>jext.keyvalue</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.serialization</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
         <dependency>

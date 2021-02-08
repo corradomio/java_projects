@@ -9,8 +9,44 @@
     <version>1.0</version>
 
     <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.esotericsoftware/kryo -->
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-core -->
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-runtime -->
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-api -->
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-api</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/de.ruedigermoeller/fst -->
+        <dependency>
+            <groupId>de.ruedigermoeller</groupId>
+            <artifactId>fst</artifactId>
+            <!--version>3.0.1</version--><!-- requires JDK14 -->
+            <version>2.56</version><!-- requires JDK8 -->
+        </dependency>
+
+    </dependencies>
 
 </project>
