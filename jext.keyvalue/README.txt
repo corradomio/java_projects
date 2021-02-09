@@ -1,15 +1,15 @@
 Speeds
 ------
 
-    halodb:    lento
-    mapdb:     lento
-    berkleydb: lento
-    lmdbjava:  lento
+    halodb:    slow
+    mapdb:     slow
+    berkleydb: slow
+    lmdbjava:  slow
 
-    leveldb:   veloce
-    rocksdb:   veloce
-    paldb:     veloce
-    chronicle: veloce
+    leveldb:   fast
+    rocksdb:   fast
+    paldb:     fast
+    chronicle: fast
 
 
 
