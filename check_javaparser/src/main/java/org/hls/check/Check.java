@@ -26,6 +26,7 @@ import jext.util.concurrent.Parallel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 
 public class Check {
@@ -35,8 +36,6 @@ public class Check {
     public static void main(String[] args) throws Exception {
         Parallel.setup();
         Logger.configure();
-
-
 
         // TypeSolver ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
         // System.out.println(ts.tryToSolveType("java.util.Collection"));
@@ -75,9 +74,9 @@ public class Check {
                 File serialized = new File(file.getParentFile(), file.getName() + ".fst");
                 FstSerializer.serialize(serialized, presult.getResult().get());
             }
-
-        } catch (Exception e) {
-            Logger.getLogger("parse").error(e, e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

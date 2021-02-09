@@ -9,7 +9,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,7 +37,22 @@ import java.util.stream.Stream;
 
 public class Parallel {
 
-    private static class Task<T> implements Callable<Boolean> {
+    static class TaskFunction<T, U> implements Callable<U> {
+        private T t;
+        private Function<T, U> body;
+
+        TaskFunction(T t, Function<T, U> body) {
+            this.t = t;
+            this.body = body;
+        }
+
+        @Override
+        public U call() {
+            return body.apply(t);
+        }
+    }
+
+    static class Task<T> implements Callable<Boolean> {
         private T t;
         private Consumer<T> body;
 
@@ -51,7 +68,7 @@ public class Parallel {
         }
     }
 
-    private static class IntTask implements Callable<Boolean> {
+    static class IntTask implements Callable<Boolean> {
         private int t;
         private IntConsumer body;
 
@@ -72,8 +89,6 @@ public class Parallel {
     private static Queue<ExecutorService> waiting;
 
     // ----------------------------------------------------------------------
-
-    // IntConsumer === Consumer<int>
 
     public static void forEach(int first, int last, IntConsumer body) {
         List<Callable<Boolean>> tasks = new ArrayList<>();
@@ -97,38 +112,61 @@ public class Parallel {
         invokeAll(tasks);
     }
 
+
+    public static <T, U> List<U> mapEach(Iterable<T> it, Function<T, U> body) {
+        List<Callable<U>> tasks = new ArrayList<>();
+        for(T t : it) tasks.add(new TaskFunction<>(t, body));
+        return invokeAll(tasks);
+    }
+
     // ----------------------------------------------------------------------
 
-
-
-    // ----------------------------------------------------------------------
-
-    public static void invokeAll(List<Callable<Boolean>> tasks) {
+    public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
         checkUsage(true);
 
-        List<Future<Boolean>> results = Collections.emptyList();
-        ExecutorService executor = newExecutorService();
+        ExecutorService executor = null;
+        List<Future<T>> futures = Collections.emptyList();
         try {
-            results = executor.invokeAll(tasks);
-            while (results.stream().anyMatch(f -> !f.isDone())) {
-                sleep(500);
-            }
+            executor = newExecutorService();
+
+            futures = executor.invokeAll(tasks);
         } catch (InterruptedException e) {
 
-        } finally {
+        }
+        while (futures.stream().anyMatch(f -> !f.isDone())) {
+            sleep(500);
+        }
+        {
             parkExecutorService(executor);
         }
 
+        // check for exceptions
+        ParallelException pe = new ParallelException();
+        List<T> results = new ArrayList<>();
+        for (Future<T> future : futures) {
+            try {
+                results.add(future.get());
+            }
+            catch (Throwable t) {
+                pe.add(t);
+            }
+        }
+
+        if (!pe.isEmpty())
+            throw pe;
+
+        return results;
     }
 
     private static synchronized ExecutorService newExecutorService() {
         ExecutorService executor;
-        if (waiting.isEmpty())
+        if (waiting.isEmpty()) {
             waiting.add(Executors.newFixedThreadPool(nthreads));
+        }
 
         executor = waiting.remove();
-        running.add(executor);
 
+        running.add(executor);
         return executor;
     }
 
@@ -142,27 +180,16 @@ public class Parallel {
         checkUsage(false);
     }
 
-    public static synchronized int shutdown() {
-        int usedThreads = 0;
-
-        if (running != null) {
+    public static synchronized void shutdown() {
+        if (running != null)
             running.forEach(ExecutorService::shutdownNow);
-            usedThreads += running.size();
-            running = null;
-        }
-        if (waiting != null) {
+        if (waiting != null)
             waiting.forEach(ExecutorService::shutdownNow);
-            usedThreads += waiting.size();
-            waiting = null;
-        }
-
-        return usedThreads*nthreads;
+        running = null;
+        waiting = null;
     }
 
     private static synchronized void checkUsage(boolean toUse) {
-        if (toUse && running == null)
-            throw new RuntimeException("Parallel not initialized. Call 'Parallel.setup()'");
-
         if (running != null)
             return;
 
