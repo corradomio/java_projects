@@ -30,6 +30,7 @@
         <module>..\jext.concurrent</module>
         <module>..\jext.collections</module>
         <module>..\jext.keyvalue</module>
+        <module>..\jext.serialization</module>
     </modules>
 
     <dependencies>
