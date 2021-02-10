@@ -22,6 +22,6 @@ public class IMCacheProvider implements CacheProvider {
         }
 
         com.cetsoft.imcache.cache.Cache<K, V> innerCache = cacheBulder.build(name);
-        return new IMCache<>(name, innerCache);
+        return new IMCache<>(name, innerCache, properties);
     }
 }

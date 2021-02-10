@@ -5,7 +5,7 @@ import jext.cache.CacheManager;
 import jext.cache.ManagedCache;
 import jext.cache.util.Unique;
 
-import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -17,16 +17,28 @@ public class EHCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     private EHCacheProvider provider;
     private org.ehcache.Cache<K, V> innerCache;
     private Unique<K> uniqueKeys = new Unique<>();
+    private Properties properties;
 
-    EHCache(String name, org.ehcache.Cache<K, V> innerCache, EHCacheProvider provider) {
+    EHCache(String name, org.ehcache.Cache<K, V> innerCache, EHCacheProvider provider, Properties properties) {
         this.name = name;
         this.innerCache = innerCache;
         this.provider = provider;
+        this.properties = properties;
+    }
+
+    @Override
+    public String getId() {
+        return Integer.toHexString(name.hashCode());
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return this.properties;
     }
 
     @Override

@@ -2,6 +2,7 @@ package jext.cache;
 
 import jext.cache.guava.GuavaCacheProvider;
 import jext.logging.Logger;
+import jext.util.StringUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 
@@ -100,28 +101,33 @@ public class CacheManager {
 
     private static class CacheConfig {
         String name;
+        String[] split;
         Properties properties;
 
         CacheConfig() {
-            name = "";
-            properties = new Properties();
-            properties.setProperty("capacity", "128");
+            this.name = "";
+            this.split = new String[0];
+            this.properties = new Properties();
+            this.properties.setProperty("capacity", "128");
         }
 
         CacheConfig(String name) {
             this.name = name;
+            this.split = name.split("\\.");
             this.properties = new Properties();
         }
 
         CacheConfig(String name, Properties properties) {
             this.name = name;
+            this.split = name.split("\\.");
             this.properties = properties;
         }
     }
 
     private static Logger logger = Logger.getLogger(CacheManager.class);
     private final List<CacheConfig> configurations = new ArrayList<>();
-    private final Map<String, Cache<?,?>> caches = new HashMap<>();
+    private final Map<String, Cache<?,?>> byName = new HashMap<>();
+    private final Map<String, Cache<?,?>> byId = new HashMap<>();
     private CacheProvider cacheProvider;
 
     // ----------------------------------------------------------------------
@@ -256,11 +262,12 @@ public class CacheManager {
     }
 
     private void clear() {
-        List<Cache<?, ?>> caches = new ArrayList<>(this.caches.values());
+        List<Cache<?, ?>> caches = new ArrayList<>(this.byName.values());
         for (Cache<?, ?> cache : caches)
             cache.close();
         configurations.clear();
-        // cacheProvider = null;
+        byName.clear();
+        byId.clear();
     }
 
     // ----------------------------------------------------------------------
@@ -271,44 +278,66 @@ public class CacheManager {
         if (cacheProvider == null)
             throw new CacheException("CacheManager not configured");
 
-        synchronized (caches) {
-            if (!caches.containsKey(name)) {
-                CacheConfig cconfig = getCacheConfig(name);
+        synchronized (byName) {
+            if (byName.containsKey(name))
+                return (Cache<K, V>) byName.get(name);
+            if (byId.containsKey(name))
+                return (Cache<K, V>) byName.get(name);
 
-                Cache<K, V> cache = cacheProvider.createCache(name, kclass, vclass, cconfig.properties);
-                ((ManagedCache)cache).setManager(this);
+            CacheConfig cconfig = getCacheConfig(name);
 
-                caches.put(name, cache);
-            }
-            return (Cache<K, V>) caches.get(name);
+            Cache<K, V> cache = cacheProvider.createCache(name, kclass, vclass, cconfig.properties);
+            ((ManagedCache)cache).setManager(this);
+
+            byName.put(cache.getName(), cache);
+            byId.put(cache.getId(), cache);
+
+            return (Cache<K, V>) byName.get(name);
         }
     }
 
     public <K,V> void removeCache(Cache<K, V> cache) {
-        synchronized (caches) {
-            caches.remove(cache.getName());
+        synchronized (byName) {
+            byName.remove(cache.getName());
+            byId.remove(cache.getId());
         }
     }
 
     private CacheConfig getCacheConfig(String name) {
-        CacheConfig cconfig = getDefaultConfig();
+        CacheConfig selectedConfig = getDefaultConfig();
+        String[] selectedSplit = selectedConfig.split;
+        String[] cacheSplit = name.split("\\.");
 
         for (CacheConfig cc : configurations) {
             // found a cache with the exact name
-            if (name.equals(cc.name))
-                return cc;
+            // if (name.equals(cc.name))
+            //     return cc;
 
             // select the MOST SPECIFIC configuration
-            String prefix = cc.name + ".";
-            if (name.startsWith(prefix) && cc.name.length() > cconfig.name.length())
-                cconfig = cc;
+            String[] ccSplit = cc.split;
+            // String prefix = cc.name + ".";
+            if (hasPrefix(ccSplit, cacheSplit) && ccSplit.length > selectedSplit.length) {
+                selectedConfig = cc;
+                selectedSplit = ccSplit;
+            }
         }
-        return cconfig;
+        return selectedConfig;
+    }
+
+    private static boolean hasPrefix(String[] ccSplit, String[] cacheSplit) {
+        if(ccSplit.length > cacheSplit.length)
+            return false;
+        for (int i=0; i<ccSplit.length; ++i)
+            if (ccSplit[i].equals("*"))
+                continue;
+            else if (!ccSplit[i].equals(cacheSplit[i]))
+                return false;
+        return true;
     }
 
     private CacheConfig getDefaultConfig() {
         for (CacheConfig cc : configurations)
-            if (cc.name.isEmpty())
+            if (cc.split.length == 0)
                 return cc;
         return new CacheConfig();
     }

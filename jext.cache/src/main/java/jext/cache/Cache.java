@@ -1,14 +1,15 @@
 package jext.cache;
 
-import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 public interface Cache<K, V> extends AutoCloseable {
 
-    /** cache name */
+    String getId();
     String getName();
+
+    Properties getProperties();
 
     boolean containsKey(K key);
 

@@ -4,7 +4,7 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.cache.ManagedCache;
 
-import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -13,16 +13,28 @@ public class CaffeineCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private String name;
     private com.github.benmanes.caffeine.cache.Cache<K, V> innerCache;
+    private Properties properties;
     private CacheManager manager;
 
-    CaffeineCache(String name, com.github.benmanes.caffeine.cache.Cache<K, V> innerCache) {
+    CaffeineCache(String name, com.github.benmanes.caffeine.cache.Cache<K, V> innerCache, Properties properties) {
         this.name = name;
         this.innerCache = innerCache;
+        this.properties = properties;
+    }
+
+    @Override
+    public String getId() {
+        return Integer.toHexString(name.hashCode());
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return this.properties;
     }
 
     @Override

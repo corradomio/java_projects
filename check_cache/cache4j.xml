@@ -60,4 +60,8 @@
     <cache name="weak">
         <!-- no configurations -->
     </cache>
+
+    <cache name="test.*.this">
+        <property name="capacity" value="123"/>
+    </cache>
 </configuration>

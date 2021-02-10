@@ -22,7 +22,7 @@ public class JCSCacheProvider implements CacheProvider {
         if (cacheAccess == null)
             cacheAccess = getInstance(UNNAMED);
 
-        return new JCSCache<>(name, cacheAccess);
+        return new JCSCache<>(name, cacheAccess, properties);
     }
 
     private static <K, V> CacheAccess<K, V> getInstance(String name) {

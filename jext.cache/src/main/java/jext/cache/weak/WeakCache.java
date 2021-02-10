@@ -4,7 +4,7 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.cache.ManagedCache;
 
-import java.util.Optional;
+import java.util.Properties;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -15,15 +15,27 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     private final String name;
     private CacheManager manager;
     private WeakHashMap<K, V> innerCache;
+    private Properties properties;
 
-    WeakCache(String name, WeakHashMap<K, V> innerCache) {
+    WeakCache(String name, WeakHashMap<K, V> innerCache, Properties properties) {
         this.name = name;
         this.innerCache = innerCache;
+        this.properties = properties;
+    }
+
+    @Override
+    public String getId() {
+        return Integer.toHexString(name.hashCode());
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return this.properties;
     }
 
     @Override

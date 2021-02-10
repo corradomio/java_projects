@@ -40,6 +40,6 @@ public class GuavaCacheProvider implements CacheProvider {
 
         com.google.common.cache.Cache<K, V> innerCache = builder.build();
 
-        return new GuavaCache<>(name, innerCache);
+        return new GuavaCache<>(name, innerCache, properties);
     }
 }

@@ -46,6 +46,6 @@ public class Cache2kCacheProvider implements CacheProvider {
 
         org.cache2k.Cache<K, V> innerCache = builder.build();
 
-        return new Cache2kCache<>(name, innerCache);
+        return new Cache2kCache<>(name, innerCache, properties);
     }
 }

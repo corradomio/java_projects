@@ -6,7 +6,7 @@ import jext.cache.ManagedCache;
 import jext.cache.util.Unique;
 import org.apache.commons.jcs.access.CacheAccess;
 
-import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -17,15 +17,27 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     private CacheManager manager;
     private CacheAccess<K, V> innerCache;
     private Unique<K> uniqueKeys = new Unique<>();
+    private Properties properties;
 
-    JCSCache(String name, CacheAccess<K, V> innerCache) {
+    JCSCache(String name, CacheAccess<K, V> innerCache, Properties properties) {
         this.name = name;
         this.innerCache = innerCache;
+        this.properties = properties;
+    }
+
+    @Override
+    public String getId() {
+        return Integer.toHexString(name.hashCode());
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return this.properties;
     }
 
     @Override

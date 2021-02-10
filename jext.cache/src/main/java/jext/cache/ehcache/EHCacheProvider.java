@@ -42,7 +42,7 @@ public class EHCacheProvider implements CacheProvider {
 
         org.ehcache.Cache<K, V> innerCache = cacheManager.createCache(name, cacheConfiguration);
 
-        return new EHCache<>(name, innerCache, this);
+        return new EHCache<>(name, innerCache, this, properties);
     }
 
     <K, V> void removeCache(EHCache<K, V> cache) {

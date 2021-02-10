@@ -34,6 +34,6 @@ public class CaffeineCacheProvider implements CacheProvider {
 
         com.github.benmanes.caffeine.cache.Cache<K, V> innerCache = cacheBuilder.build();
 
-        return new CaffeineCache<K, V>(name, innerCache);
+        return new CaffeineCache<K, V>(name, innerCache, properties);
     }
 }

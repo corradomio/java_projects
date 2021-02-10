@@ -5,6 +5,7 @@ import jext.cache.CacheManager;
 import jext.cache.ManagedCache;
 
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -19,8 +20,18 @@ public class AccessCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     }
 
     @Override
+    public String getId() {
+        return this.innerCache.getId();
+    }
+
+    @Override
     public String getName() {
-        return innerCache.getName();
+        return this.innerCache.getName();
+    }
+
+    @Override
+    public Properties getProperties() {
+        return this.innerCache.getProperties();
     }
 
     // @Override

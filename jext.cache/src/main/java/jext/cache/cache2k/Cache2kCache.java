@@ -5,7 +5,7 @@ import jext.cache.CacheManager;
 import jext.cache.ManagedCache;
 import jext.cache.util.Unique;
 
-import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -17,15 +17,27 @@ public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     private CacheManager manager;
     private org.cache2k.Cache<K, V> innerCache;
     private Unique<K> uniqueKeys = new Unique<>();
+    private Properties properties;
 
-    Cache2kCache(String name, org.cache2k.Cache<K, V> innerCache) {
+    Cache2kCache(String name, org.cache2k.Cache<K, V> innerCache, Properties properties) {
         this.name = name;
         this.innerCache = innerCache;
+        this.properties = properties;
+    }
+
+    @Override
+    public String getId() {
+        return Integer.toHexString(name.hashCode());
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return this.properties;
     }
 
     @Override
