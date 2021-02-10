@@ -1,7 +1,6 @@
 package jext.serialization.protostuff;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
+import io.protostuff.GraphIOUtil;
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
@@ -14,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ProtostuffSerializer {
 
@@ -28,7 +28,7 @@ public class ProtostuffSerializer {
         LinkedBuffer buffer = LinkedBuffer.allocate(1024);
         try(BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(serialized)))
         {
-            ProtostuffIOUtil.writeTo(out, object, schema, buffer);
+            GraphIOUtil.writeTo(out, object, schema, buffer);
         }
         finally
         {
@@ -38,9 +38,9 @@ public class ProtostuffSerializer {
 
     public static <T> T deserialize(File serialized, Class<T> clazz) throws IOException {
         Schema<T> schema = RuntimeSchema.getSchema(clazz, STRATEGY);
-        try(Input input = new Input(new FileInputStream(serialized))) {
+        try(InputStream input = new FileInputStream(serialized)) {
             T parsed = schema.newMessage();
-            ProtostuffIOUtil.mergeFrom(input, parsed, schema);
+            GraphIOUtil.mergeFrom(input, parsed, schema);
             return parsed;
         }
     }

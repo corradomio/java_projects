@@ -68,14 +68,19 @@ public class Check {
                 // JSONUtils.save(new File(file.getParentFile(), file.getName() + ".json"), presult.getResult().get());
 
                 // File serialized = new File(file.getParentFile(), file.getName() + ".kryo");
-                // KryoSerializer.serialize(serialized, presult.getResult().get());
-                // File serialized = new File(file.getParentFile(), file.getName() + ".protostuff");
-                // ProtostuffSerializer.serialize(serialized, presult.getResult().get());
-                File serialized = new File(file.getParentFile(), file.getName() + ".fst");
-                FstSerializer.serialize(serialized, presult.getResult().get());
+                // CompilationUnit cu = presult.getResult().get();
+                // KryoSerializer.serialize(serialized, cu);
+                // CompilationUnit desercu = KryoSerializer.deserialize(serialized, CompilationUnit.class);
+                File serialized = new File(file.getParentFile(), file.getName() + ".protostuff");
+                ProtostuffSerializer.serialize(serialized, presult.getResult().get());
+                CompilationUnit desercu = ProtostuffSerializer.deserialize(serialized, CompilationUnit.class);
+                // File serialized = new File(file.getParentFile(), file.getName() + ".fst");
+                // FstSerializer.serialize(serialized, presult.getResult().get());
+                // CompilationUnit desercu = KryoSerializer.deserialize(serialized, CompilationUnit.class);
+                // System.out.println(desercu);
             }
         }
-        catch (IOException e) {
+        catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
