@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE cache4j:configuration SYSTEM "cache4j.dtd" -->
+<configuration>
+    <provider
+            value1="jext.cache.cache2k.Cache2kCacheProvider"
+            value2="jext.cache.guava.GuavaCacheProvider"
+            value3="jext.cache.imcache.IMCacheProvider"
+            value4="jext.cache.jcs.JCSCacheProvider"
+            value5="jext.cache.weak.WeakCacheProvider"
+            value6="jext.cache.ehcache.EHCacheProvider"
+            value="jext.cache.caffeine.CaffeineCacheProvider"
+    />
+
+    <!--
+        qualified name
+        If the name is 'a.b.c', each cache with name 'a.b.c...' will be configured
+        with these parameters
+      -->
+    <cache name="">
+        <property name="capacity" value="1024"/>
+        <!--
+        expiry policies in milliseconds
+
+        <property name="expireAfterAccess" value="1000"/>
+        <property name="expireAfterWrite" value="1000"/>
+        -->
+    </cache>
+    <cache name="c">
+        <property name="capacity" value="2048"/>
+        <!--
+        expiry policies in milliseconds
+
+        <property name="expireAfterAccess" value="1000"/>
+        <property name="expireAfterWrite" value="1000"/>
+        -->
+    </cache>
+</configuration>

@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
 import jext.logging.Logger;
 
-public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
+public class LogGenericVisitorAdapter<R, A> extends GenericVisitorWithDefaults<R, A> {
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -17,31 +17,6 @@ public class LogVisitorAdapter<A> extends VisitorWithDefaults<A> {
 
     protected CompilationUnit cu;
     protected String fileName;
-
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
-
-    public LogVisitorAdapter() {
-
-    }
-
-    // ----------------------------------------------------------------------
-    // Operations
-    // ----------------------------------------------------------------------
-
-    public LogVisitorAdapter analyze(CompilationUnit cu) {
-        this.cu = cu;
-        this.fileName = "";
-
-        try {
-            visit(cu, null);
-        }
-        catch (Throwable e) {
-            logger.error(e);
-        }
-        return this;
-    }
 
     // ----------------------------------------------------------------------
     // Overrides

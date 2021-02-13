@@ -39,50 +39,16 @@ import com.github.javaparser.ast.type.UnknownType;
 import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
-import jext.logging.Logger;
+import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 
-
-public class BaseVisitorAdapter extends VoidVisitorAdapter<Void> {
-
-    // ----------------------------------------------------------------------
-    // Private Fields
-    // ----------------------------------------------------------------------
-
-    protected Logger logger = Logger.getLogger(getClass());
-
-    protected ContextTypeSolver ts;
-    protected CompilationUnit cu;
+public class BaseGenericVisitorAdapter<R, A> extends GenericVisitorAdapter<R, A> {
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public BaseVisitorAdapter() {
-
-    }
-
-    // ----------------------------------------------------------------------
-    // Operations
-    // ----------------------------------------------------------------------
-
-    // NOT USED
-    // public BaseVisitorAdapter addTypeSolver(TypeSolver ts) {
-    //     if (this.ts == null)
-    //         this.ts = new ContextTypeSolver();
-    //     this.ts.add(ts);
-    //     return this;
-    // }
-
-    protected BaseVisitorAdapter analyze(CompilationUnit cu) {
-        this.cu = cu;
-        if (this.ts != null)
-            this.ts.setCu(cu);
-
-            visit(cu, null);
-        return this;
+    public BaseGenericVisitorAdapter() {
+        super();
     }
 
     // ----------------------------------------------------------------------
@@ -90,482 +56,487 @@ public class BaseVisitorAdapter extends VoidVisitorAdapter<Void> {
     // ----------------------------------------------------------------------
 
     @Override
-    public void visit(AnnotationDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(AnnotationDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(AnnotationMemberDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(AnnotationMemberDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayAccessExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ArrayAccessExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayCreationExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ArrayCreationExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayInitializerExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ArrayInitializerExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(AssertStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(AssertStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(AssignExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(AssignExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(BinaryExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(BinaryExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(BlockComment n, Void arg) {
-        super.visit(n, arg);
+    public R visit(BlockStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(BlockStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(BooleanLiteralExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(BooleanLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(BreakStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(BreakStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(CastExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(CastExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(CatchClause n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(CatchClause n, Void arg) {
-        super.visit(n, arg);
+    public R visit(CharLiteralExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(CharLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ClassExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ClassExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ClassOrInterfaceDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ClassOrInterfaceType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ClassOrInterfaceType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(CompilationUnit n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(CompilationUnit n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ConditionalExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ConditionalExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ConstructorDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ConstructorDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ContinueStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ContinueStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(DoStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(DoStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(DoubleLiteralExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(DoubleLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(EmptyStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(EmptyStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(EnclosedExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(EnclosedExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(EnumConstantDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(EnumConstantDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(EnumDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(EnumDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ExplicitConstructorInvocationStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ExplicitConstructorInvocationStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ExpressionStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ExpressionStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(FieldAccessExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(FieldAccessExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(FieldDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(FieldDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ForEachStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ForEachStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ForStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ForStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(IfStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(IfStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(InitializerDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(InitializerDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(InstanceOfExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(InstanceOfExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(IntegerLiteralExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(IntegerLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(JavadocComment n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(JavadocComment n, Void arg) {
-        super.visit(n, arg);
+    public R visit(LabeledStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(LabeledStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(LongLiteralExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(LineComment n, Void arg) {
-        super.visit(n, arg);
+    public R visit(MarkerAnnotationExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(LongLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(MemberValuePair n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(MarkerAnnotationExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(MethodCallExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(MemberValuePair n, Void arg) {
-        super.visit(n, arg);
+    public R visit(MethodDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(MethodCallExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(NameExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(MethodDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(NormalAnnotationExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(NameExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(NullLiteralExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(NormalAnnotationExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ObjectCreationExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(NullLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(PackageDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ObjectCreationExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(Parameter n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(PackageDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(PrimitiveType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(Parameter n, Void arg) {
-        super.visit(n, arg);
+    public R visit(Name n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(PrimitiveType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(SimpleName n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(Name n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ArrayType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(SimpleName n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ArrayCreationLevel n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(IntersectionType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayCreationLevel n, Void arg) {
-        super.visit(n, arg);
+    public R visit(UnionType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(IntersectionType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ReturnStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnionType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(SingleMemberAnnotationExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ReturnStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(StringLiteralExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(SingleMemberAnnotationExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(SuperExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(StringLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(SwitchEntry n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(SuperExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(SwitchStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(SwitchEntry n, Void arg) {
-        super.visit(n, arg);
+    public R visit(SynchronizedStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(SwitchStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ThisExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(SynchronizedStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ThrowStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ThisExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(TryStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ThrowStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(LocalClassDeclarationStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(TryStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(TypeParameter n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(LocalClassDeclarationStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(UnaryExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(TypeParameter n, Void arg) {
-        super.visit(n, arg);
+    public R visit(UnknownType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnaryExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(VariableDeclarationExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnknownType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(VariableDeclarator n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(VariableDeclarationExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(VoidType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(VariableDeclarator n, Void arg) {
-        super.visit(n, arg);
+    public R visit(WhileStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(VoidType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(WildcardType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(WhileStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(LambdaExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(WildcardType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(MethodReferenceExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(LambdaExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(TypeExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(MethodReferenceExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ImportDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(TypeExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(BlockComment n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(NodeList n, Void arg) {
-        super.visit(n, arg);
+    public R visit(LineComment n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ImportDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(NodeList n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleDeclaration n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ModuleDeclaration n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleRequiresDirective n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ModuleRequiresDirective n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleExportsDirective n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ModuleExportsDirective n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleProvidesDirective n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ModuleProvidesDirective n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleUsesDirective n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ModuleUsesDirective n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleOpensDirective n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ModuleOpensDirective n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnparsableStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(UnparsableStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(ReceiverParameter n, Void arg) {
-        super.visit(n, arg);
+    public R visit(ReceiverParameter n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(VarType n, Void arg) {
-        super.visit(n, arg);
+    public R visit(VarType n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(Modifier n, Void arg) {
-        super.visit(n, arg);
+    public R visit(Modifier n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(SwitchExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(SwitchExpr n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(TextBlockLiteralExpr n, Void arg) {
-        super.visit(n, arg);
+    public R visit(YieldStmt n, A arg) {
+        return super.visit(n, arg);
     }
 
     @Override
-    public void visit(YieldStmt n, Void arg) {
-        super.visit(n, arg);
+    public R visit(TextBlockLiteralExpr n, A arg) {
+        return super.visit(n, arg);
+    }
+
+    @Override
+    public R visit(PatternExpr n, A arg) {
+        return super.visit(n, arg);
     }
 }
