@@ -1,12 +1,18 @@
 package jext.util;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class SetUtils {
 
     public static <T> boolean empty(Set<T> s) {
         return s.size() == 0;
+    }
+
+    public static <T> Set<T> asSet(T... args) {
+        return new HashSet<>(Arrays.asList(args));
     }
 
     public static <T> boolean isSameset(Set<T> s1, Set<T> s2) {
@@ -47,6 +53,8 @@ public class SetUtils {
         return false;
     }
 
+    // ----------------------------------------------------------------------
+
     public static <T> Set<T> union(Set<T> s1, Set<T> s2) {
         Set<T> r = new HashSet<T>();
         r.addAll(s1);
@@ -72,4 +80,33 @@ public class SetUtils {
         r.addAll(difference(s2, s1));
         return r;
     }
+
+    // ----------------------------------------------------------------------
+
+    public static <T> Set<T> unionOrdered(Set<T> s1, Set<T> s2) {
+        Set<T> r = new TreeSet<T>();
+        r.addAll(s1);
+        r.addAll(s2);
+        return r;
+    }
+
+    public static <T> Set<T> intersectionOrdered(Set<T> s1, Set<T> s2) {
+        Set<T> r = new TreeSet<T>(s1);
+        r.retainAll(s2);
+        return r;
+    }
+
+    public static <T> Set<T> differenceOrdered(Set<T> s1, Set<T> s2) {
+        Set<T> r = new TreeSet<T>(s1);
+        r.removeAll(s2);
+        return r;
+    }
+
+    public static <T> Set<T> simmdiffOrdered(Set<T> s1, Set<T> s2) {
+        Set<T> r = new TreeSet<T>();
+        r.addAll(difference(s1, s2));
+        r.addAll(difference(s2, s1));
+        return r;
+    }
+
 }

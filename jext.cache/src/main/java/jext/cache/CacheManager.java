@@ -83,6 +83,9 @@ public class CacheManager {
     public static <K, V> Cache<K, V> getCache(String name, Class<K> kclass, Class<V> vclass) {
         return instance.retrieveCache(name, kclass, vclass);
     }
+    public static <K, V> Cache<K, V> getCache(String name) {
+        return (Cache<K, V>) getCache(name, Object.class, Object.class);
+    }
 
     /**
      * Destroy all caches and shutdown the cache manager

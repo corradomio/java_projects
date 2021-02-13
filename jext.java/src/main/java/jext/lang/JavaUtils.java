@@ -1,4 +1,4 @@
-package jext.java;
+package jext.lang;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,10 +20,10 @@ public class JavaUtils {
     public static final String IMPORT_STATIC = "import static ";
     public static final String IMPORT = "import ";
     public static final String PUBLIC = "public ";
-    public static final String CLASS = " class ";
-    public static final String INTERFACE = " interface ";
-    public static final String ENUM = " enum ";
-    public static final String ANNOTATION = " @interface ";
+    public static final String CLASS = "class ";
+    public static final String INTERFACE = "interface ";
+    public static final String ENUM = "enum ";
+    public static final String ANNOTATION = "@interface ";
 
     /*
         B       byte

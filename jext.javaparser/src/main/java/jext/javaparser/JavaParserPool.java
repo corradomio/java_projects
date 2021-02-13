@@ -4,17 +4,23 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.Problem;
+import com.github.javaparser.TokenMgrException;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
+import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import jext.cache.CacheManager;
+import jext.cache.ManagedCache;
 import jext.logging.Logger;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,10 +32,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_EDGE;
-import static com.github.javaparser.Providers.provider;
+import static jext.javaparser.Providers.provider;
 
 /*
     This class is Copy & Paste plus some updates of the class:
@@ -43,24 +50,23 @@ public class JavaParserPool {
     // Pool
     // ----------------------------------------------------------------------
 
-    private static JavaParserPool pool = new JavaParserPool();
+    // private static JavaParserPool pool = new JavaParserPool();
 
-    public static JavaParserPool getPool() {
-        return pool;
-    }
+    // public static JavaParserPool getPool() {
+    //     return pool;
+    // }
 
-    public static JavaParserPool newPool(String name) {
-        return new JavaParserPool(name);
+    public static JavaParserPool newPool(String prefix, String name) {
+        return new JavaParserPool(prefix, name);
     }
 
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
 
-    private static final String GLOBAL = "global";
-
     private Logger logger;
 
+    private String prefix;
     private String name;
 
     // source directories of the parsed files
@@ -82,12 +88,12 @@ public class JavaParserPool {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public JavaParserPool() {
-        this(GLOBAL, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
-    }
+    // public JavaParserPool() {
+    //     this(GLOBAL, GLOBAL, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
+    // }
 
-    public JavaParserPool(String name) {
-        this(name, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
+    public JavaParserPool(String prefix, String name) {
+        this(prefix, name, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
     }
 
     /**
@@ -97,7 +103,8 @@ public class JavaParserPool {
      *        However, using a size limit is advised when solving symbols in large code sources. In such cases, internal
      *        caches might consume large amounts of heap space.
      */
-    public JavaParserPool(String name, ParserConfiguration parserConfiguration, long cacheSizeLimit) {
+    public JavaParserPool(String prefix, String name, ParserConfiguration parserConfiguration, long cacheSizeLimit) {
+        this.prefix = prefix;
         this.name = name;
         this.sourceRoots = new HashSet<>();
         this.parserConfiguration = parserConfiguration;
@@ -105,33 +112,42 @@ public class JavaParserPool {
 
         this.logger = Logger.getLogger(getClass(), name);
 
-        this.parsedFiles = BuildCache(cacheSizeLimit);
-        this.parsedDirectories = BuildCache(cacheSizeLimit);
-        this.foundTypes = BuildCache(cacheSizeLimit);
+        this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
+        this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
+        this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
     }
 
     // ----------------------------------------------------------------------
     // Cache
     // ----------------------------------------------------------------------
 
-    private <TKey, TValue> Cache<TKey, TValue> BuildCache(long cacheSizeLimit) {
-        CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder().softValues();
-        if (cacheSizeLimit != CACHE_SIZE_UNSET) {
-            cacheBuilder.maximumSize(cacheSizeLimit);
-        }
-        return cacheBuilder.build();
+    private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
+        // CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder().softValues();
+        // if (cacheSizeLimit != CACHE_SIZE_UNSET) {
+        //     cacheBuilder.maximumSize(cacheSizeLimit);
+        // }
+        // return cacheBuilder.build();
+
+        jext.cache.Cache<TKey, TValue> cache =
+            CacheManager.getCache(String.format("dependency.%s.%s.%s", this.prefix, this.name, name));
+
+        return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
     }
 
-    public JavaParserPool resetCache() {
-        parsedFiles = BuildCache(cacheSizeLimit);
-        parsedDirectories = BuildCache(cacheSizeLimit);
-        foundTypes = BuildCache(cacheSizeLimit);
-        return this;
-    }
+    // public JavaParserPool resetCache() {
+    //     parsedFiles = BuildCache(cacheSizeLimit);
+    //     parsedDirectories = BuildCache(cacheSizeLimit);
+    //     foundTypes = BuildCache(cacheSizeLimit);
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    public String getName() {
+        return this.name;
+    }
 
     public JavaParserPool setParserConfiguration(ParserConfiguration parserConfiguration) {
         Objects.requireNonNull(parserConfiguration, "parserConfiguration can be not null");
@@ -157,95 +173,121 @@ public class JavaParserPool {
         return parse(srcFile.toPath());
     }
 
-    // private ParseResult<CompilationUnit> parsePath(Path srcFile) {
-    //     try {
-    //         return parsedFiles.get(srcFile.toAbsolutePath(), () -> {
-    //             ParseResult<CompilationUnit> result =
-    //                 new JavaParser(parserConfiguration)
-    //                     .parse(COMPILATION_UNIT, provider(srcFile));
-    //             result.ifSuccessful(cu -> {
-    //                 cu.setStorage(srcFile);
-    //                 cu.getPackageDeclaration().ifPresent(pdecl -> {
-    //                     addSourceRoot(srcFile, pdecl.getNameAsString());
-    //                 });
-    //             });
-    //             return result;
-    //         });
-    //     }
-    //     catch (Throwable e) {
-    //         return new ParseResult<>(
-    //             null,
-    //             new ArrayList<Problem>(){{
-    //                 add(new Problem(e.getMessage(), TokenRange.INVALID, e));
-    //             }},
-    //             new CommentsCollection());
-    //     }
-    // }
+    // ----------------------------------------------------------------------
 
-    private ParseResult<CompilationUnit> parse(Path srcFile) {
+    // WARNING:
+    //  IT IS NOT POSSIBLE to compile source files in parallel ALSO creating
+    //  different instances of "JavaParser", one for each source file.
+    //
+    private /*synchronized*/ ParseResult<CompilationUnit> parse(Path srcFile) {
+        if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
+            return new ParseResult<>(
+                null,
+                new ArrayList<Problem>() {{
+                    add(new Problem("FileNotFoundException", TokenRange.INVALID,
+                        new FileNotFoundException(srcFile.toString())));
+                }},
+                new CommentsCollection());
+        }
+
+        ParseResult<CompilationUnit> presult;
+
         try {
-            return parsedFiles.get(srcFile.toAbsolutePath(), () -> {
+            presult = parsedFiles.get(srcFile, () -> {
+                logger.debugft("... parsing %s", srcFile);
                 try {
-                    if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
-                        return new ParseResult<>(
-                            null,
-                            new ArrayList<Problem>() {{
-                                add(new Problem("FileNotFoundException", TokenRange.INVALID,
-                                    new FileNotFoundException(srcFile.toString())));
-                            }},
-                            new CommentsCollection());
-                    }
-                    // return new JavaParser(parserConfiguration).parse(COMPILATION_UNIT, provider(srcFile));
-                    ParseResult<CompilationUnit> result =
-                        new JavaParser(parserConfiguration)
-                            .parse(COMPILATION_UNIT, provider(srcFile));
-                    result.ifSuccessful(cu -> {
-                        cu.setStorage(srcFile);
-                        cu.getPackageDeclaration().ifPresent(pdecl -> {
-                            addSourceRoot(srcFile, pdecl.getNameAsString());
-                        });
-                    });
-                    return result;
-
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException("Issue while parsing while type solving: " + srcFile.toAbsolutePath(), e);
+                    // ParseResult<CompilationUnit> result =
+                    //     new JavaParser(parserConfiguration)
+                    //         .parse(COMPILATION_UNIT, provider(srcFile))
+                    //     ;
+                    // result.ifSuccessful(cu -> {
+                    //     cu.setStorage(srcFile);
+                    //     cu.getPackageDeclaration().ifPresent(pdecl -> {
+                    //         addSourceRoot(srcFile, pdecl.getNameAsString());
+                    //     });
+                    // });
+                    // return result;
+                    return parseResult(srcFile);
+                } catch (IOException e) {
+                    throw new RuntimeException("Issue while parsing: " + srcFile, e);
                 }
             });
         } catch (ExecutionException e) {
+            logger.errorf("Unable to parse %s: %s", srcFile, e);
             return new ParseResult<>(
                 null,
-                new ArrayList<Problem>(){{
+                new ArrayList<Problem>() {{
                     add(new Problem("ExecutionException", TokenRange.INVALID, e));
                 }},
                 new CommentsCollection());
         }
+        finally {
+
+        }
+
+        return presult;
+    }
+
+    /**
+     * Sometime the parsin fails for a ""strange""
+     *
+     *      """Lexical Error ..."""
+     *
+     * This seems to a ""transient error"".
+     * To mitigate it, we retry to parse the file some other time
+     */
+    private ParseResult<CompilationUnit> parseResult(Path srcFile) throws IOException {
+        Thread.yield();
+
+        int count = 0;
+        TokenMgrException exception = null;
+        while (count < 3) {
+            try {
+                ParseResult<CompilationUnit> result =
+                    new JavaParser(parserConfiguration)
+                        .parse(COMPILATION_UNIT, provider(srcFile));
+                result.ifSuccessful(cu -> {
+                    cu.setStorage(srcFile);
+                    cu.getPackageDeclaration().ifPresent(pdecl -> {
+                        addSourceRoot(srcFile, pdecl.getNameAsString());
+                    });
+                });
+                return result;
+            }
+            catch (TokenMgrException e) {
+                exception = e;
+                logger.warnf("Lexical error caught: retry");
+                ++count;
+            }
+            catch (Throwable t) {
+                if (t.getMessage().contains("Lexical error")) {
+                    logger.warnf("Lexical error caught: retry (%s)", t.getClass().getCanonicalName());
+                    ++count;
+                }
+                else {
+                    throw t;
+                }
+            }
+        }
+        throw exception;
     }
 
     private void addSourceRoot(Path srcFile, String packageName) {
-        synchronized (sourceRoots) {
-            String subDir = packageName.replace('.', '/');
-            String srcHome = srcFile.getParent().toAbsolutePath().toString().replace('\\', '/');
+        String subDir = packageName.replace('.', '/');
+        String srcHome = srcFile.getParent().toAbsolutePath().toString().replace('\\', '/');
 
-            // check that the java file is the correct directory
-            if (!srcHome.endsWith(subDir))
-                return;
+        // check that the java file is the correct directory
+        if (!srcHome.endsWith(subDir))
+            return;
 
-            Path srcDir = Paths.get(srcHome.substring(0, srcHome.length() - subDir.length() - 1));
-            sourceRoots.add(srcDir);
-        }
+        Path srcDir = Paths.get(srcHome.substring(0, srcHome.length() - subDir.length()-1));
+        sourceRoots.add(srcDir);
     }
 
     /**
      * Note: that this parse only files directly contained in this directory.
      *       It does not traverse recursively all children directory.
      */
-    private List<CompilationUnit> parseDirectory(Path srcDirectory) {
-        return parseDirectory(srcDirectory, false);
-    }
-
-    private List<CompilationUnit> parseDirectoryRecursively(Path srcDirectory) {
-        return parseDirectory(srcDirectory, true);
-    }
 
     private List<CompilationUnit> parseDirectory(Path srcDirectory, boolean recursively) {
         try {
@@ -258,14 +300,15 @@ public class JavaParserPool {
                                 if (file.getFileName().toString().toLowerCase().endsWith(".java")) {
                                     parse(file).getResult().ifPresent(units::add);
                                 } else if (recursively && file.toFile().isDirectory()) {
-                                    units.addAll(parseDirectoryRecursively(file));
+                                    units.addAll(parseDirectory(file, true));
                                 }
                             });
                     }
                 }
                 return units;
             });
-        } catch (ExecutionException e) {
+        }
+        catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
 
@@ -285,7 +328,8 @@ public class JavaParserPool {
     //             }
     //             return result;
     //         });
-    //     } catch (ExecutionException e) {
+    //     }
+    //     catch (ExecutionException e) {
     //         throw new RuntimeException(e);
     //     }
     // }
@@ -341,10 +385,12 @@ public class JavaParserPool {
     // }
 
     public Optional<TypeDeclaration<?>> tryToSolveType(String name) {
-        synchronized (this/*getPool()*/) {
+        //synchronized (this)
+        {
             try {
                 return foundTypes.get(name, () -> tryToSolveTypeUncached(name));
-            } catch (ExecutionException e) {
+            }
+            catch (ExecutionException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -387,7 +433,7 @@ public class JavaParserPool {
                 // If this is not possible we parse all files
                 // We try just in the same package, for classes defined in a file not named as the class itself
                 {
-                    List<CompilationUnit> compilationUnits = parseDirectory(srcFile.getParent());
+                    List<CompilationUnit> compilationUnits = parseDirectory(srcFile.getParent(), false);
                     for (CompilationUnit compilationUnit : compilationUnits) {
                         Optional<com.github.javaparser.ast.body.TypeDeclaration<?>> astTypeDeclaration
                             = Navigator.findType(compilationUnit, typeName.toString());
@@ -400,6 +446,33 @@ public class JavaParserPool {
             }
 
         return Optional.empty();
+    }
+
+    // ----------------------------------------------------------------------
+    // Initialization/Cleanup
+    // ----------------------------------------------------------------------
+
+    private static AtomicInteger counter = new AtomicInteger();
+
+    public static void initialize() {
+        int inUse = counter.incrementAndGet();
+        //if (inUse > 1)
+            //Logger.getLogger(JavaParserPool.class).warnf("initialize: in use %d", inUse);
+    }
+
+    public static void cleanup() {
+        int inUse = counter.decrementAndGet();
+        if (inUse == 0) {
+            //Logger.getLogger(JavaParserPool.class).warnf("cleanup: no pools inuse", inUse);
+            JavaParserFacade.clearInstances();
+        }
+        else if (inUse < 0) {
+            counter.set(0);
+            Logger.getLogger(JavaParserPool.class).error("more cleanup that initialize");
+        }
+        else {
+            //Logger.getLogger(JavaParserPool.class).warnf("clean: in use %d", inUse);
+        }
     }
 
     // ----------------------------------------------------------------------

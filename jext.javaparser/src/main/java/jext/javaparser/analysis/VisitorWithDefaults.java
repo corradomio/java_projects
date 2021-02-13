@@ -83,7 +83,8 @@ public class VisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
 
         try {
             visit(cu, null);
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             logger.error(e);
         }
         return this;

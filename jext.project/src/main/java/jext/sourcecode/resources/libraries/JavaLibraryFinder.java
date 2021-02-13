@@ -1,4 +1,4 @@
-package jext.sourcecode.libraries;
+package jext.sourcecode.resources.libraries;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
@@ -6,6 +6,7 @@ import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.util.Parameters;
 
 import java.io.File;

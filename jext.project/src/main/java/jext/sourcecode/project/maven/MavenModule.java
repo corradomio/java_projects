@@ -1,6 +1,5 @@
 package jext.sourcecode.project.maven;
 
-import jext.sourcecode.resources.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;

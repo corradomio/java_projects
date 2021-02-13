@@ -32,10 +32,10 @@ public class ImplementedType extends NamedObject implements Type {
     // Constructors
     // ----------------------------------------------------------------------
 
-    public ImplementedType(Name name) {
-        super(name);
-        this.role = TypeRole.UNKNOWN;
-    }
+    // public ImplementedType(Name name) {
+    //     super(name);
+    //     this.role = TypeRole.UNKNOWN;
+    // }
 
     public ImplementedType(Name name, TypeRole role, Source source) {
         super(name);
@@ -136,10 +136,10 @@ public class ImplementedType extends NamedObject implements Type {
 
     // -- Score
 
-    @Override
-    public List<Double> getScore() {
-        return null;
-    }
+    // @Override
+    // public List<Double> getScore() {
+    //     return null;
+    // }
 
     // -- Other models
 
@@ -155,16 +155,16 @@ public class ImplementedType extends NamedObject implements Type {
 
     // -- Entry point
 
-    @Override
-    public boolean isEntryPoint() {
-        // none to do in the source code
-        return false;
-    }
+    // @Override
+    // public boolean isEntryPoint() {
+    //     // none to do in the source code
+    //     return false;
+    // }
 
-    @Override
-    public long[] getCountMethods() {
-        return null;
-    }
+    // @Override
+    // public long[] getCountMethods() {
+    //     return null;
+    // }
 
     // ----------------------------------------------------------------------
     // Implementation

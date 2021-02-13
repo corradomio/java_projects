@@ -1,6 +1,8 @@
 package jext.sourcecode.project;
 
+import jext.maven.MavenDownloader;
 import jext.name.Name;
+import jext.sourcecode.resources.libraries.JavaLibraryFinder;
 import jext.sourcecode.project.ant.AntProject;
 import jext.sourcecode.project.eclipse.EclipseProject;
 import jext.sourcecode.project.gradle.GradleProject;
@@ -103,6 +105,10 @@ public class ProjectFactory {
         //     runtimeLibrary = guessRuntimeLibrary(project);
         //     project.getProperties().setProperty(RUNTIME_LIBRARY, runtimeLibrary);
         // }
+
+        MavenDownloader downloader = new MavenDownloader();
+        LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(downloader);
+        project.setLibraryFinder(lfinder);
 
         return project;
     }

@@ -20,6 +20,8 @@ public class Logger {
     public static void configure() {
         if (!configured) {
             File log4j = new File("log4j.xml");
+            if (!log4j.exists())
+                log4j = new File("config/log4j.xml");
             if (log4j.exists())
                 configure(log4j);
             else

@@ -7,85 +7,103 @@ package jext.name;
     ''
  */
 
+import jext.util.PathUtils;
+
 public class PathName implements Name {
+
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private String path;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public PathName(String path) {
-        this.path = path;
-        this.normalize();
+        this.path = PathUtils.normalize(path);
     }
 
-    public PathName(String parent, String name) {
-        this.path = String.format("%s/%s", parent, name);
-        this.normalize();
+    public PathName(String ns, String name) {
+        this.path = PathUtils.concat(ns, name);
     }
 
     public PathName(Name parent, String name) {
-        this.path = String.format("%s/%s", parent, name);
-        this.normalize();
+        this.path = PathUtils.concat(parent.getFullName(), name);
     }
 
-    private void normalize(){
-        path = path.replace('\\', '/');
-        if (path.endsWith("/"))
-            path = path.substring(0, path.length()-1);
-        if (path.startsWith("/"))
-            path = path.substring(1);
-        while (path.contains("//"))
-            path= path.replace("//", "/");
-    }
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isRoot() {
-        return path.isEmpty();
+        return path.length() == 0;
     }
 
     @Override
     public String getName() {
-        int sep = path.lastIndexOf('/');
-        return sep > 0 ? path.substring(sep+1) : path;
+        return PathUtils.getName(path);
     }
 
     @Override
     public Name getParent() {
-        int sep = path.lastIndexOf('/');
-        return sep > 0 ? new PathName(path.substring(0, sep)) : null;
+        if (isRoot())
+            return null;
+        else
+            return new PathName(PathUtils.getParent(path));
     }
 
     @Override
     public String getParentName() {
-        int sep = path.lastIndexOf('/');
-        return sep > 0 ? path.substring(0, sep) : null;
+        if (isRoot())
+            return null;
+        else
+            return PathUtils.getParent(path);
     }
 
     @Override
     public String getFullName() {
-        return null;
+        return path;
     }
 
     @Override
     public String[] getParts() {
-        return new String[0];
+        return path.split("/");
     }
 
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    // @Override
+    // public Name compose(String name) {
+    //     return new PathName(path, name);
+    // }
+
+    // ----------------------------------------------------------------------
+    // Override
+    // ----------------------------------------------------------------------
+
     @Override
-    public int hashCode() {
-        return path.hashCode();
+    public int compareTo(Name that) {
+        return getFullName().compareTo(that.getFullName());
     }
 
     @Override
     public boolean equals(Object obj) {
         Name that = (Name) obj;
-        return path.equals(that.toString());
+        return getFullName().equals(that.getFullName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getFullName().hashCode();
     }
 
     @Override
     public String toString() {
         return path;
-    }
-
-    @Override
-    public int compareTo(Name o) {
-        return 0;
     }
 }

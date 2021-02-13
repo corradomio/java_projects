@@ -2,6 +2,7 @@ package org.hls.check;
 
 import jext.io.Console;
 import jext.util.concurrent.Parallel;
+import jext.util.concurrent.Sleep;
 
 import java.io.IOException;
 import java.util.Random;
@@ -18,14 +19,15 @@ public class Main {
 
             int last = rnd.nextInt(1000000);
             Parallel.forEach(0, last, (j) -> {
-                if ((System.currentTimeMillis()/1000)%10 == 0)
+                if (j % 10000 == 0) {
                     System.out.printf("%d, %d\n", i, j);
+                    Sleep.sleep(500);
+                }
             });
-
+            System.out.printf("[%d] done\n", i);
         });
 
-        int uthreads = Parallel.shutdown();
-        System.out.println(uthreads);
+        Parallel.shutdown();
 
         Console.readKey("Press any key");
     }

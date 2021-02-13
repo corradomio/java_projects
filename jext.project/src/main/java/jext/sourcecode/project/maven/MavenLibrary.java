@@ -1,4 +1,4 @@
-package jext.sourcecode.resources.libraries;
+package jext.sourcecode.project.maven;
 
 import jext.name.Name;
 import jext.sourcecode.resources.type.ReferencedType;
@@ -7,7 +7,6 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.maven.MavenName;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.maven.MavenCoords;

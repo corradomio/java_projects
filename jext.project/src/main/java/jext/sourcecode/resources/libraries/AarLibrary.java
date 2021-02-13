@@ -1,4 +1,4 @@
-package jext.sourcecode.resources.java;
+package jext.sourcecode.resources.libraries;
 
 import jext.name.Name;
 import jext.sourcecode.project.Module;
@@ -12,7 +12,15 @@ import java.util.Set;
 
 public class AarLibrary extends JarLibrary {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private File aarFile;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public AarLibrary(File aarFile, Module module) {
         super(toJarFile(aarFile), module);

@@ -2,20 +2,15 @@ package jext.sourcecode.project;
 
 import jext.sourcecode.project.util.SourceInfo;
 
+import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 public interface Source extends Resource {
 
     SourceInfo getSourceInfo();
 
-    // File   getFile();
-    // String getPath();
-
-    // String getModuleId();
-
-    // Module getModule();
-
-    // String getDigest();
+    Optional<File> getSourceRoot();
 
     String getLanguage();
 

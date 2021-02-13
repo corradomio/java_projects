@@ -99,6 +99,16 @@ public class FileUtils {
         return relativePath;
     }
 
+    public static String relativePathNoExt(File parentDir, File file) {
+        String rpath = relativePath(parentDir, file);
+        int pos = rpath.lastIndexOf('.');
+        int sep = rpath.lastIndexOf('/');
+        if (pos == -1 || pos < sep)
+            return rpath;
+        else
+            return rpath.substring(0, pos);
+    }
+
     public static String getAbsolutePath(File file) {
         return normalize(file.getAbsolutePath());
     }

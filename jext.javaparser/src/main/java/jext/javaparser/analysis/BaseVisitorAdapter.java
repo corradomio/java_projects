@@ -68,25 +68,20 @@ public class BaseVisitorAdapter extends VoidVisitorAdapter<Void> {
     // Operations
     // ----------------------------------------------------------------------
 
-    public BaseVisitorAdapter addTypeSolver(TypeSolver ts) {
-        if (this.ts == null)
-            this.ts = new ContextTypeSolver();
-        this.ts.add(ts);
-        return this;
-    }
+    // NOT USED
+    // public BaseVisitorAdapter addTypeSolver(TypeSolver ts) {
+    //     if (this.ts == null)
+    //         this.ts = new ContextTypeSolver();
+    //     this.ts.add(ts);
+    //     return this;
+    // }
 
-    public BaseVisitorAdapter analyze(CompilationUnit cu) {
+    protected BaseVisitorAdapter analyze(CompilationUnit cu) {
         this.cu = cu;
         if (this.ts != null)
             this.ts.setCu(cu);
 
-        // cu.getStorage().ifPresent(s -> this.fileName = s.getFileName());
-
-        try {
             visit(cu, null);
-        } catch (Throwable e) {
-            logger.error(e);
-        }
         return this;
     }
 

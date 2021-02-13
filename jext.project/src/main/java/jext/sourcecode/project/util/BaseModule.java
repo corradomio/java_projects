@@ -1,5 +1,6 @@
 package jext.sourcecode.project.util;
 
+import jext.name.PathName;
 import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
@@ -8,11 +9,11 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
-import ae.ebtic.spl.analysis.sourcecode.resources.ArchiveUtils;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.io.util.FileFilters;
 import jext.logging.Logger;
+import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.util.FileUtils;
 import jext.util.SetUtils;
 
@@ -20,9 +21,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
@@ -44,6 +48,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
     protected List<Library> libraries;
     protected List<Module> dependencies;
     protected List<Source> sources;
+    // protected SourceRoots sourceRoots;
 
     protected Logger logger;
 
@@ -210,6 +215,23 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
     // Module content
     // ----------------------------------------------------------------------
 
+    // @Override
+    // public List<SourceRoot> getSourceRoots() {
+    //     if (this.sourceRoots != null)
+    //         return this.sourceRoots;
+    //
+    //     this.sourceRoots = new SourceRoots(this);
+    //
+    //     getDirectories().forEach(dir -> {
+    //         getBaseProject().getSources(dir, this)
+    //             .forEach(source -> {
+    //                 sourceRoots.add(source);
+    //             });
+    //     });
+    //
+    //     return this.sourceRoots;
+    // }
+
     @Override
     public List<Source> getSources() {
         if (sources != null)
@@ -227,6 +249,8 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
 
     @Override
     public Source getSource(String name) {
+        // for (SourceRoot sourceRoot : getSourceRoots())
+        // for (Source source : sourceRoot.getSources()) {
         for (Source source : getSources()) {
             if (source.getId().equals(name))
                 return source;
@@ -238,6 +262,16 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
                 return source;
         }
         return null;
+    }
+
+    @Override
+    public Set<File> getSourceRoots() {
+        Set<File> sourceRoots = new HashSet<>();
+        for (Source source : getSources()) {
+            source.getSourceRoot().ifPresent(sourceRoot ->
+                sourceRoots.add(sourceRoot));
+        }
+        return sourceRoots;
     }
 
     // ----------------------------------------------------------------------
@@ -376,7 +410,13 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
         Set<RefType> definedTypes = cache.get(getId(), () -> {
             Set<RefType> types = new HashSet<>();
 
-            getSources().forEach(source -> types.addAll(source.getTypes()));
+            getSources().forEach(source ->
+                        types.addAll(source.getTypes()));
+
+            // getSourceRoots().forEach(sourceRoot -> {
+            //     sourceRoot.getSources().forEach(source ->
+            //         types.addAll(source.getTypes()));
+            // });
 
             return types;
         });
@@ -391,9 +431,13 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
         return cache.get(getId(), () -> {
                 Set<RefType> usedTypes = new HashSet<>();
 
-                getSources().forEach(source -> {
-                    usedTypes.addAll(source.getUsedTypes());
-                });
+                getSources().forEach(source ->
+                        usedTypes.addAll(source.getUsedTypes()));
+
+                // getSourceRoots().forEach(sourceRoot -> {
+                //     sourceRoot.getSources().forEach(source ->
+                //         usedTypes.addAll(source.getUsedTypes()));
+                // });
 
                 return usedTypes;
             });
@@ -422,6 +466,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
 
         @Override
         public int compare(Module o1, Module o2) {
+            // int cmp = o2.getSourceRoots().size() - o1.getSourceRoots().size();
             int cmp = o2.getSources().size() - o1.getSources().size();
             if (cmp == 0)
                 cmp = o1.getName().getFullName().compareTo(o2.getName().getFullName());
@@ -440,7 +485,9 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
         return String.format("%s[%s, %d]",
             getClass().getSimpleName(),
             this.getName().getFullName(),
-            this.getSources().size());
+            // this.getSourceRoots().size()
+            this.getSources().size()
+        );
     }
 
 }

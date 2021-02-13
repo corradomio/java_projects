@@ -1,4 +1,4 @@
-package jext.sourcecode.resources.java;
+package jext.sourcecode.resources.libraries;
 
 import jext.sourcecode.resources.BaseLibrary;
 import jext.name.Name;
@@ -6,7 +6,7 @@ import jext.sourcecode.resources.type.ReferencedType;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.util.PathName;
+import jext.name.PathName;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.nio.file.FilteredFileVisitor;

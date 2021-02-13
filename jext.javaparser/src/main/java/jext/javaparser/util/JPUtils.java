@@ -14,7 +14,7 @@ import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclarat
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.java.JavaUtils;
+import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
 import java.util.Optional;
@@ -31,9 +31,13 @@ public class JPUtils {
 
     // ----------------------------------------------------------------------
 
-    public static void setTypeSolver(CompilationUnit cu, TypeSolver ts){
+    public static void setSymbolSolver(CompilationUnit cu, TypeSolver ts) {
         JavaSymbolSolver symbolResolver = new JavaSymbolSolver(ts);
-        symbolResolver.inject(cu);
+        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+    }
+
+    public static void removeSymbolSolver(CompilationUnit cu) {
+        cu.removeData(Node.SYMBOL_RESOLVER_KEY);
     }
 
     // ----------------------------------------------------------------------

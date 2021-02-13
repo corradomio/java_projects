@@ -57,8 +57,8 @@ public interface Type extends RefType {
      *  score[0]: features-core
      *  score[1]: k-core
      */
-    @Nullable
-    List<Double> getScore();
+    // @Nullable
+    // List<Double> getScore();
 
     // ----------------------------------------------------------------------
     // Entrypoint
@@ -67,9 +67,9 @@ public interface Type extends RefType {
     /**
      * Check is this type is an "entryPoint" after the runtime analysis
      */
-    boolean isEntryPoint();
+    // boolean isEntryPoint();
 
-    long[] getCountMethods();
+    // long[] getCountMethods();
 
     // /**
     //  * Set this type as an "entryPoint": during the "runtime analysis" there was

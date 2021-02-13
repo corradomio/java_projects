@@ -2,7 +2,7 @@ package jext.sourcecode.project.gradle;
 
 import jext.name.Name;
 import jext.sourcecode.project.gradle.util.BuildGradleFile;
-import jext.sourcecode.resources.maven.MavenLibrary;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.gradle.collectors.DependenciesCollector;
 import jext.sourcecode.project.gradle.collectors.ErrorsCollector;
 import jext.sourcecode.project.gradle.collectors.LoggerCollector;

@@ -8,10 +8,12 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
 import jext.java.TypeRole;
+import jext.sourcecode.resources.type.ReferencedType;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JavaSourceCode extends SourceCode {
@@ -21,6 +23,11 @@ public class JavaSourceCode extends SourceCode {
     public JavaSourceCode(File file, Module module) {
         super(file, module);
         this.parser = new FastJavaParser(file);
+    }
+
+    @Override
+    public Optional<File> getSourceRoot() {
+        return parser.getSourceRoot();
     }
 
     @Override
@@ -40,7 +47,7 @@ public class JavaSourceCode extends SourceCode {
             return Collections.emptyList();
 
         return importedClasses.stream()
-            .map(ImplementedType::new)
+            .map(ReferencedType::new)
             .collect(Collectors.toList());
     }
 

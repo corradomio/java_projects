@@ -1,5 +1,6 @@
 package jext.java;
 
+import jext.lang.JavaUtils;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.ObjectName;
@@ -8,7 +9,6 @@ import jext.util.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 public class FastJavaParser {
@@ -70,6 +70,8 @@ public class FastJavaParser {
     // ----------------------------------------------------------------------
 
     public TypeRole parse() {
+        if (sourceFile.getName().equals("Test.java"))
+            sourceRoot = null;
         if (parsed)
             return this.role;
         else
@@ -87,6 +89,8 @@ public class FastJavaParser {
                 if (line.startsWith("//"))
                     continue;
                     // package ...
+                else if (line.isEmpty())
+                    continue;
                 else if (line.startsWith(JavaUtils.PACKAGE)) {
                     namespace = parseNamespace(line);
                 }

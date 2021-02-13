@@ -1,11 +1,11 @@
 package jext.sourcecode.project.eclipse;
 
-import ae.ebtic.spl.analysis.sourcecode.resources.ArchiveUtils;
-import jext.sourcecode.resources.maven.MavenLibrary;
 import jext.sourcecode.project.eclipse.util.ClasspathFile;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 

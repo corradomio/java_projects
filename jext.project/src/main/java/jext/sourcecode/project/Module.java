@@ -2,6 +2,7 @@ package jext.sourcecode.project;
 
 import jext.name.IdNamed;
 import jext.name.Name;
+import jext.sourcecode.project.util.SourceRoot;
 
 import java.io.File;
 import java.util.List;
@@ -33,8 +34,10 @@ public interface Module extends IdNamed {
 
     // -- sources
 
+
     /** Sources defined inside the module */
     List<Source> getSources();
+    Set<File> getSourceRoots();
 
     /** Retrieve a source by id/full name/name */
     Source getSource(String name);

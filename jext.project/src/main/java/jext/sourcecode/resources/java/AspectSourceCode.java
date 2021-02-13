@@ -8,11 +8,17 @@ import jext.sourcecode.project.Type;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class AspectSourceCode extends SourceCode {
 
     public AspectSourceCode(File file, Module module) {
         super(file, module);
+    }
+
+    @Override
+    public Optional<File> getSourceRoot() {
+        return Optional.empty();
     }
 
     @Override

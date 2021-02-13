@@ -1,6 +1,6 @@
 package jext.sourcecode.project.ant;
 
-import jext.sourcecode.resources.maven.MavenLibrary;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.ant.util.IvyFile;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.Library;

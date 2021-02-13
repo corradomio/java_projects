@@ -13,12 +13,45 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>Gradle Repository</id>
+            <url>https://repo.gradle.org/gradle/libs-releases-local/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.commons</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.maven</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.java</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.cache</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+
+        <!-- Gradle Tooling API -->
+
+        <!-- https://mvnrepository.com/artifact/org.gradle/gradle-tooling-api -->
+        <dependency>
+            <groupId>org.gradle</groupId>
+            <artifactId>gradle-tooling-api</artifactId>
+            <version>6.4.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>

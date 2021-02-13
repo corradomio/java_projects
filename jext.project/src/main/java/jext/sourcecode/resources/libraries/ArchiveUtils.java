@@ -1,8 +1,7 @@
-package jext.sourcecode.resources;
+package jext.sourcecode.resources.libraries;
 
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
-import jext.sourcecode.resources.libraries.AarLibrary;
 
 import java.io.File;
 

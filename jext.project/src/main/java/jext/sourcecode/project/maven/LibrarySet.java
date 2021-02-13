@@ -1,9 +1,8 @@
-package jext.sourcecode.project.util;
+package jext.sourcecode.project.maven;
 
-import jext.sourcecode.resources.libraries.MavenLibrary;
+import jext.maven.Version;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
-import jext.maven.Version;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;

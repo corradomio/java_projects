@@ -1,84 +1,120 @@
 package jext.name;
 
+import jext.lang.JavaUtils;
+
+
+/**
+ * Can handle two types of names:
+ *
+ *      - java name:  [namepsace].[name]
+ *      - file name:  [folder]/[name]
+ */
 public class ObjectName implements Name {
 
-    private String namespace;
+    // ----------------------------------------------------------------------
+    // Static methods
+    // ----------------------------------------------------------------------
 
-    public ObjectName(String namespace) {
-        this.namespace = namespace;
-        this.normalize();
+    public static ObjectName _empty = new ObjectName("");
+
+    public static ObjectName empty() {
+        return _empty;
     }
 
-    public ObjectName(String parent, String name) {
-        this.namespace = String.format("%s.%s", parent, name);
-        this.normalize();
+    // ----------------------------------------------------------------------
+    // Fields
+    // ----------------------------------------------------------------------
+
+    protected String name;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    public ObjectName(String name) {
+        this.name = name;
+    }
+
+    public ObjectName(String namespace, String name) {
+        this.name = JavaUtils.fullName(namespace, name);
     }
 
     public ObjectName(Name parent, String name) {
-        this.namespace = String.format("%s.%s", parent, name);
-        this.normalize();
+        this.name = JavaUtils.fullName(parent.getFullName(), name);
     }
 
-    private void normalize(){
-        if (namespace.endsWith("."))
-            namespace = namespace.substring(0, namespace.length()-1);
-        if (namespace.startsWith("."))
-            namespace = namespace.substring(1);
-        while (namespace.contains(".."))
-            namespace = namespace.replace("..", ".");
-    }
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isRoot() {
-        return namespace.isEmpty();
+        return name.length() == 0;
     }
 
     @Override
     public String getName() {
-        int sep = namespace.lastIndexOf('.');
-        return sep > 0 ? namespace.substring(sep+1) : namespace;
+        return JavaUtils.nameOf(name);
     }
 
     @Override
     public Name getParent() {
-        int sep = namespace.lastIndexOf('.');
-        return sep > 0 ? new PathName(namespace.substring(0, sep)) : null;
+        if (isRoot())
+            return null;
+        else
+            return new ObjectName(JavaUtils.namespaceOf(name));
     }
 
     @Override
     public String getParentName() {
-        int sep = namespace.lastIndexOf('.');
-        return sep > 0 ? namespace.substring(0, sep) : null;
+        if (isRoot())
+            return null;
+        else
+            return JavaUtils.namespaceOf(name);
     }
 
     @Override
     public String getFullName() {
-        return null;
+        return name;
     }
 
     @Override
     public String[] getParts() {
-        return new String[0];
+        return name.split("\\.");
     }
 
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    // @Override
+    // public Name compose(String name) {
+    //     return new ObjectName(this.name, name);
+    // }
+
+    // ----------------------------------------------------------------------
+    // Override
+    // ----------------------------------------------------------------------
+
     @Override
-    public int hashCode() {
-        return namespace.hashCode();
+    public int compareTo(Name that) {
+        return getFullName().compareTo(that.getFullName());
     }
 
     @Override
     public boolean equals(Object obj) {
         Name that = (Name) obj;
-        return namespace.equals(that.toString());
+        return getFullName().equals(that.getFullName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getFullName().hashCode();
     }
 
     @Override
     public String toString() {
-        return namespace;
+        return name;
     }
 
-    @Override
-    public int compareTo(Name o) {
-        return 0;
-    }
 }

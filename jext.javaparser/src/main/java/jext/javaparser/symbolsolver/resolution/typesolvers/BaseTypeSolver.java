@@ -15,30 +15,34 @@ public abstract class BaseTypeSolver implements TypeSolver {
 
     protected Logger logger;
     protected TypeSolver parent;
-    protected String name = getClass().getSimpleName();
+    protected String name;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    private BaseTypeSolver() {
-        this.logger = Logger.getLogger(getClass(), name);
-    }
+    // private BaseTypeSolver() {
+    //     this.logger = Logger.getLogger(getClass(), name);
+    // }
 
     protected BaseTypeSolver(String name) {
         this.name = name;
         this.logger = Logger.getLogger(getClass(), name);
     }
 
-    protected BaseTypeSolver(File file) {
-        String name = FileUtils.getNameWithoutExt(file);
-        this.name = name;
-        this.logger = Logger.getLogger(getClass(), name);
-    }
+    // protected BaseTypeSolver(File file) {
+    //     String name = FileUtils.getNameWithoutExt(file);
+    //     this.name = name;
+    //     this.logger = Logger.getLogger(getClass(), name);
+    // }
 
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
+
+    public String getName() {
+        return name;
+    }
 
     @Override
     public TypeSolver getParent() {

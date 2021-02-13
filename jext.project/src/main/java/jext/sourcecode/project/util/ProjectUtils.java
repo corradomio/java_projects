@@ -21,8 +21,12 @@ public class ProjectUtils {
     public static List<Source> getSources(Project project) {
         List<Source> sources = new ArrayList<>();
 
+        // for (Module module : project.getModules())
+        //     for (SourceRoot sourceRoot : module.getSourceRoots())
+        //         sources.addAll(sourceRoot.getSources());
+
         for (Module module : project.getModules())
-            sources.addAll(module.getSources());
+                sources.addAll(module.getSources());
 
         return sources;
     }
@@ -106,7 +110,6 @@ public class ProjectUtils {
      * Collect all module's defined types
      *
      * @param project
-     * @param includeLibraries if to include the types defined in external libraries
      * @return
      */
     public static Set<RefType> getDefinedTypes(Project project) {

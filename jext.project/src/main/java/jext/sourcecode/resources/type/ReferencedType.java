@@ -7,8 +7,8 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
 import jext.java.TypeRole;
-import jext.sourcecode.project.util.ObjectName;
-import jext.java.JavaUtils;
+import jext.name.ObjectName;
+import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
 public class ReferencedType extends NamedObject implements RefType {
@@ -35,6 +35,11 @@ public class ReferencedType extends NamedObject implements RefType {
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
+
+    public ReferencedType(Name name) {
+        super(name);
+        this.role = TypeRole.UNKNOWN;
+    }
 
     public ReferencedType(Name name, Library library) {
         super(name);

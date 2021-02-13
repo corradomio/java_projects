@@ -10,7 +10,9 @@ public class ProjectDump {
     }
 
     private void dumpProject(Project p) {
-        Console.printf("Project '%s'::%s  [%s]\n", p.getName(), p.getProjectType(), p.getProjectHome());
+        Console.printf("Project '%s'\n", p.getName());
+        Console.printf("    type %s\n", p.getProjectType(), p.getProjectHome());
+        Console.printf("    home %s\n", p.getProjectHome());
 
         Console.printf("  modules (%d):\n", p.getModules().size());
         p.getModules().forEach(m -> {
@@ -20,13 +22,13 @@ public class ProjectDump {
         Console.printf("  module details:\n", p.getModules().size());
         p.getModules().forEach(m -> {
             Console.printf("    module '%s' (%s)\n", m.getName(), m.getId());
-            Console.printf("           '%s'\n", m.getModuleHome());
-            if (!m.getDependencies(false).isEmpty()) {
-                Console.printf("      dependencies (%d):\n", m.getDependencies(false).size());
-                m.getDependencies(false).forEach(d -> {
-                    Console.printf("        '%s'\n", d.getName());
-                });
-            }
+            Console.printf("        home '%s'\n", m.getModuleHome());
+            // if (!m.getSourceRoots().isEmpty()) {
+            //     Console.printf("      sources (%d):\n", m.getSourceRoots().size());
+            //     // m.getSources().getRoots().forEach(root -> {
+            //     //     Console.printf("        %s (%d)\n", root, m.getSources().getSources(root).size());
+            //     // });
+            // }
             if (!m.getSources().isEmpty()) {
                 Console.printf("      sources (%d):\n", m.getSources().size());
                 // m.getSources().getRoots().forEach(root -> {
@@ -44,6 +46,12 @@ public class ProjectDump {
                 // m.getResources().forEach(resource -> {
                 //     Console.printf("        %s\n", resource);
                 // });
+            }
+            if (!m.getDependencies(false).isEmpty()) {
+                Console.printf("      dependencies (%d):\n", m.getDependencies(false).size());
+                m.getDependencies(false).forEach(d -> {
+                    Console.printf("        '%s'\n", d.getName());
+                });
             }
         });
 

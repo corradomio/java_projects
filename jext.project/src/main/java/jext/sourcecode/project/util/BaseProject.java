@@ -1,7 +1,9 @@
 package jext.sourcecode.project.util;
 
-import ae.ebtic.spl.analysis.sourcecode.resources.ResourceFile;
-import ae.ebtic.spl.analysis.sourcecode.resources.SourceCode;
+import jext.name.PathName;
+import jext.sourcecode.project.maven.LibrarySet;
+import jext.sourcecode.resources.ResourceFile;
+import jext.sourcecode.resources.SourceCode;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
@@ -247,7 +249,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                     if (!sourceRoot.isPresent())
                         return FileVisitResult.CONTINUE;
 
-                    addJavaSourceRoot(sourceRoots, sourceRoot);
+                    addJavaSourceRoot(sourceRoots, sourceRoot.get());
 
                     skip[0] = true;
                     return FileVisitResult.SKIP_SIBLINGS;
@@ -272,15 +274,21 @@ public abstract class BaseProject extends NamedObject implements Project {
     private static final String MAVEN_SRC = "src";
     private static final String ANT_SOURCE = "source";
 
-    private void addJavaSourceRoot(Bag<File> sourceRoots, Optional<File> optSourceRoot) {
-        if (!optSourceRoot.isPresent())
-            return;
+    private void addJavaSourceRoot(Bag<File> sourceRoots, File sourceRoot) {
 
-        File sourceRoot = optSourceRoot.get();
+        // check src/main/java
         if (MAVEN_SRC_MAIN_JAVA.equals(sourceRoot.getName()))
             sourceRoot = sourceRoot.getParentFile();
+        // check src/main/[anything]
+        if (MAVEN_SRC_MAIN.equals(sourceRoot.getParentFile().getName()))
+            sourceRoot = sourceRoot.getParentFile();
+        // check src/test/[anything]
+        if (MAVEN_SRC_TEST.equals(sourceRoot.getParentFile().getName()))
+            sourceRoot = sourceRoot.getParentFile();
+        // check src/main
         if (MAVEN_SRC_MAIN.equals(sourceRoot.getName()))
             sourceRoot = sourceRoot.getParentFile();
+        // check src/test
         if (MAVEN_SRC_TEST.equals(sourceRoot.getName()))
             sourceRoot = sourceRoot.getParentFile();
 

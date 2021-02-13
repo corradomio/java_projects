@@ -270,7 +270,7 @@ public class MavenDownloader implements MavenConst {
         coords = getVersioned(coords);
 
         if (!coords.hasVersion()) {
-            logger.errorf("Missing version in %s", coords);
+            logger.warnf("Missing version in %s", coords);
             return Collections.emptyList();
         }
 
@@ -340,7 +340,7 @@ public class MavenDownloader implements MavenConst {
         coords = getVersioned(coords);
 
         if (!coords.hasVersion()) {
-            logger.errorf("Missing version in %s", coords);
+            logger.warnf("Missing version in %s", coords);
             return Collections.emptyList();
         }
 
