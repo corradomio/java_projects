@@ -2,6 +2,7 @@ package jext.cache;
 
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 public interface Cache<K, V> extends AutoCloseable {
@@ -26,7 +27,7 @@ public interface Cache<K, V> extends AutoCloseable {
     /** the value in cache or the defaultValue */
     V getOrDefault(K key, V defaultValue);
 
-    // V getChecked(K key, Callable<V> callable) throws ExecutionException;
+    V getChecked(K key, Callable<V> callable) throws ExecutionException;
     // Optional<V> getIfPresent(K key);
 
     /** Insert into the cache */

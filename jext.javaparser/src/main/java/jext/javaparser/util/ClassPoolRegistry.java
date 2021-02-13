@@ -89,7 +89,7 @@ public class ClassPoolRegistry {
     private void addDirectory(File libraryDirectory) {
         FileUtils.listFiles(libraryDirectory, FileFilters.IS_JAR)
             .forEach(this::addFile);
-        FileUtils.listFiles(libraryDirectory, FileFilters.IS_JAR)
+        FileUtils.listFiles(libraryDirectory, FileFilters.IS_JMOD)
             .forEach(this::addFile);
     }
 

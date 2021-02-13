@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 
 public class JDKTypeSolver extends JarFilesTypeSolver {
@@ -14,17 +15,16 @@ public class JDKTypeSolver extends JarFilesTypeSolver {
     public JDKTypeSolver(File jdk) {
         super(jdk.getName());
 
-        try {
-            Files.walkFileTree(jdk.toPath(), new SimpleFileVisitor<Path>(){
+        addLibraries(new File(jdk, "lib"), ".jar");
+        addLibraries(new File(jdk, "jre/lib"), ".jar");
+        addLibraries(new File(jdk, "jmod"), ".jmod");
+    }
 
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.endsWith(".jar") || file.endsWith(".jmod"))
-                        JDKTypeSolver.this.add(file.toFile());
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) { }
+    private void addLibraries(File directory, String ext) {
+        File[] libraryFiles = directory.listFiles((f, n) -> n.endsWith(ext));
+        if (libraryFiles != null)
+        for(File libraryFile : libraryFiles)
+            add(libraryFile);
     }
 
 }

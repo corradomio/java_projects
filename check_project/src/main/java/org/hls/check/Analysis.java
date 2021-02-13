@@ -13,6 +13,7 @@ import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.BaseVoidVisitorAdapter;
 import jext.javaparser.analysis.LogVisitorAdapter;
+import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
@@ -173,11 +174,11 @@ public class Analysis extends BaseVoidVisitorAdapter {
             .flatMap(lib -> lib.getFiles().stream())
             .collect(Collectors.toList());
 
-        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-        combinedTypeSolver.add(new JDKTypeSolver(new File("D:\\Java\\Jdk1.8.0.x64"))
+        CombinedTypeSolver ts = new CombinedTypeSolver();
+        ts.add(new JDKTypeSolver(new File("D:\\Java\\Jdk1.8.0.x64"))
             .addAll(libs));
         module.getSourceRoots().forEach(src -> {
-            combinedTypeSolver.add(new JavaParserTypeSolver(src));
+            ts.add(new JavaParserTypeSolver(src));
         });
 
         JavaParser parser = new JavaParser();
@@ -185,9 +186,12 @@ public class Analysis extends BaseVoidVisitorAdapter {
             new File("D:\\Projects.github\\java_projects\\check_test\\src\\main\\java\\org\\hls\\check\\Test.java"))
             .getResult().get();
 
-        JPUtils.setSymbolSolver(cu, combinedTypeSolver);
+        // JPUtils.setSymbolSolver(cu, combinedTypeSolver);
+        //
+        // cu.accept(new LogVisitorAdapter<Object, Object>(), null);
 
-        cu.accept(new LogVisitorAdapter<Object, Object>(), null);
+        SolveSymbolsVisitor ss = new SolveSymbolsVisitor();
+        ss.analyze(cu, ts);
 
     }
 }

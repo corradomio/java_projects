@@ -54,7 +54,7 @@ public class GuavaCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     //     return Optional.ofNullable(value);
     // }
 
-    // @Override
+    @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         return (V) innerCache.get(key, callable);
     }

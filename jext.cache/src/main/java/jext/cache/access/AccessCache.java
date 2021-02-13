@@ -52,11 +52,11 @@ public class AccessCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         return innerCache.containsKey(key);
     }
 
-    // @Override
-    // public V getChecked(K key, Callable<V> callable) throws ExecutionException {
-    //     lastAccess = System.currentTimeMillis();
-    //     return innerCache.getChecked(key, callable);
-    // }
+    @Override
+    public V getChecked(K key, Callable<V> callable) throws ExecutionException {
+        lastAccess = System.currentTimeMillis();
+        return innerCache.getChecked(key, callable);
+    }
 
     @Override
     public V get(K key, Callable<V> callable) {

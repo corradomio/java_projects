@@ -58,7 +58,7 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     //     }
     // }
 
-    // @Override
+    @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
         synchronized (innerCache) {
             if (!innerCache.containsKey(key)) {
