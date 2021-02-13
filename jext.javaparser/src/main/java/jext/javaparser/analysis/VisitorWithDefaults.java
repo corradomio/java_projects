@@ -42,13 +42,13 @@ import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 
-public class GenericVisitorWithDefaults<R, A> extends GenericVisitorAdapter<R, A> {
+public class VisitorWithDefaults<R, A> extends VisitorAdapter<R, A> {
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public GenericVisitorWithDefaults() {
+    public VisitorWithDefaults() {
         super();
     }
 

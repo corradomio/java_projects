@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
 import jext.logging.Logger;
 
-public class LogGenericVisitorAdapter<R, A> extends GenericVisitorWithDefaults<R, A> {
+public class LogVisitorAdapter<R, A> extends VisitorWithDefaults<R, A> {
 
     // ----------------------------------------------------------------------
     // Private Fields

@@ -3,21 +3,18 @@ package org.hls.check;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
-import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
-import jext.javaparser.analysis.BaseVisitorAdapter;
-import jext.javaparser.analysis.LogGenericVisitorAdapter;
+import jext.javaparser.analysis.BaseVoidVisitorAdapter;
+import jext.javaparser.analysis.LogVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
@@ -25,7 +22,6 @@ import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.PathName;
-import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
@@ -34,9 +30,11 @@ import jext.util.Parameters;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class Analysis extends BaseVisitorAdapter {
+public class Analysis extends BaseVoidVisitorAdapter {
 
     private Project project;
     private ClassPoolRegistry classPoolRegistry;
@@ -171,19 +169,25 @@ public class Analysis extends BaseVisitorAdapter {
 
     static void test2(Project project) throws Exception {
         Module module = project.getModule("");
+        List<File> libs = project.getLibraries().stream()
+            .flatMap(lib -> lib.getFiles().stream())
+            .collect(Collectors.toList());
+
         CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
-        combinedTypeSolver.add(new ReflectionTypeSolver());
+        combinedTypeSolver.add(new JDKTypeSolver(new File("D:\\Java\\Jdk1.8.0.x64"))
+            .addAll(libs));
         module.getSourceRoots().forEach(src -> {
             combinedTypeSolver.add(new JavaParserTypeSolver(src));
         });
 
         JavaParser parser = new JavaParser();
-        CompilationUnit cu = parser.parse(new File("D:\\Projects.github\\java_projects\\check_test\\src\\main\\java\\org\\hls\\check\\Test.java"))
+        CompilationUnit cu = parser.parse(
+            new File("D:\\Projects.github\\java_projects\\check_test\\src\\main\\java\\org\\hls\\check\\Test.java"))
             .getResult().get();
 
         JPUtils.setSymbolSolver(cu, combinedTypeSolver);
 
-        cu.accept(new LogGenericVisitorAdapter<Object, Object>(), JavaParserFacade.get(combinedTypeSolver));
+        cu.accept(new LogVisitorAdapter<Object, Object>(), null);
 
     }
 }

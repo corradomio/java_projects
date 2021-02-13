@@ -39,15 +39,15 @@ import com.github.javaparser.ast.type.UnknownType;
 import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
-import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 
-public class BaseGenericVisitorAdapter<R, A> extends GenericVisitorAdapter<R, A> {
+
+public class BaseVisitorAdapter<R, A> extends VisitorAdapter<R, A> {
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public BaseGenericVisitorAdapter() {
+    public BaseVisitorAdapter() {
         super();
     }
 

@@ -45,7 +45,7 @@ import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.logging.Logger;
 
-public class VisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
+public class VoidVisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -61,7 +61,7 @@ public class VisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public VisitorWithDefaults() {
+    public VoidVisitorWithDefaults() {
 
     }
 
@@ -69,12 +69,12 @@ public class VisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
     // Operations
     // ----------------------------------------------------------------------
 
-    public VisitorWithDefaults addTypeSolver(TypeSolver ts) {
+    public VoidVisitorWithDefaults addTypeSolver(TypeSolver ts) {
         this.ts.add(ts);
         return this;
     }
 
-    public VisitorWithDefaults analyze(CompilationUnit cu) {
+    public VoidVisitorWithDefaults analyze(CompilationUnit cu) {
         this.cu = cu;
         this.ts.setCu(cu);
         this.fileName = "";

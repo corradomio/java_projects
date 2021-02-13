@@ -1,14 +1,11 @@
 package org.hls.check;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Output;
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import jext.cache.CacheManager;
 import jext.io.util.FileFilters;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVisitorAdapter;
@@ -16,18 +13,11 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
-import jext.serialization.fst.FstSerializer;
-import jext.serialization.kryo.KryoSerializer;
 import jext.serialization.protostuff.ProtostuffSerializer;
 import jext.util.FileUtils;
-import jext.util.JSONUtils;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Collections;
 
 public class Check {
 
@@ -36,6 +26,7 @@ public class Check {
     public static void main(String[] args) throws Exception {
         Parallel.setup();
         Logger.configure();
+        CacheManager.configure();
 
         // TypeSolver ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
         // System.out.println(ts.tryToSolveType("java.util.Collection"));
@@ -85,7 +76,6 @@ public class Check {
         }
     }
 
-
     static void analyze1(CompilationUnit cu) {
         new LogVisitorAdapter<Void>().analyze(cu);
     }
@@ -103,7 +93,7 @@ public class Check {
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\alt-rt.jar")));
             // ts.add(cptss.getTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8")));
 
-            JPUtils.setTypeSolver(cu, ts);
+            JPUtils.setSymbolSolver(cu, ts);
 
             cu.findAll(MethodCallExpr.class).forEach(Check::analyze);
         }

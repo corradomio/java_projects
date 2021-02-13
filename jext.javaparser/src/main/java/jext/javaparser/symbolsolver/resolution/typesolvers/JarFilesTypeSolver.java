@@ -18,6 +18,10 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
     // Constructor
     // ----------------------------------------------------------------------
 
+    public JarFilesTypeSolver() {
+        this("libraries");
+    }
+
     public JarFilesTypeSolver(String name) {
         this(name, new ClassPoolRegistry());
     }
@@ -27,8 +31,14 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
         this.classPoolRegistry = classPoolRegistry;
     }
 
-    public void addAll(List<File> libraryFiles) {
+    public JarFilesTypeSolver add(File libraryFile) {
+        this.classPoolRegistry.add(libraryFile);
+        return this;
+    }
+
+    public JarFilesTypeSolver addAll(List<File> libraryFiles) {
         this.classPoolRegistry.addAll(libraryFiles);
+        return this;
     }
 
     // ----------------------------------------------------------------------

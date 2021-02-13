@@ -2,16 +2,9 @@ package org.hls.check;
 
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.comments.JavadocComment;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
-
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVisitorAdapter;
-import jext.javaparser.analysis.MethodCallsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
@@ -23,7 +16,6 @@ import java.io.File;
 public class CheckMethodCalls {
 
     static JavaParserPool pool;
-    // static TypeSolver ts;
 
     public static void main(String[] args) {
         Logger.configure(new File("log4j.xml"));
@@ -54,9 +46,9 @@ public class CheckMethodCalls {
         ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
         ts.add(new JDKTypeSolver(new File("D:\\Java\\Jdk8.0.x64")));
 
-        JPUtils.setTypeSolver(cu, ts);
+        JPUtils.setSymbolSolver(cu, ts);
 
-        MethodCallsVisitor lva = new MethodCallsVisitor();
+        LogVisitorAdapter<Void> lva = new LogVisitorAdapter<>();
         lva.analyze(cu);
     }
 }

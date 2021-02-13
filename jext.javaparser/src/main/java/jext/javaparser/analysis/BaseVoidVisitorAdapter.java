@@ -40,12 +40,11 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.logging.Logger;
 
 
-public class BaseVisitorAdapter extends VoidVisitorAdapter<Void> {
+public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -60,7 +59,7 @@ public class BaseVisitorAdapter extends VoidVisitorAdapter<Void> {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public BaseVisitorAdapter() {
+    public BaseVoidVisitorAdapter() {
 
     }
 
@@ -76,7 +75,7 @@ public class BaseVisitorAdapter extends VoidVisitorAdapter<Void> {
     //     return this;
     // }
 
-    protected BaseVisitorAdapter analyze(CompilationUnit cu) {
+    protected BaseVoidVisitorAdapter analyze(CompilationUnit cu) {
         this.cu = cu;
         if (this.ts != null)
             this.ts.setCu(cu);

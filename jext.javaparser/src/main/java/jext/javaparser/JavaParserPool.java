@@ -50,11 +50,11 @@ public class JavaParserPool {
     // Pool
     // ----------------------------------------------------------------------
 
-    // private static JavaParserPool pool = new JavaParserPool();
+    private static JavaParserPool pool = new JavaParserPool("", "default");
 
-    // public static JavaParserPool getPool() {
-    //     return pool;
-    // }
+    public static JavaParserPool getPool() {
+        return pool;
+    }
 
     public static JavaParserPool newPool(String prefix, String name) {
         return new JavaParserPool(prefix, name);
