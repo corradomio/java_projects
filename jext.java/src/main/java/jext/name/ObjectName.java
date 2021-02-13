@@ -1,6 +1,7 @@
 package jext.name;
 
 public class ObjectName implements Name {
+
     private String namespace;
 
     public ObjectName(String namespace) {
@@ -51,6 +52,16 @@ public class ObjectName implements Name {
     }
 
     @Override
+    public String getFullName() {
+        return null;
+    }
+
+    @Override
+    public String[] getParts() {
+        return new String[0];
+    }
+
+    @Override
     public int hashCode() {
         return namespace.hashCode();
     }
@@ -64,5 +75,10 @@ public class ObjectName implements Name {
     @Override
     public String toString() {
         return namespace;
+    }
+
+    @Override
+    public int compareTo(Name o) {
+        return 0;
     }
 }

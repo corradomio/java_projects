@@ -59,6 +59,16 @@ public class PathName implements Name {
     }
 
     @Override
+    public String getFullName() {
+        return null;
+    }
+
+    @Override
+    public String[] getParts() {
+        return new String[0];
+    }
+
+    @Override
     public int hashCode() {
         return path.hashCode();
     }
@@ -72,5 +82,10 @@ public class PathName implements Name {
     @Override
     public String toString() {
         return path;
+    }
+
+    @Override
+    public int compareTo(Name o) {
+        return 0;
     }
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DOCTYPE cache4j:configuration SYSTEM "cache4j.dtd" -->
+<configuration>
+    <!--
+        Specify the cache provider. Default 'GuavaCacheProvider'
+      -->
+    <provider
+            value1="jext.cache.cache2k.Cache2kCacheProvider"
+            value2="jext.cache.guava.GuavaCacheProvider"
+            value3="jext.cache.imcache.IMCacheProvider"
+            value4="jext.cache.jcs.JCSCacheProvider"
+            value5="jext.cache.weak.WeakCacheProvider"
+            value6="jext.cache.ehcache.EHCacheProvider"
+            value="jext.cache.caffeine.CaffeineCacheProvider"
+    />
+
+    <!--
+        qualified name
+        If the name is 'a.b.c', each cache with name 'a.b.c...' will be configured
+        with these parameters.
+
+        Root configuration: @name="".
+
+        Default properties:
+
+        - capacity:  num of elements in cache
+        - expireAfterWrite: expires after the specified number of milliseconds from the 'put''
+        - expireAfterAccess: expires after the specified number of milliseconds from the
+          last access ('put'/'get'')
+
+        The 'timeout' can be specified as:
+
+        - [[DD:]HH:]MM:SS[.CCC] | SS.[CCC]   (WITH '.' ! Otherwise is considered in milliseconds)
+        - CCC (milliseconds)
+        - <DD>d | <HH>h | <MM>m | <SS>s specifying the time unit
+
+        Other properties specific for each cache library
+      -->
+    <cache name="">
+        <property name="capacity" value="1024"/>
+    </cache>
+    <cache name="cache2k">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="caffeine">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="ehcache">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="guava">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="imcache">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="jcs">
+        <property name="capacity" value="2048"/>
+    </cache>
+    <cache name="weak">
+        <!-- no configurations -->
+    </cache>
+
+    <cache name="test.*.this">
+        <property name="capacity" value="123"/>
+    </cache>
+</configuration>
