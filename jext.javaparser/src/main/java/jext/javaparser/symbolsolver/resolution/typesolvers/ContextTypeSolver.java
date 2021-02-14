@@ -48,7 +48,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     private static Logger logsolver = Logger.getLogger(ContextTypeSolver.class);
 
-    private static final String DEFAULT = "Default";
+    private static final String DEFAULT = "default";
     private static final String JAVA_LANG = "java.lang";
 
     private CompilationUnit cu;
@@ -71,9 +71,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // Constructor
     // ----------------------------------------------------------------------
 
-    // public ContextTypeSolver() {
-    //     this("Root");
-    // }
+    public ContextTypeSolver() {
+        this(DEFAULT, DEFAULT);
+    }
 
     public ContextTypeSolver(TypeSolver typeSolver) {
         super(DEFAULT);
