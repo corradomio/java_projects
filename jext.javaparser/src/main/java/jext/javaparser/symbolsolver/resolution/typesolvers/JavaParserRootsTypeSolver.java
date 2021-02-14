@@ -46,7 +46,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     // private static final int CACHE_SIZE_UNSET = -1;
 
     public JavaParserRootsTypeSolver() {
-        this("Default", new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE));
+        this("default", new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE));
     }
 
     public JavaParserRootsTypeSolver(String name) {

@@ -4,7 +4,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import jext.logging.Logger;
-import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +14,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 
 public class ClassPoolRegistry {
 
@@ -39,7 +38,7 @@ public class ClassPoolRegistry {
         CtClass ctClazz;
 
         public CtClass toCtClass() throws IOException {
-            synchronized (classPool) {
+            synchronized (this) {
                 if (ctClazz != null)
                     return ctClazz;
 
@@ -54,9 +53,8 @@ public class ClassPoolRegistry {
 
     private final ClassPool classPool;
     private final Map<String, ClasspathElement> classpathElements;
-    private final Set<File> jarFiles;
-    private final Set<File> jmodFiles;
     private final Set<String> libraryNames;
+    private final Set<File> librarieFiles;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -65,9 +63,8 @@ public class ClassPoolRegistry {
     public ClassPoolRegistry() {
         this.classPool = new ClassPool(false);
         this.classpathElements = new HashMap<>();
-        this.jarFiles = new TreeSet<>();
-        this.jmodFiles = new TreeSet<>();
         this.libraryNames = new HashSet<>();
+        this.librarieFiles = new HashSet<>();
     }
 
     // ----------------------------------------------------------------------
@@ -86,15 +83,24 @@ public class ClassPoolRegistry {
     // Operations
     // ----------------------------------------------------------------------
 
-    public void addAll(List<File> libraryFiles) {
-        libraryFiles.forEach(this::add);
+    public ClassPoolRegistry addJdk(File jdk) {
+        add(new File(jdk, "lib"));      // jdk 1 -> 8
+        add(new File(jdk, "jre/lib"));  // jre 1 -> 8
+        add(new File(jdk, "jmods"));    // jdk 9 -> ...
+        return this;
     }
 
-    public void add(File libraryFile) {
+    public ClassPoolRegistry addAll(List<File> libraryFiles) {
+        libraryFiles.forEach(this::add);
+        return this;
+    }
+
+    public ClassPoolRegistry add(File libraryFile) {
         if (libraryFile.isFile())
             addFile(libraryFile);
         else
             addDirectory(libraryFile);
+        return this;
     }
 
     private void addDirectory(File directory) {
@@ -109,12 +115,13 @@ public class ClassPoolRegistry {
     }
 
     private void addFile(File libraryFile) {
-        if (jarFiles.contains(libraryFile) || jmodFiles.contains(libraryFile))
+        if (librarieFiles.contains(libraryFile))
             return;
         String libraryName = libraryFile.getName();
         if (libraryNames.contains(libraryName))
             return;
 
+        librarieFiles.add(libraryFile);
         libraryNames.add(libraryName);
 
         addElements(libraryFile);

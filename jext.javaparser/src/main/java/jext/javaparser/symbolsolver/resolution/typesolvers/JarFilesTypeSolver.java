@@ -13,6 +13,8 @@ import java.util.Set;
 
 public class JarFilesTypeSolver extends BaseTypeSolver {
 
+    private static final String DEFAULT = "default";
+
     protected ClassPoolRegistry classPoolRegistry;
 
     // ----------------------------------------------------------------------
@@ -20,7 +22,11 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
 
     public JarFilesTypeSolver() {
-        this("libraries");
+        this(DEFAULT, new ClassPoolRegistry());
+    }
+
+    public JarFilesTypeSolver(ClassPoolRegistry classPoolRegistry) {
+        this(DEFAULT, classPoolRegistry);
     }
 
     public JarFilesTypeSolver(String name) {
@@ -32,20 +38,18 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
         this.classPoolRegistry = classPoolRegistry;
     }
 
+    public JarFilesTypeSolver add(File libraryFile) {
+        this.classPoolRegistry.add(libraryFile);
+        return this;
+    }
+
     public JarFilesTypeSolver addAll(List<File> libraryFiles) {
-        libraryFiles.forEach(this::add);
+        this.classPoolRegistry.addAll(libraryFiles);
         return this;
     }
 
     public JarFilesTypeSolver addJdk(File jdk) {
-        add(new File(jdk, "lib"));      // jdk 1 -> 8
-        add(new File(jdk, "jre/lib"));  // jre 1 -> 8
-        add(new File(jdk, "jmods"));    // jdk 9 -> ...
-        return this;
-    }
-
-    public JarFilesTypeSolver add(File libraryFile) {
-        this.classPoolRegistry.add(libraryFile);
+        this.classPoolRegistry.addJdk(jdk);
         return this;
     }
 

@@ -8,6 +8,7 @@ import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserRootsTypeSolver;
+import jext.javaparser.util.ClassPoolRegistry;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.PathName;
@@ -21,6 +22,9 @@ import java.io.File;
 
 public class AnalyzeDL4J {
 
+    static ClassPoolRegistry classPoolRegistry;
+    static ClassPoolRegistry jdkPoolRegistry;
+
     public static void main(String[] args) {
         Logger.configure();
         CacheManager.configure();
@@ -32,6 +36,16 @@ public class AnalyzeDL4J {
             new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"),
             params
         );
+
+        File JDK = new File("D:\\Java\\Jdk1.8.0.x64");
+
+        classPoolRegistry = new ClassPoolRegistry();
+        dl4j.getLibraries().forEach(library -> {
+            classPoolRegistry.addAll(library.getFiles());
+        });
+        classPoolRegistry.addJdk(JDK);
+
+        jdkPoolRegistry = new ClassPoolRegistry().addJdk(JDK);
 
         dl4j.getModules().stream()
             .flatMap(module -> module.getSources().stream())
@@ -50,22 +64,11 @@ public class AnalyzeDL4J {
 
         ContextTypeSolver ctx = new ContextTypeSolver();
 
-        File JDK = new File("D:\\Java\\Jdk1.8.0.x64");
-
         // jdk
-        JarFilesTypeSolver jdkts = new JarFilesTypeSolver().addJdk(JDK);
+        JarFilesTypeSolver jdkts = new JarFilesTypeSolver(jdkPoolRegistry);
 
         // libraries
-        JarFilesTypeSolver libsts = new JarFilesTypeSolver().addJdk(JDK);
-        project.getLibraries().forEach(library -> {
-            libsts.addAll(library.getFiles());
-        });
-
-        // add rt libraries
-        project.getRuntimeLibraries().forEach(jdk -> {
-            jdkts.addJdk(JDK);
-            libsts.addJdk(JDK);
-        });
+        JarFilesTypeSolver libsts = new JarFilesTypeSolver(classPoolRegistry);
 
         // current module
         JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver();

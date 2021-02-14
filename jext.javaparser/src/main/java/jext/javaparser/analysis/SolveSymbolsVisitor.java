@@ -6,9 +6,12 @@ import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VarType;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+
+import java.util.NoSuchElementException;
 
 public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
 
@@ -32,7 +35,16 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
             ResolvedReferenceType rrt = n.resolve();
             // System.out.println(rrt);
         }
+        catch (UnsolvedSymbolException e) {
+            logger.error(e.toString());
+            // System.err.println(e);
+        }
         catch (UnsupportedOperationException e) {
+            logger.error(e.toString());
+            // System.err.println(e);
+        }
+        catch (NoSuchElementException e) {
+            logger.error(e.toString());
             // System.err.println(e);
         }
         super.visit(n, arg);
