@@ -6,6 +6,7 @@ import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VarType;
+import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 
@@ -27,7 +28,13 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
 
     @Override
     public void visit(ClassOrInterfaceType n, Void arg) {
-        System.out.println(n.resolve());
+        try {
+            ResolvedReferenceType rrt = n.resolve();
+            // System.out.println(rrt);
+        }
+        catch (UnsupportedOperationException e) {
+            // System.err.println(e);
+        }
         super.visit(n, arg);
     }
 
