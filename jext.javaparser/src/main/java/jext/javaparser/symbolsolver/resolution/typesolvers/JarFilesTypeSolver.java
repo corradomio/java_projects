@@ -8,6 +8,7 @@ import jext.javaparser.util.ClassPoolRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 
 public class JarFilesTypeSolver extends BaseTypeSolver {
@@ -31,13 +32,20 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
         this.classPoolRegistry = classPoolRegistry;
     }
 
-    public JarFilesTypeSolver add(File libraryFile) {
-        this.classPoolRegistry.add(libraryFile);
+    public JarFilesTypeSolver addAll(List<File> libraryFiles) {
+        libraryFiles.forEach(this::add);
         return this;
     }
 
-    public JarFilesTypeSolver addAll(List<File> libraryFiles) {
-        this.classPoolRegistry.addAll(libraryFiles);
+    public JarFilesTypeSolver addJdk(File jdk) {
+        add(new File(jdk, "lib"));      // jdk 1 -> 8
+        add(new File(jdk, "jre/lib"));  // jre 1 -> 8
+        add(new File(jdk, "jmods"));    // jdk 9 -> ...
+        return this;
+    }
+
+    public JarFilesTypeSolver add(File libraryFile) {
+        this.classPoolRegistry.add(libraryFile);
         return this;
     }
 
@@ -56,7 +64,6 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
             else {
                 SymbolReference<ResolvedReferenceTypeDeclaration>
                     unsolved = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
-                // unresolved.put(name, unsolved);
                 return unsolved;
             }
         } catch (IOException var3) {

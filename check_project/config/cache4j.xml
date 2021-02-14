@@ -38,6 +38,7 @@
       -->
     <cache name="">
         <property name="capacity" value="1024"/>
+        <property name="softValues" value="true" />
     </cache>
     <cache name="cache2k">
         <property name="capacity" value="2048"/>

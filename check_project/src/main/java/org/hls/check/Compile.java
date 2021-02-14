@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class App {
+public class Compile {
 
     public static void main(String[] args) {
         CacheManager.configure();
@@ -28,7 +28,7 @@ public class App {
             params
         );
 
-        dl4j.getModule("").getTypes();
+        System.out.println(dl4j.getModule("").getTypes());
 
         // System.out.println(dl4j.getProjectType());
         // dl4j.getLibraries().forEach(library -> {

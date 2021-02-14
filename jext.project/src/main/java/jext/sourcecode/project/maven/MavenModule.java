@@ -103,7 +103,7 @@ public class MavenModule extends BaseModule {
         MavenDownloader md = project.getLibraryDownloader();
 
         List<MavenCoords> coordList = getDirectCoordsDependencies();
-        md.checkArtifacts(coordList);
+        // md.checkArtifacts(coordList);
 
         Set<MavenCoords> setCoords = new HashSet<>(coordList);
 
@@ -112,7 +112,7 @@ public class MavenModule extends BaseModule {
             setCoords.addAll(ddcoords);
         });
 
-        md.checkArtifacts(new ArrayList<>(setCoords));
+        // md.checkArtifacts(new ArrayList<>(setCoords));
 
         return setCoords.stream()
             .map(coords -> new MavenLibrary(coords, md, project))

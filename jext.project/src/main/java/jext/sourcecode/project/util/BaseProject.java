@@ -437,7 +437,10 @@ public abstract class BaseProject extends NamedObject implements Project {
         });
 
         // add the runtime library
+        // NO: the runtime library is at module level
         // libraries.add(getRuntimeLibrary());
+
+        libraries.checkArtifacts();
 
         return libraries;
     }

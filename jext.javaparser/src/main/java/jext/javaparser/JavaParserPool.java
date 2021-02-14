@@ -50,7 +50,7 @@ public class JavaParserPool {
     // Pool
     // ----------------------------------------------------------------------
 
-    private static JavaParserPool pool = new JavaParserPool("", "default");
+    private static JavaParserPool pool = new JavaParserPool("default", "default");
 
     public static JavaParserPool getPool() {
         return pool;

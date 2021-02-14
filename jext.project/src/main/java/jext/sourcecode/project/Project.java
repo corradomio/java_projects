@@ -62,7 +62,7 @@ public interface Project extends IdNamed {
     /** Retrieve a module by id/full name */
     Module getModule(String nameOrId);
 
-    /** Retrieve the UNION of all module libraries */
+    /** UNION of all module libraries */
     Set<Library> getLibraries();
 
     Library getLibrary(String libraryId);

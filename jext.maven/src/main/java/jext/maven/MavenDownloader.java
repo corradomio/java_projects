@@ -6,11 +6,15 @@ import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 import jext.util.StringUtils;
+import jext.util.concurrent.Parallel;
 import jext.xml.XPathUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.w3c.dom.Element;
 
@@ -678,7 +682,7 @@ public class MavenDownloader implements MavenConst {
 
         // if it was not possible to download the file, mark 'coords' as invalid
         if (!downloadedFile.exists()) {
-            logger.errorf("Unable to download file %s for %s", type, coords);
+            logger.errorf("Unable to download library %s for %s", type, coords);
             markAsInvalidType(coords, type);
         }
     }
@@ -786,9 +790,20 @@ public class MavenDownloader implements MavenConst {
         {
             logger.debugft("Try to download from %s", downloadUrl);
 
-            HttpClient httpClient = HttpClients.createDefault();
-            HttpGet httpget = new HttpGet(downloadUrl);
-            HttpResponse response = httpClient.execute(httpget);
+            RequestConfig globalConfig = RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.DEFAULT)
+                .build();
+            CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultRequestConfig(globalConfig)
+                .build();
+            RequestConfig localConfig = RequestConfig.copy(globalConfig)
+                .setCookieSpec(CookieSpecs.STANDARD)
+                .build();
+
+            // HttpClient httpClient = HttpClients.createDefault();
+            HttpGet httpGet = new HttpGet(downloadUrl);
+            httpGet.setConfig(localConfig);
+            HttpResponse response = httpClient.execute(httpGet);
             if (response.getStatusLine().getStatusCode() >= 400) {
                 return;
             }
@@ -967,6 +982,11 @@ public class MavenDownloader implements MavenConst {
      * @param coordList list of coordinates to check
      */
     public void checkArtifacts(List<MavenCoords> coordList) {
+
+        Parallel.forEach(coordList, coords -> {
+            getPomFile(coords);
+            getArtifact(coords);
+        });
 
     }
 

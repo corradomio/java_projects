@@ -1,8 +1,11 @@
 package jext.sourcecode.project.maven;
 
+import jext.maven.MavenCoords;
+import jext.maven.MavenDownloader;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
+import jext.util.concurrent.Parallel;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -12,11 +15,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class LibrarySet extends AbstractSet<Library> {
 
     private Set<Library> localLibs = new TreeSet<>();
     private Map<String, MavenLibrary> mavenLibs = new TreeMap<>();
+
+    public LibrarySet() {
+
+    }
 
 
     @Override
@@ -36,18 +44,40 @@ public class LibrarySet extends AbstractSet<Library> {
         if (library.getLibraryType() != LibraryType.MAVEN)
             return localLibs.add(library);
 
-        boolean modified = false;
         MavenLibrary mavenLib = (MavenLibrary) library;
         String name = mavenLib.getMavenName();
         Version version = mavenLib.getMavenVersion();
         if (!mavenLibs.containsKey(name)) {
             mavenLibs.put(name, mavenLib);
-            modified = true;
-        } else if (mavenLibs.get(name).getMavenVersion().compareTo(version) < 0) {
-            mavenLibs.put(name, mavenLib);
-            modified = true;
+            return true;
         }
-        return modified;
+
+        Version currentVersion = mavenLibs.get(name).getMavenVersion();
+        if (currentVersion.compareTo(version) < 0) {
+            mavenLibs.put(name, mavenLib);
+            return true;
+        }
+        else if (currentVersion.compareTo(version) > 0) {
+            return false;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public void checkArtifacts() {
+        List<MavenCoords> artifacts = mavenLibs
+            .values()
+            .stream()
+            .map(MavenLibrary::getCoords)
+            .collect(Collectors.toList());
+
+        Parallel.forEach(mavenLibs.values(), mavenLibrary -> {
+            MavenCoords coords = mavenLibrary.getCoords();
+            MavenDownloader md = mavenLibrary.getMavenDownloader();
+            md.getPom(coords);
+            md.getArtifact(coords);
+        });
     }
 
 }

@@ -114,15 +114,21 @@ public class CacheManager {
             this.properties.setProperty("capacity", "128");
         }
 
-        CacheConfig(String name) {
-            this.name = name;
-            this.split = name.split("\\.");
-            this.properties = new Properties();
-        }
+        // CacheConfig(String name) {
+        //     this.name = name;
+        //     if (this.name.isEmpty())
+        //         this.split = new String[0];
+        //     else
+        //         this.split = name.split("\\.");
+        //     this.properties = new Properties();
+        // }
 
         CacheConfig(String name, Properties properties) {
             this.name = name;
-            this.split = name.split("\\.");
+            if (this.name.isEmpty())
+                this.split = new String[0];
+            else
+                this.split = name.split("\\.");
             this.properties = properties;
         }
     }
@@ -172,7 +178,7 @@ public class CacheManager {
     }
 
     private void configureUsing(File configurationsFile) {
-        logger.info(String.format("Configure using %s", configurationsFile.getAbsolutePath()));
+        logger.info(String.format("Configured using %s", configurationsFile.getAbsolutePath()));
         try {
             if (configurationsFile.getName().endsWith(".xml")) {
                 Element configuration = XPathUtils.parse(configurationsFile).getDocumentElement();
@@ -244,7 +250,7 @@ public class CacheManager {
         for (CacheConfig cconfig : configurations)
             if (cconfig.name.equals(name))
                 return cconfig;
-        CacheConfig cconfig = new CacheConfig(name);
+        CacheConfig cconfig = new CacheConfig(name, new Properties());
         configurations.add(cconfig);
         return cconfig;
     }

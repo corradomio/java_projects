@@ -22,10 +22,14 @@ public class Logger {
             File log4j = new File("log4j.xml");
             if (!log4j.exists())
                 log4j = new File("config/log4j.xml");
-            if (log4j.exists())
+            if (log4j.exists()) {
                 configure(log4j);
-            else
+                Logger.getLogger(Logger.class).infof("Configured using %s", log4j.getAbsolutePath());
+            }
+            else {
                 BasicConfigurator.configure();
+                Logger.getLogger(Logger.class).infof("Configured using basic configuration");
+            }
             configured = true;
         }
     }

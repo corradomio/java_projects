@@ -59,7 +59,7 @@ public class EclipseModule extends BaseModule {
             .collect(Collectors.toList());
 
         MavenDownloader md = project.getLibraryDownloader();
-        md.checkArtifacts(coordList);
+        // md.checkArtifacts(coordList);
 
         return coordList
             .stream()

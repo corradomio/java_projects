@@ -30,7 +30,7 @@ public class MavenLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     protected MavenCoords coords;
-    protected MavenDownloader downloader;
+    protected MavenDownloader md;
 
     protected List<Library> dependencies;
     private List<File> jarFiles;
@@ -41,17 +41,21 @@ public class MavenLibrary extends BaseLibrary {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public MavenLibrary(MavenCoords coords, MavenDownloader downloader, Project project) {
+    public MavenLibrary(MavenCoords coords, MavenDownloader md, Project project) {
         super(new MavenName(coords), project);
 
         this.coords = coords;
-        this.downloader = downloader;
-        this.libraryFile = downloader.getPomFile(coords);
+        this.md = md;
+        this.libraryFile = md.getPomFile(coords);
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    public MavenDownloader getMavenDownloader() {
+        return this.md;
+    }
 
     public String getMavenName() {
         return coords.getName();
@@ -93,11 +97,11 @@ public class MavenLibrary extends BaseLibrary {
     @Override
     public String getDigest() {
         File digestFile;
-        MavenPom pom = downloader.getPom(coords);
+        MavenPom pom = md.getPom(coords);
         if (pom != null && pom.isPomPackaging())
-            digestFile = downloader.getPomFile(coords);
+            digestFile = md.getPomFile(coords);
         else
-            digestFile = downloader.getArtifact(coords);
+            digestFile = md.getArtifact(coords);
         return FileUtils.digest(digestFile);
     }
 
@@ -116,14 +120,14 @@ public class MavenLibrary extends BaseLibrary {
             return dependencies;
 
         dependencies = getDependencies(coords).stream()
-            .map(dcoords -> new MavenLibrary(dcoords, downloader, project))
+            .map(dcoords -> new MavenLibrary(dcoords, md, project))
             .collect(Collectors.toList());
 
         return dependencies;
     }
 
     private List<MavenCoords> getDependencies(MavenCoords coords) {
-        return downloader.getDependencies(coords, MAX_DEPTH);
+        return md.getDependencies(coords, MAX_DEPTH);
     }
 
     // ----------------------------------------------------------------------
@@ -191,7 +195,7 @@ public class MavenLibrary extends BaseLibrary {
         if (jarFiles != null)
             return;
 
-        jarFiles = downloader.getArtifacts(coords);
+        jarFiles = md.getArtifacts(coords);
     }
 
     // ----------------------------------------------------------------------

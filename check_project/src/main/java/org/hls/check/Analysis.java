@@ -15,7 +15,6 @@ import jext.javaparser.analysis.BaseVoidVisitorAdapter;
 import jext.javaparser.analysis.LogVisitorAdapter;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
@@ -79,6 +78,9 @@ public class Analysis extends BaseVoidVisitorAdapter {
         if (classPoolRegistry == null) {
             classPoolRegistry = new ClassPoolRegistry();
             project.getLibraries().forEach(library -> {
+                library.getFiles().forEach(libraryFile -> {
+                    classPoolRegistry.add(libraryFile);
+                });
                 classPoolRegistry.addAll(library.getFiles());
             });
         }
@@ -175,7 +177,8 @@ public class Analysis extends BaseVoidVisitorAdapter {
             .collect(Collectors.toList());
 
         CombinedTypeSolver ts = new CombinedTypeSolver();
-        ts.add(new JDKTypeSolver(new File("D:\\Java\\Jdk1.8.0.x64"))
+        ts.add(new JarFilesTypeSolver()
+            .addJdk(new File("D:\\Java\\Jdk1.8.0.x64"))
             .addAll(libs));
         module.getSourceRoots().forEach(src -> {
             ts.add(new JavaParserTypeSolver(src));

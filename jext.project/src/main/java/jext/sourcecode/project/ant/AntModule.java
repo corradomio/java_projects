@@ -55,7 +55,7 @@ public class AntModule extends BaseModule {
         });
 
         MavenDownloader md = project.getLibraryDownloader();
-        md.checkArtifacts(coordList);
+        // md.checkArtifacts(coordList);
 
         coordList.sort(Comparator.naturalOrder());
         return coordList.stream()

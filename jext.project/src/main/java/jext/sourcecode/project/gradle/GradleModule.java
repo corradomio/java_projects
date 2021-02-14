@@ -170,7 +170,7 @@ public class GradleModule extends BaseModule {
             .collect(Collectors.toList());
 
         MavenDownloader md = project.getLibraryDownloader();
-        md.checkArtifacts(coordList);
+        // md.checkArtifacts(coordList);
 
         dmodules = collector.getProjects(gradleConfiguration)
             .stream()

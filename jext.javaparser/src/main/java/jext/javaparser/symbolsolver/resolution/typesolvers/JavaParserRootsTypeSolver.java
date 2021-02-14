@@ -10,6 +10,7 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.logging.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +36,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     private String name;
     private Set<File> sourceRoots;
     private JavaParser javaParser;
+    private Logger logger;
 
     private TypeSolver parent;
 
@@ -41,6 +44,10 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     private final Cache<Path, List<CompilationUnit>> parsedDirectories;
     private final Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> foundTypes;
     // private static final int CACHE_SIZE_UNSET = -1;
+
+    public JavaParserRootsTypeSolver() {
+        this("Default", new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE));
+    }
 
     public JavaParserRootsTypeSolver(String name) {
         this(name, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE));
@@ -53,10 +60,15 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
         this.foundTypes = CacheManager.getCache(name +".foundTypes");
         this.sourceRoots = new HashSet<>();
         this.javaParser = new JavaParser(parserConfiguration);
+        this.logger = Logger.getLogger(JavaParserRootsTypeSolver.class, name);
     }
 
-    public void addSourceRoot(File sourceRoot) {
+    public void add(File sourceRoot) {
         this.sourceRoots.add(sourceRoot);
+    }
+
+    public void addAll(Collection<File> sourceRoots) {
+        this.sourceRoots.addAll(sourceRoots);
     }
 
     // public JavaParserRootsTypeSolver(File srcDir) {
@@ -127,6 +139,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
                     if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
                         return Optional.empty();
                     }
+                    logger.debugf("... parse %s", srcFile.toAbsolutePath());
                     return javaParser.parse(COMPILATION_UNIT, provider(srcFile))
                         .getResult()
                         .map(cu -> cu.setStorage(srcFile));
@@ -203,7 +216,17 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
                     filePath.append("/")
                         .append(nameElements[j]);
                 }
+
+                // if it is a directory, it is not necessary to continue
+                if (new File(filePath.toString()).isDirectory())
+                    break;
+
                 filePath.append(".java");
+
+                // if the file doesn't exist, try with less elements
+                // (teh class can be a inner class)
+                if (!new File(filePath.toString()).exists())
+                    continue;
 
                 StringBuilder typeName = new StringBuilder();
                 for (int j = i - 1; j < nameElements.length; j++) {
