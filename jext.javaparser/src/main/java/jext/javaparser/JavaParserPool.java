@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -160,8 +161,17 @@ public class JavaParserPool {
         return this;
     }
 
-    public JavaParserPool addSourceRoot(File sourceRoot) {
+    // ----------------------------------------------------------------------
+    // Source roots
+    // ----------------------------------------------------------------------
+
+    public JavaParserPool add(File sourceRoot) {
         sourceRoots.add(sourceRoot.toPath());
+        return this;
+    }
+
+    public JavaParserPool addAll(Collection<File> sourceRoots) {
+        sourceRoots.forEach(this::add);
         return this;
     }
 
