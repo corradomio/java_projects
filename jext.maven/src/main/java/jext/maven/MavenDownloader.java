@@ -170,7 +170,7 @@ public class MavenDownloader implements MavenConst {
 
     private String getPackaging(MavenCoords coords) {
         MavenPom pom = getPom(coords);
-        return pom.getPackaging();
+        return pom != null ? pom.getPackaging() : PACKAGING_JAR;
     }
 
     public File getPomFile(MavenCoords coords) {

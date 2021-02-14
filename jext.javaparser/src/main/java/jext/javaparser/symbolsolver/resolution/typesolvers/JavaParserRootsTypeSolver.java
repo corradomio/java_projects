@@ -10,6 +10,7 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.cache.ManagedCache;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -33,17 +34,30 @@ import static com.github.javaparser.Providers.provider;
 
 public class JavaParserRootsTypeSolver implements TypeSolver {
 
-    private String name;
-    private Set<File> sourceRoots;
-    private JavaParser javaParser;
-    private Logger logger;
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
+    private final String name;
+    private String cachePrefix;
+
+    // maximum cache size
+    private long cacheSizeLimit = -1;
+
+    private final Set<File> sourceRoots;
+    private final JavaParser javaParser;
+    private final Logger logger;
 
     private TypeSolver parent;
 
-    private final Cache<Path, Optional<CompilationUnit>> parsedFiles;
-    private final Cache<Path, List<CompilationUnit>> parsedDirectories;
-    private final Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> foundTypes;
-    // private static final int CACHE_SIZE_UNSET = -1;
+    private Cache<Path, Optional<CompilationUnit>> parsedFiles;
+    private Cache<Path, List<CompilationUnit>> parsedDirectories;
+    private Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> foundTypes;
+    private static final int CACHE_SIZE_UNSET = -1;
+
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
 
     public JavaParserRootsTypeSolver() {
         this("default", new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE));
@@ -55,20 +69,14 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
 
     public JavaParserRootsTypeSolver(String name, ParserConfiguration parserConfiguration) {
         this.name = name;
-        this.parsedFiles = CacheManager.getCache(name +".parsedFiles");
-        this.parsedDirectories = CacheManager.getCache(name +".parsedDirectories");
-        this.foundTypes = CacheManager.getCache(name +".foundTypes");
+        this.cachePrefix = name;
         this.sourceRoots = new HashSet<>();
         this.javaParser = new JavaParser(parserConfiguration);
         this.logger = Logger.getLogger(JavaParserRootsTypeSolver.class, name);
-    }
 
-    public void add(File sourceRoot) {
-        this.sourceRoots.add(sourceRoot);
-    }
-
-    public void addAll(Collection<File> sourceRoots) {
-        this.sourceRoots.addAll(sourceRoots);
+        // this.parsedFiles = CacheManager.getCache(name +".parsedFiles");
+        // this.parsedDirectories = CacheManager.getCache(name +".parsedDirectories");
+        // this.foundTypes = CacheManager.getCache(name +".foundTypes");
     }
 
     // public JavaParserRootsTypeSolver(File srcDir) {
@@ -102,6 +110,35 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     //     foundTypes = BuildCache(cacheSizeLimit);
     // }
 
+    // ----------------------------------------------------------------------
+    // Source roots
+    // ----------------------------------------------------------------------
+
+    public JavaParserRootsTypeSolver setCachePrefix(String cachePrefix) {
+        this.cachePrefix = cachePrefix;
+        createCaches();
+        return this;
+    }
+
+    private void createCaches() {
+        this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
+        this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
+        this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+    }
+
+    private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
+        // CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder().softValues();
+        // if (cacheSizeLimit != CACHE_SIZE_UNSET) {
+        //     cacheBuilder.maximumSize(cacheSizeLimit);
+        // }
+        // return cacheBuilder.build();
+
+        jext.cache.Cache<TKey, TValue> cache =
+            CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
+
+        return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
+    }
+
     // private <TKey, TValue> Cache<TKey, TValue> BuildCache(long cacheSizeLimit) {
     //     CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder().softValues();
     //     if (cacheSizeLimit != CACHE_SIZE_UNSET) {
@@ -110,10 +147,21 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     //     return cacheBuilder.build();
     // }
 
-    @Override
-    public String toString() {
-        return String.format("JavaParserRootsTypeSolver{name=%s, parent=%s}", name, parent);
+    // ----------------------------------------------------------------------
+    // Source roots
+    // ----------------------------------------------------------------------
+
+    public void add(File sourceRoot) {
+        this.sourceRoots.add(sourceRoot);
     }
+
+    public void addAll(Collection<File> sourceRoots) {
+        this.sourceRoots.addAll(sourceRoots);
+    }
+
+    // ----------------------------------------------------------------------
+    // TypeSolver parent
+    // ----------------------------------------------------------------------
 
     @Override
     public TypeSolver getParent() {
@@ -131,6 +179,10 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
         }
         this.parent = parent;
     }
+
+    // ----------------------------------------------------------------------
+    // TypeSolver parent
+    // ----------------------------------------------------------------------
 
     private Optional<CompilationUnit> parse(Path srcFile) {
         try {
@@ -187,6 +239,10 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
         }
     }
 
+    // ----------------------------------------------------------------------
+    // TypeSolver
+    // ----------------------------------------------------------------------
+
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
         try {
@@ -224,7 +280,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
                 filePath.append(".java");
 
                 // if the file doesn't exist, try with less elements
-                // (teh class can be a inner class)
+                // (the class can be a inner class)
                 if (!new File(filePath.toString()).exists())
                     continue;
 
@@ -263,6 +319,15 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
         }
 
         return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+    }
+
+    // ----------------------------------------------------------------------
+    // Overrides
+    // ----------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return String.format("JavaParserRootsTypeSolver{name=%s, parent=%s}", name, parent);
     }
 
 }

@@ -56,7 +56,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
     private JavaParserPool ppool(Module module) {
         Name name = module.getName();
         if (!pools.containsKey(name))
-            pools.put(name, JavaParserPool.newPool(project.getId(), module.getName().getName()));
+            pools.put(name, JavaParserPool.newPool(module.getName().getName()));
         return pools.get(name);
     }
 

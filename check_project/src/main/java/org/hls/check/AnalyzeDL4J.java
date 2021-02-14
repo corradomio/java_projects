@@ -36,8 +36,8 @@ public class AnalyzeDL4J {
         Parameters params = Parameters.params();
 
         Project dl4j = Projects.newProject(name,
-            //new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7")
-            new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
+            new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7")
+            // new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
             , params
         );
 

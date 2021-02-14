@@ -36,7 +36,7 @@ public class Compile {
         // });
 
         ProjectDump.dump(dl4j);
-        JavaParserPool pool = JavaParserPool.newPool("dl4j", "global");
+        JavaParserPool pool = JavaParserPool.newPool("global");
 
         long start = System.currentTimeMillis();
         AtomicInteger count = new AtomicInteger();

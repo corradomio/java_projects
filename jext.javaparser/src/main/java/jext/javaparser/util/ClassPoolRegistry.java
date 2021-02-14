@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -63,7 +64,7 @@ public class ClassPoolRegistry {
     public ClassPoolRegistry() {
         this.classPool = new ClassPool(false);
         this.classpathElements = new HashMap<>();
-        this.libraryNames = new HashSet<>();
+        this.libraryNames = new TreeSet<>();
         this.librarieFiles = new HashSet<>();
     }
 

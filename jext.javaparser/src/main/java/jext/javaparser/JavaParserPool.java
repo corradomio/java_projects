@@ -51,24 +51,26 @@ public class JavaParserPool {
     // Pool
     // ----------------------------------------------------------------------
 
-    private static JavaParserPool pool = new JavaParserPool("default", "default");
+    private static JavaParserPool pool = new JavaParserPool();
 
     public static JavaParserPool getPool() {
         return pool;
     }
 
-    public static JavaParserPool newPool(String prefix, String name) {
-        return new JavaParserPool(prefix, name);
+    public static JavaParserPool newPool(String name) {
+        return new JavaParserPool(name);
     }
 
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
 
+    private static final String DEFAULT = "default";
+
     private Logger logger;
 
-    private String prefix;
     private String name;
+    private String cachePrefix;
 
     // source directories of the parsed files
     private Set<Path> sourceRoots;
@@ -89,12 +91,12 @@ public class JavaParserPool {
     // Constructor
     // ----------------------------------------------------------------------
 
-    // public JavaParserPool() {
-    //     this(GLOBAL, GLOBAL, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
-    // }
+    public JavaParserPool() {
+        this(DEFAULT, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
+    }
 
-    public JavaParserPool(String prefix, String name) {
-        this(prefix, name, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
+    public JavaParserPool(String name) {
+        this(name, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
     }
 
     /**
@@ -104,23 +106,29 @@ public class JavaParserPool {
      *        However, using a size limit is advised when solving symbols in large code sources. In such cases, internal
      *        caches might consume large amounts of heap space.
      */
-    public JavaParserPool(String prefix, String name, ParserConfiguration parserConfiguration, long cacheSizeLimit) {
-        this.prefix = prefix;
+    public JavaParserPool(String name, ParserConfiguration parserConfiguration, long cacheSizeLimit) {
         this.name = name;
+        this.cachePrefix = name;
         this.sourceRoots = new HashSet<>();
         this.parserConfiguration = parserConfiguration;
         this.cacheSizeLimit = cacheSizeLimit;
 
         this.logger = Logger.getLogger(getClass(), name);
 
-        this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
-        this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
-        this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+        // this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
+        // this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
+        // this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
     }
 
     // ----------------------------------------------------------------------
     // Cache
     // ----------------------------------------------------------------------
+
+    private void createCaches() {
+        this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
+        this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
+        this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+    }
 
     private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
         // CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder().softValues();
@@ -130,7 +138,7 @@ public class JavaParserPool {
         // return cacheBuilder.build();
 
         jext.cache.Cache<TKey, TValue> cache =
-            CacheManager.getCache(String.format("dependency.%s.%s.%s", this.prefix, this.name, name));
+            CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
 
         return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
     }
@@ -148,6 +156,11 @@ public class JavaParserPool {
 
     public String getName() {
         return this.name;
+    }
+
+    public JavaParserPool setCachePrefix(String cachePrefix) {
+        this.cachePrefix = cachePrefix;
+        return this;
     }
 
     public JavaParserPool setParserConfiguration(ParserConfiguration parserConfiguration) {
@@ -180,6 +193,7 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
 
     public ParseResult<CompilationUnit> parse(File srcFile) {
+        createCaches();
         return parse(srcFile.toPath());
     }
 
