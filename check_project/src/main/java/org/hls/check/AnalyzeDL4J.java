@@ -2,6 +2,7 @@ package org.hls.check;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import com.hazelcast.logging.ILogger;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
@@ -56,9 +57,11 @@ public class AnalyzeDL4J {
 
         jdkPoolRegistry = new ClassPoolRegistry().addJdk(JDK);
 
-        dl4j.getModules().parallelStream()
-            .flatMap(module -> module.getSources().stream())
-            .forEach(AnalyzeDL4J::analyze);
+
+        dl4j.getModules().forEach(module -> {
+            // Parallel.forEach(module.getSources(), AnalyzeDL4J::analyze);
+            module.getSources().forEach(AnalyzeDL4J::analyze);
+        });
 
         System.out.println("=== END ===");
 
@@ -67,43 +70,48 @@ public class AnalyzeDL4J {
     }
 
     static void analyze(Source source) {
-        Module module = source.getModule();
-        Project project = module.getProject();
-        File srcFile = source.getFile();
+        try {
+            Module module = source.getModule();
+            Project project = module.getProject();
+            File srcFile = source.getFile();
 
-        System.out.println("analyze " + srcFile);
+            System.out.println("analyze " + srcFile);
 
-        ContextTypeSolver ctx = new ContextTypeSolver();
+            ContextTypeSolver ctx = new ContextTypeSolver();
 
-        // jdk
-        JarFilesTypeSolver jdkts = new JarFilesTypeSolver(jdkPoolRegistry);
+            // jdk
+            JarFilesTypeSolver jdkts = new JarFilesTypeSolver(jdkPoolRegistry);
 
-        // libraries
-        JarFilesTypeSolver libsts = new JarFilesTypeSolver(classPoolRegistry);
+            // libraries
+            JarFilesTypeSolver libsts = new JarFilesTypeSolver(classPoolRegistry);
 
-        // current module
-        // JavaParserPoolTypeSolver mts = new JavaParserPoolTypeSolver(pool);
-        JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver();
-        mts.addAll(module.getSourceRoots());
-        module.getDependencies(false).forEach(dmodule -> {
-            mts.addAll(dmodule.getSourceRoots());
-        });
+            // current module
+            // JavaParserPoolTypeSolver mts = new JavaParserPoolTypeSolver(pool);
+            JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver().createCaches();
+            mts.addAll(module.getSourceRoots());
+            module.getDependencies(false).forEach(dmodule -> {
+                mts.addAll(dmodule.getSourceRoots());
+            });
 
-        // runtime library
-        // JDKTypeSolver rtts = new JDKTypeSolver(new File("D:\\Java\\Jdk1.8.0.x64"));
+            // runtime library
+            // JDKTypeSolver rtts = new JDKTypeSolver(new File("D:\\Java\\Jdk1.8.0.x64"));
 
-        // compose type solver
-        ctx.add(jdkts);         // jdk
-        ctx.add(mts);           // modules
-        ctx.add(libsts);        // libraries
+            // compose type solver
+            ctx.add(jdkts);         // jdk
+            ctx.add(mts);           // modules
+            ctx.add(libsts);        // libraries
 
-        // compile the code
+            // compile the code
 
-        TypeSolver ts = ctx;
+            TypeSolver ts = ctx;
 
-        CompilationUnit cu = JavaParserPool.getPool().parse(srcFile).getResult().get();
+            CompilationUnit cu = JavaParserPool.getPool().parse(srcFile).getResult().get();
 
-        SolveSymbolsVisitor ss = new SolveSymbolsVisitor();
-        ss.analyze(cu, ts);
+            SolveSymbolsVisitor ss = new SolveSymbolsVisitor();
+            ss.analyze(cu, ts);
+        }
+        catch(Throwable t){
+            System.err.println(t.getClass());
+        }
     }
 }

@@ -11,12 +11,9 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import jext.cache.CacheManager;
-import jext.cache.ManagedCache;
+import jext.cache.Cache;
 import jext.logging.Logger;
-import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -124,10 +121,16 @@ public class JavaParserPool {
     // Cache
     // ----------------------------------------------------------------------
 
-    private void createCaches() {
+    public JavaParserPool setCachePrefix(String cachePrefix) {
+        this.cachePrefix = cachePrefix;
+        return this;
+    }
+
+    public JavaParserPool createCaches() {
         this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
         this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
         this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+        return this;
     }
 
     private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
@@ -137,10 +140,9 @@ public class JavaParserPool {
         // }
         // return cacheBuilder.build();
 
-        jext.cache.Cache<TKey, TValue> cache =
-            CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
+        return CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
 
-        return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
+        // return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
     }
 
     // public JavaParserPool resetCache() {
@@ -156,11 +158,6 @@ public class JavaParserPool {
 
     public String getName() {
         return this.name;
-    }
-
-    public JavaParserPool setCachePrefix(String cachePrefix) {
-        this.cachePrefix = cachePrefix;
-        return this;
     }
 
     public JavaParserPool setParserConfiguration(ParserConfiguration parserConfiguration) {
@@ -217,7 +214,7 @@ public class JavaParserPool {
         ParseResult<CompilationUnit> presult;
 
         try {
-            presult = parsedFiles.get(srcFile, () -> {
+            presult = parsedFiles.getChecked(srcFile, () -> {
                 logger.debugft("... parsing %s", srcFile);
                 try {
                     // ParseResult<CompilationUnit> result =
@@ -315,7 +312,7 @@ public class JavaParserPool {
 
     private List<CompilationUnit> parseDirectory(Path srcDirectory, boolean recursively) {
         try {
-            return parsedDirectories.get(srcDirectory.toAbsolutePath(), () -> {
+            return parsedDirectories.getChecked(srcDirectory.toAbsolutePath(), () -> {
                 List<CompilationUnit> units = new ArrayList<>();
                 if (Files.exists(srcDirectory)) {
                     try (DirectoryStream<Path> srcDirectoryStream = Files.newDirectoryStream(srcDirectory)) {
@@ -412,7 +409,7 @@ public class JavaParserPool {
         //synchronized (this)
         {
             try {
-                return foundTypes.get(name, () -> tryToSolveTypeUncached(name));
+                return foundTypes.getChecked(name, () -> tryToSolveTypeUncached(name));
             }
             catch (ExecutionException e) {
                 throw new RuntimeException(e);

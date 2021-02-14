@@ -1,6 +1,7 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
@@ -50,7 +51,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
 
     private TypeSolver parent;
 
-    private Cache<Path, Optional<CompilationUnit>> parsedFiles;
+    private Cache<Path, ParseResult<CompilationUnit>> parsedFiles;
     private Cache<Path, List<CompilationUnit>> parsedDirectories;
     private Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> foundTypes;
     private static final int CACHE_SIZE_UNSET = -1;
@@ -120,10 +121,11 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
         return this;
     }
 
-    private void createCaches() {
+    public JavaParserRootsTypeSolver createCaches() {
         this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
         this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
         this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+        return this;
     }
 
     private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
@@ -133,10 +135,9 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
         // }
         // return cacheBuilder.build();
 
-        jext.cache.Cache<TKey, TValue> cache =
-            CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
+        return CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
 
-        return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
+        // return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
     }
 
     // private <TKey, TValue> Cache<TKey, TValue> BuildCache(long cacheSizeLimit) {
@@ -184,17 +185,19 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     // TypeSolver parent
     // ----------------------------------------------------------------------
 
-    private Optional<CompilationUnit> parse(Path srcFile) {
+    private ParseResult<CompilationUnit> parse(Path srcFile) {
         try {
             return parsedFiles.getChecked(srcFile.toAbsolutePath(), () -> {
                 try {
-                    if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
-                        return Optional.empty();
-                    }
+                    // if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
+                    //     return new ParseResult<>()
+                    // }
                     logger.debugf("... parse %s", srcFile.toAbsolutePath());
-                    return javaParser.parse(COMPILATION_UNIT, provider(srcFile))
-                        .getResult()
-                        .map(cu -> cu.setStorage(srcFile));
+                    ParseResult<CompilationUnit> result = javaParser.parse(COMPILATION_UNIT, provider(srcFile));
+                    result.ifSuccessful(cu -> {
+                        cu.setStorage(srcFile);
+                    });
+                    return result;
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException("Issue while parsing while type solving: " + srcFile.toAbsolutePath(), e);
                 }
@@ -203,6 +206,8 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
             throw new RuntimeException(e);
         }
     }
+
+
 
     /**
      * Note that this parse only files directly contained in this directory.
@@ -225,7 +230,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
                         srcDirectoryStream
                             .forEach(file -> {
                                 if (file.getFileName().toString().toLowerCase().endsWith(".java")) {
-                                    parse(file).ifPresent(units::add);
+                                    parse(file).getResult().ifPresent(units::add);
                                 } else if (recursively && file.toFile().isDirectory()) {
                                     units.addAll(parseDirectoryRecursively(file));
                                 }
@@ -295,7 +300,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
                 // As an optimization we first try to look in the canonical position where we expect to find the file
                 Path srcFile = Paths.get(filePath.toString());
                 {
-                    Optional<CompilationUnit> compilationUnit = parse(srcFile);
+                    Optional<CompilationUnit> compilationUnit = parse(srcFile).getResult();
                     if (compilationUnit.isPresent()) {
                         Optional<com.github.javaparser.ast.body.TypeDeclaration<?>> astTypeDeclaration = Navigator.findType(compilationUnit.get(), typeName.toString());
                         if (astTypeDeclaration.isPresent()) {
