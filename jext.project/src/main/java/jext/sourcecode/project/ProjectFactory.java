@@ -2,6 +2,7 @@ package jext.sourcecode.project;
 
 import jext.maven.MavenDownloader;
 import jext.name.Name;
+import jext.name.PathName;
 import jext.sourcecode.resources.libraries.JavaLibraryFinder;
 import jext.sourcecode.project.ant.AntProject;
 import jext.sourcecode.project.eclipse.EclipseProject;
@@ -130,7 +131,9 @@ public class ProjectFactory {
     // }
 
     public static Project newProject(File projectHome, Properties properties) {
-        return newProject(projectHome.getName(), projectHome, properties);
+        String projectName = projectHome.getName();
+        String repositoryName = projectHome.getParentFile().getName();
+        return newProject(new PathName(repositoryName, projectName), projectHome, properties);
     }
 
     // public static Project newProject(File projectHome, Parameters params) {

@@ -211,7 +211,6 @@ public abstract class BaseProject extends NamedObject implements Project {
     private List<File> findSourceRoots() {
         // skip[0] == skip subtree
         // skip[1] == skip files
-        boolean[] skip = new boolean[2];
         HashBag<File> sourceRoots = new HashBag<>();
         try {
             Files.walkFileTree(projectHome.toPath(), new SimpleFileVisitor<Path>() {
@@ -222,25 +221,15 @@ public abstract class BaseProject extends NamedObject implements Project {
                     if (excludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
                         return FileVisitResult.SKIP_SUBTREE;
 
-                    if (skip[0]) {
-                        skip[0] = false;
-                        return FileVisitResult.SKIP_SUBTREE;
-                    }
-
-                    skip[1] = FileUtils.listFiles(dir, JAVA_EXT).isEmpty();
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
-                    if (skip[1]) return FileVisitResult.CONTINUE;
-
                     File file = path.toFile();
 
                     if (!JAVA_EXT.equals(FileUtils.getExtension(file)))
                         return FileVisitResult.CONTINUE;
-
-                    // logger.debugf("   visit %s", path.toString());
 
                     FastJavaParser parser = new FastJavaParser(file);
                     Optional<File> sourceRoot = parser.getSourceRoot();
@@ -251,7 +240,6 @@ public abstract class BaseProject extends NamedObject implements Project {
 
                     addJavaSourceRoot(sourceRoots, sourceRoot.get());
 
-                    skip[0] = true;
                     return FileVisitResult.SKIP_SIBLINGS;
                 }
             });
