@@ -2,7 +2,6 @@ package jext.sourcecode.project.util;
 
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Module;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.AbstractList;
@@ -51,7 +50,6 @@ public class SourceRoots extends AbstractList<SourceRoot> {
         return size;
     }
 
-    @NotNull
     @Override
     public Iterator<SourceRoot> iterator() {
         return rootsMap.values().iterator();

@@ -43,12 +43,12 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         return innerCache.containsKey(key);
     }
 
-    @Override
-    public V getOrDefault(K key, V defaultValue) {
-        synchronized (innerCache) {
-            return innerCache.getOrDefault(key, defaultValue);
-        }
-    }
+    // @Override
+    // public V getOrDefault(K key, V defaultValue) {
+    //     synchronized (innerCache) {
+    //         return innerCache.getOrDefault(key, defaultValue);
+    //     }
+    // }
 
     // @Override
     // public Optional<V> getIfPresent(K key) {
@@ -57,6 +57,13 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     //         return Optional.ofNullable(value);
     //     }
     // }
+
+    @Override
+    public V get(K key) {
+        synchronized (innerCache) {
+            return innerCache.getOrDefault(key, null);
+        }
+    }
 
     @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
@@ -84,14 +91,14 @@ public class WeakCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         }
     }
 
-    @Override
-    public V get(K key, Function<K, V> function) {
-        try {
-            return getChecked(key, () -> function.apply(key));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    // @Override
+    // public V get(K key, Function<K, V> function) {
+    //     try {
+    //         return getChecked(key, () -> function.apply(key));
+    //     } catch (ExecutionException e) {
+    //         throw new RuntimeException(e);
+    //     }
+    // }
 
     @Override
     public void put(K key, V value) {

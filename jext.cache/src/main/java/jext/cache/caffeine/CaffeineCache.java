@@ -42,17 +42,22 @@ public class CaffeineCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         return innerCache.getIfPresent(key) != null;
     }
 
-    @Override
-    public V getOrDefault(K key, V defaultValue) {
-        V value = innerCache.getIfPresent(key);
-        return value != null ? value : defaultValue;
-    }
+    // @Override
+    // public V getOrDefault(K key, V defaultValue) {
+    //     V value = innerCache.getIfPresent(key);
+    //     return value != null ? value : defaultValue;
+    // }
 
     // @Override
     // public Optional<V> getIfPresent(K key) {
     //     V value = innerCache.getIfPresent(key);
     //     return Optional.ofNullable(value);
     // }
+
+    @Override
+    public V get(K key) {
+        return innerCache.getIfPresent(key);
+    }
 
     @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
@@ -82,14 +87,14 @@ public class CaffeineCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         }
     }
 
-    @Override
-    public V get(K key, Function<K, V> function) {
-        try {
-            return getChecked(key, () -> function.apply(key));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    // @Override
+    // public V get(K key, Function<K, V> function) {
+    //     try {
+    //         return getChecked(key, () -> function.apply(key));
+    //     } catch (ExecutionException e) {
+    //         throw new RuntimeException(e);
+    //     }
+    // }
 
     @Override
     public void put(K key, V value) {

@@ -52,7 +52,7 @@ public interface Library extends IdNamed {
      * List of types defined in the library
      * (not efficient)
      */
-    Set<RefType> getTypes();
+    Set<? extends RefType> getTypes();
 
     /**
      * Check if the type is defined in the  library

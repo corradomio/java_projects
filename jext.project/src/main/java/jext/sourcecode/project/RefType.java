@@ -30,7 +30,7 @@ public interface RefType extends IdNamed {
     /**
      *
      */
-    // int getTypeParametersCount();
+    int getTypeParametersCount();
 
     /**
      * Retrieve the library that contains the implementation of the

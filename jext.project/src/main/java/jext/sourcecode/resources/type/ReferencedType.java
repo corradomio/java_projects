@@ -69,10 +69,10 @@ public class ReferencedType extends NamedObject implements RefType {
         throw new ClassCastException();
     }
 
-    // @Override
-    // public int getTypeParametersCount() {
-    //     return nTypeParams;
-    // }
+    @Override
+    public int getTypeParametersCount() {
+        return nTypeParams;
+    }
 
     @Override
     public TypeRole getRole() {

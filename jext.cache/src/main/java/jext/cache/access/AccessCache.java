@@ -40,11 +40,11 @@ public class AccessCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     //     return innerCache.getIfPresent(key);
     // }
 
-    @Override
-    public V getOrDefault(K key, V defaultValue) {
-        lastAccess = System.currentTimeMillis();
-        return innerCache.getOrDefault(key, defaultValue);
-    }
+    // @Override
+    // public V getOrDefault(K key, V defaultValue) {
+    //     lastAccess = System.currentTimeMillis();
+    //     return innerCache.getOrDefault(key, defaultValue);
+    // }
 
     @Override
     public boolean containsKey(K key) {
@@ -64,10 +64,15 @@ public class AccessCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         return innerCache.get(key, callable);
     }
 
+    // @Override
+    // public V get(K key, Function<K, V> function) {
+    //     lastAccess = System.currentTimeMillis();
+    //     return innerCache.get(key, function);
+    // }
+
     @Override
-    public V get(K key, Function<K, V> function) {
-        lastAccess = System.currentTimeMillis();
-        return innerCache.get(key, function);
+    public V get(K key) {
+        return innerCache.get(key);
     }
 
     @Override

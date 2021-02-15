@@ -77,19 +77,19 @@ public class MavenDownloader implements MavenConst {
     private static final Pattern HREF_VERSION =
         Pattern.compile("<a href=\"([^\"]+)/\" title=\"[^\"]+\">.*</a>\\s+([0-9\\-]+).*");
 
-    // timestamp last download
-    // private long downloadTimestamp = System.currentTimeMillis();
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
+    /**
+     * Default Maven downloader. It uses the default repository
+     */
     public MavenDownloader() {
         repoUrls.add("https://repo.maven.apache.org/maven2");
     }
 
     /**
-     * To use it to create a clone of the current downloader to add new custom repositories
+     * Create a clone of the current downloader, useful to add new custom repositories
      */
     public MavenDownloader newDownloader() {
         return new MavenDownloader()
@@ -98,6 +98,7 @@ public class MavenDownloader implements MavenConst {
             .setDownloadTimeout(downloadTimeout)
             .setCheckTimeout(checkTimeout)
             .setParallelDownloads(parallelDownloads)
+            .initialize()
             ;
     }
 
@@ -105,11 +106,13 @@ public class MavenDownloader implements MavenConst {
     // Configuration
     // ----------------------------------------------------------------------
 
+    /** Directory where to download the artifacts */
     public MavenDownloader setDownload(File downloadDir) {
         this.downloadDir = downloadDir;
         return this;
     }
 
+    /** Repository where to search teh artifacts */
     public MavenDownloader addRepository(String repoUrl) {
         // remove the last "/"
         if (repoUrl.endsWith("/"))
@@ -122,14 +125,13 @@ public class MavenDownloader implements MavenConst {
         return this;
     }
 
+    /** Repositories where to serach teh artifacts */
     public MavenDownloader addRepositories(Collection<String> repoUrls) {
         repoUrls.forEach(this::addRepository);
         return this;
     }
 
-    /**
-     * Timeout to wait before a connection starts
-     */
+    /**  Timeout to wait before a connection starts */
     public MavenDownloader setDownloadTimeout(long millis) {
         this.downloadTimeout = millis;
         return this;
@@ -145,19 +147,13 @@ public class MavenDownloader implements MavenConst {
         return this;
     }
 
-    /**
-     * Parallel downloads permitted
-     * @param parallelDownloads
-     * @return
-     */
+    /** Parallel downloads permitted */
     public MavenDownloader setParallelDownloads(int parallelDownloads) {
         this.parallelDownloads = parallelDownloads;
         return this;
     }
 
-    /**
-     * Check if the download directory there exists.
-     */
+    /** Create download directory there it doesn't exist. */
     public MavenDownloader initialize() {
         if (!downloadDir.exists() && !downloadDir.mkdirs())
             logger.warnf("Unable to create directory %s", downloadDir);
@@ -168,27 +164,31 @@ public class MavenDownloader implements MavenConst {
     // Compatibility
     // ----------------------------------------------------------------------
 
-    private String getPackaging(MavenCoords coords) {
-        MavenPom pom = getPom(coords);
-        return pom != null ? pom.getPackaging() : PACKAGING_JAR;
-    }
-
+    /**
+     * Retrieve the '.pom' file from the coordinates
+     */
     public File getPomFile(MavenCoords coords) {
         coords = normalize(coords);
 
+        // compose the local file
         File pomFile = getFile(coords, MavenType.POM);
         if (!pomFile.exists())
             downloadFile(coords, MavenType.POM);
         return pomFile;
     }
 
+    /**
+     * Retrieve the '.jar' file from the coordinates
+     */
     public File getArtifact(MavenCoords coords) {
         coords = normalize(coords);
 
+        // compose the local file
         File artifactFile = getFile(coords, MavenType.ARTIFACT);
         if (!artifactFile.exists())
             downloadFile(coords, MavenType.ARTIFACT);
 
+        // if the file is an '.aar' file, extract all '.jar's
         if (artifactFile.getName().endsWith(".aar"))
             artifactFile = JarUtils.extractJarFromAar(artifactFile);
 
@@ -209,7 +209,7 @@ public class MavenDownloader implements MavenConst {
 
     /** Relocate the coordinates */
     private MavenCoords getRelocated(MavenCoords coords) {
-        MavenPom pom = getPom_(coords);
+        MavenPom pom = getMavenPom(coords);
         if (pom == null)
             return coords;
         else if (pom.isRelocated())
@@ -250,6 +250,7 @@ public class MavenDownloader implements MavenConst {
         final Entry parent;
         final MavenDependency dcoords;
         final int depth;
+
         Entry(MavenDependency dcoords) {
             this.parent = null;
             this.depth = 0;
@@ -262,80 +263,80 @@ public class MavenDownloader implements MavenConst {
         }
     }
 
-    /**
-     * If the artifact is a 'jar', itself, if it is a 'pom', the list of
-     * components coords (recursively)
-     *
-     * @param maxDepth = 0 -> no recursion
-     *                 > 0 -> max depth
-     *                 < 0 -> infinite recursion
-     */
-    public List<MavenCoords> getComponentsCoords(MavenCoords coords, int maxDepth) {
-        coords = getVersioned(coords);
-
-        if (!coords.hasVersion()) {
-            logger.warnf("Missing version in %s", coords);
-            return Collections.emptyList();
-        }
-
-        // check for 'relocated' coords
-        MavenPom pom = getPom(coords);
-        if (pom == null)
-            return Collections.emptyList();
-
-        List<MavenCoords> components = new ArrayList<>();
-
-        // 1) is a 'jar'
-        if (!pom.isPomPackaging()) {
-            components.add(coords);
-            return components;
-        }
-
-        // 2) is a 'pom' but not 'recursive'
-        if (maxDepth == 0)
-            return pom.getComponents()
-                .stream()
-                .map(compo -> compo.coords)
-                .collect(Collectors.toList());
-
-        // 3) is a 'pom' and 'recursive' - breadth first (queue)
-        Queue<Entry> toVisit = new LinkedList<>();
-        toVisit.add(new Entry(new MavenDependency(coords)));
-        Set<MavenDependency> visited = new HashSet<>();
-
-        while(!toVisit.isEmpty()) {
-            Entry entry = toVisit.remove();
-            int edepth = entry.depth;
-
-            if (edepth > maxDepth)
-                continue;
-
-            // remove from the queue
-            MavenDependency dcoords = entry.dcoords;
-            // if already visited, skip
-            if (visited.contains(dcoords))
-                continue;
-
-            // check for relocated pom
-            pom = getPom(dcoords.coords);
-            if (pom == null)
-                continue;
-
-            // if 'pom', add components to toVisit
-            // if 'jar', add to visited
-            else if (pom.isPomPackaging())
-                pom.getComponents()
-                .forEach(compo -> {
-                    toVisit.add(new Entry(compo, entry));
-                });
-            else
-                visited.add(dcoords);
-        }
-
-        return visited.stream()
-            .map(dcoords -> dcoords.coords)
-            .collect(Collectors.toList());
-    }
+    // /**
+    //  * If the artifact is a 'jar', itself, if it is a 'pom', the list of
+    //  * components coords (recursively)
+    //  *
+    //  * @param maxDepth = 0 -> no recursion
+    //  *                 > 0 -> max depth
+    //  *                 < 0 -> infinite recursion
+    //  */
+    // public List<MavenCoords> getComponentsCoords(MavenCoords coords, int maxDepth) {
+    //     coords = getVersioned(coords);
+    //
+    //     if (!coords.hasVersion()) {
+    //         logger.errorf("Missing version in %s", coords);
+    //         return Collections.emptyList();
+    //     }
+    //
+    //     // check for 'relocated' coords
+    //     MavenPom pom = getPom(coords);
+    //     if (pom == null)
+    //         return Collections.emptyList();
+    //
+    //     List<MavenCoords> components = new ArrayList<>();
+    //
+    //     // 1) is a 'jar'
+    //     if (!pom.isPomPackaging()) {
+    //         components.add(coords);
+    //         return components;
+    //     }
+    //
+    //     // 2) is a 'pom' but not 'recursive'
+    //     if (maxDepth == 0)
+    //         return pom.getComponents()
+    //             .stream()
+    //             .map(compo -> compo.coords)
+    //             .collect(Collectors.toList());
+    //
+    //     // 3) is a 'pom' and 'recursive' - breadth first (queue)
+    //     Queue<Entry> toVisit = new LinkedList<>();
+    //     toVisit.add(new Entry(new MavenDependency(coords)));
+    //     Set<MavenDependency> visited = new HashSet<>();
+    //
+    //     while(!toVisit.isEmpty()) {
+    //         Entry entry = toVisit.remove();
+    //         int edepth = entry.depth;
+    //
+    //         if (edepth > maxDepth)
+    //             continue;
+    //
+    //         // remove from the queue
+    //         MavenDependency dcoords = entry.dcoords;
+    //         // if already visited, skip
+    //         if (visited.contains(dcoords))
+    //             continue;
+    //
+    //         // check for relocated pom
+    //         pom = getPom(dcoords.coords);
+    //         if (pom == null)
+    //             continue;
+    //
+    //         // if 'pom', add components to toVisit
+    //         // if 'jar', add to visited
+    //         else if (pom.isPomPackaging())
+    //             pom.getComponents()
+    //             .forEach(compo -> {
+    //                 toVisit.add(new Entry(compo, entry));
+    //             });
+    //         else
+    //             visited.add(dcoords);
+    //     }
+    //
+    //     return visited.stream()
+    //         .map(dcoords -> dcoords.coords)
+    //         .collect(Collectors.toList());
+    // }
 
     /**
      * List of 'dependencies'
@@ -360,7 +361,6 @@ public class MavenDownloader implements MavenConst {
                 .collect(Collectors.toList());
 
         // 2) recursive
-
         Queue<Entry> toVisit = new LinkedList<>();
         toVisit.add(new Entry(new MavenDependency(coords)));
         Set<MavenDependency> visited = new HashSet<>();
@@ -412,10 +412,23 @@ public class MavenDownloader implements MavenConst {
     // Artifacts
     // ----------------------------------------------------------------------
 
+    /**
+     * Retrieve the list of artifacts (list of files), contained inside the
+     * library specified by coordinates.
+     *
+     * If packaging is 'jar' of the default, there is only one file.
+     * If packaging is 'pom', the library is a collection of other libraries
+     *
+     * @param coords Maven coordinates
+     * @return list of artifacts
+     */
     public List<File> getArtifacts(MavenCoords coords) {
         return getArtifacts(Collections.singletonList(coords));
     }
 
+    /**
+     * List of artifacts realetd to the libraries list
+     */
     public List<File> getArtifacts(List<MavenCoords> coordsList) {
         List<File> artifacts = new ArrayList<>();
         for(MavenCoords coords : coordsList) {
@@ -435,11 +448,14 @@ public class MavenDownloader implements MavenConst {
     }
 
     public MavenPom getPom(MavenCoords coords) {
+        // normalize the coordinates
         coords = normalize(coords);
-        return getPom_(coords);
+        // retrieve the MavenPom object
+        return getMavenPom(coords);
     }
 
-    private MavenPom getPom_(MavenCoords coords) {
+    // MavenPom object from the coordinates
+    private MavenPom getMavenPom(MavenCoords coords) {
         if (!coords.hasVersion())
             return null;
 
@@ -463,6 +479,9 @@ public class MavenDownloader implements MavenConst {
         return pom == MavenPom.invalid() ? null : pom;
     }
 
+    /**
+     * Maven coordinates for the latest version of the library
+     */
     public MavenCoords getLatest(MavenCoords coords) {
         String latestVersion =  getLatestVersion(coords);
         if (!latestVersion.isEmpty())
@@ -493,6 +512,7 @@ public class MavenDownloader implements MavenConst {
                     <release>1.78</release>         // optional
                     <versions>
                         <version>1.0.3</version>
+                        ...
                         <version>1.2.0</version>    // latest
                     </versions>
                 </versioning>
@@ -581,6 +601,7 @@ public class MavenDownloader implements MavenConst {
     // MavenCoords -> File & Url
     // ----------------------------------------------------------------------
 
+    // Compose the file from the object type
     private File getFile(MavenCoords coords, MavenType type) {
         String relativePath;
         String groupId = coords.groupId.replace('.', '/');
@@ -589,24 +610,30 @@ public class MavenDownloader implements MavenConst {
 
         switch (type) {
             case VERSIONS:
+                // <groupId>/<artifactId>/<artifactId>.html
                 relativePath = String.format("%1$s/%2$s/%2$s.html",
                     groupId,
                     artifactId);
                 break;
             case METADATA:
+                // <groupId>/<artifactId>/maven-metadata.xml
                 relativePath = String.format("%s/%s/maven-metadata.xml",
                     groupId,
                     artifactId);
                 break;
             case POM:
+                // <groupId>/<artifactId>/<version>/<artifactId>-<version>.pom
                 relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.pom",
                     groupId,
                     artifactId,
                     version);
                 break;
             case ARTIFACT:
+                // <groupId>/<artifactId>/<version>/<artifactId>-<version>.<packaging>
                 relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.%4$s",
-                    groupId, artifactId, version,
+                    groupId,
+                    artifactId,
+                    version,
                     getPackaging(coords));
                 break;
             // case INVALID:
@@ -621,11 +648,18 @@ public class MavenDownloader implements MavenConst {
         return new File(downloadDir, relativePath);
     }
 
+    private String getPackaging(MavenCoords coords) {
+        MavenPom pom = getPom(coords);
+        return pom.getPackaging();
+    }
+
+    // Invalid file flag:  '<file>.invalid'
     private File getInvalidFlagFile(MavenCoords coords, MavenType type) {
         File file = getFile(coords, type);
         return new File(file.getParentFile(), file.getName() + ".invalid");
     }
 
+    // Relative artifact's url from the coordinates
     private String getUrl(String repoUrl, MavenCoords coords, MavenType type) {
         String groupId = coords.groupId.replace('.', '/');
         String artifactId = coords.artifactId;
@@ -633,22 +667,26 @@ public class MavenDownloader implements MavenConst {
 
         switch (type) {
             case VERSIONS:
+                // <repository>/<groupId>/<artifactId>
                 return String.format("%1$s/%2$s/%3$s",
                     repoUrl,
                     groupId,
                     artifactId);
             case METADATA:
+                // <repository>/<groupId>/<artifactId>/maven-metadata.xml
                 return String.format("%1$s/%2$s/%3$s/maven-metadata.xml",
                     repoUrl,
                     groupId,
                     artifactId);
             case POM:
+                // <repository>/<groupId>/<artifactId>/<version>/<artifactId>-<version>.pom
                 return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.pom",
                     repoUrl,
                     groupId,
                     artifactId,
                     version);
             case ARTIFACT:
+                // <repository>/<groupId>/<artifactId>/<version>/<artifactId>-<version>.<packaging>
                 return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.%5$s",
                     repoUrl,
                     groupId, artifactId, version,
@@ -727,7 +765,6 @@ public class MavenDownloader implements MavenConst {
                 renameTo(tempFile, downloadedFile);
 
                 break;
-
             }
             finally {
                 delete(tempFile);

@@ -471,7 +471,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         Cache<String, Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>>
             cache = CacheManager.getCache(String.format("dependency.%s.alreadySolved", this.prefix));
         Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
-            alreadySolved = cache.getOrDefault(key, new HashMap<>());
+            alreadySolved = cache.get(key, () -> new HashMap<>());
 
         // Sometimes, the typesolver try to solve a generic type (with "<...>").
         // This step remove the "<...>"

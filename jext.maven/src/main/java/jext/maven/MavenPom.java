@@ -96,7 +96,7 @@ public class MavenPom implements MavenConst {
         try {
             this.project = XPathUtils.parse(pomFile).getDocumentElement();
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             logger.errorf("Unable to parse %s: %s", pomFile, e);
         }
 
@@ -104,7 +104,7 @@ public class MavenPom implements MavenConst {
         try {
             this.project = XPathUtils.parse(EMPTY_POM).getDocumentElement();
         }
-        catch (Exception e) { }
+        catch (Throwable e) { }
 
     }
 

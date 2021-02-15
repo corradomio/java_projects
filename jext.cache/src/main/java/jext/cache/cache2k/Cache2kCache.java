@@ -45,17 +45,22 @@ public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         return innerCache.containsKey(key);
     }
 
-    @Override
-    public V getOrDefault(K key, V defaultValue) {
-        V value = innerCache.get(key);
-        return value != null ? value : defaultValue;
-    }
+    // @Override
+    // public V getOrDefault(K key, V defaultValue) {
+    //     V value = innerCache.get(key);
+    //     return value != null ? value : defaultValue;
+    // }
 
     // @Override
     // public Optional<V> getIfPresent(K key) {
     //     V value = innerCache.get(key);
     //     return Optional.ofNullable(value);
     // }
+
+    @Override
+    public V get(K key) {
+        return innerCache.get(key);
+    }
 
     @Override
     public V getChecked(K key, Callable<V> callable) throws ExecutionException {
@@ -88,14 +93,14 @@ public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         }
     }
 
-    @Override
-    public V get(K key, Function<K, V> function) {
-        try {
-            return getChecked(key, () -> function.apply(key));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    // @Override
+    // public V get(K key, Function<K, V> function) {
+    //     try {
+    //         return getChecked(key, () -> function.apply(key));
+    //     } catch (ExecutionException e) {
+    //         throw new RuntimeException(e);
+    //     }
+    // }
 
     @Override
     public void put(K key, V value) {

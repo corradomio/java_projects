@@ -1,21 +1,13 @@
 package jext.sourcecode.resources.type;
 
+import jext.java.TypeRole;
 import jext.name.Name;
-
-// import ae.ebtic.spl.analysis.common.EdgeDirection;
-// import ae.ebtic.spl.analysis.components.Component;
-// import ae.ebtic.spl.analysis.features.Feature;
-// import ae.ebtic.spl.analysis.sourcecode.model.Field;
-// import ae.ebtic.spl.analysis.sourcecode.model.Method;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
-import jext.sourcecode.project.util.NamedObject;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
-import jext.java.TypeRole;
-
-import java.util.List;
+import jext.sourcecode.project.util.NamedObject;
 
 public class ImplementedType extends NamedObject implements Type {
 
@@ -78,10 +70,10 @@ public class ImplementedType extends NamedObject implements Type {
 
     // --
 
-    // @Override
-    // public int getTypeParametersCount() {
-    //     return nParams;
-    // }
+    @Override
+    public int getTypeParametersCount() {
+        return nParams;
+    }
 
     @Override
     public Library getLibrary() {
