@@ -1,6 +1,7 @@
 package jext.javaparser.analysis;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
@@ -25,6 +26,11 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
     }
 
     @Override
+    public void visit(PackageDeclaration n, Void arg) {
+        super.visit(n, arg);
+    }
+
+    @Override
     public void visit(ClassExpr n, Void arg) {
         super.visit(n, arg);
     }
@@ -40,11 +46,11 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
             // System.err.println(e);
         }
         catch (UnsupportedOperationException e) {
-            logger.error(e.toString());
+            logger.error(e.toString() + " " + n.getNameAsString());
             // System.err.println(e);
         }
         catch (NoSuchElementException e) {
-            logger.error(e.toString());
+            logger.error(e.toString() + " " + n.getNameAsString());
             // System.err.println(e);
         }
         super.visit(n, arg);
