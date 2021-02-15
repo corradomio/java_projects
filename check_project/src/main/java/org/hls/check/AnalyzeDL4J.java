@@ -37,12 +37,12 @@ public class AnalyzeDL4J {
         Parameters params = Parameters.params();
 
         Project dl4j = Projects.newProject(name,
-            new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7")
-            // new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
+            // new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7")
+            new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
             , params
         );
 
-        pool = JavaParserPool.getPool();
+        pool = JavaParserPool.getPool().withCache();
         dl4j.getModules().forEach(module -> {
             pool.addAll(module.getSourceRoots());
         });
@@ -56,7 +56,6 @@ public class AnalyzeDL4J {
         classPoolRegistry.addJdk(JDK);
 
         jdkPoolRegistry = new ClassPoolRegistry().addJdk(JDK);
-
 
         dl4j.getModules().forEach(module -> {
             Parallel.forEach(module.getSources(), AnalyzeDL4J::analyze);
@@ -87,7 +86,7 @@ public class AnalyzeDL4J {
 
             // current module
             // JavaParserPoolTypeSolver mts = new JavaParserPoolTypeSolver(pool);
-            JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver().createCaches();
+            JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver().withCache();
             mts.addAll(module.getSourceRoots());
             module.getDependencies(false).forEach(dmodule -> {
                 mts.addAll(dmodule.getSourceRoots());

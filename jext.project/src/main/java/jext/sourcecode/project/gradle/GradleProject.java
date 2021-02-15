@@ -1,5 +1,6 @@
 package jext.sourcecode.project.gradle;
 
+import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 import jext.io.file.FilePatterns;
@@ -29,7 +30,7 @@ public class GradleProject extends BaseProject {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final String TYPE = "gradle";
+    public static final ProjectType TYPE = ProjectType.GRADLE;
     private static final String MODULE_FILE = "build.gradle";
     private static final String MODULE_FILE_KTS = "build.gradle.kts";
 

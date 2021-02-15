@@ -21,12 +21,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
@@ -42,7 +39,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
     protected Project project;
     protected String path;
     protected Properties properties;
-    protected File moduleRoot;
+    protected File moduleHome;
 
     protected List<File> directories;
     protected List<Library> libraries;
@@ -56,13 +53,13 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected BaseModule(File moduleRoot, Project project) {
+    protected BaseModule(File moduleHome, Project project) {
         super(null);
-        this.moduleRoot = moduleRoot;
+        this.moduleHome = moduleHome;
         this.project = project;
         this.properties = new Properties();
 
-        this.path = FileUtils.relativePath(project.getProjectHome(), moduleRoot);
+        this.path = FileUtils.relativePath(project.getProjectHome(), moduleHome);
         setName(new PathName(this.path));
 
         this.logger = Logger.getLogger("%s.%s.%s",
@@ -92,7 +89,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
 
     @Override
     public File getModuleHome() {
-        return this.moduleRoot;
+        return this.moduleHome;
     }
 
     // ----------------------------------------------------------------------
@@ -366,7 +363,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
         List<Resource> resources = new ArrayList<>();
 
         // local resources
-        resources.addAll(getBaseProject().getResources(moduleRoot, this));
+        resources.addAll(getBaseProject().getResources(moduleHome, this));
 
         // sub resources
         getDirectories().forEach(dir -> {
@@ -449,7 +446,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
 
     protected List<File> getDirectories() {
         if (directories == null)
-            directories = getBaseProject().getDirectories(moduleRoot);
+            directories = getBaseProject().getDirectories(moduleHome);
         return directories;
     }
 

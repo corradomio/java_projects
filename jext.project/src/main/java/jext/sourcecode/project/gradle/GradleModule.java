@@ -60,8 +60,8 @@ public class GradleModule extends BaseModule {
     }
 
     private void init() {
-        File buildGradle = new File(moduleRoot, BUILD_GRADLE);
-        File directoryGradle = new File(moduleRoot, moduleRoot.getName() + ".gradle");
+        File buildGradle = new File(moduleHome, BUILD_GRADLE);
+        File directoryGradle = new File(moduleHome, moduleHome.getName() + ".gradle");
 
         if (directoryGradle.exists())
             this.buildGradle = new BuildGradleFile(directoryGradle);

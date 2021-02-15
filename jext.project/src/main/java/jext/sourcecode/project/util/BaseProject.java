@@ -1,6 +1,7 @@
 package jext.sourcecode.project.util;
 
 import jext.name.PathName;
+import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.resources.ResourceFile;
 import jext.sourcecode.resources.SourceCode;
@@ -61,7 +62,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     protected Logger logger;
     protected File projectHome;
-    protected String projectType;
+    protected ProjectType projectType;
     protected Properties properties;
 
     protected List<Module> modules;
@@ -78,7 +79,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected BaseProject(String projectName, File projectHome, Properties properties, String projectType){
+    protected BaseProject(String projectName, File projectHome, Properties properties, ProjectType projectType){
         super(new PathName(projectName));
         this.projectHome = projectHome;
         this.projectType = projectType;
@@ -121,7 +122,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     @Override
-    public String getProjectType() {
+    public ProjectType getProjectType() {
         return projectType;
     }
 

@@ -13,6 +13,7 @@ import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import jext.cache.CacheManager;
 import jext.cache.Cache;
+import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserRootsTypeSolver;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -121,16 +122,21 @@ public class JavaParserPool {
     // Cache
     // ----------------------------------------------------------------------
 
-    public JavaParserPool setCachePrefix(String cachePrefix) {
+    public JavaParserPool withCache() {
+        return withCache(this.name);
+    }
+
+    public JavaParserPool withCache(String cachePrefix) {
         this.cachePrefix = cachePrefix;
+        createCaches();
         return this;
     }
 
-    public JavaParserPool createCaches() {
+    private void createCaches() {
+        if (this.parsedFiles != null) return;
         this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
         this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
         this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
-        return this;
     }
 
     private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
@@ -160,16 +166,16 @@ public class JavaParserPool {
         return this.name;
     }
 
-    public JavaParserPool setParserConfiguration(ParserConfiguration parserConfiguration) {
+    public JavaParserPool withParserConfiguration(ParserConfiguration parserConfiguration) {
         Objects.requireNonNull(parserConfiguration, "parserConfiguration can be not null");
         this.parserConfiguration = parserConfiguration;
         return this;
     }
 
-    public JavaParserPool setCacheSizeLimit(long cacheSizeLimit) {
-        this.cacheSizeLimit = cacheSizeLimit;
-        return this;
-    }
+    // public JavaParserPool setCacheSizeLimit(long cacheSizeLimit) {
+    //     this.cacheSizeLimit = cacheSizeLimit;
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Source roots

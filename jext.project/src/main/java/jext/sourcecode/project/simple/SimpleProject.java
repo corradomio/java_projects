@@ -1,5 +1,6 @@
 package jext.sourcecode.project.simple;
 
+import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 
@@ -14,7 +15,7 @@ public class SimpleProject extends BaseProject {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final String TYPE = "simple";
+    public static final ProjectType TYPE = ProjectType.SIMPLE;
     public static final String UNKNOWN = "unknown";
 
     // ----------------------------------------------------------------------

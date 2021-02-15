@@ -11,8 +11,10 @@ import java.util.Set;
 
 public interface Module extends IdNamed {
 
+    /** Module id */
     String getId();
 
+    /** Module name */
     Name getName();
 
     /** Owner project */
@@ -24,7 +26,7 @@ public interface Module extends IdNamed {
     /** Module home directory (relative to projectHome) */
     String getPath();
 
-    /** Module root directory (physical path) */
+    /** Module home directory (physical path) */
     File getModuleHome();
 
     // -- modules
@@ -34,16 +36,18 @@ public interface Module extends IdNamed {
 
     // -- sources
 
-
-    /** Sources defined inside the module */
+    /** Sources available inside the module */
     List<Source> getSources();
+
+    /** Source roots */
     Set<File> getSourceRoots();
 
     /** Retrieve a source by id/full name/name */
     Source getSource(String name);
 
-    // -- resources/libraries
+    // -- libraries
 
+    /** Module runtime library */
     Library getRuntimeLibrary();
 
     /** Libraries used by the module (local & remote) */
@@ -52,6 +56,8 @@ public interface Module extends IdNamed {
     /** Retrieve a library by id/full name/name */
     Library getLibrary(String nameOrId);
 
+    // -- resources
+
     /** Resources used by the module */
     List<Resource> getResources();
 
@@ -59,11 +65,7 @@ public interface Module extends IdNamed {
 
     // -- types
 
-    /**
-     * List of types defined inside the module
-     * It is possible to specify if to include the types
-     * defined inside included external libraries
-     */
+    /** List of types defined inside the module */
     Set<RefType> getTypes();
 
     /** List of types used (in imports) in the implementations */

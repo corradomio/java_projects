@@ -1,5 +1,6 @@
 package jext.sourcecode.project.eclipse;
 
+import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 
@@ -12,7 +13,7 @@ public class EclipseProject extends BaseProject {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final String TYPE = "eclipse";
+    public static final ProjectType TYPE = ProjectType.ECLIPSE;
     public static final String MODULE_FILE = ".project";
 
     // ----------------------------------------------------------------------

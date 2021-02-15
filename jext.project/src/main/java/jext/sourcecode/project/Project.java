@@ -34,7 +34,7 @@ public interface Project extends IdNamed {
      *                  - file patterns ('** /test/**')
      *                  - file extensions ('.xml')
      *                  to exclude
-     *                  default: 'target,build,out,.*
+     *                  default: 'target,out,.*
      *
      *  Note: it is possible to use multiple 'module.*', adding a suffix ('module.resources.1')
      */
@@ -48,7 +48,7 @@ public interface Project extends IdNamed {
     // ----------------------------------------------------------------------
 
     /** Project type */
-    String getProjectType();
+    ProjectType getProjectType();
 
     /** Project properties */
     Properties getProperties();

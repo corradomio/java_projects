@@ -39,6 +39,8 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     // Private fields
     // ----------------------------------------------------------------------
 
+    private static final String DEFAULT = "default";
+
     private final String name;
     private String cachePrefix;
 
@@ -54,14 +56,14 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     private Cache<Path, ParseResult<CompilationUnit>> parsedFiles;
     private Cache<Path, List<CompilationUnit>> parsedDirectories;
     private Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> foundTypes;
-    private static final int CACHE_SIZE_UNSET = -1;
+    // private static final int CACHE_SIZE_UNSET = -1;
 
     // ----------------------------------------------------------------------
     // Constructors
     // ----------------------------------------------------------------------
 
     public JavaParserRootsTypeSolver() {
-        this("default", new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE));
+        this(DEFAULT, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE));
     }
 
     public JavaParserRootsTypeSolver(String name) {
@@ -115,17 +117,21 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     // Source roots
     // ----------------------------------------------------------------------
 
-    public JavaParserRootsTypeSolver setCachePrefix(String cachePrefix) {
+    public JavaParserRootsTypeSolver withCache() {
+        return withCache(this.name);
+    }
+
+    public JavaParserRootsTypeSolver withCache(String cachePrefix) {
         this.cachePrefix = cachePrefix;
         createCaches();
         return this;
     }
 
-    public JavaParserRootsTypeSolver createCaches() {
+    private void createCaches() {
+        if (this.parsedFiles != null) return;
         this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
         this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
         this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
-        return this;
     }
 
     private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
@@ -179,6 +185,8 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
             throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
         }
         this.parent = parent;
+
+        createCaches();
     }
 
     // ----------------------------------------------------------------------
@@ -206,7 +214,6 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
             throw new RuntimeException(e);
         }
     }
-
 
 
     /**

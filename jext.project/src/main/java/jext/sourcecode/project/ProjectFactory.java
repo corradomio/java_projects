@@ -21,7 +21,6 @@ import static jext.sourcecode.project.Project.PROJECT_TYPE;
 
 public class ProjectFactory {
 
-    private static final String AUTO = "auto";
     private static final Logger logger = Logger.getLogger(ProjectFactory.class);
 
     // ----------------------------------------------------------------------
@@ -59,7 +58,7 @@ public class ProjectFactory {
     public static Project newProject(String projectName, File projectHome, Properties properties) {
 
         Project project;
-        String projectType;
+        ProjectType projectType;
         String runtimeLibrary;
 
         //
@@ -74,8 +73,8 @@ public class ProjectFactory {
         //      5) Simple
         //
 
-        projectType = properties.getProperty(PROJECT_TYPE, null);
-        if (StringUtils.isEmpty(projectName) || AUTO.equals(projectType));
+        projectType = ProjectType.toProjectType(properties.getProperty(PROJECT_TYPE, ProjectType.AUTO.name()));
+        if (StringUtils.isEmpty(projectName) || ProjectType.AUTO.equals(projectType));
             projectType = guessProjectType(projectHome, properties);
 
         if (AntProject.TYPE.equals(projectType))

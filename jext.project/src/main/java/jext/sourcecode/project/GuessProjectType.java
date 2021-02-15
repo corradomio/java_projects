@@ -40,9 +40,9 @@ public class GuessProjectType {
     // 4) it is a simple type
     //
 
-    public static String guessProjectType(File projectHome, Properties props) {
+    public static ProjectType guessProjectType(File projectHome, Properties props) {
         List<File> directories;
-        String projectType;
+        ProjectType projectType;
 
         {
             // directories = Collections.singletonList(projectHome);
@@ -74,15 +74,15 @@ public class GuessProjectType {
         //     return SimpleProject.TYPE;
     }
 
-    private static class CountNames extends HashMap<String, Integer> {
-        void add(String name) {
+    private static class CountNames extends HashMap<ProjectType, Integer> {
+        void add(ProjectType name) {
             this.put(name, 1 + this.getOrDefault(name, 0));
         }
 
-        String getMostFrequentName() {
-            String selected = null;
+        ProjectType getMostFrequentName() {
+            ProjectType selected = null;
             int selectedCount = 0;
-            for (String name : keySet()) {
+            for (ProjectType name : keySet()) {
                 int count = get(name);
                 if (count > selectedCount) {
                     selected = name;
@@ -93,7 +93,7 @@ public class GuessProjectType {
         }
     }
 
-    private static String findBetterType(File directory, Properties props) {
+    private static ProjectType findBetterType(File directory, Properties props) {
         if (GradleProject.isProject(directory, props))
             return GradleProject.TYPE;
         if (MavenProject.isProject(directory, props))
@@ -105,7 +105,7 @@ public class GuessProjectType {
         return null;
     }
 
-    private static String findMostFrequentType(List<File> directories, Properties props) {
+    private static ProjectType findMostFrequentType(List<File> directories, Properties props) {
         CountNames counts = new CountNames();
 
         directories.forEach(directory -> {
