@@ -57,6 +57,10 @@ public class Logger {
 
     // factory methods
 
+    public static Logger getLogger() {
+        return getLogger("$");
+    }
+
     public static Logger getLogger(String name) {
         if (name.contains("/"))
             name = name.replace('.', '_').replace('/', '.');
@@ -251,5 +255,15 @@ public class Logger {
         if (!counts.containsKey(category))
             counts.put(category, new AtomicInteger());
         return counts.get(category).incrementAndGet();
+    }
+
+    // query
+
+    public void println(String message) {
+        info(message);
+    }
+
+    public void printf(String message, Object ... args) {
+        infof(message, args);
     }
 }

@@ -59,11 +59,11 @@ public class AnalyzeDL4J {
 
 
         dl4j.getModules().forEach(module -> {
-            // Parallel.forEach(module.getSources(), AnalyzeDL4J::analyze);
-            module.getSources().forEach(AnalyzeDL4J::analyze);
+            Parallel.forEach(module.getSources(), AnalyzeDL4J::analyze);
+            // module.getSources().forEach(AnalyzeDL4J::analyze);
         });
 
-        System.out.println("=== END ===");
+        Logger.getLogger("main").println("=== END ===");
 
         CacheManager.shutdown();
         Parallel.shutdown();
