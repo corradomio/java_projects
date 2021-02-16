@@ -59,7 +59,6 @@ public class ProjectFactory {
 
         Project project;
         ProjectType projectType;
-        String runtimeLibrary;
 
         //
         // If the project type is not specified, we try to understand it based on
@@ -86,8 +85,6 @@ public class ProjectFactory {
         else if (EclipseProject.TYPE.equals(projectType))
             project = new EclipseProject(projectName, projectHome, properties);
         else if (SimpleProject.TYPE.equals(projectType))
-            project = new SimpleProject(projectName, projectHome, properties);
-        else if (SimpleProject.UNKNOWN.equals(projectType))
             project = new SimpleProject(projectName, projectHome, properties);
         else {
             logger.errorf("Project type %s unknown", projectType);

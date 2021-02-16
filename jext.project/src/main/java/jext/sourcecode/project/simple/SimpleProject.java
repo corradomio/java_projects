@@ -16,7 +16,6 @@ public class SimpleProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     public static final ProjectType TYPE = ProjectType.SIMPLE;
-    public static final String UNKNOWN = "unknown";
 
     // ----------------------------------------------------------------------
     // Static methods

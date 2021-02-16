@@ -157,6 +157,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     protected void findModulesByScan() {
+        logger.debug("findModulesByScan");
 
         String moduleFile = getProperties().getProperty(PROJECT_MODULE, MODULE_FILE);
         List<File> moduleDirs = new ArrayList<>();
@@ -190,6 +191,8 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     protected void findModulesByJavaSourceRoots() {
+        logger.debug("findModulesByJavaSourceRoots");
+
         List<File> sourceRoots = findSourceRoots();
         addSourceRootModules(sourceRoots);
     }
@@ -322,8 +325,9 @@ public abstract class BaseProject extends NamedObject implements Project {
      * Add the root module (with name "") if not present
      */
     protected void addRootModule() {
+        logger.debug("addRootModule");
+
         // if the ROOT module is not present it is ADDED
-        // as FIRST module!!!!
         if (!hasRootModule()) {
             Module rootModule = newModule(projectHome);
             modules.add(rootModule);
