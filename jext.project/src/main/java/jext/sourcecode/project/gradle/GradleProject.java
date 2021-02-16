@@ -97,6 +97,8 @@ public class GradleProject extends BaseProject {
     }
 
     private void findModulesByConfig() {
+        logger.debug("findModulesByConfig");
+
         List<File> moduleHomes = new ArrayList<>();
         try {
             Files.walkFileTree(projectHome.toPath(), new SimpleFileVisitor<Path>(){
@@ -125,6 +127,8 @@ public class GradleProject extends BaseProject {
     }
 
     public void findModulesByGradle() {
+        logger.debug("findModulesByGradle");
+
         Set<GradleModule> gmodules = new HashSet<>();
         Queue<GradleModule> toVisit = new LinkedList<>();
         toVisit.add(rootModule);
