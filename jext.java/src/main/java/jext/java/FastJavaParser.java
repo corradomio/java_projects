@@ -7,6 +7,7 @@ import jext.name.ObjectName;
 import jext.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +78,6 @@ public class FastJavaParser {
         else
             parsed = true;
 
-        try {
             String namespace = "";
             boolean exit = false;
 
@@ -133,9 +133,6 @@ public class FastJavaParser {
             } else {
                 role = TypeRole.UNKNOWN;
             }
-        } catch (Throwable t) {
-            logger.error(t, t);
-        }
 
         return this.role;
     }

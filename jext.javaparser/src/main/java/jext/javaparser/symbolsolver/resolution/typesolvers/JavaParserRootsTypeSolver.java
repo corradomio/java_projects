@@ -3,7 +3,10 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.Problem;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
@@ -11,11 +14,9 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.cache.ManagedCache;
 import jext.logging.Logger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +32,8 @@ import java.util.concurrent.ExecutionException;
 
 import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_EDGE;
-import static com.github.javaparser.Providers.provider;
+import static jext.javaparser.Providers.provider;
+
 
 public class JavaParserRootsTypeSolver implements TypeSolver {
 
@@ -45,10 +47,10 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     private String cachePrefix;
 
     // maximum cache size
-    private long cacheSizeLimit = -1;
+    // private long cacheSizeLimit = -1;
+    private ParserConfiguration parserConfiguration;
 
     private final Set<File> sourceRoots;
-    private final JavaParser javaParser;
     private final Logger logger;
 
     private TypeSolver parent;
@@ -56,7 +58,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     private Cache<Path, ParseResult<CompilationUnit>> parsedFiles;
     private Cache<Path, List<CompilationUnit>> parsedDirectories;
     private Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> foundTypes;
-    // private static final int CACHE_SIZE_UNSET = -1;
+    private static final int CACHE_SIZE_UNSET = -1;
 
     // ----------------------------------------------------------------------
     // Constructors
@@ -74,7 +76,7 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
         this.name = name;
         this.cachePrefix = name;
         this.sourceRoots = new HashSet<>();
-        this.javaParser = new JavaParser(parserConfiguration);
+        this.parserConfiguration = parserConfiguration;
         this.logger = Logger.getLogger(JavaParserRootsTypeSolver.class, name);
 
         // this.parsedFiles = CacheManager.getCache(name +".parsedFiles");
@@ -129,9 +131,9 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
 
     private void createCaches() {
         if (this.parsedFiles != null) return;
-        this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
-        this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
-        this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+        this.parsedFiles = buildCache("parsedFiles", CACHE_SIZE_UNSET);
+        this.parsedDirectories = buildCache("parsedDirectories", CACHE_SIZE_UNSET);
+        this.foundTypes = buildCache("foundTypes", CACHE_SIZE_UNSET);
     }
 
     private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
@@ -196,22 +198,29 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     private ParseResult<CompilationUnit> parse(Path srcFile) {
         try {
             return parsedFiles.getChecked(srcFile.toAbsolutePath(), () -> {
-                try {
-                    // if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
-                    //     return new ParseResult<>()
-                    // }
+                // try {
                     logger.debugf("... parse %s", srcFile.toAbsolutePath());
-                    ParseResult<CompilationUnit> result = javaParser.parse(COMPILATION_UNIT, provider(srcFile));
+                    ParseResult<CompilationUnit> result =
+                        new JavaParser(parserConfiguration)
+                            .parse(COMPILATION_UNIT, provider(srcFile))
+                        ;
                     result.ifSuccessful(cu -> {
                         cu.setStorage(srcFile);
                     });
                     return result;
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException("Issue while parsing while type solving: " + srcFile.toAbsolutePath(), e);
-                }
+                // }
+                // catch (Throwable e) {
+                //     throw new ExecutionException("Issue parsing: " + srcFile, e);
+                // }
             });
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            logger.errorf("Unable to parse %s: %s", srcFile, e);
+            return new ParseResult<>(
+                null,
+                new ArrayList<Problem>() {{
+                    add(new Problem("ExecutionException", TokenRange.INVALID, e));
+                }},
+                new CommentsCollection());
         }
     }
 

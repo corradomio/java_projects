@@ -109,7 +109,6 @@ public class JavaParserPool {
         this.sourceRoots = new HashSet<>();
         this.parserConfiguration = parserConfiguration;
         this.cacheSizeLimit = cacheSizeLimit;
-
         this.logger = Logger.getLogger(getClass(), name);
 
         // this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
@@ -220,25 +219,25 @@ public class JavaParserPool {
 
         try {
             presult = parsedFiles.getChecked(srcFile, () -> {
-                logger.debugft("... parsing %s", srcFile);
-                try {
-                    // ParseResult<CompilationUnit> result =
-                    //     new JavaParser(parserConfiguration)
-                    //         .parse(COMPILATION_UNIT, provider(srcFile))
-                    //     ;
-                    // result.ifSuccessful(cu -> {
-                    //     cu.setStorage(srcFile);
-                    //     cu.getPackageDeclaration().ifPresent(pdecl -> {
-                    //         addSourceRoot(srcFile, pdecl.getNameAsString());
-                    //     });
-                    // });
-                    // return result;
-                    return parseResult(srcFile);
-                } catch (IOException e) {
-                    throw new RuntimeException("Issue while parsing: " + srcFile, e);
-                }
+                logger.debugft("... parse %s", srcFile);
+                // try {
+                    ParseResult<CompilationUnit> result =
+                        new JavaParser(parserConfiguration)
+                            .parse(COMPILATION_UNIT, provider(srcFile))
+                        ;
+                    result.ifSuccessful(cu -> {
+                        cu.setStorage(srcFile);
+                        cu.getPackageDeclaration().ifPresent(pdecl -> {
+                            addSourceRoot(srcFile, pdecl.getNameAsString());
+                        });
+                    });
+                    return result;
+                // } catch (Throwable e) {
+                //     throw new ExecutionException("Issue parsing: " + srcFile, e);
+                // }
             });
-        } catch (ExecutionException e) {
+        }
+        catch (ExecutionException e) {
             logger.errorf("Unable to parse %s: %s", srcFile, e);
             return new ParseResult<>(
                 null,
@@ -247,56 +246,53 @@ public class JavaParserPool {
                 }},
                 new CommentsCollection());
         }
-        finally {
-
-        }
 
         return presult;
     }
 
-    /**
-     * Sometime the parsin fails for a ""strange""
-     *
-     *      """Lexical Error ..."""
-     *
-     * This seems to a ""transient error"".
-     * To mitigate it, we retry to parse the file some other time
-     */
-    private ParseResult<CompilationUnit> parseResult(Path srcFile) throws IOException {
-        Thread.yield();
-
-        int count = 0;
-        TokenMgrException exception = null;
-        while (count < 3) {
-            try {
-                ParseResult<CompilationUnit> result =
-                    new JavaParser(parserConfiguration)
-                        .parse(COMPILATION_UNIT, provider(srcFile));
-                result.ifSuccessful(cu -> {
-                    cu.setStorage(srcFile);
-                    cu.getPackageDeclaration().ifPresent(pdecl -> {
-                        addSourceRoot(srcFile, pdecl.getNameAsString());
-                    });
-                });
-                return result;
-            }
-            catch (TokenMgrException e) {
-                exception = e;
-                logger.warnf("Lexical error caught: retry");
-                ++count;
-            }
-            catch (Throwable t) {
-                if (t.getMessage().contains("Lexical error")) {
-                    logger.warnf("Lexical error caught: retry (%s)", t.getClass().getCanonicalName());
-                    ++count;
-                }
-                else {
-                    throw t;
-                }
-            }
-        }
-        throw exception;
-    }
+    // /**
+    //  * Sometime the parsin fails for a ""strange""
+    //  *
+    //  *      """Lexical Error ..."""
+    //  *
+    //  * This seems to a ""transient error"".
+    //  * To mitigate it, we retry to parse the file some other time
+    //  */
+    // private ParseResult<CompilationUnit> parseResult(Path srcFile) throws IOException {
+    //     Thread.yield();
+    //
+    //     int count = 0;
+    //     TokenMgrException exception = null;
+    //     while (count < 3) {
+    //         try {
+    //             ParseResult<CompilationUnit> result =
+    //                 new JavaParser(parserConfiguration)
+    //                     .parse(COMPILATION_UNIT, provider(srcFile));
+    //             result.ifSuccessful(cu -> {
+    //                 cu.setStorage(srcFile);
+    //                 cu.getPackageDeclaration().ifPresent(pdecl -> {
+    //                     addSourceRoot(srcFile, pdecl.getNameAsString());
+    //                 });
+    //             });
+    //             return result;
+    //         }
+    //         catch (TokenMgrException e) {
+    //             exception = e;
+    //             logger.warnf("Lexical error caught: retry");
+    //             ++count;
+    //         }
+    //         catch (Throwable t) {
+    //             if (t.getMessage().contains("Lexical error")) {
+    //                 logger.warnf("Lexical error caught: retry (%s)", t.getClass().getCanonicalName());
+    //                 ++count;
+    //             }
+    //             else {
+    //                 throw t;
+    //             }
+    //         }
+    //     }
+    //     throw exception;
+    // }
 
     private void addSourceRoot(Path srcFile, String packageName) {
         String subDir = packageName.replace('.', '/');

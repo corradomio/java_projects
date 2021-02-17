@@ -108,6 +108,10 @@ public class URL  {
         return proto;
     }
 
+    public String getProtocolHostPort() {
+        return String.format("%s://%s", protocol, hostPort);
+    }
+
     public String getHostPort() { return hostPort; }
 
     public String getHostPortPath() {

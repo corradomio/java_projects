@@ -15,15 +15,21 @@ import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import jext.cache.Cache;
 import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 public class JPUtils {
 
@@ -245,9 +251,9 @@ public class JPUtils {
         catch (UnsupportedOperationException e) {
 
         }
-        catch (Throwable t) {
-            logger.error(t, t);
-        }
+        // catch (Throwable t) {
+        //     logger.error(t, t);
+        // }
         return rmd.getQualifiedName();
     }
 
@@ -265,9 +271,9 @@ public class JPUtils {
         catch (UnsupportedOperationException e) {
 
         }
-        catch (Throwable t) {
-            logger.error(t, t);
-        }
+        // catch (Throwable t) {
+        //     logger.error(t, t);
+        // }
         return rcd.getQualifiedName();
     }
 
@@ -301,6 +307,88 @@ public class JPUtils {
             for (TypeSolver ts : toRemove)
                 tsmap.remove(ts);
         }
+    }
+
+    private static class JavaParserFacadeCache implements Cache<Object, Object> {
+        private Map<TypeSolver, ?> tsmap;
+
+        JavaParserFacadeCache(Map<TypeSolver, ?> tsmap) {
+            this.tsmap = tsmap;
+        }
+
+        @Override
+        public String getId() {
+            return Integer.toHexString(JavaParserFacade.class.getName().hashCode());
+        }
+
+        @Override
+        public String getName() {
+            return JavaParserFacade.class.getName();
+        }
+
+        @Override
+        public Properties getProperties() {
+            return jext.util.Properties.empty();
+        }
+
+        @Override
+        public long size() {
+            return tsmap.size();
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object get(Object key, Callable<Object> callable) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object get(Object key, Function<Object, Object> function) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object getOrDefault(Object key, Object defaultValue) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object getChecked(Object key, Callable<Object> callable) throws ExecutionException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Optional<Object> getIfPresent(Object key) {
+            return Optional.empty();
+        }
+
+        @Override
+        public void put(Object key, Object value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void remove(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void close() {
+
+        }
+    }
+
+    public static Cache<?, ?> getJavaParserFacadeCache() {
+        return new JavaParserFacadeCache(getJavaParserFacadeTypeSolversMap());
     }
 
 }

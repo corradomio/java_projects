@@ -44,7 +44,6 @@ public class FilePatterns {
     }
 
     public boolean accept(String stext, String ltext) {
-        return (accept(ltext) || accept(stext));
+        return accept(stext) || accept(ltext);
     }
-
 }

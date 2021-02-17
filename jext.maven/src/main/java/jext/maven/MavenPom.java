@@ -4,8 +4,11 @@ import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -96,7 +99,7 @@ public class MavenPom implements MavenConst {
         try {
             this.project = XPathUtils.parse(pomFile).getDocumentElement();
         }
-        catch (Throwable e) {
+        catch (ParserConfigurationException | IOException | SAXException e) {
             logger.errorf("Unable to parse %s: %s", pomFile, e);
         }
 
@@ -104,7 +107,7 @@ public class MavenPom implements MavenConst {
         try {
             this.project = XPathUtils.parse(EMPTY_POM).getDocumentElement();
         }
-        catch (Throwable e) { }
+        catch (ParserConfigurationException | IOException | SAXException e) { }
 
     }
 
@@ -453,16 +456,16 @@ public class MavenPom implements MavenConst {
         </project>
      */
     public List<MavenCoords> getDependencyCoords() {
-        try {
+        // try {
             return getDependencies()
                 .stream()
                 .map(dep -> dep.coords)
                 .collect(Collectors.toList());
-        }
-        catch (Throwable t) {
-            logger.error(pomFile.toString() + ": " + t, t);
-            return Collections.emptyList();
-        }
+        // }
+        // catch (Throwable t) {
+        //     logger.error(pomFile.toString() + ": " + t, t);
+        //     return Collections.emptyList();
+        // }
     }
 
     public List<MavenDependency> getDependencies() {

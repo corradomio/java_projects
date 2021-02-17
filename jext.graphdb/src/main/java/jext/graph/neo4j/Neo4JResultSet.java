@@ -3,8 +3,8 @@ package jext.graph.neo4j;
 import jext.graph.GraphIterator;
 import jext.util.HashSet;
 import jext.util.Set;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,9 @@ import java.util.List;
 
 public class Neo4JResultSet<T> implements GraphIterator<T> {
 
-    private StatementResult result;
+    private Result result;
 
-    Neo4JResultSet(StatementResult result) {
+    Neo4JResultSet(Result result) {
         this.result = result;
     }
 
@@ -38,7 +38,7 @@ public class Neo4JResultSet<T> implements GraphIterator<T> {
 
     @Override
     public Set<T> toSet() {
-        Set<T> s = new HashSet();
+        Set<T> s = new HashSet<>();
         while(hasNext())
             s.add(next());
         return s;

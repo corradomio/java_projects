@@ -109,7 +109,7 @@ public class ObjectName implements Name {
 
     @Override
     public int hashCode() {
-        return getFullName().hashCode();
+        return name.hashCode();
     }
 
     @Override

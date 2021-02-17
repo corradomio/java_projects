@@ -80,13 +80,8 @@ public class VoidVisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
         this.fileName = "";
 
         cu.getStorage().ifPresent(s -> this.fileName = s.getFileName());
+        visit(cu, null);
 
-        try {
-            visit(cu, null);
-        }
-        catch (Throwable e) {
-            logger.error(e);
-        }
         return this;
     }
 

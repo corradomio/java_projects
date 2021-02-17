@@ -17,7 +17,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -461,7 +463,7 @@ public class MavenDownloader implements MavenConst {
 
         Cache<MavenCoords, MavenPom> cache = CacheManager.getCache("maven.pom", MavenCoords.class, MavenPom.class);
         MavenPom pom = cache.get(coords, () -> {
-            try {
+            // try {
                 File pomFile = getFile(coords, MavenType.POM);
                 if (!pomFile.exists())
                     downloadFile(coords, MavenType.POM);
@@ -469,11 +471,11 @@ public class MavenDownloader implements MavenConst {
                     return MavenPom.invalid();
                 }
                 return new MavenPom(pomFile, this);
-            }
-            catch(Throwable t) {
-                logger.error(t, t);
-                return MavenPom.invalid();
-            }
+            // }
+            // catch (Throwable t) {
+            //     logger.error(t, t);
+            //     return MavenPom.invalid();
+            // }
         });
 
         return pom == MavenPom.invalid() ? null : pom;
@@ -531,7 +533,7 @@ public class MavenDownloader implements MavenConst {
 
             return latestVersion[0];
         }
-        catch (Throwable e) {
+        catch (ParserConfigurationException | IOException | SAXException e) {
             logger.errorf("%s: %s", metadataFile, e);
             return NO_VERSION;
         }
@@ -648,11 +650,6 @@ public class MavenDownloader implements MavenConst {
         return new File(downloadDir, relativePath);
     }
 
-    private String getPackaging(MavenCoords coords) {
-        MavenPom pom = getPom(coords);
-        return pom.getPackaging();
-    }
-
     // Invalid file flag:  '<file>.invalid'
     private File getInvalidFlagFile(MavenCoords coords, MavenType type) {
         File file = getFile(coords, type);
@@ -695,6 +692,11 @@ public class MavenDownloader implements MavenConst {
             default:
                 throw new UnsupportedOperationException(type.toString());
         }
+    }
+
+    private String getPackaging(MavenCoords coords) {
+        MavenPom pom = getPom(coords);
+        return pom.getPackaging();
     }
 
     // ----------------------------------------------------------------------
@@ -752,10 +754,10 @@ public class MavenDownloader implements MavenConst {
                     logger.errorf("IOException %s: %s", downloadUrl, e.getMessage());
                     continue;
                 }
-                catch (Throwable t) {
-                    logger.errorf("Throwable %s: %s", downloadUrl, t);
-                    break;
-                }
+                // catch (Throwable t) {
+                //     logger.errorf("Throwable %s: %s", downloadUrl, t);
+                //     break;
+                // }
 
                 // check if the downloaded file has the correct type
                 if (!isValidFileType(tempFile, type))
@@ -806,7 +808,7 @@ public class MavenDownloader implements MavenConst {
 
             renameTo(tempFile, downloadedFile);
         }
-        catch (Throwable e) {
+        catch (IOException e) {
             logger.errorf("%s: %s", downloadUrl, e);
         }
         finally {
@@ -920,7 +922,7 @@ public class MavenDownloader implements MavenConst {
                 Element root = XPathUtils.parse(file).getDocumentElement();
                 return "project".equals(root.getTagName());
             }
-            catch (Throwable t) {
+            catch (ParserConfigurationException | IOException | SAXException t) {
                 return false;
             }
         }
@@ -930,7 +932,7 @@ public class MavenDownloader implements MavenConst {
                 Element root = XPathUtils.parse(file).getDocumentElement();
                 return "metadata".equals(root.getTagName());
             }
-            catch (Throwable t) {
+            catch (ParserConfigurationException | IOException | SAXException t) {
                 return false;
             }
         }

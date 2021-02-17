@@ -41,8 +41,8 @@ public class Neo4JQuery implements Query {
         return this;
     }
 
-    public Query limit(int count) {
-        this.limit = new Limit(count);
+    public Query limit(int limit) {
+        this.limit = new Limit(limit);
         return this;
     }
 

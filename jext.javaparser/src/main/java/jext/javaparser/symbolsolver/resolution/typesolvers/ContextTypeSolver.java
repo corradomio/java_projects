@@ -230,7 +230,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      * @param n name to solve as type
      * @return a resolved type with full qualified name or null
      */
-    @Nullable
     public ResolvedType resolve(NameExpr n) {
         if (aborted) return null;
 
@@ -285,6 +284,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             | IllegalArgumentException | IndexOutOfBoundsException e) {
             ;
         }
+        catch (OutOfMemoryError e) {
+            throw e;
+        }
         catch (RuntimeException e) {
             String message = e.getMessage();
             if (message == null)
@@ -298,9 +300,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             else
                 logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
         }
-        catch (Throwable t) {
-            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
-        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
+        // }
 
         // If scope it is not present, this means that the class is the CURRENT class
         // (I hope!)
@@ -324,6 +326,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException e) {
             ;
         }
+        catch (OutOfMemoryError e) {
+            throw e;
+        }
         catch (RuntimeException e) {
             String message = e.getMessage();
             // Throwable cause = e.getCause();
@@ -338,9 +343,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             else
                 logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
         }
-        catch (Throwable t) {
-            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
-        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
+        // }
 
         logsolver.warnft("Unable to solve call %s", mce.toString());
 
@@ -358,6 +363,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             | IllegalArgumentException | IndexOutOfBoundsException e) {
             ;
         }
+        catch (OutOfMemoryError e) {
+            throw e;
+        }
         catch (RuntimeException e) {
             String message = e.getMessage();
             if (message == null)
@@ -371,9 +379,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             else
                 logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
         }
-        catch (Throwable t) {
-            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
-        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
+        // }
 
         // If scope it is not present, this means that the class is the CURRENT class
         // (I hope!)
@@ -397,6 +405,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException e) {
             ;
         }
+        catch (OutOfMemoryError e) {
+            throw e;
+        }
         catch (RuntimeException e) {
             String message = e.getMessage();
             // Throwable cause = e.getCause();
@@ -411,9 +422,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             else
                 logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
         }
-        catch (Throwable t) {
-            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
-        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
+        // }
 
         logsolver.warnft("Unable to solve call %s", oce.toString());
 
@@ -431,6 +442,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             | IllegalArgumentException | IndexOutOfBoundsException e) {
             ;
         }
+        catch (OutOfMemoryError e) {
+            throw e;
+        }
         catch (RuntimeException e) {
             String message = e.getMessage();
             if (message == null)
@@ -444,9 +458,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             else
                 logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mre.toString(), e.getMessage(), filename);
         }
-        catch (Throwable t) {
-            logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mre.toString(), t.getMessage(), filename);
-        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mre.toString(), t.getMessage(), filename);
+        // }
 
         logsolver.warnft("Unable to solve call %s", mre.toString());
 
@@ -470,7 +484,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         Cache<String, Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>>
             cache = CacheManager.getCache(String.format("%s.alreadySolved", this.cacheName));
         Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
-            alreadySolved = cache.get(key, () -> new HashMap<>());
+            alreadySolved = cache.getOrDefault(key, new HashMap<>());
 
         // Sometimes, the typesolver try to solve a generic type (with "<...>").
         // This step remove the "<...>"

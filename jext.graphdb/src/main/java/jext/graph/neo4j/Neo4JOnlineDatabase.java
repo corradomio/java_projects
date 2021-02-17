@@ -5,9 +5,9 @@ import jext.graph.GraphSession;
 import jext.logging.Logger;
 import jext.net.URL;
 import jext.util.StringUtils;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.exceptions.DatabaseException;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.exceptions.DatabaseException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +64,7 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
         if (user == null) user = props.getProperty(USER_EXT);
         if (password == null) password = props.getProperty(PASSWORD_EXT);
 
-        this.driver = org.neo4j.driver.v1.GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
+        this.driver = org.neo4j.driver.GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
     }
 
     @Override

@@ -9,7 +9,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
@@ -37,172 +36,141 @@ import java.util.stream.Stream;
 
 public class Parallel {
 
-    static class TaskFunction<T, U> implements Callable<U> {
-        private T t;
-        private Function<T, U> body;
-
-        TaskFunction(T t, Function<T, U> body) {
-            this.t = t;
-            this.body = body;
-        }
-
-        @Override
-        public U call() {
-            return body.apply(t);
-        }
-    }
-
-    static class Task<T> implements Callable<Boolean> {
-        private T t;
-        private Consumer<T> body;
-
-        Task(T t, Consumer<T> body) {
-            this.t = t;
-            this.body = body;
-        }
-
-        @Override
-        public Boolean call() {
-            body.accept(t);
-            return true;
-        }
-    }
-
-    static class IntTask implements Callable<Boolean> {
-        private int t;
-        private IntConsumer body;
-
-        IntTask(int t, IntConsumer body) {
-            this.t = t;
-            this.body = body;
-        }
-
-        @Override
-        public Boolean call() {
-            body.accept(t);
-            return true;
-        }
-    }
-
-    private static int nthreads;
-    private static List<ExecutorService> running;
-    private static Queue<ExecutorService> waiting;
+    // private static int nthreads;
+    // private static List<ExecutorService> running;
+    // private static Queue<ExecutorService> waiting;
 
     // ----------------------------------------------------------------------
 
     public static void forEach(int first, int last, IntConsumer body) {
-        List<Callable<Boolean>> tasks = new ArrayList<>();
-        for(int t=first; t<last; ++t) tasks.add(new IntTask(t, body));
-        invokeAll(tasks);
+
+        new Parallelize().forEach(first, last, body);
+
+        // List<Callable<Boolean>> tasks = new ArrayList<>();
+        // for(int t=first; t<last; ++t) tasks.add(new IntTask(t, body));
+        // invokeAll(tasks);
     }
 
     public static <T> void forEach(Iterable<T> it, Consumer<T> body) {
-        List<Callable<Boolean>> tasks = new ArrayList<>();
-        for(T t : it) tasks.add(new Task<>(t, body));
-        invokeAll(tasks);
+
+        new Parallelize().forEach(it, body);
+
+        // List<Callable<Boolean>> tasks = new ArrayList<>();
+        // for(T t : it) tasks.add(new Task<>(t, body));
+        // invokeAll(tasks);
     }
 
     public static <T> void forEach(Stream<T> s, Consumer<T> body) {
-        List<Callable<Boolean>> tasks = s.map(t -> new Task<>(t, body)).collect(Collectors.toList());
-        invokeAll(tasks);
+
+        new Parallelize().forEach(s, body);
+
+        // List<Callable<Boolean>> tasks = s.map(t -> new Task<>(t, body)).collect(Collectors.toList());
+        // invokeAll(tasks);
     }
 
     public static void forEach(IntStream s, IntConsumer body) {
-        List<Callable<Boolean>> tasks = s.mapToObj(t -> new IntTask(t, body)).collect(Collectors.toList());
-        invokeAll(tasks);
+
+        new Parallelize().forEach(s, body);
+
+        // List<Callable<Boolean>> tasks = s.mapToObj(t -> new IntTask(t, body)).collect(Collectors.toList());
+        // invokeAll(tasks);
     }
 
 
-    public static <T, U> List<U> mapEach(Iterable<T> it, Function<T, U> body) {
-        List<Callable<U>> tasks = new ArrayList<>();
-        for(T t : it) tasks.add(new TaskFunction<>(t, body));
-        return invokeAll(tasks);
-    }
+    // public static <T, U> List<U> mapEach(Iterable<T> it, Function<T, U> body) {
+    //     List<Callable<U>> tasks = new ArrayList<>();
+    //     for(T t : it) tasks.add(new TaskFunction<>(t, body));
+    //     return invokeAll(tasks);
+    // }
 
     // ----------------------------------------------------------------------
 
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
-        checkUsage(true);
 
-        ExecutorService executor = null;
-        List<Future<T>> futures = Collections.emptyList();
-        try {
-            executor = newExecutorService();
+        return new Parallelize().invokeAll(tasks);
 
-            futures = executor.invokeAll(tasks);
-        } catch (InterruptedException e) {
-
-        }
-        while (futures.stream().anyMatch(f -> !f.isDone())) {
-            sleep(500);
-        }
-        {
-            parkExecutorService(executor);
-        }
-
-        // check for exceptions
-        ParallelException pe = new ParallelException();
-        List<T> results = new ArrayList<>();
-        for (Future<T> future : futures) {
-            try {
-                results.add(future.get());
-            }
-            catch (Throwable t) {
-                pe.add(t);
-            }
-        }
-
-        if (!pe.isEmpty())
-            throw pe;
-
-        return results;
+        // checkUsage(true);
+        //
+        // ExecutorService executor = null;
+        // List<Future<T>> futures = Collections.emptyList();
+        // try {
+        //     executor = newExecutorService();
+        //
+        //     futures = executor.invokeAll(tasks);
+        // } catch (InterruptedException e) {
+        //
+        // }
+        // while (futures.stream().anyMatch(f -> !f.isDone())) {
+        //     sleep(500);
+        // }
+        // {
+        //     parkExecutorService(executor);
+        // }
+        //
+        // // check for exceptions
+        // ParallelException pe = new ParallelException();
+        // List<T> results = new ArrayList<>();
+        // for (Future<T> future : futures) {
+        //     try {
+        //         results.add(future.get());
+        //     }
+        //     catch (Throwable t) {
+        //         pe.add(t);
+        //     }
+        // }
+        //
+        // if (!pe.isEmpty())
+        //     throw pe;
+        //
+        // return results;
     }
 
-    private static synchronized ExecutorService newExecutorService() {
-        ExecutorService executor;
-        if (waiting.isEmpty()) {
-            waiting.add(Executors.newFixedThreadPool(nthreads));
-        }
+    // private static synchronized ExecutorService newExecutorService() {
+    //     ExecutorService executor;
+    //     if (waiting.isEmpty()) {
+    //         waiting.add(Executors.newFixedThreadPool(nthreads));
+    //     }
+    //
+    //     executor = waiting.remove();
+    //
+    //     running.add(executor);
+    //     return executor;
+    // }
 
-        executor = waiting.remove();
+    // private static synchronized void parkExecutorService(ExecutorService executor) {
+    //     if (executor == null) return;
+    //     running.remove(executor);
+    //     waiting.add(executor);
+    // }
 
-        running.add(executor);
-        return executor;
-    }
-
-    private static synchronized void parkExecutorService(ExecutorService executor) {
-        if (executor == null) return;
-        running.remove(executor);
-        waiting.add(executor);
-    }
-
-    public static void setup() {
-        checkUsage(false);
-    }
+    // public static void setup() {
+    //     checkUsage(false);
+    // }
 
     public static synchronized void shutdown() {
-        if (running != null)
-            running.forEach(ExecutorService::shutdownNow);
-        if (waiting != null)
-            waiting.forEach(ExecutorService::shutdownNow);
-        running = null;
-        waiting = null;
+        // if (running != null)
+        //     running.forEach(ExecutorService::shutdownNow);
+        // if (waiting != null)
+        //     waiting.forEach(ExecutorService::shutdownNow);
+        // running = null;
+        // waiting = null;
+        Parallelize.shutdown();
     }
 
-    private static synchronized void checkUsage(boolean toUse) {
-        if (running != null)
-            return;
+    // private static synchronized void checkUsage(boolean toUse) {
+    //     if (running != null)
+    //         return;
+    //
+    //     nthreads = Runtime.getRuntime().availableProcessors() - 1;
+    //     if (nthreads < 3) nthreads = 3;
+    //     running = new LinkedList<>();
+    //     waiting = new LinkedList<>();
+    // }
 
-        nthreads = Runtime.getRuntime().availableProcessors() - 1;
-        if (nthreads < 3) nthreads = 3;
-        running = new LinkedList<>();
-        waiting = new LinkedList<>();
-    }
-
-    private static void sleep(long millis) {
-        if (millis > 0)
-            try {
-                Thread.sleep(millis);
-            } catch (InterruptedException e) { }
-    }
+    // private static void sleep(long millis) {
+    //     if (millis > 0)
+    //         try {
+    //             Thread.sleep(millis);
+    //         } catch (InterruptedException e) { }
+    // }
 }

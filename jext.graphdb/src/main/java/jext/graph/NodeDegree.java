@@ -1,5 +1,25 @@
 package jext.graph;
 
+/**
+ * Class used to specify the
+ *
+ *  - input degree
+ *  - output degree
+ *  - degree (=input degree + output degree)
+ *
+ *  of a node.
+ *  It is possible to specify the minimum and maximum degree
+ *
+ *  If the degree is specified as a string, the supported sintax is:
+ *
+ *      deg             exactly this degree
+ *      min-max         min <= deg <= max
+ *      min-            min <= deg
+ *      -max                   deg <= max
+ *
+ * The flag 'isDegree' is used to specify if it is considered the global
+ * node degree or separated input/output degrees
+ */
 public class NodeDegree {
 
     public static final long MIN_DEGREE =  0;
@@ -50,13 +70,29 @@ public class NodeDegree {
     public long maxInDegree  = MAX_DEGREE;
     public long minOutDegree = MIN_DEGREE;
     public long maxOutDegree = MAX_DEGREE;
-    public boolean isDegree = false;
+    public boolean isDegree = true;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public NodeDegree() { }
+
+    public NodeDegree(int degree) {
+        this(Direction.Any, degree, degree);
+    }
+
+    public NodeDegree(int inDegree, int outDegree) {
+        this(inDegree, inDegree, outDegree, outDegree);
+    }
+
+    public NodeDegree(long minInDegree, long maxInDegree, long minOutDegree, long maxOutDegree) {
+        this.minInDegree  = minInDegree;
+        this.maxInDegree  = maxInDegree;
+        this.minOutDegree = minOutDegree;
+        this.maxOutDegree = maxOutDegree;
+        this.isDegree = false;
+    }
 
     public NodeDegree(Direction direction, long degree) {
         this(direction, degree, degree);
@@ -65,12 +101,14 @@ public class NodeDegree {
     public NodeDegree(Direction direction, long minDegree, long maxDegree) {
         switch(direction) {
             case Input:
-                minInDegree = minDegree;
-                maxInDegree = maxDegree;
+                this.minInDegree = minDegree;
+                this.maxInDegree = maxDegree;
+                this.isDegree = false;
                 break;
             case Output:
-                minOutDegree = minDegree;
-                maxOutDegree = maxDegree;
+                this.minOutDegree = minDegree;
+                this.maxOutDegree = maxDegree;
+                this.isDegree = false;
                 break;
             case Any:
                 minInDegree = minDegree;
@@ -82,15 +120,9 @@ public class NodeDegree {
                 maxInDegree = maxDegree;
                 minOutDegree = minDegree;
                 maxOutDegree = maxDegree;
+                this.isDegree = false;
                 break;
         }
-    }
-
-    public NodeDegree(long minInDegree, long maxInDegree, long minOutDegree, long maxOutDegree) {
-        this.minInDegree  = minInDegree;
-        this.maxInDegree  = maxInDegree;
-        this.minOutDegree = minOutDegree;
-        this.maxOutDegree = maxOutDegree;
     }
 
     // ----------------------------------------------------------------------

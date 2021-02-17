@@ -34,12 +34,7 @@ public class LogVoidVisitorAdapter<A> extends VoidVisitorWithDefaults<A> {
         this.cu = cu;
         this.fileName = "";
 
-        try {
-            visit(cu, null);
-        }
-        catch (Throwable e) {
-            logger.error(e);
-        }
+        visit(cu, null);
         return this;
     }
 

@@ -150,16 +150,16 @@ public class GradleModule extends BaseModule {
                 .setStandardError(err)
                 .run();
         }
-        // catch (BuildException e) {
-        //     String message = e.getCause().getMessage();
-        //     if (!message.contains("not found in root project"))
-        //         logger.error(e);
-        // }
-        catch (Throwable e) {
+        catch (BuildException e) {
             String message = e.getCause().getMessage();
             if (!message.contains("not found in root project"))
                 logger.error(e);
         }
+        // catch (Throwable e) {
+        //     String message = e.getCause().getMessage();
+        //     if (!message.contains("not found in root project"))
+        //         logger.error(e);
+        // }
         finally {
             logcoll.close();
             collector.close();

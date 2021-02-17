@@ -15,11 +15,12 @@ public class GraphDatabases {
     // ----------------------------------------------------------------------
 
     private static final String URL = "url";
+    private static final String URI = "uri";
     private static Map<String, GraphDatabaseFactory> protocols = new HashMap<>();
     private static Logger logger = Logger.getLogger(GraphDatabases.class);
 
     static {
-        try (InputStream inp = GraphDatabases.class.getResourceAsStream("/jext/graph/util/protocols.properties")) {
+        try (InputStream inp = GraphDatabases.class.getResourceAsStream("/jext/graphdb/util/protocols.properties")) {
             Properties props = new Properties();
             props.load(inp);
 
@@ -29,7 +30,8 @@ public class GraphDatabases {
 
                 protocols.put(proto, factory);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error(e, e);
         }
     }
@@ -40,6 +42,8 @@ public class GraphDatabases {
 
     public static GraphDatabase newGraphDatabase(Properties props) throws GraphDatabaseException {
         String surl = props.getProperty(URL);
+        if (surl == null)
+            surl = props.getProperty(URI);
         return newGraphDatabase(surl, props);
     }
 
@@ -53,7 +57,11 @@ public class GraphDatabases {
         nprops.putAll(props);
         nprops.putAll(url.getParameters());
 
-        GraphDatabase graphdb = factory.newGraphDatabase(url, props);
+        // compatibility between "user" & "username"
+        if (props.containsKey("username"))
+            nprops.put("user", props.get("username"));
+
+        GraphDatabase graphdb = factory.newGraphDatabase(url, nprops);
         graphdb.initialize();
         return graphdb;
     }

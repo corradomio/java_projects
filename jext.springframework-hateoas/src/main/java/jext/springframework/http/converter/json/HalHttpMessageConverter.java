@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.hateoas.mediatype.MessageResolver;
 import org.springframework.hateoas.mediatype.hal.CurieProvider;
 import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
-import org.springframework.hateoas.server.core.DefaultLinkRelationProvider;
+import org.springframework.hateoas.server.core.DelegatingLinkRelationProvider;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
 
@@ -18,9 +18,9 @@ public class HalHttpMessageConverter extends AbstractJackson2HttpMessageConverte
         super(new ObjectMapper(), new MediaType("application", "json", StandardCharsets.UTF_8));
         objectMapper.registerModule(new Jackson2HalModule());
         objectMapper.setHandlerInstantiator(new Jackson2HalModule.HalHandlerInstantiator(
-                new DefaultLinkRelationProvider(),
-                CurieProvider.NONE,
-                MessageResolver.DEFAULTS_ONLY
+            new DelegatingLinkRelationProvider(),
+            CurieProvider.NONE,
+            MessageResolver.DEFAULTS_ONLY
         ));
         // customize your mapper if needed
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

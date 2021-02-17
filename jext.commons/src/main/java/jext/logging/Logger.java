@@ -15,6 +15,15 @@ public class Logger {
     private static boolean configured = false;
     private static int timeout = 3000;
 
+    // timed logs
+    private static transient long warnts;
+    private static transient long warncnt;
+    private static transient long infots;
+    private static transient long infocnt;
+
+    private static transient long timestamp;
+    private static transient long count;
+
     // configuration
 
     public static void configure() {
@@ -71,17 +80,17 @@ public class Logger {
         return getLogger(String.format(format, args));
     }
 
-    public static Logger getLogger(Class clazz) {
-        return getLogger(clazz.getName());
+    public static Logger getLogger(Class<?> clazz) {
+        return getLogger(clazz.getCanonicalName());
     }
 
     public static Logger getLogger(Class<?> clazz, String name) {
         if (name.contains("/"))
             name = name.replace('.', '_').replace('/', '.');
         if (name.length() > 0)
-            return getLogger("%s.%s", clazz.toString(), name);
+            return getLogger("%s.%s", clazz.getCanonicalName(), name);
         else
-            return getLogger("%s.$", clazz.toString(), name);
+            return getLogger("%s.$", clazz.getCanonicalName(), name);
     }
 
     // private fields and constructor
@@ -92,7 +101,17 @@ public class Logger {
         this.logger = logger;
     }
 
-    // debugf
+    // query
+
+    public boolean isDebugEnabled() {
+        return logger.isDebugEnabled();
+    }
+
+    public boolean isInfoEnabled() {
+        return logger.isInfoEnabled();
+    }
+
+    // debug/debugf
 
     public void debug(Object message) {
         logger.debug(message);
@@ -106,7 +125,7 @@ public class Logger {
         logger.debug(String.format(format, args));
     }
 
-    // infof
+    // info/infof
 
     public void info(Object message) {
         logger.info(message);
@@ -120,7 +139,7 @@ public class Logger {
         logger.info(String.format(format, args));
     }
 
-    // warnf
+    // warn/warnf
 
     public void warn(Object message) {
         logger.warn(message);
@@ -134,7 +153,7 @@ public class Logger {
         logger.warn(String.format(format, args));
     }
 
-    // errorf
+    // error/errorf
 
     public void error(Object message) {
         logger.error(message);
@@ -148,7 +167,7 @@ public class Logger {
         logger.error(String.format(format, args));
     }
 
-    // fatalf
+    // fatal
 
     public void fatal(Object message) {
         logger.fatal(message);
@@ -158,21 +177,17 @@ public class Logger {
         logger.fatal(message, t);
     }
 
-    // timed debugf/infof
-
-    private static transient long timestamp;
-    private static transient long count;
-    private static transient Level level = Level.ALL;
+    // timed debug/info
+    // it write a log ONLY each 'timeout' milliseconds
 
     public void debugt(String format, Object... args) {
         long now = System.currentTimeMillis();
         ++count;
-        if ((now - timestamp) > timeout || level != Level.INFO) {
+        if ((now - timestamp) > timeout/* || level != Level.DEBUG*/) {
             String message = String.format(format, args);
             logger.debug(String.format("%s (%d) ...", message, count));
             timestamp = now;
             count = 0;
-            level = Level.DEBUG;
         }
     }
 
@@ -182,36 +197,24 @@ public class Logger {
 
     public void infoft(String format, Object... args) {
         long now = System.currentTimeMillis();
-        ++count;
-        if ((now - timestamp) > timeout || level != Level.INFO) {
+        ++infocnt;
+        if ((now - infots) > timeout/* || level != Level.INFO*/) {
             String message = String.format(format, args);
             logger.info(String.format("%s (%d) ...", message, count));
-            timestamp = now;
-            count = 0;
-            level = Level.INFO;
+            infots = now;
+            infocnt = 0;
         }
     }
 
     public void warnft(String format, Object... args) {
         long now = System.currentTimeMillis();
-        ++count;
-        if ((now - timestamp) > timeout || level != Level.WARN) {
+        ++warncnt;
+        if ((now - warnts) > timeout/* || level != Level.WARN*/) {
             String message = String.format(format, args);
             logger.warn(String.format("%s (%d) ...", message, count));
-            timestamp = now;
-            count = 0;
-            level = Level.WARN;
-        }
+            warnts = now;
+            warncnt = 0;
     }
-
-    // query
-
-    public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
-    }
-
-    public boolean isInfoEnabled() {
-        return logger.isInfoEnabled();
     }
 
     // counted warn/error
