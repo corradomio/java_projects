@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hls.check</groupId>
+    <artifactId>check_all</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <modules>
+        <module>../jext.antlr</module>
+        <module>../jext.batch</module>
+        <module>../jext.buildtools</module>
+        <module>../jext.cache</module>
+        <module>../jext.collections</module>
+        <module>../jext.compress</module>
+        <module>../jext.commons</module>
+        <module>../jext.concurrent</module>
+        <module>../jext.csv</module>
+        <module>../jext.embedding</module>
+        <module>../jext.graph</module>
+        <module>../jext.graphdb</module>
+        <module>../jext.java</module>
+        <module>../jext.javaparser</module>
+        <module>../jext.jcuda</module>
+        <module>../jext.jgrapht</module>
+        <module>../jext.keyvalue</module>
+        <module>../jext.logdigester</module>
+        <module>../jext.maven</module>
+        <module>../jext.ml</module>
+        <module>../jext.project</module>
+        <module>../jext.serialization</module>
+        <module>../jext.springframework-cache</module>
+        <module>../jext.springframework-core</module>
+        <module>../jext.springframework-data</module>
+        <module>../jext.springframework-hateoas</module>
+        <module>../jext.tasks</module>
+        <module>../jext.vfs</module>
+    </modules>
+
+</project>
