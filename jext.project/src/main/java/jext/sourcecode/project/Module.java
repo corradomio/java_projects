@@ -23,7 +23,7 @@ public interface Module extends IdNamed {
     /** Module properties */
     Properties getProperties();
 
-    /** Module home directory (relative to projectHome) */
+    /** Module path directory (relative to projectHome) */
     String getPath();
 
     /** Module home directory (physical path) */
@@ -32,7 +32,7 @@ public interface Module extends IdNamed {
     // -- modules
 
     /** Module dependencies */
-    List<Module> getDependencies(boolean recursive);
+    List<Module> getDependencies();
 
     // -- sources
 

@@ -5,6 +5,7 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -16,7 +17,6 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
@@ -27,6 +27,7 @@ import jext.cache.CacheManager;
 import jext.javaparser.resolution.ReferenceConstructorDeclaration;
 import jext.javaparser.resolution.ReferencedMethodDeclaration;
 import jext.javaparser.symbolsolver.namespacemodel.NamespaceDeclaration;
+import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
@@ -56,12 +57,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     private final Map<String, String> imports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
     private String namespace;
-    private String prefix;
+    private String cacheName;
     private transient boolean aborted;
-
-    // cache used to speedup the resolver algorithm
-    // private final Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
-    //     alreadySolved = new HashMap<>();
 
     // cache used to patch a problem with the parser that it is unable
     // to distinguish between a type and a namespace
@@ -72,18 +69,25 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // ----------------------------------------------------------------------
 
     public ContextTypeSolver() {
-        this(DEFAULT, DEFAULT);
+        this(DEFAULT);
     }
 
     public ContextTypeSolver(TypeSolver typeSolver) {
         super(DEFAULT);
-        this.prefix = DEFAULT;
         super.add(typeSolver);
     }
 
-    public ContextTypeSolver(String prefix, String name) {
+    public ContextTypeSolver(String name) {
         super(name);
-        this.prefix = prefix;
+    }
+
+    // ----------------------------------------------------------------------
+    // Configuration
+    // ----------------------------------------------------------------------
+
+    public ContextTypeSolver withCache(String cacheName) {
+        this.cacheName = cacheName;
+        return this;
     }
 
     // ----------------------------------------------------------------------
@@ -148,23 +152,22 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         cu.getStorage().ifPresent(storage -> {
             this.filename = storage.getPath().toFile();
         });
-        setSymbolResolver(cu);
+        attach();
         setContext();
         return this;
     }
 
-    /**
-     * Detach the typeSolver from the compilationUnit
-     */
-    public void detach() {
-        if (cu != null)
-            cu.removeData(Node.SYMBOL_RESOLVER_KEY);
-    }
-
-    private void setSymbolResolver(CompilationUnit cu) {
+    private void attach() {
+        if (cu == null) return;
         // Inject inside cu THIS typeSolver
         SymbolResolver symbolResolver = new JavaSymbolSolver(this);
         cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+    }
+
+    public void detach() {
+        if (cu == null) return;
+        cu.removeData(Node.SYMBOL_RESOLVER_KEY);
+        JPUtils.removeTypeSolver(this);
     }
 
     private void setContext() {
@@ -231,13 +234,13 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     public ResolvedType resolve(NameExpr n) {
         if (aborted) return null;
 
-        try {
-            ResolvedValueDeclaration rvd = n.resolve();
-            return rvd.getType();
-        }
-        catch (UnsolvedSymbolException | UnsupportedOperationException e) {
-            // logger.error(e, e);
-        }
+        // try {
+        //     ResolvedValueDeclaration rvd = n.resolve();
+        //     return rvd.getType();
+        // }
+        // catch (UnsolvedSymbolException | UnsupportedOperationException e) {
+        //
+        // }
         return resolve(n.getName().asString(), n);
     }
 
@@ -265,20 +268,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         // unable to solve
         return null;
-    }
-
-    /**
-     * Check is the symbol is a 'package name'.
-     * This method is used to speedup the resolution of a symbol when it is sure that
-     * the symbol 'can be' a namespace.
-     *
-     * The data structure 'namespaces' is filled ONLY if there are resolved symbols.
-     *
-     * @param symbol symbol to check
-     * @return is the symbol is a 'package name'
-     */
-    public boolean isNamespace(String symbol) {
-        return namespaces.containsKey(symbol);
     }
 
     // ----------------------------------------------------------------------
@@ -318,8 +307,13 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         if (!mce.getScope().isPresent())
             return null;
 
+        // Skip "NameExpr" nodes because their resolution requires A LOT of type
+        Expression expr = mce.getScope().get();
+        if (expr instanceof NameExpr)
+            return null;
+
         try {
-            ResolvedType rt = mce.getScope().get().calculateResolvedType();
+            ResolvedType rt = expr.calculateResolvedType();
             String typeName = rt.describe();
 
             int nArguments = mce.getArguments().size();
@@ -386,8 +380,13 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         if (!oce.getScope().isPresent())
             return null;
 
+        // Skip "NameExpr" nodes because their resolution requires A LOT of type
+        Expression expr = oce.getScope().get();
+        if (expr instanceof NameExpr)
+            return null;
+
         try {
-            ResolvedType rt = oce.getScope().get().calculateResolvedType();
+            ResolvedType rt = expr.calculateResolvedType();
             String typeName = rt.describe();
 
             int nArguments = oce.getArguments().size();
@@ -469,7 +468,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         String key = getName();
         Cache<String, Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>>
-            cache = CacheManager.getCache(String.format("dependency.%s.alreadySolved", this.prefix));
+            cache = CacheManager.getCache(String.format("%s.alreadySolved", this.cacheName));
         Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
             alreadySolved = cache.get(key, () -> new HashMap<>());
 
@@ -503,7 +502,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         String key = getName();
         Cache<String, Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>>
-            cache = CacheManager.getCache(String.format("dependency.%s.alreadySolved", this.prefix));
+            cache = CacheManager.getCache(String.format("%s.alreadySolved", this.cacheName));
         Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
             alreadySolved = cache.get(key, () -> new HashMap<>());
 

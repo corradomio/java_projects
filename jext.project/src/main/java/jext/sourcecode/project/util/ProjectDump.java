@@ -47,9 +47,9 @@ public class ProjectDump {
                 //     Console.printf("        %s\n", resource);
                 // });
             }
-            if (!m.getDependencies(false).isEmpty()) {
-                Console.printf("      dependencies (%d):\n", m.getDependencies(false).size());
-                m.getDependencies(false).forEach(d -> {
+            if (!m.getDependencies().isEmpty()) {
+                Console.printf("      dependencies (%d):\n", m.getDependencies().size());
+                m.getDependencies().forEach(d -> {
                     Console.printf("        '%s'\n", d.getName());
                 });
             }

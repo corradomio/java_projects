@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class LibrarySet extends AbstractSet<Library> {
 
-    private Set<Library> localLibs = new TreeSet<>();
-    private Map<String, MavenLibrary> mavenLibs = new TreeMap<>();
+    private Set<Library> localLibraries = new TreeSet<>();
+    private Map<String, MavenLibrary> mavenLibraries = new TreeMap<>();
 
     public LibrarySet() {
 
@@ -30,31 +30,31 @@ public class LibrarySet extends AbstractSet<Library> {
     @Override
     public Iterator<Library> iterator() {
         List<Library> libraries = new ArrayList<>();
-        libraries.addAll(localLibs);
-        libraries.addAll(mavenLibs.values());
+        libraries.addAll(localLibraries);
+        libraries.addAll(mavenLibraries.values());
         return libraries.iterator();
     }
 
     @Override
     public int size() {
-        return localLibs.size() + mavenLibs.size();
+        return localLibraries.size() + mavenLibraries.size();
     }
 
     public boolean add(Library library) {
         if (library.getLibraryType() != LibraryType.MAVEN)
-            return localLibs.add(library);
+            return localLibraries.add(library);
 
         MavenLibrary mavenLib = (MavenLibrary) library;
         String name = mavenLib.getMavenName();
         Version version = mavenLib.getMavenVersion();
-        if (!mavenLibs.containsKey(name)) {
-            mavenLibs.put(name, mavenLib);
+        if (!mavenLibraries.containsKey(name)) {
+            mavenLibraries.put(name, mavenLib);
             return true;
         }
 
-        Version currentVersion = mavenLibs.get(name).getMavenVersion();
+        Version currentVersion = mavenLibraries.get(name).getMavenVersion();
         if (currentVersion.compareTo(version) < 0) {
-            mavenLibs.put(name, mavenLib);
+            mavenLibraries.put(name, mavenLib);
             return true;
         }
         else if (currentVersion.compareTo(version) > 0) {
@@ -66,13 +66,13 @@ public class LibrarySet extends AbstractSet<Library> {
     }
 
     public void checkArtifacts() {
-        List<MavenCoords> artifacts = mavenLibs
+        List<MavenCoords> artifacts = mavenLibraries
             .values()
             .stream()
             .map(MavenLibrary::getCoords)
             .collect(Collectors.toList());
 
-        Parallel.forEach(mavenLibs.values(), mavenLibrary -> {
+        Parallel.forEach(mavenLibraries.values(), mavenLibrary -> {
             MavenCoords coords = mavenLibrary.getCoords();
             MavenDownloader md = mavenLibrary.getMavenDownloader();
             md.getPom(coords);

@@ -21,6 +21,7 @@ import static jext.sourcecode.project.Project.PROJECT_TYPE;
 
 public class ProjectFactory {
 
+    private static final String AUTO = "auto";
     private static final Logger logger = Logger.getLogger(ProjectFactory.class);
 
     // ----------------------------------------------------------------------
@@ -58,7 +59,8 @@ public class ProjectFactory {
     public static Project newProject(String projectName, File projectHome, Properties properties) {
 
         Project project;
-        ProjectType projectType;
+        String projectType;
+        String runtimeLibrary;
 
         //
         // If the project type is not specified, we try to understand it based on
@@ -72,8 +74,8 @@ public class ProjectFactory {
         //      5) Simple
         //
 
-        projectType = ProjectType.toProjectType(properties.getProperty(PROJECT_TYPE, ProjectType.AUTO.name()));
-        if (StringUtils.isEmpty(projectName) || ProjectType.AUTO.equals(projectType));
+        projectType = properties.getProperty(PROJECT_TYPE, AUTO);
+        if (StringUtils.isEmpty(projectName) || AUTO.equals(projectType));
             projectType = guessProjectType(projectHome, properties);
 
         if (AntProject.TYPE.equals(projectType))
@@ -85,6 +87,8 @@ public class ProjectFactory {
         else if (EclipseProject.TYPE.equals(projectType))
             project = new EclipseProject(projectName, projectHome, properties);
         else if (SimpleProject.TYPE.equals(projectType))
+            project = new SimpleProject(projectName, projectHome, properties);
+        else if (SimpleProject.UNKNOWN.equals(projectType))
             project = new SimpleProject(projectName, projectHome, properties);
         else {
             logger.errorf("Project type %s unknown", projectType);

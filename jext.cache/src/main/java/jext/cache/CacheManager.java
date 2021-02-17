@@ -283,33 +283,29 @@ public class CacheManager {
     // Private operations
     // ----------------------------------------------------------------------
 
-    private <K,V> Cache<K, V> retrieveCache(String name, Class<K> kclass, Class<V> vclass){
+    private synchronized <K,V> Cache<K, V> retrieveCache(String name, Class<K> kclass, Class<V> vclass){
         if (cacheProvider == null)
             throw new CacheException("CacheManager not configured");
 
-        synchronized (byName) {
-            if (byName.containsKey(name))
-                return (Cache<K, V>) byName.get(name);
-            if (byId.containsKey(name))
-                return (Cache<K, V>) byName.get(name);
-
-            CacheConfig cconfig = getCacheConfig(name);
-
-            Cache<K, V> cache = cacheProvider.createCache(name, kclass, vclass, cconfig.properties);
-            ((ManagedCache)cache).setManager(this);
-
-            byName.put(cache.getName(), cache);
-            byId.put(cache.getId(), cache);
-
+        if (byName.containsKey(name))
             return (Cache<K, V>) byName.get(name);
-        }
+        if (byId.containsKey(name))
+            return (Cache<K, V>) byName.get(name);
+
+        CacheConfig cconfig = getCacheConfig(name);
+
+        Cache<K, V> cache = cacheProvider.createCache(name, kclass, vclass, cconfig.properties);
+        ((ManagedCache)cache).setManager(this);
+
+        byName.put(cache.getName(), cache);
+        byId.put(cache.getId(), cache);
+
+        return (Cache<K, V>) byName.get(name);
     }
 
-    public <K,V> void removeCache(Cache<K, V> cache) {
-        synchronized (byName) {
-            byName.remove(cache.getName());
-            byId.remove(cache.getId());
-        }
+    public synchronized <K,V> void removeCache(Cache<K, V> cache) {
+        byName.remove(cache.getName());
+        byId.remove(cache.getId());
     }
 
     private CacheConfig getCacheConfig(String name) {

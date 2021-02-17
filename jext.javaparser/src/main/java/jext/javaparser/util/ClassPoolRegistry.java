@@ -4,6 +4,7 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import jext.logging.Logger;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class ClassPoolRegistry {
     private static final String DOT_JMOD = ".jmod";
     private static final String DOT_CLASS = ".class";
     private static final String CLASSES_SLASH = "classes/";
+    private static final String DEFAULT_NAMESPACE = "";
 
     public class ClasspathElement {
         String name;
@@ -99,8 +101,10 @@ public class ClassPoolRegistry {
     public ClassPoolRegistry add(File libraryFile) {
         if (libraryFile.isFile())
             addFile(libraryFile);
-        else
+        else if (libraryFile.isDirectory())
             addDirectory(libraryFile);
+        else
+            logger.warnf("Library file %s not existent", FileUtils.getAbsolutePath(libraryFile));
         return this;
     }
 
@@ -143,8 +147,10 @@ public class ClassPoolRegistry {
             while (e.hasMoreElements()) {
                 entry = e.nextElement();
                 if (entry != null && !entry.isDirectory() && entry.getName().endsWith(DOT_CLASS)) {
-                    String name = epc.toClassName(entry.getName());
-                    addElement(name, libraryFile, entry);
+                    String entryName = entry.getName();
+                    String className = epc.toClassName(entryName);
+                    String namespace = epc.toNamespace(entryName);
+                    addElement(className, namespace, libraryFile, entry);
                 }
             }
         }
@@ -153,7 +159,7 @@ public class ClassPoolRegistry {
         }
     }
 
-    private void addElement(String name, File libraryFile, JarEntry entry) {
+    protected void addElement(String name, String namespace, File libraryFile, JarEntry entry) {
         ClasspathElement element = new ClasspathElement();
         element.name = name;
         element.libraryFile = libraryFile;
@@ -166,30 +172,56 @@ public class ClassPoolRegistry {
     // EntryPath -> ClassName converters
     // ----------------------------------------------------------------------
 
-    @FunctionalInterface
     private interface EntryPathConverter {
         String toClassName(String entryPath);
+        String toNamespace(String namespace);
     }
 
-    private static EntryPathConverter JARPATH_CONVERTER = entryPath -> {
-        if (!entryPath.endsWith(DOT_CLASS)) {
-            throw new IllegalStateException();
+    private static EntryPathConverter JARPATH_CONVERTER = new EntryPathConverter() {
+
+        @Override
+        public String toClassName(String entryPath) {
+            // if (!entryPath.endsWith(DOT_CLASS)) {
+            //     throw new IllegalStateException();
+            // }
+            String className = entryPath.substring(0, entryPath.length() - DOT_CLASS.length());
+            className = className.replace('/', '.');
+            className = className.replace('$', '.');
+            return className;
         }
-        String className = entryPath.substring(0, entryPath.length() - DOT_CLASS.length());
-        className = className.replace('/', '.');
-        className = className.replace('$', '.');
-        return className;
+
+        @Override
+        public String toNamespace(String entryPath) {
+            int pos = entryPath.lastIndexOf('/');
+            String namespace = pos != -1 ? entryPath.substring(0, pos) : DEFAULT_NAMESPACE;
+            namespace = namespace.replace('/', '.');
+            return namespace;
+        }
     };
 
-    private static EntryPathConverter JMODPATH_CONVERTER = entryPath -> {
-        if (!entryPath.endsWith(DOT_CLASS) || !entryPath.startsWith(CLASSES_SLASH)) {
-            throw new IllegalStateException();
+
+    private static EntryPathConverter JMODPATH_CONVERTER = new EntryPathConverter() {
+
+        @Override
+        public String toClassName(String entryPath) {
+            // if (!entryPath.endsWith(DOT_CLASS) || !entryPath.startsWith(CLASSES_SLASH)) {
+            //     throw new IllegalStateException();
+            // }
+            String className = entryPath.substring(CLASSES_SLASH.length(), entryPath.length() - DOT_CLASS.length());
+            className = className.replace('/', '.');
+            className = className.replace('$', '.');
+            return className;
+        };
+
+        @Override
+        public String toNamespace(String entryPath) {
+            int pos = entryPath.lastIndexOf('/');
+            String namespace = entryPath.substring(CLASSES_SLASH.length(), pos);
+            namespace = namespace.replace('/', '.');
+            return namespace;
         }
-        String className = entryPath.substring(CLASSES_SLASH.length(), entryPath.length() - DOT_CLASS.length());
-        className = className.replace('/', '.');
-        className = className.replace('$', '.');
-        return className;
     };
+
 
     private static EntryPathConverter getEntryPathConverter(File libFile) {
         return (libFile.getName().endsWith(".jmod"))

@@ -96,25 +96,28 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
     // Module dependencies
     // ----------------------------------------------------------------------
 
+    // @Override
+    // public List<Module> getDependencies(boolean recursive) {
+    //     if (dependencies == null)
+    //         dependencies = getDependencies();
+    //
+    //     if (!recursive)
+    //         return dependencies;
+    //     else
+    //         return getRecursiveDependencies();
+    // }
+
     @Override
-    public List<Module> getDependencies(boolean recursive) {
-        if (dependencies == null)
-            dependencies = getDependencies();
-
-        if (!recursive)
-            return dependencies;
-        else
-            return getRecursiveDependencies();
-    }
-
-
-    protected List<Module> getDependencies() {
+    public List<Module> getDependencies() {
         //
         // WARN: DON'T CALL IT directly!
         //
         // It is better to call 'getDependencies(false)'  because
         // that method checks if 'dependencies' is already evaluated!
         //
+
+        if (dependencies != null)
+            return dependencies;
 
         //
         // Identify a module dependency based on the following rule:
@@ -185,28 +188,29 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
             orderedDeps.add(dmodule);
         });
 
-        if (orderedDeps.isEmpty())
-            return Collections.emptyList();
-        else
-            return new ArrayList<>(orderedDeps);
+        this.dependencies = orderedDeps.isEmpty()
+            ? Collections.emptyList()
+            : new ArrayList<>(orderedDeps);
+
+        return this.dependencies;
     }
 
     // evaluate the recursive dependencies (breath first)
-    private List<Module> getRecursiveDependencies() {
-        Queue<Module> toVisit = new LinkedList<>(getDependencies(false));
-        Set<Module> visited = new HashSet<>();
-
-        while (!toVisit.isEmpty()) {
-            Module dmodule = toVisit.remove();
-            if (visited.contains(dmodule))
-                continue;
-
-            visited.add(dmodule);
-            toVisit.addAll(dmodule.getDependencies(false));
-        }
-
-        return new ArrayList<>(visited);
-    }
+    // private List<Module> getRecursiveDependencies() {
+    //     Queue<Module> toVisit = new LinkedList<>(getDependencies());
+    //     Set<Module> visited = new HashSet<>();
+    //
+    //     while (!toVisit.isEmpty()) {
+    //         Module dmodule = toVisit.remove();
+    //         if (visited.contains(dmodule))
+    //             continue;
+    //
+    //         visited.add(dmodule);
+    //         toVisit.addAll(dmodule.getDependencies());
+    //     }
+    //
+    //     return new ArrayList<>(visited);
+    // }
 
     // ----------------------------------------------------------------------
     // Module content

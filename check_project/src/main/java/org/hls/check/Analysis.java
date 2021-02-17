@@ -86,7 +86,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
         }
 
         // 2)
-        ctx = new ContextTypeSolver(project.getId(), module.getId());
+        ctx = new ContextTypeSolver(module.getId());
 
         // global libraries
         ctx.add(new JarFilesTypeSolver(project.getId(), classPoolRegistry));
@@ -95,7 +95,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
         ctx.add(modulets(module));
 
         // dependent modules
-        module.getDependencies(false)
+        module.getDependencies()
             .forEach(dmodule -> {
                 ctx.add(modulets(dmodule));
             });

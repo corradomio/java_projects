@@ -74,7 +74,10 @@ public class GradleModule extends BaseModule {
     // ----------------------------------------------------------------------
 
     @Override
-    protected List<Module> getDependencies() {
+    public List<Module> getDependencies() {
+        if (dependencies != null)
+            return dependencies;
+
         //
         // Override 'BaseModule::getDependencies()' to reorder the
         // dependencies based on the 'building system configuration file'
@@ -101,10 +104,11 @@ public class GradleModule extends BaseModule {
         // add the missing dependencies based on the module types intersection
         orderedDeps.addAll(super.getDependencies());
 
-        if (orderedDeps.isEmpty())
-            return Collections.emptyList();
-        else
-            return new ArrayList<>(orderedDeps);
+        this.dependencies = orderedDeps.isEmpty()
+            ? Collections.emptyList()
+            : new ArrayList<>(orderedDeps);
+
+        return this.dependencies;
     }
 
     // ----------------------------------------------------------------------

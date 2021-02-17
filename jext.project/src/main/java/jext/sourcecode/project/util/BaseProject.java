@@ -1,7 +1,6 @@
 package jext.sourcecode.project.util;
 
 import jext.name.PathName;
-import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.resources.ResourceFile;
 import jext.sourcecode.resources.SourceCode;
@@ -25,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -62,7 +62,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     protected Logger logger;
     protected File projectHome;
-    protected ProjectType projectType;
+    protected String projectType;
     protected Properties properties;
 
     protected List<Module> modules;
@@ -79,7 +79,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected BaseProject(String projectName, File projectHome, Properties properties, ProjectType projectType){
+    protected BaseProject(String projectName, File projectHome, Properties properties, String projectType){
         super(new PathName(projectName));
         this.projectHome = projectHome;
         this.projectType = projectType;
@@ -122,7 +122,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     @Override
-    public ProjectType getProjectType() {
+    public String getProjectType() {
         return projectType;
     }
 
@@ -423,17 +423,19 @@ public abstract class BaseProject extends NamedObject implements Project {
         // 1) local libraries
         // 2) maven libraries buf for them it keep ONLY the latest version
 
-        libraries = new LibrarySet();
+        LibrarySet libraries = new LibrarySet();
 
         getModules().forEach(module -> {
             libraries.addAll(module.getLibraries());
         });
 
-        // add the runtime library
-        // NO: the runtime library is at module level
-        // libraries.add(getRuntimeLibrary());
+        // Note: the runtime libraries ARE NOT ADDED because
+        //       they are specific for eachmodule
 
+        logger.debugf("check %d libraries", libraries.size());
         libraries.checkArtifacts();
+
+        this.libraries = libraries;
 
         return libraries;
     }
@@ -481,6 +483,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                     return FileVisitResult.CONTINUE;
                 }
             });
+        } catch (InvalidPathException e) {
         } catch (IOException e) { }
 
         return moduleDirs;

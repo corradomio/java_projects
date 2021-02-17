@@ -1,6 +1,5 @@
 package jext.sourcecode.project.maven;
 
-import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 
@@ -13,7 +12,7 @@ public class MavenProject extends BaseProject {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final ProjectType TYPE = ProjectType.MAVEN;
+    public static final String TYPE = "maven";
     public static final String MODULE_FILE = "pom.xml";
 
     // ----------------------------------------------------------------------

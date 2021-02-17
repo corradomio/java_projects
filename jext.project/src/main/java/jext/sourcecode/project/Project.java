@@ -48,7 +48,7 @@ public interface Project extends IdNamed {
     // ----------------------------------------------------------------------
 
     /** Project type */
-    ProjectType getProjectType();
+    String getProjectType();
 
     /** Project properties */
     Properties getProperties();
@@ -62,7 +62,7 @@ public interface Project extends IdNamed {
     /** Retrieve a module by id/full name */
     Module getModule(String nameOrId);
 
-    /** UNION of all module libraries */
+    /** UNION of all module libraries with the HIGHEST version */
     Set<Library> getLibraries();
 
     Library getLibrary(String libraryId);

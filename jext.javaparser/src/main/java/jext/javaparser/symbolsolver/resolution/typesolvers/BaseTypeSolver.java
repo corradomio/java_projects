@@ -21,20 +21,10 @@ public abstract class BaseTypeSolver implements TypeSolver {
     // Constructor
     // ----------------------------------------------------------------------
 
-    // private BaseTypeSolver() {
-    //     this.logger = Logger.getLogger(getClass(), name);
-    // }
-
     protected BaseTypeSolver(String name) {
         this.name = name;
         this.logger = Logger.getLogger(getClass(), name);
     }
-
-    // protected BaseTypeSolver(File file) {
-    //     String name = FileUtils.getNameWithoutExt(file);
-    //     this.name = name;
-    //     this.logger = Logger.getLogger(getClass(), name);
-    // }
 
     // ----------------------------------------------------------------------
     // Operations

@@ -27,8 +27,4 @@ public class SimpleModule extends BaseModule {
     // Operations
     // ----------------------------------------------------------------------
 
-    @Override
-    protected List<Module> getDependencies() {
-        return Collections.emptyList();
-    }
 }

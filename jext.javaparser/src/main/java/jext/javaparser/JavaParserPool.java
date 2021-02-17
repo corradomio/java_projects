@@ -13,7 +13,6 @@ import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import jext.cache.CacheManager;
 import jext.cache.Cache;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserRootsTypeSolver;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -495,7 +494,7 @@ public class JavaParserPool {
         }
         else if (inUse < 0) {
             counter.set(0);
-            Logger.getLogger(JavaParserPool.class).error("more cleanup that initialize");
+            Logger.getLogger(JavaParserPool.class).error("More cleanup than initialize");
         }
         else {
             //Logger.getLogger(JavaParserPool.class).warnf("clean: in use %d", inUse);

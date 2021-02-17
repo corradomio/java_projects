@@ -34,11 +34,11 @@ public class AnalyzeDL4J {
         CacheManager.configure();
 
         Name name = new PathName("test/dl4j");
-        Parameters params = Parameters.params();
+        Parameters params = Parameters.params("module.exclude", "*test*");
 
         Project dl4j = Projects.newProject(name,
-            // new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7")
-            new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
+            new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7")
+            // new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
             , params
         );
 
@@ -59,7 +59,6 @@ public class AnalyzeDL4J {
 
         dl4j.getModules().forEach(module -> {
             Parallel.forEach(module.getSources(), AnalyzeDL4J::analyze);
-            // module.getSources().forEach(AnalyzeDL4J::analyze);
         });
 
         Logger.getLogger("main").println("=== END ===");
@@ -88,7 +87,7 @@ public class AnalyzeDL4J {
             // JavaParserPoolTypeSolver mts = new JavaParserPoolTypeSolver(pool);
             JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver().withCache();
             mts.addAll(module.getSourceRoots());
-            module.getDependencies(false).forEach(dmodule -> {
+            module.getDependencies().forEach(dmodule -> {
                 mts.addAll(dmodule.getSourceRoots());
             });
 

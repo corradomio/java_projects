@@ -1,6 +1,5 @@
 package jext.sourcecode.project.ant;
 
-import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 
@@ -13,7 +12,7 @@ public class AntProject extends BaseProject {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final ProjectType TYPE = ProjectType.ANT;
+    public static final String TYPE = "ant";
     public static final String MODULE_FILE = "build.xml";
 
     // ----------------------------------------------------------------------

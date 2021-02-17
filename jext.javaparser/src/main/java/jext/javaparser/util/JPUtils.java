@@ -13,10 +13,16 @@ import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class JPUtils {
@@ -42,22 +48,22 @@ public class JPUtils {
 
     // ----------------------------------------------------------------------
 
-    public static MethodCallScope findMethodCallScope(Node n) {
-        Optional<Node> current = n.getParentNode();
-        while(current.isPresent()) {
-            Class<?> clazz = current.get().getClass();
-
-            if (INITIALIZER_DECLARATION.equals(clazz))
-                return new MethodCallScope((InitializerDeclaration)n);
-
-            if (METHOD_DECLARATION.equals(clazz))
-                return new MethodCallScope((MethodDeclaration)n);
-
-            if (CONSTRUCTOR_DECLARATION.equals(clazz))
-                return new MethodCallScope((ConstructorDeclaration)n);
-        }
-        return MethodCallScope.unavailable();
-    }
+    // public static MethodCallScope findMethodCallScope(Node n) {
+    //     Optional<Node> current = n.getParentNode();
+    //     while(current.isPresent()) {
+    //         Class<?> clazz = current.get().getClass();
+    //
+    //         if (INITIALIZER_DECLARATION.equals(clazz))
+    //             return new MethodCallScope((InitializerDeclaration)n);
+    //
+    //         if (METHOD_DECLARATION.equals(clazz))
+    //             return new MethodCallScope((MethodDeclaration)n);
+    //
+    //         if (CONSTRUCTOR_DECLARATION.equals(clazz))
+    //             return new MethodCallScope((ConstructorDeclaration)n);
+    //     }
+    //     return MethodCallScope.unavailable();
+    // }
 
     // ----------------------------------------------------------------------
 
@@ -79,23 +85,23 @@ public class JPUtils {
     //     return Optional.empty();
     // }
 
-    public static Optional<MethodDeclaration> findMethodDeclaration(Node n) {
-        Optional<Node> current = n.getParentNode();
-        while(current.isPresent()) {
-            Class<?> clazz = current.get().getClass();
-
-            // found a methods declaration
-            if (clazz.equals(MethodDeclaration.class))
-                return Optional.of((MethodDeclaration)current.get());
-
-            // found an initializer
-            if (clazz.equals(InitializerDeclaration.class))
-                return Optional.empty();
-
-            current = current.get().getParentNode();
-        }
-        return Optional.empty();
-    }
+    // public static Optional<MethodDeclaration> findMethodDeclaration(Node n) {
+    //     Optional<Node> current = n.getParentNode();
+    //     while(current.isPresent()) {
+    //         Class<?> clazz = current.get().getClass();
+    //
+    //         // found a methods declaration
+    //         if (clazz.equals(MethodDeclaration.class))
+    //             return Optional.of((MethodDeclaration)current.get());
+    //
+    //         // found an initializer
+    //         if (clazz.equals(InitializerDeclaration.class))
+    //             return Optional.empty();
+    //
+    //         current = current.get().getParentNode();
+    //     }
+    //     return Optional.empty();
+    // }
 
     // ----------------------------------------------------------------------
 
@@ -264,4 +270,37 @@ public class JPUtils {
         }
         return rcd.getQualifiedName();
     }
+
+    // ----------------------------------------------------------------------
+
+    private static Map<TypeSolver, ?> getJavaParserFacadeTypeSolversMap() {
+        try {
+            Field instancesField = JavaParserFacade.class.getDeclaredField("instances");
+            instancesField.setAccessible(true);
+            return (Map<TypeSolver, ?>)instancesField.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeTypeSolver(TypeSolver ts) {
+        synchronized (JavaParserFacade.class) {
+            Map<TypeSolver, ?> tsmap = getJavaParserFacadeTypeSolversMap();
+            tsmap.remove(ts);
+        }
+    }
+
+    public static void removeTypeSolvers(String prefix) {
+        List<TypeSolver> toRemove = new ArrayList<>();
+        synchronized (JavaParserFacade.class) {
+            Map<TypeSolver, ?> tsmap = getJavaParserFacadeTypeSolversMap();
+            for(TypeSolver ts : tsmap.keySet())
+                if (ts instanceof BaseTypeSolver)
+                    if (((BaseTypeSolver)ts).getName().startsWith(prefix))
+                        toRemove.add(ts);
+            for (TypeSolver ts : toRemove)
+                tsmap.remove(ts);
+        }
+    }
+
 }

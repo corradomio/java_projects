@@ -1,6 +1,5 @@
 package jext.sourcecode.project.gradle;
 
-import jext.sourcecode.project.ProjectType;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 import jext.io.file.FilePatterns;
@@ -30,7 +29,7 @@ public class GradleProject extends BaseProject {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final ProjectType TYPE = ProjectType.GRADLE;
+    public static final String TYPE = "gradle";
     private static final String MODULE_FILE = "build.gradle";
     private static final String MODULE_FILE_KTS = "build.gradle.kts";
 
@@ -97,8 +96,6 @@ public class GradleProject extends BaseProject {
     }
 
     private void findModulesByConfig() {
-        logger.debug("findModulesByConfig");
-
         List<File> moduleHomes = new ArrayList<>();
         try {
             Files.walkFileTree(projectHome.toPath(), new SimpleFileVisitor<Path>(){
@@ -127,8 +124,6 @@ public class GradleProject extends BaseProject {
     }
 
     public void findModulesByGradle() {
-        logger.debug("findModulesByGradle");
-
         Set<GradleModule> gmodules = new HashSet<>();
         Queue<GradleModule> toVisit = new LinkedList<>();
         toVisit.add(rootModule);

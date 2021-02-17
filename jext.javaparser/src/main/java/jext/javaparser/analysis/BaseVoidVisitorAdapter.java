@@ -67,20 +67,12 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
     // Operations
     // ----------------------------------------------------------------------
 
-    // NOT USED
-    // public BaseVisitorAdapter addTypeSolver(TypeSolver ts) {
-    //     if (this.ts == null)
-    //         this.ts = new ContextTypeSolver();
-    //     this.ts.add(ts);
-    //     return this;
-    // }
-
     protected BaseVoidVisitorAdapter analyze(CompilationUnit cu) {
         this.cu = cu;
         if (this.ts != null)
             this.ts.setCu(cu);
 
-            visit(cu, null);
+        visit(cu, null);
         return this;
     }
 
