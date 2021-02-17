@@ -41,6 +41,11 @@ public class JCSCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     }
 
     @Override
+    public long size() {
+        return -1;
+    }
+
+    @Override
     public boolean containsKey(K key) {
         return innerCache.get(key) != null;
     }

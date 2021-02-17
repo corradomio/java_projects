@@ -39,6 +39,11 @@ public class GuavaCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
     }
 
     @Override
+    public long size() {
+        return innerCache.size();
+    }
+
+    @Override
     public boolean containsKey(K key) {
         return innerCache.getIfPresent(key) != null;
     }

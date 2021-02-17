@@ -34,6 +34,11 @@ public class AccessCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
         return this.innerCache.getProperties();
     }
 
+    @Override
+    public long size() {
+        return innerCache.size();
+    }
+
     // @Override
     // public Optional<V> getIfPresent(K key) {
     //     lastAccess = System.currentTimeMillis();

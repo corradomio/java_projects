@@ -10,6 +10,8 @@ public interface Cache<K, V> extends AutoCloseable {
     String getId();
     String getName();
 
+    long size();
+
     Properties getProperties();
 
     boolean containsKey(K key);

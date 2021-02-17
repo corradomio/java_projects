@@ -19,6 +19,7 @@ import jext.cache.Cache;
 import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
+import jext.util.PropertiesUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -328,7 +329,7 @@ public class JPUtils {
 
         @Override
         public Properties getProperties() {
-            return jext.util.Properties.empty();
+            return PropertiesUtils.empty();
         }
 
         @Override
@@ -346,15 +347,15 @@ public class JPUtils {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public Object get(Object key, Function<Object, Object> function) {
-            throw new UnsupportedOperationException();
-        }
+        // @Override
+        // public Object get(Object key, Function<Object, Object> function) {
+        //     throw new UnsupportedOperationException();
+        // }
 
-        @Override
-        public Object getOrDefault(Object key, Object defaultValue) {
-            throw new UnsupportedOperationException();
-        }
+        // @Override
+        // public Object getOrDefault(Object key, Object defaultValue) {
+        //     throw new UnsupportedOperationException();
+        // }
 
         @Override
         public Object getChecked(Object key, Callable<Object> callable) throws ExecutionException {
@@ -362,9 +363,14 @@ public class JPUtils {
         }
 
         @Override
-        public Optional<Object> getIfPresent(Object key) {
-            return Optional.empty();
+        public Object get(Object key) {
+            throw new UnsupportedOperationException();
         }
+
+        // @Override
+        // public Optional<Object> getIfPresent(Object key) {
+        //     return Optional.empty();
+        // }
 
         @Override
         public void put(Object key, Object value) {
