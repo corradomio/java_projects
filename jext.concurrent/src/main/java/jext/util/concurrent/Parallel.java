@@ -143,9 +143,9 @@ public class Parallel {
     //     waiting.add(executor);
     // }
 
-    // public static void setup() {
-    //     checkUsage(false);
-    // }
+    public static void setup() {
+        Parallelize.setup();
+    }
 
     public static synchronized void shutdown() {
         // if (running != null)

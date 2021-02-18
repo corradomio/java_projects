@@ -1,2 +1,8 @@
-package jext.javaparser.ast;public interface Unique {
+package jext.javaparser.ast;
+
+import com.github.javaparser.ast.Node;
+
+public interface Unique {
+
+    void analyze(Object n);
 }

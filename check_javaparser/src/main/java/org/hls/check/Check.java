@@ -9,6 +9,7 @@ import jext.cache.CacheManager;
 import jext.io.util.FileFilters;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
+import jext.javaparser.ast.UniqueSymbols;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
@@ -23,6 +24,8 @@ public class Check {
 
     private static CombinedTypeSolver cptss = new CombinedTypeSolver();
 
+    static UniqueSymbols us = new UniqueSymbols();
+
     public static void main(String[] args) throws Exception {
         Parallel.setup();
         Logger.configure();
@@ -31,11 +34,24 @@ public class Check {
         // TypeSolver ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
         // System.out.println(ts.tryToSolveType("java.util.Collection"));
 
-        JavaParserPool pool = JavaParserPool.getPool();
+        // JavaParserPool pool = JavaParserPool.getPool();
         // pool.setCacheSizeLimit(1000);
 
-        Parallel.forEach(FileUtils.listFiles(new File("D:\\Projects.github\\other_projects\\hibernate-orm"), FileFilters.IS_JAVA),
+        Parallel.forEach(FileUtils.listFiles(
+            // new File("D:\\Projects.github\\other_projects\\hibernate-orm")
+            // new File("D:\\Projects.github\\other_projects\\deeplearning4j")
+            new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
+            , FileFilters.IS_JAVA),
             Check::parse);
+
+        // FileUtils.listFiles(
+        //     new File("D:\\Projects.github\\other_projects\\hibernate-orm")
+            // new File("D:\\Projects.github\\other_projects\\deeplearning4j")
+            // , FileFilters.IS_JAVA)
+            // .stream()
+            // .forEach(Check::parse);
+
+        us.stats();
 
         // FileUtils.listFiles(
         //     //new File("data\\bookstore\\src\\main\\java"),
@@ -52,19 +68,23 @@ public class Check {
 
     private static void parse(File file) {
         try {
-            System.out.printf("== %s ==\n", file.getName());
+            // System.out.printf("== %s ==\n", file.getName());
             //return new JavaParser().parse(file);
             ParseResult<CompilationUnit> presult = JavaParserPool.getPool().parse(file);
             if (presult.isSuccessful() && presult.getResult().isPresent()) {
                 // JSONUtils.save(new File(file.getParentFile(), file.getName() + ".json"), presult.getResult().get());
 
                 // File serialized = new File(file.getParentFile(), file.getName() + ".kryo");
-                // CompilationUnit cu = presult.getResult().get();
+                CompilationUnit cu = presult.getResult().get();
+
+                // UniqueSymbols us = new UniqueSymbols();
+                us.analyze(cu);
+
                 // KryoSerializer.serialize(serialized, cu);
                 // CompilationUnit desercu = KryoSerializer.deserialize(serialized, CompilationUnit.class);
-                File serialized = new File(file.getParentFile(), file.getName() + ".protostuff");
-                ProtostuffSerializer.serialize(serialized, presult.getResult().get());
-                CompilationUnit desercu = ProtostuffSerializer.deserialize(serialized, CompilationUnit.class);
+                // File serialized = new File(file.getParentFile(), file.getName() + ".protostuff");
+                // ProtostuffSerializer.serialize(serialized, presult.getResult().get());
+                // CompilationUnit desercu = ProtostuffSerializer.deserialize(serialized, CompilationUnit.class);
                 // File serialized = new File(file.getParentFile(), file.getName() + ".fst");
                 // FstSerializer.serialize(serialized, presult.getResult().get());
                 // CompilationUnit desercu = KryoSerializer.deserialize(serialized, CompilationUnit.class);
