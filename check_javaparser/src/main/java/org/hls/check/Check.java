@@ -8,8 +8,8 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSol
 import jext.cache.CacheManager;
 import jext.io.util.FileFilters;
 import jext.javaparser.JavaParserPool;
-import jext.javaparser.analysis.LogVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
+import jext.javaparser.analysis.LogVoidVisitorAdapter;
+import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
@@ -32,7 +32,7 @@ public class Check {
         // System.out.println(ts.tryToSolveType("java.util.Collection"));
 
         JavaParserPool pool = JavaParserPool.getPool();
-        pool.setCacheSizeLimit(1000);
+        // pool.setCacheSizeLimit(1000);
 
         Parallel.forEach(FileUtils.listFiles(new File("D:\\Projects.github\\other_projects\\hibernate-orm"), FileFilters.IS_JAVA),
             Check::parse);
@@ -77,7 +77,7 @@ public class Check {
     }
 
     static void analyze1(CompilationUnit cu) {
-        new LogVisitorAdapter<Void>().analyze(cu);
+        new LogVoidVisitorAdapter<Void>().analyze(cu);
     }
 
     static void analyze(CompilationUnit cu) {
@@ -87,7 +87,7 @@ public class Check {
             // ts.add(new JavaParserTypeSolver(new File("data\\bookstore\\src\\main\\java")));
             ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
             // ts.add(new JavaParserTypeSolver(new File("src_only")));
-            ts.add(new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8")));
+            ts.add(new JarFilesTypeSolver().add(new File("D:\\Java\\MiniJdk\\Jdk8")));
             // ts.add(new ReflectionTypeSolver());
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\rt.jar")));
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\alt-rt.jar")));

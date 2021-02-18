@@ -4,8 +4,8 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import jext.javaparser.JavaParserPool;
-import jext.javaparser.analysis.LogVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JDKTypeSolver;
+import jext.javaparser.analysis.LogVoidVisitorAdapter;
+import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
@@ -44,11 +44,11 @@ public class CheckMethodCalls {
     static void analyze(CompilationUnit cu) {
         CombinedTypeSolver ts = new CombinedTypeSolver();
         ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
-        ts.add(new JDKTypeSolver(new File("D:\\Java\\Jdk8.0.x64")));
+        ts.add(new JarFilesTypeSolver().addJdk(new File("D:\\Java\\Jdk8.0.x64")));
 
         JPUtils.setSymbolSolver(cu, ts);
 
-        LogVisitorAdapter<Void> lva = new LogVisitorAdapter<>();
+        LogVoidVisitorAdapter<Void> lva = new LogVoidVisitorAdapter<>();
         lva.analyze(cu);
     }
 }
