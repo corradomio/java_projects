@@ -215,26 +215,20 @@ public class JavaParserPool {
                 new CommentsCollection());
         }
 
-        ParseResult<CompilationUnit> presult;
-
         try {
-            presult = parsedFiles.getChecked(srcFile, () -> {
-                logger.debugft("... parse %s", srcFile);
-                // try {
-                    ParseResult<CompilationUnit> result =
-                        new JavaParser(parserConfiguration)
-                            .parse(COMPILATION_UNIT, provider(srcFile))
-                        ;
-                    result.ifSuccessful(cu -> {
-                        cu.setStorage(srcFile);
-                        cu.getPackageDeclaration().ifPresent(pdecl -> {
-                            addSourceRoot(srcFile, pdecl.getNameAsString());
-                        });
-                    });
-                    return result;
-                // } catch (Throwable e) {
-                //     throw new ExecutionException("Issue parsing: " + srcFile, e);
-                // }
+            return parsedFiles.getChecked(srcFile, () -> {
+                // logger.debugft("... parse %s", srcFile);
+                // ParseResult<CompilationUnit> result =
+                //     new JavaParser(parserConfiguration)
+                //         .parse(COMPILATION_UNIT, provider(srcFile));
+                // result.ifSuccessful(cu -> {
+                //     cu.setStorage(srcFile);
+                //     cu.getPackageDeclaration().ifPresent(pdecl -> {
+                //         addSourceRoot(srcFile, pdecl.getNameAsString());
+                //     });
+                // });
+                // return result;
+                return parseSource(srcFile);
             });
         }
         catch (ExecutionException e) {
@@ -246,53 +240,39 @@ public class JavaParserPool {
                 }},
                 new CommentsCollection());
         }
-
-        return presult;
     }
 
-    // /**
-    //  * Sometime the parsin fails for a ""strange""
-    //  *
-    //  *      """Lexical Error ..."""
-    //  *
-    //  * This seems to a ""transient error"".
-    //  * To mitigate it, we retry to parse the file some other time
-    //  */
-    // private ParseResult<CompilationUnit> parseResult(Path srcFile) throws IOException {
-    //     Thread.yield();
-    //
-    //     int count = 0;
-    //     TokenMgrException exception = null;
-    //     while (count < 3) {
-    //         try {
-    //             ParseResult<CompilationUnit> result =
-    //                 new JavaParser(parserConfiguration)
-    //                     .parse(COMPILATION_UNIT, provider(srcFile));
-    //             result.ifSuccessful(cu -> {
-    //                 cu.setStorage(srcFile);
-    //                 cu.getPackageDeclaration().ifPresent(pdecl -> {
-    //                     addSourceRoot(srcFile, pdecl.getNameAsString());
-    //                 });
-    //             });
-    //             return result;
-    //         }
-    //         catch (TokenMgrException e) {
-    //             exception = e;
-    //             logger.warnf("Lexical error caught: retry");
-    //             ++count;
-    //         }
-    //         catch (Throwable t) {
-    //             if (t.getMessage().contains("Lexical error")) {
-    //                 logger.warnf("Lexical error caught: retry (%s)", t.getClass().getCanonicalName());
-    //                 ++count;
-    //             }
-    //             else {
-    //                 throw t;
-    //             }
-    //         }
-    //     }
-    //     throw exception;
-    // }
+    /**
+     * Sometime the parsing fails for a ""strange""
+     *
+     *      """Lexical Error ..."""
+     *
+     * This seems to be a ""transient error"".
+     * To mitigate it, we retry to parse the file some other time
+     */
+    private ParseResult<CompilationUnit> parseSource(Path srcFile) throws IOException {
+        logger.debugft("... parse %s", srcFile.toAbsolutePath());
+        ParseResult<CompilationUnit> result = null;
+
+        for(int count = 0; count < 3; ++count) {
+            Thread.yield();
+
+            result =
+                new JavaParser(parserConfiguration)
+                    .parse(COMPILATION_UNIT, provider(srcFile));
+            if (result.isSuccessful()) {
+                result.ifSuccessful(cu -> {
+                    cu.setStorage(srcFile);
+                    cu.getPackageDeclaration().ifPresent(pdecl -> {
+                        addSourceRoot(srcFile, pdecl.getNameAsString());
+                    });
+                });
+                break;
+            }
+            ++count;
+        }
+        return result;
+    }
 
     private void addSourceRoot(Path srcFile, String packageName) {
         String subDir = packageName.replace('.', '/');
