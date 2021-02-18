@@ -1,4 +1,4 @@
-package jext.javaparser.util;
+package jext.javaparser.ast;
 
 import java.util.HashMap;
 import java.util.Map;
