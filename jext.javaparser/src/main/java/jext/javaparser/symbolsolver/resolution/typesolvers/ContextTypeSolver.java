@@ -17,6 +17,8 @@ import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import com.github.javaparser.resolution.types.ResolvedPrimitiveType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
@@ -24,9 +26,11 @@ import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.javaparser.exception.ResolveAbortedException;
+import jext.javaparser.exception.ResolveTimeoutException;
 import jext.javaparser.resolution.ReferenceConstructorDeclaration;
 import jext.javaparser.resolution.ReferencedMethodDeclaration;
-import jext.javaparser.symbolsolver.namespacemodel.NamespaceDeclaration;
+import jext.javaparser.symbolsolver.namespacemodel.NamespaceSolver;
 import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
@@ -39,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class ContextTypeSolver extends CompositeTypeSolver {
@@ -56,13 +61,13 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     private File filename;
     private final Map<String, String> imports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
+    private NamespaceSolver nssolver;
     private String namespace;
     private String cacheName;
-    private transient boolean aborted;
 
     // cache used to patch a problem with the parser that it is unable
     // to distinguish between a type and a namespace
-    private final Map<String, NamespaceDeclaration> namespaces = new HashMap<>();
+    // private final Map<String, NamespaceDeclaration> namespaces = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -70,11 +75,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     public ContextTypeSolver() {
         this(DEFAULT);
-    }
-
-    public ContextTypeSolver(TypeSolver typeSolver) {
-        super(DEFAULT);
-        super.add(typeSolver);
     }
 
     public ContextTypeSolver(String name) {
@@ -134,13 +134,14 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         return this;
     }
 
+    public ContextTypeSolver setNamespaceSolver(NamespaceSolver nssolver) {
+        this.nssolver = nssolver;
+        return this;
+    }
+
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
-
-    public void abort() {
-        this.aborted = true;
-    }
 
     /**
      * Set the compilationUnit used to resolve symbols.
@@ -209,19 +210,33 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      */
     @Nullable
     public ResolvedType resolve(Type n) {
-        if (aborted) return null;
-
         try {
-            return n.resolve();
+            setTimestamp();
+
+            ResolvedType rt;
+            if (n.isPrimitiveType())
+                rt = ResolvedPrimitiveType.byName(n.asPrimitiveType().getType().name());
+            else if (n.isClassOrInterfaceType())
+                rt = resolve(n.asClassOrInterfaceType().getNameAsString(), n);
+            else
+                rt = n.resolve();
+
+            return rt;
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", n.toString());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
         }
         catch (RuntimeException e) {
-            // logger.error(e, e);
+
+        }
+        finally {
+            clearTimestamp();
         }
 
-        if (n.isClassOrInterfaceType())
-            return resolve(n.asClassOrInterfaceType().getNameAsString(), n);
-        else
-            return null;
+        return null;
     }
 
     /**
@@ -231,15 +246,29 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      * @return a resolved type with full qualified name or null
      */
     public ResolvedType resolve(NameExpr n) {
-        if (aborted) return null;
 
-        // try {
-        //     ResolvedValueDeclaration rvd = n.resolve();
-        //     return rvd.getType();
-        // }
-        // catch (UnsolvedSymbolException | UnsupportedOperationException e) {
-        //
-        // }
+        try {
+            setTimestamp();
+
+            ResolvedValueDeclaration rvd = n.resolve();
+
+            return rvd.getType();
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", n.toString());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", n.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (RuntimeException e) {
+
+        }
+        finally {
+            clearTimestamp();
+        }
         return resolve(n.getName().asString(), n);
     }
 
@@ -251,8 +280,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      */
     @Nullable
     public ResolvedType resolve(String symbol, Node context) {
-        if (aborted) return null;
-
         setContext();
 
         String stripped = JavaUtils.toPlainSignature(symbol);
@@ -275,16 +302,21 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     @Nullable
     public ResolvedMethodDeclaration resolve(MethodCallExpr mce) {
-        if (aborted) return null;
-
         try {
-            return mce.resolve();
+            setTimestamp();
+
+            ResolvedMethodDeclaration rmd = mce.resolve();
+
+            return rmd;
         }
-        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException
-            | IllegalArgumentException | IndexOutOfBoundsException e) {
-            ;
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", mce.toString());
         }
-        catch (OutOfMemoryError e) {
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", mce.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
             throw e;
         }
         catch (RuntimeException e) {
@@ -303,6 +335,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // catch (Throwable t) {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
         // }
+        finally {
+            clearTimestamp();
+        }
 
         // If scope it is not present, this means that the class is the CURRENT class
         // (I hope!)
@@ -311,10 +346,12 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         // Skip "NameExpr" nodes because their resolution requires A LOT of type
         Expression expr = mce.getScope().get();
-        if (expr instanceof NameExpr)
-            return null;
+        // if (expr instanceof NameExpr)
+        //     return null;
 
         try {
+            setTimestamp();
+
             ResolvedType rt = expr.calculateResolvedType();
             String typeName = rt.describe();
 
@@ -323,10 +360,14 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
             return new ReferencedMethodDeclaration(typeName, methodName, nArguments);
         }
-        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException e) {
-            ;
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", expr.toString());
         }
-        catch (OutOfMemoryError e) {
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", expr.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
             throw e;
         }
         catch (RuntimeException e) {
@@ -346,6 +387,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // catch (Throwable t) {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
         // }
+        finally {
+            clearTimestamp();
+        }
 
         logsolver.warnft("Unable to solve call %s", mce.toString());
 
@@ -354,16 +398,21 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     @Nullable
     public ResolvedConstructorDeclaration resolve(ObjectCreationExpr oce) {
-        if (aborted) return null;
-
         try {
-            return oce.resolve();
+            setTimestamp();
+
+            ResolvedConstructorDeclaration rcd = oce.resolve();
+
+            return rcd;
         }
-        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException
-            | IllegalArgumentException | IndexOutOfBoundsException e) {
-            ;
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", oce.toString());
         }
-        catch (OutOfMemoryError e) {
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException | IllegalArgumentException | IndexOutOfBoundsException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", oce.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
             throw e;
         }
         catch (RuntimeException e) {
@@ -382,6 +431,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // catch (Throwable t) {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
         // }
+        finally {
+            clearTimestamp();
+        }
 
         // If scope it is not present, this means that the class is the CURRENT class
         // (I hope!)
@@ -390,10 +442,12 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         // Skip "NameExpr" nodes because their resolution requires A LOT of type
         Expression expr = oce.getScope().get();
-        if (expr instanceof NameExpr)
-            return null;
+        // if (expr instanceof NameExpr)
+        //     return null;
 
         try {
+            setTimestamp();
+
             ResolvedType rt = expr.calculateResolvedType();
             String typeName = rt.describe();
 
@@ -402,10 +456,14 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
             return new ReferenceConstructorDeclaration(typeName, methodName, nArguments);
         }
-        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException e) {
-            ;
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", expr.toString());
         }
-        catch (OutOfMemoryError e) {
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", oce.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
             throw e;
         }
         catch (RuntimeException e) {
@@ -425,6 +483,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // catch (Throwable t) {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
         // }
+        finally {
+            clearTimestamp();
+        }
 
         logsolver.warnft("Unable to solve call %s", oce.toString());
 
@@ -433,16 +494,21 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     @Nullable
     public ResolvedMethodDeclaration resolve(MethodReferenceExpr mre) {
-        if (aborted) return null;
-
         try {
-            return mre.resolve();
+            this.setTimestamp();
+
+            ResolvedMethodDeclaration rmd =  mre.resolve();
+
+            return rmd;
         }
-        catch (UnsolvedSymbolException | UnsupportedOperationException | MethodAmbiguityException
-            | IllegalArgumentException | IndexOutOfBoundsException e) {
-            ;
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", mre.toString());
         }
-        catch (OutOfMemoryError e) {
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException | IllegalArgumentException | IndexOutOfBoundsException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", mre.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
             throw e;
         }
         catch (RuntimeException e) {
@@ -461,6 +527,9 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // catch (Throwable t) {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mre.toString(), t.getMessage(), filename);
         // }
+        finally {
+            this.clearTimestamp();
+        }
 
         logsolver.warnft("Unable to solve call %s", mre.toString());
 
@@ -471,6 +540,16 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // tryToSolveType
     // ----------------------------------------------------------------------
 
+    private Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
+    getAlreadySolved() {
+        String key = getName();
+        Cache<String, Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>>
+            cache = CacheManager.getCache(String.format("%s.alreadySolved", this.cacheName));
+        Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
+            alreadySolved = cache.get(key, () -> new HashMap<>());
+        return alreadySolved;
+    }
+
     /**
      * Try to resolve 'name', a 'full qualified symbol', using the registered solvers
      *
@@ -480,33 +559,29 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
 
-        String key = getName();
-        Cache<String, Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>>
-            cache = CacheManager.getCache(String.format("%s.alreadySolved", this.cacheName));
-        Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
-            alreadySolved = cache.get(key, () -> new HashMap<>());
-
-        // Sometimes, the typesolver try to solve a generic type (with "<...>").
+        // 0) sometimes, the typesolver try to solve a generic type (with "<...>").
         // This step remove the "<...>"
         if (!JavaUtils.isPlainSignature(name))
             name = JavaUtils.toPlainSignature(name);
 
-        // 0) if already solved
+        // 1) if already solved
+        Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
+            alreadySolved = getAlreadySolved();
         if (alreadySolved.containsKey(name))
             return alreadySolved.get(name);
 
-        // 1) skip if it is a namespace
-        if (namespaces.containsKey(name))
+        // 2) skip if it is a namespace
+        if (this.nssolver.isNamespace(name))
             return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
-        // 2) try to solve using the standard methods
+        // 3) try to solve using the standard methods
         SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveUsingSolvers(name);
 
-        // 3) it is not possible to solve the symbol using the context HERE
+        // 4) it is not possible to solve the symbol using the context HERE
         //    because we must use NOT only the imports but also the definitions of
         //    the inner classes
 
-        // 4) register the solved symbol AND the namespaces (IF solved)
+        // 5) register the solved symbol AND the namespaces (IF solved)
         addSolved(name, solved);
 
         return solved;
@@ -514,14 +589,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     private void addSolved(String name, SymbolReference<ResolvedReferenceTypeDeclaration> solved) {
 
-        String key = getName();
-        Cache<String, Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>>
-            cache = CacheManager.getCache(String.format("%s.alreadySolved", this.cacheName));
-        Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
-            alreadySolved = cache.get(key, () -> new HashMap<>());
-
         if (!solved.isSolved()) return;
-        if (alreadySolved.containsKey(name)) return;
+
+        Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
+            alreadySolved = getAlreadySolved();
 
         // register the solved symbol
         alreadySolved.put(name, solved);
@@ -530,12 +601,12 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // Warn: there is a problem with the 'inner classes' BUT, because it is not simple
         // to understand if a qualified name is a namespace OR a class, FOR NOW we suppose
         // that this approach is good enough
-        String namespace = JavaUtils.namespaceOf(name);
-        while(namespace.length() > 0) {
-            if (namespaces.containsKey(namespace)) break;
-            namespaces.put(namespace, new NamespaceDeclaration(namespace));
-            namespace = JavaUtils.namespaceOf(namespace);
-        }
+        // String namespace = JavaUtils.namespaceOf(name);
+        // while(namespace.length() > 0) {
+        //     if (namespaces.containsKey(namespace)) break;
+        //     namespaces.put(namespace, new NamespaceDeclaration(namespace));
+        //     namespace = JavaUtils.namespaceOf(namespace);
+        // }
     }
 
     // ----------------------------------------------------------------------
@@ -544,22 +615,18 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     // Default implementation using the registered typeSolvers
     private SymbolReference<ResolvedReferenceTypeDeclaration>
-    tryToSolveUsingSolvers(String namespace, String name) {
-        return tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
-    }
-
-    // Default implementation using the registered typeSolvers
-    private SymbolReference<ResolvedReferenceTypeDeclaration>
     tryToSolveUsingSolvers(String name) {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         // 0) check if it is a namespace -> skip
-        // if (namespaces.containsKey(name))
-        //     return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        if (this.nssolver.isNamespace(name))
+            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
         // 1) speedup: check if the symbol was already solved
-        // if (alreadySolved.containsKey(name))
-        //     return alreadySolved.get(name);
+        Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
+            alreadySolved = getAlreadySolved();
+        if (alreadySolved.containsKey(name))
+            return alreadySolved.get(name);
 
         // 2) check using the registered solvers
         for(TypeSolver typeSolver : elements) {
@@ -578,7 +645,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         // 0) check if it is a namespace -> skip
-        if (namespaces.containsKey(name))
+        if (this.nssolver.isNamespace(name))
             return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
         // 1) try to solve using the full imports
@@ -588,7 +655,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // 2) try to resolve using startImports (it contains also the current package
         //    AND "java.lang")
         for(String namespace : starImports) {
-            solved = tryToSolveUsingSolvers(namespace, name);
+            solved = tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
             if (solved.isSolved())
                 return solved;
         }
@@ -597,7 +664,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //    TODO: this part MUST BE IMPROVED
         Stack<String> contextStack = getContextStack(context);
         for(String namespace : contextStack) {
-            solved = tryToSolveUsingSolvers(namespace, name);
+            solved = tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
             if (solved.isSolved())
                 return solved;
         }
@@ -636,6 +703,52 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         if (!starImports.isEmpty())
             return String.format("%s.%s", starImports.toString(), name);
         return name;
+    }
+
+    // ----------------------------------------------------------------------
+    // canSolve
+    // ----------------------------------------------------------------------
+
+    private static class Timestamp {
+        private long timestamp;
+        private long timeout = 500;
+        private AtomicInteger tsdepth = new AtomicInteger();
+
+        void set() {
+            if (tsdepth.getAndIncrement() == 0)
+                this.timestamp = System.currentTimeMillis();
+        }
+
+        boolean timeout() {
+            return (timestamp > 0) && ((System.currentTimeMillis()-timestamp) > timeout);
+        }
+
+        void clear() {
+            if (tsdepth.decrementAndGet() == 0)
+                this.timestamp = 0;
+        }
+    }
+
+    private transient boolean aborted;
+    private Timestamp timestamp = new Timestamp();
+
+    public void abort() {
+        this.aborted = true;
+    }
+
+    public void setTimestamp() {
+        timestamp.set();
+    }
+
+    public void clearTimestamp() {
+        timestamp.clear();
+    }
+
+    public void canSolve() {
+        if (aborted)
+            throw new ResolveAbortedException();
+        if (timestamp.timeout())
+            throw new ResolveTimeoutException();
     }
 
 }

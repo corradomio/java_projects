@@ -51,4 +51,9 @@ public abstract class BaseTypeSolver implements TypeSolver {
         this.parent = parent;
     }
 
+    // @Override
+    // public void canSolve() {
+    //     if (this.parent != null)
+    //         this.parent.canSolve();
+    // }
 }

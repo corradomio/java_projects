@@ -17,6 +17,7 @@ import jext.cache.CacheManager;
 import jext.logging.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,7 +36,7 @@ import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_E
 import static jext.javaparser.Providers.provider;
 
 
-public class JavaParserRootsTypeSolver implements TypeSolver {
+public class JavaParserRootsTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -52,8 +53,6 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
 
     private final Set<File> sourceRoots;
     private final Logger logger;
-
-    private TypeSolver parent;
 
     private Cache<Path, ParseResult<CompilationUnit>> parsedFiles;
     private Cache<Path, List<CompilationUnit>> parsedDirectories;
@@ -73,6 +72,8 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     }
 
     public JavaParserRootsTypeSolver(String name, ParserConfiguration parserConfiguration) {
+        super(name);
+
         this.name = name;
         this.cachePrefix = name;
         this.sourceRoots = new HashSet<>();
@@ -172,24 +173,24 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     // TypeSolver parent
     // ----------------------------------------------------------------------
 
-    @Override
-    public TypeSolver getParent() {
-        return parent;
-    }
-
-    @Override
-    public void setParent(TypeSolver parent) {
-        Objects.requireNonNull(parent);
-        if (this.parent != null) {
-            throw new IllegalStateException("This TypeSolver already has a parent.");
-        }
-        if (parent == this) {
-            throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
-        }
-        this.parent = parent;
-
-        createCaches();
-    }
+    // @Override
+    // public TypeSolver getParent() {
+    //     return parent;
+    // }
+    //
+    // @Override
+    // public void setParent(TypeSolver parent) {
+    //     Objects.requireNonNull(parent);
+    //     if (this.parent != null) {
+    //         throw new IllegalStateException("This TypeSolver already has a parent.");
+    //     }
+    //     if (parent == this) {
+    //         throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
+    //     }
+    //     this.parent = parent;
+    //
+    //     createCaches();
+    // }
 
     // ----------------------------------------------------------------------
     // TypeSolver parent
@@ -198,20 +199,16 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
     private ParseResult<CompilationUnit> parse(Path srcFile) {
         try {
             return parsedFiles.getChecked(srcFile.toAbsolutePath(), () -> {
-                // try {
-                    logger.debugf("... parse %s", srcFile.toAbsolutePath());
-                    ParseResult<CompilationUnit> result =
-                        new JavaParser(parserConfiguration)
-                            .parse(COMPILATION_UNIT, provider(srcFile))
-                        ;
-                    result.ifSuccessful(cu -> {
-                        cu.setStorage(srcFile);
-                    });
-                    return result;
-                // }
-                // catch (Throwable e) {
-                //     throw new ExecutionException("Issue parsing: " + srcFile, e);
-                // }
+                // logger.debugf("... parse %s", srcFile.toAbsolutePath());
+                // ParseResult<CompilationUnit> result =
+                //     new JavaParser(parserConfiguration)
+                //         .parse(COMPILATION_UNIT, provider(srcFile))
+                //     ;
+                // result.ifSuccessful(cu -> {
+                //     cu.setStorage(srcFile);
+                // });
+                // return result;
+                return parseSource(srcFile);
             });
         } catch (ExecutionException e) {
             logger.errorf("Unable to parse %s: %s", srcFile, e);
@@ -222,6 +219,35 @@ public class JavaParserRootsTypeSolver implements TypeSolver {
                 }},
                 new CommentsCollection());
         }
+    }
+
+    /**
+     * Sometime the parsing fails for a ""strange""
+     *
+     *      """Lexical Error ..."""
+     *
+     * This seems to a ""transient error"".
+     * To mitigate it, we retry to parse the file some other time
+     */
+    private ParseResult<CompilationUnit> parseSource(Path srcFile) throws IOException {
+        logger.debugft("... parse %s", srcFile.toAbsolutePath());
+        ParseResult<CompilationUnit> result = null;
+
+        for(int count = 0; count < 3; ++count) {
+            Thread.yield();
+
+            result =
+                new JavaParser(parserConfiguration)
+                    .parse(COMPILATION_UNIT, provider(srcFile));
+            if (result.isSuccessful()) {
+                result.ifSuccessful(cu -> {
+                    cu.setStorage(srcFile);
+                });
+                break;
+            }
+            ++count;
+        }
+        return result;
     }
 
 
