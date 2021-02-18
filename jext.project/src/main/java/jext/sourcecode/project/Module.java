@@ -53,6 +53,9 @@ public interface Module extends IdNamed {
     /** Libraries used by the module (local & remote) */
     List<Library> getLibraries();
 
+    /** Libraries used by the module (local & remote) */
+    List<Library> getDefinedLibraries();
+
     /** Retrieve a library by id/full name/name */
     Library getLibrary(String nameOrId);
 

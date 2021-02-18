@@ -65,7 +65,7 @@ public interface Project extends IdNamed {
     /** UNION of all module libraries with the HIGHEST version */
     Set<Library> getLibraries();
 
-    Library getLibrary(String libraryId);
+    Library getLibrary(String nameOrId);
 
     // ----------------------------------------------------------------------
 

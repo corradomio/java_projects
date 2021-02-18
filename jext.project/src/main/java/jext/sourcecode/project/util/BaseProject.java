@@ -426,7 +426,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         LibrarySet libraries = new LibrarySet();
 
         getModules().forEach(module -> {
-            libraries.addAll(module.getLibraries());
+            libraries.addAll(module.getDefinedLibraries());
         });
 
         // Note: the runtime libraries ARE NOT ADDED because

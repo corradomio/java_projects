@@ -13,6 +13,7 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.io.util.FileFilters;
 import jext.logging.Logger;
+import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.util.FileUtils;
 import jext.util.SetUtils;
@@ -296,6 +297,12 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
 
     @Override
     public List<Library> getLibraries() {
+        LibrarySet projectLibraries = (LibrarySet) project.getLibraries();
+        return projectLibraries.resolveAll(getDefinedLibraries());
+    }
+
+    @Override
+    public List<Library> getDefinedLibraries() {
         if (libraries != null)
             return libraries;
 
@@ -310,7 +317,11 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
 
     @Override
     public Library getLibrary(String nameOrId) {
-        for (Library library : getLibraries()) {
+        Library selected = project.getLibrary(nameOrId);
+        if (selected != null)
+            return selected;
+
+        for (Library library : getDefinedLibraries()) {
             if (library.getId().equals(nameOrId))
                 return library;
             if (library.getName().getFullName().equals(nameOrId))
@@ -320,6 +331,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
             if (library.getPath().equals(nameOrId))
                 return library;
         }
+
         return null;
     }
 

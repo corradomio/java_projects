@@ -17,15 +17,19 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+/**
+ * Class used to collect all libraries but to keep ONLY the latest version
+ */
 public class LibrarySet extends AbstractSet<Library> {
 
     private Set<Library> localLibraries = new TreeSet<>();
+
+    // [groupId:artifactId] -> library
     private Map<String, MavenLibrary> mavenLibraries = new TreeMap<>();
 
     public LibrarySet() {
 
     }
-
 
     @Override
     public Iterator<Library> iterator() {
@@ -63,6 +67,22 @@ public class LibrarySet extends AbstractSet<Library> {
         else {
             return false;
         }
+    }
+
+    /**
+     * If the library is a Maven library, it return the latest version
+     */
+    public Library resolve(Library library) {
+        if (library.getLibraryType() != LibraryType.MAVEN)
+            return library;
+        else
+            return mavenLibraries.get(library.getName().getName());
+    }
+
+    public List<Library> resolveAll(List<Library> libraries) {
+        return libraries.stream()
+            .map(this::resolve)
+            .collect(Collectors.toList());
     }
 
     public void checkArtifacts() {

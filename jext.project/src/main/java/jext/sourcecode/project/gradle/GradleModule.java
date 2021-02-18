@@ -215,9 +215,9 @@ public class GradleModule extends BaseModule {
             if (!message.contains("not found in root project"))
                 logger.error(e, e);
         }
-        catch (Throwable t) {
-            logger.error(t, t);
-        }
+        // catch (Throwable t) {
+        //     logger.error(t, t);
+        // }
         finally {
             projects.close();
             err.close();

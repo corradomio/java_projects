@@ -94,15 +94,13 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return Collections.emptyList();
     }
 
-    @Override
-    public boolean isLocal() {
-        LibraryType ltype = getLibraryType();
-        return !(ltype == LibraryType.MAVEN
-            // || ltype == LibraryType.MAVEN_COLLECTION
-            // || ltype == LibraryType.LOCAL_COLLECTION
-            || ltype == LibraryType.RUNTIME
-        );
-    }
+    // @Override
+    // public boolean isLocal() {
+    //     LibraryType ltype = getLibraryType();
+    //     return !(ltype == LibraryType.MAVEN
+    //         || ltype == LibraryType.RUNTIME
+    //     );
+    // }
 
     // ----------------------------------------------------------------------
     // Version

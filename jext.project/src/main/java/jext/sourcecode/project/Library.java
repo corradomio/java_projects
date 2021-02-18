@@ -20,10 +20,10 @@ public interface Library extends IdNamed {
     String getModuleId();
     Module getModule();
 
-    /**
-     * If the library is defined locally (in a local jar)
-     */
-    boolean isLocal();
+    // /**
+    //  * If the library is defined locally (in a local jar)
+    //  */
+    // boolean isLocal();
 
     /** Library tpe */
     LibraryType getLibraryType();
