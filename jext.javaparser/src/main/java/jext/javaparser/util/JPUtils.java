@@ -10,12 +10,14 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
+import jext.javaparser.exception.ResolveTimeoutException;
 import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
@@ -23,7 +25,6 @@ import jext.util.PropertiesUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -249,12 +250,12 @@ public class JPUtils {
             String signature = rmd.getSignature();
             return signature;
         }
-        catch (UnsupportedOperationException e) {
+        catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", rmd.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (RuntimeException e) {
 
         }
-        // catch (Throwable t) {
-        //     logger.error(t, t);
-        // }
         return rmd.getQualifiedName();
     }
 
@@ -269,12 +270,12 @@ public class JPUtils {
             }
             return signature;
         }
-        catch (UnsupportedOperationException e) {
+        catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", rcd.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (RuntimeException e) {
 
         }
-        // catch (Throwable t) {
-        //     logger.error(t, t);
-        // }
         return rcd.getQualifiedName();
     }
 
@@ -363,7 +364,7 @@ public class JPUtils {
         }
 
         @Override
-        public Object get(Object key) {
+        public Object get(Object o) {
             throw new UnsupportedOperationException();
         }
 
