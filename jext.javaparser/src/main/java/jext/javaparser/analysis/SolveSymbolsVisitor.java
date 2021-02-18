@@ -20,7 +20,7 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
         if (ts instanceof ContextTypeSolver)
             this.ts = (ContextTypeSolver) ts;
         else
-            this.ts = new ContextTypeSolver(ts);
+            this.ts = new ContextTypeSolver().add(ts);
 
         super.analyze(cu);
     }
