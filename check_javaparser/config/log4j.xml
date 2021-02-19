@@ -15,6 +15,10 @@
 		<level value="info" />
 	</logger>
 
+	<logger name="org.apache.http">
+		<level value="info"/>
+	</logger>
+
 	<!-- Root Logger -->
 	<root>
 		<priority value="DEBUG" />

@@ -3,6 +3,7 @@ package org.hls.check;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
@@ -18,14 +19,17 @@ public class CheckMethodCalls {
     static JavaParserPool pool;
 
     public static void main(String[] args) {
-        Logger.configure(new File("log4j.xml"));
+        Logger.configure();
+        CacheManager.configure();
 
         // ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
         pool = JavaParserPool.getPool();
 
         FileUtils.listFiles(
-            //new File("data\\bookstore\\src\\main\\java"),
-            new File("D:\\Projects.github\\java_projects\\jext.cache"),
+            //new File("data\\bookstore\\src\\main\\java")
+            // new File("D:\\Projects.github\\java_projects\\jext.cache")
+            new File("src_only")
+            ,
             pathname -> true)
             .stream()
             .filter(file -> file.getName().endsWith(".java"))

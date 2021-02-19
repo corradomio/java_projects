@@ -16,24 +16,6 @@ public class Test {
 
         System.out.println(l.size());
 
-        //
-        // l.stream()
-        //     .filter(new Predicate<Integer>() {
-        //         @Override
-        //         public boolean test(Integer i) {
-        //             return 0 == i%2;
-        //         }
-        //     })
-        //     .map(new Function<Integer, Integer>() {
-        //         public Integer apply(Integer i) {
-        //             return i+1;
-        //         }
-        //     })
-        //     .forEach(new Consumer<Integer>() {
-        //         @Override
-        //         public void accept(Integer i) {
-        //             System.out.println(i);
-        //         }
-        //     });
     }
+
 }

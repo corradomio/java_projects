@@ -2,6 +2,7 @@ package jext.maven;
 
 import jext.logging.Logger;
 import jext.util.FileUtils;
+import jext.util.PropertiesUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -240,8 +241,8 @@ public class MavenPom implements MavenConst {
         </project>
      */
     public MavenCoords getCoords() {
-        String gid = null;
-        String aid = null;
+        String gid = NO_ID;
+        String aid = NO_ID;
         String v = NO_VERSION;
 
         // defaults using parent
@@ -249,13 +250,13 @@ public class MavenPom implements MavenConst {
         if (parent != null) {
             gid = XPathUtils.getValue(parent, GROUP_ID, gid);
             aid = XPathUtils.getValue(parent, ARTIFACT_ID, aid);
-            v = XPathUtils.getValue(parent, VERSION, v);
+            v = XPathUtils.getValue(parent, VERSION, v, mavenprops);
         }
 
         // resolve using parent
         gid = XPathUtils.getValue(project, GROUP_ID, gid);
         aid = XPathUtils.getValue(project, ARTIFACT_ID, aid);
-        v = XPathUtils.getValue(project, VERSION, v);
+        v = XPathUtils.getValue(project, VERSION, v, mavenprops);
 
         return new MavenCoords(gid, aid, v);
     }

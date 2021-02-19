@@ -1,4 +1,4 @@
-package jext.javaparser.ast;
+package jext.javaparser.util;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;

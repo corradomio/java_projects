@@ -103,8 +103,8 @@ public class ClassPoolRegistry {
             addFile(libraryFile);
         else if (libraryFile.isDirectory())
             addDirectory(libraryFile);
-        else
-            logger.warnf("Library file %s not existent", FileUtils.getAbsolutePath(libraryFile));
+        // else
+        //     logger.warnf("Library file %s not existent", FileUtils.getAbsolutePath(libraryFile));
         return this;
     }
 

@@ -18,9 +18,9 @@ public class HashBidiMap<K, V> extends HashMap<K, V> implements BidiMap<K, V> {
 
 
     @Override
-    public HashMap<K, V> put_(K key, V value) {
+    public HashMap<K, V> add(K key, V value) {
         _invmap.put(value, key);
-        super.put_(key, value);
+        super.add(key, value);
         return this;
     }
 

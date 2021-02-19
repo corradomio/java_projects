@@ -14,6 +14,7 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.javaparser.symbolsolver.namespacemodel.NamespaceSolver;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -36,7 +37,7 @@ import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_E
 import static jext.javaparser.Providers.provider;
 
 
-public class JavaParserRootsTypeSolver extends BaseTypeSolver {
+public class JavaParserRootsTypeSolver extends BaseTypeSolver implements NamespaceSolver {
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -161,12 +162,14 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver {
     // Source roots
     // ----------------------------------------------------------------------
 
-    public void add(File sourceRoot) {
+    public JavaParserRootsTypeSolver add(File sourceRoot) {
         this.sourceRoots.add(sourceRoot);
+        return this;
     }
 
-    public void addAll(Collection<File> sourceRoots) {
+    public JavaParserRootsTypeSolver addAll(Collection<File> sourceRoots) {
         this.sourceRoots.addAll(sourceRoots);
+        return this;
     }
 
     // ----------------------------------------------------------------------
@@ -284,6 +287,18 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver {
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // ----------------------------------------------------------------------
+    // TypeSolver
+    // ----------------------------------------------------------------------
+
+    public boolean isNamespace(String name) {
+        String relativePath = name.replace(".", "/");
+        for(File sourceRoot : sourceRoots)
+            if (new File(sourceRoot, relativePath).isDirectory())
+                return true;
+        return false;
     }
 
     // ----------------------------------------------------------------------

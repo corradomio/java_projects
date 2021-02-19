@@ -56,12 +56,13 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     private static final String DEFAULT = "default";
     private static final String JAVA_LANG = "java.lang";
+    private static final String ROOT_PACKAGE = "";
 
     private CompilationUnit cu;
     private File filename;
     private final Map<String, String> imports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
-    private NamespaceSolver nssolver;
+    // private NamespaceSolver nssolver;
     private String namespace;
     private String cacheName;
 
@@ -123,21 +124,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         return this;
     }
 
-    /**
-     * Add the default imports: the imports from the current package and
-     * from the default package "java.lang". These must be the last imports
-     * to add.
-     */
-    public ContextTypeSolver addDefaultImports() {
-        this.starImports.add(this.starImports.size(), JAVA_LANG);
-        this.starImports.add(this.starImports.size(), this.namespace);
-        return this;
-    }
-
-    public ContextTypeSolver setNamespaceSolver(NamespaceSolver nssolver) {
-        this.nssolver = nssolver;
-        return this;
-    }
+    // public ContextTypeSolver setNamespaceSolver(NamespaceSolver nssolver) {
+    //     this.nssolver = nssolver;
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Operations
@@ -185,6 +175,17 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         cu.getPackageDeclaration().ifPresent(this::setPackage);
         cu.getImports().forEach(this::addImport);
         addDefaultImports();
+    }
+
+    /**
+     * Add the default imports: the imports from the current package and
+     * from the default package "java.lang". These must be the last imports
+     * to add.
+     */
+    private void addDefaultImports() {
+        this.starImports.add(this.starImports.size(), JAVA_LANG);       // import java.lang.*
+        this.starImports.add(this.starImports.size(), this.namespace);  // import <currentPackage>.*
+        this.starImports.add(this.starImports.size(), ROOT_PACKAGE);    // import <rootPackage>.*
     }
 
     // ----------------------------------------------------------------------
@@ -571,8 +572,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             return alreadySolved.get(name);
 
         // 2) skip if it is a namespace
-        if (this.nssolver.isNamespace(name))
-            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        // if (this.nssolver.isNamespace(name))
+        //     return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
         // 3) try to solve using the standard methods
         SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveUsingSolvers(name);
@@ -619,8 +620,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         // 0) check if it is a namespace -> skip
-        if (this.nssolver.isNamespace(name))
-            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        // if (this.nssolver.isNamespace(name))
+        //     return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
         // 1) speedup: check if the symbol was already solved
         Map<String, SymbolReference<ResolvedReferenceTypeDeclaration>>
@@ -645,8 +646,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         // 0) check if it is a namespace -> skip
-        if (this.nssolver.isNamespace(name))
-            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        // if (this.nssolver.isNamespace(name))
+        //     return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
         // 1) try to solve using the full imports
         if (imports.containsKey(name))

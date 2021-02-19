@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface Set<E> extends java.util.Set<E> {
 
-    Set<E> add_(E e);
+    Set<E> put(E e);
 
-    Set<E> addAll_(Collection<? extends E> c);
+    Set<E> putAll(Collection<? extends E> c);
 }

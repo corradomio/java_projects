@@ -37,7 +37,7 @@ public class AdjacentMatrix {
     public AdjacentMatrix() { }
 
     public AdjacentMatrix add(String i, String j) {
-        vertices.add_(i).add(j);
+        vertices.put(i).add(j);
         edges.add(new Edge(i, j));
         return this;
     }

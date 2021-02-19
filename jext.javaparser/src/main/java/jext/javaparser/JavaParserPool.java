@@ -76,7 +76,7 @@ public class JavaParserPool {
     private ParserConfiguration parserConfiguration;
 
     // maximum cache size
-    private long cacheSizeLimit = -1;
+    // private long cacheSizeLimit = -1;
 
     // caches
     private Cache<Path, ParseResult<CompilationUnit>> parsedFiles;
@@ -108,7 +108,7 @@ public class JavaParserPool {
         this.cachePrefix = name;
         this.sourceRoots = new HashSet<>();
         this.parserConfiguration = parserConfiguration;
-        this.cacheSizeLimit = cacheSizeLimit;
+        // this.cacheSizeLimit = cacheSizeLimit;
         this.logger = Logger.getLogger(getClass(), name);
 
         // this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
@@ -117,12 +117,8 @@ public class JavaParserPool {
     }
 
     // ----------------------------------------------------------------------
-    // Cache
+    // Configuration
     // ----------------------------------------------------------------------
-
-    public JavaParserPool withCache() {
-        return withCache(this.name);
-    }
 
     public JavaParserPool withCache(String cachePrefix) {
         this.cachePrefix = cachePrefix;
@@ -130,11 +126,43 @@ public class JavaParserPool {
         return this;
     }
 
+    public JavaParserPool withParserConfiguration(ParserConfiguration parserConfiguration) {
+        Objects.requireNonNull(parserConfiguration, "parserConfiguration can be not null");
+        this.parserConfiguration = parserConfiguration;
+        return this;
+    }
+
+    // ----------------------------------------------------------------------
+    // Source roots
+    // ----------------------------------------------------------------------
+
+    public JavaParserPool add(File sourceRoot) {
+        this.sourceRoots.add(sourceRoot.toPath());
+        return this;
+    }
+
+    public JavaParserPool addAll(Collection<File> sourceRoots) {
+        sourceRoots.forEach(this::add);
+        return this;
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public String getName() {
+        return this.name;
+    }
+
+    // ----------------------------------------------------------------------
+    // Cache
+    // ----------------------------------------------------------------------
+
     private void createCaches() {
         if (this.parsedFiles != null) return;
-        this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
-        this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
-        this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+        this.parsedFiles = buildCache("parsedFiles", CACHE_SIZE_UNSET);
+        this.parsedDirectories = buildCache("parsedDirectories", CACHE_SIZE_UNSET);
+        this.foundTypes = buildCache("foundTypes", CACHE_SIZE_UNSET);
     }
 
     private <TKey, TValue> Cache<TKey, TValue> buildCache(String name, long cacheSizeLimit) {
@@ -157,39 +185,6 @@ public class JavaParserPool {
     // }
 
     // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    public String getName() {
-        return this.name;
-    }
-
-    public JavaParserPool withParserConfiguration(ParserConfiguration parserConfiguration) {
-        Objects.requireNonNull(parserConfiguration, "parserConfiguration can be not null");
-        this.parserConfiguration = parserConfiguration;
-        return this;
-    }
-
-    // public JavaParserPool setCacheSizeLimit(long cacheSizeLimit) {
-    //     this.cacheSizeLimit = cacheSizeLimit;
-    //     return this;
-    // }
-
-    // ----------------------------------------------------------------------
-    // Source roots
-    // ----------------------------------------------------------------------
-
-    public JavaParserPool add(File sourceRoot) {
-        sourceRoots.add(sourceRoot.toPath());
-        return this;
-    }
-
-    public JavaParserPool addAll(Collection<File> sourceRoots) {
-        sourceRoots.forEach(this::add);
-        return this;
-    }
-
-    // ----------------------------------------------------------------------
     // Parsing
     // ----------------------------------------------------------------------
 
@@ -205,15 +200,15 @@ public class JavaParserPool {
     //  different instances of "JavaParser", one for each source file.
     //
     private /*synchronized*/ ParseResult<CompilationUnit> parse(Path srcFile) {
-        if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
-            return new ParseResult<>(
-                null,
-                new ArrayList<Problem>() {{
-                    add(new Problem("FileNotFoundException", TokenRange.INVALID,
-                        new FileNotFoundException(srcFile.toString())));
-                }},
-                new CommentsCollection());
-        }
+        // if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
+        //     return new ParseResult<>(
+        //         null,
+        //         new ArrayList<Problem>() {{
+        //             add(new Problem("FileNotFoundException", TokenRange.INVALID,
+        //                 new FileNotFoundException(srcFile.toString())));
+        //         }},
+        //         new CommentsCollection());
+        // }
 
         try {
             return parsedFiles.getChecked(srcFile, () -> {
@@ -257,33 +252,17 @@ public class JavaParserPool {
         for(int count = 0; count < 3; ++count) {
             Thread.yield();
 
-            result =
-                new JavaParser(parserConfiguration)
+            result = new JavaParser(parserConfiguration)
                     .parse(COMPILATION_UNIT, provider(srcFile));
             if (result.isSuccessful()) {
                 result.ifSuccessful(cu -> {
                     cu.setStorage(srcFile);
-                    cu.getPackageDeclaration().ifPresent(pdecl -> {
-                        addSourceRoot(srcFile, pdecl.getNameAsString());
-                    });
                 });
                 break;
             }
             ++count;
         }
         return result;
-    }
-
-    private void addSourceRoot(Path srcFile, String packageName) {
-        String subDir = packageName.replace('.', '/');
-        String srcHome = srcFile.getParent().toAbsolutePath().toString().replace('\\', '/');
-
-        // check that the java file is the correct directory
-        if (!srcHome.endsWith(subDir))
-            return;
-
-        Path srcDir = Paths.get(srcHome.substring(0, srcHome.length() - subDir.length()-1));
-        sourceRoots.add(srcDir);
     }
 
     /**
@@ -387,14 +366,11 @@ public class JavaParserPool {
     // }
 
     public Optional<TypeDeclaration<?>> tryToSolveType(String name) {
-        //synchronized (this)
-        {
-            try {
-                return foundTypes.getChecked(name, () -> tryToSolveTypeUncached(name));
-            }
-            catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            return foundTypes.getChecked(name, () -> tryToSolveTypeUncached(name));
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -448,33 +424,6 @@ public class JavaParserPool {
             }
 
         return Optional.empty();
-    }
-
-    // ----------------------------------------------------------------------
-    // Initialization/Cleanup
-    // ----------------------------------------------------------------------
-
-    private static AtomicInteger counter = new AtomicInteger();
-
-    public static void initialize() {
-        int inUse = counter.incrementAndGet();
-        //if (inUse > 1)
-            //Logger.getLogger(JavaParserPool.class).warnf("initialize: in use %d", inUse);
-    }
-
-    public static void cleanup() {
-        int inUse = counter.decrementAndGet();
-        if (inUse == 0) {
-            //Logger.getLogger(JavaParserPool.class).warnf("cleanup: no pools inuse", inUse);
-            JavaParserFacade.clearInstances();
-        }
-        else if (inUse < 0) {
-            counter.set(0);
-            Logger.getLogger(JavaParserPool.class).error("More cleanup than initialize");
-        }
-        else {
-            //Logger.getLogger(JavaParserPool.class).warnf("clean: in use %d", inUse);
-        }
     }
 
     // ----------------------------------------------------------------------

@@ -9,12 +9,11 @@ import jext.cache.CacheManager;
 import jext.io.util.FileFilters;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
-import jext.javaparser.ast.UniqueSymbols;
+import jext.javaparser.util.UniqueIdentifiers;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
-import jext.serialization.protostuff.ProtostuffSerializer;
 import jext.util.FileUtils;
 import jext.util.concurrent.Parallel;
 
@@ -24,7 +23,7 @@ public class Check {
 
     private static CombinedTypeSolver cptss = new CombinedTypeSolver();
 
-    static UniqueSymbols us = new UniqueSymbols();
+    static UniqueIdentifiers ui = new UniqueIdentifiers();
 
     public static void main(String[] args) throws Exception {
         Parallel.setup();
@@ -51,7 +50,8 @@ public class Check {
             // .stream()
             // .forEach(Check::parse);
 
-        us.stats();
+        // us.stats();
+        ui.stats();
 
         // FileUtils.listFiles(
         //     //new File("data\\bookstore\\src\\main\\java"),
@@ -78,7 +78,8 @@ public class Check {
                 CompilationUnit cu = presult.getResult().get();
 
                 // UniqueSymbols us = new UniqueSymbols();
-                us.analyze(cu);
+                // us.analyze(cu);
+                ui.analyze(cu);
 
                 // KryoSerializer.serialize(serialized, cu);
                 // CompilationUnit desercu = KryoSerializer.deserialize(serialized, CompilationUnit.class);
