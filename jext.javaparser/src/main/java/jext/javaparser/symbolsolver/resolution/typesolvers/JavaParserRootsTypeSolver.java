@@ -11,10 +11,8 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
-import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.javaparser.symbolsolver.namespacemodel.NamespaceSolver;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -37,13 +35,11 @@ import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_E
 import static jext.javaparser.Providers.provider;
 
 
-public class JavaParserRootsTypeSolver extends BaseTypeSolver implements NamespaceSolver {
+public class JavaParserRootsTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
-
-    private static final String DEFAULT = "default";
 
     private final String name;
     private String cachePrefix;
@@ -53,6 +49,7 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver implements Namespa
     private ParserConfiguration parserConfiguration;
 
     private final Set<File> sourceRoots;
+    private Set<String> namespaces;
     private final Logger logger;
 
     private Cache<Path, ParseResult<CompilationUnit>> parsedFiles;
@@ -78,6 +75,7 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver implements Namespa
         this.name = name;
         this.cachePrefix = name;
         this.sourceRoots = new HashSet<>();
+        this.namespaces = new HashSet<>();
         this.parserConfiguration = parserConfiguration;
         this.logger = Logger.getLogger(JavaParserRootsTypeSolver.class, name);
 
@@ -170,6 +168,10 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver implements Namespa
     public JavaParserRootsTypeSolver addAll(Collection<File> sourceRoots) {
         this.sourceRoots.addAll(sourceRoots);
         return this;
+    }
+
+    public ParseResult<CompilationUnit> parse(File srcFile) {
+        return parse(srcFile.toPath());
     }
 
     // ----------------------------------------------------------------------
@@ -294,10 +296,26 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver implements Namespa
     // ----------------------------------------------------------------------
 
     public boolean isNamespace(String name) {
+        if (namespaces.contains(name))
+            return true;
         String relativePath = name.replace(".", "/");
         for(File sourceRoot : sourceRoots)
-            if (new File(sourceRoot, relativePath).isDirectory())
+            if (isDirectory(name, new File(sourceRoot, relativePath))) {
+                namespaces.add(name);
                 return true;
+            }
+        return false;
+    }
+
+    // Problem: in Windows 'a/b/C' and 'a/b/c' are the SAME path
+    // but, in Java, in general, 'C' is a class and 'c' is a namespace
+    private boolean isDirectory(String name, File directory) {
+        try {
+            return directory.isDirectory()
+                && directory.getCanonicalFile().getAbsolutePath()
+                .replace("\\", "/")
+                .endsWith(name.replace('.', '/'));
+        } catch (IOException e) { }
         return false;
     }
 

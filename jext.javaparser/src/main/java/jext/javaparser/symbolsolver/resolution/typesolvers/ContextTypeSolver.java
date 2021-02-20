@@ -30,7 +30,6 @@ import jext.javaparser.exception.ResolveAbortedException;
 import jext.javaparser.exception.ResolveTimeoutException;
 import jext.javaparser.resolution.ReferenceConstructorDeclaration;
 import jext.javaparser.resolution.ReferencedMethodDeclaration;
-import jext.javaparser.symbolsolver.namespacemodel.NamespaceSolver;
 import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
@@ -62,7 +61,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     private File filename;
     private final Map<String, String> imports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
-    // private NamespaceSolver nssolver;
     private String namespace;
     private String cacheName;
 
@@ -124,11 +122,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         return this;
     }
 
-    // public ContextTypeSolver setNamespaceSolver(NamespaceSolver nssolver) {
-    //     this.nssolver = nssolver;
-    //     return this;
-    // }
-
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
@@ -186,17 +179,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         this.starImports.add(this.starImports.size(), JAVA_LANG);       // import java.lang.*
         this.starImports.add(this.starImports.size(), this.namespace);  // import <currentPackage>.*
         this.starImports.add(this.starImports.size(), ROOT_PACKAGE);    // import <rootPackage>.*
-    }
-
-    // ----------------------------------------------------------------------
-    // Overrides
-    // ----------------------------------------------------------------------
-
-    @Override
-    public ContextTypeSolver add(TypeSolver typeSolver) {
-        // used to ensure the correct result type (THIS class)
-        super.add(typeSolver);
-        return this;
     }
 
     // ----------------------------------------------------------------------

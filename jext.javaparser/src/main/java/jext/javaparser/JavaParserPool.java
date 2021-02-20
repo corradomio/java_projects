@@ -4,13 +4,11 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.Problem;
-import com.github.javaparser.TokenMgrException;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
-import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import jext.cache.CacheManager;
 import jext.cache.Cache;
 import jext.logging.Logger;
@@ -29,8 +27,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_EDGE;
@@ -70,7 +68,9 @@ public class JavaParserPool {
     private String cachePrefix;
 
     // source directories of the parsed files
-    private Set<Path> sourceRoots;
+    private Set<Path> pathRoots;
+    private Set<File> sourceRoots;
+    private Set<String> namespaces;
 
     // parser configuration used for the parser
     private ParserConfiguration parserConfiguration;
@@ -106,8 +106,10 @@ public class JavaParserPool {
     public JavaParserPool(String name, ParserConfiguration parserConfiguration, long cacheSizeLimit) {
         this.name = name;
         this.cachePrefix = name;
+        this.pathRoots = new HashSet<>();
         this.sourceRoots = new HashSet<>();
         this.parserConfiguration = parserConfiguration;
+        this.namespaces = new ConcurrentSkipListSet<>();
         // this.cacheSizeLimit = cacheSizeLimit;
         this.logger = Logger.getLogger(getClass(), name);
 
@@ -119,6 +121,10 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
+
+    public JavaParserPool withCache() {
+        return withCache(this.name);
+    }
 
     public JavaParserPool withCache(String cachePrefix) {
         this.cachePrefix = cachePrefix;
@@ -137,13 +143,42 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
 
     public JavaParserPool add(File sourceRoot) {
-        this.sourceRoots.add(sourceRoot.toPath());
+        this.sourceRoots.add(sourceRoot);
+        this.pathRoots.add(sourceRoot.toPath());
         return this;
     }
 
     public JavaParserPool addAll(Collection<File> sourceRoots) {
         sourceRoots.forEach(this::add);
         return this;
+    }
+
+    public Set<File> getSourceRoots() {
+        return sourceRoots;
+    }
+
+    public boolean isNamespace(String name) {
+        if (namespaces.contains(name))
+            return true;
+        String relativePath = name.replace(".", "/");
+        for(File sourceRoot : sourceRoots)
+            if (isDirectory(name, new File(sourceRoot, relativePath))) {
+                namespaces.add(name);
+                return true;
+            }
+        return false;
+    }
+
+    // Problem: in Windows 'a/b/C' and 'a/b/c' are the SAME path
+    // but, in Java, in general, 'C' is a class and 'c' is a namespace
+    private boolean isDirectory(String name, File directory) {
+        try {
+            return directory.isDirectory()
+                && directory.getCanonicalFile().getAbsolutePath()
+                .replace("\\", "/")
+                .endsWith(name.replace('.', '/'));
+        } catch (IOException e) { }
+        return false;
     }
 
     // ----------------------------------------------------------------------
@@ -200,15 +235,15 @@ public class JavaParserPool {
     //  different instances of "JavaParser", one for each source file.
     //
     private /*synchronized*/ ParseResult<CompilationUnit> parse(Path srcFile) {
-        // if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
-        //     return new ParseResult<>(
-        //         null,
-        //         new ArrayList<Problem>() {{
-        //             add(new Problem("FileNotFoundException", TokenRange.INVALID,
-        //                 new FileNotFoundException(srcFile.toString())));
-        //         }},
-        //         new CommentsCollection());
-        // }
+        if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
+            return new ParseResult<>(
+                null,
+                new ArrayList<Problem>() {{
+                    add(new Problem("FileNotFoundException", TokenRange.INVALID,
+                        new FileNotFoundException(srcFile.toString())));
+                }},
+                new CommentsCollection());
+        }
 
         try {
             return parsedFiles.getChecked(srcFile, () -> {
@@ -366,6 +401,10 @@ public class JavaParserPool {
     // }
 
     public Optional<TypeDeclaration<?>> tryToSolveType(String name) {
+
+        if(isNamespace(name))
+            return Optional.empty();
+
         try {
             return foundTypes.getChecked(name, () -> tryToSolveTypeUncached(name));
         }
@@ -377,14 +416,19 @@ public class JavaParserPool {
     private Optional<TypeDeclaration<?>> tryToSolveTypeUncached(String name) {
         String[] nameElements = name.split("\\.");
 
-        for(Path srcDir : sourceRoots)
+        for(Path srcDir : pathRoots)
             for (int i = nameElements.length; i > 0; i--) {
                 StringBuilder filePath = new StringBuilder(srcDir.toAbsolutePath().toString());
                 for (int j = 0; j < i; j++) {
                     filePath.append("/")
                         .append(nameElements[j]);
                 }
+                if (isDirectory(name, new File(filePath.toString())))
+                    break;
+
                 filePath.append(".java");
+                if (!new File(filePath.toString()).exists())
+                    continue;
 
                 StringBuilder typeName = new StringBuilder();
                 for (int j = i - 1; j < nameElements.length; j++) {

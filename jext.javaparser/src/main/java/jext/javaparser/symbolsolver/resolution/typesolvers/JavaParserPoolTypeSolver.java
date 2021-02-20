@@ -10,6 +10,10 @@ import java.util.Optional;
 
 public class JavaParserPoolTypeSolver extends BaseTypeSolver {
 
+    // ----------------------------------------------------------------------
+    // Private properties
+    // ----------------------------------------------------------------------
+
     private JavaParserPool pool;
 
     // ----------------------------------------------------------------------
@@ -27,24 +31,32 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
+    // Extended operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean isNamespace(String name) {
+        return pool.isNamespace(name);
+    }
+
+    // ----------------------------------------------------------------------
     // Resolve
     // ----------------------------------------------------------------------
 
+    @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-
         try {
             Optional<TypeDeclaration<?>> astTypeDeclaration = pool.tryToSolveType(name);
             if (astTypeDeclaration.isPresent()) {
                 return SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(astTypeDeclaration.get()));
             } else {
-                return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+                return UNSOLVED;
             }
         }
         catch (com.google.common.util.concurrent.UncheckedExecutionException e) {
             logger.error(e.getMessage());
         }
-
-        return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        return UNSOLVED;
     }
 
     // ----------------------------------------------------------------------

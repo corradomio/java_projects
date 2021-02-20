@@ -108,13 +108,9 @@ public class UniqueIdentifiers extends VoidVisitorAdapter<Void> {
         try {
             Field field = n.getClass().getDeclaredField("identifier");
             field.setAccessible(true);
-            try {
-                String symbol = (String) field.get(n);
-                field.set(n, symbols.get(symbol));
-            } catch (IllegalAccessException e) {
-
-            }
-        } catch (NoSuchFieldException e) {
+            String symbol = (String) field.get(n);
+            field.set(n, symbols.get(symbol));
+        } catch (IllegalAccessException | NoSuchFieldException e) {
 
         }
     }

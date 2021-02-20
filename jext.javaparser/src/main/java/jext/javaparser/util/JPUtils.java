@@ -2,14 +2,19 @@ package jext.javaparser.util;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
@@ -137,6 +142,48 @@ public class JPUtils {
         return Optional.empty();
     }
 
+    public static boolean isTypeParameter(ClassOrInterfaceType n) {
+        Optional<Node> optParent = n.getParentNode();
+        while(optParent.isPresent()) {
+            Node node = optParent.get();
+
+            if (node instanceof ClassOrInterfaceDeclaration) {
+                ClassOrInterfaceDeclaration decl = ((ClassOrInterfaceDeclaration) node).asClassOrInterfaceDeclaration();
+                for (TypeParameter p : decl.getTypeParameters())
+                    if (p.getName().equals(n.getName()))
+                        return true;
+            }
+            if (node instanceof MethodDeclaration) {
+                MethodDeclaration decl = ((MethodDeclaration) node).asMethodDeclaration();
+                for (TypeParameter p : decl.getTypeParameters())
+                    if (p.getName().equals(n.getName()))
+                        return true;
+            }
+            if (node instanceof ConstructorDeclaration) {
+                ConstructorDeclaration decl = ((ConstructorDeclaration) node).asConstructorDeclaration();
+                for (TypeParameter p : decl.getTypeParameters())
+                    if (p.getName().equals(n.getName()))
+                        return true;
+            }
+
+            optParent = node.getParentNode();
+        }
+        return false;
+    }
+
+    public static boolean isMethodReferenceExpr(ClassOrInterfaceType n) {
+        Optional<Node> optParent = n.getParentNode();
+        while(optParent.isPresent()) {
+            Node node = optParent.get();
+
+            if (node instanceof MethodReferenceExpr)
+                return true;
+
+            optParent = node.getParentNode();
+        }
+        return false;
+    }
+
     /**
      * Find the class containing this method declaration
      * @param n node
@@ -211,8 +258,8 @@ public class JPUtils {
                 return Optional.of((ClassOrInterfaceDeclaration) declaration);
             if (declClass.equals(LocalClassDeclarationStmt.class))
                 ; //return Optional.of(((LocalClassDeclarationStmt) declaration).getClassDeclaration());
-            if (declClass.equals(ObjectCreationExpr.class))
-                return Optional.empty();
+            // if (declClass.equals(ObjectCreationExpr.class))
+            //     return Optional.empty();
 
             optDecl = declaration.getParentNode();
         }
@@ -296,6 +343,8 @@ public class JPUtils {
             Map<TypeSolver, ?> tsmap = getJavaParserFacadeTypeSolversMap();
             tsmap.remove(ts);
         }
+        if (ts instanceof BaseTypeSolver)
+            ((BaseTypeSolver)ts).getElements().forEach(JPUtils::removeTypeSolver);
     }
 
     public static void removeTypeSolvers(String prefix) {

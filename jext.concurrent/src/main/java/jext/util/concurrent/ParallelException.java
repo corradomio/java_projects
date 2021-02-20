@@ -8,28 +8,38 @@ import java.util.Set;
 
 public class ParallelException extends jext.lang.RuntimeException {
 
-    private List<Throwable> throwables = new ArrayList<>();
-    Set<String> messages = new HashSet<>();
+    private static class LinkedCauseException extends jext.lang.RuntimeException {
+        LinkedCauseException(Throwable t) {
+            super(t);
+        }
+    }
+
+    private LinkedCauseException lce;
+    private Set<String> messages = new HashSet<>();
 
     public ParallelException() {
 
     }
 
     boolean isEmpty() {
-        return throwables.isEmpty();
+        return lce == null;
     }
 
     public void add(Throwable t) {
         String message = t.getMessage();
         if (message == null)
             message = t.getClass().getName();
-
-        throwables.add(t);
         messages.add(message);
-    }
 
-    public List<Throwable> getExceptions() {
-        return throwables;
+        LinkedCauseException lce = new LinkedCauseException(t);
+        if (this.lce == null) {
+            this.lce = lce;
+            this.setCause(lce);
+        }
+        else {
+            this.lce.setCause(lce);
+            this.lce = lce;
+        }
     }
 
     public String getMessage() {

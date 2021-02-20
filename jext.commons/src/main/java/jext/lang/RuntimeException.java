@@ -33,4 +33,13 @@ public class RuntimeException extends java.lang.RuntimeException {
             detailedMessage.set(this, message);
         } catch (NoSuchFieldException | IllegalAccessException e) { }
     }
+
+    public void setCause(Throwable t) {
+        try {
+            if (t == null) return;
+            Field cause = Throwable.class.getDeclaredField("cause");
+            cause.setAccessible(true);
+            cause.set(this, t);
+        } catch (NoSuchFieldException | IllegalAccessException e) { }
+    }
 }

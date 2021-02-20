@@ -8,12 +8,13 @@ import jext.javaparser.util.ClassPoolRegistry;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 
 public class JarFilesTypeSolver extends BaseTypeSolver {
 
-    private static final String DEFAULT = "default";
+    // ----------------------------------------------------------------------
+    // Protected fields
+    // ----------------------------------------------------------------------
 
     protected ClassPoolRegistry classPoolRegistry;
 
@@ -38,6 +39,15 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
         this.classPoolRegistry = classPoolRegistry;
     }
 
+    // ----------------------------------------------------------------------
+    // Configuration
+    // ----------------------------------------------------------------------
+
+    public JarFilesTypeSolver withClassPoolRegistry(ClassPoolRegistry classPoolRegistry) {
+        this.classPoolRegistry = classPoolRegistry;
+        return this;
+    }
+
     public JarFilesTypeSolver add(File libraryFile) {
         this.classPoolRegistry.add(libraryFile);
         return this;
@@ -54,11 +64,23 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
+    // Extended operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean isNamespace(String name) {
+        return classPoolRegistry.isNamespace(name);
+    }
+
+    // ----------------------------------------------------------------------
     // Resolve
     // ----------------------------------------------------------------------
 
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
+
+        if(classPoolRegistry.isNamespace(name))
+            return UNSOLVED;
 
         try {
             if (this.classPoolRegistry.containsKey(name)) {
@@ -66,9 +88,8 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
                     this.getRoot()));
             }
             else {
-                SymbolReference<ResolvedReferenceTypeDeclaration>
-                    unsolved = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
-                return unsolved;
+                // return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);;
+                return UNSOLVED;
             }
         } catch (IOException var3) {
             throw new RuntimeException(var3);

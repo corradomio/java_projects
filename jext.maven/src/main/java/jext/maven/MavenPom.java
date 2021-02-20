@@ -113,49 +113,40 @@ public class MavenPom implements MavenConst {
     }
 
     private void readMavenProps() {
+        String parentGroupId, parentArtifactId, parentVersion;
+        String groupId, artifactId, version, packaging;
+        String empty = "";
+
         this.mavenprops = new Properties();
 
-        // 1.2) POM properties
+        // 0) main properties
         {
-            addProperty(mavenprops, "pom.groupId", "groupId", "");
-            addProperty(mavenprops, "pom.artifactId", "artifactId", "");
-            addProperty(mavenprops, "pom.version", "version", "");
+            addProperty(mavenprops, "project.modelVersion", "modelVersion", "4.0.0");
+            addProperty(mavenprops, "project.name", "name", empty);
+            mavenprops.put("project.basedir", FileUtils.getAbsolutePath(pomFile.getParentFile()));
         }
-        // 3) project properties
+
+        // 1) parent coords
         {
-            String parentGroupId, parentArtifactId, parentVersion;
-            String groupId, artifactId, version;
+            parentGroupId = addProperty(mavenprops, "project.parent.groupId", "parent/groupId", empty);
+            parentArtifactId = addProperty(mavenprops, "project.parent.artifactId", "parent/artifactId", empty);
+            parentVersion = addProperty(mavenprops, "project.parent.version", "parent/version", empty);
+            packaging = addProperty(mavenprops, "project.packaging", "packaging", "jar");
+            mavenprops.setProperty("packaging.type", packaging);
+        }
 
-            // 3.1) project info
-            {
-                addProperty(mavenprops, "project.modelVersion", "modelVersion", "4.0.0");
-                addProperty(mavenprops, "project.name", "name", "");
-                mavenprops.put("project.basedir", FileUtils.getAbsolutePath(pomFile.getParentFile()));
-            }
+        // 2) current coords
+        {
+            groupId = addProperty(mavenprops, "project.groupId", "groupId", parentGroupId);
+            artifactId = addProperty(mavenprops, "project.artifactId", "artifactId", parentArtifactId);
+            version = addProperty(mavenprops, "project.version", "version", parentVersion);
+        }
 
-            // 3.2) parent coords
-            // bugfix: changed from null to the empty string as default value for parentXXId
-            {
-                parentGroupId = addProperty(mavenprops, "project.parent.groupId", "parent/groupId", "");
-                parentArtifactId = addProperty(mavenprops, "project.parent.artifactId", "parent/artifactId", "");
-                parentVersion = addProperty(mavenprops, "project.parent.version", "parent/version", "");
-            }
-
-            // 3.3) current coords
-            {
-                groupId = addProperty(mavenprops, "project.groupId", "groupId", parentGroupId);
-                artifactId = addProperty(mavenprops, "project.artifactId", "artifactId", parentArtifactId);
-                version = addProperty(mavenprops, "project.version", "version", parentVersion);
-
-                addProperty(mavenprops, "project.packaging", "packaging", "jar");
-            }
-
-            // 3.4) POM properties: in some ".pom" files there are dependencies with "pom.*" instead then "project.*"
-            {
-                mavenprops.setProperty("pom.groupId", groupId);
-                mavenprops.setProperty("pom.artifactId", artifactId);
-                mavenprops.setProperty("pom.version", version);
-            }
+        // 3) POM properties: in some ".pom" files there are dependencies with "pom.*" instead then "project.*"
+        {
+            mavenprops.setProperty("pom.groupId", groupId);
+            mavenprops.setProperty("pom.artifactId", artifactId);
+            mavenprops.setProperty("pom.version", version);
         }
     }
 
@@ -166,16 +157,17 @@ public class MavenPom implements MavenConst {
             .forEach(eprop -> {
                 String pname = eprop.getNodeName().trim();
                 String value = eprop.getTextContent().trim();
+                value = PropertiesUtils.resolveValue(value, mavenprops);
                 localprops.put(pname, value);
             });
     }
 
     // ----------------------------------------------------------------------
 
-    public MavenPom setDownloader(MavenDownloader downloader) {
-        this.downloader = downloader;
-        return this;
-    }
+    // public MavenPom setDownloader(MavenDownloader downloader) {
+    //     this.downloader = downloader;
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Predicates
@@ -217,6 +209,8 @@ public class MavenPom implements MavenConst {
     public String getPackaging() {
         String packaging = XPathUtils.getValue(project, PACKAGING, PACKAGING_JAR);
         if (PACKAGING_BUNDLE.equals(packaging))
+            return PACKAGING_JAR;
+        else if (packaging.contains("$"))
             return PACKAGING_JAR;
         else
             return packaging;
@@ -379,7 +373,7 @@ public class MavenPom implements MavenConst {
     }
 
     private String addProperty(Properties properties, String name, String xpath, String defaultValue) {
-        String value = XPathUtils.getValue(project, xpath, defaultValue);
+        String value = XPathUtils.getValue(project, xpath, defaultValue, properties);
         if (isValid(value))
             properties.put(name, value);
         return value;

@@ -734,6 +734,8 @@ public class MavenDownloader implements MavenConst {
         for (String repoUrl : repoUrls) {
             try {
                 String downloadUrl = getUrl(repoUrl, coords, type);
+                if (downloadUrl.contains("$"))
+                    downloadUrl = getUrl(repoUrl, coords, type); //DEBUG
 
                 try {
                     downloadFromUrl(downloadedFile, downloadUrl);

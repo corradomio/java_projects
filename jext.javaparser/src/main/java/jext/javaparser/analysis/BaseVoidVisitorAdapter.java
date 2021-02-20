@@ -40,7 +40,8 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
 import jext.logging.Logger;
 
 
@@ -52,7 +53,7 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
 
     protected Logger logger = Logger.getLogger(getClass());
 
-    protected ContextTypeSolver ts;
+    protected TypeSolverExt ts;
     protected CompilationUnit cu;
 
     // ----------------------------------------------------------------------
@@ -69,8 +70,8 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
 
     protected BaseVoidVisitorAdapter analyze(CompilationUnit cu) {
         this.cu = cu;
-        if (this.ts != null)
-            this.ts.setCu(cu);
+        // if (this.ts != null)
+        //     this.ts.setCu(cu);
 
         visit(cu, null);
         return this;

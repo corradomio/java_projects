@@ -1,2 +1,3 @@
-package test.p1;public class ParameterSpace {
-}
+package test.p1;
+
+public interface ParameterSpace<P> { }

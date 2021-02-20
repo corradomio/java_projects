@@ -34,4 +34,7 @@
         <property name="expireAfterWrite" value="1000"/>
         -->
     </cache>
+    <cache name="default">
+        <property name="softValues" value="true" />
+    </cache>
 </configuration>

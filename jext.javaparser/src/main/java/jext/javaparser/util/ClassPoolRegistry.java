@@ -4,7 +4,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import jext.logging.Logger;
-import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +55,9 @@ public class ClassPoolRegistry {
 
     private final ClassPool classPool;
     private final Map<String, ClasspathElement> classpathElements;
+    private final Set<String> namespaces;
     private final Set<String> libraryNames;
-    private final Set<File> librarieFiles;
+    private final Set<File> libraryFiles;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -67,7 +67,8 @@ public class ClassPoolRegistry {
         this.classPool = new ClassPool(false);
         this.classpathElements = new HashMap<>();
         this.libraryNames = new TreeSet<>();
-        this.librarieFiles = new HashSet<>();
+        this.libraryFiles = new HashSet<>();
+        this.namespaces = new HashSet<>();
     }
 
     // ----------------------------------------------------------------------
@@ -80,6 +81,14 @@ public class ClassPoolRegistry {
 
     public ClasspathElement get(String name) {
         return classpathElements.get(name);
+    }
+
+    public boolean isNamespace(String name) {
+        return namespaces.contains(name);
+    }
+
+    public boolean isType(String name) {
+        return classpathElements.containsKey(name);
     }
 
     // ----------------------------------------------------------------------
@@ -120,13 +129,13 @@ public class ClassPoolRegistry {
     }
 
     private void addFile(File libraryFile) {
-        if (librarieFiles.contains(libraryFile))
+        if (libraryFiles.contains(libraryFile))
             return;
         String libraryName = libraryFile.getName();
         if (libraryNames.contains(libraryName))
             return;
 
-        librarieFiles.add(libraryFile);
+        libraryFiles.add(libraryFile);
         libraryNames.add(libraryName);
 
         addElements(libraryFile);
@@ -166,6 +175,7 @@ public class ClassPoolRegistry {
         element.entry = entry;
 
         classpathElements.put(name, element);
+        namespaces.add(namespace);
     }
 
     // ----------------------------------------------------------------------

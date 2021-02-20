@@ -1,20 +1,27 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.logging.Logger;
-import jext.util.FileUtils;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
-public abstract class BaseTypeSolver implements TypeSolver {
+public abstract class BaseTypeSolver implements TypeSolverExt {
 
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
 
+    protected static final String DEFAULT = "default";
+    protected static final SymbolReference<ResolvedReferenceTypeDeclaration>
+        UNSOLVED = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+
     protected Logger logger;
-    protected TypeSolver parent;
+    protected TypeSolverExt parent;
     protected String name;
 
     // ----------------------------------------------------------------------
@@ -27,12 +34,16 @@ public abstract class BaseTypeSolver implements TypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // Operations
+    // Properties
     // ----------------------------------------------------------------------
 
     public String getName() {
         return name;
     }
+
+    // ----------------------------------------------------------------------
+    // Parent
+    // ----------------------------------------------------------------------
 
     @Override
     public TypeSolver getParent() {
@@ -48,12 +59,29 @@ public abstract class BaseTypeSolver implements TypeSolver {
         if (parent == this) {
             throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
         }
-        this.parent = parent;
+        this.parent = (TypeSolverExt) parent;
     }
 
-    // @Override
-    // public void canSolve() {
-    //     if (this.parent != null)
-    //         this.parent.canSolve();
-    // }
+    // ----------------------------------------------------------------------
+    // Extended operations
+    // ----------------------------------------------------------------------
+
+    public List<TypeSolver> getElements() {
+        return Collections.emptyList();
+    }
+
+    // ----------------------------------------------------------------------
+    // Extended operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean isNamespace(String name) {
+        return false;
+    }
+
+    @Override
+    public void canSolve() {
+        if (this.parent != null)
+            this.parent.canSolve();
+    }
 }
