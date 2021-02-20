@@ -7,7 +7,7 @@ import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
 import jext.logging.Logger;
@@ -30,8 +30,10 @@ public class CheckDL4J {
             CacheManager.configure();
 
             Project project = Projects.newProject(
-                new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7")
-                , PropertiesUtils.empty());
+                new File(
+                    "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                    // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
+                ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
 
@@ -68,10 +70,10 @@ public class CheckDL4J {
     }
 
     private static void solve(File source) {
-        // System.out.printf("== %s ==\n", source.getName());
+        System.out.printf("== %s ==\n", source.getName());
 
         CompositeTypeSolver ts = new CachedTypeSolver();
-        ts.add(new JarFilesTypeSolver().withClassPoolRegistry(cpr));
+        ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
         ts.add(new JavaParserPoolTypeSolver(pool));
 
         ParseResult<CompilationUnit> result = pool.parse(source);

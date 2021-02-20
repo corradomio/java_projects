@@ -79,9 +79,4 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
         return false;
     }
 
-    @Override
-    public void canSolve() {
-        if (this.parent != null)
-            this.parent.canSolve();
-    }
 }

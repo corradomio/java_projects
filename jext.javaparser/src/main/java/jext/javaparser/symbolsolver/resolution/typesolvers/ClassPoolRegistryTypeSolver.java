@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class JarFilesTypeSolver extends BaseTypeSolver {
+public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------
     // Protected fields
@@ -22,19 +22,19 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public JarFilesTypeSolver() {
+    public ClassPoolRegistryTypeSolver() {
         this(DEFAULT, new ClassPoolRegistry());
     }
 
-    public JarFilesTypeSolver(ClassPoolRegistry classPoolRegistry) {
+    public ClassPoolRegistryTypeSolver(ClassPoolRegistry classPoolRegistry) {
         this(DEFAULT, classPoolRegistry);
     }
 
-    public JarFilesTypeSolver(String name) {
+    public ClassPoolRegistryTypeSolver(String name) {
         this(name, new ClassPoolRegistry());
     }
 
-    public JarFilesTypeSolver(String name, ClassPoolRegistry classPoolRegistry) {
+    public ClassPoolRegistryTypeSolver(String name, ClassPoolRegistry classPoolRegistry) {
         super(name);
         this.classPoolRegistry = classPoolRegistry;
     }
@@ -43,22 +43,22 @@ public class JarFilesTypeSolver extends BaseTypeSolver {
     // Configuration
     // ----------------------------------------------------------------------
 
-    public JarFilesTypeSolver withClassPoolRegistry(ClassPoolRegistry classPoolRegistry) {
+    public ClassPoolRegistryTypeSolver withClassPoolRegistry(ClassPoolRegistry classPoolRegistry) {
         this.classPoolRegistry = classPoolRegistry;
         return this;
     }
 
-    public JarFilesTypeSolver add(File libraryFile) {
+    public ClassPoolRegistryTypeSolver add(File libraryFile) {
         this.classPoolRegistry.add(libraryFile);
         return this;
     }
 
-    public JarFilesTypeSolver addAll(List<File> libraryFiles) {
+    public ClassPoolRegistryTypeSolver addAll(List<File> libraryFiles) {
         this.classPoolRegistry.addAll(libraryFiles);
         return this;
     }
 
-    public JarFilesTypeSolver addJdk(File jdk) {
+    public ClassPoolRegistryTypeSolver addJdk(File jdk) {
         this.classPoolRegistry.addJdk(jdk);
         return this;
     }

@@ -194,7 +194,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     @Nullable
     public ResolvedType resolve(Type n) {
         try {
-            setTimestamp();
+            // setTimestamp();
 
             ResolvedType rt;
             if (n.isPrimitiveType())
@@ -216,7 +216,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         }
         finally {
-            clearTimestamp();
+            // clearTimestamp();
         }
 
         return null;
@@ -231,7 +231,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     public ResolvedType resolve(NameExpr n) {
 
         try {
-            setTimestamp();
+            // setTimestamp();
 
             ResolvedValueDeclaration rvd = n.resolve();
 
@@ -250,7 +250,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         }
         finally {
-            clearTimestamp();
+            // clearTimestamp();
         }
         return resolve(n.getName().asString(), n);
     }
@@ -286,7 +286,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     @Nullable
     public ResolvedMethodDeclaration resolve(MethodCallExpr mce) {
         try {
-            setTimestamp();
+            // setTimestamp();
 
             ResolvedMethodDeclaration rmd = mce.resolve();
 
@@ -319,7 +319,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
         // }
         finally {
-            clearTimestamp();
+            // clearTimestamp();
         }
 
         // If scope it is not present, this means that the class is the CURRENT class
@@ -333,7 +333,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //     return null;
 
         try {
-            setTimestamp();
+            // setTimestamp();
 
             ResolvedType rt = expr.calculateResolvedType();
             String typeName = rt.describe();
@@ -371,7 +371,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
         // }
         finally {
-            clearTimestamp();
+            // clearTimestamp();
         }
 
         logsolver.warnft("Unable to solve call %s", mce.toString());
@@ -382,7 +382,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     @Nullable
     public ResolvedConstructorDeclaration resolve(ObjectCreationExpr oce) {
         try {
-            setTimestamp();
+            // setTimestamp();
 
             ResolvedConstructorDeclaration rcd = oce.resolve();
 
@@ -415,7 +415,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
         // }
         finally {
-            clearTimestamp();
+            // clearTimestamp();
         }
 
         // If scope it is not present, this means that the class is the CURRENT class
@@ -429,7 +429,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //     return null;
 
         try {
-            setTimestamp();
+            // setTimestamp();
 
             ResolvedType rt = expr.calculateResolvedType();
             String typeName = rt.describe();
@@ -467,7 +467,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
         // }
         finally {
-            clearTimestamp();
+            // clearTimestamp();
         }
 
         logsolver.warnft("Unable to solve call %s", oce.toString());
@@ -478,7 +478,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     @Nullable
     public ResolvedMethodDeclaration resolve(MethodReferenceExpr mre) {
         try {
-            this.setTimestamp();
+            // setTimestamp();
 
             ResolvedMethodDeclaration rmd =  mre.resolve();
 
@@ -511,7 +511,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mre.toString(), t.getMessage(), filename);
         // }
         finally {
-            this.clearTimestamp();
+            // clearTimestamp();
         }
 
         logsolver.warnft("Unable to solve call %s", mre.toString());
@@ -692,46 +692,39 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // canSolve
     // ----------------------------------------------------------------------
 
-    private static class Timestamp {
-        private long timestamp;
-        private long timeout = 500;
-        private AtomicInteger tsdepth = new AtomicInteger();
-
-        void set() {
-            if (tsdepth.getAndIncrement() == 0)
-                this.timestamp = System.currentTimeMillis();
-        }
-
-        boolean timeout() {
-            return (timestamp > 0) && ((System.currentTimeMillis()-timestamp) > timeout);
-        }
-
-        void clear() {
-            if (tsdepth.decrementAndGet() == 0)
-                this.timestamp = 0;
-        }
-    }
-
-    private transient boolean aborted;
-    private Timestamp timestamp = new Timestamp();
-
-    public void abort() {
-        this.aborted = true;
-    }
-
-    public void setTimestamp() {
-        timestamp.set();
-    }
-
-    public void clearTimestamp() {
-        timestamp.clear();
-    }
-
-    public void canSolve() {
-        if (aborted)
-            throw new ResolveAbortedException();
-        if (timestamp.timeout())
-            throw new ResolveTimeoutException();
-    }
+    // private static class Timestamp {
+    //     private long timestamp;
+    //     private long timeout = 500;
+    //     private AtomicInteger tsdepth = new AtomicInteger();
+    //
+    //     void set() {
+    //         if (tsdepth.getAndIncrement() == 0)
+    //             this.timestamp = System.currentTimeMillis();
+    //     }
+    //
+    //     boolean timeout() {
+    //         return (timestamp > 0) && ((System.currentTimeMillis()-timestamp) > timeout);
+    //     }
+    //
+    //     void clear() {
+    //         if (tsdepth.decrementAndGet() == 0)
+    //             this.timestamp = 0;
+    //     }
+    // }
+    //
+    // private transient boolean aborted;
+    // private Timestamp timestamp = new Timestamp();
+    //
+    // public void abort() {
+    //     this.aborted = true;
+    // }
+    //
+    // public void setTimestamp() {
+    //     timestamp.set();
+    // }
+    //
+    // public void clearTimestamp() {
+    //     timestamp.clear();
+    // }
 
 }

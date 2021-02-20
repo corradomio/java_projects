@@ -1,3 +1,9 @@
 package test.p2;
 
-public class Convolution2D extends ConvolutionLayer { }
+import java.util.List;
+
+public class Convolution2D extends ConvolutionLayer {
+    String s = "ciccio";
+    List<String> ls;
+    StringBuilder sb;
+}

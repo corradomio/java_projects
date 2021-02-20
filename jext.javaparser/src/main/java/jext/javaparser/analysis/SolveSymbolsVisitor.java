@@ -19,6 +19,7 @@ import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
+import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExtWrapper;
 import jext.javaparser.util.JPUtils;
 
 import java.io.File;
@@ -34,7 +35,10 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
 
     public void analyze(CompilationUnit cu, TypeSolver ts) {
         this.cu = cu;
-        this.ts = (TypeSolverExt) ts;
+        if (ts instanceof TypeSolverExt)
+            this.ts = (TypeSolverExt) ts;
+        else
+            this.ts = new TypeSolverExtWrapper(ts);
 
         try {
             attach();
@@ -73,6 +77,7 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
             ResolvedReferenceType rrt = n.resolve();
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
+            // e.printStackTrace();
             String symbol = n.toString();
             if (!unsolved.contains(symbol) && !JPUtils.isTypeParameter(n) && !JPUtils.isMethodReferenceExpr(n)) {
                 try { n.resolve(); } catch(Exception t){ }
