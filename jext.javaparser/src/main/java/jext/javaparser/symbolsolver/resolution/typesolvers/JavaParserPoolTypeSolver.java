@@ -20,6 +20,14 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     // Constructor
     // ----------------------------------------------------------------------
 
+    public JavaParserPoolTypeSolver() {
+        this(DEFAULT);
+    }
+
+    public JavaParserPoolTypeSolver(String name) {
+        super(name);
+    }
+
     public JavaParserPoolTypeSolver(JavaParserPool pool) {
         super(pool.getName());
         this.pool = pool;
@@ -28,6 +36,15 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     public JavaParserPoolTypeSolver(String name, JavaParserPool pool) {
         super(name);
         this.pool = pool;
+    }
+
+    // ----------------------------------------------------------------------
+    // Extended operations
+    // ----------------------------------------------------------------------
+
+    public JavaParserPoolTypeSolver withPool(JavaParserPool pool) {
+        this.pool = pool;
+        return this;
     }
 
     // ----------------------------------------------------------------------

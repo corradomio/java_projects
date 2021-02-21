@@ -36,6 +36,7 @@ public class CheckMini {
 
         FileUtils.listFiles(new File("src_only"), f -> f.getName().endsWith(".java"))
             .forEach(source -> {
+                System.out.println(source.getAbsolutePath());
                 CachedTypeSolver ts = new CachedTypeSolver();
                 ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
                 ts.add(new JavaParserPoolTypeSolver(pool));
@@ -111,13 +112,16 @@ public class CheckMini {
         assertEquals("java.util.List<java.lang.String>",    variables.get(1).getType().resolve().describe());
         assertEquals("java.lang.StringBuilder",             variables.get(2).getType().resolve().describe());
     }
+
     public static void main(String[] args) {
         Parallel.setup();
         Logger.configure();
         CacheManager.configure();
 
-        // test1();
+        test1();
         // test2();
-        testIssue3103();
+        // testIssue3103();
+
+        Parallel.shutdown();
     }
 }

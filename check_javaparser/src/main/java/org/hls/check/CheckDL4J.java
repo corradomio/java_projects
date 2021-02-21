@@ -66,7 +66,7 @@ public class CheckDL4J {
         }
 
         System.out.println("== DONE ==");
-        Parallel.setup();
+        Parallel.shutdown();
     }
 
     private static void solve(File source) {
@@ -74,7 +74,7 @@ public class CheckDL4J {
 
         CompositeTypeSolver ts = new CachedTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
-        ts.add(new JavaParserPoolTypeSolver(pool));
+        ts.add(new JavaParserPoolTypeSolver().withPool(pool));
 
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {
