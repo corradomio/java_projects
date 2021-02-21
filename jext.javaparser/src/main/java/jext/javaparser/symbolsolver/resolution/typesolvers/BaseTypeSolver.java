@@ -1,6 +1,15 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.MethodReferenceExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.logging.Logger;
@@ -60,6 +69,36 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
             throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
         }
         this.parent = (TypeSolverExt) parent;
+    }
+
+    // ----------------------------------------------------------------------
+    // Resolve
+    // ----------------------------------------------------------------------
+
+    @Override
+    public ResolvedType resolve(Type type) {
+        return type.resolve();
+    }
+
+    @Override
+    public ResolvedType resolve(NameExpr n) {
+        ResolvedValueDeclaration rvd = n.resolve();
+        return rvd.getType();
+    }
+
+    @Override
+    public ResolvedMethodDeclaration resolve(MethodReferenceExpr n) {
+        return n.resolve();
+    }
+
+    @Override
+    public ResolvedConstructorDeclaration resolve(ObjectCreationExpr n) {
+        return n.resolve();
+    }
+
+    @Override
+    public ResolvedMethodDeclaration resolve(MethodCallExpr n) {
+        return n.resolve();
     }
 
     // ----------------------------------------------------------------------

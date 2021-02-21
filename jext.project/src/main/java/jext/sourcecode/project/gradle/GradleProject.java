@@ -3,6 +3,7 @@ package jext.sourcecode.project.gradle;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 import jext.io.file.FilePatterns;
+import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
@@ -36,9 +37,12 @@ public class GradleProject extends BaseProject {
     public static final String GRADLE_VERSION = "gradle.version";
     public static final String GRADLE_INSTALLATION = "gradle.installation";
     public static final String GRADLE_URI = "gradle.uri";
-    public static final String GRADLE_HOMEDIR = "gradle.homedir";
+    public static final String GRADLE_HOMEDIR = "gradle.home";
     public static final String GRADLE_BUILD = "gradle.build";
     public static final String GRADLE_CONFIGURATION = "gradle.configuration";
+
+    private static final String GRADLE_HOME = "GRADLE_HOME";
+    private static final String NO_GRADLE_HOME = "NO_GRADLE_HOME";
 
     // ----------------------------------------------------------------------
     // Static methods
@@ -164,28 +168,61 @@ public class GradleProject extends BaseProject {
         // useBuildDistribution();
         // useGradleUserHomeDir(File gradleUserHomeDir);
 
-        if (properties.containsKey(GRADLE_VERSION)) {
-            String gradleVersion = PropertiesUtils.getString(properties, GRADLE_VERSION);
-            connector.useGradleVersion(gradleVersion);
+        if (System.getProperties().containsKey(GRADLE_HOME)) {
+            File gradleHome = new File(System.getProperties().getProperty(GRADLE_HOME));
+
+            if (gradleHome.exists()) {
+                logger.infof("GRADLE_HOME defined: using local installation at %s", FileUtils.getAbsolutePath(gradleHome));
+                connector.useInstallation(gradleHome);
+            }
+            else
+                logger.warnf("GRADLE_HOME=%s: home directory not existent", FileUtils.getAbsolutePath(gradleHome));
         }
 
+        if (properties.containsKey(GRADLE_VERSION)) {
+            String gradleVersion = PropertiesUtils.getString(properties, GRADLE_VERSION);
+
+            logger.infof("%s defined: using Gradle v%s", GRADLE_VERSION, gradleVersion);
+
+            connector.useGradleVersion(gradleVersion);
+        }
         if (properties.containsKey(GRADLE_INSTALLATION)) {
             File gradleHome = PropertiesUtils.getFile(properties, GRADLE_INSTALLATION);
+
             connector.useInstallation(gradleHome);
+            if (gradleHome.exists()) {
+                logger.infof("%s defined: using local installation at %s", GRADLE_INSTALLATION, FileUtils.getAbsolutePath(gradleHome));
+
+                connector.useInstallation(gradleHome);
+            }
+            else
+                logger.warnf("%s=%s: installation not existent", GRADLE_INSTALLATION, FileUtils.getAbsolutePath(gradleHome));
         }
 
         if (properties.containsKey(GRADLE_URI)) {
             URI gradleDistribution = PropertiesUtils.getURI(properties, GRADLE_URI);
+
+            logger.infof("%s defined: using %s", GRADLE_URI, gradleDistribution);
+
             connector.useDistribution(gradleDistribution);
         }
 
         if (properties.containsKey(GRADLE_HOMEDIR)) {
-            File gradleUserHomeDir = PropertiesUtils.getFile(properties, GRADLE_HOMEDIR);
-            connector.useGradleUserHomeDir(gradleUserHomeDir);
+            File gradleHome = PropertiesUtils.getFile(properties, GRADLE_HOMEDIR);
+            if (gradleHome.exists()) {
+                logger.infof("%s defined: using local installation at %s", GRADLE_INSTALLATION, FileUtils.getAbsolutePath(gradleHome));
+
+                connector.useGradleUserHomeDir(gradleHome);
+            }
+            else
+                logger.warnf("%s=%s: home directory not existent", GRADLE_HOMEDIR, FileUtils.getAbsolutePath(gradleHome));
         }
 
         if (properties.containsKey(GRADLE_BUILD)) {
             boolean gradleBluild = PropertiesUtils.getBoolean(properties, GRADLE_BUILD, false);
+
+            logger.infof("%s=%s", GRADLE_BUILD, gradleBluild);
+
             if (gradleBluild)
                 connector.useBuildDistribution();
         }

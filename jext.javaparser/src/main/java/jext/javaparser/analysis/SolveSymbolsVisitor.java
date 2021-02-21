@@ -102,7 +102,7 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
     @Override
     public void visit(ClassOrInterfaceType n, Void arg) {
         try {
-            if (ts.isNamespace(n.toString())) return;
+            if (tsx().isNamespace(n.toString())) return;
             ResolvedReferenceType rrt = n.resolve();
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {

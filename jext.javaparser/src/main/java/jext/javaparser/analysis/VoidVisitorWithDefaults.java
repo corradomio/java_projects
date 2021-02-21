@@ -41,8 +41,11 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.resolution.SymbolResolver;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 
 public class VoidVisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
@@ -55,7 +58,7 @@ public class VoidVisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
 
     protected CompilationUnit cu;
     protected String fileName;
-    protected ContextTypeSolver ts;
+    protected TypeSolver ts;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -69,20 +72,31 @@ public class VoidVisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
     // Operations
     // ----------------------------------------------------------------------
 
-    public VoidVisitorWithDefaults addTypeSolver(TypeSolver ts) {
-        this.ts.add(ts);
+    public VoidVisitorWithDefaults analyze(CompilationUnit cu) {
+        this.cu = cu;
+        this.fileName = "";
+
+        try {
+            attach();
+            visit(cu, null);
+        }
+        finally {
+            detach();
+        }
+
         return this;
     }
 
-    public VoidVisitorWithDefaults analyze(CompilationUnit cu) {
-        this.cu = cu;
-        this.ts.setCu(cu);
-        this.fileName = "";
-
+    private void attach() {
+        if (ts == null) return;
+        SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
+        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
         cu.getStorage().ifPresent(s -> this.fileName = s.getFileName());
-        visit(cu, null);
+    }
 
-        return this;
+    private void detach() {
+        cu.removeData(Node.SYMBOL_RESOLVER_KEY);
+        JPUtils.removeTypeSolver(ts);
     }
 
     // ----------------------------------------------------------------------

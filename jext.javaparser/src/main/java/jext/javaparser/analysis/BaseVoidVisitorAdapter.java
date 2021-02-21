@@ -4,6 +4,7 @@ import com.github.javaparser.ast.ArrayCreationLevel;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.AnnotationDeclaration;
@@ -40,8 +41,11 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.resolution.SymbolResolver;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
+import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 
 
@@ -53,8 +57,8 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
 
     protected Logger logger = Logger.getLogger(getClass());
 
-    protected TypeSolverExt ts;
     protected CompilationUnit cu;
+    protected TypeSolver ts;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -70,11 +74,30 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
 
     protected BaseVoidVisitorAdapter analyze(CompilationUnit cu) {
         this.cu = cu;
-        // if (this.ts != null)
-        //     this.ts.setCu(cu);
 
-        visit(cu, null);
+        try {
+            attach();
+            visit(cu, null);
+        }
+        finally {
+            detach();
+        }
         return this;
+    }
+
+    private void attach() {
+        if (ts == null) return;
+        SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
+        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+    }
+
+    private void detach() {
+        cu.removeData(Node.SYMBOL_RESOLVER_KEY);
+        JPUtils.removeTypeSolver(ts);
+    }
+
+    protected TypeSolverExt tsx() {
+        return (TypeSolverExt) ts;
     }
 
     // ----------------------------------------------------------------------

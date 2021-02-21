@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 public class CompositeTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------
@@ -34,9 +33,10 @@ public class CompositeTypeSolver extends BaseTypeSolver {
     // Extended operations
     // ----------------------------------------------------------------------
 
-    public void add(TypeSolver ts) {
+    public CompositeTypeSolver add(TypeSolver ts) {
         this.elements.add(ts);
         ts.setParent(this);
+        return this;
     }
 
     @Override

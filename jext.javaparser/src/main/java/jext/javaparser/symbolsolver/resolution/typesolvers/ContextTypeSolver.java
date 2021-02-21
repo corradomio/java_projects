@@ -89,6 +89,11 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         return this;
     }
 
+    public ContextTypeSolver add(TypeSolver ts) {
+        super.add(ts);
+        return this;
+    }
+
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
@@ -233,9 +238,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         try {
             // setTimestamp();
 
-            ResolvedValueDeclaration rvd = n.resolve();
+            // ResolvedValueDeclaration rvd = n.resolve();
+            // return rvd.getType();
 
-            return rvd.getType();
+            return super.resolve(n);
         }
         catch (StackOverflowError e) {
             logger.errorf("StackOverflow on %s", n.toString());
@@ -288,9 +294,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         try {
             // setTimestamp();
 
-            ResolvedMethodDeclaration rmd = mce.resolve();
+            // ResolvedMethodDeclaration rmd = mce.resolve();
+            // return rmd;
 
-            return rmd;
+            return super.resolve(mce);
         }
         catch (StackOverflowError e) {
             logger.errorf("StackOverflow on %s", mce.toString());
@@ -384,9 +391,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         try {
             // setTimestamp();
 
-            ResolvedConstructorDeclaration rcd = oce.resolve();
+            // ResolvedConstructorDeclaration rcd = oce.resolve();
+            // return rcd;
 
-            return rcd;
+            return super.resolve(oce);
         }
         catch (StackOverflowError e) {
             logger.errorf("StackOverflow on %s", oce.toString());
@@ -480,9 +488,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         try {
             // setTimestamp();
 
-            ResolvedMethodDeclaration rmd =  mre.resolve();
+            // ResolvedMethodDeclaration rmd =  mre.resolve();
+            // return rmd;
 
-            return rmd;
+            return super.resolve(mre);
         }
         catch (StackOverflowError e) {
             logger.errorf("StackOverflow on %s", mre.toString());

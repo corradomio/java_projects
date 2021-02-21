@@ -1,5 +1,6 @@
 package jext.sourcecode.project.maven;
 
+import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.Version;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
  * Class used to collect all libraries but to keep ONLY the latest version
  */
 public class LibrarySet extends AbstractSet<Library> {
+
+    private static Logger logger = Logger.getLogger(LibrarySet.class);
 
     private Set<Library> localLibraries = new TreeSet<>();
 
@@ -93,10 +96,15 @@ public class LibrarySet extends AbstractSet<Library> {
             .collect(Collectors.toList());
 
         Parallel.forEach(mavenLibraries.values(), mavenLibrary -> {
+            try {
             MavenCoords coords = mavenLibrary.getCoords();
             MavenDownloader md = mavenLibrary.getMavenDownloader();
             md.getPom(coords);
             md.getArtifact(coords);
+            }
+            catch (RuntimeException e) {
+                logger.errorf("Unable to check %s: %s", mavenLibrary.getName(), e.getMessage());
+            }
         });
     }
 
