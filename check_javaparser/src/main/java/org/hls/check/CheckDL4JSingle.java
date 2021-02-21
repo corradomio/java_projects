@@ -10,6 +10,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
+import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
@@ -62,7 +63,8 @@ public class CheckDL4JSingle {
 
             solve(new File(
             // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7\\arbiter\\arbiter-deeplearning4j\\src\\test\\java\\org\\deeplearning4j\\arbiter\\multilayernetwork\\TestLayerSpace.java"
-                "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7\\deeplearning4j\\deeplearning4j-nlp-parent\\deeplearning4j-nlp-japanese\\src\\test\\java\\org\\deeplearning4j\\text\\tokenization\\tokenizer\\JapaneseTokenizerTest.java"
+            // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7\\deeplearning4j\\deeplearning4j-nlp-parent\\deeplearning4j-nlp-japanese\\src\\test\\java\\org\\deeplearning4j\\text\\tokenization\\tokenizer\\JapaneseTokenizerTest.java"
+                "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7\\deeplearning4j\\deeplearning4j-core\\src\\test\\java\\org\\deeplearning4j\\nn\\updater\\TestUpdaters.java"
             ));
 
         }
@@ -71,14 +73,13 @@ public class CheckDL4JSingle {
         }
 
         System.out.println("== DONE ==");
-        Parallel.setup();
+        Parallel.shutdown();
     }
 
-    @Test
     private static void solve(File source) throws FileNotFoundException {
-        // System.out.printf("== %s ==\n", source.getName());
+        System.out.printf("== %s ==\n", source.getName());
 
-        CompositeTypeSolver ts = new CompositeTypeSolver();
+        CompositeTypeSolver ts = new CachedTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
         ts.add(new JavaParserPoolTypeSolver(pool));
 
