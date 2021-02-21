@@ -2,13 +2,11 @@ package org.hls.check;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import com.hazelcast.logging.ILogger;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserRootsTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
 import jext.logging.Logger;
@@ -78,10 +76,10 @@ public class AnalyzeDL4J {
             ContextTypeSolver ctx = new ContextTypeSolver();
 
             // jdk
-            JarFilesTypeSolver jdkts = new JarFilesTypeSolver(jdkPoolRegistry);
+            ClassPoolRegistryTypeSolver jdkts = new ClassPoolRegistryTypeSolver(jdkPoolRegistry);
 
             // libraries
-            JarFilesTypeSolver libsts = new JarFilesTypeSolver(classPoolRegistry);
+            ClassPoolRegistryTypeSolver libsts = new ClassPoolRegistryTypeSolver(classPoolRegistry);
 
             // current module
             // JavaParserPoolTypeSolver mts = new JavaParserPoolTypeSolver(pool);

@@ -168,8 +168,8 @@ public class GradleProject extends BaseProject {
         // useBuildDistribution();
         // useGradleUserHomeDir(File gradleUserHomeDir);
 
-        if (System.getProperties().containsKey(GRADLE_HOME)) {
-            File gradleHome = new File(System.getProperties().getProperty(GRADLE_HOME));
+        if (System.getenv().containsKey(GRADLE_HOME)) {
+            File gradleHome = new File(System.getenv().get(GRADLE_HOME));
 
             if (gradleHome.exists()) {
                 logger.infof("GRADLE_HOME defined: using local installation at %s", FileUtils.getAbsolutePath(gradleHome));

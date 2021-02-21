@@ -39,7 +39,8 @@ public class Check {
         Parallel.forEach(FileUtils.listFiles(
             // new File("D:\\Projects.github\\other_projects\\hibernate-orm")
             // new File("D:\\Projects.github\\other_projects\\deeplearning4j")
-            new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
+            // new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
+            new File("D:\\SPLGroup\\Downloads\\BTProjects\\ForSalwa")
             , FileFilters.IS_JAVA),
             Check::parse);
 

@@ -12,13 +12,12 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.BaseVoidVisitorAdapter;
-import jext.javaparser.analysis.LogVisitorAdapter;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JarFilesTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
-import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.PathName;
@@ -89,7 +88,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
         ctx = new ContextTypeSolver(module.getId());
 
         // global libraries
-        ctx.add(new JarFilesTypeSolver(project.getId(), classPoolRegistry));
+        ctx.add(new ClassPoolRegistryTypeSolver(project.getId(), classPoolRegistry));
 
         // current module
         ctx.add(modulets(module));
@@ -177,7 +176,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
             .collect(Collectors.toList());
 
         CombinedTypeSolver ts = new CombinedTypeSolver();
-        ts.add(new JarFilesTypeSolver()
+        ts.add(new JarTypeSolver()
             .addJdk(new File("D:\\Java\\Jdk1.8.0.x64"))
             .addAll(libs));
         module.getSourceRoots().forEach(src -> {
