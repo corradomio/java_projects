@@ -18,6 +18,7 @@ import org.gradle.tooling.ProjectConnection;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -167,17 +168,34 @@ public class GradleModule extends BaseModule {
             err.close();
         }
 
-        String gradleConfiguration = project.getProperties().getProperty(GradleProject.GRADLE_CONFIGURATION, COMPILE_CLASSPATH);
+        // String gradleConfiguration = project.getProperties().getProperty(GradleProject.GRADLE_CONFIGURATION, COMPILE_CLASSPATH);
+        // 2021/02/22: it is necessary to collect MULTIPLE gradle configurations. At minimum:
+        //
+        //  1) all configurations containing 'default'
+        //  2) all configurations containing 'compile'
+        //  3) all configurations containing 'implementation' because 'compile' is deprecated
+        //  4) all configurations containing 'test' because we are include also the source files used for tests
+        //
 
-        List<MavenCoords> coordList = collector.getLibraries(gradleConfiguration)
-            .stream()
-            .map(MavenCoords::new)
-            .collect(Collectors.toList());
+        Set<String> dmods = new HashSet<>();
+        Set<String> dlibs = new HashSet<>();
+
+        for (String configurationName : collector.getConfigurationNames()) {
+            if (!isConfigurationValid(configurationName))
+                continue;
+
+            dlibs.addAll(collector.getLibraries(configurationName));
+            dmods.addAll(collector.getProjects(configurationName));
+        }
 
         MavenDownloader md = project.getLibraryDownloader();
-        // md.checkArtifacts(coordList);
 
-        dmodules = collector.getProjects(gradleConfiguration)
+        List<MavenCoords> coords = dlibs.stream()
+            .map(MavenCoords::new)
+            .collect(Collectors.toList());
+        md.checkArtifacts(coords, false);
+
+        dmodules = dmods
             .stream()
             .map(name -> project.getModule(name))
             .filter(Objects::nonNull)
@@ -185,11 +203,25 @@ public class GradleModule extends BaseModule {
             .sorted()
             .collect(Collectors.toList());
 
-        dcoords = coordList
+        dcoords = coords
             .stream()
             .sorted()
-            .map(coords -> new MavenLibrary(coords, md, project))
+            .map(dcoords -> new MavenLibrary(dcoords, md, project))
             .collect(Collectors.toList());
+    }
+
+    private static String[] VALID_NAMES = {
+        "default",
+        "implementation",
+        "compile",
+        "test"
+    };
+
+    private static boolean isConfigurationValid(String configurationName) {
+        for (String validName : VALID_NAMES)
+            if (configurationName.contains(validName))
+                return true;
+        return false;
     }
 
     // ----------------------------------------------------------------------
@@ -209,8 +241,8 @@ public class GradleModule extends BaseModule {
             connection
                 .newBuild().forTasks(projectsTask)
                     .withArguments("--continue")
-                // .setStandardOutput(projects)             // thi
-                .setStandardOutput(logcoll)
+                // .setStandardOutput(projects)             // this
+                .setStandardOutput(logcoll)                 // OR this
                 .setStandardError(err)
                 .run();
         }

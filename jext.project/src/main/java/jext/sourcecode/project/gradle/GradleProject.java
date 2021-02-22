@@ -152,7 +152,7 @@ public class GradleProject extends BaseProject {
             }
 
             for (GradleModule gmodule : gmodules) {
-                gmodule.getMavenLibraries();
+                gmodule.getDefinedLibraries();
                 gmodule.getMavenRepositories();
                 addGradleModule(gmodule);
             }
@@ -256,7 +256,12 @@ public class GradleProject extends BaseProject {
         // useBuildDistribution();
         // useGradleUserHomeDir(File gradleUserHomeDir);
 
-        if (System.getenv().containsKey(GRADLE_HOME)) {
+        // check if "gradlew.*" is present in 'projectHome'
+        File[] gradlews = projectHome.listFiles(file -> file.getName().startsWith("gradlew"));
+        if (gradlews != null && gradlews.length > 0) {
+
+        }
+        else if (System.getenv().containsKey(GRADLE_HOME)) {
             File gradleHome = new File(System.getenv().get(GRADLE_HOME));
 
             if (gradleHome.exists()) {

@@ -49,6 +49,7 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     // compile
     // compileClasspath
     // compileOnly
+    // implementation
     // default
     // testCompile
     // testCompileClasspath
@@ -60,11 +61,11 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     // .
 
 
-    private static final String COMPILE_CLASSPATH = "compileClasspath";
-    private static final String COMPILE_ONLY = "compileOnly";
-    private static final String TEST_COMPILE_CLASSPATH = "testCompileClasspath";
-    private static final String TEST_COMPILE = "testCompileClasspath";
-    private static final String DEFAULT = "default";
+    // private static final String COMPILE_CLASSPATH = "compileClasspath";
+    // private static final String COMPILE_ONLY = "compileOnly";
+    // private static final String TEST_COMPILE_CLASSPATH = "testCompileClasspath";
+    // private static final String TEST_COMPILE = "testCompileClasspath";
+    // private static final String DEFAULT = "default";
 
     public static class Dependencies {
         public final Set<String> libraries = new TreeSet<>();
@@ -82,7 +83,7 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     // ----------------------------------------------------------------------
 
     private static final int STATE_CONFIGURATIONS = 1;
-    private static final int  STATE_DEPENDENCIES = 2;
+    private static final int STATE_DEPENDENCIES = 2;
 
     private final LogDigester digester;
 
@@ -101,7 +102,6 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         digester.addRule("[-]+", STATE_CONFIGURATIONS);
 
         // <configurationName> - <description>
-        //digester.addRule(STATE_CONFIGURATIONS, "[A-Za-z0-9_$:-]+\\s-\\s.*", STATE_DEPENDENCIES);
         digester.addRule(STATE_CONFIGURATIONS, "([A-Za-z0-9_$]+)\\s-\\s.*", this::addConfiguration);
 
         //
@@ -126,12 +126,6 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     private static final String FAILED = "FAILED";
     private static final String NOT_RESOLVED = "(n)";
     private static final String PROJECT = "project";
-
-    // private Dependencies _getConfiguration() {
-    //     if (!configurations.containsKey(currentConfiguration))
-    //         configurations.put(currentConfiguration, new Dependencies());
-    //     return configurations.get(currentConfiguration);
-    // }
 
     private int addConfiguration(int state, Matcher matcher, String line)  {
         String configurationName = matcher.group(1);
@@ -180,6 +174,10 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     //             return false;
     //     return true;
     // }
+
+    public Set<String> getConfigurationNames() {
+        return this.configurations.keySet();
+    }
 
     public Set<String> getProjects(String configuration) {
         if (this.configurations.containsKey(configuration))

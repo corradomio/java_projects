@@ -33,7 +33,13 @@ public class LoggerCollector extends LineOutputStream {
     @Override
     public void consume(String line) {
         String message = line.toLowerCase();
-        if (message.contains("error"))
+
+        // skip "> Task :"
+        // skip "ProjectDir:
+        if (line.contains("> Task :") || line.contains("ProjectDir:"))
+            return;
+
+        if (message.contains("error") || message.contains("fail"))
             logger.error(line);
         else if (message.contains("warn"))
             logger.warn(line);
