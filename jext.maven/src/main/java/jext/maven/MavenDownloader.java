@@ -734,8 +734,6 @@ public class MavenDownloader implements MavenConst {
         for (String repoUrl : repoUrls) {
             try {
                 String downloadUrl = getUrl(repoUrl, coords, type);
-                if (downloadUrl.contains("$"))
-                    downloadUrl = getUrl(repoUrl, coords, type); //DEBUG
 
                 try {
                     downloadFromUrl(downloadedFile, downloadUrl);
@@ -1022,10 +1020,11 @@ public class MavenDownloader implements MavenConst {
      *
      * @param coordList list of coordinates to check
      */
-    public void checkArtifacts(List<MavenCoords> coordList) {
+    public void checkArtifacts(List<MavenCoords> coordList, boolean artifacts) {
 
         Parallel.forEach(coordList, coords -> {
             getPomFile(coords);
+            if (artifacts)
             getArtifact(coords);
         });
 

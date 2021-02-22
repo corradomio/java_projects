@@ -110,9 +110,6 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
             toString = String.format("%s:%s:%s", groupId, artifactId, version);
         else
             toString = String.format("%s:%s", groupId, artifactId);
-
-        if (groupId.contains("openblas"))
-            artifactId = artifactId;
     }
 
     // ----------------------------------------------------------------------
