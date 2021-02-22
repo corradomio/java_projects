@@ -145,8 +145,9 @@ public class GradleModule extends BaseModule {
         try(ProjectConnection connection = getGradleProject().getConnection()) {
             connection
                 .newBuild().forTasks(dependenciesTask)
-                .setStandardOutput(collector)
-                // .setStandardOutput(logcoll)
+                .withArguments("--continue")
+                // .setStandardOutput(collector)            // this
+                .setStandardOutput(logcoll)                 // OR this
                 .setStandardError(err)
                 .run();
         }
@@ -203,10 +204,13 @@ public class GradleModule extends BaseModule {
         String projectsTask = toTask("projects");
         ErrorsCollector err = new ErrorsCollector(logger);
         ProjectsCollector projects = new ProjectsCollector();
+        LoggerCollector logcoll = new LoggerCollector(logger, projects);
         try(ProjectConnection connection = getGradleProject().getConnection()) {
             connection
                 .newBuild().forTasks(projectsTask)
-                .setStandardOutput(projects)
+                    .withArguments("--continue")
+                // .setStandardOutput(projects)             // thi
+                .setStandardOutput(logcoll)
                 .setStandardError(err)
                 .run();
         }

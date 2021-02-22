@@ -1,12 +1,20 @@
 package jext.sourcecode.project.gradle;
 
+import jdk.nashorn.internal.ir.debug.NashornClassReader;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
 import jext.io.file.FilePatterns;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
+import org.gradle.tooling.BuildAction;
+import org.gradle.tooling.BuildActionExecuter;
+import org.gradle.tooling.BuildLauncher;
+import org.gradle.tooling.GradleConnectionException;
 import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ModelBuilder;
 import org.gradle.tooling.ProjectConnection;
+import org.gradle.tooling.ResultHandler;
+import org.gradle.tooling.TestLauncher;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,19 +136,30 @@ public class GradleProject extends BaseProject {
     }
 
     public void findModulesByGradle() {
-        Set<GradleModule> gmodules = new HashSet<>();
-        Queue<GradleModule> toVisit = new LinkedList<>();
-        toVisit.add(rootModule);
 
-        while(!toVisit.isEmpty()) {
-            GradleModule gmodule = toVisit.remove();
-            gmodules.add(gmodule);
+        try {
+            openConnection();
 
-            toVisit.addAll(gmodule.getModules());
+            Set<GradleModule> gmodules = new HashSet<>();
+            Queue<GradleModule> toVisit = new LinkedList<>();
+            toVisit.add(rootModule);
+
+            while (!toVisit.isEmpty()) {
+                GradleModule gmodule = toVisit.remove();
+                gmodules.add(gmodule);
+
+                toVisit.addAll(gmodule.getModules());
+            }
+
+            for (GradleModule gmodule : gmodules) {
+                gmodule.getMavenLibraries();
+                gmodule.getMavenRepositories();
+                addGradleModule(gmodule);
+            }
         }
-
-        for (GradleModule gmodule : gmodules)
-            addGradleModule(gmodule);
+        finally {
+            closeConnection();
+        }
     }
 
     void addGradleModule(GradleModule gmodule) {
@@ -155,8 +174,77 @@ public class GradleProject extends BaseProject {
     // Tooling api
     // ----------------------------------------------------------------------
 
+    private static class NoCloseableProjectConnection implements ProjectConnection {
+
+        private ProjectConnection pc;
+
+        NoCloseableProjectConnection(ProjectConnection pc) {
+            this.pc = pc;
+        }
+
+        @Override
+        public <T> T getModel(Class<T> aClass) throws GradleConnectionException, IllegalStateException {
+            return pc.getModel(aClass);
+        }
+
+        @Override
+        public <T> void getModel(Class<T> aClass, ResultHandler<? super T> resultHandler) throws IllegalStateException {
+            getModel(aClass, resultHandler);
+        }
+
+        @Override
+        public BuildLauncher newBuild() {
+            return pc.newBuild();
+        }
+
+        @Override
+        public TestLauncher newTestLauncher() {
+            return pc.newTestLauncher();
+        }
+
+        @Override
+        public <T> ModelBuilder<T> model(Class<T> aClass) {
+            return pc.model(aClass);
+        }
+
+        @Override
+        public <T> BuildActionExecuter<T> action(BuildAction<T> buildAction) {
+            return pc.action(buildAction);
+        }
+
+        @Override
+        public BuildActionExecuter.Builder action() {
+            return pc.action();
+        }
+
+        @Override
+        public void notifyDaemonsAboutChangedPaths(List<Path> list) {
+            pc.notifyDaemonsAboutChangedPaths(list);
+        }
+
+        @Override
+        public void close() {
+
+        }
+    }
+
+    private ProjectConnection connection;
+
     ProjectConnection getConnection() {
-        return connector.connect();
+        if (connection != null)
+            return new NoCloseableProjectConnection(connection);
+
+        connection = connector.connect();
+        return new NoCloseableProjectConnection(connection);
+    }
+
+    private void openConnection() {
+        connection = connector.connect();
+    }
+
+    private void closeConnection() {
+        connection.close();
+        connection = null;
     }
 
     private void connect() {

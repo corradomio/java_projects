@@ -55,7 +55,7 @@ public class ProjectsCollector extends LineOutputStream implements Iterable<Stri
         digester = new LogDigester();
         digester.addRule("Root project '([^']+)'.*", this::rootProject);
         digester.addRule(ANALYZING, "[\\s\\|\\\\+-]+Project\\s+':([^']+)'.*", this::addProject);
-        digester.addRule(ANALYZING, "", LogDigester.STATE_DONE);
+        // digester.addRule(ANALYZING, "", LogDigester.STATE_DONE);
     }
 
     // ----------------------------------------------------------------------
