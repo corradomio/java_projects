@@ -2,7 +2,6 @@ package jext.javaparser.util;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -11,7 +10,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
-import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
@@ -36,7 +34,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class JPUtils {
 

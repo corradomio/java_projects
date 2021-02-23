@@ -36,12 +36,13 @@ public class Check {
         // JavaParserPool pool = JavaParserPool.getPool();
         // pool.setCacheSizeLimit(1000);
 
-        Parallel.forEach(FileUtils.listFiles(
-            // new File("D:\\Projects.github\\other_projects\\hibernate-orm")
-            // new File("D:\\Projects.github\\other_projects\\deeplearning4j")
-            // new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
-            new File("D:\\SPLGroup\\Downloads\\BTProjects\\ForSalwa")
-            , FileFilters.IS_JAVA),
+        Parallel.forEach(FileUtils.listFiles(new File(
+            // "D:\\Projects.github\\other_projects\\hibernate-orm"
+            // "D:\\Projects.github\\other_projects\\deeplearning4j"
+            "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
+            // "D:\\SPLGroup\\Downloads\\BTProjects\\ForSalwa"
+            // "D:\\SPLGroup\\spl-workspaces\\ext-workspace\\BTProjects\\DEUM"
+            ), FileFilters.IS_JAVA),
             Check::parse);
 
         // FileUtils.listFiles(
