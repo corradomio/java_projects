@@ -1025,7 +1025,7 @@ public class MavenDownloader implements MavenConst {
         Parallel.forEach(coordList, coords -> {
             getPomFile(coords);
             if (artifacts)
-            getArtifact(coords);
+                getArtifact(coords);
         });
 
     }
