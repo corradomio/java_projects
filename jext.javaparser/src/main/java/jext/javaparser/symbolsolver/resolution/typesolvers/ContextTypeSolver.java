@@ -54,8 +54,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     private static Logger logsolver = Logger.getLogger(ContextTypeSolver.class);
 
     private static final String DEFAULT = "default";
-    private static final String JAVA_LANG = "java.lang";
-    private static final String ROOT_PACKAGE = "";
 
     private CompilationUnit cu;
     private File filename;
@@ -86,6 +84,16 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     public ContextTypeSolver withCache(String cacheName) {
         this.cacheName = cacheName;
+        return this;
+    }
+
+    public ContextTypeSolver withCu(CompilationUnit cu) {
+        this.cu = cu;
+
+        namespace = "";
+        cu.getPackageDeclaration().ifPresent(this::setPackage);
+        cu.getImports().forEach(this::addImport);
+        addDefaultImports();
         return this;
     }
 
@@ -132,58 +140,14 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // ----------------------------------------------------------------------
 
     /**
-     * Set the compilationUnit used to resolve symbols.
-     * The typeSolver is assigned to the cu
-     * @param cu compilationUnit to use
-     */
-    public ContextTypeSolver setCu(CompilationUnit cu) {
-        this.cu = cu;
-        cu.getStorage().ifPresent(storage -> {
-            this.filename = storage.getPath().toFile();
-        });
-        attach();
-        setContext();
-        return this;
-    }
-
-    private void attach() {
-        if (cu == null) return;
-        // Inject inside cu THIS typeSolver
-        SymbolResolver symbolResolver = new JavaSymbolSolver(this);
-        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
-    }
-
-    public void detach() {
-        if (cu == null) return;
-        cu.removeData(Node.SYMBOL_RESOLVER_KEY);
-        JPUtils.removeTypeSolver(this);
-    }
-
-    private void setContext() {
-        // Set the context used for the symbol resolution:
-        // 1) current package
-        // 2) imports
-        // 3) default imports
-        if (namespace != null)
-            return;
-        if (cu == null)
-            throw new IllegalStateException("Missing CompilationUnit. Use 'setCu(cu)");
-
-        namespace = "";
-        cu.getPackageDeclaration().ifPresent(this::setPackage);
-        cu.getImports().forEach(this::addImport);
-        addDefaultImports();
-    }
-
-    /**
      * Add the default imports: the imports from the current package and
      * from the default package "java.lang". These must be the last imports
      * to add.
      */
     private void addDefaultImports() {
-        this.starImports.add(this.starImports.size(), JAVA_LANG);       // import java.lang.*
-        this.starImports.add(this.starImports.size(), this.namespace);  // import <currentPackage>.*
-        this.starImports.add(this.starImports.size(), ROOT_PACKAGE);    // import <rootPackage>.*
+        this.starImports.add(JavaUtils.JAVA_LANG);       // import java.lang.*
+        this.starImports.add(this.namespace);  // import <currentPackage>.*
+        this.starImports.add(JavaUtils.ROOT);    // import <rootPackage>.*
     }
 
     // ----------------------------------------------------------------------
@@ -269,7 +233,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      */
     @Nullable
     public ResolvedType resolve(String symbol, Node context) {
-        setContext();
 
         String stripped = JavaUtils.toPlainSignature(symbol);
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;

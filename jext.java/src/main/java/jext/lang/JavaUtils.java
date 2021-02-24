@@ -88,16 +88,27 @@ public class JavaUtils {
     }
 
     // ----------------------------------------------------------------------
+    // Namespace    <name>[.<name>]*
+    // Class name   <upperCase><name>
+    //
 
-    private static Pattern NAMESPACE = Pattern.compile("([a-z]+)(\\.[a-z]+)+");
 
-
-    private static Pattern IDENTIFIER = Pattern.compile("[a-z_$][A-Z0-9a-z_$]*");
+    private static Pattern CLASSNAME  = Pattern.compile("[A-Z_$][0-9A-Za-z_$]*");
+    private static Pattern IDENTIFIER = Pattern.compile("[a-z_$][0-9A-Za-z_$]*");
 
     public static boolean isIdentifier(String symbol) {
-        // <name>.<name>... with <name> in lowercase
-        // a generic identifier starting with a lowercase letter
+        // in general, an identifier starts with a lowercase letter
         return IDENTIFIER.matcher(symbol).matches();
+    }
+
+    public static boolean isClassName(String symbol) {
+        // in general, a class starts with an uppercase letter
+        return CLASSNAME.matcher(symbol).matches();
+    }
+
+    public static boolean isQualified(String symbol) {
+        // in general, a symbol containing a dot is a qualified name
+        return symbol.contains(".");
     }
 
     // ----------------------------------------------------------------------

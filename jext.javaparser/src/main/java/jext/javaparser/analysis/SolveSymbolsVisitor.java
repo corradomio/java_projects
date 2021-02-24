@@ -28,6 +28,7 @@ import com.github.javaparser.resolution.types.ResolvedArrayType;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedTypeVariable;
+import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.resolution.ReferencedTypeDeclaration;
 import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
@@ -50,7 +51,6 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
 
     private static final int NAME_LENGTH = 16;
 
-    private static Set<String> unsolved = new ConcurrentSkipListSet<>();
     private File source;
 
     private String packageName;
@@ -87,6 +87,9 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
     }
 
     // ---
+    // BEFORE ImportDeclaration
+    // AFTER  PackageDeclaration
+    //
 
     @Override
     public void visit(ImportDeclaration n, Void arg) {
@@ -330,10 +333,15 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
     }
 
     private void resolve(NameExpr n) {
+        RuntimeException ex = null;
+
         try {
             ResolvedValueDeclaration rdecl = n.resolve();
         }
-        catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
+        catch (UnsolvedSymbolException e) {
+            ex = e;
+        }
+        catch (UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.toString();
             logger.errorf("NameExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
@@ -341,11 +349,32 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
             String symbol = n.toString();
             logger.errorf("NameExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
+
+        if (ex != null)
+        try {
+            resolveByContext(n.getNameAsString(), ex);
+        }
+        catch (UnsolvedSymbolException e) {
+            String symbol = n.toString();
+            logger.errorf("NameExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
+        }
     }
 
-    private ResolvedDeclaration resolveByContext(String name) {
+    private ResolvedDeclaration resolveByContext(String name, RuntimeException e) {
+        if (JavaUtils.isIdentifier(name))
+            throw e;
+
         if (namedImports.containsKey(name))
             return new ReferencedTypeDeclaration(namedImports.get(name));
+
+        for (String namespace : starImports) {
+            String fullName = JavaUtils.fullName(namespace, name);
+            SymbolReference<ResolvedReferenceTypeDeclaration> solved = ts.getRoot().tryToSolveType(fullName);
+            if (solved.isSolved())
+                return solved.getCorrespondingDeclaration();
+        }
+
+        throw new  UnsolvedSymbolException(name);
     }
 
 }

@@ -12,6 +12,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <jgrapht.version>1.5.0</jgrapht.version>
     </properties>
 
     <dependencies>
@@ -35,20 +36,21 @@
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.4.0</version>
+            <version>${jgrapht.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
-            <version>1.4.0</version>
+            <version>${jgrapht.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-io -->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-io</artifactId>
-            <version>1.4.0</version>
+            <version>${jgrapht.version}</version>
         </dependency>
+        
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
