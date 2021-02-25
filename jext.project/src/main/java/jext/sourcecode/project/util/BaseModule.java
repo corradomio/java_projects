@@ -46,7 +46,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
     protected List<Library> libraries;
     protected List<Module> dependencies;
     protected List<Source> sources;
-    // protected SourceRoots sourceRoots;
+    protected Set<File> sourceRoots;
 
     protected Logger logger;
 
@@ -217,23 +217,6 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
     // Module content
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public List<SourceRoot> getSourceRoots() {
-    //     if (this.sourceRoots != null)
-    //         return this.sourceRoots;
-    //
-    //     this.sourceRoots = new SourceRoots(this);
-    //
-    //     getDirectories().forEach(dir -> {
-    //         getBaseProject().getSources(dir, this)
-    //             .forEach(source -> {
-    //                 sourceRoots.add(source);
-    //             });
-    //     });
-    //
-    //     return this.sourceRoots;
-    // }
-
     @Override
     public List<Source> getSources() {
         if (sources != null)
@@ -268,7 +251,10 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
 
     @Override
     public Set<File> getSourceRoots() {
-        Set<File> sourceRoots = new HashSet<>();
+        if (sourceRoots != null)
+            return sourceRoots;
+
+        sourceRoots = new HashSet<>();
         for (Source source : getSources()) {
             source.getSourceRoot().ifPresent(sourceRoot ->
                 sourceRoots.add(sourceRoot));
@@ -307,9 +293,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
             return libraries;
 
         libraries = new ArrayList<>();
-
         libraries.addAll(getLocalLibraries());
-
         libraries.addAll(getMavenLibraries());
 
         return libraries;

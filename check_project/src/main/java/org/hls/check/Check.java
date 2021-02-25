@@ -17,10 +17,12 @@ public class Check {
         CacheManager.configure();
         Parallel.setup();
 
-        Project p = Projects.newProject(
-            // new File("D:\\SPLGroup\\Downloads\\BTProjects\\ForSalwa")
-            new File("D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0")
-            , Properties.empty()
+        Project p = Projects.newProject(new File(
+            // "D:\\SPLGroup\\Downloads\\BTProjects\\ForSalwa"
+            // "D:\\SPLGroup\\Downloads\\BTProjects\\cocome-maven-project"
+            // "D:\\SPLGroup\\example_repo\\deeplearning4j"
+            "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
+            ), Properties.empty()
         ) ;
 
         ProjectDump.dump(p);

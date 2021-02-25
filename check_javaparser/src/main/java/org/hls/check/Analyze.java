@@ -35,9 +35,9 @@ public class Analyze {
             log.infof("Load project");
             Project project = Projects.newProject(
                 new File(
-                    "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
+                    // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
                     // "D:\\SPLGroup\\spl-workspaces\\ext-workspace\\BTProjects\\DEUM"
-                    // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                    "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
                 ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));

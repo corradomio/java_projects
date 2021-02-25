@@ -267,6 +267,7 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
     private void resolve(MethodCallExpr n) {
         try {
             ResolvedMethodDeclaration rdecl = n.resolve();
+            logger.printf("   call: %s", rdecl.getQualifiedName());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
@@ -284,7 +285,8 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
     public void visit(ClassOrInterfaceType n, Void arg) {
         try {
             if (tsx().isNamespace(n.toString())) return;
-            ResolvedReferenceType rrt = n.resolve();
+            ResolvedReferenceType rdecl = n.resolve();
+            logger.printf("   ctype: %s", rdecl.getQualifiedName());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             if (JPUtils.isTypeParameter(n)) return;
@@ -298,7 +300,8 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
     public void visit(ArrayType n, Void arg) {
         try {
             if (tsx().isNamespace(n.toString())) return;
-            ResolvedArrayType rrt = n.resolve();
+            ResolvedArrayType rdecl = n.resolve();
+            logger.printf("   ctype: %s", rdecl.getComponentType().describe());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.toString();
@@ -315,7 +318,8 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
 
     private void resolve(VarType n) {
         try {
-            ResolvedType rrt = n.resolve();
+            ResolvedType rdecl = n.resolve();
+            logger.printf("   vtype: %s", rdecl.describe());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.toString();
@@ -337,6 +341,7 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
 
         try {
             ResolvedValueDeclaration rdecl = n.resolve();
+            logger.printf("   nexpr: %s", rdecl.getType().describe());
         }
         catch (UnsolvedSymbolException e) {
             ex = e;

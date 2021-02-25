@@ -30,7 +30,8 @@ public class JarLibrary extends BaseLibrary {
         super(ObjectName.empty(), module.getProject());
 
         String rpath = FileUtils.relativePathNoExt(module.getModuleHome(), jarFile);
-        setName(new PathName(rpath));
+        String name = FileUtils.getNameWithoutExt(jarFile);
+        setName(new PathName(name));
 
         this.libraryFile = jarFile;
         this.module = module;

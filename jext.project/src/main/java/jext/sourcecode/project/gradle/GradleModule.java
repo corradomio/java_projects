@@ -137,6 +137,13 @@ public class GradleModule extends BaseModule {
     }
 
     private void retrieveDependencies() {
+
+        // initialize to avoid NullPointerException(s)
+        dmodules = Collections.emptyList();
+        dcoords = Collections.emptyList();
+
+        if (project.isAborted()) return;
+
         logger.debugf("retrieveDependencies");
 
         String dependenciesTask = toTask("dependencies");

@@ -17,6 +17,7 @@ import jext.nio.file.FilteredFileVisitor;
 import jext.util.Bag;
 import jext.util.FileUtils;
 import jext.util.HashBag;
+import jext.util.PathUtils;
 import jext.util.PropertiesUtils;
 import jext.java.FastJavaParser;
 
@@ -53,7 +54,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     private static final String DEFAULT_SOURCES = ".java";
     private static final String DEFAULT_RESOURCES = ".xml,.properties,.json,.gradle,.project,.classpath";
-    private static final String DEFAULT_EXCLUDES = "target,out,.*";
+    private static final String DEFAULT_EXCLUDES = ".*";
     private static final String JAVA_EXT = ".java";
 
     // ----------------------------------------------------------------------
@@ -74,6 +75,8 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected FilePatterns sources;
     protected FilePatterns resources;
     protected FilePatterns excludes;
+
+    protected transient boolean aborted;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -312,8 +315,9 @@ public abstract class BaseProject extends NamedObject implements Project {
      * Check if there is a already registered module for the same directory
      */
     private boolean hasModuleWithHome(File sourceRoot) {
+        String relativePath = FileUtils.relativePath(getProjectHome(), sourceRoot);
         for(Module module : modules) {
-            if (module.getModuleHome().equals(sourceRoot))
+            if (module.getName().getFullName().equals(relativePath))
                 return true;
         }
         return false;
@@ -331,6 +335,8 @@ public abstract class BaseProject extends NamedObject implements Project {
         if (!hasRootModule()) {
             Module rootModule = newModule(projectHome);
             modules.add(rootModule);
+
+            logger.warnf("Added Root module");
         }
 
         modules.sort(Comparator.comparing(m -> m.getName().getFullName()));
@@ -546,6 +552,20 @@ public abstract class BaseProject extends NamedObject implements Project {
     @Override
     public double getComplexity(double threshold) {
         return 0.;
+    }
+
+    // ----------------------------------------------------------------------
+    // Abort
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void abort() {
+        this.aborted = true;
+    }
+
+    @Override
+    public boolean isAborted() {
+        return this.aborted;
     }
 
     // ----------------------------------------------------------------------

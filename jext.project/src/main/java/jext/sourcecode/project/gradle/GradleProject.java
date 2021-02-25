@@ -1,9 +1,8 @@
 package jext.sourcecode.project.gradle;
 
-import jdk.nashorn.internal.ir.debug.NashornClassReader;
-import jext.sourcecode.project.util.BaseProject;
-import jext.sourcecode.project.Module;
 import jext.io.file.FilePatterns;
+import jext.sourcecode.project.Module;
+import jext.sourcecode.project.util.BaseProject;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.BuildAction;
@@ -144,7 +143,7 @@ public class GradleProject extends BaseProject {
             Queue<GradleModule> toVisit = new LinkedList<>();
             toVisit.add(rootModule);
 
-            while (!toVisit.isEmpty()) {
+            while (!toVisit.isEmpty() && !isAborted()) {
                 GradleModule gmodule = toVisit.remove();
                 gmodules.add(gmodule);
 

@@ -117,16 +117,9 @@ public class Analysis extends BaseVoidVisitorAdapter {
 
         ParseResult<CompilationUnit> result = pool.parse(source.getFile());
         result.ifSuccessful(cu -> {
-            try {
-                ctx.setCu(cu);
-
-                logger.info("Start ...");
-                visit(cu, null);
-                logger.info("Done");
-            }
-            finally {
-                ctx.detach();
-            }
+            logger.info("Start ...");
+            visit(cu, null);
+            logger.info("Done");
         });
     }
 

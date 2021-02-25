@@ -207,7 +207,8 @@ public class JavaParserPool {
         // }
         // return cacheBuilder.build();
 
-        return CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
+        String cacheName = String.format("%s.%s", this.cachePrefix, name);
+        return CacheManager.getCache(cacheName);
 
         // return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
     }

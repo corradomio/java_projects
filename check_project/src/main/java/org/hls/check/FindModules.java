@@ -1,6 +1,5 @@
 package org.hls.check;
 
-import jdk.nashorn.internal.runtime.logging.Loggable;
 import jext.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;

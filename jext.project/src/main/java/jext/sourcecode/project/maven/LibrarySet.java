@@ -85,6 +85,7 @@ public class LibrarySet extends AbstractSet<Library> {
     public List<Library> resolveAll(List<Library> libraries) {
         return libraries.stream()
             .map(this::resolve)
+            .sorted()
             .collect(Collectors.toList());
     }
 

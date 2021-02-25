@@ -76,7 +76,7 @@ Soot:
         NameExpr
         AnnotationMemberDeclaration
         ExplicitConstructorInvocationStmt
-        MethodreferenceExpr
+        MethodReferenceExpr
         VariableDeclarator
         ConstructorDeclaration
         FieldDeclaration

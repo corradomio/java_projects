@@ -27,6 +27,10 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_EDGE;
 import static com.github.javaparser.Providers.provider;
 
+/**
+ * Extends the original JavaParserTypeSolver to support multiple
+ * source root directories.
+ */
 public class JavaParserTypeSolver implements TypeSolver {
 
     private List<Path> srcDirs;
@@ -74,6 +78,11 @@ public class JavaParserTypeSolver implements TypeSolver {
         srcDirs = new ArrayList<>();
     }
 
+    /**
+     * Add a source root
+     * @param fileDir directory of a source root
+     * @return itself
+     */
     public JavaParserTypeSolver add(File fileDir) {
         Path srcDir = fileDir.toPath();
         if (!Files.exists(srcDir) || !Files.isDirectory(srcDir)) {
@@ -83,6 +92,11 @@ public class JavaParserTypeSolver implements TypeSolver {
         return this;
     }
 
+    /**
+     * Add all source roots
+     * @param srcDirs list of source roots
+     * @return itself
+     */
     public JavaParserTypeSolver addAll(List<File> srcDirs) {
         srcDirs.forEach(this::add);
         return this;
