@@ -39,7 +39,7 @@ public class ProjectDump {
         stream.printf("fullname: %s\n", project.getName().getFullName());
         stream.printf("id: %s\n", project.getId());
         stream.printf("projectType: %s\n", project.getProjectType());
-        stream.printf("home: '%s'\n", project.getProjectType());
+        stream.printf("home: '%s'\n", project.getProjectHome());
         stream.printf("properties:\n");
         project.getProperties().forEach((n, v) -> {
             spaces(stream, 1).printf("%s: %s\n", n, v);
@@ -52,6 +52,7 @@ public class ProjectDump {
             spaces(stream, 2).printf("id: %s\n", m.getId());
             spaces(stream, 2).printf("home: '%s'\n", m.getModuleHome());
             spaces(stream, 2).printf("path: '%s'\n", m.getPath());
+            spaces(stream, 2).printf("runtimeLibrary: '%s'\n", m.getRuntimeLibrary().getName().getFullName());
             spaces(stream, 2).printf("properties:\n");
             m.getProperties().forEach((n, v) -> {
                 spaces(stream, 3).printf("%s: %s\n", n, v);
@@ -83,6 +84,18 @@ public class ProjectDump {
         });
         stream.printf("libraries:\n");
         project.getLibraries().forEach(l -> {
+            spaces(stream, 1).printf("%s:\n", l.getName().getName());
+            spaces(stream, 2).printf("name: %s\n", l.getName().getName());
+            spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
+            spaces(stream, 2).printf("id: %s\n", l.getId());
+            spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
+            spaces(stream, 2).printf("files:\n");
+            l.getFiles().forEach(lf -> {
+                spaces(stream, 3).printf("- %s\n", lf.getAbsolutePath());
+            });
+        });
+        stream.printf("runtimeLibraries:\n");
+        ProjectUtils.getRuntimeLibraries(project).forEach(l -> {
             spaces(stream, 1).printf("%s:\n", l.getName().getName());
             spaces(stream, 2).printf("name: %s\n", l.getName().getName());
             spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());

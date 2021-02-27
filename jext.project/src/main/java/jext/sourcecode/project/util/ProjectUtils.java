@@ -1,8 +1,6 @@
 package jext.sourcecode.project.util;
 
-// import ae.ebtic.spl.analysis.components.Component;
-// import ae.ebtic.spl.analysis.features.Feature;
-
+import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -20,11 +18,6 @@ public class ProjectUtils {
 
     public static List<Source> getSources(Project project) {
         List<Source> sources = new ArrayList<>();
-
-        // for (Module module : project.getModules())
-        //     for (SourceRoot sourceRoot : module.getSourceRoots())
-        //         sources.addAll(sourceRoot.getSources());
-
         for (Module module : project.getModules())
                 sources.addAll(module.getSources());
 
@@ -62,26 +55,6 @@ public class ProjectUtils {
 
     // ----------------------------------------------------------------------
 
-    // public static List<Library> getLibraries(Project project) {
-    //     Set<Library> libraries = new HashSet<>();
-    //
-    //     for (Module module : project.getModules())
-    //         libraries.addAll(module.getLibraries());
-    //
-    //     return new ArrayList<>(libraries);
-    // }
-    //
-    // public static Library getLibrary(Project project, String nameOrId) {
-    //     for (Module module : project.getModules()) {
-    //         Library library = module.getLibrary(nameOrId);
-    //         if (library != null)
-    //             return library;
-    //     }
-    //     return null;
-    // }
-
-    // ----------------------------------------------------------------------
-
     public static List<Type> getTypes(Project project) {
         List<Type> definedTypes = new ArrayList<>();
         project.getModules().forEach(module -> {
@@ -106,12 +79,6 @@ public class ProjectUtils {
         return null;
     }
 
-    /**
-     * Collect all module's defined types
-     *
-     * @param project
-     * @return
-     */
     public static Set<RefType> getDefinedTypes(Project project) {
         Set<RefType> definedTypes = new HashSet<>();
 
@@ -122,12 +89,6 @@ public class ProjectUtils {
         return definedTypes;
     }
 
-    /**
-     * Collect all module's used types
-     *
-     * @param project
-     * @return
-     */
     public static Set<RefType> getUsedTypes(Project project) {
         Set<RefType> usedTypes = new HashSet<>();
 
@@ -138,12 +99,6 @@ public class ProjectUtils {
         return usedTypes;
     }
 
-    /**
-     * Scann all modules for a defined type with the specified name
-     * @param project
-     * @param typeName
-     * @return
-     */
     public static Optional<RefType> findType(Project project, String typeName) {
         for (Module module : project.getModules()) {
             for (RefType refType : module.getTypes())
@@ -157,28 +112,12 @@ public class ProjectUtils {
 
     // ----------------------------------------------------------------------
 
-    // public static Set<Component> getComponents(Project project) {
-    //     Set<Component> components = new HashSet<>();
-    //
-    //     project.getModules().forEach(module -> {
-    //         module.getTypes().forEach(refType -> {
-    //             components.addAll(refType.asType().getComponents());
-    //         });
-    //     });
-    //     return components;
-    // }
-
-    // ----------------------------------------------------------------------
-
-    // public static Set<Feature> getFeatures(Project project) {
-    //     Set<Feature> features = new HashSet<>();
-    //
-    //     project.getModules().forEach(module -> {
-    //         module.getTypes().forEach(refType -> {
-    //             features.addAll(refType.asType().getFeatures());
-    //         });
-    //     });
-    //     return features;
-    // }
+    public static Set<Library> getRuntimeLibraries(Project project) {
+        Set<Library> rtLibraries = new HashSet<>();
+        project.getModules().forEach(module -> {
+            rtLibraries.add(module.getRuntimeLibrary());
+        });
+        return rtLibraries;
+    }
 
 }

@@ -18,10 +18,10 @@ public class Check {
         Parallel.setup();
 
         Project p = Projects.newProject(new File(
-            "D:\\SPLGroup\\BTProjects\\ForSalwa"
-            // "D:\\SPLGroup\\Downloads\\BTProjects\\cocome-maven-project"
+            // "D:\\SPLGroup\\BTProjects\\ForSalwa"
+            // "D:\\SPLGroup\\BTProjects\\cocome-maven-project"
             // "D:\\SPLGroup\\example_repo\\deeplearning4j"
-            // "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
+            "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
             ), Properties.empty()
         ) ;
 
