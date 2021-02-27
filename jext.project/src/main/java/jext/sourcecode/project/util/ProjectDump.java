@@ -35,10 +35,10 @@ public class ProjectDump {
     }
 
     private void yamlProject(Project project, PrintStream stream) {
-        stream.printf("name: '%s'\n", project.getName().getName());
-        stream.printf("fullname: '%s'\n", project.getName().getFullName());
+        stream.printf("name: %s\n", project.getName().getName());
+        stream.printf("fullname: %s\n", project.getName().getFullName());
         stream.printf("id: %s\n", project.getId());
-        stream.printf("type: %s\n", project.getProjectType());
+        stream.printf("projectType: %s\n", project.getProjectType());
         stream.printf("home: '%s'\n", project.getProjectType());
         stream.printf("properties:\n");
         project.getProperties().forEach((n, v) -> {
@@ -87,6 +87,7 @@ public class ProjectDump {
             spaces(stream, 2).printf("name: %s\n", l.getName().getName());
             spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
             spaces(stream, 2).printf("id: %s\n", l.getId());
+            spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
             spaces(stream, 2).printf("files:\n");
             l.getFiles().forEach(lf -> {
                 spaces(stream, 3).printf("- %s\n", lf.getAbsolutePath());
