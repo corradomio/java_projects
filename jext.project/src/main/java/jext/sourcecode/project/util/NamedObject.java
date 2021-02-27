@@ -47,6 +47,7 @@ public class NamedObject implements IdNamed, Comparable<Named> {
 
     //
     protected void setName(String name) {
+        name = name.replace(' ', '-');
         this.name = new PathName(name);
     }
 }
