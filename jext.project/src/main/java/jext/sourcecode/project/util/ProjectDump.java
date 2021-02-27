@@ -4,74 +4,93 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.util.FileUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 public class ProjectDump {
 
     public static void dump(Project project) {
-        new ProjectDump().dumpProject(project, System.out);
+        new ProjectDump().yamlProject(project, System.out);
     }
 
-    private void dumpProject(Project p, PrintStream Console) {
-        Console.printf("Project '%s' (%s)\n", p.getName(), p.getProjectType());
-        Console.printf("    home %s\n", p.getProjectHome());
+    public static void yaml(Project project, File yaml) {
+        try(OutputStream w = new BufferedOutputStream(new FileOutputStream(yaml))) {
+            yaml(project, w);
+        }
+        catch (IOException e) { }
+    }
 
-        Console.printf("  modules (%d):\n", p.getModules().size());
-        p.getModules().forEach(m -> {
-            Console.printf("    module '%s' (%s)\n", m.getName(), m.getId());
+    public static void yaml(Project project, OutputStream yaml) {
+        new ProjectDump().yamlProject(project, new PrintStream(yaml));
+    }
+
+    private static PrintStream spaces(PrintStream stream, int n) {
+        for (int i=0; i<n; ++i)
+            stream.print("    ");
+        return stream;
+    }
+
+    private void yamlProject(Project project, PrintStream stream) {
+        stream.printf("name: '%s'\n", project.getName().getName());
+        stream.printf("fullname: '%s'\n", project.getName().getFullName());
+        stream.printf("id: %s\n", project.getId());
+        stream.printf("type: %s\n", project.getProjectType());
+        stream.printf("home: '%s'\n", project.getProjectType());
+        stream.printf("properties:\n");
+        project.getProperties().forEach((n, v) -> {
+            spaces(stream, 1).printf("%s: %s\n", n, v);
         });
-
-        Console.printf("  libraries (%d):\n", p.getLibraries().size());
-        p.getLibraries().forEach(l-> {
-            LibraryType ltype = l.getLibraryType();
-            switch(ltype) {
-                case LOCAL:
-                    Console.printf("    local   %s (%s)\n", l.getName(), l.getId()); break;
-                case MAVEN:
-                    Console.printf("    maven   %s (%s)\n", l.getName(), l.getId()); break;
-                case RUNTIME:
-                    Console.printf("    runtime %s (%s)\n", l.getName(), l.getId()); break;
-                default:
-                    Console.printf("    library %s (%s)\n", l.getName(), l.getId()); break;
-            }
+        stream.printf("modules:\n");
+        project.getModules().forEach(m -> {
+            spaces(stream, 1).printf("'%s':\n", m.getName().getFullName());
+            spaces(stream, 2).printf("name: '%s'\n", m.getName().getName());
+            spaces(stream, 2).printf("fullname: '%s'\n", m.getName().getFullName());
+            spaces(stream, 2).printf("id: %s\n", m.getId());
+            spaces(stream, 2).printf("home: '%s'\n", m.getModuleHome());
+            spaces(stream, 2).printf("path: '%s'\n", m.getPath());
+            spaces(stream, 2).printf("properties:\n");
+            m.getProperties().forEach((n, v) -> {
+                spaces(stream, 3).printf("%s: %s\n", n, v);
+            });
+            spaces(stream, 2).printf("sourceRoots:\n");
+            m.getSourceRoots().forEach(sr -> {
+                spaces(stream, 3).printf("- %s\n", FileUtils.relativePath(m.getModuleHome(), sr));
+            });
+            spaces(stream, 2).printf("definedLibraries:\n");
+            m.getLibraries().forEach(l -> {
+                spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
+            });
+            spaces(stream, 2).printf("dependencies:\n");
+            m.getDependencies().forEach(d -> {
+                spaces(stream, 3).printf("- %s\n", d.getName().getFullName());
+            });
+            spaces(stream, 2).printf("libraries:\n");
+            m.getLibraries().forEach(l -> {
+                spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
+            });
+            spaces(stream, 2).printf("definedTypes:\n");
+            m.getTypes().forEach(t -> {
+                spaces(stream, 3).printf("- %s\n", t.getName().getFullName());
+            });
+            spaces(stream, 2).printf("usedTypes:\n");
+            m.getUsedTypes().forEach(t -> {
+                spaces(stream, 3).printf("- %s\n", t.getName().getFullName());
+            });
         });
-
-        Console.printf("  module details:\n", p.getModules().size());
-        p.getModules().forEach(m -> {
-            Console.printf("    module '%s' (%s)\n", m.getName(), m.getId());
-            Console.printf("        home '%s'\n", m.getModuleHome());
-            if (!m.getSourceRoots().isEmpty()) {
-                Console.printf("        sroots '%s'\n", m.getModuleHome());
-                m.getSourceRoots().forEach(sr -> {
-                    Console.printf("          %s\n", FileUtils.relativePath(m.getModuleHome(), sr));
-                });
-            }
-            if (!m.getSources().isEmpty()) {
-                Console.printf("      sources (%d):\n", m.getSources().size());
-                // m.getSources().getRoots().forEach(root -> {
-                //     Console.printf("        %s (%d)\n", root, m.getSources().getSources(root).size());
-                // });
-            }
-            if (!m.getLibraries().isEmpty()) {
-                Console.printf("      libraries (%d):\n", m.getLibraries().size());
-                m.getLibraries().forEach(library -> {
-                    Console.printf("        %s\n", library.getName());
-                });
-            }
-            if (!m.getResources().isEmpty()) {
-                Console.printf("      resources (%d):\n", m.getResources().size());
-                // m.getResources().forEach(resource -> {
-                //     Console.printf("        %s\n", resource);
-                // });
-            }
-            if (!m.getDependencies().isEmpty()) {
-                Console.printf("      dependencies (%d):\n", m.getDependencies().size());
-                m.getDependencies().forEach(d -> {
-                    Console.printf("        '%s'\n", d.getName());
-                });
-            }
+        stream.printf("libraries:\n");
+        project.getLibraries().forEach(l -> {
+            spaces(stream, 1).printf("'%s':\n", l.getName().getName());
+            spaces(stream, 2).printf("name: '%s'\n", l.getName().getName());
+            spaces(stream, 2).printf("fullname: '%s'\n", l.getName().getFullName());
+            spaces(stream, 2).printf("id: %s\n", l.getId());
+            spaces(stream, 2).printf("files:\n");
+            l.getFiles().forEach(lf -> {
+                spaces(stream, 3).printf("- %s\n", lf.getAbsolutePath());
+            });
         });
-
-        Console.printf("end\n");
     }
 }

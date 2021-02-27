@@ -49,6 +49,7 @@ public class MavenProject extends BaseProject {
 
     @Override
     public Module getModule(String nameOrId) {
+        // nameOrId can be Maven coords
         for (Module module : getModules()) {
             if (((MavenModule) module).getMavenCoords().equals(nameOrId))
                 return module;

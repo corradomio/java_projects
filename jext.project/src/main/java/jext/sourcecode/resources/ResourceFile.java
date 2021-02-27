@@ -34,7 +34,7 @@ public class ResourceFile extends NamedObject implements Resource {
         this.path =  FileUtils.relativePath(getProject().getProjectHome(), file);
 
         String rpath = FileUtils.relativePathNoExt(module.getModuleHome(), getFile());
-        setName(new PathName(rpath));
+        setName(rpath);
     }
 
     // ----------------------------------------------------------------------

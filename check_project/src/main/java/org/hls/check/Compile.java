@@ -28,7 +28,7 @@ public class Compile {
             params
         );
 
-        System.out.println(dl4j.getModule("").getTypes());
+        System.out.println(dl4j.getModule().getTypes());
 
         // System.out.println(dl4j.getProjectType());
         // dl4j.getLibraries().forEach(library -> {

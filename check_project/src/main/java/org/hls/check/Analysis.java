@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static jext.sourcecode.project.Project.ROOT_MODULE_NAME;
+
 public class Analysis extends BaseVoidVisitorAdapter {
 
     private Project project;
@@ -159,11 +161,11 @@ public class Analysis extends BaseVoidVisitorAdapter {
     static void test1(Project project) {
 
         Analysis analysis = new Analysis(project);
-        analysis.analyze(project.getModule(""));
+        analysis.analyze(project.getModule(ROOT_MODULE_NAME));
     }
 
     static void test2(Project project) throws Exception {
-        Module module = project.getModule("");
+        Module module = project.getModule();
         List<File> libs = project.getLibraries().stream()
             .flatMap(lib -> lib.getFiles().stream())
             .collect(Collectors.toList());

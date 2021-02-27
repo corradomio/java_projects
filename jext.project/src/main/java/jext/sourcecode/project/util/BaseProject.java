@@ -17,7 +17,6 @@ import jext.nio.file.FilteredFileVisitor;
 import jext.util.Bag;
 import jext.util.FileUtils;
 import jext.util.HashBag;
-import jext.util.PathUtils;
 import jext.util.PropertiesUtils;
 import jext.java.FastJavaParser;
 
@@ -43,8 +42,6 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
-
-    private static final String ROOT_MODULE_NAME = "";
 
     public static final String MODULE_FILE = "build.xml";
 
@@ -186,6 +183,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         moduleDirs.forEach(moduleHome -> {
             Module module = newModule(moduleHome);
+            module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_FROM_CONFIGURATION_FILE);
             modules.add(module);
         });
 
@@ -301,14 +299,13 @@ public abstract class BaseProject extends NamedObject implements Project {
     private void addSourceRootModules(List<File> sourceRoots) {
         sourceRoots.stream()
             .filter(sourceRoot -> !hasModuleWithHome(sourceRoot))
-            .forEach(this::addModule);
-    }
+            .forEach(sourceRoot -> {
+                Module module = newModule(sourceRoot);
+                module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_FROM_SOURCE_ROOTS);
+                modules.add(module);
 
-    private void addModule(File sourceRoot) {
-        Module module = newModule(sourceRoot);
-        modules.add(module);
-
-        logger.warnf("Added module %s based on source root '%s'", module.getName(), module.getModuleHome());
+                logger.warnf("Added module %s based on source root '%s'", module.getName(), module.getModuleHome());
+            });
     }
 
     /**
@@ -334,6 +331,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         // if the ROOT module is not present it is ADDED
         if (!hasRootModule()) {
             Module rootModule = newModule(projectHome);
+            rootModule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_IS_MISSING);
             modules.add(rootModule);
 
             logger.warnf("Added Root module");
@@ -353,6 +351,9 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     @Override
     public Module getModule(String nameOrId) {
+        if (nameOrId.isEmpty() || nameOrId.equals("0"))
+            nameOrId = ROOT_MODULE_NAME;
+
         for (Module module : getModules()) {
             if (module.getId().equals(nameOrId))
                 return module;

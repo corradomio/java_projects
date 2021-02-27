@@ -287,10 +287,10 @@ public class GradleModule extends BaseModule {
     }
 
     private String toTask(String taskName) {
-        String moduleName = getName().toString().replace('/',':');
-        if (moduleName.isEmpty())
+        String gradleProject = getPath().replace('/',':');
+        if (gradleProject.isEmpty())
             return taskName;
         else
-            return String.format("%s:%s", moduleName, taskName);
+            return String.format("%s:%s", gradleProject, taskName);
     }
 }

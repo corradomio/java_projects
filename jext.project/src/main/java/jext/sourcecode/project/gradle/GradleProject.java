@@ -130,6 +130,7 @@ public class GradleProject extends BaseProject {
 
         moduleHomes.forEach(moduleHome -> {
             Module module = newModule(moduleHome);
+            module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_CONFIGURATION);
             modules.add(module);
         });
     }
@@ -327,7 +328,9 @@ public class GradleProject extends BaseProject {
 
     @Override
     protected Module newModule(File moduleHome) {
-        return new GradleModule(moduleHome, this);
+        Module module = new GradleModule(moduleHome, this);
+        module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_AUTOMATIC);
+        return module;
     }
 
 }

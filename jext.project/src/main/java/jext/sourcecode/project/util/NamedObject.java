@@ -3,6 +3,7 @@ package jext.sourcecode.project.util;
 import jext.name.IdNamed;
 import jext.name.Name;
 import jext.name.Named;
+import jext.name.PathName;
 import jext.util.StringUtils;
 
 public class NamedObject implements IdNamed, Comparable<Named> {
@@ -45,7 +46,7 @@ public class NamedObject implements IdNamed, Comparable<Named> {
     }
 
     //
-    protected void setName(Name name) {
-        this.name = name;
+    protected void setName(String name) {
+        this.name = new PathName(name);
     }
 }

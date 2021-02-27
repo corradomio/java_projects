@@ -18,14 +18,16 @@ public class Check {
         Parallel.setup();
 
         Project p = Projects.newProject(new File(
-            // "D:\\SPLGroup\\Downloads\\BTProjects\\ForSalwa"
+            "D:\\SPLGroup\\BTProjects\\ForSalwa"
             // "D:\\SPLGroup\\Downloads\\BTProjects\\cocome-maven-project"
             // "D:\\SPLGroup\\example_repo\\deeplearning4j"
-            "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
+            // "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
             ), Properties.empty()
         ) ;
 
-        ProjectDump.dump(p);
+        String name = p.getName().getName();
+
+        ProjectDump.yaml(p, new File(name + ".yaml"));
 
 
         Parallel.shutdown();

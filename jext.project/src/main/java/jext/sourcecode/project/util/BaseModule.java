@@ -1,6 +1,9 @@
 package jext.sourcecode.project.util;
 
-import jext.name.PathName;
+import jext.cache.Cache;
+import jext.cache.CacheManager;
+import jext.io.util.FileFilters;
+import jext.logging.Logger;
 import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
@@ -9,10 +12,6 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
-import jext.cache.Cache;
-import jext.cache.CacheManager;
-import jext.io.util.FileFilters;
-import jext.logging.Logger;
 import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.util.FileUtils;
@@ -23,15 +22,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public abstract class BaseModule extends NamedObject implements /*Directory*/Module {
+import static jext.sourcecode.project.Project.ROOT_MODULE_NAME;
+
+public abstract class BaseModule extends NamedObject implements Module {
 
     // ----------------------------------------------------------------------
     // Protected fields
@@ -61,12 +60,19 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
         this.properties = new Properties();
 
         this.path = FileUtils.relativePath(project.getProjectHome(), moduleHome);
-        setName(new PathName(this.path));
+        setName(this.path);
 
         this.logger = Logger.getLogger("%s.%s.%s",
             getClass().getSimpleName(),
             project.getName().getName(),
             getName().getName());
+    }
+
+    @Override
+    protected void setName(String name) {
+        if (name.isEmpty())
+            name = ROOT_MODULE_NAME;
+        super.setName(name);
     }
 
     // ----------------------------------------------------------------------
@@ -405,7 +411,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
         Cache<String, Set<RefType>> cache = CacheManager.getCache(String.format("dependency.%s.module.types", project.getId()));
 
         Set<RefType> definedTypes = cache.get(getId(), () -> {
-            Set<RefType> types = new HashSet<>();
+            Set<RefType> types = new TreeSet<>();
 
             getSources().forEach(source ->
                         types.addAll(source.getTypes()));
@@ -426,7 +432,7 @@ public abstract class BaseModule extends NamedObject implements /*Directory*/Mod
         Cache<String, Set<RefType>> cache = CacheManager.getCache(String.format("dependency.%s.module.usedTypes", project.getId()));
 
         return cache.get(getId(), () -> {
-                Set<RefType> usedTypes = new HashSet<>();
+                Set<RefType> usedTypes = new TreeSet<>();
 
                 getSources().forEach(source ->
                         usedTypes.addAll(source.getUsedTypes()));

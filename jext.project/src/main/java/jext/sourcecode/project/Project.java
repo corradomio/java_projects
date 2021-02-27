@@ -45,6 +45,14 @@ public interface Project extends IdNamed {
     String MODULE_RESOURCES = "module.resources";
     String MODULE_EXCLUDE = "module.exclude";
 
+    String ROOT_MODULE_NAME = "$";
+    String MODULE_DEFINITION = "module.definition";
+    String MODULE_DEFINITION_AUTOMATIC = "automatic";
+    String MODULE_DEFINITION_BY_CONFIGURATION = "configuration";
+    String MODULE_DEFINITION_FROM_CONFIGURATION_FILE = "fromConfigurationFile";
+    String MODULE_DEFINITION_IS_MISSING = "wasMissing";
+    String MODULE_DEFINITION_FROM_SOURCE_ROOTS = "sourceRoots";
+
     // ----------------------------------------------------------------------
 
     /** Project type */
@@ -58,6 +66,10 @@ public interface Project extends IdNamed {
 
     /** List of all project's modules */
     List<Module> getModules();
+
+    default Module getModule() {
+        return getModule(ROOT_MODULE_NAME);
+    }
 
     /** Retrieve a module by id/full name */
     Module getModule(String nameOrId);
