@@ -14,6 +14,7 @@ import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
+import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
 import jext.util.SetUtils;
 
@@ -283,6 +284,8 @@ public abstract class BaseModule extends NamedObject implements Module {
             logger.errorf("JDK Library %s not available. Uses the default jdk8", runtimeName);
             runtimeLibrary = lfinder.getLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY);
         }
+        if (runtimeLibrary == null)
+            runtimeLibrary = new InvalidLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY, getProject());
 
         return runtimeLibrary;
     }
