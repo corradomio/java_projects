@@ -46,9 +46,9 @@ public class ProjectDump {
         });
         stream.printf("modules:\n");
         project.getModules().forEach(m -> {
-            spaces(stream, 1).printf("'%s':\n", m.getName().getFullName());
-            spaces(stream, 2).printf("name: '%s'\n", m.getName().getName());
-            spaces(stream, 2).printf("fullname: '%s'\n", m.getName().getFullName());
+            spaces(stream, 1).printf("%s:\n", m.getName().getFullName());
+            spaces(stream, 2).printf("name: %s\n", m.getName().getName());
+            spaces(stream, 2).printf("fullname: %s\n", m.getName().getFullName());
             spaces(stream, 2).printf("id: %s\n", m.getId());
             spaces(stream, 2).printf("home: '%s'\n", m.getModuleHome());
             spaces(stream, 2).printf("path: '%s'\n", m.getPath());
@@ -83,9 +83,9 @@ public class ProjectDump {
         });
         stream.printf("libraries:\n");
         project.getLibraries().forEach(l -> {
-            spaces(stream, 1).printf("'%s':\n", l.getName().getName());
-            spaces(stream, 2).printf("name: '%s'\n", l.getName().getName());
-            spaces(stream, 2).printf("fullname: '%s'\n", l.getName().getFullName());
+            spaces(stream, 1).printf("%s:\n", l.getName().getName());
+            spaces(stream, 2).printf("name: %s\n", l.getName().getName());
+            spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
             spaces(stream, 2).printf("id: %s\n", l.getId());
             spaces(stream, 2).printf("files:\n");
             l.getFiles().forEach(lf -> {
