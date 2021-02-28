@@ -23,9 +23,6 @@ import java.util.stream.Stream;
  */
 public class Parallelize {
 
-    // private AtomicInteger running = new AtomicInteger();
-    // private AtomicInteger waiting = new AtomicInteger();
-
     private class TaskFunction<T, U> implements Callable<U> {
         private T t;
         private Function<T, U> body;
@@ -37,14 +34,7 @@ public class Parallelize {
 
         @Override
         public U call() {
-            // try {
-            //     waiting.decrementAndGet();
-            //     running.incrementAndGet();
                 return body.apply(t);
-            // }
-            // finally {
-            //     running.decrementAndGet();
-            // }
         }
     }
 
@@ -59,14 +49,7 @@ public class Parallelize {
 
         @Override
         public Boolean call() {
-            // try {
-            //     waiting.decrementAndGet();
-            //     running.incrementAndGet();
                 body.accept(t);
-            // }
-            // finally {
-            //     running.decrementAndGet();
-            // }
             return true;
         }
     }
@@ -82,14 +65,7 @@ public class Parallelize {
 
         @Override
         public Boolean call() {
-            // try {
-            //     waiting.decrementAndGet();
-            //     running.incrementAndGet();
                 body.accept(t);
-            // }
-            // finally {
-            //     running.decrementAndGet();
-            // }
             return true;
         }
     }

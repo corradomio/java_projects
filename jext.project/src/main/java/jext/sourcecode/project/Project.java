@@ -45,7 +45,7 @@ public interface Project extends IdNamed {
     String MODULE_RESOURCES = "module.resources";
     String MODULE_EXCLUDE = "module.exclude";
 
-    String ROOT_MODULE_NAME = "$";
+    String ROOT_MODULE_NAME = "";
     String MODULE_DEFINITION = "module.definition";
     String MODULE_DEFINITION_AUTOMATIC = "automatic";
     String MODULE_DEFINITION_BY_CONFIGURATION = "configuration";

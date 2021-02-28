@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class FastJavaParser {
@@ -70,69 +71,67 @@ public class FastJavaParser {
     // Parse the source code
     // ----------------------------------------------------------------------
 
-    public TypeRole parse() {
-        if (sourceFile.getName().equals("Test.java"))
-            sourceRoot = null;
+    private TypeRole parse() {
         if (parsed)
-            return this.role;
+            return role;
         else
             parsed = true;
 
-            String namespace = "";
-            boolean exit = false;
+        String namespace = "";
+        boolean exit = false;
 
-            List<String> lines = FileUtils.toStrings(sourceFile, JavaUtils.PUBLIC);
-            for (String line : lines) {
-                if (exit) break;
+        List<String> lines = FileUtils.toStrings(sourceFile, JavaUtils.PUBLIC);
+        for (String line : lines) {
+            if (exit) break;
 
-                // // ...
-                if (line.startsWith("//"))
-                    continue;
-                    // package ...
-                else if (line.isEmpty())
-                    continue;
-                else if (line.startsWith(JavaUtils.PACKAGE)) {
-                    namespace = parseNamespace(line);
-                }
-                // import static ...
-                else if (line.startsWith(JavaUtils.IMPORT_STATIC)) {
-                    // import static <namespace>.<name>.<symbol>;
-                    Name refType = parseImport(line);
-                    refType = refType.getParent();
+            line = line.trim();
+
+            // // ...
+            if (line.startsWith("//" ) || line.contains("*"))
+                continue;
+                // package ...
+            else if (line.isEmpty())
+                continue;
+            else if (line.startsWith(JavaUtils.PACKAGE)) {
+                namespace = parseNamespace(line);
+            }
+            // import static ...
+            else if (line.startsWith(JavaUtils.IMPORT_STATIC)) {
+                // import static <namespace>.<name>.<symbol>;
+                Name refType = parseImport(line);
+                refType = refType.getParent();
+                this.classImports.add(refType);
+            }
+            // import ...
+            else if (line.startsWith(JavaUtils.IMPORT)) {
+                Name refType = parseImport(line);
+                if (line.contains(".*;"))
+                    this.namespaceImports.add(refType.getParent());
+                else
                     this.classImports.add(refType);
-                }
-                // import ...
-                else if (line.startsWith(JavaUtils.IMPORT)) {
-                    Name refType = parseImport(line);
-                    if (line.contains(".*;"))
-                        this.namespaceImports.add(refType.getParent());
-                    else
-                        this.classImports.add(refType);
-                }
-                // [public] [abstract] [final] [static] class|enum|interface [@]<name>[typeParams] { ...
-                else if (line.contains(JavaUtils.CLASS)) {
-                    this.role = TypeRole.CLASS;
-                    exit = true;
-                } else if (line.contains(JavaUtils.INTERFACE)) {
-                    this.role = TypeRole.INTERFACE;
-                    exit = true;
-                } else if (line.contains(JavaUtils.ENUM)) {
-                    this.role = TypeRole.ENUM;
-                    exit = true;
-                } else if (line.contains(JavaUtils.ANNOTATION)) {
-                    this.role = TypeRole.ANNOTATION;
-                    exit = true;
-                } else {
-                    //
-                }
             }
-
-            if (role != TypeRole.UNKNOWN) {
-                this.sourceRoot = parseRoot(namespace, sourceFile);
-                this.type = parseType(namespace, sourceFile);
+            // [public] [abstract] [final] [static] class|enum|[@]interface <name>[typeParams] { ...
+            else if (line.contains(JavaUtils.CLASS)) {
+                this.role = TypeRole.CLASS;
+                exit = true;
+            } else if (line.contains(JavaUtils.INTERFACE)) {
+                this.role = TypeRole.INTERFACE;
+                exit = true;
+            } else if (line.contains(JavaUtils.ENUM)) {
+                this.role = TypeRole.ENUM;
+                exit = true;
+            } else if (line.contains(JavaUtils.ANNOTATION)) {
+                this.role = TypeRole.ANNOTATION;
+                exit = true;
             } else {
-                role = TypeRole.UNKNOWN;
+                //
             }
+        }
+
+        if (role != TypeRole.UNKNOWN) {
+            this.sourceRoot = parseRoot(namespace, sourceFile);
+            this.type = parseType(namespace, sourceFile);
+        }
 
         return this.role;
     }
@@ -183,8 +182,9 @@ public class FastJavaParser {
         int sep = path.indexOf(relativePath);
         if (sep == -1)
             return null;
-        else
-            return new File(path.substring(0, sep - 1));
+
+        String homePath = path.substring(0, sep - 1);
+        return new File(homePath);
     }
 
 }

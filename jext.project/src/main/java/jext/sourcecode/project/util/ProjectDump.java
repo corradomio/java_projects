@@ -1,6 +1,5 @@
 package jext.sourcecode.project.util;
 
-import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.util.FileUtils;
 
@@ -13,19 +12,23 @@ import java.io.PrintStream;
 
 public class ProjectDump {
 
-    public static void dump(Project project) {
-        new ProjectDump().yamlProject(project, System.out);
+    public static final int NO_LIBRARIES = 0x0001;
+    public static final int NO_TYPES = 0x0002;
+    public static final int NO_DEPENDENCIES = 0x0004;
+
+    public static void dump(Project project, long flags) {
+        new ProjectDump().yamlProject(project, System.out, flags);
     }
 
-    public static void yaml(Project project, File yaml) {
+    public static void yaml(Project project, File yaml, long flags) {
         try(OutputStream w = new BufferedOutputStream(new FileOutputStream(yaml))) {
-            yaml(project, w);
+            yaml(project, w, flags);
         }
         catch (IOException e) { }
     }
 
-    public static void yaml(Project project, OutputStream yaml) {
-        new ProjectDump().yamlProject(project, new PrintStream(yaml));
+    public static void yaml(Project project, OutputStream yaml, long flags) {
+        new ProjectDump().yamlProject(project, new PrintStream(yaml), flags);
     }
 
     private static PrintStream spaces(PrintStream stream, int n) {
@@ -34,7 +37,7 @@ public class ProjectDump {
         return stream;
     }
 
-    private void yamlProject(Project project, PrintStream stream) {
+    private void yamlProject(Project project, PrintStream stream, long flags) {
         stream.printf("name: %s\n", project.getName().getName());
         stream.printf("fullname: %s\n", project.getName().getFullName());
         stream.printf("id: %s\n", project.getId());
@@ -46,13 +49,19 @@ public class ProjectDump {
         });
         stream.printf("modules:\n");
         project.getModules().forEach(m -> {
-            spaces(stream, 1).printf("%s:\n", m.getName().getFullName());
-            spaces(stream, 2).printf("name: %s\n", m.getName().getName());
-            spaces(stream, 2).printf("fullname: %s\n", m.getName().getFullName());
+            if (m.getName().getFullName().isEmpty()) {
+                spaces(stream, 1).printf("'%s':\n", m.getName().getFullName());
+                spaces(stream, 2).printf("name: '%s'\n", m.getName().getName());
+                spaces(stream, 2).printf("fullname: '%s'\n", m.getName().getFullName());
+            }
+            else {
+                spaces(stream, 1).printf("%s:\n", m.getName().getFullName());
+                spaces(stream, 2).printf("name: %s\n", m.getName().getName());
+                spaces(stream, 2).printf("fullname: %s\n", m.getName().getFullName());
+            }
             spaces(stream, 2).printf("id: %s\n", m.getId());
             spaces(stream, 2).printf("home: '%s'\n", m.getModuleHome());
             spaces(stream, 2).printf("path: '%s'\n", m.getPath());
-            spaces(stream, 2).printf("runtimeLibrary: '%s'\n", m.getRuntimeLibrary().getName().getFullName());
             spaces(stream, 2).printf("properties:\n");
             m.getProperties().forEach((n, v) -> {
                 spaces(stream, 3).printf("%s: %s\n", n, v);
@@ -61,50 +70,63 @@ public class ProjectDump {
             m.getSourceRoots().forEach(sr -> {
                 spaces(stream, 3).printf("- %s\n", FileUtils.relativePath(m.getModuleHome(), sr));
             });
-            spaces(stream, 2).printf("definedLibraries:\n");
-            m.getLibraries().forEach(l -> {
-                spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
-            });
-            spaces(stream, 2).printf("dependencies:\n");
-            m.getDependencies().forEach(d -> {
-                spaces(stream, 3).printf("- %s\n", d.getName().getFullName());
-            });
-            spaces(stream, 2).printf("libraries:\n");
-            m.getLibraries().forEach(l -> {
-                spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
-            });
-            spaces(stream, 2).printf("definedTypes:\n");
-            m.getTypes().forEach(t -> {
-                spaces(stream, 3).printf("- %s\n", t.getName().getFullName());
-            });
-            spaces(stream, 2).printf("usedTypes:\n");
-            m.getUsedTypes().forEach(t -> {
-                spaces(stream, 3).printf("- %s\n", t.getName().getFullName());
-            });
+
+            if ((flags & NO_DEPENDENCIES) == 0) {
+                spaces(stream, 2).printf("dependencies:\n");
+                m.getDependencies().forEach(d -> {
+                    spaces(stream, 3).printf("- %s\n", d.getName().getFullName());
+                });
+            }
+            if ((flags & NO_LIBRARIES) == 0) {
+                spaces(stream, 2).printf("runtimeLibrary: '%s'\n", m.getRuntimeLibrary().getName().getFullName());
+
+                spaces(stream, 2).printf("definedLibraries:\n");
+                m.getLibraries().forEach(l -> {
+                    spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
+                });
+
+                spaces(stream, 2).printf("libraries:\n");
+                m.getLibraries().forEach(l -> {
+                    spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
+                });
+            }
+            if ((flags & NO_TYPES) == 0) {
+                spaces(stream, 2).printf("definedTypes:\n");
+                m.getTypes().forEach(t -> {
+                    spaces(stream, 3).printf("- %s\n", t.getName().getFullName());
+                });
+                spaces(stream, 2).printf("usedTypes:\n");
+                m.getUsedTypes().forEach(t -> {
+                    spaces(stream, 3).printf("- %s\n", t.getName().getFullName());
+                });
+            }
         });
-        stream.printf("libraries:\n");
-        project.getLibraries().forEach(l -> {
-            spaces(stream, 1).printf("%s:\n", l.getName().getName());
-            spaces(stream, 2).printf("name: %s\n", l.getName().getName());
-            spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
-            spaces(stream, 2).printf("id: %s\n", l.getId());
-            spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
-            spaces(stream, 2).printf("files:\n");
-            l.getFiles().forEach(lf -> {
-                spaces(stream, 3).printf("- %s\n", lf.getAbsolutePath());
+
+        if ((flags & NO_LIBRARIES) == 0) {
+            stream.printf("libraries:\n");
+            project.getLibraries().forEach(l -> {
+                spaces(stream, 1).printf("%s:\n", l.getName().getName());
+                spaces(stream, 2).printf("name: %s\n", l.getName().getName());
+                spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
+                spaces(stream, 2).printf("id: %s\n", l.getId());
+                spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
+                spaces(stream, 2).printf("files:\n");
+                l.getFiles().forEach(lf -> {
+                    spaces(stream, 3).printf("- %s\n", lf.getAbsolutePath());
+                });
             });
-        });
-        stream.printf("runtimeLibraries:\n");
-        ProjectUtils.getRuntimeLibraries(project).forEach(l -> {
-            spaces(stream, 1).printf("%s:\n", l.getName().getName());
-            spaces(stream, 2).printf("name: %s\n", l.getName().getName());
-            spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
-            spaces(stream, 2).printf("id: %s\n", l.getId());
-            spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
-            spaces(stream, 2).printf("files:\n");
-            l.getFiles().forEach(lf -> {
-                spaces(stream, 3).printf("- %s\n", lf.getAbsolutePath());
+            stream.printf("runtimeLibraries:\n");
+            ProjectUtils.getRuntimeLibraries(project).forEach(l -> {
+                spaces(stream, 1).printf("%s:\n", l.getName().getName());
+                spaces(stream, 2).printf("name: %s\n", l.getName().getName());
+                spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
+                spaces(stream, 2).printf("id: %s\n", l.getId());
+                spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
+                spaces(stream, 2).printf("files:\n");
+                l.getFiles().forEach(lf -> {
+                    spaces(stream, 3).printf("- %s\n", lf.getAbsolutePath());
+                });
             });
-        });
+        }
     }
 }

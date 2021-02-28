@@ -229,8 +229,8 @@ public abstract class BaseModule extends NamedObject implements Module {
         if (sources != null)
             return sources;
 
+        directories = getBaseProject().getDirectories(moduleHome);
         sources = new ArrayList<>();
-
         getDirectories().forEach(dir -> {
             List<Source> srclist = getBaseProject().getSources(dir, this);
             sources.addAll(srclist);
@@ -266,6 +266,9 @@ public abstract class BaseModule extends NamedObject implements Module {
             source.getSourceRoot().ifPresent(sourceRoot ->
                 sourceRoots.add(sourceRoot));
         }
+
+
+
         return sourceRoots;
     }
 

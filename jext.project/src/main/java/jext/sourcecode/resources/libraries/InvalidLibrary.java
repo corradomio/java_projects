@@ -1,15 +1,12 @@
 package jext.sourcecode.resources.libraries;
 
 import jext.name.Name;
-import jext.name.Named;
 import jext.name.PathName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.resources.BaseLibrary;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collections;

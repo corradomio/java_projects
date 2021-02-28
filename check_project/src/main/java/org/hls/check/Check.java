@@ -22,14 +22,15 @@ public class Check {
             // "D:\\SPLGroup\\BTProjects\\cocome-maven-project"
             // "D:\\SPLGroup\\example_repo\\deeplearning4j"
             "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
+            // "D:\\Projects\\java\\strange"
             ), Properties.empty()
         ) ;
 
         String name = p.getName().getName();
 
-        ProjectDump.yaml(p, new File(name + ".yaml"));
+        ProjectDump.yaml(p, new File(name + ".yaml"), ProjectDump.NO_TYPES | ProjectDump.NO_LIBRARIES);
 
-
+        System.out.println("Done");
         Parallel.shutdown();
     }
 }

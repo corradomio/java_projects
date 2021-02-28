@@ -194,7 +194,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected void findModulesByJavaSourceRoots() {
         logger.debug("findModulesByJavaSourceRoots");
 
-        List<File> sourceRoots = findSourceRoots();
+        List<File> sourceRoots = findModulesHome();
         addSourceRootModules(sourceRoots);
     }
 
@@ -213,10 +213,9 @@ public abstract class BaseProject extends NamedObject implements Project {
      *
      * @return
      */
-    private List<File> findSourceRoots() {
-        // skip[0] == skip subtree
-        // skip[1] == skip files
-        HashBag<File> sourceRoots = new HashBag<>();
+    private List<File> findModulesHome() {
+        HashBag<File> modulesHome = new HashBag<>();
+
         try {
             Files.walkFileTree(projectHome.toPath(), new SimpleFileVisitor<Path>() {
                 @Override
@@ -243,7 +242,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                     if (!sourceRoot.isPresent())
                         return FileVisitResult.CONTINUE;
 
-                    addJavaSourceRoot(sourceRoots, sourceRoot.get());
+                    addModuleHome(modulesHome, sourceRoot.get());
 
                     return FileVisitResult.SKIP_SIBLINGS;
                 }
@@ -252,13 +251,13 @@ public abstract class BaseProject extends NamedObject implements Project {
             logger.errorf("findModulesByJavaSourceRoots[%s]: %s", projectHome, e);
         }
 
-        List<File> selectedRoots = new ArrayList<>();
-        for(File sourceRoot : sourceRoots) {
-            int count = sourceRoots.get(sourceRoot);
-            selectedRoots.add(sourceRoot);
+        List<File> selectedHomes = new ArrayList<>();
+        for(File moduleHome : modulesHome) {
+            int count = modulesHome.get(moduleHome);
+            selectedHomes.add(moduleHome);
         }
 
-        return selectedRoots;
+        return selectedHomes;
     }
 
     private static final String MAVEN_SRC_MAIN_JAVA = "java";
@@ -267,38 +266,42 @@ public abstract class BaseProject extends NamedObject implements Project {
     private static final String MAVEN_SRC = "src";
     private static final String ANT_SOURCE = "source";
 
-    private void addJavaSourceRoot(Bag<File> sourceRoots, File sourceRoot) {
+    private void addModuleHome(Bag<File> modulesHome, File sourceRoot) {
+        File moduleHome = sourceRoot;
 
         // check src/main/java
-        if (MAVEN_SRC_MAIN_JAVA.equals(sourceRoot.getName()))
-            sourceRoot = sourceRoot.getParentFile();
+        if (MAVEN_SRC_MAIN_JAVA.equals(moduleHome.getName()))
+            moduleHome = moduleHome.getParentFile();
         // check src/main/[anything]
-        if (MAVEN_SRC_MAIN.equals(sourceRoot.getParentFile().getName()))
-            sourceRoot = sourceRoot.getParentFile();
+        if (MAVEN_SRC_MAIN.equals(moduleHome.getParentFile().getName()))
+            moduleHome = moduleHome.getParentFile();
         // check src/test/[anything]
-        if (MAVEN_SRC_TEST.equals(sourceRoot.getParentFile().getName()))
-            sourceRoot = sourceRoot.getParentFile();
+        if (MAVEN_SRC_TEST.equals(moduleHome.getParentFile().getName()))
+            moduleHome = moduleHome.getParentFile();
         // check src/main
-        if (MAVEN_SRC_MAIN.equals(sourceRoot.getName()))
-            sourceRoot = sourceRoot.getParentFile();
+        if (MAVEN_SRC_MAIN.equals(moduleHome.getName()))
+            moduleHome = moduleHome.getParentFile();
         // check src/test
-        if (MAVEN_SRC_TEST.equals(sourceRoot.getName()))
-            sourceRoot = sourceRoot.getParentFile();
+        if (MAVEN_SRC_TEST.equals(moduleHome.getName()))
+            moduleHome = moduleHome.getParentFile();
 
-        String name = sourceRoot.getName();
+        String name = moduleHome.getName();
         if (MAVEN_SRC.equals(name) || ANT_SOURCE.equals(name))
-            sourceRoot = sourceRoot.getParentFile();
+            moduleHome = moduleHome.getParentFile();
 
-        sourceRoots.add(sourceRoot);
+        if (moduleHome.equals(sourceRoot))
+            moduleHome = moduleHome.getParentFile();
+
+        modulesHome.add(moduleHome);
     }
 
     /**
-     * Add an extra module for each source root not already registerd as module home
+     * Add an extra module for each source root not already registered as module home
      * @param sourceRoots
      */
     private void addSourceRootModules(List<File> sourceRoots) {
         sourceRoots.stream()
-            .filter(sourceRoot -> !hasModuleWithHome(sourceRoot))
+            .filter(sourceRoot -> !isModuleHome(sourceRoot))
             .forEach(sourceRoot -> {
                 Module module = newModule(sourceRoot);
                 module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_FROM_SOURCE_ROOTS);
@@ -309,9 +312,9 @@ public abstract class BaseProject extends NamedObject implements Project {
     }
 
     /**
-     * Check if there is a already registered module for the same directory
+     * Check if there is a already registered module for the same directory as home directory
      */
-    private boolean hasModuleWithHome(File sourceRoot) {
+    private boolean isModuleHome(File sourceRoot) {
         String relativePath = FileUtils.relativePath(getProjectHome(), sourceRoot);
         for(Module module : modules) {
             if (module.getName().getFullName().equals(relativePath))

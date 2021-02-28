@@ -35,7 +35,7 @@ public class Compile {
         //     System.out.println(library.getName());
         // });
 
-        ProjectDump.dump(dl4j);
+        ProjectDump.dump(dl4j, ProjectDump.NO_TYPES | ProjectDump.NO_LIBRARIES);
         JavaParserPool pool = JavaParserPool.newPool("global");
 
         long start = System.currentTimeMillis();
