@@ -60,6 +60,14 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return newGraph(directed, false, false, weighted, null, null);
     }
 
+    /**
+     * Created a new graph with the same properties of the specified graph
+     *
+     * @param graph graph used as properties'  template
+     * @param <V> ver
+     * @param <E>
+     * @return
+     */
     public static <V, E> Graph<V, E> newGraph(Graph<V, E> graph) {
         GraphType gtype = graph.getType();
         return newGraph(

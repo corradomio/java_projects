@@ -2,10 +2,10 @@ package jext.graph;
 
 import jext.logging.Logger;
 import jext.net.URL;
-import jext.util.HashMap;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class GraphDatabases {
@@ -42,6 +42,8 @@ public class GraphDatabases {
 
     public static GraphDatabase newGraphDatabase(Properties props) throws GraphDatabaseException {
         String surl = props.getProperty(URL);
+        if (surl == null)
+            surl = props.getProperty(URI);
         if (surl == null)
             surl = props.getProperty(URI);
         return newGraphDatabase(surl, props);

@@ -93,21 +93,21 @@ public class PropertiesUtils {
     }};
 
     public static String getString(Properties properties, String name) {
-        return properties.getProperty(name);
+        return resolveValue(properties.getProperty(name), properties);
     }
 
     public static int getInt(Properties properties, String name, int defaultValue) {
-        String value = properties.getProperty(name, String.valueOf(defaultValue));
+        String value = resolveValue(properties.getProperty(name, String.valueOf(defaultValue)), properties);
         return Integer.parseInt(value);
     }
 
     public static long getLong(Properties properties, String name, long defaultValue) {
-        String value = properties.getProperty(name, String.valueOf(defaultValue));
+        String value = resolveValue(properties.getProperty(name, String.valueOf(defaultValue)), properties);
         return Long.parseLong(value);
     }
 
     public static boolean getBoolean(Properties properties, String name, boolean defaultValue) {
-        String value = properties.getProperty(name, String.valueOf(defaultValue));
+        String value = resolveValue(properties.getProperty(name, String.valueOf(defaultValue)), properties);
         if (FALSE_VALUES.contains(value))
             return false;
         if (TRUE_VALUES.contains(value))
@@ -117,12 +117,12 @@ public class PropertiesUtils {
     }
 
     public static File getFile(Properties properties, String name) {
-        String value = properties.getProperty(name);
+        String value = resolveValue(properties.getProperty(name), properties);
         return new File(value);
     }
 
     public static URI getURI(Properties properties, String name) {
-        String value = properties.getProperty(name);
+        String value = resolveValue(properties.getProperty(name), properties);
         try {
             return new URI(value);
         } catch (URISyntaxException e) {
