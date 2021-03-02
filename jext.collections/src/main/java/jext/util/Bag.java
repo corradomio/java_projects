@@ -1,13 +1,11 @@
 package jext.util;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
-public class Bag<T extends Comparable<T>> extends HashMap<T, Integer> {
+public class Bag<T> extends HashMap<T, Integer> implements Iterable<T> {
 
-    public Bag() {
-
-    }
+    public Bag() { }
 
     public void add(T item) {
         this.put(item, 1+ this.getOrDefault(item, 0));
@@ -32,15 +30,20 @@ public class Bag<T extends Comparable<T>> extends HashMap<T, Integer> {
             items[i++] = new Pair<>(item, this.get(item));
         }
 
-        Arrays.sort(items, (o1, o2) -> {
-            int i1 = o1.getValue();
-            int i2 = o2.getValue();
-            if (i1 == i2)
-                return o1.getKey().compareTo(o2.getKey());
-            else
-                return -(i1-i2);
-        });
+        // Arrays.sort(items, (o1, o2) -> {
+        //     int i1 = o1.getValue();
+        //     int i2 = o2.getValue();
+        //     if (i1 == i2)
+        //         return o1.getKey().compareTo(o2.getKey());
+        //     else
+        //         return -(i1-i2);
+        // });
 
         return items;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return super.keySet().iterator();
     }
 }
