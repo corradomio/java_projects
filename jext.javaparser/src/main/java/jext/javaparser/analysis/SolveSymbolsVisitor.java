@@ -31,8 +31,8 @@ import com.github.javaparser.resolution.types.ResolvedTypeVariable;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.resolution.ReferencedTypeDeclaration;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
 import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExtWrapper;
+import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverWithResolve;
 import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
@@ -44,8 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
 
@@ -67,7 +65,7 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
         cu.getStorage().ifPresent(storage ->
             source = storage.getPath().toFile());
 
-        if (ts instanceof TypeSolverExt)
+        if (ts instanceof TypeSolverWithResolve)
             this.ts = ts;
         else
             this.ts = new TypeSolverExtWrapper(ts);
@@ -373,7 +371,7 @@ public class SolveSymbolsVisitor extends BaseVoidVisitorAdapter {
             return new ReferencedTypeDeclaration(namedImports.get(name));
 
         for (String namespace : starImports) {
-            String fullName = JavaUtils.fullName(namespace, name);
+            String fullName = JavaUtils.qualifiedName(namespace, name);
             SymbolReference<ResolvedReferenceTypeDeclaration> solved = ts.getRoot().tryToSolveType(fullName);
             if (solved.isSolved())
                 return solved.getCorrespondingDeclaration();

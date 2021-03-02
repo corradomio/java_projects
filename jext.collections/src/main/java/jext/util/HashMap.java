@@ -18,12 +18,12 @@ public class HashMap<K, V> extends java.util.HashMap<K, V> implements Map<K, V> 
         super(m);
     }
 
-    public HashMap<K, V> add(K key, V value) {
+    public HashMap<K, V> putThis(K key, V value) {
         super.put(key, value);
         return this;
     }
 
-    public HashMap<K, V> addAll(java.util.Map<? extends K, ? extends V> m) {
+    public HashMap<K, V> putAllThis(java.util.Map<? extends K, ? extends V> m) {
         super.putAll(m);
         return this;
     }

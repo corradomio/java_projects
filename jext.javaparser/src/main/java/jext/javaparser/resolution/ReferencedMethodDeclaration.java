@@ -17,7 +17,7 @@ public class ReferencedMethodDeclaration implements ResolvedMethodDeclaration {
     private int nParameters;
 
     public ReferencedMethodDeclaration(String typeName, String methodName, int nParameters) {
-        this.qualifiedName = JavaUtils.fullName(typeName, methodName);
+        this.qualifiedName = JavaUtils.qualifiedName(typeName, methodName);
         this.nParameters = nParameters;
     }
 

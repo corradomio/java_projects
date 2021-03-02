@@ -44,7 +44,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
+import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverWithResolve;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 
@@ -96,8 +96,8 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
         JPUtils.removeTypeSolver(ts);
     }
 
-    protected TypeSolverExt tsx() {
-        return (TypeSolverExt) ts;
+    protected TypeSolverWithResolve tsx() {
+        return (TypeSolverWithResolve) ts;
     }
 
     // ----------------------------------------------------------------------

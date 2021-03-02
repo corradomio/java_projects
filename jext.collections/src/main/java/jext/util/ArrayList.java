@@ -13,13 +13,13 @@ public class ArrayList<E> extends java.util.ArrayList<E> implements List<E> {
     }
 
     @Override
-    public ArrayList<E> add_(E e) {
+    public ArrayList<E> addThis(E e) {
         super.add(e);
         return this;
     }
 
     @Override
-    public ArrayList<E> addAll_(Collection<? extends E> c) {
+    public ArrayList<E> addAllThis(Collection<? extends E> c) {
         super.addAll(c);
         return this;
     }

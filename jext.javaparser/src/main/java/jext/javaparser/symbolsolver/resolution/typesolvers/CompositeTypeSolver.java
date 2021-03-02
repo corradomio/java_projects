@@ -5,7 +5,6 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CompositeTypeSolver extends BaseTypeSolver {
@@ -51,7 +50,7 @@ public class CompositeTypeSolver extends BaseTypeSolver {
     @Override
     public boolean isNamespace(String name) {
         for (TypeSolver typeSolver : elements) {
-            if (((TypeSolverExt)typeSolver).isNamespace(name))
+            if (((TypeSolverWithResolve)typeSolver).isNamespace(name))
                 return true;
         }
         return false;

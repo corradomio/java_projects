@@ -9,8 +9,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
-import jext.cache.CacheManager;
 import jext.cache.Cache;
+import jext.cache.CacheManager;
 import jext.logging.Logger;
 
 import java.io.File;

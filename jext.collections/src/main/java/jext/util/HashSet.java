@@ -21,13 +21,13 @@ public class HashSet<E> extends java.util.HashSet<E> implements Set<E> {
     }
 
     @Override
-    public HashSet<E> put(E e) {
+    public HashSet<E> addThis(E e) {
         super.add(e);
         return this;
     }
 
     @Override
-    public Set<E> putAll(Collection<? extends E> c) {
+    public Set<E> addAllThis(Collection<? extends E> c) {
         super.addAll(c);
         return this;
     }

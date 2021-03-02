@@ -8,6 +8,7 @@ import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,22 @@ public class ProjectUtils {
                 return source;
         }
         return null;
+    }
+
+    public static List<File> getSourceRoots(Project project) {
+        List<File> sourceRoots = new ArrayList<>();
+        project.getModules().forEach(module -> {
+            sourceRoots.addAll(module.getSourceRoots());
+        });
+        return sourceRoots;
+    }
+
+    public static Set<File> getLibraryFiles(Project project) {
+        Set<File> libraryFiles = new HashSet<>();
+        project.getLibraries().forEach(library -> {
+            libraryFiles.addAll(library.getFiles());
+        });
+        return libraryFiles;
     }
 
     // ----------------------------------------------------------------------

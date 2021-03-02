@@ -8,15 +8,23 @@ import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver2;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
 import jext.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
+import jext.sourcecode.project.util.ProjectDump;
+import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
+import org.hls.java.analysis.MemberDeclarations;
+import org.hls.java.analysis.TypeDeclarations;
 
 import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 public class CheckDL4J {
 
@@ -37,27 +45,32 @@ public class CheckDL4J {
 
             project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
 
-            // ProjectDump.dump(project);
+            ProjectDump.yaml(project, new File(project.getName().getName() + "yaml"), 0);
 
-            pool = JavaParserPool.getPool().withCache();
 
-            project.getModules().forEach(module -> {
-                pool.addAll(module.getSourceRoots());
-            });
+            List<File> sourceRoots = ProjectUtils.getSourceRoots(project);
+            Set<File> libraryFiles = ProjectUtils.getLibraryFiles(project);
 
+
+            // JavaParserPool:
+            //      multiple source roots
+            pool = JavaParserPool.newPool("dl4j")
+                .addAll(sourceRoots)
+                .withCache();
+
+            // ClassPoolRegistry
+            //      multiple jar files
             cpr = new ClassPoolRegistry()
+                // .addAll(libraryFiles)
                 .addJdk(new File("D:\\Java\\Jdk8.0.x64"));
-            project.getLibraries().forEach(library -> {
-                cpr.addAll(library.getFiles());
-            });
+
+            // Resolve all symbols
+            //
 
             project.getModules().forEach(module -> {
                 Parallel.forEach(module.getSources(), source -> {
                     solve(source.getFile());
                 });
-                // module.getSources().forEach(source -> {
-                //     solve(source.getFile());
-                // });
             });
 
         }
@@ -72,15 +85,17 @@ public class CheckDL4J {
     private static void solve(File source) {
         System.out.printf("== %s ==\n", source.getName());
 
-        CompositeTypeSolver ts = new CachedTypeSolver();
+        ContextTypeSolver2 ts = new ContextTypeSolver2();
         ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
         ts.add(new JavaParserPoolTypeSolver().withPool(pool));
 
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {
 
-            SolveSymbolsVisitor ssv = new SolveSymbolsVisitor();
-            ssv.analyze(cu, ts);
+            ts.withCu(cu);
+            //SolveSymbolsVisitor visitor = new SolveSymbolsVisitor();
+            MemberDeclarations visitor = new MemberDeclarations();
+            visitor.analyze(cu, ts);
         });
     }
 }

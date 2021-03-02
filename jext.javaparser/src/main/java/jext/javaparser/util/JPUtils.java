@@ -16,6 +16,7 @@ import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
@@ -54,6 +55,18 @@ public class JPUtils {
 
     public static void removeSymbolSolver(CompilationUnit cu) {
         cu.removeData(Node.SYMBOL_RESOLVER_KEY);
+    }
+
+    // ----------------------------------------------------------------------
+
+    public static boolean isInnerClass(ResolvedReferenceTypeDeclaration rdecl) {
+        String packageName = rdecl.getPackageName();
+        String qualifiedName = rdecl.getQualifiedName();
+        boolean isInnerClass = qualifiedName.indexOf('.', packageName.length()+1) != -1;
+        if (isInnerClass)
+            return true;
+        else
+            return false;
     }
 
     // ----------------------------------------------------------------------
@@ -272,7 +285,7 @@ public class JPUtils {
         if (!ocid.isPresent())
             return Optional.empty();
         oqname = getFullyQualifiedName(ocid.get());
-        return Optional.of(JavaUtils.fullName(oqname.get(), name));
+        return Optional.of(JavaUtils.qualifiedName(oqname.get(), name));
     }
 
     // ----------------------------------------------------------------------

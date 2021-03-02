@@ -14,12 +14,11 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.logging.Logger;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class BaseTypeSolver implements TypeSolverExt {
+public abstract class BaseTypeSolver implements TypeSolverWithResolve {
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -30,7 +29,7 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
         UNSOLVED = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
     protected Logger logger;
-    protected TypeSolverExt parent;
+    protected TypeSolverWithResolve parent;
     protected String name;
 
     // ----------------------------------------------------------------------
@@ -68,7 +67,7 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
         if (parent == this) {
             throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
         }
-        this.parent = (TypeSolverExt) parent;
+        this.parent = (TypeSolverWithResolve) parent;
     }
 
     // ----------------------------------------------------------------------

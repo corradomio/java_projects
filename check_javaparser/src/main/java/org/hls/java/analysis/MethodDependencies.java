@@ -1,2 +1,4 @@
-package org.hls.java.analysis;public class MethodDependencies {
+package org.hls.java.analysis;
+
+public class MethodDependencies {
 }

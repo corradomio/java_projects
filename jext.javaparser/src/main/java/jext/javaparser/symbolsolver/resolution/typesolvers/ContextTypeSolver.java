@@ -12,15 +12,12 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.MethodAmbiguityException;
-import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedPrimitiveType;
 import com.github.javaparser.resolution.types.ResolvedType;
-import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
@@ -30,7 +27,6 @@ import jext.javaparser.exception.ResolveAbortedException;
 import jext.javaparser.exception.ResolveTimeoutException;
 import jext.javaparser.resolution.ReferenceConstructorDeclaration;
 import jext.javaparser.resolution.ReferencedMethodDeclaration;
-import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
@@ -42,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class ContextTypeSolver extends CompositeTypeSolver {
@@ -610,7 +605,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // 2) try to resolve using startImports (it contains also the current package
         //    AND "java.lang")
         for(String namespace : starImports) {
-            solved = tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
+            solved = tryToSolveUsingSolvers(JavaUtils.qualifiedName(namespace, name));
             if (solved.isSolved())
                 return solved;
         }
@@ -619,7 +614,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //    TODO: this part MUST BE IMPROVED
         Stack<String> contextStack = getContextStack(context);
         for(String namespace : contextStack) {
-            solved = tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
+            solved = tryToSolveUsingSolvers(JavaUtils.qualifiedName(namespace, name));
             if (solved.isSolved())
                 return solved;
         }

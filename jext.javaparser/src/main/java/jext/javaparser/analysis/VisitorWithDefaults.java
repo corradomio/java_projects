@@ -40,7 +40,6 @@ import com.github.javaparser.ast.type.UnknownType;
 import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
-import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 
 public class VisitorWithDefaults<R, A> extends VisitorAdapter<R, A> {
 

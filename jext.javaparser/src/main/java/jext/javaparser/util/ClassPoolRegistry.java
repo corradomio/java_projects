@@ -8,10 +8,10 @@ import jext.logging.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -102,7 +102,7 @@ public class ClassPoolRegistry {
         return this;
     }
 
-    public ClassPoolRegistry addAll(List<File> libraryFiles) {
+    public ClassPoolRegistry addAll(Collection<File> libraryFiles) {
         libraryFiles.forEach(this::add);
         return this;
     }
