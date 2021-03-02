@@ -45,7 +45,7 @@ public class CheckDL4J {
 
             project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
 
-            ProjectDump.yaml(project, new File(project.getName().getName() + "yaml"), 0);
+            ProjectDump.yaml(project, new File(project.getName().getName() + ".yaml"), 0);
 
 
             List<File> sourceRoots = ProjectUtils.getSourceRoots(project);
