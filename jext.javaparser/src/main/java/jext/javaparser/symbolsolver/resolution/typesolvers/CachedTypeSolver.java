@@ -41,7 +41,7 @@ public class CachedTypeSolver extends CompositeTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // Resolve
+    // tryToSolveType
     // ----------------------------------------------------------------------
 
     @Override

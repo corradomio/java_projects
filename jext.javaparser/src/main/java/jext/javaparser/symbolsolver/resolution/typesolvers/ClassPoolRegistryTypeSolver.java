@@ -73,7 +73,7 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // Resolve
+    // tryToSolveType
     // ----------------------------------------------------------------------
 
     @Override

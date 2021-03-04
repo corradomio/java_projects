@@ -7,43 +7,27 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.javaparser.analysis.BaseVoidVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExtWrapper;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverWithResolve;
+import jext.javaparser.analysis.ContextVisitorAdapter;
 import jext.javaparser.util.JPUtils;
-import jext.logging.Logger;
-import jext.util.FileUtils;
 
-import java.io.File;
 import java.util.NoSuchElementException;
 
-public class TypeDeclarations extends BaseVoidVisitorAdapter {
+public class TypeDeclarations extends ContextVisitorAdapter {
 
-    private static final int NAME_LENGTH = 16;
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
-    private File source;
+    public TypeDeclarations() {
 
-    public void analyze(CompilationUnit cu, TypeSolver ts) {
-        cu.getStorage().ifPresent(storage ->
-            source = storage.getPath().toFile());
-
-        if (ts instanceof TypeSolverWithResolve)
-            this.ts = ts;
-        else
-            this.ts = new TypeSolverExtWrapper(ts);
-
-        logger = Logger.getLogger(loggerName());
-
-        super.analyze(cu);
     }
 
-    private String loggerName() {
-        String name = FileUtils.getNameWithoutExt(source);
-        if (name.length() > NAME_LENGTH)
-            name = name.substring(0, NAME_LENGTH);
-        while (name.length() < NAME_LENGTH)
-            name += " ";
-        return name;
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public void analyze(CompilationUnit cu, TypeSolver ts) {
+        super.analyze(cu, ts);
     }
 
     // ----------------------------------------------------------------------
@@ -111,5 +95,9 @@ public class TypeDeclarations extends BaseVoidVisitorAdapter {
             logger.error("AnnotationDeclaration: " + e.toString() + " " + n.toString());
         }
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
 }

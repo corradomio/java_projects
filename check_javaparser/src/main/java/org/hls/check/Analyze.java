@@ -9,7 +9,9 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.UnsolvedSymbolsTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
+import jext.javaparser.util.UnsolvedSymbols;
 import jext.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
@@ -23,6 +25,7 @@ public class Analyze {
 
     static JavaParserPool pool;
     static ClassPoolRegistry cpr;
+    static UnsolvedSymbols unr;
 
     static Logger log = Logger.getLogger("Analyze");
 
@@ -59,15 +62,17 @@ public class Analyze {
                 cpr.addAll(library.getFiles());
             });
 
+            unr = new UnsolvedSymbols();
+
             log.infof("Solve");
 
             project.getModules().forEach(module -> {
-                Parallel.forEach(module.getSources(), source -> {
-                    solve(source.getFile());
-                });
-                // module.getSources().forEach(source -> {
+                // Parallel.forEach(module.getSources(), source -> {
                 //     solve(source.getFile());
                 // });
+                module.getSources().forEach(source -> {
+                    solve(source.getFile());
+                });
             });
 
         }
@@ -85,6 +90,7 @@ public class Analyze {
         CompositeTypeSolver ts = new CachedTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
         ts.add(new JavaParserPoolTypeSolver().withPool(pool));
+        ts.add(new UnsolvedSymbolsTypeSolver(unr));
 
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {

@@ -9,7 +9,6 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver2;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
 import jext.logging.Logger;
@@ -85,14 +84,14 @@ public class CheckDL4J {
     private static void solve(File source) {
         System.out.printf("== %s ==\n", source.getName());
 
-        ContextTypeSolver2 ts = new ContextTypeSolver2();
+        ContextTypeSolver ts = new ContextTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
         ts.add(new JavaParserPoolTypeSolver().withPool(pool));
 
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {
 
-            ts.withCu(cu);
+            // ts.withCu(cu);
             //SolveSymbolsVisitor visitor = new SolveSymbolsVisitor();
             MemberDeclarations visitor = new MemberDeclarations();
             visitor.analyze(cu, ts);

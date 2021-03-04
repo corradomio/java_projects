@@ -319,7 +319,7 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // TypeSolver
+    // tryToSolveType
     // ----------------------------------------------------------------------
 
     @Override

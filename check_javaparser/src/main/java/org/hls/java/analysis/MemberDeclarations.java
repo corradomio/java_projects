@@ -1,9 +1,6 @@
 package org.hls.java.analysis;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -14,88 +11,26 @@ import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.javaparser.analysis.BaseVoidVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExtWrapper;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverWithResolve;
-import jext.lang.JavaUtils;
-import jext.logging.Logger;
-import jext.util.FileUtils;
+import jext.javaparser.analysis.ContextVisitorAdapter;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class MemberDeclarations extends BaseVoidVisitorAdapter {
+public class MemberDeclarations extends ContextVisitorAdapter {
 
-    private static final int NAME_LENGTH = 16;
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
-    private File source;
+    public MemberDeclarations() {
 
-    private String packageName;
-    private Map<String, String> namedImports = new HashMap<>();
-    private List<String> starImports = new ArrayList<>();
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public void analyze(CompilationUnit cu, TypeSolver ts) {
-        cu.getStorage().ifPresent(storage ->
-            source = storage.getPath().toFile());
-
-        if (ts instanceof TypeSolverWithResolve)
-            this.ts = ts;
-        else
-            this.ts = new TypeSolverExtWrapper(ts);
-
-        logger = Logger.getLogger(loggerName());
-
-        super.analyze(cu);
-    }
-
-    private String loggerName() {
-        String name = FileUtils.getNameWithoutExt(source);
-        if (name.length() > NAME_LENGTH)
-            name = name.substring(0, NAME_LENGTH);
-        while (name.length() < NAME_LENGTH)
-            name += " ";
-        return name;
-    }
-
-    // ---
-    // BEFORE ImportDeclaration
-    // AFTER  PackageDeclaration
-    //
-
-    @Override
-    public void visit(ImportDeclaration n, Void arg) {
-        // called BEFORE PackageDeclaration
-        String importName = n.getNameAsString();
-
-        if (n.isStatic()) return;
-        if (n.isAsterisk()) {
-            starImports.add(importName);
-        }
-        else {
-            namedImports.put(JavaUtils.nameOf(importName), importName);
-        }
-        // logger.printf("imp: %s", n.getNameAsString());
-        super.visit(n, arg);
-    }
-
-    @Override
-    public void visit(PackageDeclaration n, Void arg) {
-        // called AFTER the ImportDeclaration
-        packageName = n.getNameAsString();
-
-        // classes in the same package
-        starImports.add(packageName);
-        // classes in "java.lang"
-        starImports.add(JavaUtils.JAVA_LANG);
-        // to support fully qualified classes
-        starImports.add(JavaUtils.ROOT);
-
-        // logger.printf("pkg: %s", packageName);
-        super.visit(n, arg);
+        super.analyze(cu, ts);
     }
 
     // ----------------------------------------------------------------------
@@ -158,8 +93,6 @@ public class MemberDeclarations extends BaseVoidVisitorAdapter {
         }
     }
 
-    // ----------------------------------------------------------------------
-
     @Override
     public void visit(FieldDeclaration n, Void args) {
         try {
@@ -172,5 +105,9 @@ public class MemberDeclarations extends BaseVoidVisitorAdapter {
             logger.error("MethodDeclaration: " + e.toString() + " " + symbol);
         }
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
 }
