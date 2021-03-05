@@ -2,36 +2,42 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
+import jext.javaparser.util.ContextSolvedSymbols;
 import jext.javaparser.util.UnsolvedSymbols;
 
-public class UnsolvedSymbolsTypeSolver extends BaseTypeSolver {
+public class ContextSolvedSymbolsTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------
     // Protected fields
     // ----------------------------------------------------------------------
 
-    protected UnsolvedSymbols unresolvedSymbols;
+    protected ContextSolvedSymbols solvedSymbols;
+    protected UnsolvedSymbols unsolvedSymbols;
 
     // ----------------------------------------------------------------------
     // Constructors
     // ----------------------------------------------------------------------
 
-    public UnsolvedSymbolsTypeSolver(UnsolvedSymbols unresolvedSymbols) {
-        super(DEFAULT);
-        this.unresolvedSymbols = unresolvedSymbols;
+    public ContextSolvedSymbolsTypeSolver(ContextSolvedSymbols solvedSymbols, UnsolvedSymbols unsolvedSymbols) {
+        this(DEFAULT, solvedSymbols, unsolvedSymbols);
     }
 
-    public UnsolvedSymbolsTypeSolver(String name, UnsolvedSymbols unresolvedSymbols) {
+    public ContextSolvedSymbolsTypeSolver(String name, ContextSolvedSymbols solvedSymbols, UnsolvedSymbols unsolvedSymbols) {
         super(name);
-        this.unresolvedSymbols = unresolvedSymbols;
+        this.solvedSymbols = solvedSymbols;
+        this.unsolvedSymbols = unsolvedSymbols;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
+    public ContextSolvedSymbols getSolvedSymbols() {
+        return solvedSymbols;
+    }
+
     public UnsolvedSymbols getUnsolvedSymbols() {
-        return unresolvedSymbols;
+        return unsolvedSymbols;
     }
 
     // ----------------------------------------------------------------------
@@ -40,7 +46,7 @@ public class UnsolvedSymbolsTypeSolver extends BaseTypeSolver {
 
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String symbol) {
-        return unresolvedSymbols.resolve(symbol);
+        return solvedSymbols.resolve(symbol);
     }
 
 }
