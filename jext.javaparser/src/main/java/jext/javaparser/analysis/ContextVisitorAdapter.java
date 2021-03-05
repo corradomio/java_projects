@@ -16,11 +16,10 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import javassist.expr.MethodCall;
 import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExtWrapper;
 import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverWithNamespace;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ContextResolverTypeSolver;
-import jext.javaparser.util.ContextResolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextSolvedSymbolsTypeSolver;
+import jext.javaparser.util.ContextSolvedSymbols;
 import jext.javaparser.util.UnsolvedSymbols;
 import jext.lang.JavaUtils;
 import jext.util.HashSet;
@@ -39,7 +38,7 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
     protected Map<String, String> namedImports = new HashMap<>();
     protected Set<String> qualifiedImports = new HashSet<>();
     protected List<String> starImports = new ArrayList<>();
-    protected ContextResolver resolvedSymbols;
+    protected ContextSolvedSymbols resolvedSymbols;
     protected UnsolvedSymbols unsolvedSymbols;
     protected File source;
 
@@ -64,7 +63,7 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
         else
             this.ts = new TypeSolverExtWrapper(ts);
 
-        tsx().findTypeSolver(ContextResolverTypeSolver.class)
+        tsx().findTypeSolver(ContextSolvedSymbolsTypeSolver.class)
             .ifPresent(cssts -> {
                 this.resolvedSymbols = cssts.getSolvedSymbols();
                 this.unsolvedSymbols = cssts.getUnsolvedSymbols();
@@ -212,7 +211,7 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
     }
 
     protected Optional<String> resolveVarType(String name, VarType n) {
-        logger.printf("   ?mcall: %s", name);
+        logger.printf("   ?vtype: %s", name);
 
         return Optional.empty();
     }
@@ -225,7 +224,7 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
     }
 
     // ----------------------------------------------------------------------
-    // end
+    // End
     // ----------------------------------------------------------------------
 
 }

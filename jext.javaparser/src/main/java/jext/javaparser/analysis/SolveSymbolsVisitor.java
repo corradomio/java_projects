@@ -30,6 +30,74 @@ import jext.javaparser.util.JPUtils;
 
 import java.util.NoSuchElementException;
 
+/*
+        Type
+            UnknownType
+            ReferencedType
+                ClassOrInterfaceType
+                ArrayType
+                TypeParameter
+            VarType
+            UnionType
+            PrimitiveType
+            WildcardType
+            VoidType
+            IntersectionType
+
+        ResolvedType
+            ResolvedVoidType
+            ResolvedArrayType
+            ResolvedPrimitiveType
+            ResolvedTypeVariable
+            ResolvedUnionType
+            ResolvedIntersectionType
+            ResolvedWildcard
+            ResolvedLambdaConstraintType
+            ResolvedReferenceType
+                ReferenceTypeImpl
+            NullType
+            LazyType
+            InferenceVariable
+            InferenceVariableType
+            LambdaArgumentTypePlaceholder
+
+        Resolvable
+            EnumConstantDeclaration
+            Parameter
+            MethodCallExpr
+            AnnotationExpr
+                MarkerAnnotationExpr
+                SingleMemberAnnotationExpr
+                NormalAnnotationExpr
+            EnumDeclaration
+            NmeExpr
+            ThisExpr
+            AnnotationMemberDeclaration
+            MethodReferenceExpr
+            ExplicitConstructorInvocationStmt
+            VariableDeclarator
+            ConstructorDeclaration
+            FieldDeclaration
+            MethodDeclaration
+            Type
+                UnknownType
+                ReferencedType
+                    ClassOrInterfaceType
+                    ArrayType
+                    TypeParameter
+                VarType
+                UnionType
+                PrimitiveType
+                WildcardType
+                VoidType
+                IntersectionType
+            ObjectCreationExpr
+            AnnotationDeclaration
+            FieldAccessExpr
+            ClassOrInterfaceDeclaration
+
+ */
+
 public class SolveSymbolsVisitor extends ContextVisitorAdapter {
 
     // ----------------------------------------------------------------------

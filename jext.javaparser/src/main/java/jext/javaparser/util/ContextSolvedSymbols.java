@@ -7,7 +7,7 @@ import jext.javaparser.resolution.ReferencedTypeDeclaration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContextResolver {
+public class ContextSolvedSymbols {
 
     private Map<String, ResolvedReferenceTypeDeclaration>
         resolved = new HashMap<>();
