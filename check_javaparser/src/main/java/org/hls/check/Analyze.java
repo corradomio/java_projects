@@ -9,8 +9,9 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.UnsolvedSymbolsTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextResolverTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
+import jext.javaparser.util.ContextResolver;
 import jext.javaparser.util.UnsolvedSymbols;
 import jext.logging.Logger;
 import jext.sourcecode.project.Project;
@@ -25,7 +26,8 @@ public class Analyze {
 
     static JavaParserPool pool;
     static ClassPoolRegistry cpr;
-    static UnsolvedSymbols unr;
+    static ContextResolver css;
+    static UnsolvedSymbols us;
 
     static Logger log = Logger.getLogger("Analyze");
 
@@ -40,7 +42,8 @@ public class Analyze {
                 new File(
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
                     // "D:\\SPLGroup\\spl-workspaces\\ext-workspace\\BTProjects\\DEUM"
-                    "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                    // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                    "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
                 ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
@@ -62,17 +65,18 @@ public class Analyze {
                 cpr.addAll(library.getFiles());
             });
 
-            unr = new UnsolvedSymbols();
+            css = new ContextResolver();
+            us = new UnsolvedSymbols();
 
             log.infof("Solve");
 
             project.getModules().forEach(module -> {
-                // Parallel.forEach(module.getSources(), source -> {
-                //     solve(source.getFile());
-                // });
-                module.getSources().forEach(source -> {
+                Parallel.forEach(module.getSources(), source -> {
                     solve(source.getFile());
                 });
+                // module.getSources().forEach(source -> {
+                //     solve(source.getFile());
+                // });
             });
 
         }
@@ -90,7 +94,7 @@ public class Analyze {
         CompositeTypeSolver ts = new CachedTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
         ts.add(new JavaParserPoolTypeSolver().withPool(pool));
-        ts.add(new UnsolvedSymbolsTypeSolver(unr));
+        ts.add(new ContextResolverTypeSolver(css, us));
 
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {
