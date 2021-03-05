@@ -67,7 +67,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
             n.getExtendedTypes().forEach(this::resolve);
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
-            String symbol = n.toString();
+            String symbol = n.getNameAsString();
             super.resolveType(symbol, n);
             // logger.error("ClassOrInterfaceDeclaration: " + e.toString() + " " + symbol);
         }
@@ -79,7 +79,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
             logger.printf("c: %s", rdecl.getQualifiedName());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
-            String symbol = n.toString();
+            String symbol = n.getNameAsString();
             super.resolveType(symbol, n);
             // logger.error("ClassOrInterfaceDeclaration: " + e.toString() + " " + symbol);
         }
@@ -117,7 +117,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
             System.out.printf("a: %s", rdecl.getQualifiedName());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
-            String symbol = n.toString();
+            String symbol = n.getNameAsString();
             super.resolveType(symbol, n);
             // logger.error("AnnotationDeclaration: " + e.toString() + " " + symbol);
         }
@@ -136,8 +136,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
             logger.printf("   m: %s", rdecl.getQualifiedName());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
-            String symbol = n.toString();
-            super.resolveType(symbol, n);
+            String symbol = n.getNameAsString();
+            super.resolveCallableDeclaration(symbol, n);
             // logger.error("ConstructorDeclaration: " + e.toString() + " " + symbol);
         }
     }
@@ -160,7 +160,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveType(symbol, n);
+            super.resolveCallableDeclaration(symbol, n);
             // logger.error("MethodDeclaration: " + e.toString() + " " + symbol);
         }
     }
@@ -176,8 +176,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
             logger.printf("t: %s", rtype.describe());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
-            String symbol = n.toString();
-            // super.resolveType(symbol, n);
+            String symbol = n.getNameAsString();
+            super.resolveTypeParameter(symbol, n);
             // logger.error("TypeParameter: " + e.toString() + " " + n.toString());
         }
     }
@@ -217,7 +217,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (RuntimeException | StackOverflowError e) {
             String symbol = n.getNameAsString();
-            super.resolveType(symbol, n);
+            super.resolveMethodCall(symbol, n);
             // logger.errorf("MethodCallExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
     }
@@ -248,7 +248,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
             logger.printf("   ctype: %s", rdecl.getComponentType().describe());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
-            String symbol = n.toString();
+            String symbol = n.getComponentType().asString();
             super.resolveType(symbol, n);
             // logger.errorf("ArrayType: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
@@ -268,7 +268,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.toString();
-            super.resolveType(symbol, n);
+            super.resolveVarType(symbol, n);
             // logger.errorf("VarType: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
 
@@ -296,37 +296,11 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (RuntimeException e) {
             String symbol = n.toString();
-            super.resolveType(symbol, n);
+            super.resolveNameExpr(symbol, n);
             // logger.errorf("NameExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
 
-        // if (ex != null)
-        // try {
-        //     resolveByContext(n.getNameAsString(), ex);
-        // }
-        // catch (UnsolvedSymbolException e) {
-        //     String symbol = n.toString();
-        //     super.resolveType(symbol, n);
-        //     logger.errorf("NameExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
-        // }
     }
-
-    // private ResolvedDeclaration resolveByContext(String name, RuntimeException e) {
-    //     if (JavaUtils.isIdentifier(name))
-    //         throw e;
-    //
-    //     if (namedImports.containsKey(name))
-    //         return new ReferencedTypeDeclaration(namedImports.get(name));
-    //
-    //     for (String namespace : starImports) {
-    //         String fullName = JavaUtils.qualifiedName(namespace, name);
-    //         SymbolReference<ResolvedReferenceTypeDeclaration> solved = ts.getRoot().tryToSolveType(fullName);
-    //         if (solved.isSolved())
-    //             return solved.getCorrespondingDeclaration();
-    //     }
-    //
-    //     throw new  UnsolvedSymbolException(name);
-    // }
 
     // ----------------------------------------------------------------------
     //

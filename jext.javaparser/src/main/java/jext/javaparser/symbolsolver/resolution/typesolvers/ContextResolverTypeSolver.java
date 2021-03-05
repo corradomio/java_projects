@@ -2,27 +2,27 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
-import jext.javaparser.util.ContextSolvedSymbols;
+import jext.javaparser.util.ContextResolver;
 import jext.javaparser.util.UnsolvedSymbols;
 
-public class ContextSolvedSymbolsTypeSolver extends BaseTypeSolver {
+public class ContextResolverTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------
     // Protected fields
     // ----------------------------------------------------------------------
 
-    protected ContextSolvedSymbols solvedSymbols;
+    protected ContextResolver solvedSymbols;
     protected UnsolvedSymbols unsolvedSymbols;
 
     // ----------------------------------------------------------------------
     // Constructors
     // ----------------------------------------------------------------------
 
-    public ContextSolvedSymbolsTypeSolver(ContextSolvedSymbols solvedSymbols, UnsolvedSymbols unsolvedSymbols) {
+    public ContextResolverTypeSolver(ContextResolver solvedSymbols, UnsolvedSymbols unsolvedSymbols) {
         this(DEFAULT, solvedSymbols, unsolvedSymbols);
     }
 
-    public ContextSolvedSymbolsTypeSolver(String name, ContextSolvedSymbols solvedSymbols, UnsolvedSymbols unsolvedSymbols) {
+    public ContextResolverTypeSolver(String name, ContextResolver solvedSymbols, UnsolvedSymbols unsolvedSymbols) {
         super(name);
         this.solvedSymbols = solvedSymbols;
         this.unsolvedSymbols = unsolvedSymbols;
@@ -32,7 +32,7 @@ public class ContextSolvedSymbolsTypeSolver extends BaseTypeSolver {
     // Properties
     // ----------------------------------------------------------------------
 
-    public ContextSolvedSymbols getSolvedSymbols() {
+    public ContextResolver getSolvedSymbols() {
         return solvedSymbols;
     }
 

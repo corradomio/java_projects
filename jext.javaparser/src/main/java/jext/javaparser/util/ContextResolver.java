@@ -2,11 +2,30 @@ package jext.javaparser.util;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
+import jext.javaparser.resolution.ReferencedTypeDeclaration;
 
-public class ContextSolvedSymbols {
+import java.util.HashMap;
+import java.util.Map;
 
-    public SymbolReference<ResolvedReferenceTypeDeclaration>
+public class ContextResolver {
+
+    private Map<String, ResolvedReferenceTypeDeclaration>
+        resolved = new HashMap<>();
+
+    public synchronized void resolved(String qualifiedName) {
+        resolved.put(qualifiedName, new ReferencedTypeDeclaration(qualifiedName));
+    }
+
+    public synchronized void resolved(ResolvedReferenceTypeDeclaration rdecl) {
+        String qualifiedName = rdecl.getQualifiedName();
+        resolved.put(qualifiedName, rdecl);
+    }
+
+    public synchronized SymbolReference<ResolvedReferenceTypeDeclaration>
         resolve(String symbol) {
-        return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        if (resolved.containsKey(symbol))
+            return SymbolReference.solved(resolved.get(symbol));
+        else
+            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
     }
 }
