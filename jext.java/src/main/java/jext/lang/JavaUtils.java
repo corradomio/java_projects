@@ -59,11 +59,11 @@ public class JavaUtils {
             return String.format("L%s;", type);
     }
 
-    public static String qualifiedName(String namespace, String name) {
-        return qualifiedName(namespace, name, false);
+    public static String fullName(String namespace, String name) {
+        return fullName(namespace, name, false);
     }
 
-    public static String qualifiedName(String namespace, String name, boolean isInner) {
+    public static String fullName(String namespace, String name, boolean isInner) {
         if (namespace.length() == 0)
             return name;
         else if (isInner)

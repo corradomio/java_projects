@@ -36,11 +36,11 @@ public class ObjectName implements Name {
     }
 
     public ObjectName(String namespace, String name) {
-        this.name = JavaUtils.qualifiedName(namespace, name);
+        this.name = JavaUtils.fullName(namespace, name);
     }
 
     public ObjectName(Name parent, String name) {
-        this.name = JavaUtils.qualifiedName(parent.getFullName(), name);
+        this.name = JavaUtils.fullName(parent.getFullName(), name);
     }
 
     // ----------------------------------------------------------------------
