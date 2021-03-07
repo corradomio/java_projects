@@ -12,6 +12,7 @@ import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
@@ -37,7 +38,7 @@ public class CheckMini {
         FileUtils.listFiles(new File("src_only"), f -> f.getName().endsWith(".java"))
             .forEach(source -> {
                 System.out.println(source.getAbsolutePath());
-                CachedTypeSolver ts = new CachedTypeSolver();
+                ContextTypeSolver ts = new ContextTypeSolver();
                 ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
                 ts.add(new JavaParserPoolTypeSolver(pool));
 

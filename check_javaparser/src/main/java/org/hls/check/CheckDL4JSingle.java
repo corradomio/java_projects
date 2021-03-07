@@ -13,6 +13,7 @@ import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
@@ -79,7 +80,7 @@ public class CheckDL4JSingle {
     private static void solve(File source) throws FileNotFoundException {
         System.out.printf("== %s ==\n", source.getName());
 
-        CompositeTypeSolver ts = new CachedTypeSolver();
+        ContextTypeSolver ts = new ContextTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
         ts.add(new JavaParserPoolTypeSolver(pool));
 

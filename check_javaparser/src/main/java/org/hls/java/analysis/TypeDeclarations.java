@@ -42,11 +42,19 @@ public class TypeDeclarations extends ContextVisitorAdapter {
 
     private void resolve(ClassOrInterfaceDeclaration n) {
         try {
+            String prefix = "c";
             ResolvedReferenceTypeDeclaration rdecl = n.resolve();
-            if (JPUtils.isInnerClass(rdecl))
-                logger.warnf("c: %s", rdecl.getQualifiedName());
+            if (rdecl.isInterface())
+                prefix = "i";
+            else if (rdecl.isEnum())
+                prefix = "e";
             else
-                logger.printf("c: %s", rdecl.getQualifiedName());
+                prefix = "c";
+
+            if (JPUtils.isInnerClass(rdecl))
+                logger.warnf("%s: %s (inner)", prefix, rdecl.getQualifiedName());
+            else
+                logger.printf("%s: %s", prefix, rdecl.getQualifiedName());
 
             // n.getImplementedTypes().forEach(this::resolve);
             // n.getExtendedTypes().forEach(this::resolve);

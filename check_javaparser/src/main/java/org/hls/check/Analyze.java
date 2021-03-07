@@ -19,6 +19,8 @@ import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectDump;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
+import org.hls.java.analysis.MemberDeclarations;
+import org.hls.java.analysis.TypeDeclarations;
 
 import java.io.File;
 
@@ -42,8 +44,9 @@ public class Analyze {
                 new File(
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
                     // "D:\\SPLGroup\\spl-workspaces\\ext-workspace\\BTProjects\\DEUM"
-                    // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
-                    "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
+                    "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                    // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
+                    // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\bookstore"
                 ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
@@ -99,7 +102,9 @@ public class Analyze {
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {
 
-            SolveSymbolsVisitor ssv = new SolveSymbolsVisitor();
+            //SolveSymbolsVisitor ssv = new SolveSymbolsVisitor();
+            //MemberDeclarations ssv = new MemberDeclarations();
+            TypeDeclarations ssv = new TypeDeclarations();
             ssv.analyze(cu, ts);
         });
     }
