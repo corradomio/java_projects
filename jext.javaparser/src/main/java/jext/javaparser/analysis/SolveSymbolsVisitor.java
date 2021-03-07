@@ -191,7 +191,6 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
     }
 
-
     @Override
     public void visit(ConstructorDeclaration n, Void arg) {
         resolve(n);
@@ -238,6 +237,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         resolve(n);
         super.visit(n, arg);
     }
+
     private void resolve(TypeParameter n) {
         try {
             ResolvedTypeVariable rtype = n.resolve();
