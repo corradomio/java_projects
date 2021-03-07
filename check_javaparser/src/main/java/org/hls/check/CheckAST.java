@@ -5,21 +5,14 @@ import com.github.javaparser.ast.CompilationUnit;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ContextSolvedSymbolsTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
 import jext.javaparser.util.ContextSolvedSymbols;
 import jext.javaparser.util.UnsolvedSymbols;
 import jext.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
-import jext.sourcecode.project.util.ProjectDump;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
-import org.hls.java.analysis.TypeDeclarations;
 
 import java.io.File;
 
@@ -43,14 +36,16 @@ public class CheckAST {
                 new File(
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
                     // "D:\\SPLGroup\\spl-workspaces\\ext-workspace\\BTProjects\\DEUM"
-                    "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                    // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
                     // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\bookstore"
+                    // "D:\\Projects.github\\java_projects\\check_javaparser\\src\\test"
+                    "D:\\Projects.github\\java_projects\\check_java_syntax"
                 ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
 
-            ProjectDump.dump(project, ProjectDump.NO_LIBRARIES | ProjectDump.NO_TYPES | ProjectDump.NO_DEPENDENCIES);
+            // ProjectDump.dump(project, ProjectDump.NO_LIBRARIES | ProjectDump.NO_TYPES | ProjectDump.NO_DEPENDENCIES);
 
             log.infof("JavaParserPool");
 
@@ -73,12 +68,12 @@ public class CheckAST {
             log.infof("Solve");
 
             project.getModules().forEach(module -> {
-                Parallel.forEach(module.getSources(), source -> {
-                    solve(source.getFile());
-                });
-                // module.getSources().forEach(source -> {
+                // Parallel.forEach(module.getSources(), source -> {
                 //     solve(source.getFile());
                 // });
+                module.getSources().forEach(source -> {
+                    solve(source.getFile());
+                });
             });
 
         }

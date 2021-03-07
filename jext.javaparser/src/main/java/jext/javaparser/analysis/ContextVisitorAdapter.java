@@ -1,10 +1,12 @@
 package jext.javaparser.analysis;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VarType;
@@ -16,12 +18,6 @@ import java.util.Optional;
 
 public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
 
-    // protected String packageName;
-    // protected Map<String, String> namedImports = new HashMap<>();
-    // protected Set<String> qualifiedImports = new HashSet<>();
-    // protected List<String> starImports = new ArrayList<>();
-    // protected ContextSolvedSymbols resolvedSymbols;
-    // protected UnsolvedSymbols unsolvedSymbols;
     protected File source;
     protected ContextTypeSolver ctx;
 
@@ -44,6 +40,92 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
         this.ctx = ts;
         this.ctx.setCu(cu);
         super.analyze(cu, ts);
+    }
+
+    // ----------------------------------------------------------------------
+    // Context
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void visit(ClassOrInterfaceDeclaration n, Void arg) {
+        try {
+            enter(n);
+            super.visit(n, arg);
+        }
+        finally {
+            exit(n);
+        }
+    }
+
+    protected void enter(ClassOrInterfaceDeclaration n) {
+
+    }
+
+    protected void exit(ClassOrInterfaceDeclaration n) {
+
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void visit(ConstructorDeclaration n, Void arg) {
+        try {
+            enter(n);
+            super.visit(n, arg);
+        }
+        finally {
+            exit(n);
+        }
+    }
+
+    protected void enter(ConstructorDeclaration n) {
+
+    }
+
+    protected void exit(ConstructorDeclaration n) {
+
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void visit(MethodDeclaration n, Void arg) {
+        try {
+            enter(n);
+            super.visit(n, arg);
+        }
+        finally {
+            exit(n);
+        }
+    }
+
+    protected void enter(MethodDeclaration n) {
+
+    }
+
+    protected void exit(MethodDeclaration n) {
+
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void visit(ObjectCreationExpr n, Void arg) {
+        try {
+            enter(n);
+            super.visit(n, arg);
+        }
+        finally {
+            exit(n);
+        }
+    }
+
+    protected void enter(ObjectCreationExpr n) {
+
+    }
+
+    protected void exit(ObjectCreationExpr n) {
+
     }
 
     // ----------------------------------------------------------------------
