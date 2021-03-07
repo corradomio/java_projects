@@ -9,6 +9,7 @@ import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclar
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import jext.lang.JavaUtils;
+import org.apache.commons.jcs.access.exception.InvalidArgumentException;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,11 +20,15 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
 
     private String qualifiedName;
 
-    public ReferencedTypeDeclaration(String namespace, String typeName) {
-        this.qualifiedName = JavaUtils.qualifiedName(namespace, typeName);
+    public ReferencedTypeDeclaration(String namespace, String name) {
+        if (namespace == null || name == null)
+            throw new InvalidArgumentException("namespace,name can not be null");
+        this.qualifiedName = JavaUtils.qualifiedName(namespace, name);
     }
 
     public ReferencedTypeDeclaration(String qualifiedName) {
+        if (qualifiedName == null)
+            throw new InvalidArgumentException("qualifiedName can not be null");
         this.qualifiedName = qualifiedName;
     }
 

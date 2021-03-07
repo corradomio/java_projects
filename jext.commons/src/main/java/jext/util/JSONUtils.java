@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class JSONUtils {
 
@@ -54,4 +55,18 @@ public class JSONUtils {
     private static ObjectMapper newObjectMapper() {
         return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
+
+
+    public static Object get(Map<String, ?> map, String path) {
+        String[] steps = path.split("/");
+        Object current = map;
+        for(String step : steps) {
+            if (current == null)
+                return current;
+
+            current = ((Map<String, ?>) current).get(step);
+        }
+        return current;
+    }
+
 }
