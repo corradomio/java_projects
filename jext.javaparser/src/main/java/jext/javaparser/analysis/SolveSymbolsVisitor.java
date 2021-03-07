@@ -26,9 +26,11 @@ import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedTypeVariable;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.util.JPUtils;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /*
         Type
@@ -112,7 +114,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
     //
     // ----------------------------------------------------------------------
 
-    public void analyze(CompilationUnit cu, TypeSolver ts) {
+    public void analyze(CompilationUnit cu, ContextTypeSolver ts) {
         super.analyze(cu, ts);
     }
 
@@ -136,8 +138,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveType(symbol, n);
-            // logger.error("ClassOrInterfaceDeclaration: " + e.toString() + " " + symbol);
+            // super.resolveType(symbol, n);
+            logger.error("ClassOrInterfaceDeclaration: " + e.toString() + " " + symbol);
         }
     }
 
@@ -151,6 +153,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
             super.resolveType(symbol, n);
             // logger.error("ClassOrInterfaceDeclaration: " + e.toString() + " " + symbol);
         }
+
     }
 
     @Override
@@ -168,8 +171,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveType(symbol, n);
-            // logger.error("EnumDeclaration: " + e.toString() + " " + symbol);
+            // super.resolveType(symbol, n);
+            logger.error("EnumDeclaration: " + e.toString() + " " + symbol);
         }
     }
 
@@ -186,8 +189,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveType(symbol, n);
-            // logger.error("AnnotationDeclaration: " + e.toString() + " " + symbol);
+            // super.resolveType(symbol, n);
+            logger.error("AnnotationDeclaration: " + e.toString() + " " + symbol);
         }
     }
 
@@ -204,8 +207,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveCallableDeclaration(symbol, n);
-            // logger.error("ConstructorDeclaration: " + e.toString() + " " + symbol);
+            // super.resolveCallableDeclaration(symbol, n);
+            logger.error("ConstructorDeclaration: " + e.toString() + " " + symbol);
         }
     }
 
@@ -227,8 +230,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveCallableDeclaration(symbol, n);
-            // logger.error("MethodDeclaration: " + e.toString() + " " + symbol);
+            // super.resolveCallableDeclaration(symbol, n);
+            logger.error("MethodDeclaration: " + e.toString() + " " + symbol);
         }
     }
 
@@ -245,8 +248,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveTypeParameter(symbol, n);
-            // logger.error("TypeParameter: " + e.toString() + " " + n.toString());
+            // super.resolveTypeParameter(symbol, n);
+            logger.error("TypeParameter: " + e.toString() + " " + n.toString());
         }
     }
 
@@ -280,13 +283,13 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {
             String symbol = n.getNameAsString();
-            super.resolveType(symbol, n);
+            super.resolveMethodCall(symbol, n);
             // logger.errorf("MethodCallExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
         catch (RuntimeException | StackOverflowError e) {
             String symbol = n.getNameAsString();
-            super.resolveMethodCall(symbol, n);
-            // logger.errorf("MethodCallExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
+            // super.resolveMethodCall(symbol, n);
+            logger.errorf("MethodCallExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
     }
 
@@ -364,8 +367,8 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
         }
         catch (RuntimeException e) {
             String symbol = n.toString();
-            super.resolveNameExpr(symbol, n);
-            // logger.errorf("NameExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
+            // super.resolveNameExpr(symbol, n);
+            logger.errorf("NameExpr: %s %s\n%s", e.toString(), symbol, source.getAbsolutePath());
         }
 
     }

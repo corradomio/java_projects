@@ -44,12 +44,11 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverWithNamespace;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 
-
-public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
+public class VoidVisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -58,13 +57,14 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
     protected Logger logger = Logger.getLogger(getClass());
 
     protected CompilationUnit cu;
+    protected String fileName;
     protected TypeSolver ts;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public BaseVoidVisitorAdapter() {
+    public VoidVisitorWithDefaults() {
 
     }
 
@@ -72,9 +72,9 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
     // Operations
     // ----------------------------------------------------------------------
 
-    protected void analyze(CompilationUnit cu, TypeSolver ts) {
+    public VoidVisitorWithDefaults analyze(CompilationUnit cu) {
         this.cu = cu;
-        this.ts = ts;
+        this.fileName = "";
 
         try {
             attach();
@@ -83,12 +83,15 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
         finally {
             detach();
         }
+
+        return this;
     }
 
     private void attach() {
         if (ts == null) return;
         SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
         cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+        cu.getStorage().ifPresent(s -> this.fileName = s.getFileName());
     }
 
     private void detach() {
@@ -96,8 +99,14 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
         JPUtils.removeTypeSolver(ts);
     }
 
-    protected TypeSolverWithNamespace tsx() {
-        return (TypeSolverWithNamespace) ts;
+    // ----------------------------------------------------------------------
+    // Defaults
+    // ----------------------------------------------------------------------
+
+    public void defaultAction(Node n, A arg) {
+    }
+
+    public void defaultAction(NodeList n, A arg) {
     }
 
     // ----------------------------------------------------------------------
@@ -105,482 +114,578 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
     // ----------------------------------------------------------------------
 
     @Override
-    public void visit(AnnotationDeclaration n, Void arg) {
+    public void visit(AnnotationDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(AnnotationMemberDeclaration n, Void arg) {
+    public void visit(AnnotationMemberDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayAccessExpr n, Void arg) {
+    public void visit(ArrayAccessExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayCreationExpr n, Void arg) {
+    public void visit(ArrayCreationExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayInitializerExpr n, Void arg) {
+    public void visit(ArrayInitializerExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(AssertStmt n, Void arg) {
+    public void visit(AssertStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(AssignExpr n, Void arg) {
+    public void visit(AssignExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(BinaryExpr n, Void arg) {
+    public void visit(BinaryExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(BlockComment n, Void arg) {
+    public void visit(BlockComment n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(BlockStmt n, Void arg) {
+    public void visit(BlockStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(BooleanLiteralExpr n, Void arg) {
+    public void visit(BooleanLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(BreakStmt n, Void arg) {
+    public void visit(BreakStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(CastExpr n, Void arg) {
+    public void visit(CastExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(CatchClause n, Void arg) {
+    public void visit(CatchClause n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(CharLiteralExpr n, Void arg) {
+    public void visit(CharLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ClassExpr n, Void arg) {
+    public void visit(ClassExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ClassOrInterfaceDeclaration n, Void arg) {
+    public void visit(ClassOrInterfaceDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ClassOrInterfaceType n, Void arg) {
+    public void visit(ClassOrInterfaceType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(CompilationUnit n, Void arg) {
+    public void visit(CompilationUnit n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ConditionalExpr n, Void arg) {
+    public void visit(ConditionalExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ConstructorDeclaration n, Void arg) {
+    public void visit(ConstructorDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ContinueStmt n, Void arg) {
+    public void visit(ContinueStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(DoStmt n, Void arg) {
+    public void visit(DoStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(DoubleLiteralExpr n, Void arg) {
+    public void visit(DoubleLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(EmptyStmt n, Void arg) {
+    public void visit(EmptyStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(EnclosedExpr n, Void arg) {
+    public void visit(EnclosedExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(EnumConstantDeclaration n, Void arg) {
+    public void visit(EnumConstantDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(EnumDeclaration n, Void arg) {
+    public void visit(EnumDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ExplicitConstructorInvocationStmt n, Void arg) {
+    public void visit(ExplicitConstructorInvocationStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ExpressionStmt n, Void arg) {
+    public void visit(ExpressionStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(FieldAccessExpr n, Void arg) {
+    public void visit(FieldAccessExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(FieldDeclaration n, Void arg) {
+    public void visit(FieldDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ForEachStmt n, Void arg) {
+    public void visit(ForEachStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ForStmt n, Void arg) {
+    public void visit(ForStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(IfStmt n, Void arg) {
+    public void visit(IfStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(InitializerDeclaration n, Void arg) {
+    public void visit(InitializerDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(InstanceOfExpr n, Void arg) {
+    public void visit(InstanceOfExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(IntegerLiteralExpr n, Void arg) {
+    public void visit(IntegerLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(JavadocComment n, Void arg) {
+    public void visit(JavadocComment n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(LabeledStmt n, Void arg) {
+    public void visit(LabeledStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(LineComment n, Void arg) {
+    public void visit(LineComment n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(LongLiteralExpr n, Void arg) {
+    public void visit(LongLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(MarkerAnnotationExpr n, Void arg) {
+    public void visit(MarkerAnnotationExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(MemberValuePair n, Void arg) {
+    public void visit(MemberValuePair n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(MethodCallExpr n, Void arg) {
+    public void visit(MethodCallExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(MethodDeclaration n, Void arg) {
+    public void visit(MethodDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(NameExpr n, Void arg) {
+    public void visit(NameExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(NormalAnnotationExpr n, Void arg) {
+    public void visit(NormalAnnotationExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(NullLiteralExpr n, Void arg) {
+    public void visit(NullLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ObjectCreationExpr n, Void arg) {
+    public void visit(ObjectCreationExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(PackageDeclaration n, Void arg) {
+    public void visit(PackageDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(Parameter n, Void arg) {
+    public void visit(Parameter n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(PrimitiveType n, Void arg) {
+    public void visit(PrimitiveType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(Name n, Void arg) {
+    public void visit(Name n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(SimpleName n, Void arg) {
+    public void visit(SimpleName n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayType n, Void arg) {
+    public void visit(ArrayType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ArrayCreationLevel n, Void arg) {
+    public void visit(ArrayCreationLevel n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(IntersectionType n, Void arg) {
+    public void visit(IntersectionType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnionType n, Void arg) {
+    public void visit(UnionType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ReturnStmt n, Void arg) {
+    public void visit(ReturnStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(SingleMemberAnnotationExpr n, Void arg) {
+    public void visit(SingleMemberAnnotationExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(StringLiteralExpr n, Void arg) {
+    public void visit(StringLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(SuperExpr n, Void arg) {
+    public void visit(SuperExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(SwitchEntry n, Void arg) {
+    public void visit(SwitchEntry n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(SwitchStmt n, Void arg) {
+    public void visit(SwitchStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(SynchronizedStmt n, Void arg) {
+    public void visit(SynchronizedStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ThisExpr n, Void arg) {
+    public void visit(ThisExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ThrowStmt n, Void arg) {
+    public void visit(ThrowStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(TryStmt n, Void arg) {
+    public void visit(TryStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(LocalClassDeclarationStmt n, Void arg) {
+    public void visit(LocalClassDeclarationStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(TypeParameter n, Void arg) {
+    public void visit(TypeParameter n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnaryExpr n, Void arg) {
+    public void visit(UnaryExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnknownType n, Void arg) {
+    public void visit(UnknownType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(VariableDeclarationExpr n, Void arg) {
+    public void visit(VariableDeclarationExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(VariableDeclarator n, Void arg) {
+    public void visit(VariableDeclarator n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(VoidType n, Void arg) {
+    public void visit(VoidType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(WhileStmt n, Void arg) {
+    public void visit(WhileStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(WildcardType n, Void arg) {
+    public void visit(WildcardType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(LambdaExpr n, Void arg) {
+    public void visit(LambdaExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(MethodReferenceExpr n, Void arg) {
+    public void visit(MethodReferenceExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(TypeExpr n, Void arg) {
+    public void visit(TypeExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(NodeList n, Void arg) {
+    public void visit(NodeList n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ImportDeclaration n, Void arg) {
+    public void visit(ImportDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleDeclaration n, Void arg) {
+    public void visit(ModuleDeclaration n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleRequiresDirective n, Void arg) {
+    public void visit(ModuleRequiresDirective n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleExportsDirective n, Void arg) {
+    public void visit(ModuleExportsDirective n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleProvidesDirective n, Void arg) {
+    public void visit(ModuleProvidesDirective n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleUsesDirective n, Void arg) {
+    public void visit(ModuleUsesDirective n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ModuleOpensDirective n, Void arg) {
+    public void visit(ModuleOpensDirective n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(UnparsableStmt n, Void arg) {
+    public void visit(UnparsableStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(ReceiverParameter n, Void arg) {
+    public void visit(ReceiverParameter n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(VarType n, Void arg) {
+    public void visit(VarType n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(Modifier n, Void arg) {
+    public void visit(Modifier n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(SwitchExpr n, Void arg) {
+    public void visit(SwitchExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(TextBlockLiteralExpr n, Void arg) {
+    public void visit(TextBlockLiteralExpr n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 
     @Override
-    public void visit(YieldStmt n, Void arg) {
+    public void visit(YieldStmt n, A arg) {
+        defaultAction(n, arg);
         super.visit(n, arg);
     }
 }

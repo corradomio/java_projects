@@ -2,6 +2,7 @@ package jext.javaparser.util;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -10,13 +11,13 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 public class JPUtils {
 
@@ -55,18 +57,6 @@ public class JPUtils {
 
     public static void removeSymbolSolver(CompilationUnit cu) {
         cu.removeData(Node.SYMBOL_RESOLVER_KEY);
-    }
-
-    // ----------------------------------------------------------------------
-
-    public static boolean isInnerClass(ResolvedReferenceTypeDeclaration rdecl) {
-        String packageName = rdecl.getPackageName();
-        String qualifiedName = rdecl.getQualifiedName();
-        boolean isInnerClass = qualifiedName.indexOf('.', packageName.length()+1) != -1;
-        if (isInnerClass)
-            return true;
-        else
-            return false;
     }
 
     // ----------------------------------------------------------------------
@@ -457,26 +447,4 @@ public class JPUtils {
         return new JavaParserFacadeCache(getJavaParserFacadeTypeSolversMap());
     }
 
-    // ----------------------------------------------------------------------
-
-    public static TypeSolver findTypeSolver(TypeSolver typeSolver, Class<? extends TypeSolver> tsclass) {
-        TypeSolver found;
-        if (typeSolver.getClass().equals(tsclass))
-            return typeSolver;
-
-        try {
-            Field field = tsclass.getDeclaredField("elements");
-            List<TypeSolver> elements = (List<TypeSolver>) field.get(typeSolver);
-            for (TypeSolver e : elements) {
-                found = findTypeSolver(e, tsclass);
-                if (found != null)
-                    return found;
-            }
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-
-        }
-
-        return null;
-    }
 }
