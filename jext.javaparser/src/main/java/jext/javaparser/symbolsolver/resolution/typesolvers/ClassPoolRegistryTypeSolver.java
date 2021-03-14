@@ -37,6 +37,8 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
     public ClassPoolRegistryTypeSolver(String name, ClassPoolRegistry classPoolRegistry) {
         super(name);
         this.classPoolRegistry = classPoolRegistry;
+        if (classPoolRegistry.isEmpty())
+            throw new IllegalArgumentException("classPoolRegistry can not be empty");
     }
 
     // ----------------------------------------------------------------------
@@ -48,13 +50,13 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
         return this;
     }
 
-    public ClassPoolRegistryTypeSolver add(File libraryFile) {
-        this.classPoolRegistry.add(libraryFile);
+    public ClassPoolRegistryTypeSolver add(File libraryFile, String libraryName) {
+        this.classPoolRegistry.add(libraryFile, libraryName);
         return this;
     }
 
-    public ClassPoolRegistryTypeSolver addAll(List<File> libraryFiles) {
-        this.classPoolRegistry.addAll(libraryFiles);
+    public ClassPoolRegistryTypeSolver addAll(List<File> libraryFiles, String libraryName) {
+        this.classPoolRegistry.addAll(libraryFiles, libraryName);
         return this;
     }
 
@@ -73,7 +75,7 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // tryToSolveType
+    // Resolve
     // ----------------------------------------------------------------------
 
     @Override
@@ -83,7 +85,7 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
             return UNSOLVED;
 
         try {
-            if (this.classPoolRegistry.containsKey(name)) {
+            if (this.classPoolRegistry.isType(name)) {
                 return SymbolReference.solved(JavassistFactory.toTypeDeclaration(this.classPoolRegistry.get(name).toCtClass(),
                     this.getRoot()));
             }

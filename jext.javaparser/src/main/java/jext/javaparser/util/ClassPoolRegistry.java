@@ -4,14 +4,16 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import jext.logging.Logger;
+import jext.util.FileUtils;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -36,6 +38,7 @@ public class ClassPoolRegistry {
     public class ClasspathElement {
         String name;
         File libraryFile;
+        String libraryName;
         JarEntry entry;
         CtClass ctClazz;
 
@@ -75,8 +78,12 @@ public class ClassPoolRegistry {
     // Properties
     // ----------------------------------------------------------------------
 
-    public boolean containsKey(String name) {
-        return classpathElements.containsKey(name);
+    public boolean isEmpty() {
+        return classpathElements.isEmpty();
+    }
+
+    public int size() {
+        return classpathElements.size();
     }
 
     public ClasspathElement get(String name) {
@@ -91,57 +98,84 @@ public class ClassPoolRegistry {
         return classpathElements.containsKey(name);
     }
 
+    @Nullable
+    public String getLibraryName(String name) {
+        if (classpathElements.containsKey(name))
+            return classpathElements.get(name).libraryName;
+        else
+            return null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Operations without name
+    // ----------------------------------------------------------------------
+
+    // public ClassPoolRegistry addAll(List<File> libraryFiles) {
+    //     libraryFiles.forEach(libraryFile -> add(libraryFile));
+    //     return this;
+    // }
+
+    // public ClassPoolRegistry add(File libraryFile) {
+    //     add(libraryFile, FileUtils.getNameWithoutExt(libraryFile));
+    //     return this;
+    // }
+
+    // protected void addElement(String name, String namespace, File libraryFile, JarEntry entry) {
+    //     addElement(name, namespace, libraryFile, entry, FileUtils.getNameWithoutExt(libraryFile));
+    // }
+
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
 
     public ClassPoolRegistry addJdk(File jdk) {
-        add(new File(jdk, "lib"));      // jdk 1 -> 8
-        add(new File(jdk, "jre/lib"));  // jre 1 -> 8
-        add(new File(jdk, "jmods"));    // jdk 9 -> ...
+        String libraryName = jdk.getName();
+        add(new File(jdk, "lib"), libraryName);      // jdk 1 -> 8
+        add(new File(jdk, "jre/lib"), libraryName);  // jre 1 -> 8
+        add(new File(jdk, "jmods"), libraryName);    // jdk 9 -> ...
         return this;
     }
 
-    public ClassPoolRegistry addAll(Collection<File> libraryFiles) {
-        libraryFiles.forEach(this::add);
+    public ClassPoolRegistry addAll(List<File> libraryFiles, String libraryName) {
+        libraryFiles.forEach(libraryFile -> add(libraryFile, libraryName));
         return this;
     }
 
-    public ClassPoolRegistry add(File libraryFile) {
+    public ClassPoolRegistry add(File libraryFile, String libraryName) {
         if (libraryFile.isFile())
-            addFile(libraryFile);
+            addFile(libraryFile, libraryName);
         else if (libraryFile.isDirectory())
-            addDirectory(libraryFile);
+            addDirectory(libraryFile, libraryName);
         // else
         //     logger.warnf("Library file %s not existent", FileUtils.getAbsolutePath(libraryFile));
         return this;
     }
 
-    private void addDirectory(File directory) {
+    private void addDirectory(File directory, String libraryName) {
         File[] files;
 
         files = directory.listFiles((p, n) -> n.endsWith(DOT_JAR));
         if (files != null)
-            for (File file : files) addFile(file);
+            for (File file : files) addFile(file, libraryName);
         files = directory.listFiles((p, n) -> n.endsWith(DOT_JMOD));
         if (files != null)
-            for (File file : files) addFile(file);
+            for (File file : files) addFile(file, libraryName);
     }
 
-    private void addFile(File libraryFile) {
+    private void addFile(File libraryFile, String libraryName) {
         if (libraryFiles.contains(libraryFile))
             return;
-        String libraryName = libraryFile.getName();
-        if (libraryNames.contains(libraryName))
+        String fileName = libraryFile.getName();
+        if (libraryNames.contains(fileName))
             return;
 
         libraryFiles.add(libraryFile);
-        libraryNames.add(libraryName);
+        libraryNames.add(fileName);
 
-        addElements(libraryFile);
+        addElements(libraryFile, libraryName);
     }
 
-    private void addElements(File libraryFile) {
+    private void addElements(File libraryFile, String libraryName) {
         try {
             classPool.insertClassPath(libraryFile.getAbsolutePath());
         } catch (NotFoundException e) {
@@ -159,7 +193,7 @@ public class ClassPoolRegistry {
                     String entryName = entry.getName();
                     String className = epc.toClassName(entryName);
                     String namespace = epc.toNamespace(entryName);
-                    addElement(className, namespace, libraryFile, entry);
+                    addElement(className, namespace, libraryFile, entry, libraryName);
                 }
             }
         }
@@ -168,11 +202,12 @@ public class ClassPoolRegistry {
         }
     }
 
-    protected void addElement(String name, String namespace, File libraryFile, JarEntry entry) {
+    protected void addElement(String name, String namespace, File libraryFile, JarEntry entry, String libraryName) {
         ClasspathElement element = new ClasspathElement();
         element.name = name;
-        element.libraryFile = libraryFile;
         element.entry = entry;
+        element.libraryFile = libraryFile;
+        element.libraryName = libraryName;
 
         classpathElements.put(name, element);
         namespaces.add(namespace);

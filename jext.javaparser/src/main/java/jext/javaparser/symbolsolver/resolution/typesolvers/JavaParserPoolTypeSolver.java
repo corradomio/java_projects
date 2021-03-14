@@ -57,7 +57,7 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // tryToSolveType
+    // Resolve
     // ----------------------------------------------------------------------
 
     @Override
@@ -84,5 +84,4 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     public String toString() {
         return String.format("JavaParserPoolTypeSolver[%s]", pool.getName());
     }
-
 }

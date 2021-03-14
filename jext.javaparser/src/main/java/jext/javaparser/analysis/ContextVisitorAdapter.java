@@ -280,14 +280,14 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
     // }
 
     protected void resolveType(String symbol, ClassOrInterfaceType n) {
-        Optional<ResolvedType> resolved = ctx.resolve(symbol, n);
-        if (!resolved.isPresent())
+        ResolvedType resolved = ctx.resolve(symbol, n);
+        if (resolved == null)
             logger.error("Unsolved ClassOrInterfaceType: " + symbol);
     }
 
     protected void resolveType(String symbol, ArrayType n) {
-        Optional<ResolvedType> resolved = ctx.resolve(symbol, n);
-        if (!resolved.isPresent())
+        ResolvedType resolved = ctx.resolve(symbol, n);
+        if (resolved == null)
             logger.error("Unsolved ClassOrInterfaceType: " + symbol);
     }
 

@@ -5,8 +5,9 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
 
 public class CompositeTypeSolver extends BaseTypeSolver {
 
@@ -51,22 +52,14 @@ public class CompositeTypeSolver extends BaseTypeSolver {
     @Override
     public boolean isNamespace(String name) {
         for (TypeSolver typeSolver : elements) {
-            if (((TypeSolverWithNamespace)typeSolver).isNamespace(name))
+            if (((TypeSolverExt)typeSolver).isNamespace(name))
                 return true;
         }
         return false;
     }
 
-    @Override
-    public <T extends TypeSolver> Optional<T> findTypeSolver(Class<T> tsClass) {
-        for (TypeSolver element : elements)
-            if (element.getClass().equals(tsClass))
-                return (Optional<T>) Optional.of(element);
-        return Optional.empty();
-    }
-
     // ----------------------------------------------------------------------
-    // tryToSolveType
+    // Resolve
     // ----------------------------------------------------------------------
 
     @Override

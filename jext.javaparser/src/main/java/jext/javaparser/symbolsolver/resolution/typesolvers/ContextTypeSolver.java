@@ -5,21 +5,33 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.MethodReferenceExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.MethodAmbiguityException;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserClassDeclaration;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserEnumDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.javaparser.resolution.ReferencedTypeDeclaration;
-import jext.javaparser.resolution.ReferencedTypeUse;
+import jext.javaparser.exception.ResolveAbortedException;
+import jext.javaparser.exception.ResolveTimeoutException;
+import jext.javaparser.resolution.ReferenceConstructorDeclaration;
+import jext.javaparser.resolution.ReferencedMethodDeclaration;
 import jext.lang.JavaUtils;
+import jext.logging.Logger;
 
+import javax.annotation.Nullable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,13 +46,15 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    // private static Logger logsolver = Logger.getLogger(ContextTypeSolver.class);
+    private static Logger logsolver = Logger.getLogger(ContextTypeSolver.class);
 
     private static final String DEFAULT = "default";
+    private static final String JAVA_LANG = "java.lang";
+    private static final String ROOT_PACKAGE = "";
 
-    // private File filename;
     private CompilationUnit cu;
-    private final Map<String, String> namedImports = new HashMap<>();
+    private File filename;
+    private final Map<String, String> imports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
     private String namespace;
     private String cacheName;
@@ -65,34 +79,81 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // Configuration
     // ----------------------------------------------------------------------
 
-    public ContextTypeSolver setCu(CompilationUnit cu) {
-        this.cu = cu;
-        this.namespace = "";
-
-        cu.getPackageDeclaration().ifPresent(this::setPackage);
-        cu.findAll(ImportDeclaration.class).forEach(this::addImport);
-        addDefaultImports();
-
+    public ContextTypeSolver withCache(String cacheName) {
+        this.cacheName = cacheName;
         return this;
     }
 
-    private void setPackage(PackageDeclaration n) {
-        this.namespace = n.getNameAsString();
+    public ContextTypeSolver add(TypeSolver ts) {
+        super.add(ts);
+        return this;
     }
 
-    private void addImport(ImportDeclaration n) {
-        String qualifiedName = n.getNameAsString();
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    /**
+     * Set the current package
+     * @param n package declaration
+     */
+    public ContextTypeSolver setPackage(PackageDeclaration n) {
+        this.namespace = n.getNameAsString();
+        return this;
+    }
+
+    /**
+     * Add an import declaration
+     * @param n import declaration
+     */
+    public ContextTypeSolver addImport(ImportDeclaration n) {
+        String importName = n.getNameAsString();
         if (n.isStatic()) {
-            qualifiedName = JavaUtils.namespaceOf(qualifiedName);
-            this.namedImports.put(JavaUtils.nameOf(qualifiedName), qualifiedName);
+            importName = JavaUtils.namespaceOf(importName);
+            this.imports.put(JavaUtils.nameOf(importName), importName);
         }
         else if (n.isAsterisk()) {
             // '*' already stripped
-            this.starImports.add(qualifiedName);
+            this.starImports.add(importName);
         }
         else {
-            this.namedImports.put(JavaUtils.nameOf(qualifiedName), qualifiedName);
+            this.imports.put(JavaUtils.nameOf(importName), importName);
         }
+        return this;
+    }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    /**
+     * Set the compilationUnit used to resolve symbols.
+     * The typeSolver is assigned to the cu
+     * @param cu compilationUnit to use
+     */
+    public ContextTypeSolver setCu(CompilationUnit cu) {
+        this.cu = cu;
+        cu.getStorage().ifPresent(storage -> {
+            this.filename = storage.getPath().toFile();
+        });
+        setContext();
+        return this;
+    }
+
+    private void setContext() {
+        // Set the context used for the symbol resolution:
+        // 1) current package
+        // 2) imports
+        // 3) default imports
+        if (namespace != null)
+            return;
+        if (cu == null)
+            throw new IllegalStateException("Missing CompilationUnit. Use 'setCu(cu)");
+
+        namespace = "";
+        cu.getPackageDeclaration().ifPresent(this::setPackage);
+        cu.getImports().forEach(this::addImport);
+        addDefaultImports();
     }
 
     /**
@@ -101,421 +162,351 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      * to add.
      */
     private void addDefaultImports() {
-        if (!this.namespace.isEmpty())
-            this.starImports.add(this.namespace);       // import <currentPackage>.*
-        this.starImports.add(JavaUtils.JAVA_LANG);      // import java.lang.*
-        this.starImports.add(JavaUtils.ROOT);           // import <rootPackage>.*
-    }
-
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    public ContextTypeSolver withCache(String cacheName) {
-        this.cacheName = cacheName;
-        return this;
+        this.starImports.add(this.starImports.size(), JAVA_LANG);       // import java.lang.*
+        this.starImports.add(this.starImports.size(), this.namespace);  // import <currentPackage>.*
+        this.starImports.add(this.starImports.size(), ROOT_PACKAGE);    // import <rootPackage>.*
     }
 
     // ----------------------------------------------------------------------
     // resolve type
     // ----------------------------------------------------------------------
 
-    public ResolvedType resolve(Type type) {
-        return type.resolve();
-    }
+    /**
+     * Try to solve the type using the standard library. If the library is not
+     * able to solve it, tries a 'direct' method
+     * @param n type to solve
+     * @return a resolved type with full qualified name or null
+     */
+    @Nullable
+    public ResolvedType resolve(Type n) {
+        try {
+            // setTimestamp();
 
-    public Optional<ResolvedType> resolve(String name, Node n) {
-        if (!JavaUtils.isClassName(name))
-            return Optional.empty();
-
-        Optional<ResolvedType> resolved = Optional.empty();
-        if (!resolved.isPresent())
-            resolved = resolveUsingNamedImports(name);
-        if (!resolved.isPresent())
-            resolved = resolveUsingStarImports(name);
-        if (!resolved.isPresent())
-            resolved = resolveUsingLocalClasses(name, n);
-        if (resolved.isPresent())
-            return resolved;
-
-        // unsolvedSymbols.unsolved(name, n, source);
-
-        return Optional.empty();
-    }
-
-    private Optional<ResolvedType> resolveUsingNamedImports(String name) {
-        if (namedImports.containsKey(name)) {
-            String resolved = namedImports.get(name);
-            // resolvedSymbols.resolved(resolved);
-            return Optional.of(new ReferencedTypeUse(resolved));
+            return n.resolve();
+            // if (n.isPrimitiveType())
+            //     rt = ResolvedPrimitiveType.byName(n.asPrimitiveType().getType().name());
+            // else if (n.isClassOrInterfaceType())
+            //     rt = resolve(n.asClassOrInterfaceType().getNameAsString(), n);
+            // else
+            //     rt = n.resolve();
         }
-        return Optional.empty();
-    }
-
-    private Optional<ResolvedType> resolveUsingStarImports(String name) {
-        for(String namespace : starImports) {
-            String qualifiedName = JavaUtils.fullName(namespace, name);
-            SymbolReference<ResolvedReferenceTypeDeclaration>
-                solved = getRoot().tryToSolveType(qualifiedName);
-            if (solved.isSolved()) {
-                // resolvedSymbols.resolved(solved.getCorrespondingDeclaration());
-                return Optional.of(new ReferencedTypeUse(solved.toString()));
-            }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", n.toString());
         }
-        return Optional.empty();
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+
+        }
+        finally {
+            // clearTimestamp();
+        }
+
+        return resolve(n.toString(), n);
     }
 
-    private Optional<ResolvedType> resolveUsingLocalClasses(String name, Node n) {
-        for(ClassOrInterfaceDeclaration c : cu.findAll(ClassOrInterfaceDeclaration.class))
-            if (name.equals(c.getNameAsString()))
-                return Optional.of(
-                    ReferenceTypeImpl.undeterminedParameters(new JavaParserClassDeclaration(c, this), this)
-                );
-        for(EnumDeclaration e : cu.findAll(EnumDeclaration.class))
-            if (name.equals(e.getNameAsString()))
-                return Optional.of(
-                    ReferenceTypeImpl.undeterminedParameters(new JavaParserEnumDeclaration(e, this), this)
-                );
-        return Optional.empty();
+    /**
+     * Try to solve the name expression as a type using the standard library.
+     * If the library is not able to solve it, tries a 'direct' method
+     * @param n name to solve as type
+     * @return a resolved type with full qualified name or null
+     */
+    @Nullable
+    public ResolvedType resolve(NameExpr n) {
+
+        try {
+            // setTimestamp();
+
+            ResolvedValueDeclaration rvd = n.resolve();
+            return rvd.getType();
+
+            // return super.resolve(n);
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", n.toString());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", n.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (RuntimeException e) {
+
+        }
+        finally {
+            // clearTimestamp();
+        }
+        return resolve(n.getName().asString(), n);
     }
 
-    // /**
-    //  * Try to solve the type using the standard library. If the library is not
-    //  * able to solve it, tries a 'direct' method
-    //  * @param n type to solve
-    //  * @return a resolved type with full qualified name or null
-    //  */
-    // @Nullable
-    // public ResolvedType resolve(Type n) {
-    //     try {
-    //         // setTimestamp();
-    //
-    //         ResolvedType rt;
-    //         if (n.isPrimitiveType())
-    //             rt = ResolvedPrimitiveType.byName(n.asPrimitiveType().getType().name());
-    //         else if (n.isClassOrInterfaceType())
-    //             rt = resolve(n.asClassOrInterfaceType().getNameAsString(), n);
-    //         else
-    //             rt = n.resolve();
-    //
-    //         return rt;
-    //     }
-    //     catch (StackOverflowError e) {
-    //         logger.errorf("StackOverflow on %s", n.toString());
-    //     }
-    //     catch (OutOfMemoryError | ResolveAbortedException e) {
-    //         throw e;
-    //     }
-    //     catch (RuntimeException e) {
-    //
-    //     }
-    //     finally {
-    //         // clearTimestamp();
-    //     }
-    //
-    //     return null;
-    // }
+    /**
+     * Try to solve 'symbol' using 'context' as context inside the AST
+     * @param symbol symbol to solve
+     * @param context context to use
+     * @return a resolved type with full qualified name or null
+     */
+    @Nullable
+    public ResolvedType resolve(String symbol, Node context) {
+        setContext();
 
-    // /**
-    //  * Try to solve the name expression as a type using the standard library.
-    //  * If the library is not able to solve it, tries a 'direct' method
-    //  * @param n name to solve as type
-    //  * @return a resolved type with full qualified name or null
-    //  */
-    // public ResolvedType resolve(NameExpr n) {
-    //
-    //     try {
-    //         // setTimestamp();
-    //
-    //         // ResolvedValueDeclaration rvd = n.resolve();
-    //         // return rvd.getType();
-    //
-    //         return super.resolve(n);
-    //     }
-    //     catch (StackOverflowError e) {
-    //         logger.errorf("StackOverflow on %s", n.toString());
-    //     }
-    //     catch (OutOfMemoryError | ResolveAbortedException e) {
-    //         throw e;
-    //     }
-    //     catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
-    //         //logger.errorf("Unable to resolve %s: %s (%s)", n.toString(), e.getClass().getName(), e.getMessage());
-    //     }
-    //     catch (RuntimeException e) {
-    //
-    //     }
-    //     finally {
-    //         // clearTimestamp();
-    //     }
-    //     return resolve(n.getName().asString(), n);
-    // }
+        String stripped = JavaUtils.toPlainSignature(symbol);
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
-    // /**
-    //  * Try to solve 'symbol' using 'context' as context inside the AST
-    //  * @param symbol symbol to solve
-    //  * @param context context to use
-    //  * @return a resolved type with full qualified name or null
-    //  */
-    // @Nullable
-    // public ResolvedType resolve(String symbol, Node context) {
-    //
-    //     String stripped = JavaUtils.toPlainSignature(symbol);
-    //     SymbolReference<ResolvedReferenceTypeDeclaration> solved;
-    //
-    //     solved = tryToSolveUsingContext(stripped, context);
-    //
-    //     if (solved.isSolved()) {
-    //         addSolved(solved.getCorrespondingDeclaration().getQualifiedName(), solved);
-    //         return new ReferenceTypeImpl(solved.getCorrespondingDeclaration(), this);
-    //     }
-    //
-    //     // unable to solve
-    //     return null;
-    // }
+        solved = tryToSolveUsingContext(stripped, context);
+
+        if (solved.isSolved()) {
+            addSolved(solved.getCorrespondingDeclaration().getQualifiedName(), solved);
+            return new ReferenceTypeImpl(solved.getCorrespondingDeclaration(), this);
+        }
+
+        // unable to solve
+        return null;
+    }
 
     // ----------------------------------------------------------------------
     // resolve method declaration
     // ----------------------------------------------------------------------
 
-    // @Nullable
-    // public ResolvedMethodDeclaration resolve(MethodCallExpr mce) {
-    //     try {
-    //         // setTimestamp();
-    //
-    //         // ResolvedMethodDeclaration rmd = mce.resolve();
-    //         // return rmd;
-    //
-    //         return super.resolve(mce);
-    //     }
-    //     catch (StackOverflowError e) {
-    //         logger.errorf("StackOverflow on %s", mce.toString());
-    //     }
-    //     catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
-    //         | MethodAmbiguityException e) {
-    //         //logger.errorf("Unable to resolve %s: %s (%s)", mce.toString(), e.getClass().getName(), e.getMessage());
-    //     }
-    //     catch (OutOfMemoryError | ResolveAbortedException e) {
-    //         throw e;
-    //     }
-    //     catch (RuntimeException e) {
-    //         String message = e.getMessage();
-    //         if (message == null)
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mce.toString(), e.getMessage(), filename);
-    //         else if (message.contains("cannot be resolved"))
-    //             ;
-    //         else if (message.contains("Unable to calculate"))
-    //             ;
-    //         else if (message.contains("Error calculating"))
-    //             ;
-    //         else
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
-    //     }
-    //     // catch (Throwable t) {
-    //     //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
-    //     // }
-    //     finally {
-    //         // clearTimestamp();
-    //     }
-    //
-    //     // If scope it is not present, this means that the class is the CURRENT class
-    //     // (I hope!)
-    //     if (!mce.getScope().isPresent())
-    //         return null;
-    //
-    //     // Skip "NameExpr" nodes because their resolution requires A LOT of type
-    //     Expression expr = mce.getScope().get();
-    //     // if (expr instanceof NameExpr)
-    //     //     return null;
-    //
-    //     try {
-    //         // setTimestamp();
-    //
-    //         ResolvedType rt = expr.calculateResolvedType();
-    //         String typeName = rt.describe();
-    //
-    //         int nArguments = mce.getArguments().size();
-    //         String methodName = mce.getNameAsString();
-    //
-    //         return new ReferencedMethodDeclaration(typeName, methodName, nArguments);
-    //     }
-    //     catch (StackOverflowError e) {
-    //         logger.errorf("StackOverflow on %s", expr.toString());
-    //     }
-    //     catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
-    //         | MethodAmbiguityException e) {
-    //         //logger.errorf("Unable to resolve %s: %s (%s)", expr.toString(), e.getClass().getName(), e.getMessage());
-    //     }
-    //     catch (OutOfMemoryError | ResolveAbortedException e) {
-    //         throw e;
-    //     }
-    //     catch (RuntimeException e) {
-    //         String message = e.getMessage();
-    //         // Throwable cause = e.getCause();
-    //         if (message == null)
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mce.toString(), e.getMessage(), filename);
-    //         else if (message.contains("cannot be resolved"))
-    //             ;
-    //         else if (message.contains("Unable to calculate"))
-    //             ;
-    //         else if (message.contains("Error calculating"))
-    //             ;
-    //         else
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
-    //     }
-    //     // catch (Throwable t) {
-    //     //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
-    //     // }
-    //     finally {
-    //         // clearTimestamp();
-    //     }
-    //
-    //     logsolver.warnft("Unable to solve call %s", mce.toString());
-    //
-    //     return null;
-    // }
+    @Nullable
+    public ResolvedMethodDeclaration resolve(MethodCallExpr mce) {
+        try {
+            // setTimestamp();
 
-    // @Nullable
-    // public ResolvedConstructorDeclaration resolve(ObjectCreationExpr oce) {
-    //     try {
-    //         // setTimestamp();
-    //
-    //         // ResolvedConstructorDeclaration rcd = oce.resolve();
-    //         // return rcd;
-    //
-    //         return super.resolve(oce);
-    //     }
-    //     catch (StackOverflowError e) {
-    //         logger.errorf("StackOverflow on %s", oce.toString());
-    //     }
-    //     catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
-    //         | MethodAmbiguityException | IllegalArgumentException | IndexOutOfBoundsException e) {
-    //         //logger.errorf("Unable to resolve %s: %s (%s)", oce.toString(), e.getClass().getName(), e.getMessage());
-    //     }
-    //     catch (OutOfMemoryError | ResolveAbortedException e) {
-    //         throw e;
-    //     }
-    //     catch (RuntimeException e) {
-    //         String message = e.getMessage();
-    //         if (message == null)
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), oce.toString(), e.getMessage(), filename);
-    //         else if (message.contains("cannot be resolved"))
-    //             ;
-    //         else if (message.contains("Unable to calculate"))
-    //             ;
-    //         else if (message.contains("Error calculating"))
-    //             ;
-    //         else
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
-    //     }
-    //     // catch (Throwable t) {
-    //     //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
-    //     // }
-    //     finally {
-    //         // clearTimestamp();
-    //     }
-    //
-    //     // If scope it is not present, this means that the class is the CURRENT class
-    //     // (I hope!)
-    //     if (!oce.getScope().isPresent())
-    //         return null;
-    //
-    //     // Skip "NameExpr" nodes because their resolution requires A LOT of type
-    //     Expression expr = oce.getScope().get();
-    //     // if (expr instanceof NameExpr)
-    //     //     return null;
-    //
-    //     try {
-    //         // setTimestamp();
-    //
-    //         ResolvedType rt = expr.calculateResolvedType();
-    //         String typeName = rt.describe();
-    //
-    //         int nArguments = oce.getArguments().size();
-    //         String methodName = oce.getTypeAsString();
-    //
-    //         return new ReferenceConstructorDeclaration(typeName, methodName, nArguments);
-    //     }
-    //     catch (StackOverflowError e) {
-    //         logger.errorf("StackOverflow on %s", expr.toString());
-    //     }
-    //     catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
-    //         | MethodAmbiguityException e) {
-    //         //logger.errorf("Unable to resolve %s: %s (%s)", oce.toString(), e.getClass().getName(), e.getMessage());
-    //     }
-    //     catch (OutOfMemoryError | ResolveAbortedException e) {
-    //         throw e;
-    //     }
-    //     catch (RuntimeException e) {
-    //         String message = e.getMessage();
-    //         // Throwable cause = e.getCause();
-    //         if (message == null)
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), oce.toString(), e.getMessage(), filename);
-    //         else if (message.contains("cannot be resolved"))
-    //             ;
-    //         else if (message.contains("Unable to calculate"))
-    //             ;
-    //         else if (message.contains("Error calculating"))
-    //             ;
-    //         else
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
-    //     }
-    //     // catch (Throwable t) {
-    //     //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
-    //     // }
-    //     finally {
-    //         // clearTimestamp();
-    //     }
-    //
-    //     logsolver.warnft("Unable to solve call %s", oce.toString());
-    //
-    //     return null;
-    // }
+            ResolvedMethodDeclaration rmd = mce.resolve();
+            return rmd;
 
-    // @Nullable
-    // public ResolvedMethodDeclaration resolve(MethodReferenceExpr mre) {
-    //     try {
-    //         // setTimestamp();
-    //
-    //         // ResolvedMethodDeclaration rmd =  mre.resolve();
-    //         // return rmd;
-    //
-    //         return super.resolve(mre);
-    //     }
-    //     catch (StackOverflowError e) {
-    //         logger.errorf("StackOverflow on %s", mre.toString());
-    //     }
-    //     catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
-    //         | MethodAmbiguityException | IllegalArgumentException | IndexOutOfBoundsException e) {
-    //         //logger.errorf("Unable to resolve %s: %s (%s)", mre.toString(), e.getClass().getName(), e.getMessage());
-    //     }
-    //     catch (OutOfMemoryError | ResolveAbortedException e) {
-    //         throw e;
-    //     }
-    //     catch (RuntimeException e) {
-    //         String message = e.getMessage();
-    //         if (message == null)
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mre.toString(), e.getMessage(), filename);
-    //         else if (message.contains("cannot be resolved"))
-    //             ;
-    //         else if (message.contains("Unable to calculate"))
-    //             ;
-    //         else if (message.contains("Error calculating"))
-    //             ;
-    //         else
-    //             logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mre.toString(), e.getMessage(), filename);
-    //     }
-    //     // catch (Throwable t) {
-    //     //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mre.toString(), t.getMessage(), filename);
-    //     // }
-    //     finally {
-    //         // clearTimestamp();
-    //     }
-    //
-    //     logsolver.warnft("Unable to solve call %s", mre.toString());
-    //
-    //     return null;
-    // }
+            // return super.resolve(mce);
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", mce.toString());
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", mce.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
+        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
+        // }
+        finally {
+            // clearTimestamp();
+        }
+
+        // If scope it is not present, this means that the class is the CURRENT class
+        // (I hope!)
+        if (!mce.getScope().isPresent())
+            return null;
+
+        // Skip "NameExpr" nodes because their resolution requires A LOT of type
+        Expression expr = mce.getScope().get();
+        // if (expr instanceof NameExpr)
+        //     return null;
+
+        try {
+            // setTimestamp();
+
+            ResolvedType rt = expr.calculateResolvedType();
+            String typeName = rt.describe();
+
+            int nArguments = mce.getArguments().size();
+            String methodName = mce.getNameAsString();
+
+            return new ReferencedMethodDeclaration(typeName, methodName, nArguments);
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", expr.toString());
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", expr.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            // Throwable cause = e.getCause();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mce.toString(), e.getMessage(), filename);
+        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mce.toString(), t.getMessage(), filename);
+        // }
+        finally {
+            // clearTimestamp();
+        }
+
+        logsolver.warnft("Unable to solve call %s", mce.toString());
+
+        return null;
+    }
+
+    @Nullable
+    public ResolvedConstructorDeclaration resolve(ObjectCreationExpr oce) {
+        try {
+            // setTimestamp();
+
+            ResolvedConstructorDeclaration rcd = oce.resolve();
+            return rcd;
+
+            // return super.resolve(oce);
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", oce.toString());
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException | IllegalArgumentException | IndexOutOfBoundsException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", oce.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), oce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
+        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
+        // }
+        finally {
+            // clearTimestamp();
+        }
+
+        // If scope it is not present, this means that the class is the CURRENT class
+        // (I hope!)
+        if (!oce.getScope().isPresent())
+            return null;
+
+        // Skip "NameExpr" nodes because their resolution requires A LOT of type
+        Expression expr = oce.getScope().get();
+        // if (expr instanceof NameExpr)
+        //     return null;
+
+        try {
+            // setTimestamp();
+
+            ResolvedType rt = expr.calculateResolvedType();
+            String typeName = rt.describe();
+
+            int nArguments = oce.getArguments().size();
+            String methodName = oce.getTypeAsString();
+
+            return new ReferenceConstructorDeclaration(typeName, methodName, nArguments);
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", expr.toString());
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", oce.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            // Throwable cause = e.getCause();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), oce.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  oce.toString(), e.getMessage(), filename);
+        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), oce.toString(), t.getMessage(), filename);
+        // }
+        finally {
+            // clearTimestamp();
+        }
+
+        logsolver.warnft("Unable to solve call %s", oce.toString());
+
+        return null;
+    }
+
+    @Nullable
+    public ResolvedMethodDeclaration resolve(MethodReferenceExpr mre) {
+        try {
+            // setTimestamp();
+
+            ResolvedMethodDeclaration rmd =  mre.resolve();
+            return rmd;
+
+            // return super.resolve(mre);
+        }
+        catch (StackOverflowError e) {
+            logger.errorf("StackOverflow on %s", mre.toString());
+        }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | ResolveTimeoutException
+            | MethodAmbiguityException | IllegalArgumentException | IndexOutOfBoundsException e) {
+            //logger.errorf("Unable to resolve %s: %s (%s)", mre.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (OutOfMemoryError | ResolveAbortedException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            String message = e.getMessage();
+            if (message == null)
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mre.toString(), e.getMessage(), filename);
+            else if (message.contains("cannot be resolved"))
+                ;
+            else if (message.contains("Unable to calculate"))
+                ;
+            else if (message.contains("Error calculating"))
+                ;
+            else
+                logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(),  mre.toString(), e.getMessage(), filename);
+        }
+        // catch (Throwable t) {
+        //     logger.errorf("[%s] %s: %s - %s", t.getClass().getSimpleName(), mre.toString(), t.getMessage(), filename);
+        // }
+        finally {
+            // clearTimestamp();
+        }
+
+        logsolver.warnft("Unable to solve call %s", mre.toString());
+
+        return null;
+    }
 
     // ----------------------------------------------------------------------
     // tryToSolveType
@@ -626,12 +617,12 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         // 0) check if it is a namespace -> skip
-        // if (this.nssolver.isNamespace(name))
-        //     return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        if (this.isNamespace(name))
+            return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
         // 1) try to solve using the full imports
-        if (namedImports.containsKey(name))
-            return tryToSolveUsingSolvers(namedImports.get(name));
+        if (imports.containsKey(name))
+            return tryToSolveUsingSolvers(imports.get(name));
 
         // 2) try to resolve using startImports (it contains also the current package
         //    AND "java.lang")
@@ -679,8 +670,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // ----------------------------------------------------------------------
 
     public String getTypeAsString(String name) {
-        if (namedImports.containsKey(name))
-            return namedImports.get(name);
+        if (imports.containsKey(name))
+            return imports.get(name);
         if (!starImports.isEmpty())
             return String.format("%s.%s", starImports.toString(), name);
         return name;

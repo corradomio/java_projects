@@ -19,15 +19,11 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
 
     private String qualifiedName;
 
-    public ReferencedTypeDeclaration(String namespace, String name) {
-        if (namespace == null || name == null)
-            throw new NullPointerException("namespace,name can not be null");
-        this.qualifiedName = JavaUtils.fullName(namespace, name);
+    public ReferencedTypeDeclaration(String namespace, String typeName) {
+        this.qualifiedName = JavaUtils.fullName(namespace, typeName);
     }
 
     public ReferencedTypeDeclaration(String qualifiedName) {
-        if (qualifiedName == null)
-            throw new NullPointerException("qualifiedName can not be null");
         this.qualifiedName = qualifiedName;
     }
 

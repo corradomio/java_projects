@@ -44,12 +44,13 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverWithNamespace;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 
 
-public class BaseVoidVisitorAdapter extends VoidVisitorWithDefaults<Void> {
+public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -83,6 +84,7 @@ public class BaseVoidVisitorAdapter extends VoidVisitorWithDefaults<Void> {
         finally {
             detach();
         }
+        // return this;
     }
 
     private void attach() {
@@ -96,8 +98,8 @@ public class BaseVoidVisitorAdapter extends VoidVisitorWithDefaults<Void> {
         JPUtils.removeTypeSolver(ts);
     }
 
-    protected TypeSolverWithNamespace tsx() {
-        return (TypeSolverWithNamespace) ts;
+    protected ContextTypeSolver tsx() {
+        return (ContextTypeSolver) ts;
     }
 
     // ----------------------------------------------------------------------

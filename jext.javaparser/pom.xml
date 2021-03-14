@@ -31,34 +31,34 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
-        <!--<dependency>-->
-        <!--    <groupId>com.github.javaparser</groupId>-->
-        <!--    <artifactId>javaparser-core</artifactId>-->
-        <!--    <version>3.18.0</version>-->
-        <!--</dependency>-->
-        <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-symbol-solver-core -->
-        <!--<dependency>-->
-        <!--    <groupId>com.github.javaparser</groupId>-->
-        <!--    <artifactId>javaparser-symbol-solver-core</artifactId>-->
-        <!--    <version>3.18.0</version>-->
-        <!--</dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
-            <version>3.19.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/javaparser-core-3.19.1-SNAPSHOT.jar</systemPath>
+            <version>3.20.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-symbol-solver-core -->
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.19.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/javaparser-symbol-solver-core-3.19.1-SNAPSHOT.jar</systemPath>
+            <version>3.20.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-core -->
+        <!--<dependency>-->
+        <!--    <groupId>com.github.javaparser</groupId>-->
+        <!--    <artifactId>javaparser-core</artifactId>-->
+        <!--    <version>3.19.1-SNAPSHOT</version>-->
+        <!--    <scope>system</scope>-->
+        <!--    <systemPath>${project.basedir}/libs/javaparser-core-3.19.1-SNAPSHOT.jar</systemPath>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.github.javaparser/javaparser-symbol-solver-core -->
+        <!--<dependency>-->
+        <!--    <groupId>com.github.javaparser</groupId>-->
+        <!--    <artifactId>javaparser-symbol-solver-core</artifactId>-->
+        <!--    <version>3.19.1-SNAPSHOT</version>-->
+        <!--    <scope>system</scope>-->
+        <!--    <systemPath>${project.basedir}/libs/javaparser-symbol-solver-core-3.19.1-SNAPSHOT.jar</systemPath>-->
+        <!--</dependency>-->
 
 
         <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->

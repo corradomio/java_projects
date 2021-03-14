@@ -9,14 +9,13 @@ import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
@@ -55,18 +54,6 @@ public class JPUtils {
 
     public static void removeSymbolSolver(CompilationUnit cu) {
         cu.removeData(Node.SYMBOL_RESOLVER_KEY);
-    }
-
-    // ----------------------------------------------------------------------
-
-    public static boolean isInnerClass(ResolvedReferenceTypeDeclaration rdecl) {
-        String packageName = rdecl.getPackageName();
-        String qualifiedName = rdecl.getQualifiedName();
-        boolean isInnerClass = qualifiedName.indexOf('.', packageName.length()+1) != -1;
-        if (isInnerClass)
-            return true;
-        else
-            return false;
     }
 
     // ----------------------------------------------------------------------
@@ -152,33 +139,49 @@ public class JPUtils {
         return Optional.empty();
     }
 
+    public static boolean isTypeParameter(NameExpr n) {
+        String symbol = n.getNameAsString();
+        return isTypeParameter(symbol, n);
+    }
+
     public static boolean isTypeParameter(ClassOrInterfaceType n) {
-        Optional<Node> optParent = n.getParentNode();
-        while(optParent.isPresent()) {
-            Node node = optParent.get();
+        String symbol = n.getNameAsString();
+        return isTypeParameter(symbol, n);
+    }
 
-            if (node instanceof ClassOrInterfaceDeclaration) {
-                ClassOrInterfaceDeclaration decl = ((ClassOrInterfaceDeclaration) node).asClassOrInterfaceDeclaration();
-                for (TypeParameter p : decl.getTypeParameters())
-                    if (p.getName().equals(n.getName()))
-                        return true;
-            }
-            if (node instanceof MethodDeclaration) {
-                MethodDeclaration decl = ((MethodDeclaration) node).asMethodDeclaration();
-                for (TypeParameter p : decl.getTypeParameters())
-                    if (p.getName().equals(n.getName()))
-                        return true;
-            }
-            if (node instanceof ConstructorDeclaration) {
-                ConstructorDeclaration decl = ((ConstructorDeclaration) node).asConstructorDeclaration();
-                for (TypeParameter p : decl.getTypeParameters())
-                    if (p.getName().equals(n.getName()))
-                        return true;
-            }
+    public static boolean isTypeParameter(String symbol, Node n) {
+        // Note: this test reduce A LOT the speed of analysis
+        // We use a simple heuristic: a symbol can be a type parameter is it is composed by
+        // 1 or 2 characters
 
-            optParent = node.getParentNode();
-        }
-        return false;
+        return symbol.length() < 3;
+
+        // Optional<Node> optParent = n.getParentNode();
+        // while(optParent.isPresent()) {
+        //     Node node = optParent.get();
+        //
+        //     if (node instanceof ClassOrInterfaceDeclaration) {
+        //         ClassOrInterfaceDeclaration decl = ((ClassOrInterfaceDeclaration) node).asClassOrInterfaceDeclaration();
+        //         for (TypeParameter p : decl.getTypeParameters())
+        //             if (p.getNameAsString().equals(symbol))
+        //                 return true;
+        //     }
+        //     if (node instanceof MethodDeclaration) {
+        //         MethodDeclaration decl = ((MethodDeclaration) node).asMethodDeclaration();
+        //         for (TypeParameter p : decl.getTypeParameters())
+        //             if (p.getNameAsString().equals(symbol))
+        //                 return true;
+        //     }
+        //     if (node instanceof ConstructorDeclaration) {
+        //         ConstructorDeclaration decl = ((ConstructorDeclaration) node).asConstructorDeclaration();
+        //         for (TypeParameter p : decl.getTypeParameters())
+        //             if (p.getNameAsString().equals(symbol))
+        //                 return true;
+        //     }
+        //
+        //     optParent = node.getParentNode();
+        // }
+        // return false;
     }
 
     public static boolean isMethodReferenceExpr(ClassOrInterfaceType n) {
@@ -457,26 +460,4 @@ public class JPUtils {
         return new JavaParserFacadeCache(getJavaParserFacadeTypeSolversMap());
     }
 
-    // ----------------------------------------------------------------------
-
-    public static TypeSolver findTypeSolver(TypeSolver typeSolver, Class<? extends TypeSolver> tsclass) {
-        TypeSolver found;
-        if (typeSolver.getClass().equals(tsclass))
-            return typeSolver;
-
-        try {
-            Field field = tsclass.getDeclaredField("elements");
-            List<TypeSolver> elements = (List<TypeSolver>) field.get(typeSolver);
-            for (TypeSolver e : elements) {
-                found = findTypeSolver(e, tsclass);
-                if (found != null)
-                    return found;
-            }
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-
-        }
-
-        return null;
-    }
 }

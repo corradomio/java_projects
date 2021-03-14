@@ -1,16 +1,25 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.MethodReferenceExpr;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedValueDeclaration;
+import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.logging.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-public abstract class BaseTypeSolver implements TypeSolverWithNamespace {
+public abstract class BaseTypeSolver implements TypeSolverExt {
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -21,7 +30,7 @@ public abstract class BaseTypeSolver implements TypeSolverWithNamespace {
         UNSOLVED = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
     protected Logger logger;
-    protected TypeSolverWithNamespace parent;
+    protected TypeSolverExt parent;
     protected String name;
 
     // ----------------------------------------------------------------------
@@ -59,8 +68,38 @@ public abstract class BaseTypeSolver implements TypeSolverWithNamespace {
         if (parent == this) {
             throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
         }
-        this.parent = (TypeSolverWithNamespace) parent;
+        this.parent = (TypeSolverExt) parent;
     }
+
+    // ----------------------------------------------------------------------
+    // Resolve
+    // ----------------------------------------------------------------------
+
+    // @Override
+    // public ResolvedType resolve(Type type) {
+    //     return type.resolve();
+    // }
+    //
+    // @Override
+    // public ResolvedType resolve(NameExpr n) {
+    //     ResolvedValueDeclaration rvd = n.resolve();
+    //     return rvd.getType();
+    // }
+    //
+    // @Override
+    // public ResolvedMethodDeclaration resolve(MethodReferenceExpr n) {
+    //     return n.resolve();
+    // }
+    //
+    // @Override
+    // public ResolvedConstructorDeclaration resolve(ObjectCreationExpr n) {
+    //     return n.resolve();
+    // }
+    //
+    // @Override
+    // public ResolvedMethodDeclaration resolve(MethodCallExpr n) {
+    //     return n.resolve();
+    // }
 
     // ----------------------------------------------------------------------
     // Extended operations
@@ -77,11 +116,6 @@ public abstract class BaseTypeSolver implements TypeSolverWithNamespace {
     @Override
     public boolean isNamespace(String name) {
         return false;
-    }
-
-    @Override
-    public <T extends TypeSolver> Optional<T> findTypeSolver(Class<T> tsClass) {
-        return Optional.empty();
     }
 
 }
