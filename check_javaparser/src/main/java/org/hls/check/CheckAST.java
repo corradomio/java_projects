@@ -59,7 +59,7 @@ public class CheckAST {
             cpr = new ClassPoolRegistry()
                 .addJdk(new File("D:\\Java\\Jdk8.0.x64"));
             project.getLibraries().forEach(library -> {
-                cpr.addAll(library.getFiles());
+                cpr.addAll(library.getFiles(), library.getName().getFullName());
             });
 
             css = new ContextSolvedSymbols();

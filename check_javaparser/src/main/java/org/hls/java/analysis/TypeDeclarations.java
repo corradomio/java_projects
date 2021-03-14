@@ -51,9 +51,9 @@ public class TypeDeclarations extends ContextVisitorAdapter {
             else
                 prefix = "c";
 
-            if (JPUtils.isInnerClass(rdecl))
-                logger.warnf("%s: %s (inner)", prefix, rdecl.getQualifiedName());
-            else
+            // if (JPUtils.isInnerClass(rdecl))
+            //     logger.warnf("%s: %s (inner)", prefix, rdecl.getQualifiedName());
+            // else
                 logger.printf("%s: %s", prefix, rdecl.getQualifiedName());
 
             // n.getImplementedTypes().forEach(this::resolve);
@@ -73,9 +73,9 @@ public class TypeDeclarations extends ContextVisitorAdapter {
     private void resolve(EnumDeclaration n) {
         try {
             ResolvedReferenceTypeDeclaration rdecl = n.resolve();
-            if (JPUtils.isInnerClass(rdecl))
-                logger.warnf("e: %s", rdecl.getQualifiedName());
-            else
+            // if (JPUtils.isInnerClass(rdecl))
+            //     logger.warnf("e: %s", rdecl.getQualifiedName());
+            // else
                 logger.printf("e: %s", rdecl.getQualifiedName());
 
             // n.getImplementedTypes().forEach(this::resolve);
@@ -94,9 +94,9 @@ public class TypeDeclarations extends ContextVisitorAdapter {
     private void resolve(AnnotationDeclaration n) {
         try {
             ResolvedReferenceTypeDeclaration rdecl = n.resolve();
-            if (JPUtils.isInnerClass(rdecl))
-                logger.warnf("a: %s", rdecl.getQualifiedName());
-            else
+            // if (JPUtils.isInnerClass(rdecl))
+            //     logger.warnf("a: %s", rdecl.getQualifiedName());
+            // else
                 logger.printf("a: %s", rdecl.getQualifiedName());
         }
         catch (UnsolvedSymbolException | UnsupportedOperationException | NoSuchElementException e) {

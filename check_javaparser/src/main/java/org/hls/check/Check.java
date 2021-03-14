@@ -110,7 +110,7 @@ public class Check {
             // ts.add(new JavaParserTypeSolver(new File("data\\bookstore\\src\\main\\java")));
             ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
             // ts.add(new JavaParserTypeSolver(new File("src_only")));
-            ts.add(new ClassPoolRegistryTypeSolver().add(new File("D:\\Java\\MiniJdk\\Jdk8")));
+            ts.add(new ClassPoolRegistryTypeSolver().add(new File("D:\\Java\\MiniJdk\\Jdk8"), "jdk8"));
             // ts.add(new ReflectionTypeSolver());
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\rt.jar")));
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\alt-rt.jar")));
