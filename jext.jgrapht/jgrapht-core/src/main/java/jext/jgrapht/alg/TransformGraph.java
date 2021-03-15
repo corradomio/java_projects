@@ -1,4 +1,4 @@
-package jext.jgrapht.graph;
+package jext.jgrapht.alg;
 
 import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
  */
 public class TransformGraph<V, E> {
 
-    // private Random rnd = new Random();
     private Graph<V, E> graph;
 
     public TransformGraph(Graph<V, E> graph) {
@@ -48,29 +47,6 @@ public class TransformGraph<V, E> {
 
         return new AsSubgraph<>(graph, null, edgeSet);
     }
-
-
-    // /**
-    //  * Random complement graph
-    //  * @param nEdges n of edges to generate
-    //  * @return a complement graph than original graph
-    //  */
-    // public Graph<V, E> complementGraph(long nEdges) {
-    //     int n = graph.vertexSet().size();
-    //
-    //     V[] vertices = (V[]) new Object[n];
-    //     graph.vertexSet().toArray(vertices);
-    //
-    //     Graph<V, E> complement = new GraphBuilder<>(graph).build();
-    //     graph.vertexSet().forEach(complement::addVertex);
-    //     while(complement.edgeSet().size() != nEdges) {
-    //         V source = vertices[rnd.nextInt(n)];
-    //         V target = vertices[rnd.nextInt(n)];
-    //         if (!graph.containsEdge(source, target))
-    //             complement.addEdge(source, target);
-    //     }
-    //     return complement;
-    // }
 
 
     /**

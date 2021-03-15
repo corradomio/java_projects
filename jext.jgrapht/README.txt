@@ -1,3 +1,41 @@
+or.jgrapht.
+    alg
+        interfaces
+            ... interfaces of all algorithms
+            ... each subpackage will implement the general algorithm
+                with a specific implementation
+        ... algorithms
+    event
+    generate
+        ... generators
+    graph
+        ... creators/modifiers
+    traverse
+        ... traverse algorithms
+    util
+        ... utilities
+
+    Graphs
+        - to create & modify a graph
+    GraphMetrics
+        -- diameter
+        -- radius
+        -- girth
+        -- number of triangles
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 order -> n of vertices
 size  -> n of edges
 

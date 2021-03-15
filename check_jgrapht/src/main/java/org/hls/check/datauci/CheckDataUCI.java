@@ -4,7 +4,7 @@ import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
-import jext.jgrapht.graph.TransformGraph;
+import jext.jgrapht.alg.TransformGraph;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;
 import jext.jgrapht.nio.adjacent.FileGraphImporter;
 import jext.jgrapht.nio.clustering.CSVClusteringImporter;
