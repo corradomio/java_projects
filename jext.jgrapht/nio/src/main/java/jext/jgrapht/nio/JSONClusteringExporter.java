@@ -1,4 +1,4 @@
-package jext.jgrapht.nio.clustering;
+package jext.jgrapht.clustering.nio;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;

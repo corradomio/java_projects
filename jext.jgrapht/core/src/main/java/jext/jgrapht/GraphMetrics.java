@@ -2,13 +2,11 @@ package jext.jgrapht;
 
 import jext.jgrapht.alg.closure.GraphComponents;
 import jext.jgrapht.util.Statistics;
-import jext.math.Mathx;
 import org.jgrapht.Graph;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static jext.math.Mathx.sq;
 

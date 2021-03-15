@@ -22,14 +22,14 @@ import java.util.stream.Collectors;
 public abstract class Graphs extends org.jgrapht.Graphs {
 
     /**
-     * Create a new grah based on properties
+     * Create a new graph based on properties
      *
      * @param directed if directed
      * @param loop     if can have loops
-     * @param multiple if canhave multiple edges
+     * @param multiple if can have multiple edges
      * @param weighted if is weighted
-     * @param <V>      the graph vertex type
-     * @param <E>      the graph edge type
+     * @param <V>      vertex type
+     * @param <E>      edge type
      * @return
      */
     public static <V, E> Graph<V, E> newGraph(
