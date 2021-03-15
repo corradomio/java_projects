@@ -8,9 +8,9 @@
     <artifactId>jext.jgrapht</artifactId>
     <version>1.0</version>
     <modules>
-        <module>core</module>
-        <module>nio</module>
         <module>color-clustering</module>
+        <module>jgrapht-core</module>
+        <module>jgrapht-io</module>
     </modules>
     <packaging>pom</packaging>
 

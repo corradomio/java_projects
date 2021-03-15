@@ -1,7 +1,5 @@
 package jext.jgrapht.util;
 
-import jext.math.Mathx;
-
 import static jext.math.Mathx.sq;
 
 public class Statistics {

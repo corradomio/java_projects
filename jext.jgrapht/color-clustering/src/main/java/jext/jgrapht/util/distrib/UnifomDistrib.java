@@ -1,10 +1,9 @@
 package jext.jgrapht.util.distrib;
 
 import jext.jgrapht.util.Distrib;
+import jext.math.Mathx;
 
 import java.util.Random;
-import java.lang.Math;
-import jext.math.Mathx;
 
 
 public class UnifomDistrib implements Distrib {

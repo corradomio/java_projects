@@ -3,9 +3,7 @@ package jext.jgrapht.graph;
 import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.AsSubgraph;
-import org.jgrapht.graph.builder.GraphBuilder;
 
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 

@@ -1,10 +1,11 @@
 package jext.jgrapht.alg.color;
 
+import jext.jgrapht.Graphs;
 import jext.jgrapht.util.EdgeInfo;
 import jext.jgrapht.util.VertexInfo;
-import jext.jgrapht.Graphs;
 import jext.logging.Logger;
 import jext.util.concurrent.SharedBitSet;
+import jext.util.concurrent.ThreadLocalRandom;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.VertexColoringAlgorithm;
 
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import jext.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 

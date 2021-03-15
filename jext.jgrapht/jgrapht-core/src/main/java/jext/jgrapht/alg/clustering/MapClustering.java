@@ -1,4 +1,4 @@
-package jext.jgrapht.clustering.nio;
+package jext.jgrapht.alg.clustering;
 
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 

@@ -3,18 +3,13 @@ package jext.jgrapht.nio.adjacent;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.ExportException;
 import org.jgrapht.nio.GraphExporter;
-import org.jgrapht.nio.ImportException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;

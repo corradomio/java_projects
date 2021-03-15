@@ -7,8 +7,6 @@ import org.jgrapht.nio.GraphImporter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -35,20 +33,35 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
     private String separators = "\\s+";
     private String comment = "#";
     private int skipLines = 0;
-    private Function<String, V> toVertex;
+    private Function<String, V> toVertex = (x) -> (V)x;
 
     public AdjacentImporter() { }
 
+    /**
+     * Select the character used as values separator.
+     * Default: spaces
+     * @param sep separator
+     */
     public AdjacentImporter<V, E> withSeparator(String sep) {
         this.separators = sep;
         return this;
     }
 
+    /**
+     * Select the character used as single line comment.
+     * Default: '#'
+     * @param comments first character used for single line comments
+     */
     public AdjacentImporter<V, E> withComment(String comments) {
         this.comment = comments;
         return this;
     }
 
+    /**
+     * Skip a predefined number of header lines
+     * Default: 0
+     * @param nLines n of lines to skip
+     */
     public AdjacentImporter<V, E> withSkipLines(int nLines) {
         this.skipLines = nLines;
         return this;
@@ -56,8 +69,8 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
 
     /**
      * Function used to convert a string in a vertex of type V
+     * Default: identity
      * @param toVertex function String->V
-     * @return self
      */
     public AdjacentImporter<V, E> withToVertex(Function<String, V> toVertex) {
         this.toVertex = toVertex;
