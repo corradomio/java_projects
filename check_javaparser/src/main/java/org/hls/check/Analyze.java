@@ -72,12 +72,12 @@ public class Analyze {
             log.infof("Solve");
 
             project.getModules().forEach(module -> {
-                Parallel.forEach(module.getSources(), source -> {
-                    solve(source.getFile());
-                });
-                // module.getSources().forEach(source -> {
+                // Parallel.forEach(module.getSources(), source -> {
                 //     solve(source.getFile());
                 // });
+                module.getSources().forEach(source -> {
+                    solve(source.getFile());
+                });
             });
 
         }

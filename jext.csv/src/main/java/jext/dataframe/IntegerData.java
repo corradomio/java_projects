@@ -1,2 +1,6 @@
-package jext.dataframe;public class IntegerData {
+package jext.dataframe;
+
+public interface IntegerData extends Data<Integer> {
+
+    int get(int iloc);
 }

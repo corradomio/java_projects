@@ -1,19 +1,51 @@
 package jext.dataframe.index;
 
-import jext.dataframe.Index;
+import jext.dataframe.util.Arrays;
 
-public class StringIndex implements Index<String> {
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
-    private String[] index;
-    private int n;
+public class StringIndex implements jext.dataframe.StringIndex {
 
-    public StringIndex() {
-        index = new String[0];
-        n = 0;
-    }
+    private Map<String, Integer> map = new TreeMap<>();
+
+    // ----------------------------------------------------------------------
 
     public StringIndex(String[] index) {
-        this.index = index;
-        this.n = index.length;
+        for (int i=0; i< index.length; ++i) {
+            map.put(index[i], i);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public int size() {
+        return map.size();
+    }
+
+    @Override
+    public int at(String loc) {
+        return map.getOrDefault(loc, -1);
+    }
+
+    @Override
+    public int get(String loc) {
+        return map.getOrDefault(loc, -1);
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Iterator<String> iterator() {
+        return map.keySet().iterator();
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return String.format("Index(%s)", Arrays.toString(map.keySet()));
     }
 }

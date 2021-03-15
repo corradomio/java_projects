@@ -1,19 +1,40 @@
 package jext.dataframe.data;
 
-import jext.dataframe.Data;
+import jext.dataframe.util.Arrays;
 
-public class StringData implements Data<String> {
+public class StringData implements jext.dataframe.StringData {
 
     private String[] data;
-    private int n;
 
-    public StringData() {
-        data = new String[0];
-        n = 0;
-    }
+    // ----------------------------------------------------------------------
 
     public StringData(String[] data) {
         this.data = data;
-        this.n = data.length;
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public int size() {
+        return data.length;
+    }
+
+    @Override
+    public String at(int iloc) {
+        if (iloc == -1)
+            return null;
+        return data[iloc];
+    }
+
+    @Override
+    public String get(int iloc) {
+        return data[iloc];
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return String.format("array(%s)", Arrays.toString(data));
     }
 }

@@ -1,2 +1,6 @@
-package jext.dataframe;public class IntegerIndex {
+package jext.dataframe;
+
+public interface IntegerIndex extends Index<Integer> {
+
+    int get(int loc);
 }

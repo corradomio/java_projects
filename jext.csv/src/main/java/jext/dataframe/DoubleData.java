@@ -1,2 +1,6 @@
-package jext.dataframe;public interface DoubleData {
+package jext.dataframe;
+
+public interface DoubleData extends Data<Double> {
+
+    double get(int iloc);
 }

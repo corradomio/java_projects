@@ -45,6 +45,20 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
     // ----------------------------------------------------------------------
     // Context
     // ----------------------------------------------------------------------
+    /*
+        BodyDeclaration
+            InitializerDeclaration
+            FieldDeclaration
+            TypeDeclaration
+                EnumDeclaration
+                AnnotationDeclaration
+                ClassOrInterfaceDeclaration
+            CallableDeclaration
+                ConstructorDeclaration
+                MethodDeclaration
+            AnnotationMemberDeclaration
+            EnumConstantDeclaration
+     */
 
     @Override
     public void visit(ClassOrInterfaceDeclaration n, Void arg) {
