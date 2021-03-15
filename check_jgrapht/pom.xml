@@ -40,17 +40,17 @@
 
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht.core</artifactId>
+            <artifactId>jext.jgrapht-core</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht.nio</artifactId>
+            <artifactId>jext.jgrapht-io</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht.color-clustering</artifactId>
+            <artifactId>jext.jgrapht-color-clustering</artifactId>
             <version>1.0</version>
         </dependency>
 

@@ -7,6 +7,7 @@ import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;
 import jext.jgrapht.nio.adjacent.FileGraphImporter;
+import jext.jgrapht.nio.clustering.CSVClusteringImporter;
 import jext.jgrapht.util.WeightMode;
 import jext.logging.Logger;
 import org.hls.check.ClusteringStatistics;
@@ -50,7 +51,7 @@ public class CheckDataUCI {
         ).importGraph(g, edgesFile);
 
         ClusteringAlgorithm.Clustering<Integer> gtruth =
-                new jext.jgrapht.clustering.nio.CSVClusteringImporter<Integer>()
+                new CSVClusteringImporter<Integer>()
                         .withToVertex(Integer::valueOf)
                         .importClustering(clusteringFile);
 
