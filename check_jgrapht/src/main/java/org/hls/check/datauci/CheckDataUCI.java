@@ -3,12 +3,10 @@ package org.hls.check.datauci;
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.clustering.ColoringClustering;
-import jext.jgrapht.alg.color.ParallelMCMCBColoring;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.nio.adjacent.AdjacentImporter;
 import jext.jgrapht.nio.adjacent.FileGraphImporter;
-import jext.jgrapht.nio.clustering.CSVClusteringImporter;
 import jext.jgrapht.util.WeightMode;
 import jext.logging.Logger;
 import org.hls.check.ClusteringStatistics;
@@ -52,7 +50,7 @@ public class CheckDataUCI {
         ).importGraph(g, edgesFile);
 
         ClusteringAlgorithm.Clustering<Integer> gtruth =
-                new CSVClusteringImporter<Integer>()
+                new jext.jgrapht.clustering.nio.CSVClusteringImporter<Integer>()
                         .withToVertex(Integer::valueOf)
                         .importClustering(clusteringFile);
 

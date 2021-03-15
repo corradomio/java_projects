@@ -37,11 +37,23 @@
             <artifactId>jext.collections</artifactId>
             <version>1.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht</artifactId>
+            <artifactId>jext.jgrapht.core</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.jgrapht.nio</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.jgrapht.color-clustering</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.concurrent</artifactId>
