@@ -15,8 +15,6 @@ import static jext.math.Mathx.sq;
  */
 public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
-    private static org.jgrapht.GraphMetrics gm;
-
     private final Graph<V, E> graph;
     private final EdgeType edgeType;
 
@@ -166,13 +164,14 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
     public int degreeOf(V vertex, EdgeType edgeType) {
         switch(edgeType){
-            case UNDIRECTED:
-                return graph.degreeOf(vertex);
+            // case UNDIRECTED:
+            //     return graph.degreeOf(vertex);
             case IN_EDGE:
                 return graph.inDegreeOf(vertex);
             case OUT_EDGE:
-            default:
                 return graph.outDegreeOf(vertex);
+            default:
+                return graph.degreeOf(vertex);
         }
     }
 
