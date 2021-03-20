@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class UniqueStrings extends VoidVisitorAdapter<Void> {
+public class UniqueSymbols extends VoidVisitorAdapter<Void> {
 
     private Map<String, String> symbols = new ConcurrentHashMap<>();
 
