@@ -2,19 +2,30 @@ package jext.sourcecode.resources.type;
 
 import jext.java.TypeRole;
 import jext.name.Name;
+import jext.name.ObjectName;
+import jext.sourcecode.project.UseDirection;
+import jext.sourcecode.project.Field;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.Method;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.project.TypeUse;
 import jext.sourcecode.project.util.NamedObject;
 
+import java.util.Collections;
+import java.util.List;
+
 public class ImplementedType extends NamedObject implements Type {
+
+    public static ImplementedType ANONYMOUS = new ImplementedType("", "", TypeRole.UNKNOWN, null);
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
+    private Name namespace;
     private Source source;
     private TypeRole role;
     public boolean innerType;
@@ -24,13 +35,20 @@ public class ImplementedType extends NamedObject implements Type {
     // Constructors
     // ----------------------------------------------------------------------
 
-    // public ImplementedType(Name name) {
-    //     super(name);
-    //     this.role = TypeRole.UNKNOWN;
-    // }
-
     public ImplementedType(Name name, TypeRole role, Source source) {
+        this(name.getParent(), name, role, source);
+    }
+
+    public ImplementedType(Name namespace, Name name, TypeRole role, Source source) {
         super(name);
+        this.namespace = namespace;
+        this.source = source;
+        this.role = role;
+    }
+
+    public ImplementedType(String namespace, String name, TypeRole role, Source source) {
+        super(new ObjectName(name));
+        this.namespace = new ObjectName(namespace);
         this.source = source;
         this.role = role;
     }
@@ -52,6 +70,11 @@ public class ImplementedType extends NamedObject implements Type {
     }
 
     @Override
+    public boolean isAnonymous() {
+        return this.getName().getName().startsWith("Anonymous");
+    }
+
+    @Override
     public Type asType() {
         return this;
     }
@@ -68,7 +91,32 @@ public class ImplementedType extends NamedObject implements Type {
         return true;
     }
 
+    @Override
+    public boolean isInner() {
+        return !namespace.equals(getName().getParent());
+    }
+
+    @Override
+    public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Field> getFields() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Method> getMethods() {
+        return Collections.emptyList();
+    }
+
     // --
+
+    @Override
+    public Name getNamespace() {
+        return namespace;
+    }
 
     @Override
     public int getTypeParametersCount() {
@@ -88,16 +136,21 @@ public class ImplementedType extends NamedObject implements Type {
     // -- Source
 
     @Override
-    public String getSourceId() {
-        return source.getId();
-    }
-
-    @Override
     public Source getSource() {
         return source;
     }
 
+    @Override
+    public String getSourceId() {
+        return source.getId();
+    }
+
     // -- Module
+
+    @Override
+    public Module getModule() {
+        return source.getModule();
+    }
 
     @Override
     public String getModuleId() {
@@ -105,58 +158,9 @@ public class ImplementedType extends NamedObject implements Type {
     }
 
     @Override
-    public Module getModule() {
-        return source.getModule();
+    public String getModuleRefId() {
+        return source.getModule().getRefId();
     }
-
-    // -- Types/fields/methods
-
-    // @Override
-    // public List<Type> getUseTypes(TypeUse useType, EdgeDirection direction, boolean recursive, boolean refTypes) {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public List<Field> getFields() {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public List<Method> getMethods() {
-    //     return Collections.emptyList();
-    // }
-
-    // -- Score
-
-    // @Override
-    // public List<Double> getScore() {
-    //     return null;
-    // }
-
-    // -- Other models
-
-    // @Override
-    // public List<Component> getComponents() {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public List<Feature> getFeatures() {
-    //     return Collections.emptyList();
-    // }
-
-    // -- Entry point
-
-    // @Override
-    // public boolean isEntryPoint() {
-    //     // none to do in the source code
-    //     return false;
-    // }
-
-    // @Override
-    // public long[] getCountMethods() {
-    //     return null;
-    // }
 
     // ----------------------------------------------------------------------
     // Implementation

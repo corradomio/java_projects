@@ -1,5 +1,7 @@
 package jext.util.concurrent;
 
+import jext.exception.AbortedException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,8 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -41,6 +45,13 @@ public class Parallel {
     private static List<ExecutorService> running;
     private static Queue<WaitingExecutorService> waiting;
     private static long TIMEOUT = 60000;
+
+    // decrease the thread priority used in Parallel
+    private static ThreadFactory threadFactory = r -> {
+        Thread thread = new Thread(r);
+        thread.setPriority(Thread.NORM_PRIORITY-2);
+        return thread;
+    };
 
     // ----------------------------------------------------------------------
 
@@ -197,13 +208,6 @@ public class Parallel {
         invokeAll(tasks);
     }
 
-
-    // public static <T, U> List<U> mapEach(Iterable<T> it, Function<T, U> body) {
-    //     List<Callable<U>> tasks = new ArrayList<>();
-    //     for(T t : it) tasks.add(new TaskFunction<>(t, body));
-    //     return invokeAll(tasks);
-    // }
-
     // ----------------------------------------------------------------------
 
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
@@ -228,7 +232,6 @@ public class Parallel {
 
         ParallelException pe = new ParallelException();
         List<T> results = collectExceptions(futures, pe);
-
         if (!pe.isEmpty())
             throw pe;
 
@@ -240,6 +243,11 @@ public class Parallel {
         for (Future<T> future : futures) {
             try {
                 results.add(future.get());
+            }
+            catch (ExecutionException e) {
+                Throwable t = e.getCause();
+                if (!(t instanceof AbortedException))
+                    pe.add(t);
             }
             catch (Throwable t) {
                 pe.add(t);
@@ -277,12 +285,16 @@ public class Parallel {
 
         if (waiting.isEmpty()) {
             waiting.add(new WaitingExecutorService(
-                Executors.newFixedThreadPool(nthreads)
+                Executors.newFixedThreadPool(nthreads, threadFactory)
                 // Executors.newDynamicThreadPool(nthreads)
             ));
         }
 
         executor = waiting.remove().get();
+
+        // remove timeout executors
+        long now = System.currentTimeMillis();
+        waiting.removeIf(wexec -> (now - wexec.timestamp) > TIMEOUT);
 
         running.add(executor);
         return executor;
@@ -299,6 +311,7 @@ public class Parallel {
     public static void setup() {
         if (nthreads == 0) {
             nthreads = Runtime.getRuntime().availableProcessors() - 1;
+            // nthreads = 2*Runtime.getRuntime().availableProcessors();
             if (nthreads < 3) nthreads = 3;
         }
 
@@ -306,8 +319,6 @@ public class Parallel {
             running = new LinkedList<>();
             waiting = new LinkedList<>();
         }
-
-        // Parallelize.setup();
     }
 
     public static synchronized void shutdown() {
@@ -317,19 +328,7 @@ public class Parallel {
             waiting.forEach(WaitingExecutorService::shutdownNow);
         running = null;
         waiting = null;
-
-        // Parallelize.shutdown();
     }
-
-    // private static synchronized void checkUsage(boolean toUse) {
-    //     if (running != null)
-    //         return;
-    //
-    //     nthreads = Runtime.getRuntime().availableProcessors() - 1;
-    //     if (nthreads < 3) nthreads = 3;
-    //     running = new LinkedList<>();
-    //     waiting = new LinkedList<>();
-    // }
 
     private static void sleep(long millis) {
         if (millis > 0)

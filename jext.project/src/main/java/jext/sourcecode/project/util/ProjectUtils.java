@@ -36,12 +36,6 @@ public class ProjectUtils {
         return sources;
     }
 
-    // public static List<Source> getSources(Project project, Predicate<String> select) {
-    //     return getSources(project).stream()
-    //         .filter(source -> select.test(source.getPath()))
-    //         .collect(Collectors.toList());
-    // }
-
     public static Source getSource(Project project, String nameOrId) {
         for (Module module : project.getModules()) {
             Source source = module.getSource(nameOrId);

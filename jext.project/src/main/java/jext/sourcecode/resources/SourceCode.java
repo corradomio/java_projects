@@ -39,6 +39,7 @@ public abstract class SourceCode extends ResourceFile implements Source {
     // private Module module;
     // private File file;
     private String language;
+    private SourceInfo sinfo;
 
     // ----------------------------------------------------------------------
     //
@@ -46,13 +47,6 @@ public abstract class SourceCode extends ResourceFile implements Source {
 
     protected SourceCode(File file, Module module) {
         super(file, module);
-
-        // this.module = module;
-        // this.file = file;
-        //
-        // String rpath = FileUtils.relativePathNoExt(module.getDirectory(), getFile());
-        // setName(new PathName(rpath));
-        //
 
         String name = file.getName();
         this.language = name.substring(name.lastIndexOf(".")+1);
@@ -89,21 +83,24 @@ public abstract class SourceCode extends ResourceFile implements Source {
 
     @Override
     public SourceInfo getSourceInfo() {
-        SourceInfo info = new SourceInfo();
+        if (sinfo != null)
+            return sinfo;
+
+        sinfo = new SourceInfo();
 
         List<String> lines = FileUtils.toStrings(file);
 
-        info.count = 1;
-        info.bytes = file.length();
-        info.totalLines = lines.size();
-        info.blankLines = lines
+        sinfo.count = 1;
+        sinfo.bytes = file.length();
+        sinfo.totalLines = lines.size();
+        sinfo.blankLines = lines
             .stream()
             .map(String::trim)
             .filter(String::isEmpty)
             .count();
-        info.codeLines = info.totalLines - info.blankLines;
+        sinfo.codeLines = sinfo.totalLines - sinfo.blankLines;
 
-        return info;
+        return sinfo;
     }
 
 }

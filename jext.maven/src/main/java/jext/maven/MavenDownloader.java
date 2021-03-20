@@ -722,7 +722,7 @@ public class MavenDownloader implements MavenConst {
 
         // if it was not possible to download the file, mark 'coords' as invalid
         if (!downloadedFile.exists()) {
-            logger.errorf("Unable to download %s for %s", type, coords);
+            logger.errorf("Unable to download library %s for %s", type, coords);
             markAsInvalidType(coords, type);
         }
     }

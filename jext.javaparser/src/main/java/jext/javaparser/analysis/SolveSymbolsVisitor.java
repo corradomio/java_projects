@@ -114,7 +114,7 @@ public class SolveSymbolsVisitor extends ContextVisitorAdapter {
     //
     // ----------------------------------------------------------------------
 
-    public void analyze(CompilationUnit cu, ContextTypeSolver ts) {
+    public void analyze(CompilationUnit cu, TypeSolver ts) {
         super.analyze(cu, ts);
     }
 

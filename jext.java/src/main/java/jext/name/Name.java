@@ -11,16 +11,14 @@ public interface Name extends Comparable<Name> {
 
     boolean isRoot();
 
-    String getName();
-
     Name getParent();
+
+    String getName();
 
     String getParentName();
 
     String getFullName();
 
-    // Name compose(String name);
-
-    String[] getParts();
+    // String[] getParts();
 
 }

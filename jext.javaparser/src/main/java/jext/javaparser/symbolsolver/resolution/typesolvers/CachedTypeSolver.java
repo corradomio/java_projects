@@ -2,6 +2,7 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
+import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 
@@ -37,6 +38,11 @@ public class CachedTypeSolver extends CompositeTypeSolver {
 
     public CachedTypeSolver withCache(String cacheName) {
         this.cacheName = cacheName;
+        return this;
+    }
+
+    public CachedTypeSolver add(TypeSolver ts) {
+        super.add(ts);
         return this;
     }
 

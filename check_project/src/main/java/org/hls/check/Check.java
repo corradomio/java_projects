@@ -5,7 +5,7 @@ import jext.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectDump;
-import jext.util.Properties;
+import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public class Check {
             // "D:\\SPLGroup\\example_repo\\deeplearning4j"
             "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
             // "D:\\Projects\\java\\strange"
-            ), Properties.empty()
+            ), PropertiesUtils.empty()
         ) ;
 
         String name = p.getName().getName();

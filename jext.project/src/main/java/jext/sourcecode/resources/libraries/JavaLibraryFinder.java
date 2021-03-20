@@ -6,6 +6,7 @@ import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.util.Parameters;
 
@@ -54,7 +55,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     private Map<String, File> namedLibraries = new HashMap<>();
 
     // directory -> library
-    private Map<File, Library> directoryLibraries = new HashMap<>();
+    private Map<File, RuntimeLibrary> rtLibraries = new HashMap<>();
 
     // maven coords -> library
     private Map<MavenCoords, Library> mavenLibraries = new HashMap<>();
@@ -165,7 +166,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     }
 
     @Override
-    public  Library getLibrary(String libraryName) {
+    public RuntimeLibrary getRuntimeLibrary(String libraryName) {
 
         synchronized(namedLibraries) {
 
@@ -177,14 +178,14 @@ public class JavaLibraryFinder implements LibraryFinder {
 
             // library already registered
             File libraryPath = namedLibraries.get(libraryName);
-            if (directoryLibraries.containsKey(libraryPath))
-                return directoryLibraries.get(libraryPath);
+            if (rtLibraries.containsKey(libraryPath))
+                return rtLibraries.get(libraryPath);
 
             // register the library
-            Library library = new DirectoryLibrary(libraryName, libraryPath, project);
-            directoryLibraries.put(libraryPath, library);
+            RuntimeLibrary rtLibrary = new JDKLibrary(libraryName, libraryPath, project);
+            rtLibraries.put(libraryPath, rtLibrary);
 
-            return library;
+            return rtLibrary;
         }
     }
 

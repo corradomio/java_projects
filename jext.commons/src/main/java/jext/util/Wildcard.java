@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 //  Special patterns: file extension, starting with a '.' but not containing
 //      a meta character ('*', '?', '/')
 //
+//      .java  ->  *.java
+//
 //
 public class Wildcard {
 
@@ -57,7 +59,7 @@ public class Wildcard {
                 //  /**
                 //else if (charAt(i+1) == '*' && charAt(i+2) == '*' && charAt(i+3) == 0) {
                 else if (match(i+1, "**\0")) {
-                    regex.append(".*");
+                    regex.append("/.*");
                     i += 2;
                 }
                 //  /*
@@ -68,7 +70,7 @@ public class Wildcard {
                 }
                 //  /...
                 else {
-                    //regex.append("/");
+                    //regex.append("[/]");
                     regex.append("/");
                 }
             }

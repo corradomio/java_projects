@@ -68,10 +68,10 @@ public class PathName implements Name {
         return path;
     }
 
-    @Override
-    public String[] getParts() {
-        return path.split("/");
-    }
+    // @Override
+    // public String[] getParts() {
+    //     return path.split("/");
+    // }
 
     // ----------------------------------------------------------------------
     // Operations

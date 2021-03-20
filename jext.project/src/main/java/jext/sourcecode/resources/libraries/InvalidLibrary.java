@@ -6,6 +6,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.resources.BaseLibrary;
 
 import java.io.File;
@@ -13,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class InvalidLibrary extends BaseLibrary {
+public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
 
     public InvalidLibrary(String libraryName, Project project) {
         super(new PathName(libraryName), project);

@@ -78,10 +78,10 @@ public class ObjectName implements Name {
         return name;
     }
 
-    @Override
-    public String[] getParts() {
-        return name.split("\\.");
-    }
+    // @Override
+    // public String[] getParts() {
+    //     return name.split("\\.");
+    // }
 
     // ----------------------------------------------------------------------
     // Operations

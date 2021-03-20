@@ -47,7 +47,8 @@ public class DelayedTimer extends Thread {
         try {
             terminate = true;
             INSTANCE.join();
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             logger.error("Catched exception", e);
         }
     }
@@ -77,7 +78,7 @@ public class DelayedTimer extends Thread {
                 try {
                     callback.call(previous, now);
                 }
-                catch(Throwable e) {
+                catch (Throwable e) {
                     logger.error("Catched exception", e);
                 }
                 finally {

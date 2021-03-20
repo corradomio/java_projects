@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 public class JavaUtils {
 
     public static final String ROOT = "";
+    public static final String VOID = "void";
     public static final String JAVA_LANG = "java.lang";
     public static final String JAVA_LANG_VOID = "java.lang.Void";
     public static final String JAVA_LANG_CLASS = "java.lang.Class";
@@ -93,8 +94,14 @@ public class JavaUtils {
     //
 
 
-    private static Pattern CLASSNAME  = Pattern.compile("[A-Z_$][0-9A-Za-z_$]*");
+    private static Pattern CLASSNAME  = Pattern.compile("[A-Z$][0-9A-Za-z_$]*");
     private static Pattern IDENTIFIER = Pattern.compile("[a-z_$][0-9A-Za-z_$]*");
+    private static Pattern CONSTANT = Pattern.compile("[0-9A-Z_$]+");
+
+    public static boolean isConstant(String symbol) {
+        // a constant is composed only by uppercase characters
+        return CONSTANT.matcher(symbol).matches();
+    }
 
     public static boolean isIdentifier(String symbol) {
         // in general, an identifier starts with a lowercase letter
@@ -109,6 +116,10 @@ public class JavaUtils {
     public static boolean isQualified(String symbol) {
         // in general, a symbol containing a dot is a qualified name
         return symbol.contains(".");
+    }
+
+    public static boolean isSpecialName(String symbol) {
+        return symbol.contains("|") || symbol.contains("?");
     }
 
     // ----------------------------------------------------------------------
@@ -197,4 +208,38 @@ public class JavaUtils {
         return !signature.contains("<") && !signature.contains("(");
     }
 
+    public static boolean isPlainMethodSignature(String signature) {
+        return !signature.contains("<");
+    }
+
+    // ----------------------------------------------------------------------
+
+    public static String toPlainMethodSignature(String signature) {
+        int state = 0;
+        int len = signature.length();
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<len; ++i) {
+            char ch = signature.charAt(i);
+            if (ch == '<')
+                state += 1;
+            else if (ch == '>')
+                state -= 1;
+            else if (state == 0)
+                sb.append(ch);
+            else
+                continue;
+        }
+        return sb.toString();
+    }
+
+    public static String toPlainMethodSignature(String methodName, int nParams) {
+        if (nParams == 0)
+            return methodName + "()";
+
+        StringBuilder sb = new StringBuilder(methodName).append("(").append(JAVA_LANG_OBJECT);
+        for (int i=1; i<nParams; ++i)
+            sb.append(", ").append(JAVA_LANG_OBJECT);
+        sb.append(")");
+        return sb.toString();
+    }
 }

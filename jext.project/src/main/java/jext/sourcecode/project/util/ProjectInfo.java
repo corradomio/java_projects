@@ -33,6 +33,7 @@ public class ProjectInfo {
         pinfo.put("projectType", project.getProjectType());
         pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
         pinfo.put("properties", project.getProperties());
+
         // this can require A LOT OF TIME
         List<Module> modules = project.getModules();
         Set<Library> libraries = project.getLibraries();

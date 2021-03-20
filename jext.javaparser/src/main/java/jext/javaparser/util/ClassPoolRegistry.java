@@ -203,6 +203,9 @@ public class ClassPoolRegistry {
     }
 
     protected void addElement(String name, String namespace, File libraryFile, JarEntry entry, String libraryName) {
+        if (classpathElements.containsKey(name))
+            return;
+
         ClasspathElement element = new ClasspathElement();
         element.name = name;
         element.entry = entry;

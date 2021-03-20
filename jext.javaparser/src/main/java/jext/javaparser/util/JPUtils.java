@@ -2,6 +2,7 @@ package jext.javaparser.util;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -11,8 +12,10 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
@@ -34,6 +37,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 public class JPUtils {
 
@@ -366,7 +370,7 @@ public class JPUtils {
             Map<TypeSolver, ?> tsmap = getJavaParserFacadeTypeSolversMap();
             for(TypeSolver ts : tsmap.keySet())
                 if (ts instanceof BaseTypeSolver)
-                    if (((BaseTypeSolver)ts).getName().startsWith(prefix))
+                    if (((BaseTypeSolver)ts).getName().contains(prefix))
                         toRemove.add(ts);
             for (TypeSolver ts : toRemove)
                 tsmap.remove(ts);

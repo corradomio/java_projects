@@ -49,7 +49,7 @@ public class AnalyzeDL4J {
 
         classPoolRegistry = new ClassPoolRegistry();
         dl4j.getLibraries().forEach(library -> {
-            classPoolRegistry.addAll(library.getFiles());
+            classPoolRegistry.addAll(library.getFiles(), library.getName().getFullName());
         });
         classPoolRegistry.addJdk(JDK);
 

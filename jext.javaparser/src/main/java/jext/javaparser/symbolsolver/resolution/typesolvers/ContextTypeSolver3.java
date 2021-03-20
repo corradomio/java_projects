@@ -13,6 +13,7 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserClassDeclaration;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserEnumDeclaration;
+import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserInterfaceDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
@@ -21,6 +22,7 @@ import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,7 @@ public class ContextTypeSolver3 extends CompositeTypeSolver {
     private final Map<String, String> namedImports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
     private String namespace;
+    private File file;
 
     // cache used to patch a problem with the parser that it is unable
     // to distinguish between a type and a namespace
@@ -71,6 +74,7 @@ public class ContextTypeSolver3 extends CompositeTypeSolver {
 
         cu.getPackageDeclaration().ifPresent(this::setPackage);
         cu.findAll(ImportDeclaration.class).forEach(this::addImport);
+        cu.getStorage().ifPresent(storage -> file = storage.getPath().toFile());
         addDefaultImports();
 
         return this;
@@ -125,7 +129,7 @@ public class ContextTypeSolver3 extends CompositeTypeSolver {
 
     @Nullable
     public ResolvedType resolve(String name, Node n) {
-        if (!JavaUtils.isClassName(name))
+        if (!JavaUtils.isClassName(name) || JavaUtils.isConstant(name))
             return null;
 
         Optional<ResolvedType> resolved = Optional.empty();
@@ -179,16 +183,29 @@ public class ContextTypeSolver3 extends CompositeTypeSolver {
     }
 
     private Optional<ResolvedType> resolveUsingLocalClasses(String name, Node n) {
-        for(ClassOrInterfaceDeclaration c : cu.findAll(ClassOrInterfaceDeclaration.class))
+        try {
+            for (ClassOrInterfaceDeclaration c : cu.findAll(ClassOrInterfaceDeclaration.class))
             if (name.equals(c.getNameAsString()))
+                    try {
                 return Optional.of(
                     ReferenceTypeImpl.undeterminedParameters(new JavaParserClassDeclaration(c, this), this)
                 );
-        for(EnumDeclaration e : cu.findAll(EnumDeclaration.class))
+                    }
+                    catch (IllegalArgumentException e) {
+                        return Optional.of(
+                            ReferenceTypeImpl.undeterminedParameters(new JavaParserInterfaceDeclaration(c, this), this)
+                        );
+                    }
+            for (EnumDeclaration e : cu.findAll(EnumDeclaration.class))
             if (name.equals(e.getNameAsString()))
                 return Optional.of(
                     ReferenceTypeImpl.undeterminedParameters(new JavaParserEnumDeclaration(e, this), this)
                 );
+        }
+        catch (IllegalArgumentException e) {
+            logger.errorf("IllegalArgumentException: %s, symbol: %s, node: %s\n %s", e.getMessage(), name, n.toString(),
+                file);
+        }
         return Optional.empty();
     }
 

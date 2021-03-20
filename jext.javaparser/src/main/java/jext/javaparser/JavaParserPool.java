@@ -9,8 +9,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
-import jext.cache.CacheManager;
 import jext.cache.Cache;
+import jext.cache.CacheManager;
 import jext.logging.Logger;
 
 import java.io.File;
@@ -71,6 +71,7 @@ public class JavaParserPool {
     private Set<Path> pathRoots;
     private Set<File> sourceRoots;
     private Set<String> namespaces;
+    // private UniqueSymbols uniqueSymbols;
 
     // parser configuration used for the parser
     private ParserConfiguration parserConfiguration;
@@ -121,6 +122,11 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
+
+    // public JavaParserPool withUniqueSymbols(UniqueSymbols uniqueSymbols) {
+    //     this.uniqueSymbols = uniqueSymbols;
+    //     return this;
+    // }
 
     public JavaParserPool withCache() {
         return withCache(this.name);
@@ -291,6 +297,8 @@ public class JavaParserPool {
                     .parse(COMPILATION_UNIT, provider(srcFile));
             if (result.isSuccessful()) {
                 result.ifSuccessful(cu -> {
+                    // if (uniqueSymbols != null)
+                    //     uniqueSymbols.analyze(cu);
                     cu.setStorage(srcFile);
                 });
                 break;

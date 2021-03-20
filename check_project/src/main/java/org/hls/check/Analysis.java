@@ -79,10 +79,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
         if (classPoolRegistry == null) {
             classPoolRegistry = new ClassPoolRegistry();
             project.getLibraries().forEach(library -> {
-                library.getFiles().forEach(libraryFile -> {
-                    classPoolRegistry.add(libraryFile);
-                });
-                classPoolRegistry.addAll(library.getFiles());
+                classPoolRegistry.addAll(library.getFiles(), library.getName().getFullName());
             });
         }
 
@@ -142,7 +139,6 @@ public class Analysis extends BaseVoidVisitorAdapter {
 
 
     public static void main(String[] args) throws Exception {
-
         CacheManager.configure();
         Logger.configure();
 
