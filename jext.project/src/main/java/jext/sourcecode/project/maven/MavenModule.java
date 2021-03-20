@@ -55,46 +55,46 @@ public class MavenModule extends BaseModule {
 
     // ----------------------------------------------------------------------
 
-    @Override
-    public List<Module> getDependencies() {
-        if (dependencies != null)
-            return dependencies;
-
-        //
-        // Override 'BaseModule::getDependencies()' to reorder the
-        // dependencies based on the 'building system configuration file'
-        //
-
-        Set<Module> orderedDeps = new TreeSet<>(COMPARATOR);
-
-        List<MavenCoords> dcoords = pom.getDependencyCoords();
-
-        // speedup: dcoords is empty
-        if (dcoords.isEmpty())
-            return super.getDependencies();
-
-        // retrieve the list of module dependencies based on
-        // the Maven configuration file ('pom.xml')
-        dcoords.forEach(coords -> {
-            Module dmodule = project.getModule(coords.toString());
-            if (dmodule != null) {
-                orderedDeps.add(dmodule);
-            }
-        });
-
-        // speedup: Maven dependencies is empty
-        if (orderedDeps.isEmpty())
-            return super.getDependencies();
-
-        // add the missing dependencies based on the module types intersection
-        orderedDeps.addAll(super.getDependencies());
-
-        this.dependencies = orderedDeps.isEmpty()
-            ? Collections.emptyList()
-            : new ArrayList<>(orderedDeps);
-
-        return this.dependencies;
-    }
+    // @Override
+    // public List<Module> getDependencies() {
+    //     if (dependencies != null)
+    //         return dependencies;
+    //
+    //     //
+    //     // Override 'BaseModule::getDependencies()' to reorder the
+    //     // dependencies based on the 'building system configuration file'
+    //     //
+    //
+    //     Set<Module> orderedDeps = new TreeSet<>(COMPARATOR);
+    //
+    //     List<MavenCoords> dcoords = pom.getDependencyCoords();
+    //
+    //     // speedup: dcoords is empty
+    //     if (dcoords.isEmpty())
+    //         return super.getDependencies();
+    //
+    //     // retrieve the list of module dependencies based on
+    //     // the Maven configuration file ('pom.xml')
+    //     dcoords.forEach(coords -> {
+    //         Module dmodule = project.getModule(coords.toString());
+    //         if (dmodule != null) {
+    //             orderedDeps.add(dmodule);
+    //         }
+    //     });
+    //
+    //     // speedup: Maven dependencies is empty
+    //     if (orderedDeps.isEmpty())
+    //         return super.getDependencies();
+    //
+    //     // add the missing dependencies based on the module types intersection
+    //     orderedDeps.addAll(super.getDependencies());
+    //
+    //     this.dependencies = orderedDeps.isEmpty()
+    //         ? Collections.emptyList()
+    //         : new ArrayList<>(orderedDeps);
+    //
+    //     return this.dependencies;
+    // }
 
     @Override
     protected List<String> getMavenRepositories() {

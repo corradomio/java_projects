@@ -12,7 +12,7 @@ public interface LibraryFinder {
 
     Library getLibrary(MavenCoords coords);
 
-    Library getLibrary(String libraryName);
+    RuntimeLibrary getRuntimeLibrary(String libraryName);
 
     MavenDownloader getDownloader();
 

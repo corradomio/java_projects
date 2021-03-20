@@ -74,43 +74,43 @@ public class GradleModule extends BaseModule {
     // Properties
     // ----------------------------------------------------------------------
 
-    @Override
-    public List<Module> getDependencies() {
-        if (dependencies != null)
-            return dependencies;
-
-        //
-        // Override 'BaseModule::getDependencies()' to reorder the
-        // dependencies based on the 'building system configuration file'
-        //
-
-        Set<Module> orderedDeps = new TreeSet<>(COMPARATOR);
-
-        List<Name> dnames = getGradleDependencies();
-
-        // speedup: dnames is empty
-        if (dnames.isEmpty())
-            return super.getDependencies();
-
-        dnames.forEach(dname -> {
-            Module dmodule = project.getModule(dname.toString());
-            if (dmodule != null)
-                orderedDeps.add(dmodule);
-        });
-
-        // speedup: Gradle dependencies is empty
-        if (orderedDeps.isEmpty())
-            return super.getDependencies();
-
-        // add the missing dependencies based on the module types intersection
-        orderedDeps.addAll(super.getDependencies());
-
-        this.dependencies = orderedDeps.isEmpty()
-            ? Collections.emptyList()
-            : new ArrayList<>(orderedDeps);
-
-        return this.dependencies;
-    }
+    // @Override
+    // public List<Module> getDependencies() {
+    //     if (dependencies != null)
+    //         return dependencies;
+    //
+    //     //
+    //     // Override 'BaseModule::getDependencies()' to reorder the
+    //     // dependencies based on the 'building system configuration file'
+    //     //
+    //
+    //     Set<Module> orderedDeps = new TreeSet<>(COMPARATOR);
+    //
+    //     List<Name> dnames = getGradleDependencies();
+    //
+    //     // speedup: dnames is empty
+    //     if (dnames.isEmpty())
+    //         return super.getDependencies();
+    //
+    //     dnames.forEach(dname -> {
+    //         Module dmodule = project.getModule(dname.toString());
+    //         if (dmodule != null)
+    //             orderedDeps.add(dmodule);
+    //     });
+    //
+    //     // speedup: Gradle dependencies is empty
+    //     if (orderedDeps.isEmpty())
+    //         return super.getDependencies();
+    //
+    //     // add the missing dependencies based on the module types intersection
+    //     orderedDeps.addAll(super.getDependencies());
+    //
+    //     this.dependencies = orderedDeps.isEmpty()
+    //         ? Collections.emptyList()
+    //         : new ArrayList<>(orderedDeps);
+    //
+    //     return this.dependencies;
+    // }
 
     // ----------------------------------------------------------------------
     // Libraries

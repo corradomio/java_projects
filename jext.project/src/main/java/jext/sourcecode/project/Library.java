@@ -17,8 +17,8 @@ public interface Library extends IdNamed {
      * It is null for runtime libraries and maven libraries because
      * these libraries are shared between multiple modules
      */
-    String getModuleId();
     Module getModule();
+    String getModuleId();
 
     // /**
     //  * If the library is defined locally (in a local jar)
@@ -37,7 +37,7 @@ public interface Library extends IdNamed {
     String getDigest();
 
     /** Dependency libraries (MAVEN) */
-    List<Library> getDependencies();
+    List<? extends Library> getDependencies();
 
     /**
      * List of file composing this library.

@@ -1,10 +1,7 @@
 package jext.sourcecode.project;
 
-// import ae.ebtic.spl.analysis.common.EdgeDirection;
-// import ae.ebtic.spl.analysis.components.Component;
-// import ae.ebtic.spl.analysis.features.Feature;
+import jext.name.Name;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -13,21 +10,25 @@ import java.util.List;
  */
 public interface Type extends RefType {
 
+    Name getNamespace();
+
     // -- Source defining this type
 
-    String getSourceId();
     Source getSource();
+    String getSourceId();
 
     // -- Module containing the source
 
-    String getModuleId();
     Module getModule();
+    String getModuleId();
+    String getModuleRefId();
 
     /**
      * Check if the type is a 'valid' type for analysis:
      * it has a specified role (role != UNKNOWN)
      */
     boolean isValid();
+    boolean isInner();
 
     /**
      * List of
@@ -36,17 +37,17 @@ public interface Type extends RefType {
      * - implemented interfaces
      * - used types in implementation
      */
-    // List<Type> getUseTypes(TypeUse useType, EdgeDirection direction, boolean recursive, boolean refTypes);
+    List<? extends Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes);
 
     /**
      * List of fields defined in the type's implementation
      */
-    // List<Field> getFields();
+    List<? extends Field> getFields();
 
     /**
      * List of defined methods
      */
-    // List<Method> getMethods();
+    List<? extends Method> getMethods();
 
     // ----------------------------------------------------------------------
     // Score

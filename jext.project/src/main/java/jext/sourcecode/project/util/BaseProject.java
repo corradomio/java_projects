@@ -19,6 +19,7 @@ import jext.util.FileUtils;
 import jext.util.HashBag;
 import jext.util.PropertiesUtils;
 import jext.java.FastJavaParser;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class BaseProject extends NamedObject implements Project {
@@ -62,6 +64,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected File projectHome;
     protected String projectType;
     protected Properties properties;
+    protected Predicate<String> selector;
 
     protected List<Module> modules;
     protected LibrarySet libraries;
@@ -115,11 +118,19 @@ public abstract class BaseProject extends NamedObject implements Project {
         this.logger = Logger.getLogger("%s.%s",
             getClass().getSimpleName(),
             getName().getName());
+
+        this.setId(StringUtils.digest(getName().getFullName()));
+        this.selector = (p) -> true;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public void setResourceFilter(Predicate<String> selector) {
+        this.selector = selector;
+    }
 
     @Override
     public String getProjectType() {
@@ -360,6 +371,8 @@ public abstract class BaseProject extends NamedObject implements Project {
         for (Module module : getModules()) {
             if (module.getId().equals(nameOrId))
                 return module;
+            if (module.getRefId().equals(nameOrId))
+                return module;
             if (module.getName().getFullName().equals(nameOrId))
                 return module;
             if (module.getPath().equals(nameOrId))
@@ -429,18 +442,20 @@ public abstract class BaseProject extends NamedObject implements Project {
         if (libraries != null)
             return libraries;
 
-        // compose two type of libraries:
+        // compose 3 type of libraries:
         // 1) local libraries
         // 2) maven libraries buf for them it keep ONLY the latest version
+        // 3) runtime libraries
 
         LibrarySet libraries = new LibrarySet();
 
-        getModules().forEach(module -> {
-            libraries.addAll(module.getDefinedLibraries());
-        });
+        // Note: the runtime libraries are added because otherwise javaassist
+        // is not able to resolve the symbols
 
-        // Note: the runtime libraries ARE NOT ADDED because
-        //       they are specific for eachmodule
+        getModules().forEach(module -> {
+            libraries.addAll(module.getDeclaredLibraries());
+            libraries.add(module.getRuntimeLibrary());
+        });
 
         logger.debugf("check %d libraries", libraries.size());
         libraries.checkArtifacts();
@@ -520,6 +535,7 @@ public abstract class BaseProject extends NamedObject implements Project {
             sources.accept(moduleHome, resource))
         ).stream()
             .map(file -> SourceCode.newSource(file, module))
+            .filter(source -> selector.test(source.getPath()))
             .collect(Collectors.toList());
 
         return list;
@@ -531,6 +547,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                 resources.accept(moduleHome, resource))
         ).stream()
             .map(file -> new ResourceFile(file, module))
+            .filter(resource -> selector.test(resource.getPath()))
             .collect(Collectors.toList());
     }
 

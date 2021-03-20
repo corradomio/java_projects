@@ -11,6 +11,7 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 
 import static jext.sourcecode.project.Project.ROOT_MODULE_NAME;
 
-public abstract class BaseModule extends NamedObject implements Module {
+public abstract class BaseModule extends ReferencedObject implements Module {
 
     // ----------------------------------------------------------------------
     // Protected fields
@@ -62,6 +63,7 @@ public abstract class BaseModule extends NamedObject implements Module {
 
         this.path = FileUtils.relativePath(project.getProjectHome(), moduleHome);
         setName(this.path);
+        setRefIdFromName();
 
         this.logger = Logger.getLogger("%s.%s.%s",
             getClass().getSimpleName(),
@@ -70,7 +72,7 @@ public abstract class BaseModule extends NamedObject implements Module {
     }
 
     @Override
-    protected void setName(String name) {
+    public void setName(String name) {
         if (name.isEmpty())
             name = ROOT_MODULE_NAME;
         super.setName(name);
@@ -176,7 +178,8 @@ public abstract class BaseModule extends NamedObject implements Module {
         Set<RefType> definedTypes = getTypes();
 
         // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
-        Set<RefType> usedTypes = SetUtils.differenceOrdered(getUsedTypes(), definedTypes);
+        //Set<RefType> usedTypes = SetUtils.differenceOrdered(getUsedTypes(), definedTypes);
+        Set<RefType> usedTypes = getUsedTypes();
 
         project.getModules().forEach(dmodule -> {
             if (dmodule.getName().equals(this.getName()))
@@ -277,15 +280,15 @@ public abstract class BaseModule extends NamedObject implements Module {
     // ----------------------------------------------------------------------
 
     @Override
-    public Library getRuntimeLibrary() {
+    public RuntimeLibrary getRuntimeLibrary() {
         String runtimeName = GuessRuntimeLibrary.guessRuntimeLibrary(this);
 
         LibraryFinder lfinder = getProject().getLibraryFinder();
 
-        Library runtimeLibrary = lfinder.getLibrary(runtimeName);
+        RuntimeLibrary runtimeLibrary = lfinder.getRuntimeLibrary(runtimeName);
         if (runtimeLibrary == null) {
             logger.errorf("JDK Library %s not available. Uses the default jdk8", runtimeName);
-            runtimeLibrary = lfinder.getLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY);
+            runtimeLibrary = lfinder.getRuntimeLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY);
         }
         if (runtimeLibrary == null)
             runtimeLibrary = new InvalidLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY, getProject());
@@ -296,11 +299,11 @@ public abstract class BaseModule extends NamedObject implements Module {
     @Override
     public List<Library> getLibraries() {
         LibrarySet projectLibraries = (LibrarySet) project.getLibraries();
-        return projectLibraries.resolveAll(getDefinedLibraries());
+        return projectLibraries.resolveAll(getDeclaredLibraries());
     }
 
     @Override
-    public List<Library> getDefinedLibraries() {
+    public List<Library> getDeclaredLibraries() {
         if (libraries != null)
             return libraries;
 
@@ -317,7 +320,7 @@ public abstract class BaseModule extends NamedObject implements Module {
         if (selected != null)
             return selected;
 
-        for (Library library : getDefinedLibraries()) {
+        for (Library library : getDeclaredLibraries()) {
             if (library.getId().equals(nameOrId))
                 return library;
             if (library.getName().getFullName().equals(nameOrId))
@@ -411,45 +414,42 @@ public abstract class BaseModule extends NamedObject implements Module {
         // cache names:
         //
         //      dependency.{project}.module.types
-        //      dependency.{project}.module.allTypes
         //
 
-        Cache<String, Set<RefType>> cache = CacheManager.getCache(String.format("dependency.%s.module.types", project.getId()));
+        String cacheName = String.format("dependency.%s.module.types", project.getId());
+        Cache<String, Set<RefType>> cache = CacheManager.getCache(cacheName);
 
-        Set<RefType> definedTypes = cache.get(getId(), () -> {
+        return cache.get(getId(), () -> {
             Set<RefType> types = new TreeSet<>();
 
             getSources().forEach(source ->
                         types.addAll(source.getTypes()));
 
-            // getSourceRoots().forEach(sourceRoot -> {
-            //     sourceRoot.getSources().forEach(source ->
-            //         types.addAll(source.getTypes()));
-            // });
-
             return types;
         });
-
-        return definedTypes;
     }
 
     @Override
     public Set<RefType> getUsedTypes() {
-        Cache<String, Set<RefType>> cache = CacheManager.getCache(String.format("dependency.%s.module.usedTypes", project.getId()));
+        // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
+        Set<RefType> definedTypes = getTypes();
+
+        // cache names:
+        //
+        //      dependency.{project}.module.usedTypes
+        //
+
+        String cacheName = String.format("dependency.%s.module.usedTypes", project.getId());
+        Cache<String, Set<RefType>> cache = CacheManager.getCache(cacheName);
 
         return cache.get(getId(), () -> {
-                Set<RefType> usedTypes = new TreeSet<>();
+            Set<RefType> usedTypes = new TreeSet<>();
 
-                getSources().forEach(source ->
-                        usedTypes.addAll(source.getUsedTypes()));
+            getSources().forEach(source ->
+                    usedTypes.addAll(source.getUsedTypes()));
 
-                // getSourceRoots().forEach(sourceRoot -> {
-                //     sourceRoot.getSources().forEach(source ->
-                //         usedTypes.addAll(source.getUsedTypes()));
-                // });
-
-                return usedTypes;
-            });
+            return SetUtils.differenceOrdered(usedTypes, definedTypes);
+        });
     }
 
     // ----------------------------------------------------------------------

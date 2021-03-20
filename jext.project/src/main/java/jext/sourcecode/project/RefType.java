@@ -2,11 +2,19 @@ package jext.sourcecode.project;
 
 import jext.java.TypeRole;
 import jext.name.IdNamed;
+import jext.name.Name;
 
 /**
  * Referenced type
  */
 public interface RefType extends IdNamed {
+
+    Project getProject();
+
+    Library getLibrary();
+    String  getLibraryId();
+
+    Name getNamespace();
 
     /**
      * Role of the type
@@ -32,13 +40,6 @@ public interface RefType extends IdNamed {
      */
     int getTypeParametersCount();
 
-    /**
-     * Retrieve the library that contains the implementation of the
-     * reference type
-     */
-    Library getLibrary();
+    boolean isAnonymous();
 
-    String getLibraryId();
-
-    Project getProject();
 }

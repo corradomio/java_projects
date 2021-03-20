@@ -1,21 +1,21 @@
 package jext.sourcecode.project;
 
-import jext.name.IdNamed;
-import jext.name.Name;
-import jext.sourcecode.project.util.SourceRoot;
+import jext.name.RefIdNamed;
 
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-public interface Module extends IdNamed {
+public interface Module extends RefIdNamed {
 
-    /** Module id */
-    String getId();
-
-    /** Module name */
-    Name getName();
+    // /** Module id */
+    // String getId();
+    //
+    // String getRefId();
+    //
+    // /** Module name */
+    // Name getName();
 
     /** Owner project */
     Project getProject();
@@ -54,7 +54,7 @@ public interface Module extends IdNamed {
     List<Library> getLibraries();
 
     /** Libraries used by the module (local & remote) */
-    List<Library> getDefinedLibraries();
+    List<Library> getDeclaredLibraries();
 
     /** Retrieve a library by id/full name/name */
     Library getLibrary(String nameOrId);

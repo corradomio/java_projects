@@ -152,7 +152,7 @@ public class GradleProject extends BaseProject {
             }
 
             for (GradleModule gmodule : gmodules) {
-                gmodule.getDefinedLibraries();
+                gmodule.getDeclaredLibraries();
                 gmodule.getMavenRepositories();
                 addGradleModule(gmodule);
             }
@@ -243,8 +243,10 @@ public class GradleProject extends BaseProject {
     }
 
     private void closeConnection() {
-        connection.close();
-        connection = null;
+        if (connection != null) {
+            connection.close();
+            connection = null;
+        }
     }
 
     private void connect() {

@@ -5,6 +5,7 @@ import jext.sourcecode.project.eclipse.EclipseProject;
 import jext.sourcecode.project.gradle.GradleProject;
 import jext.sourcecode.project.maven.MavenProject;
 import jext.sourcecode.project.simple.SimpleProject;
+import jext.sourcecode.project.util.CountNames;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -72,25 +73,6 @@ public class GuessProjectType {
         //     return AntProject.TYPE;
         // else // project type not defined
         //     return SimpleProject.TYPE;
-    }
-
-    private static class CountNames extends HashMap<String, Integer> {
-        void add(String name) {
-            this.put(name, 1 + this.getOrDefault(name, 0));
-        }
-
-        String getMostFrequentName() {
-            String selected = null;
-            int selectedCount = 0;
-            for (String name : keySet()) {
-                int count = get(name);
-                if (count > selectedCount) {
-                    selected = name;
-                    selectedCount = count;
-                }
-            }
-            return selected;
-        }
     }
 
     private static String findBetterType(File directory, Properties props) {
