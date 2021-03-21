@@ -55,5 +55,6 @@ public class CheckCavemanOut {
                 .exportGraph(g, new File("relaxcave.dot"));
 
         new GraphMetrics<>(g).getVertexStatistics().print();
+
     }
 }

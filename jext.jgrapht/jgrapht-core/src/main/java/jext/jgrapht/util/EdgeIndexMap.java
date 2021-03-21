@@ -1,2 +1,4 @@
-package jext.jgrapht.util;public class EdgeIndexMap {
+package jext.jgrapht.util;
+
+public class EdgeIndexMap {
 }

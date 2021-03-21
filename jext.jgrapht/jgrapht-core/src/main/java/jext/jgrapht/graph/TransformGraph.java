@@ -1,4 +1,4 @@
-package jext.jgrapht.alg;
+package jext.jgrapht.graph;
 
 import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
