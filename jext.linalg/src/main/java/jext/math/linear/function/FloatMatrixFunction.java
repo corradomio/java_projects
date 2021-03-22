@@ -1,6 +1,6 @@
 package jext.math.linear.function;
 
 @FunctionalInterface
-public interface FloatMatrix {
-    float eval(int i, int j);
+public interface FloatMatrixFunction {
+    float apply(int i, int j);
 }

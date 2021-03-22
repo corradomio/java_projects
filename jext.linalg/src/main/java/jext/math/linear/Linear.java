@@ -1,4 +1,4 @@
-package jext.math.linear.dense;
+package jext.math.linear;
 
 import jext.math.linear.function.FloatMatrixFunction;
 import jext.math.linear.function.FloatVectorFunction;
@@ -46,10 +46,6 @@ public class Linear {
             for (int j=0; j<m; ++j, ++k)
                 a[k] = f.apply(i, j);
         return a;
-    }
-
-    public static float[] identity(int n) {
-        return diagonal(n, n, 1);
     }
 
     public static float[] diagonal(int n, int m, float c) {
@@ -137,4 +133,80 @@ public class Linear {
             for (int c=0; c<m; ++c, l++,i+=k)
                 R[l] = dot(A, i, B, c, k);
     }
+
+    // ----------------------------------------------------------------------
+
+    // r = s*u + t*v
+    public static void linear(float[] r, float s, float[] u, float t, float[] v) {
+        // (0,0)
+        if (s == 0 && t == 0)
+            zeros(r);
+        // (1,0)
+        else if (s == 1 && t == 0)
+            assign(r, u);
+        // (0,1)
+        else if (s == 0 && t == 1)
+            assign(r, v);
+        // (1,1)
+        else if (s == 1 && t == 1)
+            lin(r, u, v);
+        // (0,t)
+        else if (s == 0)
+            lin(r, t, v);
+        // (s,0)
+        else if (t == 0)
+            lin(r, s, u);
+        // (1,t)
+        else if (s == 1)
+            lin(r, u, t, v);
+        // (s,1)
+        else if (t == 1)
+            lin(r, v, s, u);
+        // (s,t)
+        else
+            lin(r,s,u,t,v);
+    }
+
+    // r = 0
+    private static void zeros(float[] r) {
+        int n = r.length;
+        for (int i=0; i<n; ++i)
+            r[i] = 0;
+    }
+
+    // r = u
+    private static void assign(float[] r, float[] u) {
+        int n = r.length;
+        for (int i=0; i<n; ++i)
+            r[i] = u[i];
+    }
+
+    // r = u + v
+    private static void lin(float[] r, float[] u, float[] v) {
+        int n = r.length;
+        for (int i=0; i<n; ++i)
+            r[i] = u[i] + v[i];
+    }
+
+    // r = s*u
+    private static void lin(float[] r, float s, float[] u) {
+        int n = r.length;
+        for (int i=0; i<n; ++i)
+            r[i] = s*u[i];
+    }
+
+    // r = u + t*v
+    private static void lin(float[] r, float[] u, float t, float[] v) {
+        int n = r.length;
+        for (int i=0; i<n; ++i)
+            r[i] = u[i] + t*v[i];
+    }
+
+    // r = s*u + t*v
+    private static void lin(float[] r, float s, float[] u, float t, float[] v) {
+        int n = r.length;
+        for (int i=0; i<n; ++i)
+            r[i] = s*u[i] + t*v[i];
+    }
+
 }

@@ -1,2 +1,7 @@
-package jext.math.linear;public interface Type {
+package jext.math.linear;
+
+public enum Type {
+    DENSE,
+    SPARSE,
+    DIAGONAL
 }

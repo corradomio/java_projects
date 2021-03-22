@@ -1,2 +1,10 @@
-package jext.math.linear;public interface Matrix {
+package jext.math.linear;
+
+public interface Matrix {
+    Type type();
+    Dim dim();
+    int length();
+
+    // R = s*A + t*B
+    Matrix linear(float s, float t, Matrix B);
 }
