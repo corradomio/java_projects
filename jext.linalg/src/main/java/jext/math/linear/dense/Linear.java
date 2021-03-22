@@ -1,4 +1,4 @@
-package jext.math.linear;
+package jext.math.linear.dense;
 
 import jext.math.linear.function.FloatMatrixFunction;
 import jext.math.linear.function.FloatVectorFunction;

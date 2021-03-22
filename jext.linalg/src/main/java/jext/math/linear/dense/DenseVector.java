@@ -1,7 +1,6 @@
 package jext.math.linear.dense;
 
 import jext.math.linear.Dim;
-import jext.math.linear.Linear;
 import jext.math.linear.Type;
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
@@ -33,9 +32,9 @@ public class DenseVector implements Vector {
     @Override
     public Vector linear(float s, float t, Vector v) {
         DenseVector that = (DenseVector) v;
-        DenseVector res = Vectors.zeros(dim);
-        Linear.linear(res.data, s, this.data, t, that.data);
-        return res;
+        DenseVector r = Vectors.zeros(dim);
+        Linear.linear(r.data, s, this.data, t, that.data);
+        return r;
     }
 
     @Override

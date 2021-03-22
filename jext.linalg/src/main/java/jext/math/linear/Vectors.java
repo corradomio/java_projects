@@ -1,6 +1,7 @@
 package jext.math.linear;
 
 import jext.math.linear.dense.DenseVector;
+import jext.math.linear.dense.Linear;
 
 public class Vectors {
 

@@ -1,6 +1,7 @@
 package jext.math.linear;
 
 import jext.math.linear.dense.DenseMatrix;
+import jext.math.linear.dense.Linear;
 
 public class Matrices {
 
@@ -31,5 +32,15 @@ public class Matrices {
             throw new IllegalArgumentException("Matrix dimensions");
 
         return new DenseMatrix(v, n);
+    }
+
+    public static DenseMatrix matrix(float[][] mat) {
+        int n = mat.length;
+        int m = n > 0 ? mat[0].length : 0;
+        float[] data = new float[n*m];
+        for (int i=0,k=0; i<n; ++i)
+            for (int j=0; j<m; ++j,++k)
+                data[k] = mat[i][j];
+        return new DenseMatrix(data, n);
     }
 }
