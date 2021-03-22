@@ -1,7 +1,7 @@
-package jext.math.linear;
+package jext.math.linear.dense;
 
-import jext.math.linear.function.FloatMatrix;
-import jext.math.linear.function.FloatVector;
+import jext.math.linear.function.FloatMatrixFunction;
+import jext.math.linear.function.FloatVectorFunction;
 
 import java.util.Random;
 
@@ -12,20 +12,17 @@ public class Linear {
     }
 
     public static float[] vect(int n, float c) {
-        float[] v = vect(n);
-        for (int i=0; i<n; ++i)
-            v[i] = c;
-        return v;
+        return vect(n, (i) -> c);
     }
 
     public static float[] vect(int n, Random rnd) {
         return vect(n, (i) -> rnd.nextFloat());
     }
 
-    public static float[] vect(int n, FloatVector f) {
+    public static float[] vect(int n, FloatVectorFunction f) {
         float[] v = vect(n);
         for (int i=0; i<n; ++i)
-            v[i] = f.eval(i);
+            v[i] = f.apply(i);
         return v;
     }
 
@@ -36,11 +33,19 @@ public class Linear {
     }
 
     public static float[] matrix(int n, int m, float c) {
-        return vect(n*m, c);
+        return matrix(n, m, (i,j) -> c);
     }
 
     public static float[] matrix(int n, int m, Random rnd) {
-        return matrix(n, m, (i, j)->rnd.nextFloat());
+        return matrix(n, m, (i,j)->rnd.nextFloat());
+    }
+
+    public static float[] matrix(int n, int m, FloatMatrixFunction f) {
+        float[] a = matrix(n, m);
+        for (int i=0,k=0; i<n; ++i)
+            for (int j=0; j<m; ++j, ++k)
+                a[k] = f.apply(i, j);
+        return a;
     }
 
     public static float[] identity(int n) {
@@ -48,37 +53,15 @@ public class Linear {
     }
 
     public static float[] diagonal(int n, int m, float c) {
+        return diagonal(n, m, (i) -> c);
+    }
+
+    public static float[] diagonal(int n, int m, FloatVectorFunction f) {
         float[] a = matrix(n, m);
         int l = Math.min(n, m);
-        for (int r=0,i=0; r<l; ++r,i+=m+1)
-            a[i] = c;
+        for (int i=0,k=0; i<l; ++i,k+=m+1)
+            a[k] = f.apply(i);
         return a;
-    }
-
-    public static float[] diagonal(int n, int m, FloatVector f) {
-        float[] a = matrix(n, m);
-        int l = Math.min(n, m);
-        for (int r=0,i=0; r<l; ++r,i+=m+1)
-            a[i] = f.eval(r);
-        return a;
-    }
-
-    public static float[] matrix(int n, int m, FloatMatrix f) {
-        float[] a = matrix(n, m);
-        for (int r=0,i=0; r<n; ++r)
-            for (int c=0; c<m; ++c, ++i)
-                a[i] = f.eval(r, c);
-        return a;
-    }
-
-    // ----------------------------------------------------------------------
-
-    public static float[] ivect(int n) {
-        return vect(n, (i) -> i);
-    }
-
-    public static float[] imatrix(int n, int m) {
-        return matrix(n, m, (i,j) -> (i+1)*10 + (j+1));
     }
 
     // ----------------------------------------------------------------------
@@ -110,11 +93,6 @@ public class Linear {
 
     // r = u . v
     public static float dot(float[] u, float[] v) {
-        // int n = v.length;
-        // float s = 0;
-        // for (int i=0; i<n; ++i)
-        //     s += u[i]*v[i];
-        // return s;
         return dot(u, 0, v);
     }
 
@@ -135,8 +113,8 @@ public class Linear {
 
 
     // r = A[i:] . B[:j]
-    public static float dot(float[]A, int i, float[] B, int j, int k) {
-        int m = B.length/k;
+    public static float dot(float[]A, int i, float[] B, int j, int m) {
+        int k=B.length/m;
         float s = 0;
         for (int l=0; l<k; ++l,++i,j+=m)
             s += A[i]*B[j];
@@ -153,10 +131,10 @@ public class Linear {
 
     // R = A + C . B
     public static void dot(float[] R, float[] A, float[] C, float[] B, int k) {
-        int n = C.length/k;
+        int n = A.length/k;
         int m = B.length/k;
-        for(int r=0,i=0; r<n;++r)
-            for (int c=0; c<m; ++c,++i)
-                ;//R[i] = A[i] + dot(C, )
+        for(int r=0,i=0,j=0,l=0; r<n; ++r)
+            for (int c=0; c<m; ++c, l++,i+=k)
+                R[l] = dot(A, i, B, c, k);
     }
 }
