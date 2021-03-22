@@ -10,7 +10,7 @@ public class Vectors {
         return vect(Linalg.ones(n));
     }
 
-    public static Vector constant(int n, float v) {
+    public static Vector vect(int n, float v) {
         return zeros(n).set(v);
     }
 

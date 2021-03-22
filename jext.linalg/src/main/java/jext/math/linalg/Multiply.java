@@ -13,6 +13,23 @@ public class Multiply {
         return s;
     }
 
+    // r = A[i,:].v
+    public static float dot(float[] A, int i, float[] v){
+        int m = v.length;
+        float s = 0;
+        for (int j=0; j<m;++i,++j)
+            s += A[i]*v[j];
+        return s;
+    }
+
+    // r = A[i:].B[:,j]
+    public static float dot(float[] A, int i, float[] B, int j, int m) {
+        float s = 0;
+        for (int k=0; k<m; ++k,++i,j+=m)
+            s += A[i]*B[j];
+        return s;
+    }
+
     // r = u * v
     public static void hprod(float[]r, float[]u, float[] v) {
         int n = r.length;
