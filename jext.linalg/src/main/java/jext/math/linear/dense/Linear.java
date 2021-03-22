@@ -209,4 +209,13 @@ public class Linear {
             r[i] = s*u[i] + t*v[i];
     }
 
+    // ----------------------------------------------------------------------
+
+    // r = s*u + t*A.v
+    public static void linear(float[] r, float s, float[] u, float t, float[] A, float[] v) {
+        int n = r.length;
+        int m = v.length;
+        for (int i=0,j=0; i<n; ++i,j+=m)
+            r[i] = s*u[i] + t*dot(A, j, v);
+    }
 }
