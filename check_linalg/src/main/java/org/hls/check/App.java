@@ -16,7 +16,7 @@ public class App {
         Vector r = u.linear(2, 3, v);
         System.out.println(r);
 
-        Matrix m = Matrices.matrix(2,3);
+        Matrix m = Matrices.zeros(2,3);
         System.out.println(m);
 
         Matrix i = Matrices.identity(3);

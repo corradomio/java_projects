@@ -30,6 +30,11 @@ public class DenseVector implements Vector {
     }
 
     @Override
+    public Vector same() {
+        return Vectors.zeros(dim);
+    }
+
+    @Override
     public Vector linear(float s, float t, Vector v) {
         DenseVector that = (DenseVector) v;
         DenseVector r = Vectors.zeros(dim);

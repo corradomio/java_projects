@@ -31,11 +31,16 @@ public class DenseMatrix implements Matrix {
         return Type.DENSE;
     }
 
+    @Override
+    public Matrix same() {
+        return Matrices.zeros(dim);
+    }
+
     // R = s*A + t*B
     @Override
     public Matrix linear(float s, float t, Matrix B) {
         DenseMatrix that = (DenseMatrix) B;
-        DenseMatrix res = Matrices.matrix(dim);
+        DenseMatrix res = Matrices.zeros(dim);
         Linear.linear(res.data, s, this.data, t, that.data);
         return res;
     }

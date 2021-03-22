@@ -5,6 +5,8 @@ public interface Matrix {
     Dim dim();
     int length();
 
+    Matrix same();
+
     // R = s*A + t*B
     Matrix linear(float s, float t, Matrix B);
 

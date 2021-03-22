@@ -13,11 +13,11 @@ public class Matrices {
         return matrix(Linear.diagonal(n, n, 1));
     }
 
-    public static DenseMatrix matrix(Dim dim) {
-        return matrix(dim.dim(0), dim.dim(1));
+    public static DenseMatrix zeros(Dim dim) {
+        return zeros(dim.dim(0), dim.dim(1));
     }
 
-    public static DenseMatrix matrix(int n, int m) {
+    public static DenseMatrix zeros(int n, int m) {
         return matrix(Linear.matrix(n, m), n);
     }
 
