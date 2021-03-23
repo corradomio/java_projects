@@ -66,15 +66,6 @@ public class Linear {
         return toString(v, 0, v.length, fmt);
     }
 
-    private static String toString(float[] v, int i, int n, String fmt) {
-        StringBuilder sb = new StringBuilder("[");
-        if (n > 0)
-            sb.append(String.format(fmt, v[i++]));
-        for (int l=1; l<n; ++l)
-            sb.append(", ").append(String.format(fmt, v[i++]));
-        return sb.append("]").toString();
-    }
-
     public static String toString(float[] A, int m, String fmt) {
         int n = A.length/m;
         StringBuilder sb = new StringBuilder("[\n");
@@ -85,14 +76,30 @@ public class Linear {
         return sb.append("]").toString();
     }
 
-    // ----------------------------------------------------------------------
+    private static String toString(float[] v, int i, int n, String fmt) {
+        StringBuilder sb = new StringBuilder("[");
+        if (n > 0)
+            sb.append(String.format(fmt, v[i++]));
+        for (int l=1; l<n; ++l)
+            sb.append(", ").append(String.format(fmt, v[i++]));
+        return sb.append("]").toString();
+    }
 
-    // r = u . v
+    // ----------------------------------------------------------------------
+    //
+    // (n,k) (k,m) -> (n,m)
+    // [. . . .]  [. .]    [. .]
+    // [. . . .]  [. .] =  [. .]
+    // [. . . .]  [. .]    [. .]
+    //            [. .]
+    //
+
+    // s = u . v
     public static float dot(float[] u, float[] v) {
         return dot(u, 0, v);
     }
 
-    // r = A[i:] . v
+    // s = A[i:] . v
     public static float dot(float[] A, int i, float[] v) {
         int m = v.length;
         float s = 0;
@@ -101,40 +108,42 @@ public class Linear {
         return s;
     }
 
-    // (n,k) (k,m) -> (n,m)
-    // [. . . .]  [. .]
-    // [. . . .]  [. .]
-    // [. . . .]  [. .]
-    //            [. .]
-
-
-    // r = A[i:] . B[:j]
-    public static float dot(float[]A, int i, float[] B, int j, int m) {
-        int k=B.length/m;
+    // s = A[i:] . B[:j]    (n,k) (k,m)
+    public static float dot(float[] A, int i, float[] B, int j, int k) {
+        int m = B.length/k;
         float s = 0;
         for (int l=0; l<k; ++l,++i,j+=m)
             s += A[i]*B[j];
         return s;
     }
 
-    // r = u + C . v
-    public static void dot(float[] r, float[] u, float[] C, float[] v) {
-        int m = u.length;
-
-        for(int i=0,j=0; i<m; i++, j+=m)
-            r[i] = u[i] + dot(C, j, v);
+    // r = A . v
+    public static void dot(float[] r, float[] A, float[] v) {
+        int m = v.length;
+        int n = A.length/m;
+        for (int l=0,i=0; l<n; ++l, i+=m)
+            r[l] = dot(A,i,v);
     }
 
-    // R = A + C . B
-    public static void dot(float[] R, float[] A, float[] C, float[] B, int k) {
+    // R = A . B      (n,k)(k,m)
+    public static void dot(float[] R, float[] A, float[] B, int k) {
         int n = A.length/k;
         int m = B.length/k;
-        for(int r=0,i=0,j=0,l=0; r<n; ++r)
-            for (int c=0; c<m; ++c, l++,i+=k)
-                R[l] = dot(A, i, B, c, k);
+        for (int r=0,i=0,l=0; r<n; ++r,i+=n)
+            for (int j=0; j<m; ++l,++j)
+                R[l] = dot(A, i, B, j, k);
     }
 
     // ----------------------------------------------------------------------
+    // (0,0)
+    // (1,0)
+    // (0,1)
+    // (1,1)
+    // (0,t)
+    // (s,0)
+    // (1,t)
+    // (s,1)
+    // (s,t)
 
     // r = s*u + t*v
     public static void linear(float[] r, float s, float[] u, float t, float[] v) {
@@ -211,11 +220,32 @@ public class Linear {
 
     // ----------------------------------------------------------------------
 
-    // r = s*u + t*A.v
-    public static void linear(float[] r, float s, float[] u, float t, float[] A, float[] v) {
-        int n = r.length;
-        int m = v.length;
-        for (int i=0,j=0; i<n; ++i,j+=m)
-            r[i] = s*u[i] + t*dot(A, j, v);
+    // r = s*A.u + t*v
+    public static void linear(float[] r, float s, float[] A, float[] u, float t, float[] v) {
+        // (0,0)
+        if (s==0 && t==0)
+            zeros(r);
+        // (1,0)    r = A.u
+        else if (s==1 && t==0)
+            dot(r, A, u);
+        // (0,1)    r = v
+        else if (s==0 && t==1)
+            assign(r, v);
+        // (1,1)
+        else if (s==1 && t==1) {
+            dot(r, A, u);
+            lin(r, r, v);
+        }
+        // (s,t)
+        else
+            lin(r, s, A, u, t, v);
+    }
+
+    // r = s*A.u + t*v
+    private static void lin(float[] r, float s, float[] A, float[] u, float t, float[] v) {
+        int n = v.length;
+        int m = u.length;
+        for (int l=0,i=0; l<n; ++l,i+=m)
+            r[l] = s*dot(A,i,u) + t*v[l];
     }
 }

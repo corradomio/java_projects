@@ -45,16 +45,23 @@ public class DenseMatrix implements Matrix {
         return res;
     }
 
-    // r = s*u + t*A.v
+    // r = s*A.u + t.v
     @Override
     public Vector linear(float s, Vector u, float t, Vector v) {
         DenseVector du = (DenseVector) u;
         DenseVector dv = (DenseVector) v;
         DenseVector res = Vectors.zeros(u.dim());
-        Linear.linear(res.data, s, du.data, t, this.data, dv.data);
+        Linear.linear(res.data, s, this.data, du.data, t, dv.data);
         return res;
     }
 
+    @Override
+    public Matrix linear(float s, Matrix C, float t, Matrix B) {
+        DenseMatrix dc = (DenseMatrix) C;
+        DenseMatrix res = Matrices.zeros(B.dim());
+        Linear.dot(res.data, this.data, dc.data, C.dim().dim(1));
+        return res;
+    }
 
     @Override
     public String toString() {

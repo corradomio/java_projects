@@ -10,6 +10,9 @@ public interface Matrix {
     // R = s*A + t*B
     Matrix linear(float s, float t, Matrix B);
 
-    // r = s*u + t*A.v
+    // r = s*A.u + t*v
     Vector linear(float s, Vector u, float t, Vector v);
+
+    // R = s*C.A + t*B
+    Matrix linear(float s, Matrix C, float t, Matrix B);
 }
