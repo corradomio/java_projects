@@ -247,9 +247,20 @@ public class Linear {
     }
 
     // r = s*A.u + t*v
+    //   r = A.u
+    //   r = s*r + t*v
     private static void lin(float[] r, float s, float[] A, float[] u, float t, float[] v) {
-        int n = v.length;
-        for (int l=0,i=0; l<n; ++l,++i)
-            r[l] = s*dot(A,i,u) + t*v[l];
+        dot(r, A, u);
+        lin(r, s, r, t, v);
+    }
+
+    // R = s*C.A + t*B
+    //   R = C.A
+    //   R = s*R + t*B
+    public static void linear(float[] R, float s, float[] C, float[] A, float t, float[] B, int k) {
+        // R = C.A
+        dot(R, C, A, k);
+        // R = s*R + t*B
+        linear(R, s, R, t, B);
     }
 }

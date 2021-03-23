@@ -58,8 +58,9 @@ public class DenseMatrix implements Matrix {
     @Override
     public Matrix linear(float s, Matrix C, float t, Matrix B) {
         DenseMatrix dc = (DenseMatrix) C;
+        DenseMatrix db = (DenseMatrix) B;
         DenseMatrix res = Matrices.zeros(B.dim());
-        Linear.dot(res.data, this.data, dc.data, C.dim().dim(1));
+        Linear.linear(res.data, s, dc.data, this.data, t, db.data, C.dim().dim(1));
         return res;
     }
 
