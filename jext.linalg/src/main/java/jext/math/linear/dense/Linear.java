@@ -236,7 +236,7 @@ public class Linear {
         // (0,1)    r = v
         else if (s==0 && t==1)
             assign(r, v);
-        // (1,1)
+        // (1,1)    r = A.u + v
         else if (s==1 && t==1) {
             dot(r, A, u);
             lin(r, r, v);
@@ -249,7 +249,6 @@ public class Linear {
     // r = s*A.u + t*v
     private static void lin(float[] r, float s, float[] A, float[] u, float t, float[] v) {
         int n = v.length;
-        int m = u.length;
         for (int l=0,i=0; l<n; ++l,++i)
             r[l] = s*dot(A,i,u) + t*v[l];
     }
