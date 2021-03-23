@@ -7,6 +7,8 @@ import jext.math.linear.Type;
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
 
+import java.util.Arrays;
+
 public class DenseMatrix implements Matrix {
     public Dim dim;
     public float[] data;
@@ -22,6 +24,11 @@ public class DenseMatrix implements Matrix {
     }
 
     @Override
+    public int dim(int idim) {
+        return dim.dim(idim);
+    }
+
+    @Override
     public int length() {
         return data.length;
     }
@@ -31,14 +38,12 @@ public class DenseMatrix implements Matrix {
         return Type.DENSE;
     }
 
-    @Override
-    public Matrix same() {
-        return Matrices.zeros(dim);
-    }
-
     // R = s*A + t*B
     @Override
     public Matrix linear(float s, float t, Matrix B) {
+        if (!dim.equals(B.dim()))
+            throw new IllegalArgumentException("Invalid dimensions");
+
         DenseMatrix that = (DenseMatrix) B;
         DenseMatrix res = Matrices.zeros(dim);
         Linear.linear(res.data, s, this.data, t, that.data);
@@ -48,6 +53,9 @@ public class DenseMatrix implements Matrix {
     // r = s*A.u + t.v
     @Override
     public Vector linear(float s, Vector u, float t, Vector v) {
+        if (dim(0) != v.dim(0) || dim(1) != v.dim(0))
+            throw new IllegalArgumentException("Invalid dimensions");
+
         DenseVector du = (DenseVector) u;
         DenseVector dv = (DenseVector) v;
         DenseVector res = Vectors.zeros(u.dim());
@@ -55,6 +63,7 @@ public class DenseMatrix implements Matrix {
         return res;
     }
 
+    // R = s*C.A + t*B
     @Override
     public Matrix linear(float s, Matrix C, float t, Matrix B) {
         DenseMatrix dc = (DenseMatrix) C;
@@ -65,7 +74,19 @@ public class DenseMatrix implements Matrix {
     }
 
     @Override
+    public int hashCode() {
+        return Arrays.hashCode(data);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        DenseMatrix that = (DenseMatrix) obj;
+        return this.dim.equals(that.dim)
+            && Arrays.equals(this.data, that.data);
+    }
+
+    @Override
     public String toString() {
-        return Linear.toString(data, dim.dim(1),"%.03f");
+        return ToString.toString(data, dim.dim(1),"%.03f");
     }
 }

@@ -19,10 +19,6 @@ public class App {
         Matrix m = Matrices.zeros(2,3);
         System.out.println(m);
 
-        Matrix i = Matrices.identity(3);
-        System.out.println(i);
-
-
         // Random rnd = new Random();
         // rnd.setSeed(System.currentTimeMillis());
         //

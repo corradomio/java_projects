@@ -4,9 +4,8 @@ public interface Vector {
 
     Type type();
     Dim dim();
+    int dim(int idim);
     int length();
-
-    Vector same();
 
     // r = s*u + t*v
     Vector linear(float s, float t, Vector v);

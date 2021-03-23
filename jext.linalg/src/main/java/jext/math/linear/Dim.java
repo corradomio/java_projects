@@ -1,5 +1,7 @@
 package jext.math.linear;
 
+import java.util.Arrays;
+
 public class Dim {
     private int[] dims;
 
@@ -19,6 +21,7 @@ public class Dim {
         return dims[idim];
     }
 
+    @Override
     public boolean equals(Object obj) {
         Dim that = (Dim)obj;
         int k = rank();
@@ -30,6 +33,11 @@ public class Dim {
             if (this.dim(i) != that.dim(i))
                 return false;
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(dims);
     }
 
     public boolean conform(Dim that) {

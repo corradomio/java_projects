@@ -5,6 +5,8 @@ import jext.math.linear.Type;
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
 
+import java.util.Arrays;
+
 public class DenseVector implements Vector {
     public Dim dim;
     public float[] data;
@@ -25,13 +27,13 @@ public class DenseVector implements Vector {
     }
 
     @Override
-    public int length() {
-        return data.length;
+    public int dim(int idim) {
+        return dim.dim(idim);
     }
 
     @Override
-    public Vector same() {
-        return Vectors.zeros(dim);
+    public int length() {
+        return data.length;
     }
 
     @Override
@@ -43,7 +45,19 @@ public class DenseVector implements Vector {
     }
 
     @Override
+    public int hashCode() {
+        return Arrays.hashCode(data);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        DenseVector that = (DenseVector) obj;
+        return this.dim.equals(that.dim)
+            && Arrays.equals(this.data, that.data);
+    }
+
+    @Override
     public String toString() {
-        return Linear.toString(data, "%.03f");
+        return ToString.toString(data, "%.03f");
     }
 }

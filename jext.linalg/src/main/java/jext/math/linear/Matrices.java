@@ -5,22 +5,23 @@ import jext.math.linear.dense.Linear;
 
 public class Matrices {
 
-    public static DenseMatrix identity(Dim dim) {
-        return identity(dim.dim(0));
-    }
+    // public static DenseMatrix identity(Dim dim) {
+    //     return identity(dim.dim(0));
+    // }
 
-    public static DenseMatrix identity(int n) {
-        return matrix(Linear.diagonal(n, n, 1));
-    }
+    // public static DenseMatrix identity(int n) {
+    //     return matrix(Linear.diagonal(n, n, 1));
+    // }
 
     public static DenseMatrix zeros(Dim dim) {
         return zeros(dim.dim(0), dim.dim(1));
     }
 
     public static DenseMatrix zeros(int n, int m) {
-        return matrix(Linear.matrix(n, m), n);
+        return matrix(new float[n*m], n);
     }
 
+    // square matrix
     public static DenseMatrix matrix(float[] v) {
         int n = (int)Math.sqrt(v.length);
         return matrix(v, n);

@@ -3,9 +3,8 @@ package jext.math.linear;
 public interface Matrix {
     Type type();
     Dim dim();
+    int dim(int idim);
     int length();
-
-    Matrix same();
 
     // R = s*A + t*B
     Matrix linear(float s, float t, Matrix B);

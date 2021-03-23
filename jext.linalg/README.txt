@@ -31,3 +31,13 @@ oppure, alla BLAS
     y = s*x + y
     y = s*A.x + t*y
     T.x = y
+
+
+BLAS naming conventions
+    https://www.netlib.org/lapack/lug/node24.html
+
+Sparse BLAS naming conventions
+    https://scc.ustc.edu.cn/zlsc/sugon/intel/mkl/mkl_manual/GUID-68706DC5-8ED9-46F3-9E74-BFBC3E7A06A6.htm
+
+MKL
+    https://scc.ustc.edu.cn/zlsc/sugon/intel/mkl/mkl_manual/index.htm#GUID-68706DC5-8ED9-46F3-9E74-BFBC3E7A06A6.htm
