@@ -101,8 +101,10 @@ public class Linear {
 
     // s = A[i:] . v
     public static float dot(float[] A, int i, float[] v) {
+        // i: row
         int m = v.length;
         float s = 0;
+        i *= m;
         for (int j=0; j<m; ++i,++j)
             s += A[i]*v[j];
         return s;
@@ -110,8 +112,11 @@ public class Linear {
 
     // s = A[i:] . B[:j]    (n,k) (k,m)
     public static float dot(float[] A, int i, float[] B, int j, int k) {
+        // i: row
+        // j: column
         int m = B.length/k;
         float s = 0;
+        i *= k;
         for (int l=0; l<k; ++l,++i,j+=m)
             s += A[i]*B[j];
         return s;
@@ -121,7 +126,7 @@ public class Linear {
     public static void dot(float[] r, float[] A, float[] v) {
         int m = v.length;
         int n = A.length/m;
-        for (int l=0,i=0; l<n; ++l, i+=m)
+        for (int l=0,i=0; l<n; ++l, ++i)
             r[l] = dot(A,i,v);
     }
 
@@ -129,7 +134,7 @@ public class Linear {
     public static void dot(float[] R, float[] A, float[] B, int k) {
         int n = A.length/k;
         int m = B.length/k;
-        for (int r=0,i=0,l=0; r<n; ++r,i+=n)
+        for (int r=0,i=0,l=0; r<n; ++r,++i)
             for (int j=0; j<m; ++l,++j)
                 R[l] = dot(A, i, B, j, k);
     }
@@ -245,7 +250,7 @@ public class Linear {
     private static void lin(float[] r, float s, float[] A, float[] u, float t, float[] v) {
         int n = v.length;
         int m = u.length;
-        for (int l=0,i=0; l<n; ++l,i+=m)
+        for (int l=0,i=0; l<n; ++l,++i)
             r[l] = s*dot(A,i,u) + t*v[l];
     }
 }
