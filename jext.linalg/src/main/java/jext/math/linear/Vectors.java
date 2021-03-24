@@ -1,8 +1,11 @@
 package jext.math.linear;
 
 import jext.math.linear.dense.DenseVector;
+import jext.math.linear.sparse.SparseVector;
 
 public class Vectors {
+
+    // -- Dense vectors
 
     public static DenseVector zeros(Dim dim) {
         return zeros(dim.dim(0));
@@ -21,5 +24,15 @@ public class Vectors {
 
     public static DenseVector vector(float[] v) {
         return new DenseVector(v);
+    }
+
+    // -- Sparse vectors
+
+    public static SparseVector sparse(Dim dim) {
+        return sparse(dim.dim(0));
+    }
+
+    public static SparseVector sparse(int n) {
+        return new SparseVector(n);
     }
 }

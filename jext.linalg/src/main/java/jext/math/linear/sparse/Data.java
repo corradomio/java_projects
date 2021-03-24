@@ -5,8 +5,6 @@ import java.util.Arrays;
 public class Data {
 
     int n;
-    // int[] rows; // vector index or row index
-    // int[] cols; // column index or zeros
     long[] coords;
     float[] data;
 
@@ -58,7 +56,7 @@ public class Data {
     public float get(int i, int j) {
         long loc = coordsOf(i, j);
         int at = locate(loc, false);
-        return coords[at] == loc ? data[at] : 0;
+        return at != -1 ? data[at] : 0;
     }
 
     private int alloc(int slots) {
@@ -77,10 +75,13 @@ public class Data {
         return at;
     }
 
-    private int locate(long loc, boolean slot) {
+    int locate(long loc, boolean write) {
         int at = locate(loc);
-        if (coords[at] == loc || !slot)
+        if (coords[at] == loc)
             return at;
+        if (!write)
+            return -1;
+
         int rest = n - at;
         if (coords[at] < loc) {
             at += 1;
@@ -90,11 +91,11 @@ public class Data {
             System.arraycopy(coords, at, coords, at + 1, rest);
             System.arraycopy(data,   at, data,   at + 1, rest);
         }
-        if (slot) n += 1;
+        n += 1;
         return at;
     }
 
-    int locate(long l) {
+    private int locate(long l) {
         int b = 0;
         int e = n-1;
         int m = -1;

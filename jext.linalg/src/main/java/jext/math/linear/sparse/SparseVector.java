@@ -3,6 +3,7 @@ package jext.math.linear.sparse;
 import jext.math.linear.Dim;
 import jext.math.linear.Type;
 import jext.math.linear.Vector;
+import jext.math.linear.Vectors;
 
 public class SparseVector extends BaseSparse implements Vector {
 
@@ -31,7 +32,10 @@ public class SparseVector extends BaseSparse implements Vector {
 
     @Override
     public Vector linear(float s, float t, Vector v) {
-        return null;
+        SparseVector that = (SparseVector) v;
+        SparseVector res = Vectors.sparse(dim);
+        Linear.linear(res.data, s, this.data, t, that.data);
+        return res;
     }
 
     @Override
