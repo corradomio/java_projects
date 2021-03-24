@@ -19,6 +19,11 @@ public class DenseMatrix implements Matrix {
     }
 
     @Override
+    public Type type() {
+        return Type.DENSE;
+    }
+
+    @Override
     public Dim dim() {
         return dim;
     }
@@ -34,8 +39,16 @@ public class DenseMatrix implements Matrix {
     }
 
     @Override
-    public Type type() {
-        return Type.DENSE;
+    public Matrix set(int i, int j, float v) {
+        int at = i*dim(1) + j;
+        data[at] = v;
+        return this;
+    }
+
+    @Override
+    public float get(int i, int j) {
+        int at = i*dim(1) + j;
+        return data[at];
     }
 
     // R = s*A + t*B

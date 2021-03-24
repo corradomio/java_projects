@@ -37,6 +37,17 @@ public class DenseVector implements Vector {
     }
 
     @Override
+    public Vector set(int i, float v) {
+        data[i] = v;
+        return this;
+    }
+
+    @Override
+    public float get(int i) {
+        return data[i];
+    }
+
+    @Override
     public Vector linear(float s, float t, Vector v) {
         DenseVector that = (DenseVector) v;
         DenseVector r = Vectors.zeros(dim);

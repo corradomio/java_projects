@@ -40,12 +40,20 @@ public class SparseVector implements Vector {
     }
 
     @Override
-    public Vector linear(float s, float t, Vector v) {
-        return null;
+    public Vector set(int i, float v) {
+        data.set(i, 0, v);
+        return this;
     }
 
-    public void set(int i, float v) {
-        data.set(i, 0, v);
+    @Override
+    public float get(int i) {
+        return data.get(i, 0);
+    }
+
+
+    @Override
+    public Vector linear(float s, float t, Vector v) {
+        return null;
     }
 
     @Override

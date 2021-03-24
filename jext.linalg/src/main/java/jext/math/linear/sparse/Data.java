@@ -39,20 +39,26 @@ public class Data {
             coords[i] = coordsOf(rows[i], cols[i]);
         return coords;
     }
-    private static long coordsOf(int r, int c) {
-        return c*100_000_000L + r;
+    private static long coordsOf(int i, int j) {
+        return j*100_000_000L + i;
     }
 
     public int length() {
         return data.length;
     }
 
-    public void set(int r, int c, float v) {
+    public void set(int i, int j, float v) {
         alloc(1);
-        long loc = coordsOf(r, c);
+        long loc = coordsOf(i, j);
         int at = locate(loc, true);
         coords[at] = loc;
         data[at] = v;
+    }
+
+    public float get(int i, int j) {
+        long loc = coordsOf(i, j);
+        int at = locate(loc, false);
+        return coords[at] == loc ? data[at] : 0;
     }
 
     private int alloc(int slots) {

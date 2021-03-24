@@ -35,6 +35,19 @@ public class SparseMatrix implements Matrix {
         return data.length();
     }
 
+
+    @Override
+    public Matrix set(int i, int j, float v) {
+        data.set(i, j, v);
+        return this;
+    }
+
+    @Override
+    public float get(int i, int j) {
+        return data.get(i, j);
+    }
+
+
     @Override
     public Matrix linear(float s, float t, Matrix B) {
         return null;

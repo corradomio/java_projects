@@ -6,6 +6,9 @@ public interface Matrix {
     int dim(int idim);
     int length();
 
+    Matrix set(int i, int j, float v);
+    float  get(int i, int j);
+
     // R = s*A + t*B
     Matrix linear(float s, float t, Matrix B);
 
