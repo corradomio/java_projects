@@ -1,5 +1,7 @@
 package jext.math.linear.sparse;
 
+import jext.math.linear.sparse.util.Loc;
+
 import java.util.Iterator;
 
 public class Coords implements Iterable<Loc> {

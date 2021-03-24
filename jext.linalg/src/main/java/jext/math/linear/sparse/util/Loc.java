@@ -1,4 +1,4 @@
-package jext.math.linear.sparse;
+package jext.math.linear.sparse.util;
 
 public class Loc {
     public long loc;
