@@ -7,33 +7,11 @@ import jext.math.linear.Vectors;
 
 import java.util.Arrays;
 
-public class DenseVector implements Vector {
-    public Dim dim;
-    public float[] data;
+public class DenseVector extends BaseDense implements Vector {
 
     public DenseVector(float[] v) {
         this.data = v;
         this.dim = new Dim(v.length);
-    }
-
-    @Override
-    public Type type() {
-        return Type.DENSE;
-    }
-
-    @Override
-    public Dim dim() {
-        return dim;
-    }
-
-    @Override
-    public int dim(int idim) {
-        return dim.dim(idim);
-    }
-
-    @Override
-    public int length() {
-        return data.length;
     }
 
     @Override

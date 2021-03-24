@@ -5,7 +5,7 @@ import jext.math.linear.Matrix;
 import jext.math.linear.Type;
 import jext.math.linear.Vector;
 
-public class SparseMatrix implements Matrix {
+public class SparseMatrix extends BaseSparse implements Matrix {
 
     private Data data;
     private Dim dim;
@@ -13,26 +13,6 @@ public class SparseMatrix implements Matrix {
     public SparseMatrix(int[] rows, int[] cols, float[] data, int n, int m) {
         this.dim = new Dim(n, m);
         this.data = new Data(rows, cols, data);
-    }
-
-    @Override
-    public Type type() {
-        return Type.SPARSE;
-    }
-
-    @Override
-    public Dim dim() {
-        return dim;
-    }
-
-    @Override
-    public int dim(int idim) {
-        return dim.dim(idim);
-    }
-
-    @Override
-    public int length() {
-        return data.length();
     }
 
 

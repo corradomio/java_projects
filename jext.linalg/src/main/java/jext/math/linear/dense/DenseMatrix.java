@@ -9,33 +9,11 @@ import jext.math.linear.Vectors;
 
 import java.util.Arrays;
 
-public class DenseMatrix implements Matrix {
-    public Dim dim;
-    public float[] data;
+public class DenseMatrix extends BaseDense implements Matrix {
 
     public DenseMatrix(float[] mat, int n) {
         this.data = mat;
         this.dim = new Dim(n, mat.length/n);
-    }
-
-    @Override
-    public Type type() {
-        return Type.DENSE;
-    }
-
-    @Override
-    public Dim dim() {
-        return dim;
-    }
-
-    @Override
-    public int dim(int idim) {
-        return dim.dim(idim);
-    }
-
-    @Override
-    public int length() {
-        return data.length;
     }
 
     @Override
