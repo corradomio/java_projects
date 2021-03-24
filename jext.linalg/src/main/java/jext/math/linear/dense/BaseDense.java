@@ -4,7 +4,7 @@ import jext.math.linear.Dim;
 import jext.math.linear.Type;
 
 public class BaseDense {
-    
+
     public Dim dim;
     public float[] data;
 

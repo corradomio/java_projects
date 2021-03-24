@@ -1,6 +1,7 @@
 package jext.math.linear;
 
 public interface Matrix {
+    
     Type type();
     Dim dim();
     int dim(int idim);
