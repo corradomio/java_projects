@@ -9,6 +9,11 @@ public class SparseVector implements Vector {
     private Data data;
     private Dim dim;
 
+    public SparseVector(int n) {
+        this.dim = new Dim(n);
+        this.data = new Data();
+    }
+
     public SparseVector(int[] idxs, float[] data, int n) {
         this.dim = new Dim(n);
         this.data = new Data(idxs, data);
@@ -37,5 +42,14 @@ public class SparseVector implements Vector {
     @Override
     public Vector linear(float s, float t, Vector v) {
         return null;
+    }
+
+    public void set(int i, float v) {
+        data.set(i, 0, v);
+    }
+
+    @Override
+    public String toString() {
+        return ToString.toStringAsVector(data);
     }
 }
