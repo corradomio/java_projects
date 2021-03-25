@@ -1,6 +1,7 @@
 package jext.math.linear.sparse;
 
 import jext.math.linear.sparse.util.Loc;
+import jext.util.Arrays;
 
 import java.util.Iterator;
 
@@ -9,18 +10,21 @@ public class Coords implements Iterable<Loc> {
     public long[] coords;
     public int n;
 
-    Coords() {
-        this.coords = new long[1];
-        this.n = 1;
+    public Coords() {
+        this.coords = new long[0];
+        this.n = 0;
     }
 
-    Coords(Coords that) {
+    public Coords(Coords that) {
         this.n = that.n;
-        this.coords = new long[n];
-        System.arraycopy(that.coords, 0, this.coords, 0, this.n);
+        this.coords = Arrays.copyOf(that.coords, that.n);
     }
 
-    Coords(long[] coords, int n) {
+    public Coords(long[] coords) {
+        this(coords, coords.length);
+    }
+
+    public Coords(long[] coords, int n) {
         this.coords = coords;
         this.n = n;
     }
@@ -37,15 +41,18 @@ public class Coords implements Iterable<Loc> {
     }
     void add(Loc l) { add (l.loc); }
 
+    // ----------------------------------------------------------------------
 
-    Coords union(Coords that) {
-        Coords res = new Coords(this);
+    public Coords union(Coords that) {
+        Coords res = new Coords();
+        for(Loc l : this)
+            res.add(l.loc);
         for(Loc l : that)
-            res.add(l);
+            res.add(l.loc);
         return res;
     }
 
-    Coords intersection(Coords that) {
+    public Coords intersection(Coords that) {
         Coords self = this;
         Coords res = new Coords();
         if (self.n > that.n) {
@@ -59,7 +66,7 @@ public class Coords implements Iterable<Loc> {
         return res;
     }
 
-    Coords difference(Coords that) {
+    public Coords difference(Coords that) {
         Coords res = new Coords();
         for(Loc l : this)
             if (!that.contains(l))
@@ -67,30 +74,45 @@ public class Coords implements Iterable<Loc> {
         return res;
     }
 
+    // ----------------------------------------------------------------------
+
+    protected void checkspace(int add) {
+        if (n+add <  coords.length)
+            return;
+
+        int nlen = coords.length;;
+        while (n+add > nlen)
+            nlen = (nlen < 16) ? 16 : (nlen <= 256) ? nlen+nlen : nlen+256;
+
+        allocate(nlen);
+    }
+
     protected int locate(long loc, boolean write) {
         int at = locate(loc);
-        if (coords[at] == loc)
+        if (at < n && coords[at] == loc)
             return at;
         if (!write)
             return -1;
 
+        checkspace(1);
+
         int rest = n - at;
-        if (coords[at] < loc) {
-            at += 1;
-            rest -= 1;
-        }
         if (rest > 0) {
-            arraycopy(at, at + 1, rest);
+            move(at, at + 1, rest);
         }
         n += 1;
         return at;
     }
 
-    protected void arraycopy(int  srcPos, int destPos, int length) {
-        System.arraycopy(coords, srcPos, coords, destPos + 1, length);
+    protected void allocate(int nlen) {
+        coords = Arrays.copyOf(coords, nlen);
     }
 
+    protected void move(int  srcPos, int destPos, int length) {
+        System.arraycopy(coords, srcPos, coords, destPos, length);
+    }
 
+    // coords[at] >= loc OR at == n
     private int locate(long loc) {
         int b = 0;
         int e = n-1;
@@ -106,6 +128,7 @@ public class Coords implements Iterable<Loc> {
                 return m;
         }
         m = (b+e)/2;
+        if (m < n && coords[m] < loc) m++;
         return m;
     }
 
@@ -130,5 +153,18 @@ public class Coords implements Iterable<Loc> {
     @Override
     public Iterator<Loc> iterator() {
         return new LocIterator();
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean equals(Object obj) {
+        Coords that = (Coords) obj;
+        return this.n == that.n && Arrays.equals(this.coords, that.coords,n);
+    }
+
+    @Override
+    public String toString() {
+        return ToString.toString(coords, n);
     }
 }

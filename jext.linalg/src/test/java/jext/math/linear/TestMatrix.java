@@ -3,7 +3,7 @@ package jext.math.linear;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TestMatrix  extends Assertions {
+public class TestMatrix extends Assertions {
 
     @Test
     void testCreate() {

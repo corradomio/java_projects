@@ -9,7 +9,6 @@ import jext.cache.CacheManager;
 import jext.io.util.FileFilters;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
-import jext.javaparser.util.UniqueIdentifiers;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
@@ -23,7 +22,7 @@ public class Check {
 
     private static CombinedTypeSolver cptss = new CombinedTypeSolver();
 
-    static UniqueIdentifiers ui = new UniqueIdentifiers();
+    // static UniqueIdentifiers ui = new UniqueIdentifiers();
 
     public static void main(String[] args) throws Exception {
         Parallel.setup();
@@ -53,7 +52,7 @@ public class Check {
             // .forEach(Check::parse);
 
         // us.stats();
-        ui.stats();
+        // ui.stats();
 
         // FileUtils.listFiles(
         //     //new File("data\\bookstore\\src\\main\\java"),
@@ -81,7 +80,7 @@ public class Check {
 
                 // UniqueSymbols us = new UniqueSymbols();
                 // us.analyze(cu);
-                ui.analyze(cu);
+                // ui.analyze(cu);
 
                 // KryoSerializer.serialize(serialized, cu);
                 // CompilationUnit desercu = KryoSerializer.deserialize(serialized, CompilationUnit.class);

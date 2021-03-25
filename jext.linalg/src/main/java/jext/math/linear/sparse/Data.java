@@ -81,8 +81,13 @@ public class Data extends Coords implements Iterable<Loc> {
         return at;
     }
 
-    protected void arraycopy(int  srcPos, int destPos, int length) {
-        super.arraycopy(srcPos, destPos, length);
+    protected void allocate(int nlen) {
+        super.allocate(nlen);
+        data = jext.util.Arrays.copyOf(data, nlen);
+    }
+
+    protected void move(int  srcPos, int destPos, int length) {
+        super.move(srcPos, destPos, length);
         System.arraycopy(data, srcPos, data, destPos + 1, length);
     }
 
