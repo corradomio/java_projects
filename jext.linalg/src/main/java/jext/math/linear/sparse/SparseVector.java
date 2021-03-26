@@ -4,12 +4,17 @@ import jext.math.linear.Dim;
 import jext.math.linear.Type;
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
+import jext.util.Arrays;
 
 public class SparseVector extends BaseSparse implements Vector {
 
     public SparseVector(int n) {
         this.dim = new Dim(n);
         this.data = new Data();
+    }
+
+    public SparseVector(float[] data) {
+        this(Arrays.indices(data.length), data, data.length);
     }
 
     public SparseVector(int[] idxs, float[] data, int n) {
@@ -36,6 +41,13 @@ public class SparseVector extends BaseSparse implements Vector {
         SparseVector res = Vectors.sparse(dim);
         Linear.linear(res.data, s, this.data, t, that.data);
         return res;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        SparseVector that = (SparseVector) obj;
+        return this.dim.equals(that.dim)
+            && this.data.equals(that.data);
     }
 
     @Override

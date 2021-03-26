@@ -1,2 +1,6 @@
-package pkg;public interface I {
+package pkg;
+
+public interface I {
+
+    void m(int i);
 }

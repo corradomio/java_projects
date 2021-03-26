@@ -14,7 +14,7 @@ public class DumpAST {
         Logger.configure();
         CacheManager.configure();
 
-        File source = new File("D:\\SPLGroup\\BTProjects\\DEUM\\src\\optimtools\\test\\TestDEUMdOnOnemax.java");
+        File source = new File("D:\\SPLGroup\\BTProjects\\DEUM\\src\\optimtools\\problems\\trap\\Trap.java");
 
         JavaParserPool jpp = JavaParserPool.getPool();;
 

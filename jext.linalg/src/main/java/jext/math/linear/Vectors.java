@@ -35,4 +35,8 @@ public class Vectors {
     public static SparseVector sparse(int n) {
         return new SparseVector(n);
     }
+
+    public static SparseVector sparse(float[] v) {
+        return new SparseVector(v);
+    }
 }

@@ -1,8 +1,7 @@
 package jext.math.linear.sparse;
 
 import jext.math.linear.sparse.util.Loc;
-
-import java.util.Arrays;
+import jext.util.Arrays;
 
 public class Data extends Coords implements Iterable<Loc> {
 
@@ -10,7 +9,7 @@ public class Data extends Coords implements Iterable<Loc> {
 
     public Data() {
         super();
-        this.data = new float[]{0};
+        this.data = new float[0];
     }
 
     public Data(int[] rows, float[] data) {
@@ -34,99 +33,67 @@ public class Data extends Coords implements Iterable<Loc> {
             coords[i] = locOf(rows[i], cols[i]);
         return coords;
     }
-    private static long locOf(int i, int j) {
-        return j*100_000_000L + i;
-    }
 
     public int length() {
         return data.length;
     }
 
-    public void set(int i, int j, float v) {
-        long loc = locOf(i, j);
-        set(loc, v);
-    }
+    //
+    // get & set
+    //
 
-    public float get(int i, int j) {
-        return get(locOf(i, j));
-    }
-
-    public float get(Loc l) { return get(l.loc); }
     public float get(long loc) {
         int at = locate(loc, false);
         return at != -1 ? data[at] : 0;
     }
+    public float get(Loc l) { return get(l.loc); }
+    public float get(int i, int j) {
+        return get(locOf(i, j));
+    }
 
     public void set(long loc, float v) {
-        alloc(1);
+        alloc();
         int at = locate(loc, true);
         coords[at] = loc;
         data[at] = v;
     }
+    public void set(Loc l, float v) { set(l.loc, v); }
+    public void set(int i, int j, float v) { set(locOf(i, j), v); }
 
-
-    private int alloc(int slots) {
-        int at = n;
-        int len = data.length;
-        if (n+slots <= len)
-            return at;
-
-        int nlen = len;
-        while (n+slots > nlen)
-            nlen = (nlen < 16) ? 16 : (nlen <= 256) ? nlen+nlen : nlen+256;
-
-        coords = Arrays.copyOf(coords, nlen);
-        data   = Arrays.copyOf(data,   nlen);
-
-        return at;
-    }
+    // ----------------------------------------------------------------------
 
     protected void allocate(int nlen) {
         super.allocate(nlen);
-        data = jext.util.Arrays.copyOf(data, nlen);
+        if (data.length < nlen)
+            data = Arrays.copyOf(data, nlen);
     }
 
     protected void move(int  srcPos, int destPos, int length) {
         super.move(srcPos, destPos, length);
-        System.arraycopy(data, srcPos, data, destPos + 1, length);
+        Arrays.move(data, srcPos, destPos, length);
     }
 
-    // int locate(long loc, boolean write) {
-    //     int at = locate(loc);
-    //     if (coords[at] == loc)
-    //         return at;
-    //     if (!write)
-    //         return -1;
-    //
-    //     int rest = n - at;
-    //     if (coords[at] < loc) {
-    //         at += 1;
-    //         rest -= 1;
-    //     }
-    //     if (rest > 0) {
-    //         System.arraycopy(coords, at, coords, at + 1, rest);
-    //         System.arraycopy(data,   at, data,   at + 1, rest);
-    //     }
-    //     n += 1;
-    //     return at;
-    // }
-    //
-    // private int locate(long l) {
-    //     int b = 0;
-    //     int e = n-1;
-    //     int m;
-    //
-    //     while (b < e) {
-    //         m = (b+e)/2;
-    //         if (l < coords[m])
-    //             e = m-1;
-    //         else if (l > coords[m])
-    //             b = m+1;
-    //         else
-    //             return m;
-    //     }
-    //     m = (b+e)/2;
-    //     return m;
-    // }
-    //
+    private int alloc() {
+        int at = n;
+        if (n+1 <= data.length)
+            return at;
+
+        int len = Arrays.lengthOf(n+1);
+        coords = Arrays.copyOf(coords, len);
+        data   = Arrays.copyOf(data,   len);
+
+        return at;
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean equals(Object obj) {
+        Data that = (Data) obj;
+        Coords coords = this.union(that);
+        for (Loc l : coords)
+            if (this.get(l) != that.get(l))
+                return false;
+        return true;
+    }
 }

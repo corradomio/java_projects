@@ -8,7 +8,6 @@ import jext.math.linear.Vector;
 public class SparseMatrix extends BaseSparse implements Matrix {
 
     private Data data;
-    private Dim dim;
 
     public SparseMatrix(int[] rows, int[] cols, float[] data, int n, int m) {
         this.dim = new Dim(n, m);

@@ -3,7 +3,7 @@ package jext.math.linear;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TestVector extends Assertions {
+public class TestDenseVector extends Assertions {
 
     @Test
     void testLength() {
