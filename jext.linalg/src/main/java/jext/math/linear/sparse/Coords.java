@@ -3,10 +3,10 @@ package jext.math.linear.sparse;
 import jext.math.linear.sparse.util.Loc;
 import jext.util.Arrays;
 
-import java.util.BitSet;
 import java.util.Iterator;
 
 public class Coords implements Iterable<Loc> {
+    // (i,j) -> j*FACTOR + i
 
     public int n;
     public long[] coords;
@@ -26,7 +26,7 @@ public class Coords implements Iterable<Loc> {
     }
 
     public Coords(Coords that) {
-        this(Arrays.copyOf(that.coords), that.n);
+        this(Arrays.copyOf(that.coords, that.n), that.n);
     }
 
     public Coords(long[] coords) {
@@ -36,55 +36,6 @@ public class Coords implements Iterable<Loc> {
     public Coords(long[] coords, int n) {
         this.coords = coords;
         this.n = n;
-    }
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-    // vector:  (i,0)
-    // matrix:  (i,j)
-    // coords:  (i,j) -> loc = j*100_000_000L + i
-    //
-
-    public int[] rows() {
-        BitSet bs = new BitSet();
-        for (int k=0; k<n; ++k)
-            bs.set(rowOf(coords[k]));
-        return arrayOf(bs);
-    }
-
-    public int[] rows(int j) {
-        BitSet bs = new BitSet();
-        for (int k=0; k<n; ++k)
-            if (colOf(coords[k]) == j)
-                bs.set(rowOf(coords[k]));
-        return arrayOf(bs);
-    }
-
-    public int[] cols() {
-        BitSet bs = new BitSet();
-        for (int k=0; k<n; ++k)
-            bs.set(colOf(coords[k]));
-        return arrayOf(bs);
-    }
-
-    public int[] cols(int i) {
-        BitSet bs = new BitSet();
-        for (int k=0; k<n; ++k)
-            if (rowOf(coords[k]) == i)
-                bs.set(colOf(coords[k]));
-        return arrayOf(bs);
-    }
-
-    private static int[] arrayOf(BitSet bs) {
-        int n = bs.cardinality();
-        int[] idxs = new int[bs.cardinality()];
-        if (n == 0)
-            return idxs;
-        idxs[0] = bs.nextSetBit(0);
-        for (int i=1; i<n; ++i)
-            idxs[i] = bs.nextSetBit(idxs[i-1]+1);
-        return idxs;
     }
 
     // ----------------------------------------------------------------------
@@ -126,13 +77,13 @@ public class Coords implements Iterable<Loc> {
     // ----------------------------------------------------------------------
 
     public Coords union(Coords that) {
-        Coords res = new Coords(Arrays.sum(this.n, that.n));
+        Coords res = new Coords(Arrays.lengthSum(this.n, that.n));
         res.n = Arrays.union(res.coords, this.coords, this.n, that.coords, that.n);
         return res;
     }
 
     public Coords intersection(Coords that) {
-        Coords res = new Coords(Arrays.min(this.n, that.n));
+        Coords res = new Coords(Arrays.lengthMin(this.n, that.n));
         res.n = Arrays.intersection(res.coords, this.coords, this.n, that.coords, that.n);
         return res;
     }
@@ -192,9 +143,9 @@ public class Coords implements Iterable<Loc> {
 
     // ----------------------------------------------------------------------
 
-    private class LocIt implements Iterator<Loc> {
-        private final Loc l = new Loc();
-        private int at;
+    protected class LocIt implements Iterator<Loc>, Iterable<Loc> {
+        protected final Loc l = new Loc();
+        protected int at;
 
         @Override
         public boolean hasNext() {
@@ -206,11 +157,83 @@ public class Coords implements Iterable<Loc> {
             l.loc = coords[at++];
             return l;
         }
+
+        @Override
+        public Iterator<Loc> iterator() {
+            return this;
+        }
     }
 
     @Override
     public Iterator<Loc> iterator() {
         return new LocIt();
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+    // vector:  (i,0)
+    // matrix:  (i,j)
+    // coords:  (i,j) -> loc = j*100_000_000L + i
+    //
+
+    private class RowIt extends LocIt implements Iterable<Loc> {
+        private int row;
+
+        RowIt(int row) {
+            this.row = row;
+            find();
+        }
+
+        @Override
+        public Loc next() {
+            l.loc = coords[at++];
+            find();
+            return l;
+        }
+
+        private void find() {
+            while (at<n)
+                if (rowOf(coords[at]) != row)
+                    ++at;
+                else break;
+        }
+
+        @Override
+        public Iterator<Loc> iterator() {
+            return this;
+        }
+    }
+
+    private class ColIt extends LocIt {
+        private int col;
+
+        ColIt(int col) {
+            this.col = col;
+            find();
+        }
+
+        @Override
+        public Loc next() {
+            l.loc = coords[at++];
+            find();
+            return l;
+        }
+
+        private void find() {
+            while (at<n)
+                if (colOf(coords[at]) != col)
+                    ++at;
+                else break;
+        }
+    }
+
+    public LocIt row(int i) {
+        return new RowIt(i);
+    }
+
+    public LocIt col(int j) {
+        return new ColIt(j);
     }
 
     // ----------------------------------------------------------------------
@@ -225,4 +248,5 @@ public class Coords implements Iterable<Loc> {
     public String toString() {
         return ToString.toString(coords, n);
     }
+
 }

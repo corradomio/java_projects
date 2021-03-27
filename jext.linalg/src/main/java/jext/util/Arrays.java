@@ -17,22 +17,22 @@ public class Arrays {
         int f;
         if (n == 0)
             return n;
-        else if (n <  16) f = 8;
+        else if (n <  16) f = 4;
         else if (n < 256) f = 16;
         else f = 256;
         int r = n%f;
         return n + ((r != 0) ? f - r : 0);
     }
 
-    public static int sum(int n1, int n2) {
+    public static int lengthSum(int n1, int n2) {
         return lengthOf(n1+n2);
     }
 
-    public static int min(int n1, int n2) {
+    public static int lengthMin(int n1, int n2) {
         return lengthOf(Math.min(n1, n2));
     }
 
-    public static int max(int n1, int n2) {
+    public static int lengthMax(int n1, int n2) {
         return lengthOf(Math.max(n1, n2));
     }
 
@@ -90,6 +90,8 @@ public class Arrays {
         return k;
     }
 
+    // ----------------------------------------------------------------------
+
     public static void zeros(long[] src) {
         for (int i=0; i<src.length; ++i)
             src[i] = 0;
@@ -111,17 +113,6 @@ public class Arrays {
         // }
         System.arraycopy(array, srcPos, array, dstPos, len);
     }
-    public static void move(float[] array, int srcPos, int dstPos, int len) {
-        System.arraycopy(array, srcPos, array, dstPos, len);
-    }
-
-    public static float[] copyOf(float[] a, int n) {
-        return java.util.Arrays.copyOf(a, n);
-    }
-
-    public static long[] copyOf(long[] a) {
-        return java.util.Arrays.copyOf(a, a.length);
-    }
 
     public static long[] copyOf(long[] a, int n) {
         return java.util.Arrays.copyOf(a, n);
@@ -132,6 +123,20 @@ public class Arrays {
             if (a[i] != b[i])
                 return false;
         return true;
+    }
+
+
+    public static void zeros(float[] src) {
+        for (int i=0; i<src.length; ++i)
+            src[i] = 0;
+    }
+
+    public static void move(float[] array, int srcPos, int dstPos, int len) {
+        System.arraycopy(array, srcPos, array, dstPos, len);
+    }
+
+    public static float[] copyOf(float[] a, int n) {
+        return java.util.Arrays.copyOf(a, n);
     }
 
     public static boolean equals(float[] a, float[] b, int n) {
