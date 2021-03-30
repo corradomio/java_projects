@@ -7,16 +7,17 @@ public class MemoryUtils {
     private static final long MB = 1024*KB;
     private static final long GB = 1024*MB;
 
-    public static long getAllocatedMemory() {
+    public static long allocatedMemory() {
         Runtime rt = Runtime.getRuntime();
         long total = rt.totalMemory();
         long free = rt.freeMemory();
         return total - free;
     }
 
-    // public static float getAllocatedMemory(float unit) {
-    //     return getAllocatedMemory()/unit;
-    // }
+    public static long freeMemory() {
+        Runtime rt = Runtime.getRuntime();
+        return rt.freeMemory();
+    }
 
     public static String format(float size) {
         if (size == 0)
@@ -29,5 +30,20 @@ public class MemoryUtils {
             return String.format("%.03f MB", size/MB);
         else
             return String.format("%.03f GB", size/GB);
+    }
+
+    public static long parse(String memsize) {
+        memsize = memsize.trim();
+        int n = memsize.length();
+        if (memsize.endsWith("GB"))
+            return (long) (GB*Double.parseDouble(memsize.substring(0,n-2).trim()));
+        if (memsize.endsWith("MB"))
+            return (long) (MB*Double.parseDouble(memsize.substring(0,n-2).trim()));
+        if (memsize.endsWith("KB"))
+            return (long) (KB*Double.parseDouble(memsize.substring(0,n-2).trim()));
+        if (memsize.endsWith("B"))
+            return (long) (B*Double.parseDouble(memsize.substring(0,n-1).trim()));
+        else
+            return (long) (B*Double.parseDouble(memsize));
     }
 }

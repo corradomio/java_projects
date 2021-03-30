@@ -137,13 +137,18 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
         return parameters;
     }
 
-    public void setParameters(Parameters params) {
-        this.parameters.putAll(params);
-    }
-
     @Override
     public boolean isTerminated() {
         return future.isCancelled() || future.isDone();
+    }
+
+    @Override
+    public TaskRequirements getRequirements() {
+        return TaskRequirements.noRequirements();
+    }
+
+    public void setParameters(Parameters params) {
+        this.parameters.putAll(params);
     }
 
     // ----------------------------------------------------------------------
@@ -238,16 +243,6 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // ----------------------------------------------------------------------
     // Support
     // ----------------------------------------------------------------------
-
-    // There are two type of messages:
-    //
-    //      messagef:   used to set prepare the CURRENT message: for example the status
-    //                  of the download (10% ... 20% ...) or something similar
-    //                  to the progress bar
-    //
-    //                  messagef is also logged but using 'debugft': a temporized
-    //                  (in general each 3 seconds) formatted DEBUG message
-    //
 
     protected void messagef(String message, Object... args) {
         String msg = String.format(message, args);

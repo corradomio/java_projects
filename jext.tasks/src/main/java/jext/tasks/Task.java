@@ -23,6 +23,8 @@ public interface Task extends Runnable {
 
     boolean isTerminated();
 
+    TaskRequirements getRequirements();
+
     // ----------------------------------------------------------------------
     // Task status
     // ----------------------------------------------------------------------
@@ -86,6 +88,7 @@ public interface Task extends Runnable {
      *
      * @param manager manager that handle the running tasks
      * @param future object used to wait the thread termination
+     *               CAN BE NULL
      */
     void waiting(TaskManager manager, Future<?> future);
 
