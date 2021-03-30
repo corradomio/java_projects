@@ -1,12 +1,16 @@
 package jext.tasks;
 
 import jext.logging.Logger;
+import jext.util.MemoryUtils;
+import jext.util.Sleep;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -42,12 +46,24 @@ public class TaskManagerService implements TaskManager, Runnable {
 
     private Logger logger = Logger.getLogger(TaskManager.class);
 
+    // executor service used to execute tasks with or wthout requirements
     private ExecutorService executor;
+    // thread used to check is some task is in the running queue but it is terminated
+    // (this is an error, in theory it is not possible, BUT it can happen)
+    // it is used also to execute tasks with requirement if the requirements are
+    // satisfied
     private Thread watchdog;
 
+    // lock used to synchronize the access to 'tasks' map
     private final Object lock = new Object();
+    // map of waiting/running tasks
     private Map<String, Task> tasks = new HashMap<>();
+    // waiting queue for tasks with requirements > 0 (for now just memory)
+    private Queue<Task> waitingHeavyTasks = new LinkedList<>();
+
+    // n of threads used in 'executor'
     private int nthreads;
+    // if this service is terminated
     private transient boolean terminated;
 
     // ----------------------------------------------------------------------
@@ -62,6 +78,7 @@ public class TaskManagerService implements TaskManager, Runnable {
         this.executor = Executors.newFixedThreadPool(nthreads);
         this.watchdog = new Thread(this);
         this.terminated = false;
+        this.watchdog.start();
     }
 
     // ----------------------------------------------------------------------
@@ -96,36 +113,39 @@ public class TaskManagerService implements TaskManager, Runnable {
     }
 
     /**
-     * retrieve the list of tasks
-     *
-     * @return
+     * Retrieve the list of all tasks (waiting & running)
      */
     public List<Task> listTasks() {
-        List<Task> selectedTasks = new ArrayList<>();
+        List<Task> allTasks = new ArrayList<>();
 
         synchronized (lock) {
-            selectedTasks.addAll(tasks.values());
+            allTasks.addAll(tasks.values());
+            allTasks.addAll(waitingHeavyTasks);
         }
-        return selectedTasks;
+        return allTasks;
     }
 
     /**
      * Retrieve the list of tasks of the specified type
      *
      * @param type
-     * @return
      */
     public List<Task> listTasks(String type) {
-        List<Task> selectedTasks = new ArrayList<>();
+        return listTasks().stream()
+            .filter(task -> task.getType().equals(type))
+            .collect(Collectors.toList());
+    }
 
-        synchronized (lock) {
-            tasks.values().forEach(task -> {
-                if(type.equals(task.getType()))
-                    selectedTasks.add(task);
-            });
-        }
+    public List<Task> listWaitingTasks() {
+        return listTasks().stream()
+            .filter(task -> task.getStatus() == TaskStatus.WAITING)
+            .collect(Collectors.toList());
+    }
 
-        return selectedTasks;
+    public List<Task> listRunningTasks() {
+        return listTasks().stream()
+            .filter(task -> task.getStatus() == TaskStatus.RUNNING)
+            .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------
@@ -145,38 +165,11 @@ public class TaskManagerService implements TaskManager, Runnable {
             return listRunningTasks().size();
     }
 
-    public int getPoolThreads() {
+    public int getThreadPoolSize() {
         if (executor instanceof ThreadPoolExecutor)
             return ((ThreadPoolExecutor)executor).getPoolSize();
         else
             return nthreads;
-    }
-
-    public List<Task> listWaitingTasks() {
-        return listTasks().stream()
-            .filter(task -> task.getStatus() != TaskStatus.RUNNING)
-            .collect(Collectors.toList());
-    }
-
-    public List<Task> listRunningTasks() {
-
-        return listTasks().stream()
-            .filter(task -> task.getStatus() == TaskStatus.RUNNING)
-            .collect(Collectors.toList());
-    }
-
-    private void removeTerminatedTasks() {
-        List<String> terminated = new ArrayList<>();
-        synchronized (lock) {
-            tasks.values().stream().forEach(task -> {
-                if (task.isTerminated())
-                    terminated.add(task.getId());
-            });
-
-            terminated.forEach(taskId -> {
-                tasks.remove(taskId);
-            });
-        }
     }
 
     // ----------------------------------------------------------------------
@@ -189,9 +182,16 @@ public class TaskManagerService implements TaskManager, Runnable {
             throw new RuntimeException("Wrong task status: " + task.getStatus());
 
         synchronized (lock) {
-            Future<?> future = executor.submit(task);
-            task.waiting(this, future);
-            tasks.put(task.getId(), task);
+
+            if (isHeavyTask(task)) {
+                task.waiting(this, null);
+                waitingHeavyTasks.add(task);
+                tasks.put(task.getId(), task);
+            }
+            else {
+                Future<?> future = executor.submit(task);
+                task.waiting(this, future);
+            }
         }
         return this;
     }
@@ -205,20 +205,14 @@ public class TaskManagerService implements TaskManager, Runnable {
     }
 
     public TaskManager abortAll() {
-        synchronized (lock) {
-            tasks.values().forEach(Task::abort);
-            tasks.clear();
-        }
+        listTasks().forEach(Task::abort);
+        tasks.clear();
+        waitingHeavyTasks.clear();
         return this;
     }
 
     public TaskManager abortAll(String type) {
-        synchronized (lock) {
-            tasks.values().forEach(task -> {
-                if (type.equals(task.getType()))
-                    task.abort();
-            });
-        }
+        listTasks(type).forEach(Task::abort);
         return this;
     }
 
@@ -227,11 +221,13 @@ public class TaskManagerService implements TaskManager, Runnable {
     // ----------------------------------------------------------------------
 
     public void waitForCompletion(int timeout, TimeUnit timeUnit) throws InterruptedException {
+        terminated = true;
         executor.shutdown();
         executor.awaitTermination(timeout, timeUnit);
     }
 
     public TaskManagerService shutdown() {
+        terminated = true;
         executor.shutdown();
         return this;
     }
@@ -262,6 +258,66 @@ public class TaskManagerService implements TaskManager, Runnable {
     public void run() {
         while (!terminated) {
             removeTerminatedTasks();
+
+            if (canSubmitHeavyTask())
+                submitHeavyTask();
+
+            // 2 times each second
+            Sleep.sleep(500);
+        }
+    }
+
+    private boolean canSubmitHeavyTask() {
+        synchronized (lock) {
+            // there are no heavy tasks waiting
+            if (waitingHeavyTasks.isEmpty())
+                return false;
+            // there are no heavy tasks running
+            if (!isHeavyTaskRunning())
+                return true;
+
+            // check just the memory
+            Task heavyTask = waitingHeavyTasks.peek();
+            long memoryNeeded = heavyTask.getRequirements().getMemoryRequirements(1);
+
+            // it can submit the task IF there is enough memory available
+            return (memoryNeeded <= MemoryUtils.freeMemory());
+        }
+    }
+
+    private void submitHeavyTask() {
+        synchronized (lock) {
+            if (waitingHeavyTasks.isEmpty()) return;
+            Task heavyTask = waitingHeavyTasks.remove();
+            Future<?> future = executor.submit(heavyTask);
+            heavyTask.waiting(this, future);
+        }
+    }
+
+    private boolean isHeavyTask(Task task) {
+        TaskRequirements treq = task.getRequirements();
+        return treq != null && treq != TaskRequirements.noRequirements();
+    }
+
+    private boolean isHeavyTaskRunning() {
+        for (Task task : tasks.values()) {
+            if (isHeavyTask(task))
+                return true;
+        }
+        return false;
+    }
+
+    private void removeTerminatedTasks() {
+        List<String> terminated = new ArrayList<>();
+        synchronized (lock) {
+            tasks.values().stream().forEach(task -> {
+                if (task.isTerminated())
+                    terminated.add(task.getId());
+            });
+
+            terminated.forEach(taskId -> {
+                tasks.remove(taskId);
+            });
         }
     }
 
