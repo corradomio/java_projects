@@ -2,7 +2,12 @@ package jext.tasks;
 
 public class TaskRequirements {
 
-    private static TaskRequirements NO_REQUIREMENTS = new TaskRequirements(0, 0);
+    public static TaskRequirements NO_REQUIREMENTS = new TaskRequirements(0, 0);
+
+    public static TaskRequirements noRequirements() {
+        return NO_REQUIREMENTS;
+    }
+
 
     private long memoryRequirementsInBytes;
     private long timeRequirementsInSeconds;
