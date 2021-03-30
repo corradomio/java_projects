@@ -1,19 +1,22 @@
 package jext.sourcecode.project.gradle;
 
 import jext.io.file.FilePatterns;
+import jext.maven.MavenCoords;
+import jext.maven.MavenDownloader;
+import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.gradle.collectors.AllDepsCollector;
+import jext.sourcecode.project.gradle.collectors.ErrorsCollector;
+import jext.sourcecode.project.gradle.collectors.GradleDeps;
+import jext.sourcecode.project.gradle.collectors.LoggerCollector;
+import jext.sourcecode.project.maven.LibrarySet;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseProject;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
-import org.gradle.tooling.BuildAction;
-import org.gradle.tooling.BuildActionExecuter;
-import org.gradle.tooling.BuildLauncher;
-import org.gradle.tooling.GradleConnectionException;
+import org.gradle.tooling.BuildException;
 import org.gradle.tooling.GradleConnector;
-import org.gradle.tooling.ModelBuilder;
 import org.gradle.tooling.ProjectConnection;
-import org.gradle.tooling.ResultHandler;
-import org.gradle.tooling.TestLauncher;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +27,10 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Queue;
-import java.util.Set;
 
 public class GradleProject extends BaseProject {
 
@@ -41,6 +42,8 @@ public class GradleProject extends BaseProject {
     private static final String MODULE_FILE = "build.gradle";
     private static final String MODULE_FILE_KTS = "build.gradle.kts";
 
+    public static final String BUILD_GRADLE = "build.gradle";
+
     public static final String GRADLE_VERSION = "gradle.version";
     public static final String GRADLE_INSTALLATION = "gradle.installation";
     public static final String GRADLE_URI = "gradle.uri";
@@ -50,6 +53,13 @@ public class GradleProject extends BaseProject {
 
     private static final String GRADLE_HOME = "GRADLE_HOME";
     private static final String NO_GRADLE_HOME = "NO_GRADLE_HOME";
+
+    private static String[] VALID_CONFIGURATIONS = {
+        "default",
+        "implementation",
+        "compile",
+        "test"
+    };
 
     // ----------------------------------------------------------------------
     // Static methods
@@ -68,6 +78,7 @@ public class GradleProject extends BaseProject {
 
     private final GradleModule rootModule;
     private GradleConnector connector;
+    private AllDepsCollector depsCollector;
     protected FilePatterns excludes;
 
     // ----------------------------------------------------------------------
@@ -84,7 +95,10 @@ public class GradleProject extends BaseProject {
         List<String> excludes = PropertiesUtils.getValues(this.getProperties(), MODULE_EXCLUDE);
         this.excludes = new FilePatterns().addAll(excludes);
 
+        // FIRST update 'build.gradle' THEN create the GradleToolingAPI connector!
+        updateBuildGradle();
         connect();
+        retrieveAllDependencies();
     }
 
     // ----------------------------------------------------------------------
@@ -98,12 +112,20 @@ public class GradleProject extends BaseProject {
 
         modules = new ArrayList<>();
 
+        addModule(rootModule);
         findModulesByConfig();
         findModulesByGradle();
         findModulesByJavaSourceRoots();
-        addRootModule();
+        //addRootModule();
 
         return modules;
+    }
+
+    private void addModule(Module module) {
+        if (getModule(module.getId()) != null)
+            return;
+
+        modules.add(module);
     }
 
     private void findModulesByConfig() {
@@ -131,112 +153,216 @@ public class GradleProject extends BaseProject {
         moduleHomes.forEach(moduleHome -> {
             Module module = newModule(moduleHome);
             module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_CONFIGURATION);
-            modules.add(module);
+            addModule(module);
         });
     }
 
-    public void findModulesByGradle() {
-
-        try {
-            openConnection();
-
-            Set<GradleModule> gmodules = new HashSet<>();
-            Queue<GradleModule> toVisit = new LinkedList<>();
-            toVisit.add(rootModule);
-
-            while (!toVisit.isEmpty() && !isAborted()) {
-                GradleModule gmodule = toVisit.remove();
-                gmodules.add(gmodule);
-
-                toVisit.addAll(gmodule.getModules());
-            }
-
-            for (GradleModule gmodule : gmodules) {
-                gmodule.getDeclaredLibraries();
-                gmodule.getMavenRepositories();
-                addGradleModule(gmodule);
-            }
-        }
-        finally {
-            closeConnection();
-        }
+    private void findModulesByGradle() {
+        depsCollector.pdeps.keySet().forEach(gradleProjectName -> {
+            addGradleModule(gradleProjectName);
+        });
     }
 
-    void addGradleModule(GradleModule gmodule) {
-        for (Module module : modules)
-            if (module.getName().equals(gmodule.getName()))
-                return;
+    private void addGradleModule(String moduleName) {
+        if (getModule(moduleName) != null)
+            return;
 
-        modules.add(gmodule);
+        addModule(newModule(new File(projectHome, moduleName)));
+    }
+
+    // public void findModulesByGradle() {
+    //
+    //     try {
+    //         openConnection();
+    //
+    //         Set<GradleModule> gmodules = new HashSet<>();
+    //         Queue<GradleModule> toVisit = new LinkedList<>();
+    //         toVisit.add(rootModule);
+    //
+    //         while (!toVisit.isEmpty() && !isAborted()) {
+    //             GradleModule gmodule = toVisit.remove();
+    //             gmodules.add(gmodule);
+    //
+    //             toVisit.addAll(gmodule.getModules());
+    //         }
+    //
+    //         for (GradleModule gmodule : gmodules) {
+    //             gmodule.getDeclaredLibraries();
+    //             gmodule.getMavenRepositories();
+    //             addGradleModule(gmodule);
+    //         }
+    //     }
+    //     finally {
+    //         closeConnection();
+    //     }
+    // }
+
+    // void addGradleModule(GradleModule gmodule) {
+    //     for (Module module : modules)
+    //         if (module.getName().equals(gmodule.getName()))
+    //             return;
+    //
+    //     modules.add(gmodule);
+    // }
+
+    // ----------------------------------------------------------------------
+    // updateBuildGradle
+    // ----------------------------------------------------------------------
+    // this method append the content of the resource 'jext.sourcecode.project.gradle.splalldeps.gradle
+    // at the end of <projectHome>/build.gradle
+
+    private static final String HEADER = "// SPLAllDependencies::BEGIN";
+    private static final String FOOTER = "// SPLAllDependencies::END";
+
+    private void updateBuildGradle() {
+        File buildGradle = new File(projectHome, BUILD_GRADLE);
+        if (!buildGradle.exists()) {
+            logger.errorf("Gradle project %s WITHOUT 'build.gradle'", getName().getFullName());
+            return;
+        }
+
+        String script = FileUtils.toString(this.getClass().getResourceAsStream(
+            "/jext/sourcecode/project/gradle/splalldeps.gradle"));
+
+        // read the file content
+        String content = FileUtils.toString(buildGradle);
+        int pos = content.indexOf(HEADER);
+        int end = content.indexOf(FOOTER);
+
+        // check the 'content' contains HEADER
+        if (pos == -1) {
+            // add the script
+            content += "\n\n" + script;
+        }
+        else if (end == -1) {
+            content = content.substring(0, pos) + script;
+        }
+        else {
+            content = content.substring(0, pos) + script + content.substring(end + FOOTER.length());
+
+        }
+        FileUtils.asFile(buildGradle, content);
+    }
+
+    private void retrieveAllDependencies() {
+        openConnection();
+
+        ErrorsCollector err = new ErrorsCollector(logger);
+        AllDepsCollector collector = new AllDepsCollector();
+        LoggerCollector logcoll = new LoggerCollector(logger, collector);
+        try {
+            connection.newBuild().forTasks("splAllDeps")
+                .withArguments("--continue")
+                // .setStandardOutput(collector)            // this
+                .setStandardOutput(logcoll)                 // OR this
+                .setStandardError(err)
+                .run();
+        }
+        catch (BuildException e) {
+            String message = e.getCause().getMessage();
+            if (!message.contains("not found in root project"))
+                logger.error(e);
+        }
+        finally {
+            logcoll.close();
+            collector.close();
+            err.close();
+            closeConnection();
+        }
+
+        this.depsCollector = collector;
+    }
+
+    public List<Library> getMavenDependencies(GradleModule module) {
+        String moduleName = module.getName().getFullName();
+        if (!depsCollector.pdeps.containsKey(moduleName))
+            return Collections.emptyList();
+
+        MavenDownloader md = getLibraryDownloader();
+
+        LibrarySet libraries = new LibrarySet();
+        Map<String, GradleDeps> configurations = depsCollector.pdeps.get(moduleName);
+        for (String configuration : VALID_CONFIGURATIONS) {
+            if (!configurations.containsKey(configuration))
+                continue;
+
+            configurations.get(configuration).libraries
+                .stream()
+                .map(MavenCoords::new)
+                .map(coords -> new MavenLibrary(coords, md, this))
+                .forEach(libraries::add);
+        }
+
+        return libraries.asList();
     }
 
     // ----------------------------------------------------------------------
     // Tooling api
     // ----------------------------------------------------------------------
 
-    private static class NoCloseableProjectConnection implements ProjectConnection {
-
-        private ProjectConnection pc;
-
-        NoCloseableProjectConnection(ProjectConnection pc) {
-            this.pc = pc;
-        }
-
-        @Override
-        public <T> T getModel(Class<T> aClass) throws GradleConnectionException, IllegalStateException {
-            return pc.getModel(aClass);
-        }
-
-        @Override
-        public <T> void getModel(Class<T> aClass, ResultHandler<? super T> resultHandler) throws IllegalStateException {
-            getModel(aClass, resultHandler);
-        }
-
-        @Override
-        public BuildLauncher newBuild() {
-            return pc.newBuild();
-        }
-
-        @Override
-        public TestLauncher newTestLauncher() {
-            return pc.newTestLauncher();
-        }
-
-        @Override
-        public <T> ModelBuilder<T> model(Class<T> aClass) {
-            return pc.model(aClass);
-        }
-
-        @Override
-        public <T> BuildActionExecuter<T> action(BuildAction<T> buildAction) {
-            return pc.action(buildAction);
-        }
-
-        @Override
-        public BuildActionExecuter.Builder action() {
-            return pc.action();
-        }
-
-        @Override
-        public void notifyDaemonsAboutChangedPaths(List<Path> list) {
-            pc.notifyDaemonsAboutChangedPaths(list);
-        }
-
-        @Override
-        public void close() {
-
-        }
-    }
+    // private static class NoCloseableProjectConnection implements ProjectConnection {
+    //
+    //     private ProjectConnection pc;
+    //
+    //     NoCloseableProjectConnection(ProjectConnection pc) {
+    //         this.pc = pc;
+    //     }
+    //
+    //     @Override
+    //     public <T> T getModel(Class<T> aClass) throws GradleConnectionException, IllegalStateException {
+    //         return pc.getModel(aClass);
+    //     }
+    //
+    //     @Override
+    //     public <T> void getModel(Class<T> aClass, ResultHandler<? super T> resultHandler) throws IllegalStateException {
+    //         getModel(aClass, resultHandler);
+    //     }
+    //
+    //     @Override
+    //     public BuildLauncher newBuild() {
+    //         return pc.newBuild();
+    //     }
+    //
+    //     @Override
+    //     public TestLauncher newTestLauncher() {
+    //         return pc.newTestLauncher();
+    //     }
+    //
+    //     @Override
+    //     public <T> ModelBuilder<T> model(Class<T> aClass) {
+    //         return pc.model(aClass);
+    //     }
+    //
+    //     @Override
+    //     public <T> BuildActionExecuter<T> action(BuildAction<T> buildAction) {
+    //         return pc.action(buildAction);
+    //     }
+    //
+    //     @Override
+    //     public BuildActionExecuter.Builder action() {
+    //         return pc.action();
+    //     }
+    //
+    //     @Override
+    //     public void notifyDaemonsAboutChangedPaths(List<Path> list) {
+    //         pc.notifyDaemonsAboutChangedPaths(list);
+    //     }
+    //
+    //     @Override
+    //     public void close() {
+    //
+    //     }
+    // }
 
     private ProjectConnection connection;
 
-    ProjectConnection getConnection() {
-        if (connection != null)
-            return new NoCloseableProjectConnection(connection);
-
-        connection = connector.connect();
-        return new NoCloseableProjectConnection(connection);
-    }
+    // ProjectConnection getConnection() {
+    //     if (connection != null)
+    //         return new NoCloseableProjectConnection(connection);
+    //
+    //     connection = connector.connect();
+    //     return new NoCloseableProjectConnection(connection);
+    // }
 
     private void openConnection() {
         connection = connector.connect();

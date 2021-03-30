@@ -60,24 +60,6 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
     // testRuntimeOnly
     // .
 
-
-    // private static final String COMPILE_CLASSPATH = "compileClasspath";
-    // private static final String COMPILE_ONLY = "compileOnly";
-    // private static final String TEST_COMPILE_CLASSPATH = "testCompileClasspath";
-    // private static final String TEST_COMPILE = "testCompileClasspath";
-    // private static final String DEFAULT = "default";
-
-    public static class Dependencies {
-        public final Set<String> libraries = new TreeSet<>();
-        public final Set<String> projects = new TreeSet<>();
-
-        public Dependencies addAll(Dependencies that) {
-            libraries.addAll(that.libraries);
-            projects.addAll(that.projects);
-            return this;
-        }
-    }
-
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
@@ -87,8 +69,12 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
 
     private final LogDigester digester;
 
-    private final Map<String, Dependencies> configurations = new HashMap<>();
+    private final Map<String, GradleDeps> configurations = new HashMap<>();
     private String currentConfiguration = "";
+
+    private static final String FAILED = "FAILED";
+    private static final String NOT_RESOLVED = "(n)";
+    private static final String PROJECT = "project";
 
     // ----------------------------------------------------------------------
     //
@@ -104,7 +90,6 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         // <configurationName> - <description>
         digester.addRule(STATE_CONFIGURATIONS, "([A-Za-z0-9_$]+)\\s-\\s.*", this::addConfiguration);
 
-        //
         // +--- org.jboss.logging:jboss-logging-processor:2.1.0.Final
         digester.addRule(STATE_DEPENDENCIES, "[\\s\\|\\\\+-]+project\\s*:\\s*([A-Za-z0-9_$:-]+).*", this::addProject);
         digester.addRule(STATE_DEPENDENCIES, "[\\s\\|\\\\+-]+([A-Za-z0-9_$:.-]+).*", this::addLibrary);
@@ -123,15 +108,15 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         digester.consume(line);
     }
 
-    private static final String FAILED = "FAILED";
-    private static final String NOT_RESOLVED = "(n)";
-    private static final String PROJECT = "project";
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private int addConfiguration(int state, Matcher matcher, String line)  {
         String configurationName = matcher.group(1);
 
         if (!configurations.containsKey(configurationName))
-            configurations.put(configurationName, new Dependencies());
+            configurations.put(configurationName, new GradleDeps());
 
         currentConfiguration = configurationName;
         return STATE_DEPENDENCIES;
@@ -183,7 +168,7 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         if (this.configurations.containsKey(configuration))
             return configurations.get(configuration).projects;
 
-        Dependencies alldeps = new Dependencies();
+        GradleDeps alldeps = new GradleDeps();
         for (String configurationName : configurations.keySet())
             alldeps.addAll(configurations.get(configurationName));
         return alldeps.projects;
@@ -193,7 +178,7 @@ public class DependenciesCollector extends LineOutputStream /*implements Iterabl
         if (this.configurations.containsKey(configuration))
             return configurations.get(configuration).libraries;
 
-        Dependencies alldeps = new Dependencies();
+        GradleDeps alldeps = new GradleDeps();
         for (String configurationName : configurations.keySet())
             alldeps.addAll(configurations.get(configurationName));
         return alldeps.libraries;

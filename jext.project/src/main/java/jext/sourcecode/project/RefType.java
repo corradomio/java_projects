@@ -4,13 +4,14 @@ import jext.java.TypeRole;
 import jext.name.IdNamed;
 import jext.name.Name;
 
+import java.util.List;
+
 /**
  * Referenced type
  */
 public interface RefType extends IdNamed {
 
     Project getProject();
-
     Library getLibrary();
     String  getLibraryId();
 
@@ -29,6 +30,9 @@ public interface RefType extends IdNamed {
      * external library
      */
     boolean isType();
+
+    boolean isCollection();
+    List<RefType> getElements();
 
     /**
      * Type conversion

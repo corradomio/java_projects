@@ -72,6 +72,10 @@ public class LibrarySet extends AbstractSet<Library> {
         }
     }
 
+    public List<Library> asList() {
+        return new ArrayList<>(mavenLibraries.values());
+    }
+
     /**
      * If the library is a Maven library, it return the latest version
      */
@@ -98,10 +102,10 @@ public class LibrarySet extends AbstractSet<Library> {
 
         Parallel.forEach(mavenLibraries.values(), mavenLibrary -> {
             try {
-            MavenCoords coords = mavenLibrary.getCoords();
-            MavenDownloader md = mavenLibrary.getMavenDownloader();
-            md.getPom(coords);
-            md.getArtifact(coords);
+                MavenCoords coords = mavenLibrary.getCoords();
+                MavenDownloader md = mavenLibrary.getMavenDownloader();
+                md.getPom(coords);
+                md.getArtifact(coords);
             }
             catch (RuntimeException e) {
                 logger.errorf("Unable to check %s: %s", mavenLibrary.getName(), e.getMessage());

@@ -1,0 +1,70 @@
+// SPLAllDependencies::BEGIN
+class SPLAllDependencies extends DefaultTask {
+    // SPLAllDependencies v1.0
+    // WARNING: DO NOT MOVE the previous line!
+    // WARNING: DO NOT INSERT lines before 'class SPLAllDependencies ...'
+    // Because it is used to check if 'build.gradle' already contains this task or not
+    // and if it uses the correct task's version
+    //
+    @TaskAction
+    def run() {
+        this.getProject().getRootProject().getAllprojects().forEach({
+            String pname = pnameOf(it);
+            println "------------------------------------------------------------"
+            if (pname.length() == 0)
+                println "Root project"
+            else
+                println "Project " + pname
+            println "------------------------------------------------------------"
+            println ""
+            dumpAllRepositories(it)
+            dumpAllConfigurations(it)
+        })
+        println 'Done'
+    }
+
+    String pnameOf(Project p) {
+        if (p == null)
+            return "";
+        if (p == p.getRootProject())
+            return "";
+        Project parent = p.getParent();
+        return pnameOf(parent) + ":" + p.getName()
+    }
+
+    void dumpAllConfigurations(Project p) {
+        int c = 0;
+        p.configurations.forEach({
+            println it.getName()
+            ++c;
+            int d=0;
+            it.dependencies.forEach({
+                if (it.group != null) {
+                    println "+--- " + it.group + ":" + it.name + ":" + it.version;
+                }
+                ++d;
+            })
+            if (d==0) {
+                println "No dependencies";
+            }
+            println ""
+        });
+        if (c == 0) {
+            println "No configurations";
+            println ""
+        }
+    }
+
+    void dumpAllRepositories(Project p) {
+        p.repositories.forEach({
+            try {
+                println "MavenRepository '" + it.url + "'"
+            }
+            catch (Throwable t) {}
+        });
+        println ""
+    }
+
+}
+task splAllDeps(type: SPLAllDependencies)
+// SPLAllDependencies::END

@@ -8,22 +8,18 @@ import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class ProjectUtils {
 
     public static List<Source> getSources(Project project) {
         List<Source> sources = new ArrayList<>();
         for (Module module : project.getModules())
-                sources.addAll(module.getSources());
+            sources.addAll(module.getSources());
 
         // sort the files in decreasing order of totalLines
         // in this way, the most large files are analysed as soon
@@ -133,21 +129,4 @@ public class ProjectUtils {
         return rtLibraries;
     }
 
-    // ----------------------------------------------------------------------
-
-    public static Set<File> getLibraryFiles(Project project) {
-        Set<File> files = new HashSet<>();
-        project.getLibraries().forEach(library -> {
-            files.addAll(library.getFiles());
-        });
-        return files;
-    }
-
-    public static List<File> getSourceRoots(Project project) {
-        List<File> files = new ArrayList<>();
-        project.getModules().forEach(module -> {
-            files.addAll(module.getSourceRoots());
-        });
-        return files;
-    }
 }

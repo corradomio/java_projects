@@ -4,6 +4,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.util.FileUtils;
+import jext.util.MapUtils;
 import jext.util.SetUtils;
 
 import java.util.HashSet;
@@ -30,16 +31,22 @@ public class ProjectInfo {
         pinfo.put("name", project.getName().getName());
         pinfo.put("fullname", project.getName().getFullName());
         pinfo.put("id", project.getId());
-        pinfo.put("projectType", project.getProjectType());
-        pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
+        pinfo.put("type", project.getProjectType());
+        pinfo.put("home", FileUtils.getAbsolutePath(project.getProjectHome()));
         pinfo.put("properties", project.getProperties());
-
+        
         // this can require A LOT OF TIME
         List<Module> modules = project.getModules();
         Set<Library> libraries = project.getLibraries();
         Set<Library> rtLibraries = ProjectUtils.getRuntimeLibraries(project);
 
-        pinfo.put("nModules", modules.size());
+        pinfo.put("counts", MapUtils.asMap(
+            "modules", modules.size(),
+            "libraries", libraries.size(),
+            "runtimeLibraries", rtLibraries.size(),
+            "sources", ProjectUtils.getSources(project).size()
+        ));
+
         pinfo.put("modules", modules
             .stream()
             .map(module -> {
@@ -49,7 +56,6 @@ public class ProjectInfo {
                 })
             .collect(Collectors.toList()));
 
-        pinfo.put("nLibraries", libraries.size());
         pinfo.put("libraries", libraries
             .stream()
             .map(library -> {
@@ -59,7 +65,6 @@ public class ProjectInfo {
             })
             .collect(Collectors.toList()));
 
-        pinfo.put("nRuntimeLibraries", rtLibraries.size());
         pinfo.put("runtimeLibraries", rtLibraries
             .stream()
             .map(library -> {
@@ -68,20 +73,23 @@ public class ProjectInfo {
                 return linfo;
             })
             .collect(Collectors.toList()));
-        pinfo.put("nSources", ProjectUtils.getSources(project).size());
 
         return pinfo;
     }
 
     private void analyze(Module m, Map<String, Object> minfo) {
+
+        Set<Library> definedLibraries = SetUtils.differenceOrdered(
+            new HashSet<>(m.getDeclaredLibraries()),
+            new HashSet<>(m.getLibraries())
+        );
+
         minfo.put("name", m.getName().getName());
         minfo.put("fullname", m.getName().getFullName());
         minfo.put("id", m.getId());
         minfo.put("moduleHome", FileUtils.getAbsolutePath(m.getModuleHome()));
         minfo.put("path", m.getPath());
         minfo.put("properties", m.getProperties());
-        minfo.put("nResources", m.getResources().size());
-        minfo.put("nSources", m.getSources().size());
         minfo.put("sourceRoots", m.getSourceRoots()
             .stream()
             .map(FileUtils::getAbsolutePath)
@@ -90,20 +98,30 @@ public class ProjectInfo {
             .stream()
             .map(dmodule -> dmodule.getName().getFullName())
             .collect(Collectors.toList()));
+        minfo.put("counts", MapUtils.asMap(
+            "resources", m.getResources().size(),
+            "sources", m.getSources().size(),
+            "sourceRoots", m.getSourceRoots().size(),
+            "dependencies", m.getDependencies().size(),
+            "libraries", m.getLibraries().size(),
+            "definedLibraries", definedLibraries.size(),
+            "types", m.getTypes().size(),
+            "usedTypes", m.getUsedTypes().size()
+        ));
+
+        // libraries
+
         minfo.put("runtimeLibrary", m.getRuntimeLibrary().getName().getFullName());
         minfo.put("libraries", m.getLibraries()
             .stream()
             .map(library -> library.getName().getFullName())
             .collect(Collectors.toList()));
-
-        Set<Library> definedLibraries = SetUtils.differenceOrdered(
-            new HashSet<>(m.getDeclaredLibraries()),
-            new HashSet<>(m.getLibraries())
-        );
         minfo.put("definedLibraries",definedLibraries
             .stream()
             .map(library -> library.getName().getFullName())
             .collect(Collectors.toList()));
+
+        // types
 
         minfo.put("types", m.getTypes()
             .stream()

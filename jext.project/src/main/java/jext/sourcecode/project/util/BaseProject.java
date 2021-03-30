@@ -282,28 +282,43 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         // check src/main/java
         if (MAVEN_SRC_MAIN_JAVA.equals(moduleHome.getName()))
-            moduleHome = moduleHome.getParentFile();
+            moduleHome = getParentFile(moduleHome);
         // check src/main/[anything]
         if (MAVEN_SRC_MAIN.equals(moduleHome.getParentFile().getName()))
-            moduleHome = moduleHome.getParentFile();
+            moduleHome = getParentFile(moduleHome);
         // check src/test/[anything]
         if (MAVEN_SRC_TEST.equals(moduleHome.getParentFile().getName()))
-            moduleHome = moduleHome.getParentFile();
+            moduleHome = getParentFile(moduleHome);
         // check src/main
         if (MAVEN_SRC_MAIN.equals(moduleHome.getName()))
-            moduleHome = moduleHome.getParentFile();
+            moduleHome = getParentFile(moduleHome);
         // check src/test
         if (MAVEN_SRC_TEST.equals(moduleHome.getName()))
-            moduleHome = moduleHome.getParentFile();
+            moduleHome = getParentFile(moduleHome);
 
+        // check parent/src | parent/source
         String name = moduleHome.getName();
         if (MAVEN_SRC.equals(name) || ANT_SOURCE.equals(name))
-            moduleHome = moduleHome.getParentFile();
+            moduleHome = getParentFile(moduleHome);
 
+        // moduleHome == sourceRoot
         if (moduleHome.equals(sourceRoot))
-            moduleHome = moduleHome.getParentFile();
+            moduleHome = getParentFile(moduleHome);
 
         modulesHome.add(moduleHome);
+    }
+
+    private File getParentFile(File directory) {
+        if (directory == null)
+            return projectHome;
+        String dpath = FileUtils.getAbsolutePath(directory);
+        String hpath = FileUtils.getAbsolutePath(projectHome);
+        if (!dpath.startsWith(hpath))
+            return projectHome;
+        if (dpath.length() > hpath.length())
+            return directory.getParentFile();
+        else
+            return projectHome;
     }
 
     /**
