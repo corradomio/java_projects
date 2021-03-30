@@ -11,7 +11,9 @@ public class JavaUtils {
 
     public static final String ROOT = "";
     public static final String VOID = "void";
+    public static final String NULL = "null";
     public static final String JAVA_LANG = "java.lang";
+    public static final String JAVA_LANG_NULL = "java.lang.Null";
     public static final String JAVA_LANG_VOID = "java.lang.Void";
     public static final String JAVA_LANG_CLASS = "java.lang.Class";
     public static final String JAVA_LANG_OBJECT = "java.lang.Object";
@@ -39,7 +41,37 @@ public class JavaUtils {
         [       array
      */
     public static final Set<String> PRIMITIVE_TYPES =
-        new HashSet<>(Arrays.asList("boolean", "byte", "char", "short", "int", "long", "float", "double", "void"));
+        new HashSet<>(Arrays.asList(
+            "boolean",
+            "byte",
+            "char",
+            "short",
+            "int",
+            "long",
+            "float",
+            "double",
+            "void"));
+
+    public static final Map<String, String> PRIMITIVE_BOXED = new HashMap<String, String>(){{
+        put("byte",     "java.lang.Byte");
+        put("char",     "java.lang.Character");
+        put("double",   "java.lang.Double");
+        put("float",    "java.lang.Float");
+        put("int",      "java.lang.Integer");
+        put("long",     "java.lang.Long");
+        put("short",    "java.lang.Short");
+        put("void",     "java.lang.Void");
+        put("boolean",  "java.lang.Boolean");
+        put("null",     "java.lang.Null");
+    }};
+
+    public static boolean isPrimitive(String name) {
+        return PRIMITIVE_TYPES.contains(name);
+    }
+
+    public static String boxed(String name) {
+        return PRIMITIVE_BOXED.getOrDefault(name, name);
+    }
 
     private static final Map<String, String> PRIMITIVE_SIGNATURE = new HashMap<String, String>(){{
         put("B", "byte");
@@ -60,7 +92,9 @@ public class JavaUtils {
             return String.format("L%s;", type);
     }
 
-    public static String fullName(String namespace, String name) {
+    // ----------------------------------------------------------------------
+
+    public static String qualifiedName(String namespace, String name) {
         return fullName(namespace, name, false);
     }
 
@@ -97,6 +131,7 @@ public class JavaUtils {
     private static Pattern CLASSNAME  = Pattern.compile("[A-Z$][0-9A-Za-z_$]*");
     private static Pattern IDENTIFIER = Pattern.compile("[a-z_$][0-9A-Za-z_$]*");
     private static Pattern CONSTANT = Pattern.compile("[0-9A-Z_$]+");
+    private static String SPECIAL_CHARS = "|?<(,:";
 
     public static boolean isConstant(String symbol) {
         // a constant is composed only by uppercase characters
@@ -110,7 +145,9 @@ public class JavaUtils {
 
     public static boolean isClassName(String symbol) {
         // in general, a class starts with an uppercase letter
-        return CLASSNAME.matcher(symbol).matches();
+        // or it contains "." to fully qualified
+
+        return symbol.contains(".") || CLASSNAME.matcher(symbol).matches();
     }
 
     public static boolean isQualified(String symbol) {
@@ -119,7 +156,10 @@ public class JavaUtils {
     }
 
     public static boolean isSpecialName(String symbol) {
-        return symbol.contains("|") || symbol.contains("?");
+        for (int i=0; i<SPECIAL_CHARS.length(); ++i)
+            if (symbol.indexOf(SPECIAL_CHARS.charAt(i)) != -1)
+                return true;
+        return false;
     }
 
     // ----------------------------------------------------------------------

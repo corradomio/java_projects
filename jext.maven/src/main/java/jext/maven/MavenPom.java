@@ -12,8 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static jext.maven.MavenCoords.isPattern;
@@ -41,9 +43,13 @@ public class MavenPom implements MavenConst {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    private static MavenPom instance = new MavenPom();
+    private static MavenPom INVALID = new MavenPom();
 
-    public static MavenPom invalid() { return instance; }
+    public static MavenPom invalid() { return INVALID; }
+
+    public static boolean isInvalid(MavenPom pom) {
+        return pom == null || pom == INVALID;
+    }
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -394,8 +400,8 @@ public class MavenPom implements MavenConst {
             ...
         </project>
      */
-    public List<String> getRepositories() {
-        List<String> repoUrls = new ArrayList<>();
+    public Set<String> getRepositories() {
+        Set<String> repoUrls = new HashSet<>();
         for (Element elt : XPathUtils.selectNodes(project, REPOSITORIES)) {
             String repoUrl = XPathUtils.getValue(elt, "url");
             if (isValid(repoUrl))

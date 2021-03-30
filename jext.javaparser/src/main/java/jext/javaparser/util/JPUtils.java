@@ -292,7 +292,7 @@ public class JPUtils {
         if (!ocid.isPresent())
             return Optional.empty();
         oqname = getFullyQualifiedName(ocid.get());
-        return Optional.of(JavaUtils.fullName(oqname.get(), name));
+        return Optional.of(JavaUtils.qualifiedName(oqname.get(), name));
     }
 
     // ----------------------------------------------------------------------

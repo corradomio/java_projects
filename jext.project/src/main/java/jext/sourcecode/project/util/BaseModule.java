@@ -364,8 +364,9 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         return Collections.emptyList();
     }
 
-    protected List<String> getMavenRepositories() {
-        return Collections.emptyList();
+    @Override
+    public Set<String> getMavenRepositories() {
+        return Collections.emptySet();
     }
 
     // ----------------------------------------------------------------------

@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 public class GradleProject extends BaseProject {
 
@@ -273,7 +274,7 @@ public class GradleProject extends BaseProject {
         this.depsCollector = collector;
     }
 
-    public List<Library> getMavenDependencies(GradleModule module) {
+    List<Library> getMavenDependencies(GradleModule module) {
         String moduleName = module.getName().getFullName();
         if (!depsCollector.pdeps.containsKey(moduleName))
             return Collections.emptyList();
@@ -294,6 +295,10 @@ public class GradleProject extends BaseProject {
         }
 
         return libraries.asList();
+    }
+
+    Set<String> getMavenRepositories(GradleModule module) {
+        return depsCollector.mavenRepos;
     }
 
     // ----------------------------------------------------------------------

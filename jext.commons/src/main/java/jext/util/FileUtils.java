@@ -4,12 +4,17 @@ import jext.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.security.MessageDigest;
@@ -33,11 +38,12 @@ public class FileUtils {
     // ----------------------------------------------------------------------
 
     public static String digest(File file) {
-        if (!file.exists())
+        if (!file.exists() || !file.isFile())
             return "0";
         try(InputStream in = new FileInputStream(file)) {
             return digest(in);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error(e, e);
             return "0";
         }
@@ -65,6 +71,17 @@ public class FileUtils {
     //
     // ----------------------------------------------------------------------
 
+    public static int countComponents(File file) {
+        if (file == null)
+            return 0;
+        String path = getAbsolutePath(file);
+        return path.split("/").length;
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     /**
      * Check if the path is absolute:
      *
@@ -74,6 +91,7 @@ public class FileUtils {
      */
     public static boolean isAbsolute(String path) {
         path = normalize(path);
+        //     linux/mac               windows: c:/...
         return path.startsWith("/") || path.indexOf(":/") == 1;
     }
 
@@ -101,6 +119,10 @@ public class FileUtils {
 
     public static String relativePathNoExt(File parentDir, File file) {
         String rpath = relativePath(parentDir, file);
+        // if the file names starts with a '.', we don't strip the 'extension'
+        if (file.getName().startsWith("."))
+            return rpath;
+        // we check that the last '.' is located AFTER the last '/'
         int pos = rpath.lastIndexOf('.');
         int sep = rpath.lastIndexOf('/');
         if (pos == -1 || pos < sep)
@@ -116,7 +138,8 @@ public class FileUtils {
     public static String toCanonicalPath(File parentDir, String path) {
         try {
             return normalize(new File(parentDir, path).getCanonicalPath());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return normalize(new File(parentDir, path).getAbsolutePath());
         }
     }
@@ -149,6 +172,10 @@ public class FileUtils {
     // Recursive listFiles
     // ----------------------------------------------------------------------
 
+    public static List<File> listFiles(File directory) {
+        return asList(directory.listFiles());
+    }
+
     public static List<File> asList(File[] files) {
         if (files == null || files.length == 0)
             return Collections.emptyList();
@@ -158,12 +185,18 @@ public class FileUtils {
 
     // NOT recursive
     public static List<File> listFiles(File directory, String ext) {
-        if (directory == null)
-            return Collections.emptyList();
-        else
             return asList(directory.listFiles((dir, name) -> name.endsWith(ext)));
     }
 
+    /**
+     * Select the files inside all sub directories specified by depth
+     *
+     * @param directory root directory
+     * @param depth sub directory depth. 0 means the current directory
+     * @param filter filter used to select the files inside the directory
+     * @param directoryFilter filter used to select which sub directories to scan
+     * @return list of files
+     */
     // NOT recursive
     public static List<File> listFiles(File directory, int depth, FileFilter filter, FileFilter directoryFilter) {
         if (depth == 0)
@@ -186,16 +219,11 @@ public class FileUtils {
     }
 
     // Recursive!
-    public static void listFiles(Collection<File> collectedFiles, File directory, FileFilter filter) {
+    public static void listFiles(List<File> collectedFiles, File directory, FileFilter filter) {
         if (directory == null) return;
         collectedFiles.addAll(asList(directory.listFiles(file -> file.isFile() && filter.accept(file))));
         asList(directory.listFiles(File::isDirectory))
                 .forEach(sundir -> listFiles(collectedFiles, sundir, filter));
-    }
-
-    // Recursive!
-    public static void listFiles(Collection<File> collectedFiles, File directory) {
-        listFiles(collectedFiles, directory, pathname -> true);
     }
 
     // ----------------------------------------------------------------------
@@ -223,12 +251,7 @@ public class FileUtils {
     // ----------------------------------------------------------------------
 
     public static boolean isParent(File parent, File path) {
-        String dbase = normalize(path.getAbsolutePath());
-        String child = normalize(parent.getAbsolutePath());
-        if (dbase.equals(child))
-            return false;
-        else
-            return child.startsWith(dbase);
+        return normalize(path.getAbsolutePath()).startsWith(normalize(parent.getAbsolutePath()));
     }
 
     /**
@@ -268,14 +291,22 @@ public class FileUtils {
     // ----------------------------------------------------------------------
 
     /** Read the content of a file as a string */
-    public static String toString(File file) {
+    public static String toString(File file)
+    {
         try {
             byte[] encoded = Files.readAllBytes(file.toPath());
             return new String(encoded, Charset.defaultCharset());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             logger.errorf("Unable to read %s: %s", file, e);
             return "";
         }
+    }
+
+    public static String toString(InputStream stream) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        copy(stream, baos);
+        return new String(baos.toByteArray(), Charset.defaultCharset());
     }
 
     /** Read the content of a file as a list of lines */
@@ -311,6 +342,57 @@ public class FileUtils {
         }
 
         return lines;
+    }
+
+    public static void asFile(File file, String content) {
+        try(Writer w = new FileWriter(file)) {
+            w.write(content);
+        }
+        catch (IOException e) {
+            logger.errorf("Unable to write %s: %s", file, e);
+        }
+    }
+
+    public static void asFile(File file, List<String> content) {
+        try(Writer w = new FileWriter(file)) {
+            for (String line : content) {
+                w.write(line);
+                w.write("\n");
+            }
+        }
+        catch (IOException e) {
+            logger.errorf("Unable to write %s: %s", file, e);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
+    public static void copy(File sourceFile, File destinationFile) {
+
+        try(InputStream in = new FileInputStream(sourceFile);
+            OutputStream out = new FileOutputStream(destinationFile)) {
+            copy(in, out);
+        }
+        catch(IOException e) {
+            logger.error(e, e);
+        }
+    }
+
+    public static void copy(InputStream in, OutputStream out) {
+        try {
+            byte[] b = new byte[1024];
+            for (int n = in.read(b); n > 0; n = in.read(b))
+                out.write(b, 0, n);
+        }
+        catch(IOException e) {
+            logger.error(e, e);
+        }
+    }
+
+    public static void mkdirs(File directory) {
+        directory.mkdirs();
     }
 
     // ----------------------------------------------------------------------

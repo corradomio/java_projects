@@ -8,29 +8,31 @@ public class ProgressStatus {
 
     private int total;
     private int current;
+    private String message;
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
-    public int    getTotal() { return total; }
+    public int    getTotal()   { return total; }
     public int    getCurrent() { return current; }
-    public double getDone() { return total > 0 ? (0.+current)/(0.+total) : 0.;}
+    public double getDone()    { return (total > 0 && current >= 0) ? (0.+current)/(0.+total) : 0.;}
+    public String getMessage() { return message; }
 
     // ----------------------------------------------------------------------
-    // Getter/setter
+    // Setter
     // ----------------------------------------------------------------------
+    // Sometimes the total number of steps is not known. In this case the
+    // total is updated
 
     public ProgressStatus setTotal(int total) {
-        this.total = total;
-        this.current = 0;
-        return this;
-    }
+        // set current to -1 for this reason:
+        // if there are 3 steps to execute, when we are at step n. 3
+        // the execution is not terminated yet!
 
-    public ProgressStatus setCurrent(int current) {
-        this.current = current;
-        if (current > total)
-            total = current;
+        this.total = total;
+        this.current = -1;
+        this.message = "Started ...";
         return this;
     }
 
@@ -44,8 +46,15 @@ public class ProgressStatus {
     // Operations
     // ----------------------------------------------------------------------
 
-    public int update(int wd) {
-        setCurrent(current + wd);
+    public int update(String msg, int wd) {
+        if (message == null)
+            message = "update";
+
+        current += wd;
+        message = msg;
+        if (current >= total)
+            total = current + 1;
+
         return current;
     }
 

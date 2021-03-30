@@ -2,6 +2,7 @@ package jext.maven;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.exception.MultipleException;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
@@ -87,7 +88,7 @@ public class MavenDownloader implements MavenConst {
      * Default Maven downloader. It uses the default repository
      */
     public MavenDownloader() {
-        repoUrls.add("https://repo.maven.apache.org/maven2");
+        addRepository("https://repo.maven.apache.org/maven2");
     }
 
     /**
@@ -114,7 +115,7 @@ public class MavenDownloader implements MavenConst {
         return this;
     }
 
-    /** Repository where to search teh artifacts */
+    /** Repository where to search the artifacts */
     public MavenDownloader addRepository(String repoUrl) {
         // remove the last "/"
         if (repoUrl.endsWith("/"))
@@ -127,7 +128,7 @@ public class MavenDownloader implements MavenConst {
         return this;
     }
 
-    /** Repositories where to serach teh artifacts */
+    /** Repositories where to search the artifacts */
     public MavenDownloader addRepositories(Collection<String> repoUrls) {
         repoUrls.forEach(this::addRepository);
         return this;
@@ -142,7 +143,7 @@ public class MavenDownloader implements MavenConst {
     /**
      * Sometimes a server doesn't works. In this case it is created a 'flag' file (*.invalid)
      * to skip another check the next time. However the flag is not forever. It has a expiration time
-     * (for default 24 hours). After this time, it is deleted.
+     * (for default 24 hours). After this time, it will be deleted.
      */
     public MavenDownloader setCheckTimeout(long seconds) {
         this.checkTimeout = seconds;
@@ -155,7 +156,7 @@ public class MavenDownloader implements MavenConst {
         return this;
     }
 
-    /** Create download directory there it doesn't exist. */
+    /** Create download directory if it doesn't exist. */
     public MavenDownloader initialize() {
         if (!downloadDir.exists() && !downloadDir.mkdirs())
             logger.warnf("Unable to create directory %s", downloadDir);
@@ -212,7 +213,7 @@ public class MavenDownloader implements MavenConst {
     /** Relocate the coordinates */
     private MavenCoords getRelocated(MavenCoords coords) {
         MavenPom pom = getMavenPom(coords);
-        if (pom == null)
+        if (MavenPom.isInvalid(pom))
             return coords;
         else if (pom.isRelocated())
             return pom.getRelocated();
@@ -265,81 +266,6 @@ public class MavenDownloader implements MavenConst {
         }
     }
 
-    // /**
-    //  * If the artifact is a 'jar', itself, if it is a 'pom', the list of
-    //  * components coords (recursively)
-    //  *
-    //  * @param maxDepth = 0 -> no recursion
-    //  *                 > 0 -> max depth
-    //  *                 < 0 -> infinite recursion
-    //  */
-    // public List<MavenCoords> getComponentsCoords(MavenCoords coords, int maxDepth) {
-    //     coords = getVersioned(coords);
-    //
-    //     if (!coords.hasVersion()) {
-    //         logger.errorf("Missing version in %s", coords);
-    //         return Collections.emptyList();
-    //     }
-    //
-    //     // check for 'relocated' coords
-    //     MavenPom pom = getPom(coords);
-    //     if (pom == null)
-    //         return Collections.emptyList();
-    //
-    //     List<MavenCoords> components = new ArrayList<>();
-    //
-    //     // 1) is a 'jar'
-    //     if (!pom.isPomPackaging()) {
-    //         components.add(coords);
-    //         return components;
-    //     }
-    //
-    //     // 2) is a 'pom' but not 'recursive'
-    //     if (maxDepth == 0)
-    //         return pom.getComponents()
-    //             .stream()
-    //             .map(compo -> compo.coords)
-    //             .collect(Collectors.toList());
-    //
-    //     // 3) is a 'pom' and 'recursive' - breadth first (queue)
-    //     Queue<Entry> toVisit = new LinkedList<>();
-    //     toVisit.add(new Entry(new MavenDependency(coords)));
-    //     Set<MavenDependency> visited = new HashSet<>();
-    //
-    //     while(!toVisit.isEmpty()) {
-    //         Entry entry = toVisit.remove();
-    //         int edepth = entry.depth;
-    //
-    //         if (edepth > maxDepth)
-    //             continue;
-    //
-    //         // remove from the queue
-    //         MavenDependency dcoords = entry.dcoords;
-    //         // if already visited, skip
-    //         if (visited.contains(dcoords))
-    //             continue;
-    //
-    //         // check for relocated pom
-    //         pom = getPom(dcoords.coords);
-    //         if (pom == null)
-    //             continue;
-    //
-    //         // if 'pom', add components to toVisit
-    //         // if 'jar', add to visited
-    //         else if (pom.isPomPackaging())
-    //             pom.getComponents()
-    //             .forEach(compo -> {
-    //                 toVisit.add(new Entry(compo, entry));
-    //             });
-    //         else
-    //             visited.add(dcoords);
-    //     }
-    //
-    //     return visited.stream()
-    //         .map(dcoords -> dcoords.coords)
-    //         .collect(Collectors.toList());
-    // }
-
     /**
      * List of 'dependencies'
      */
@@ -353,7 +279,7 @@ public class MavenDownloader implements MavenConst {
 
         // 1) not recursive
         final MavenPom pom = getPom(coords);
-        if (pom == null)
+        if (MavenPom.isInvalid(pom))
             return Collections.emptyList();
 
         if (maxDepth == 0)
@@ -385,7 +311,7 @@ public class MavenDownloader implements MavenConst {
                 continue;
 
             final MavenPom dpom = getPom(dcoords.coords);
-            if (dpom == null) {
+            if (MavenPom.isInvalid(dpom)) {
                 continue;
             }
             else if (dpom.isPomPackaging()) {
@@ -435,7 +361,7 @@ public class MavenDownloader implements MavenConst {
         List<File> artifacts = new ArrayList<>();
         for(MavenCoords coords : coordsList) {
             MavenPom pom = getPom(coords);
-            if (pom == null)
+            if (MavenPom.isInvalid(pom))
                 continue;
             if (pom.isPomPackaging())
                 continue;
@@ -459,7 +385,7 @@ public class MavenDownloader implements MavenConst {
     // MavenPom object from the coordinates
     private MavenPom getMavenPom(MavenCoords coords) {
         if (!coords.hasVersion())
-            return null;
+            return MavenPom.invalid();
 
         Cache<MavenCoords, MavenPom> cache = CacheManager.getCache("maven.pom", MavenCoords.class, MavenPom.class);
         MavenPom pom = cache.get(coords, () -> {
@@ -478,7 +404,7 @@ public class MavenDownloader implements MavenConst {
             // }
         });
 
-        return pom == MavenPom.invalid() ? null : pom;
+        return pom; // pom == MavenPom.invalid() ? null : pom;
     }
 
     /**
@@ -703,31 +629,38 @@ public class MavenDownloader implements MavenConst {
     // Download file
     // ----------------------------------------------------------------------
 
-    private void downloadFile(MavenCoords coords, MavenType type) {
+    private MultipleException downloadFile(MavenCoords coords, MavenType type) {
+
+        MultipleException excpt = new MultipleException(String.format("Unable to download %s for %s", type, coords));
 
         // if 'coords' are marked as 'invalid', skip (with timeout)
-        if (isInvalidType(coords, type))
-            return;
+        if (isInvalidType(coords, type)) {
+            excpt.addCause(new RuntimeException("Invalid coordinates"));
+            return excpt;
+        }
 
         File downloadedFile = getFile(coords, type);
 
         // if the ".pom" file defined a "downloadUrl", it downloads from this url
         if (type == MavenType.ARTIFACT && hasDownloadUrl(coords)) {
             // if the download is failed, try to download with the standard method
-            if(!downloadUsingUrl(coords))
-                downloadFromRepositories(coords, type);
+            if(!downloadUsingUrl(coords, excpt))
+                downloadFromRepositories(coords, type, excpt);
         }
         else
-            downloadFromRepositories(coords, type);
+            downloadFromRepositories(coords, type, excpt);
 
         // if it was not possible to download the file, mark 'coords' as invalid
         if (!downloadedFile.exists()) {
-            logger.errorf("Unable to download library %s for %s", type, coords);
+            //logger.errorf("Unable to download library %s for %s", type, coords);
+            logger.error(excpt.getMessage());
             markAsInvalidType(coords, type);
         }
+
+        return excpt;
     }
 
-    private void downloadFromRepositories(MavenCoords coords, MavenType type) {
+    private void downloadFromRepositories(MavenCoords coords, MavenType type, MultipleException excpt) {
         File downloadedFile = getFile(coords, type);
         File tempFile = getTemp(downloadedFile);
 
@@ -739,11 +672,13 @@ public class MavenDownloader implements MavenConst {
                     downloadFromUrl(downloadedFile, downloadUrl);
                 }
                 catch (FileNotFoundException e) {
-                    logger.errorf("FileNotFoundException %s", downloadUrl);
+                    //logger.errorf("FileNotFoundException %s", downloadUrl);
+                    excpt.addCause(e);
                     continue;
                 }
                 catch (UnknownHostException e) {
-                    logger.errorf("UnknownHostException %s", downloadUrl);
+                    //logger.errorf("UnknownHostException %s", downloadUrl);
+                    excpt.addCause(e);
                     continue;
                 }
                 catch (IOException e) {
@@ -751,7 +686,9 @@ public class MavenDownloader implements MavenConst {
                     // if (message.contains(" 403 ")) continue;
                     // if (message.contains(" 401 ")) continue;
                     // if (message.contains(" 301 ")) continue;
-                    logger.errorf("IOException %s: %s", downloadUrl, e.getMessage());
+
+                    //logger.errorf("IOException %s: %s", downloadUrl, e.getMessage());
+                    excpt.addCause(e);
                     continue;
                 }
                 // catch (Throwable t) {
@@ -788,13 +725,13 @@ public class MavenDownloader implements MavenConst {
         return pom != null && pom.hasDownloadUrl();
     }
 
-    private boolean downloadUsingUrl(MavenCoords coords) {
+    private boolean downloadUsingUrl(MavenCoords coords, MultipleException excpt) {
         MavenType type = MavenType.ARTIFACT;
         File downloadedFile = getFile(coords, type);
         File tempFile = getTemp(downloadedFile);
 
         MavenPom pom = getPom(coords);
-        if (pom == null)
+        if (MavenPom.isInvalid(pom))
             return false;
 
         String downloadUrl = pom.getDownloadUrl();
@@ -809,7 +746,7 @@ public class MavenDownloader implements MavenConst {
             renameTo(tempFile, downloadedFile);
         }
         catch (IOException e) {
-            logger.errorf("%s: %s", downloadUrl, e);
+            excpt.addCause(e);
         }
         finally {
             delete(tempFile);
@@ -820,50 +757,42 @@ public class MavenDownloader implements MavenConst {
 
     private void downloadFromUrl(File downloadedFile, String downloadUrl) throws IOException {
         File tempFile = getTemp(downloadedFile);
-        URL url = new URL(downloadUrl);
-
         mkdirs(tempFile);
         delete(tempFile);
 
         // HttpClient is able to handle '301 Moved Permanently' !!!
-        {
-            logger.debugft("Try to download from %s", downloadUrl);
+        URL url = new URL(downloadUrl);
 
-            RequestConfig globalConfig = RequestConfig.custom()
-                .setCookieSpec(CookieSpecs.DEFAULT)
-                .build();
-            CloseableHttpClient httpClient = HttpClients.custom()
-                .setDefaultRequestConfig(globalConfig)
-                .build();
-            RequestConfig localConfig = RequestConfig.copy(globalConfig)
-                .setCookieSpec(CookieSpecs.STANDARD)
-                .build();
+        logger.debugft("Try to download from %s", downloadUrl);
 
-            // HttpClient httpClient = HttpClients.createDefault();
-            HttpGet httpGet = new HttpGet(downloadUrl);
-            httpGet.setConfig(localConfig);
-            HttpResponse response = httpClient.execute(httpGet);
-            if (response.getStatusLine().getStatusCode() >= 400) {
-                return;
-            }
+        RequestConfig globalConfig = RequestConfig.custom()
+            .setCookieSpec(CookieSpecs.DEFAULT)
+            .build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+            .setDefaultRequestConfig(globalConfig)
+            .build();
+        RequestConfig localConfig = RequestConfig.copy(globalConfig)
+            .setCookieSpec(CookieSpecs.STANDARD)
+            .build();
 
-            HttpEntity entity = response.getEntity();
+        // HttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(downloadUrl);
+        httpGet.setConfig(localConfig);
+        HttpResponse response = httpClient.execute(httpGet);
+        if (response.getStatusLine().getStatusCode() >= 400) {
+            throw new IOException("Unable to download from " + downloadUrl + ": " + response.getStatusLine());
+        }
 
-            try (InputStream istream = entity.getContent()) {
-                try (OutputStream ostream = new FileOutputStream(tempFile)) {
-                    byte[] buffer = new byte[1024];
-                    for(int len = istream.read(buffer); len > 0; len = istream.read(buffer)) {
-                        ostream.write(buffer, 0, len);
-                    }
+        HttpEntity entity = response.getEntity();
+
+        try (InputStream istream = entity.getContent()) {
+            try (OutputStream ostream = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[1024];
+                for(int len = istream.read(buffer); len > 0; len = istream.read(buffer)) {
+                    ostream.write(buffer, 0, len);
                 }
             }
         }
-
-        // try(ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
-        //     FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
-        //     FileChannel fileChannel = fileOutputStream.getChannel()) {
-        //     fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-        // }
     }
 
     // ----------------------------------------------------------------------

@@ -17,7 +17,7 @@ public class ReferenceConstructorDeclaration implements ResolvedConstructorDecla
     private int nParameters;
 
     public ReferenceConstructorDeclaration(String typeName, String methodName, int nParameters) {
-        this.qualifiedName = JavaUtils.fullName(typeName, methodName);
+        this.qualifiedName = JavaUtils.qualifiedName(typeName, methodName);
         this.nParameters = nParameters;
     }
 

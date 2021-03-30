@@ -39,12 +39,14 @@ public class ProjectInfo {
         List<Module> modules = project.getModules();
         Set<Library> libraries = project.getLibraries();
         Set<Library> rtLibraries = ProjectUtils.getRuntimeLibraries(project);
+        Set<String> mavenRepos = ProjectUtils.getMavenRepositories(project);
 
         pinfo.put("counts", MapUtils.asMap(
             "modules", modules.size(),
             "libraries", libraries.size(),
             "runtimeLibraries", rtLibraries.size(),
-            "sources", ProjectUtils.getSources(project).size()
+            "sources", ProjectUtils.getSources(project).size(),
+            "mavenRepositories", mavenRepos.size()
         ));
 
         pinfo.put("modules", modules
@@ -73,6 +75,8 @@ public class ProjectInfo {
                 return linfo;
             })
             .collect(Collectors.toList()));
+
+        pinfo.put("mavenRepositories", mavenRepos);
 
         return pinfo;
     }

@@ -6,10 +6,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class TaskManagerService implements TaskManager {
+public class TaskManagerService implements TaskManager, Runnable {
 
     public static TaskManagerService createTaskManager(int nthreads) {
         return new TaskManagerService(nthreads);
@@ -38,10 +43,12 @@ public class TaskManagerService implements TaskManager {
     private Logger logger = Logger.getLogger(TaskManager.class);
 
     private ExecutorService executor;
+    private Thread watchdog;
 
     private final Object lock = new Object();
     private Map<String, Task> tasks = new HashMap<>();
     private int nthreads;
+    private transient boolean terminated;
 
     // ----------------------------------------------------------------------
     // TaskManager
@@ -53,45 +60,37 @@ public class TaskManagerService implements TaskManager {
 
         this.nthreads = nthreads;
         this.executor = Executors.newFixedThreadPool(nthreads);
+        this.watchdog = new Thread(this);
+        this.terminated = false;
     }
 
     // ----------------------------------------------------------------------
-    // Properties
+    // Tasks
     // ----------------------------------------------------------------------
 
-    // /**
-    //  * Unique id assigned to the TaskManager
-    //  */
-    // public static String getId() { return Long.toString(id); }
-
     /**
-     * Check if the taskId is a valid id
+     * Check if the task with the specified is id running
      */
     public boolean isRunning(String taskId) {
-        Task task = getTask(taskId);
-        return task != null;
+        Optional<Task> task = getTask(taskId);
+        return task.isPresent();
     }
 
     /**
      * Retrieve the task with the specified id
-     *
-     * Note: the task can not exist because ALREADY terminates!
-     *
-     * @param taskId id of the task to retrieve
-     * @return
      */
-    public Task getTask(String taskId) {
+    public Optional<Task> getTask(String taskId) {
         if (taskId == null)
-            return null;
+            return Optional.empty();
 
         synchronized (lock) {
-            return tasks.getOrDefault(taskId, null);
+            return Optional.ofNullable(tasks.getOrDefault(taskId, null));
         }
     }
 
-    public Task getTask(Task task) {
+    public Optional<Task> getTask(Task task) {
         if (task == null)
-            return null;
+            return Optional.empty();
         else
             return getTask(task.getId());
     }
@@ -160,9 +159,24 @@ public class TaskManagerService implements TaskManager {
     }
 
     public List<Task> listRunningTasks() {
+
         return listTasks().stream()
             .filter(task -> task.getStatus() == TaskStatus.RUNNING)
             .collect(Collectors.toList());
+    }
+
+    private void removeTerminatedTasks() {
+        List<String> terminated = new ArrayList<>();
+        synchronized (lock) {
+            tasks.values().stream().forEach(task -> {
+                if (task.isTerminated())
+                    terminated.add(task.getId());
+            });
+
+            terminated.forEach(taskId -> {
+                tasks.remove(taskId);
+            });
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -193,6 +207,7 @@ public class TaskManagerService implements TaskManager {
     public TaskManager abortAll() {
         synchronized (lock) {
             tasks.values().forEach(Task::abort);
+            tasks.clear();
         }
         return this;
     }
@@ -236,6 +251,17 @@ public class TaskManagerService implements TaskManager {
     public void finishedTask(Task task) {
         synchronized (lock) {
             tasks.remove(task.getId());
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Watchdog
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void run() {
+        while (!terminated) {
+            removeTerminatedTasks();
         }
     }
 

@@ -627,7 +627,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         // 2) try to resolve using startImports (it contains also the current package
         //    AND "java.lang")
         for(String namespace : starImports) {
-            solved = tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
+            solved = tryToSolveUsingSolvers(JavaUtils.qualifiedName(namespace, name));
             if (solved.isSolved())
                 return solved;
         }
@@ -636,7 +636,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         //    TODO: this part MUST BE IMPROVED
         Stack<String> contextStack = getContextStack(context);
         for(String namespace : contextStack) {
-            solved = tryToSolveUsingSolvers(JavaUtils.fullName(namespace, name));
+            solved = tryToSolveUsingSolvers(JavaUtils.qualifiedName(namespace, name));
             if (solved.isSolved())
                 return solved;
         }

@@ -40,6 +40,7 @@ public class LogDigester {
 
     public static final int STATE_BEGIN = -1;
     public static final int STATE_DONE = -2;
+    public static final int KEEP_STATE = 0;
 
     private int state = STATE_BEGIN;
 

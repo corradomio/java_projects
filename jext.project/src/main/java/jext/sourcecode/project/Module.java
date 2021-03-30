@@ -47,6 +47,8 @@ public interface Module extends RefIdNamed {
 
     // -- libraries
 
+    Set<String> getMavenRepositories();
+
     /** Module runtime library */
     Library getRuntimeLibrary();
 

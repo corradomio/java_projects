@@ -5,22 +5,33 @@ import java.io.Serializable;
 /**
  * A task is composed of several 'works' and each work of several 'steps'
  *
- *      task
- *          work_1
+ *      task(n)
+ *          work_1(m)
  *              step_11
  *              ...
+ *              step_1m
  *          ...
- *          work_n
+ *          work_n(m)
  *              step_n1
  *              ...
+ *
+ * Sequence of calls
+ *
+ *      start(nWorks)
+ *          startWork(nSteps)   -- call the previous endWork() if necessary
+ *              update(iSteps)
+ *          endWork()           -- optional
+ *      done()                  -- complete all steps and all works
  */
 
 
 public class Progress implements Serializable {
+
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
+    private boolean inWork;
     private ProgressStatus works = new ProgressStatus();
     private ProgressStatus steps = new ProgressStatus();
 
@@ -48,36 +59,44 @@ public class Progress implements Serializable {
         steps.setTotal(0);
     }
 
-    // public void setWork(int currentWork, int totalWorks) {
-    //     works.setCurrent(currentWork, totalWorks);
-    //     steps.setTotal(0);
-    // }
-
-    public void startWork(int totalSteps) {
-        works.update(1);
+    public void startWork(String message, int totalSteps) {
+        if (inWork) endWork();
+        works.update(message, 1);
         steps.setTotal(totalSteps);
+        inWork = true;
     }
 
-    public int update(int wd) {
-        return steps.update(wd);
+    public int update(String message, int wd) {
+        return steps.update(message, wd);
     }
 
-    // public void setWorkDone(int currentWork) {
-    //     steps.setCurrent(currentWork);
-    // }
+    public void endWork() {
+        steps.completed();
+        inWork = false;
+    }
+
+    public void done() {
+        steps.completed();
+        works.completed();
+    }
+
+    // ----------------------------------------------------------------------
+    // Special operations operations
+    // ----------------------------------------------------------------------
+
+    public void addWorks(int nWorks) {
+        works.setTotal(works.getTotal() + nWorks);
+    }
 
     public void setStepsDone(int currentStep, int totalSteps) {
         steps.setCurrent(currentStep, totalSteps);
     }
 
-    public void endWork() {
-        steps.completed();
-    }
+    // ----------------------------------------------------------------------
+    // Overrides
+    // ----------------------------------------------------------------------
 
-    public void done() {
-        works.completed();
-    }
-
+    @Override
     public String toString() {
         return String.format("work[%d/%d (%f)]/step[%d/%d (%f)]",
             works.getCurrent(),

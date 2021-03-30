@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DefinedMethod extends NamedObject implements Method {
 
     private RefType ownerType;
-    private RefType returnType = ReferencedType.VOID;
+    private RefType returnType = ReferencedType.JAVA_LANG_VOID;
     private List<Parameter> parameters = new ArrayList<>();
     private AtomicInteger callIndex;
     private MethodName lastCallName;
@@ -56,7 +56,7 @@ public class DefinedMethod extends NamedObject implements Method {
         if (returnType != null)
             this.returnType = returnType;
         else
-            this.returnType = ReferencedType.VOID;
+            this.returnType = ReferencedType.JAVA_LANG_VOID;
     }
 
     public void add(String parameterName, RefType type) {

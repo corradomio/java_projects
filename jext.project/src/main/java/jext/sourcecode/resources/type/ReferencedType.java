@@ -11,17 +11,21 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.util.NamedObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ReferencedType extends NamedObject implements RefType {
 
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final ReferencedType VOID = new ReferencedType(JavaUtils.VOID);
+    public static final ReferencedType JAVA_LANG_NULL = new ReferencedType(JavaUtils.JAVA_LANG_NULL);
     public static final ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaUtils.JAVA_LANG_VOID);
     public static final ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaUtils.JAVA_LANG_OBJECT);
     public static final ReferencedType JAVA_LANG_CLASS = new ReferencedType(JavaUtils.JAVA_LANG_CLASS);
-    public static final ReferencedType ARRAY = new ReferencedType(JavaUtils.ARRAY);
+    // public static final ReferencedType ARRAY = new ReferencedType(JavaUtils.ARRAY);
 
     // ----------------------------------------------------------------------
     // Fields
@@ -31,8 +35,9 @@ public class ReferencedType extends NamedObject implements RefType {
 
     public Name namespace;
     public int nTypeParams;
-    public TypeRole role = TypeRole.UNKNOWN;
+    public TypeRole role;
     public Library library;
+    private List<RefType> elements = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -57,11 +62,12 @@ public class ReferencedType extends NamedObject implements RefType {
         this.namespace = guessNamespace();
 
         // DEBUG
-        String qualifiedName = name.getFullName();
-        if (qualifiedName.contains("<") || qualifiedName.contains("[") || qualifiedName.contains("\\") || qualifiedName.contains("?"))
-            System.out.println("Invalid: " + qualifiedName);
-        // if (qualifiedName.length() < 3)
-        //     System.out.println("Invalid: " + qualifiedName);
+        String fullname = name.getFullName();
+        if (fullname.contains("<") || fullname.contains("[") || fullname.contains("\\") || fullname.contains("?"))
+            Logger.getLogger(ReferencedType.class).errorf("Invalid: %s", fullname);
+        if (JavaUtils.isPrimitive(fullname)) {
+            setName(JavaUtils.boxed(fullname));
+        }
     }
 
     private Name guessNamespace() {
@@ -96,6 +102,16 @@ public class ReferencedType extends NamedObject implements RefType {
     @Override
     public boolean isAnonymous() {
         return this.getName().getName().startsWith("Anonymous");
+    }
+
+    @Override
+    public boolean isCollection() {
+        return !elements.isEmpty();
+    }
+
+    @Override
+    public List<RefType> getElements() {
+        return elements;
     }
 
     @Override
@@ -134,6 +150,10 @@ public class ReferencedType extends NamedObject implements RefType {
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+
+    public void add(RefType refType) {
+        elements.add(refType);
+    }
 
     @Override
     public String toString() {

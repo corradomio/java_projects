@@ -1,29 +1,31 @@
 package jext.tasks;
 
-import java.util.Date;
-
 public class StatusChange {
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
-
-    private Date timestamp;
     private TaskStatus status;
+    private long timestamp;
     private String message;
 
-    public StatusChange(TaskStatus status, String message) {
-        this.timestamp = new Date();
-        this.status = status;
-        this.message = message;
-
-        assert message != null;
+    public StatusChange(TaskStatus status, long timeout) {
+        this(status, timeout, null);
     }
 
-    public Date getTimestamp() { return timestamp; }
+    public StatusChange(TaskStatus status, long timestamp, String message) {
+        if (message == null)
+            message = status.toString();
+
+        this.timestamp = timestamp;
+        this.status = status;
+        this.message = message;
+    }
 
     public TaskStatus getStatus() { return status; }
+
+    public long getTimestamp() { return timestamp; }
 
     public String getMessage() { return message; }
 }

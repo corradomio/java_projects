@@ -1,7 +1,9 @@
 package jext.tasks;
 
+import jext.util.Parameters;
+
+import java.util.List;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public interface Task extends Runnable {
 
@@ -19,15 +21,26 @@ public interface Task extends Runnable {
      */
     String getType();
 
+    boolean isTerminated();
+
+    // ----------------------------------------------------------------------
+    // Task status
+    // ----------------------------------------------------------------------
+
     /**
-     * Status of the task
+     * Current status of the task
      */
     TaskStatus getStatus();
 
     /**
-     * Status of the task
+     * List of status changed with timestamp
      */
-    TaskStatus getPreviousStatus();
+    List<StatusChange> getStatusHistory();
+
+    /**
+     * When the task has reached the current state
+     */
+    long getTimestamp();
 
     // ----------------------------------------------------------------------
     // Support properties
@@ -43,14 +56,15 @@ public interface Task extends Runnable {
      */
     Progress getProgress();
 
+    /**
+     * Retrieve the list of parameters
+     * @return
+     */
+    Parameters getParameters();
+
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
-
-    /**
-     * Add a listener
-     */
-    void addListener(TaskStatusListener listener);
 
     /**
      * Abort the running task.
@@ -59,8 +73,13 @@ public interface Task extends Runnable {
     void abort();
 
     // ----------------------------------------------------------------------
-    // Thread support
+    // TaskManager support
     // ----------------------------------------------------------------------
+
+    /**
+     * Add a listener
+     */
+    void addListener(TaskStatusListener listener);
 
     /**
      * Callback called when the task is inserted into the waiting queue
@@ -69,10 +88,5 @@ public interface Task extends Runnable {
      * @param future object used to wait the thread termination
      */
     void waiting(TaskManager manager, Future<?> future);
-
-    /**
-     * Wait for the task completion
-     */
-    void waitForCompletion(long timeout, TimeUnit timeUnit);
 
 }

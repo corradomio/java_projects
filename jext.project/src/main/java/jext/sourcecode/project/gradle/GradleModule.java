@@ -126,8 +126,9 @@ public class GradleModule extends BaseModule {
     // ----------------------------------------------------------------------
 
     @Override
-    protected List<String> getMavenRepositories() {
-        return buildGradle.getRepositories();
+    public Set<String> getMavenRepositories() {
+        // return buildGradle.getRepositories();
+        return getGradleProject().getMavenRepositories(this);
     }
 
     @Override

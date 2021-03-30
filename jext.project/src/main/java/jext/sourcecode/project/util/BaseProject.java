@@ -575,7 +575,8 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         for(Module module : getModules()) {
             BaseModule bmodule = (BaseModule) module;
-            mavenRepos.addAll(bmodule.getMavenRepositories());
+            Set<String> urlrepos = bmodule.getMavenRepositories();
+            mavenRepos.addAll(urlrepos);
         }
 
         return mavenRepos;

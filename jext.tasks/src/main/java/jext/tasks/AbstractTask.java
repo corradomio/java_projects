@@ -5,6 +5,7 @@ import jext.util.Parameters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -17,30 +18,31 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
     protected Logger logger;
 
-    // task type
-    private String type;
+    // task type (a generic string)
+    protected String taskType;
 
-    // task id
-    private String id;
+    // unique task id
+    protected String id;
 
     // task status
-    private TaskStatus previousStatus = TaskStatus.CREATED;
-    private TaskStatus status = TaskStatus.CREATED;
-
-    // task properties
-    private Parameters parameters = new Parameters();
+    private TaskStatus status;
+    private long timestamp;
+    private List<StatusChange> history;
 
     // current message
     private String message = "";
 
-    // catched exception
-    private Throwable cathedException;
+    // task parameters
+    protected final Parameters parameters = new Parameters();
 
     // progress status
-    private Progress progress = new Progress();
+    private final Progress progress = new Progress();
 
     // user has request the task abort
     protected boolean aborted;
+
+    // catched exception
+    private Throwable exception;
 
     // ----------------------------------------------------------------------
     // Task Manager
@@ -62,41 +64,36 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
             return this;
         }
 
-        Listeners addListeners(List<TaskStatusListener> llist) {
-            listeners.addAll(llist);
-            return this;
-        }
-
-        void fireStatusChanged(TaskStatus prevStatus) {
+        void fireStatusChanged(TaskStatus previousStatus) {
             for (TaskStatusListener l : listeners) {
-                try {
-                    l.onStatusChanged(prevStatus,AbstractTask.this);
-                }
-                catch(Throwable t) {
-                    logger.error(t);
-                }
+                // try {
+                    l.onStatusChanged(previousStatus,AbstractTask.this);
+                // }
+                // catch (Throwable t) {
+                //     logger.error(t);
+                // }
             }
         }
 
         void fireProgressChanged() {
             for (TaskStatusListener l : listeners) {
-                try {
+                // try {
                     l.onProgressChanged(AbstractTask.this);
-                }
-                catch(Throwable t) {
-                    logger.error(t);
-                }
+                // }
+                // catch (Throwable t) {
+                //     logger.error(t);
+                // }
             }
         }
 
         void fireDone() {
             for (TaskStatusListener l : listeners) {
-                try {
+                // try {
                     l.onDone(AbstractTask.this);
-                }
-                catch(Throwable t) {
-                    logger.error(t);
-                }
+                // }
+                // catch (Throwable t) {
+                //     logger.error(t);
+                // }
             }
         }
     }
@@ -109,9 +106,15 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
     public AbstractTask() {
         this.id = TaskManagerService.newTaskId();
+        this.taskType = getClass().getSimpleName();
+
+        this.logger = Logger.getLogger(String.format("jext.tasks.Task.%s.%s", taskType, id));
+
         this.status = TaskStatus.CREATED;
-        this.type = getClass().getSimpleName();
-        this.logger = Logger.getLogger(String.format("jext.tasks.Task.%s.%s", type, id));
+        this.timestamp = System.currentTimeMillis();
+
+        this.history = new Stack<>();
+        this.history.add(new StatusChange(this.status, this.timestamp));
 
         this.listeners = new Listeners().addListener(this);
     }
@@ -120,25 +123,51 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // Properties
     // ----------------------------------------------------------------------
 
+    @Override
     public String getId() { return id; }
 
-    public String getType() { return type; }
+    @Override
+    public String getType() { return taskType; }
 
-    public TaskStatus getStatus() { return status; }
-
-    public TaskStatus getPreviousStatus() { return previousStatus; }
-
+    @Override
     public String getMessage() { return message; }
 
-    public Progress getProgress() { return progress; }
-
+    @Override
     public Parameters getParameters() {
         return parameters;
     }
 
-    public AbstractTask setParameters(Parameters params) {
+    public void setParameters(Parameters params) {
         this.parameters.putAll(params);
-        return this;
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return future.isCancelled() || future.isDone();
+    }
+
+    // ----------------------------------------------------------------------
+    // Progress
+    // ----------------------------------------------------------------------
+
+    public Progress getProgress() {
+        return progress;
+    }
+
+    // ----------------------------------------------------------------------
+    // Status
+    // ----------------------------------------------------------------------
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public List<StatusChange> getStatusHistory() {
+        return history;
     }
 
     // ----------------------------------------------------------------------
@@ -146,7 +175,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // ----------------------------------------------------------------------
 
     //
-    // NOT implement THIS method in the derived classes
+    // DO NOT implement THIS method in the derived classes
     // Implements: 'process()'
     //
     public final void run() {
@@ -164,8 +193,8 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
             else
                 setStatus(TaskStatus.SUCCESS, "Success");
         }
-        catch(Throwable t) {
-            cathedException = t;
+        catch (Throwable t) {
+            exception = t;
             logger.error(t, t);
 
             if (aborted)
@@ -174,12 +203,10 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
                 setStatus(TaskStatus.FAILED, t.toString());
         }
         finally {
-            // done();
-            TaskStatus prevStatus = getStatus();
-            setStatus(TaskStatus.DONE, prevStatus.toString());
+            done();
+            setStatus(TaskStatus.DONE, "Done");
+
             manager.finishedTask(this);
-            progress.done();
-            listeners.fireDone();
         }
     }
 
@@ -195,11 +222,18 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // Request for abort
     public final void abort() {
         aborted = true;
-        //setStatus(TaskStatus.ABORTED, "Aborted by user");
         onAbort();
     }
 
-    protected abstract void onAbort();
+    /**
+     * Executed when "abort()" is called.
+     * It is used to ""abort"" the current process!
+     *
+     * Note: IT IS NOT THE SAME THING of "onAborted()"!!!
+     */
+    protected void onAbort() {
+
+    }
 
     // ----------------------------------------------------------------------
     // Support
@@ -219,7 +253,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
         String msg = String.format(message, args);
 
         this.message = msg;
-        this.logger.debugft(msg);
+        this.logger.debugt(msg);
     }
 
     // ----------------------------------------------------------------------
@@ -228,10 +262,6 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
     public void addListener(TaskStatusListener listener) {
         listeners.addListener(listener);
-    }
-
-    public void addListeners(List<TaskStatusListener> llist) {
-        listeners.addListeners(llist);
     }
 
     // ----------------------------------------------------------------------
@@ -245,18 +275,19 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
      * @param message a message related to the state change
      */
     private void setStatus(TaskStatus newStatus, String message) {
-        assert message != null;
+        TaskStatus previousStatus = this.status;
 
-        this.previousStatus = this.status;
+        if (message == null)
+            message = String.format("%s -> %s", previousStatus, newStatus);
+        else
+            message = String.format("%s -> %s: %s", previousStatus, newStatus, message);
+
         this.status = newStatus;
-        //statusChanges.add(new StatusChange(status, message));
+        this.timestamp = System.currentTimeMillis();
+        this.history.add(new StatusChange(this.status, this.timestamp, message));
 
-        logger.infof("Status %s -> %s: %s",
-            previousStatus.toString(),
-            status.toString(),
-            message);
+        logger.info(message);
 
-        // onStatusChanged(previousStatus);
         listeners.fireStatusChanged(previousStatus);
     }
 
@@ -266,7 +297,25 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
     public void onStatusChanged(TaskStatus prevStatus, Task task) {
         assert this == task;
-        onStatusChanged(prevStatus);
+        switch(getStatus()) {
+            case RUNNING:
+                onStarted();
+                break;
+            case SUCCESS:
+                onSuccess();
+                break;
+            case ABORTED:
+                onAborted();
+                break;
+            case FAILED:
+                onFailed(exception);
+                break;
+            case DONE:
+                onDone();
+                break;
+            default:
+                break;
+        }
     }
 
     public void onDone(Task task) {
@@ -282,28 +331,6 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // ----------------------------------------------------------------------
     // Events
     // ----------------------------------------------------------------------
-
-    /**
-     * Called when the status of the
-     * @param previousStatus
-     */
-    private void onStatusChanged(TaskStatus previousStatus) {
-        switch(getStatus()) {
-            case RUNNING:
-                onStarted();
-                break;
-            case SUCCESS:
-                onSuccess();
-                break;
-            case ABORTED:
-                onAborted();
-                break;
-            case FAILED:
-                onFailed(cathedException);
-            default:
-                break;
-        }
-    }
 
     /**
      * Called when the task is started and BEFORE to call "process()"
@@ -348,11 +375,12 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
         setStatus(TaskStatus.WAITING, "Waiting");
     }
 
-    // Used in the code to wait explicitely for the task termination
+    // Used in the code to wait explicitly for the task termination
     public void waitForCompletion(long timeout, TimeUnit timeUnit) {
         try {
             future.get(timeout, timeUnit);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error(e, e);
         }
     }
@@ -363,10 +391,14 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // The job is composed of n tasks and each task of k steps of work
     //
     //      start(nWorks)
-    //          startWork(nSteps)
+    //          startWork(nWorks)
     //              update(stepsDone)
-    //              setStepsDone(stepsDone, totalSteps)
-    //          endWord()
+    //              setWorkDone(stepsDone, totalSteps)
+    //          [endTask()]
+    //          startWork(nWorks)
+    //              ...
+    //          [endTask()]
+    //          ...
     //      done()
 
     protected void start(int totalWorks) {
@@ -376,23 +408,18 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
     protected void startWork(String message, int totalSteps) {
         messagef(message);
-        progress.startWork(totalSteps);
+        progress.startWork(message, totalSteps);
         listeners.fireProgressChanged();
     }
 
     protected void update(int stepsDone) {
-        progress.update(stepsDone);
+        progress.update("updated", stepsDone);
         listeners.fireProgressChanged();
     }
 
     protected void update(String message, int stepsDone) {
         messagef(message);
-        progress.update(stepsDone);
-        listeners.fireProgressChanged();
-    }
-
-    protected void setStepsDone(int stepsDone, int totalSteps) {
-        progress.setStepsDone(stepsDone, totalSteps);
+        progress.update(message, stepsDone);
         listeners.fireProgressChanged();
     }
 
@@ -406,37 +433,13 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
         listeners.fireProgressChanged();
     }
 
-    // ----------------------------------------------------------------------
-    // Deprecated methods
-    // ----------------------------------------------------------------------
-    // The name 'task' referred to a work is in conflict with the term 'task'
-    // used in the 'Task' and 'ProjectTask' interfaces
-
-    /**
-     * @deprecated
-     * Uses 'startWork'
-     */
-    @Deprecated
-    protected void startTask(String message, int totalSteps) {
-        startWork(message, totalSteps);
-    }
-
-    /**
-     * @deprecated
-     * Uses 'endWork'
-     */
-    @Deprecated
-    protected void endTask() {
-        endWork();
-    }
-
-    /**
-     * @deprecated
-     * Uses 'setStepDone'
-     */
-    @Deprecated
     protected void setWorkDone(int stepsDone, int totalSteps) {
-        setStepsDone(stepsDone, totalSteps);
+        progress.setStepsDone(stepsDone, totalSteps);
+        listeners.fireProgressChanged();
+    }
+
+    protected void addWorks(int nWorks) {
+        progress.addWorks(nWorks);
     }
 
 }

@@ -3,6 +3,7 @@ package jext.sourcecode.resources.type;
 import jext.java.TypeRole;
 import jext.name.Name;
 import jext.name.ObjectName;
+import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.UseDirection;
 import jext.sourcecode.project.Field;
 import jext.sourcecode.project.Library;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class ImplementedType extends NamedObject implements Type {
 
-    public static ImplementedType ANONYMOUS = new ImplementedType("", "", TypeRole.UNKNOWN, null);
+    public static ImplementedType ANONYMOUS = new ImplementedType("", "Anonymous", TypeRole.UNKNOWN, null);
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -47,10 +48,7 @@ public class ImplementedType extends NamedObject implements Type {
     }
 
     public ImplementedType(String namespace, String name, TypeRole role, Source source) {
-        super(new ObjectName(name));
-        this.namespace = new ObjectName(namespace);
-        this.source = source;
-        this.role = role;
+        this(new ObjectName(namespace), new ObjectName(name), role, source);
     }
 
     // ----------------------------------------------------------------------
@@ -70,8 +68,18 @@ public class ImplementedType extends NamedObject implements Type {
     }
 
     @Override
+    public boolean isCollection() {
+        return false;
+    }
+
+    @Override
+    public List<RefType> getElements() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public boolean isAnonymous() {
-        return this.getName().getName().startsWith("Anonymous");
+        return this.getName().getName().contains("Anonymous");
     }
 
     @Override

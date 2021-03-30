@@ -182,9 +182,6 @@ public class ItemSet {
 
     private List<File> getCurrentFiles(File baseDir) {
         File[] files = baseDir.listFiles(File::isFile);
-        if (files == null || files.length == 0)
-            return Collections.emptyList();
-
         return FileUtils.asList(files)
                 .stream()
                 .filter(file -> accept(baseDir, file))

@@ -20,11 +20,13 @@ public class CheckElasticsearch {
             Logger.configure();
             CacheManager.configure();
 
-            Project project = Projects.newProject(new File("D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"),
+            Project project = Projects.newProject(new File(
+                "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\elasticsearch"
+                ),
                 PropertiesUtils.empty());
 
             Map<String, ?> pinfo = ProjectInfo.analyze(project);
-            JSONUtils.save(new File("d:/temp/dump.json"), pinfo);
+            JSONUtils.save(new File("project-info.json"), pinfo);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

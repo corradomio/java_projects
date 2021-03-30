@@ -20,7 +20,7 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
     private String qualifiedName;
 
     public ReferencedTypeDeclaration(String namespace, String typeName) {
-        this.qualifiedName = JavaUtils.fullName(namespace, typeName);
+        this.qualifiedName = JavaUtils.qualifiedName(namespace, typeName);
     }
 
     public ReferencedTypeDeclaration(String qualifiedName) {

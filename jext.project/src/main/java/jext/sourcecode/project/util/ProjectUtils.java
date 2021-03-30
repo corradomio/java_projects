@@ -129,4 +129,14 @@ public class ProjectUtils {
         return rtLibraries;
     }
 
+    // ----------------------------------------------------------------------
+
+    public static Set<String> getMavenRepositories(Project project) {
+        Set<String> mavenRepos = new HashSet<>();
+        project.getModules().forEach(module -> {
+            mavenRepos.addAll(module.getMavenRepositories());
+        });
+        return mavenRepos;
+    }
+
 }

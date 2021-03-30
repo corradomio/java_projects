@@ -97,7 +97,7 @@ public class MavenModule extends BaseModule {
     // }
 
     @Override
-    protected List<String> getMavenRepositories() {
+    public Set<String> getMavenRepositories() {
         return pom.getRepositories();
     }
 
