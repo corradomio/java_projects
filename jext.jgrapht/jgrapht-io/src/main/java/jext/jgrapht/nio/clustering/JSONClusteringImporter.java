@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * Import a clustering in JSON format (generated from JSONClusteringExporter)
- * @param <V>
+ * Import a Clustering form a file in JSON format, generated using JSONClusteringExporter
  */
 public class JSONClusteringImporter<V> {
 

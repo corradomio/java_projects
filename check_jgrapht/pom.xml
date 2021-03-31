@@ -22,8 +22,8 @@
     <modules>
         <module>../jext.commons</module>
         <module>../jext.collections</module>
-        <module>../jext.jgrapht</module>
         <module>../jext.concurrent</module>
+        <module>../jext.jgrapht</module>
     </modules>
 
     <dependencies>

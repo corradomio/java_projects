@@ -5,7 +5,7 @@ import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.clustering.ColoringClustering;
 import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 import jext.jgrapht.alg.TransformGraph;
-import jext.jgrapht.nio.adjacent.AdjacentImporter;
+import jext.jgrapht.nio.adjacent.EdgesImporter;
 import jext.jgrapht.nio.adjacent.FileGraphImporter;
 import jext.jgrapht.nio.clustering.CSVClusteringImporter;
 import jext.jgrapht.util.WeightMode;
@@ -45,7 +45,7 @@ public class CheckDataUCI {
         );
 
         new FileGraphImporter<>(
-                new AdjacentImporter<Integer, DefaultWeightedEdge>()
+                new EdgesImporter<Integer, DefaultWeightedEdge>()
                         .withToVertex(Integer::valueOf)
                         .withSeparator(",")
         ).importGraph(g, edgesFile);

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Export a clustering in JSON format
+ * Export a Clustering object in JSON format
  *
  * @param <V>
  */

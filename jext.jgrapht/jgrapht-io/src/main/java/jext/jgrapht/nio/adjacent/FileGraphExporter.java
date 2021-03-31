@@ -14,6 +14,14 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * This class permit to use an GraphExporter exporting the graph
+ * directly in a compressed file.
+ *
+ * The compression algorithm is selected from the file extension.
+ * The supported formats are: '.gz', '.zip'
+ *
+ */
 public class FileGraphExporter<V, E> implements GraphExporter<V, E> {
 
     private GraphExporter<V, E> exporter;

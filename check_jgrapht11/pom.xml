@@ -19,12 +19,19 @@
         <module>../jext.collections</module>
         <module>../jext.concurrent</module>
         <module>../jext.jgrapht11</module>
+        <module>../jext.jgrapht11/jgrapht-core</module>
+        <module>../jext.jgrapht11/jgrapht-io</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht11</artifactId>
+            <artifactId>jext.jgrapht11-core</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.jgrapht11-io</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

@@ -10,23 +10,24 @@ import java.io.Reader;
 import java.util.function.Function;
 
 /**
- * Import a graph defined by a list of adjacent nodes:
+ * Import a graph defined by a list of edges:
  *
- *              1 2\n
- *              2 4\n
+ *              1 2
+ *              2 4
+ *              ...
  *
  * if weighted
  *
- *              1 2 w12\n
- *              2 4 w24\n
+ *              1 2 w12
+ *              2 4 w24
+ *              ...
  *
- * Sepataror can be space, comma, etc.
- * @param <V>
- * @param <E>
+ * The separator can be space, comma, etc.
+ * The header is optional (it can be a CSV file)
  */
-public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
+public class EdgesImporter<V, E> implements GraphImporter<V, E> {
 
-    private static Logger logger = Logger.getLogger(AdjacentImporter.class);
+    private static Logger logger = Logger.getLogger(EdgesImporter.class);
     private Graph<V, E> g;
     private long vcount = 0;
     private long ecount = 0;
@@ -35,14 +36,14 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
     private int skipLines = 0;
     private Function<String, V> toVertex = (x) -> (V)x;
 
-    public AdjacentImporter() { }
+    public EdgesImporter() { }
 
     /**
      * Select the character used as values separator.
      * Default: spaces
      * @param sep separator
      */
-    public AdjacentImporter<V, E> withSeparator(String sep) {
+    public EdgesImporter<V, E> withSeparator(String sep) {
         this.separators = sep;
         return this;
     }
@@ -52,7 +53,7 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
      * Default: '#'
      * @param comments first character used for single line comments
      */
-    public AdjacentImporter<V, E> withComment(String comments) {
+    public EdgesImporter<V, E> withComment(String comments) {
         this.comment = comments;
         return this;
     }
@@ -62,7 +63,7 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
      * Default: 0
      * @param nLines n of lines to skip
      */
-    public AdjacentImporter<V, E> withSkipLines(int nLines) {
+    public EdgesImporter<V, E> withSkipLines(int nLines) {
         this.skipLines = nLines;
         return this;
     }
@@ -72,7 +73,7 @@ public class AdjacentImporter<V, E> implements GraphImporter<V, E> {
      * Default: identity
      * @param toVertex function String->V
      */
-    public AdjacentImporter<V, E> withToVertex(Function<String, V> toVertex) {
+    public EdgesImporter<V, E> withToVertex(Function<String, V> toVertex) {
         this.toVertex = toVertex;
         return this;
     }

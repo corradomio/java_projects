@@ -13,10 +13,9 @@ import java.util.function.Function;
  * Import a clustering from a CSV file with the structure
  *
  *          vertex,cluster      (header: optional)
- *          v1, c1 \n
+ *          v1,    c1
+ *          v2,    c2
  *          ...
- *
- * @param <V>
  */
 public class CSVClusteringImporter<V> {
 
