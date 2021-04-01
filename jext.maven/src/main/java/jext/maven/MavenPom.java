@@ -438,7 +438,6 @@ public class MavenPom implements MavenConst {
     // ----------------------------------------------------------------------
     // Dependencies
     // ----------------------------------------------------------------------
-
     /*
         <project>
           <groupId>ant</groupId>
@@ -503,8 +502,9 @@ public class MavenPom implements MavenConst {
             .forEach(dep -> {
                 boolean optional = XPathUtils.getValue(dep, OPTIONAL, false, props);
                 String scope = XPathUtils.getValue(dep, SCOPE, SCOPE_COMPILE);
+                boolean scoped = !SCOPE_COMPILE.equals(scope) && !SCOPE_PROVIDED.equals(scope) && !SCOPE_TEST.equals(scope);
 
-                if (optional || !SCOPE_COMPILE.equals(scope) && !SCOPE_PROVIDED.equals(scope))
+                if (optional || scoped)
                     return;
 
                 String gid = XPathUtils.getValue(dep, GROUP_ID, coords.groupId, props);

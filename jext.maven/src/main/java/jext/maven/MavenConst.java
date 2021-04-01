@@ -19,6 +19,7 @@ public interface MavenConst {
     String SCOPE = "scope";
         String SCOPE_COMPILE = "compile";
         String SCOPE_PROVIDED = "provided";
+        String SCOPE_TEST = "test";
     String OPTIONAL = "optional";
 
     String SNAPSHOT = "-SNAPSHOT";

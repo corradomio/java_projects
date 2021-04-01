@@ -1,9 +1,9 @@
 {
-  "name" : "cocome-maven-project",
-  "fullname" : "example_repo/cocome-maven-project",
-  "id" : "5f577322",
+  "name" : "commons_lang",
+  "fullname" : "example_repo/commons_lang",
+  "id" : "2cfa1bcd",
   "type" : "maven",
-  "home" : "D:/SPLGroup/example_repo/cocome-maven-project",
+  "home" : "D:/SPLGroup/example_repo/commons_lang",
   "properties" : {
     "module.exclude.$" : ".*",
     "project.module" : "pom.xml",
@@ -12,480 +12,38 @@
     "module.sources.$" : ".java"
   },
   "counts" : {
-    "mavenRepositories" : 4,
+    "mavenRepositories" : 0,
     "runtimeLibraries" : 1,
-    "sources" : 351,
-    "libraries" : 50,
-    "modules" : 18
+    "sources" : 401,
+    "libraries" : 16,
+    "modules" : 1
   },
   "modules" : [ {
     "name" : "",
     "fullname" : "",
     "id" : "0",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project",
+    "moduleHome" : "D:/SPLGroup/example_repo/commons_lang",
     "path" : "",
     "properties" : {
       "module.definition" : "configurationFile"
     },
-    "sourceRoots" : [ ],
+    "sourceRoots" : [ "D:/SPLGroup/example_repo/commons_lang/src/test/java", "D:/SPLGroup/example_repo/commons_lang/src/main/java" ],
     "dependencies" : [ ],
     "counts" : {
-      "types" : 0,
-      "sources" : 0,
-      "libraries" : 0,
-      "resources" : 1,
+      "types" : 385,
+      "sources" : 401,
+      "libraries" : 15,
+      "resources" : 27,
       "definedLibraries" : 0,
-      "usedTypes" : 0,
-      "sourceRoots" : 0,
-      "dependencies" : 0
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ ],
-    "definedLibraries" : [ ],
-    "types" : [ ],
-    "usedTypes" : [ ]
-  }, {
-    "name" : "cloud-logic-service",
-    "fullname" : "cloud-logic-service",
-    "id" : "743329ae",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service",
-    "path" : "cloud-logic-service",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ ],
-    "dependencies" : [ ],
-    "counts" : {
-      "types" : 0,
-      "sources" : 0,
-      "libraries" : 0,
-      "resources" : 1,
-      "definedLibraries" : 0,
-      "usedTypes" : 0,
-      "sourceRoots" : 0,
-      "dependencies" : 0
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ ],
-    "definedLibraries" : [ ],
-    "types" : [ ],
-    "usedTypes" : [ ]
-  }, {
-    "name" : "cloud-enterprise-logic",
-    "fullname" : "cloud-logic-service/cloud-enterprise-logic",
-    "id" : "787c180b",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-enterprise-logic",
-    "path" : "cloud-logic-service/cloud-enterprise-logic",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ ],
-    "dependencies" : [ ],
-    "counts" : {
-      "types" : 0,
-      "sources" : 0,
-      "libraries" : 0,
-      "resources" : 1,
-      "definedLibraries" : 0,
-      "usedTypes" : 0,
-      "sourceRoots" : 0,
-      "dependencies" : 0
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ ],
-    "definedLibraries" : [ ],
-    "types" : [ ],
-    "usedTypes" : [ ]
-  }, {
-    "name" : "enterprise-logic-ear",
-    "fullname" : "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ear",
-    "id" : "1dc41c7f",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ear",
-    "path" : "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ear",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ ],
-    "dependencies" : [ "cloud-logic-service/cloud-logic-core-impl", "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ejb", "cloud-logic-service/cloud-logic-core-services", "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-webservice" ],
-    "counts" : {
-      "types" : 0,
-      "sources" : 0,
-      "libraries" : 17,
-      "resources" : 2,
-      "definedLibraries" : 1,
-      "usedTypes" : 0,
-      "sourceRoots" : 0,
-      "dependencies" : 4
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ ],
-    "usedTypes" : [ ]
-  }, {
-    "name" : "enterprise-logic-ejb",
-    "fullname" : "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ejb",
-    "id" : "1dc41d86",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ejb",
-    "path" : "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ejb",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ejb/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-store-logic/store-logic-ejb", "cloud-logic-service/cloud-logic-core-api", "cloud-logic-service/cloud-logic-core-impl", "cloud-logic-service/java-old-utils", "cloud-logic-service/cloud-logic-core-services", "cloud-logic-service/cloud-registry-client" ],
-    "counts" : {
-      "types" : 26,
-      "sources" : 26,
-      "libraries" : 23,
-      "resources" : 4,
-      "definedLibraries" : 1,
-      "usedTypes" : 92,
-      "sourceRoots" : 1,
-      "dependencies" : 6
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "junit:junit:4.13.2", "junit:junit:4.13.2", "net.bytebuddy:byte-buddy-agent:1.10.20", "net.bytebuddy:byte-buddy:1.10.20", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.jboss.spec:jboss-javaee-all-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.mockito:mockito-core:3.8.0", "org.objenesis:objenesis:3.1", "org.opentest4j:opentest4j:1.2.0" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.tradingsystem.inventory.application.productdispatcher.AmplCplexSolver", "org.cocome.tradingsystem.inventory.application.productdispatcher.AmplPipe", "org.cocome.tradingsystem.inventory.application.productdispatcher.CplexSolution", "org.cocome.tradingsystem.inventory.application.productdispatcher.IOptimizationSolverLocal", "org.cocome.tradingsystem.inventory.application.productdispatcher.ProductDispatcherServer", "org.cocome.tradingsystem.inventory.application.reporting.ReportingServer", "org.cocome.tradingsystem.inventory.application.usermanager.UserManager", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.AuthToken", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.CredentialFactory", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.PlainPassword", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.RandomPasswordGenerator", "org.cocome.tradingsystem.inventory.data.enterprise.EnterpriseQueryProvider", "org.cocome.tradingsystem.inventory.data.generator.DatabaseConfiguration", "org.cocome.tradingsystem.inventory.data.generator.DatabaseContent", "org.cocome.tradingsystem.inventory.data.generator.DatabaseFiller", "org.cocome.tradingsystem.inventory.data.generator.DatabaseGenerator", "org.cocome.tradingsystem.inventory.data.generator.DefaultEntityConfiguration", "org.cocome.tradingsystem.inventory.data.generator.EntityGenerator", "org.cocome.tradingsystem.inventory.data.generator.IEntityConfiguration", "org.cocome.tradingsystem.inventory.data.generator.ItemizedDatabaseFiller", "org.cocome.tradingsystem.inventory.data.generator.RandomHelper", "org.cocome.tradingsystem.inventory.data.generator.StorizedDatabaseFiller", "org.cocome.tradingsystem.inventory.data.generator.TestDatabaseFiller", "org.cocome.tradingsystem.inventory.data.persistence.CloudPersistence", "org.cocome.tradingsystem.inventory.data.usermanager.EnterpriseUserQueryProvider", "org.cocome.tradingsystem.util.Configuration" ],
-    "usedTypes" : [ "java.io.DataInputStream", "java.io.File", "java.io.FileInputStream", "java.io.FileOutputStream", "java.io.FileWriter", "java.io.IOException", "java.io.InputStream", "java.io.PrintStream", "java.io.PrintWriter", "java.io.UnsupportedEncodingException", "java.net.URLEncoder", "java.security.SecureRandom", "java.util.ArrayList", "java.util.Arrays", "java.util.Calendar", "java.util.Collection", "java.util.Collections", "java.util.Date", "java.util.Formatter", "java.util.HashMap", "java.util.Iterator", "java.util.LinkedHashMap", "java.util.LinkedHashSet", "java.util.LinkedList", "java.util.List", "java.util.Map", "java.util.Map.Entry", "java.util.NoSuchElementException", "java.util.Properties", "java.util.Random", "java.util.Set", "java.util.regex.Matcher", "java.util.regex.Pattern", "javax.annotation.PostConstruct", "javax.ejb.CreateException", "javax.ejb.EJB", "javax.ejb.EJBException", "javax.ejb.Local", "javax.ejb.Singleton", "javax.ejb.Startup", "javax.ejb.Stateless", "javax.ejb.TransactionAttribute", "javax.ejb.TransactionAttributeType", "javax.ejb.TransactionManagement", "javax.ejb.TransactionManagementType", "javax.enterprise.context.ApplicationScoped", "javax.enterprise.context.Dependent", "javax.enterprise.inject.Instance", "javax.enterprise.inject.New", "javax.enterprise.inject.Produces", "javax.enterprise.inject.spi.InjectionPoint", "javax.inject.Inject", "javax.inject.Provider", "org.apache.log4j.Logger", "org.cocome.cloud.logic.registry.client.IApplicationHelper", "org.cocome.cloud.logic.stub.IStoreManager", "org.cocome.cloud.logic.stub.IStoreManagerService", "org.cocome.cloud.registry.service.Names", "org.cocome.tradingsystem.inventory.application.store.CustomerWithStoreTO", "org.cocome.tradingsystem.inventory.application.store.ProductAmountTO", "org.cocome.tradingsystem.inventory.application.store.ProductMovementTO", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.StoreTO", "org.cocome.tradingsystem.inventory.application.usermanager.CredentialType", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.ICredential", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.ICredentialFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseDataFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseQuery", "org.cocome.tradingsystem.inventory.data.enterprise.IProduct", "org.cocome.tradingsystem.inventory.data.enterprise.IProductSupplier", "org.cocome.tradingsystem.inventory.data.enterprise.ITradingEnterprise", "org.cocome.tradingsystem.inventory.data.persistence.IPersistenceContext", "org.cocome.tradingsystem.inventory.data.persistence.IPersistenceContextLocal", "org.cocome.tradingsystem.inventory.data.persistence.UpdateException", "org.cocome.tradingsystem.inventory.data.store.IOrderEntry", "org.cocome.tradingsystem.inventory.data.store.IProductOrder", "org.cocome.tradingsystem.inventory.data.store.IStockItem", "org.cocome.tradingsystem.inventory.data.store.IStore", "org.cocome.tradingsystem.inventory.data.store.IStoreDataFactory", "org.cocome.tradingsystem.inventory.data.store.IStoreQuery", "org.cocome.tradingsystem.inventory.data.usermanager.ICustomer", "org.cocome.tradingsystem.inventory.data.usermanager.IUser", "org.cocome.tradingsystem.inventory.data.usermanager.IUserQuery", "org.cocome.tradingsystem.remote.access.connection.IBackendQuery", "org.cocome.tradingsystem.remote.access.connection.QueryParameterEncoder", "org.cocome.tradingsystem.remote.access.parsing.IBackendConversionHelper", "org.cocome.tradingsystem.util.exception.NotInDatabaseException", "org.cocome.tradingsystem.util.java.Iterables", "org.cocome.tradingsystem.util.java.Lists", "org.cocome.tradingsystem.util.java.Maps", "org.cocome.tradingsystem.util.java.Sets", "org.cocome.tradingsystem.util.qualifier.Credential" ]
-  }, {
-    "name" : "enterprise-logic-webservice",
-    "fullname" : "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-webservice",
-    "id" : "3dc64f98",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-enterprise-logic/enterprise-logic-webservice",
-    "path" : "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-webservice",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-enterprise-logic/enterprise-logic-webservice/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-logic-core-api", "cloud-logic-service/cloud-logic-core-impl", "cloud-logic-service/cloud-enterprise-logic/enterprise-logic-ejb", "cloud-logic-service/cloud-logic-core-services", "cloud-logic-service/cloud-registry-client" ],
-    "counts" : {
-      "types" : 5,
-      "sources" : 5,
-      "libraries" : 42,
-      "resources" : 7,
-      "definedLibraries" : 1,
-      "usedTypes" : 49,
-      "sourceRoots" : 1,
-      "dependencies" : 5
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "javax.el:javax.el-api:3.0.1-b06", "javax.enterprise:cdi-api:2.0-PFD2", "javax.inject:javax.inject:1", "javax.interceptor:javax.interceptor-api:1.2.2", "javax.validation:validation-api:2.0.1.Final", "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final", "org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.el:jboss-el-api_2.2_spec:1.0.6.Final", "org.jboss.spec.javax.el:jboss-el-api_3.0_spec:1.0.11.Final", "org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec:2.1.29.1.Final", "org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.resource:jboss-connector-api_1.6_spec:1.0.1.Final", "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.0_spec:1.0.1.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.2_spec:1.0.2.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.3_spec:1.0.3.Final", "org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec:1.1.4.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.2.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec:1.0.5.Final", "org.jboss.spec:jboss-javaee-web-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0", "xalan:serializer:2.7.1", "xalan:xalan:2.7.1" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.cloud.webservice.enterpriseservice.EnterpriseManager", "org.cocome.cloud.webservice.enterpriseservice.EnterpriseManagerStartup", "org.cocome.cloud.webservice.enterpriseservice.reporting.EnterpriseReport", "org.cocome.cloud.webservice.usermanagerservice.LoginManager", "org.cocome.cloud.webservice.util.EJBExceptionHelper" ],
-    "usedTypes" : [ "java.io.IOException", "java.net.URISyntaxException", "java.util.ArrayList", "java.util.Collection", "java.util.List", "javax.annotation.PostConstruct", "javax.ejb.CreateException", "javax.ejb.EJB", "javax.ejb.EJBException", "javax.ejb.Singleton", "javax.ejb.Startup", "javax.ejb.Stateless", "javax.inject.Inject", "javax.jws.WebService", "org.apache.log4j.Logger", "org.cocome.cloud.logic.registry.client.IApplicationHelper", "org.cocome.cloud.registry.service.Names", "org.cocome.logic.webservice.enterpriseservice.IEnterpriseManager", "org.cocome.logic.webservice.enterpriseservice.reportingservice.IEnterpriseReport", "org.cocome.logic.webservice.usermanagerservice.ILoginManager", "org.cocome.tradingsystem.inventory.application.reporting.IReportingLocal", "org.cocome.tradingsystem.inventory.application.reporting.ReportTO", "org.cocome.tradingsystem.inventory.application.store.CustomerWithStoreTO", "org.cocome.tradingsystem.inventory.application.store.EnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierTO", "org.cocome.tradingsystem.inventory.application.store.StoreWithEnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.SupplierTO", "org.cocome.tradingsystem.inventory.application.usermanager.IAuthenticator", "org.cocome.tradingsystem.inventory.application.usermanager.IUserManager", "org.cocome.tradingsystem.inventory.application.usermanager.Role", "org.cocome.tradingsystem.inventory.application.usermanager.UserTO", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseDataFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseQuery", "org.cocome.tradingsystem.inventory.data.enterprise.IProduct", "org.cocome.tradingsystem.inventory.data.enterprise.IProductSupplier", "org.cocome.tradingsystem.inventory.data.enterprise.ITradingEnterprise", "org.cocome.tradingsystem.inventory.data.persistence.IPersistenceContext", "org.cocome.tradingsystem.inventory.data.persistence.UpdateException", "org.cocome.tradingsystem.inventory.data.store.IStore", "org.cocome.tradingsystem.inventory.data.store.IStoreDataFactory", "org.cocome.tradingsystem.inventory.data.usermanager.IUser", "org.cocome.tradingsystem.inventory.data.usermanager.IUserDataFactory", "org.cocome.tradingsystem.util.exception.BaseException", "org.cocome.tradingsystem.util.exception.NotInDatabaseException", "org.cocome.tradingsystem.util.scope.CashDeskRegistry", "org.cocome.tradingsystem.util.scope.ICashDeskRegistryFactory", "org.cocome.tradingsystem.util.scope.IContextRegistry", "org.cocome.tradingsystem.util.scope.RegistryKeys" ]
-  }, {
-    "name" : "cloud-logic-core-api",
-    "fullname" : "cloud-logic-service/cloud-logic-core-api",
-    "id" : "79d14d4",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-logic-core-api",
-    "path" : "cloud-logic-service/cloud-logic-core-api",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-logic-core-api/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/java-old-utils" ],
-    "counts" : {
-      "types" : 78,
-      "sources" : 78,
-      "libraries" : 18,
-      "resources" : 2,
-      "definedLibraries" : 1,
-      "usedTypes" : 43,
-      "sourceRoots" : 1,
-      "dependencies" : 1
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.jboss.spec:jboss-javaee-all-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.cloud.logic.webservice.exception.UnhandledException", "org.cocome.cloud.registry.service.ComponentNotAvailableException", "org.cocome.cloud.registry.service.Names", "org.cocome.tradingsystem.cashdeskline.cashdesk.CashDeskState", "org.cocome.tradingsystem.cashdeskline.cashdesk.IllegalCashDeskStateException", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.IllegalInputException", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.MessageKind", "org.cocome.tradingsystem.inventory.application.productdispatcher.IProductDispatcherLocal", "org.cocome.tradingsystem.inventory.application.reporting.IReportingLocal", "org.cocome.tradingsystem.inventory.application.reporting.ReportTO", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderEntryTO", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderTO", "org.cocome.tradingsystem.inventory.application.store.CustomerWithStoreTO", "org.cocome.tradingsystem.inventory.application.store.EnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.IStockItemTOAccessor", "org.cocome.tradingsystem.inventory.application.store.IStoreInventoryLocal", "org.cocome.tradingsystem.inventory.application.store.IStoreInventoryManagerLocal", "org.cocome.tradingsystem.inventory.application.store.InvalidRollInRequestException", "org.cocome.tradingsystem.inventory.application.store.NoSuchProductException", "org.cocome.tradingsystem.inventory.application.store.NotImplementedException", "org.cocome.tradingsystem.inventory.application.store.OrderEntryTO", "org.cocome.tradingsystem.inventory.application.store.OrderTO", "org.cocome.tradingsystem.inventory.application.store.ProductAmountTO", "org.cocome.tradingsystem.inventory.application.store.ProductMovementTO", "org.cocome.tradingsystem.inventory.application.store.ProductOutOfStockException", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierAndStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierTO", "org.cocome.tradingsystem.inventory.application.store.SaleTO", "org.cocome.tradingsystem.inventory.application.store.StockItemTO", "org.cocome.tradingsystem.inventory.application.store.StoreTO", "org.cocome.tradingsystem.inventory.application.store.StoreWithEnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.SupplierTO", "org.cocome.tradingsystem.inventory.application.usermanager.CredentialTO", "org.cocome.tradingsystem.inventory.application.usermanager.CredentialType", "org.cocome.tradingsystem.inventory.application.usermanager.CredentialTypeNotFoundException", "org.cocome.tradingsystem.inventory.application.usermanager.IAuthenticator", "org.cocome.tradingsystem.inventory.application.usermanager.IUserManager", "org.cocome.tradingsystem.inventory.application.usermanager.Role", "org.cocome.tradingsystem.inventory.application.usermanager.UserTO", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.ICredential", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.ICredentialFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseDataFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseQuery", "org.cocome.tradingsystem.inventory.data.enterprise.IProduct", "org.cocome.tradingsystem.inventory.data.enterprise.IProductSupplier", "org.cocome.tradingsystem.inventory.data.enterprise.ITradingEnterprise", "org.cocome.tradingsystem.inventory.data.persistence.IPersistence", "org.cocome.tradingsystem.inventory.data.persistence.IPersistenceContext", "org.cocome.tradingsystem.inventory.data.persistence.UpdateException", "org.cocome.tradingsystem.inventory.data.store.IOrderEntry", "org.cocome.tradingsystem.inventory.data.store.IProductOrder", "org.cocome.tradingsystem.inventory.data.store.IStockItem", "org.cocome.tradingsystem.inventory.data.store.IStore", "org.cocome.tradingsystem.inventory.data.store.IStoreDataFactory", "org.cocome.tradingsystem.inventory.data.store.IStoreQuery", "org.cocome.tradingsystem.inventory.data.usermanager.ICustomer", "org.cocome.tradingsystem.inventory.data.usermanager.IUser", "org.cocome.tradingsystem.inventory.data.usermanager.IUserDataFactory", "org.cocome.tradingsystem.inventory.data.usermanager.IUserQuery", "org.cocome.tradingsystem.remote.access.connection.IBackendQuery", "org.cocome.tradingsystem.remote.access.connection.IPersistenceConnection", "org.cocome.tradingsystem.remote.access.parsing.IBackendConversionHelper", "org.cocome.tradingsystem.util.Configuration", "org.cocome.tradingsystem.util.exception.BaseException", "org.cocome.tradingsystem.util.exception.NotInDatabaseException", "org.cocome.tradingsystem.util.qualifier.CashDeskRequired", "org.cocome.tradingsystem.util.qualifier.Cloud", "org.cocome.tradingsystem.util.qualifier.Credential", "org.cocome.tradingsystem.util.qualifier.CredentialLiteral", "org.cocome.tradingsystem.util.qualifier.EnterpriseRequired", "org.cocome.tradingsystem.util.qualifier.StoreRequired", "org.cocome.tradingsystem.util.scope.CashDeskSessionScoped", "org.cocome.tradingsystem.util.scope.ICashDeskRegistryFactory", "org.cocome.tradingsystem.util.scope.IContextRegistry", "org.cocome.tradingsystem.util.scope.RegistryKeys", "org.cocome.tradingsystem.util.scope.context.INamedSessionContext" ],
-    "usedTypes" : [ "java.io.IOException", "java.io.InputStream", "java.io.Serializable", "java.lang.annotation.ElementType", "java.lang.annotation.Retention", "java.lang.annotation.RetentionPolicy", "java.lang.annotation.Target", "java.util.Collection", "java.util.Collections", "java.util.Date", "java.util.LinkedList", "java.util.List", "java.util.Map", "java.util.Properties", "java.util.Set", "javax.annotation.PostConstruct", "javax.ejb.CreateException", "javax.ejb.Local", "javax.ejb.Singleton", "javax.ejb.Startup", "javax.enterprise.context.ApplicationScoped", "javax.enterprise.context.ContextNotActiveException", "javax.enterprise.context.NormalScope", "javax.enterprise.context.spi.Context", "javax.enterprise.inject.Produces", "javax.enterprise.inject.spi.InjectionPoint", "javax.enterprise.util.AnnotationLiteral", "javax.inject.Qualifier", "javax.persistence.Basic", "javax.persistence.EntityNotFoundException", "javax.xml.bind.annotation.XmlAccessType", "javax.xml.bind.annotation.XmlAccessorType", "javax.xml.bind.annotation.XmlAttribute", "javax.xml.bind.annotation.XmlElement", "javax.xml.bind.annotation.XmlElementWrapper", "javax.xml.bind.annotation.XmlEnum", "javax.xml.bind.annotation.XmlEnumValue", "javax.xml.bind.annotation.XmlRootElement", "javax.xml.bind.annotation.XmlSchemaType", "javax.xml.bind.annotation.XmlType", "javax.xml.ws.WebFault", "org.apache.log4j.Logger", "static java.lang.annotation.ElementType" ]
-  }, {
-    "name" : "cloud-logic-core-impl",
-    "fullname" : "cloud-logic-service/cloud-logic-core-impl",
-    "id" : "-13f6e15a",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-logic-core-impl",
-    "path" : "cloud-logic-service/cloud-logic-core-impl",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-logic-core-impl/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-store-logic/store-logic-ejb", "cloud-logic-service/cloud-logic-core-api", "cloud-logic-service/java-old-utils" ],
-    "counts" : {
-      "types" : 37,
-      "sources" : 37,
-      "libraries" : 18,
-      "resources" : 1,
-      "definedLibraries" : 1,
-      "usedTypes" : 130,
-      "sourceRoots" : 1,
-      "dependencies" : 3
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.jboss.spec:jboss-javaee-all-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.tradingsystem.inventory.data.enterprise.EnterpriseDatatypesFactory", "org.cocome.tradingsystem.inventory.data.enterprise.Product", "org.cocome.tradingsystem.inventory.data.enterprise.ProductSupplier", "org.cocome.tradingsystem.inventory.data.enterprise.TradingEnterprise", "org.cocome.tradingsystem.inventory.data.persistence.CloudPersistenceContext", "org.cocome.tradingsystem.inventory.data.persistence.ServiceAdapterEntityConverter", "org.cocome.tradingsystem.inventory.data.persistence.ServiceAdapterHeaders", "org.cocome.tradingsystem.inventory.data.store.EnterpriseStoreQueryProvider", "org.cocome.tradingsystem.inventory.data.store.OrderEntry", "org.cocome.tradingsystem.inventory.data.store.ProductOrder", "org.cocome.tradingsystem.inventory.data.store.StockItem", "org.cocome.tradingsystem.inventory.data.store.Store", "org.cocome.tradingsystem.inventory.data.store.StoreDatatypesFactory", "org.cocome.tradingsystem.inventory.data.usermanager.Customer", "org.cocome.tradingsystem.inventory.data.usermanager.User", "org.cocome.tradingsystem.inventory.data.usermanager.UsermanagerDatatypesFactory", "org.cocome.tradingsystem.remote.access.connection.CSVBackendConnection", "org.cocome.tradingsystem.remote.access.connection.GetXMLFromBackend", "org.cocome.tradingsystem.remote.access.connection.QueryParameterEncoder", "org.cocome.tradingsystem.remote.access.parsing.CSVHelper", "org.cocome.tradingsystem.remote.access.parsing.MessageToCSV", "org.cocome.tradingsystem.remote.access.parsing.ParserPostMessage", "org.cocome.tradingsystem.util.java.Assert", "org.cocome.tradingsystem.util.java.DualElement", "org.cocome.tradingsystem.util.java.DualIterator", "org.cocome.tradingsystem.util.java.Iterables", "org.cocome.tradingsystem.util.java.Lists", "org.cocome.tradingsystem.util.java.Maps", "org.cocome.tradingsystem.util.java.Reflection", "org.cocome.tradingsystem.util.java.Sets", "org.cocome.tradingsystem.util.java.Swing", "org.cocome.tradingsystem.util.java.TimeSpan", "org.cocome.tradingsystem.util.scope.CashDeskRegistry", "org.cocome.tradingsystem.util.scope.CashDeskRegistryFactory", "org.cocome.tradingsystem.util.scope.CashDeskSessionScopeExtension", "org.cocome.tradingsystem.util.scope.context.NamedSessionContext", "org.cocome.tradingsystem.util.scope.context.NamedSessionContextHolder" ],
-    "usedTypes" : [ "de.kit.ipd.java.utils.framework.table.Row", "de.kit.ipd.java.utils.parsing.csv.CSVParser", "de.kit.ipd.java.utils.time.TimeUtils", "java.awt.event.ActionListener", "java.io.BufferedReader", "java.io.DataOutputStream", "java.io.IOException", "java.io.InputStreamReader", "java.io.Serializable", "java.io.StringReader", "java.io.UnsupportedEncodingException", "java.lang.annotation.Annotation", "java.lang.reflect.AccessibleObject", "java.lang.reflect.Array", "java.lang.reflect.Field", "java.lang.reflect.Method", "java.net.HttpURLConnection", "java.net.MalformedURLException", "java.net.ProtocolException", "java.net.URL", "java.net.URLConnection", "java.net.URLDecoder", "java.net.URLEncoder", "java.util.ArrayList", "java.util.Arrays", "java.util.BitSet", "java.util.Collection", "java.util.Collections", "java.util.Comparator", "java.util.Date", "java.util.EnumSet", "java.util.HashMap", "java.util.HashSet", "java.util.Iterator", "java.util.LinkedHashMap", "java.util.LinkedHashSet", "java.util.LinkedList", "java.util.List", "java.util.Map", "java.util.Map.Entry", "java.util.NoSuchElementException", "java.util.Queue", "java.util.Random", "java.util.Set", "java.util.TreeSet", "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.TimeUnit", "javax.annotation.PostConstruct", "javax.ejb.CreateException", "javax.ejb.Local", "javax.ejb.Stateless", "javax.ejb.TransactionAttribute", "javax.ejb.TransactionAttributeType", "javax.enterprise.context.ContextNotActiveException", "javax.enterprise.context.Dependent", "javax.enterprise.context.RequestScoped", "javax.enterprise.context.SessionScoped", "javax.enterprise.context.spi.Contextual", "javax.enterprise.context.spi.CreationalContext", "javax.enterprise.event.Observes", "javax.enterprise.inject.Any", "javax.enterprise.inject.Instance", "javax.enterprise.inject.Produces", "javax.enterprise.inject.spi.AfterBeanDiscovery", "javax.enterprise.inject.spi.Bean", "javax.enterprise.inject.spi.BeanManager", "javax.enterprise.inject.spi.BeforeBeanDiscovery", "javax.enterprise.inject.spi.Extension", "javax.inject.Inject", "javax.inject.Provider", "javax.persistence.Basic", "javax.persistence.Inheritance", "javax.swing.JButton", "javax.xml.parsers.DocumentBuilder", "javax.xml.parsers.DocumentBuilderFactory", "javax.xml.parsers.ParserConfigurationException", "org.apache.log4j.Logger", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderEntryTO", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderTO", "org.cocome.tradingsystem.inventory.application.store.CustomerWithStoreTO", "org.cocome.tradingsystem.inventory.application.store.EnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.OrderEntryTO", "org.cocome.tradingsystem.inventory.application.store.OrderTO", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierAndStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierTO", "org.cocome.tradingsystem.inventory.application.store.StockItemTO", "org.cocome.tradingsystem.inventory.application.store.StoreTO", "org.cocome.tradingsystem.inventory.application.store.StoreWithEnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.SupplierTO", "org.cocome.tradingsystem.inventory.application.usermanager.CredentialTO", "org.cocome.tradingsystem.inventory.application.usermanager.CredentialType", "org.cocome.tradingsystem.inventory.application.usermanager.CredentialTypeNotFoundException", "org.cocome.tradingsystem.inventory.application.usermanager.Role", "org.cocome.tradingsystem.inventory.application.usermanager.UserTO", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.ICredential", "org.cocome.tradingsystem.inventory.application.usermanager.credentials.ICredentialFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseDataFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseQuery", "org.cocome.tradingsystem.inventory.data.enterprise.IProduct", "org.cocome.tradingsystem.inventory.data.enterprise.IProductSupplier", "org.cocome.tradingsystem.inventory.data.enterprise.ITradingEnterprise", "org.cocome.tradingsystem.inventory.data.store.IOrderEntry", "org.cocome.tradingsystem.inventory.data.store.IProductOrder", "org.cocome.tradingsystem.inventory.data.store.IStockItem", "org.cocome.tradingsystem.inventory.data.store.IStore", "org.cocome.tradingsystem.inventory.data.store.IStoreDataFactory", "org.cocome.tradingsystem.inventory.data.usermanager.ICustomer", "org.cocome.tradingsystem.inventory.data.usermanager.IUser", "org.cocome.tradingsystem.inventory.data.usermanager.IUserDataFactory", "org.cocome.tradingsystem.remote.access.connection.IBackendQuery", "org.cocome.tradingsystem.remote.access.connection.IPersistenceConnection", "org.cocome.tradingsystem.remote.access.parsing.IBackendConversionHelper", "org.cocome.tradingsystem.util.exception.NotInDatabaseException", "org.cocome.tradingsystem.util.qualifier.CashDeskRequired", "org.cocome.tradingsystem.util.qualifier.CredentialLiteral", "org.cocome.tradingsystem.util.qualifier.EnterpriseRequired", "org.cocome.tradingsystem.util.qualifier.StoreRequired", "org.cocome.tradingsystem.util.scope.IContextRegistry", "org.cocome.tradingsystem.util.scope.RegistryKeys", "org.cocome.tradingsystem.util.scope.context.INamedSessionContext", "org.cocome.tradingsystem.util.scope.context.NamedSessionContextHolder.NamedSessionInstance", "org.w3c.dom.Document", "org.w3c.dom.Element", "org.w3c.dom.Node", "org.w3c.dom.NodeList", "org.xml.sax.InputSource", "org.xml.sax.SAXException", "static java.util.concurrent.TimeUnit" ]
-  }, {
-    "name" : "cloud-logic-core-services",
-    "fullname" : "cloud-logic-service/cloud-logic-core-services",
-    "id" : "-24d0e61c",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-logic-core-services",
-    "path" : "cloud-logic-service/cloud-logic-core-services",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-logic-core-services/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-logic-core-api" ],
-    "counts" : {
-      "types" : 13,
-      "sources" : 13,
-      "libraries" : 25,
-      "resources" : 5,
-      "definedLibraries" : 0,
-      "usedTypes" : 41,
-      "sourceRoots" : 1,
-      "dependencies" : 1
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "javax.el:javax.el-api:3.0.1-b06", "javax.enterprise:cdi-api:2.0-PFD2", "javax.inject:javax.inject:1", "javax.interceptor:javax.interceptor-api:1.2.2", "javax.validation:validation-api:2.0.1.Final", "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final", "org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.el:jboss-el-api_2.2_spec:1.0.6.Final", "org.jboss.spec.javax.el:jboss-el-api_3.0_spec:1.0.11.Final", "org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec:2.1.29.1.Final", "org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.resource:jboss-connector-api_1.6_spec:1.0.1.Final", "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.0_spec:1.0.1.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.2_spec:1.0.2.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.3_spec:1.0.3.Final", "org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec:1.1.4.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.2.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec:1.0.5.Final", "org.jboss.spec:jboss-javaee-web-6.0:3.0.3.Final", "xalan:serializer:2.7.1", "xalan:xalan:2.7.1" ],
-    "definedLibraries" : [ ],
-    "types" : [ "org.cocome.cloud.registry.service.IURIRegistryManager", "org.cocome.cloud.registry.service.RegistryEntry", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.ICashDesk", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.barcodescannerservice.IBarcodeScanner", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.cardreaderservice.ICardReader", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.cashboxservice.ICashBox", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.expresslightservice.IExpressLight", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.printerservice.IPrinter", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.userdisplayservice.IUserDisplay", "org.cocome.logic.webservice.enterpriseservice.IEnterpriseManager", "org.cocome.logic.webservice.enterpriseservice.reportingservice.IEnterpriseReport", "org.cocome.logic.webservice.storeservice.IStoreManager", "org.cocome.logic.webservice.usermanagerservice.ILoginManager" ],
-    "usedTypes" : [ "java.io.IOException", "java.net.URI", "java.rmi.NotBoundException", "java.util.Collection", "java.util.List", "java.util.Map", "java.util.Map.Entry", "java.util.Set", "javax.ejb.CreateException", "javax.jws.WebMethod", "javax.jws.WebParam", "javax.jws.WebService", "javax.xml.bind.annotation.XmlElement", "javax.xml.bind.annotation.XmlSchema", "org.cocome.cloud.logic.webservice.exception.UnhandledException", "org.cocome.tradingsystem.cashdeskline.cashdesk.IllegalCashDeskStateException", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.IllegalInputException", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.MessageKind", "org.cocome.tradingsystem.inventory.application.reporting.ReportTO", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderEntryTO", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderTO", "org.cocome.tradingsystem.inventory.application.store.CustomerWithStoreTO", "org.cocome.tradingsystem.inventory.application.store.EnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.InvalidRollInRequestException", "org.cocome.tradingsystem.inventory.application.store.NoSuchProductException", "org.cocome.tradingsystem.inventory.application.store.NotImplementedException", "org.cocome.tradingsystem.inventory.application.store.ProductMovementTO", "org.cocome.tradingsystem.inventory.application.store.ProductOutOfStockException", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierAndStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierTO", "org.cocome.tradingsystem.inventory.application.store.SaleTO", "org.cocome.tradingsystem.inventory.application.store.StockItemTO", "org.cocome.tradingsystem.inventory.application.store.StoreWithEnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.SupplierTO", "org.cocome.tradingsystem.inventory.application.usermanager.Role", "org.cocome.tradingsystem.inventory.application.usermanager.UserTO", "org.cocome.tradingsystem.inventory.data.enterprise.IProductSupplier", "org.cocome.tradingsystem.inventory.data.persistence.UpdateException", "org.cocome.tradingsystem.util.exception.NotInDatabaseException" ]
-  }, {
-    "name" : "cloud-registry-client",
-    "fullname" : "cloud-logic-service/cloud-registry-client",
-    "id" : "-400475de",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-registry-client",
-    "path" : "cloud-logic-service/cloud-registry-client",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-registry-client/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-logic-core-services" ],
-    "counts" : {
-      "types" : 2,
-      "sources" : 2,
-      "libraries" : 18,
-      "resources" : 1,
-      "definedLibraries" : 1,
-      "usedTypes" : 18,
-      "sourceRoots" : 1,
-      "dependencies" : 1
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.jboss.spec:jboss-javaee-all-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.cloud.logic.registry.client.ApplicationHelper", "org.cocome.cloud.logic.registry.client.IApplicationHelper" ],
-    "usedTypes" : [ "java.lang.reflect.Constructor", "java.lang.reflect.InvocationTargetException", "java.net.MalformedURLException", "java.net.URI", "java.net.URISyntaxException", "java.net.URL", "java.util.HashSet", "java.util.Set", "javax.annotation.PreDestroy", "javax.enterprise.context.ApplicationScoped", "javax.xml.namespace.QName", "javax.xml.ws.Service", "javax.xml.ws.WebServiceRef", "org.apache.log4j.Logger", "org.cocome.cloud.logic.stub.IURIRegistryManager", "org.cocome.cloud.logic.stub.IURIRegistryManagerService", "org.cocome.cloud.logic.stub.NotBoundException", "org.cocome.cloud.logic.stub.NotBoundException_Exception" ]
-  }, {
-    "name" : "cloud-registry-service",
-    "fullname" : "cloud-logic-service/cloud-registry-service",
-    "id" : "-7d9204c2",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-registry-service",
-    "path" : "cloud-logic-service/cloud-registry-service",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-registry-service/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-logic-core-services" ],
-    "counts" : {
-      "types" : 3,
-      "sources" : 3,
-      "libraries" : 42,
-      "resources" : 8,
-      "definedLibraries" : 1,
-      "usedTypes" : 17,
-      "sourceRoots" : 1,
-      "dependencies" : 1
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "javax.el:javax.el-api:3.0.1-b06", "javax.enterprise:cdi-api:2.0-PFD2", "javax.inject:javax.inject:1", "javax.interceptor:javax.interceptor-api:1.2.2", "javax.validation:validation-api:2.0.1.Final", "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final", "org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.el:jboss-el-api_2.2_spec:1.0.6.Final", "org.jboss.spec.javax.el:jboss-el-api_3.0_spec:1.0.11.Final", "org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec:2.1.29.1.Final", "org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.resource:jboss-connector-api_1.6_spec:1.0.1.Final", "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.0_spec:1.0.1.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.2_spec:1.0.2.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.3_spec:1.0.3.Final", "org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec:1.1.4.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.2.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec:1.0.5.Final", "org.jboss.spec:jboss-javaee-web-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0", "xalan:serializer:2.7.1", "xalan:xalan:2.7.1" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.cloud.registry.service.IRegistry", "org.cocome.cloud.registry.service.URIRegistry", "org.cocome.cloud.registry.service.URIRegistryManager" ],
-    "usedTypes" : [ "java.net.URI", "java.rmi.NotBoundException", "java.util.Collection", "java.util.Collections", "java.util.HashMap", "java.util.LinkedHashMap", "java.util.LinkedHashSet", "java.util.Map", "java.util.Map.Entry", "java.util.Set", "javax.ejb.Local", "javax.ejb.Singleton", "javax.ejb.Startup", "javax.ejb.Stateless", "javax.inject.Inject", "javax.jws.WebService", "org.apache.log4j.Logger" ]
-  }, {
-    "name" : "cloud-store-logic",
-    "fullname" : "cloud-logic-service/cloud-store-logic",
-    "id" : "7a9035b9",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic",
-    "path" : "cloud-logic-service/cloud-store-logic",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ ],
-    "dependencies" : [ ],
-    "counts" : {
-      "types" : 0,
-      "sources" : 0,
-      "libraries" : 0,
-      "resources" : 1,
-      "definedLibraries" : 0,
-      "usedTypes" : 0,
-      "sourceRoots" : 0,
-      "dependencies" : 0
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ ],
-    "definedLibraries" : [ ],
-    "types" : [ ],
-    "usedTypes" : [ ]
-  }, {
-    "name" : "store-logic-ear",
-    "fullname" : "cloud-logic-service/cloud-store-logic/store-logic-ear",
-    "id" : "10076225",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic/store-logic-ear",
-    "path" : "cloud-logic-service/cloud-store-logic/store-logic-ear",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ ],
-    "dependencies" : [ "cloud-logic-service/cloud-store-logic/store-logic-ejb", "cloud-logic-service/cloud-logic-core-impl", "cloud-logic-service/cloud-store-logic/store-logic-webservice", "cloud-logic-service/cloud-logic-core-services", "cloud-logic-service/cloud-registry-client" ],
-    "counts" : {
-      "types" : 0,
-      "sources" : 0,
-      "libraries" : 17,
-      "resources" : 2,
-      "definedLibraries" : 1,
-      "usedTypes" : 0,
-      "sourceRoots" : 0,
-      "dependencies" : 5
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ ],
-    "usedTypes" : [ ]
-  }, {
-    "name" : "store-logic-ejb",
-    "fullname" : "cloud-logic-service/cloud-store-logic/store-logic-ejb",
-    "id" : "1007632c",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic/store-logic-ejb",
-    "path" : "cloud-logic-service/cloud-store-logic/store-logic-ejb",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic/store-logic-ejb/src/test/java", "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic/store-logic-ejb/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-logic-core-api", "cloud-logic-service/cloud-logic-core-impl", "cloud-logic-service/cloud-logic-core-services", "cloud-logic-service/cloud-registry-client" ],
-    "counts" : {
-      "types" : 88,
-      "sources" : 88,
-      "libraries" : 23,
-      "resources" : 5,
-      "definedLibraries" : 1,
-      "usedTypes" : 105,
+      "usedTypes" : 248,
       "sourceRoots" : 2,
-      "dependencies" : 4
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "junit:junit:4.13.2", "junit:junit:4.13.2", "net.bytebuddy:byte-buddy-agent:1.10.20", "net.bytebuddy:byte-buddy:1.10.20", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.jboss.spec:jboss-javaee-all-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.mockito:mockito-core:3.8.0", "org.objenesis:objenesis:3.1", "org.opentest4j:opentest4j:1.2.0" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "Unknown", "org.cocome.tradingsystem.cashdeskline.cashdesk.CashDeskEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.CashDeskModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.ICashDeskEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.ICashDeskModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.barcodescanner.BarcodeScannerModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.barcodescanner.IBarcodeScannerModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.cardreader.CardReaderModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.cardreader.ICardReaderModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.CashBoxEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.CashBoxModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.ICashBoxEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.ICashBoxModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.expresslight.ExpressLightEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.expresslight.ExpressLightModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.expresslight.IExpressLightEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.expresslight.IExpressLightModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.printer.IPrinterEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.printer.IPrinterModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.printer.PrinterEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.printer.PrinterModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.IUserDisplayEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.IUserDisplayModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.UserDisplayEventHandler", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.UserDisplayModel", "org.cocome.tradingsystem.cashdeskline.coordinator.CoordinatorEventHandler", "org.cocome.tradingsystem.cashdeskline.coordinator.CoordinatorModel", "org.cocome.tradingsystem.cashdeskline.coordinator.ExpressModeEvaluator", "org.cocome.tradingsystem.cashdeskline.coordinator.ExpressModePolicy", "org.cocome.tradingsystem.cashdeskline.coordinator.ICoordinatorEventConsumerLocal", "org.cocome.tradingsystem.cashdeskline.coordinator.ICoordinatorModelLocal", "org.cocome.tradingsystem.cashdeskline.coordinator.Sale", "org.cocome.tradingsystem.cashdeskline.datatypes.ControlKeyStroke", "org.cocome.tradingsystem.cashdeskline.datatypes.NumPadKeyStroke", "org.cocome.tradingsystem.cashdeskline.datatypes.PaymentMode", "org.cocome.tradingsystem.cashdeskline.events.AccountSaleEvent", "org.cocome.tradingsystem.cashdeskline.events.CashAmountEnteredEvent", "org.cocome.tradingsystem.cashdeskline.events.CashBoxClosedEvent", "org.cocome.tradingsystem.cashdeskline.events.CashBoxNumPadKeypressEvent", "org.cocome.tradingsystem.cashdeskline.events.CashBoxOpenedEvent", "org.cocome.tradingsystem.cashdeskline.events.ChangeAmountCalculatedEvent", "org.cocome.tradingsystem.cashdeskline.events.ContentChangedEvent", "org.cocome.tradingsystem.cashdeskline.events.ContentChangedEventType", "org.cocome.tradingsystem.cashdeskline.events.ContentChangedQualifier", "org.cocome.tradingsystem.cashdeskline.events.CreditCardPinEnteredEvent", "org.cocome.tradingsystem.cashdeskline.events.CreditCardScanFailedEvent", "org.cocome.tradingsystem.cashdeskline.events.CreditCardScannedEvent", "org.cocome.tradingsystem.cashdeskline.events.ExpressModeDisabledEvent", "org.cocome.tradingsystem.cashdeskline.events.ExpressModeEnabledEvent", "org.cocome.tradingsystem.cashdeskline.events.InsufficientCashAmountEvent", "org.cocome.tradingsystem.cashdeskline.events.InvalidCreditCardEvent", "org.cocome.tradingsystem.cashdeskline.events.InvalidProductBarcodeEvent", "org.cocome.tradingsystem.cashdeskline.events.PaymentModeRejectedEvent", "org.cocome.tradingsystem.cashdeskline.events.PaymentModeSelectedEvent", "org.cocome.tradingsystem.cashdeskline.events.ProductBarcodeScannedEvent", "org.cocome.tradingsystem.cashdeskline.events.RunningTotalChangedEvent", "org.cocome.tradingsystem.cashdeskline.events.SaleFinishedEvent", "org.cocome.tradingsystem.cashdeskline.events.SaleRegisteredEvent", "org.cocome.tradingsystem.cashdeskline.events.SaleStartedEvent", "org.cocome.tradingsystem.cashdeskline.events.SaleSuccessEvent", "org.cocome.tradingsystem.external.DebitResult", "org.cocome.tradingsystem.external.IBankLocal", "org.cocome.tradingsystem.external.TransactionID", "org.cocome.tradingsystem.external.TrivialBankServer", "org.cocome.tradingsystem.inventory.application.store.IStoreEventConsumerLocal", "org.cocome.tradingsystem.inventory.application.store.StoreEventHandler", "org.cocome.tradingsystem.inventory.application.store.StoreServer", "org.cocome.tradingsystem.inventory.data.enterprise.StoreEnterpriseQueryProvider", "org.cocome.tradingsystem.inventory.data.persistence.CloudPersistence", "org.cocome.tradingsystem.util.Configuration", "org.cocome.tradingsystem.util.java.Assert", "org.cocome.tradingsystem.util.java.DualElement", "org.cocome.tradingsystem.util.java.DualIterator", "org.cocome.tradingsystem.util.java.Iterables", "org.cocome.tradingsystem.util.java.Lists", "org.cocome.tradingsystem.util.java.Maps", "org.cocome.tradingsystem.util.java.Reflection", "org.cocome.tradingsystem.util.java.Sets", "org.cocome.tradingsystem.util.java.Swing", "org.cocome.tradingsystem.util.java.TimeSpan", "org.cocome.tradingsystem.util.mvc.AbstractModel", "org.cocome.tradingsystem.util.mvc.ContentChangedListener", "org.cocome.tradingsystem.util.mvc.ContentChangedListenerTest", "org.cocome.tradingsystem.util.mvc.IContentChangedListener", "org.cocome.tradingsystem.util.qualifier.CashDeskRequired", "org.cocome.tradingsystem.util.qualifier.Cloud", "org.cocome.tradingsystem.util.qualifier.EnterpriseRequired", "org.cocome.tradingsystem.util.qualifier.StoreRequired" ],
-    "usedTypes" : [ "java.awt.event.ActionListener", "java.io.IOException", "java.io.InputStream", "java.io.Serializable", "java.lang.annotation.ElementType", "java.lang.annotation.Retention", "java.lang.annotation.RetentionPolicy", "java.lang.annotation.Target", "java.lang.reflect.AccessibleObject", "java.lang.reflect.Array", "java.lang.reflect.Field", "java.lang.reflect.InvocationTargetException", "java.lang.reflect.Method", "java.net.MalformedURLException", "java.rmi.RemoteException", "java.util.ArrayList", "java.util.Arrays", "java.util.BitSet", "java.util.Collection", "java.util.Collections", "java.util.Comparator", "java.util.Date", "java.util.EnumSet", "java.util.HashMap", "java.util.HashSet", "java.util.Iterator", "java.util.LinkedHashMap", "java.util.LinkedHashSet", "java.util.LinkedList", "java.util.List", "java.util.Locale", "java.util.Map", "java.util.NoSuchElementException", "java.util.Properties", "java.util.Queue", "java.util.Random", "java.util.Set", "java.util.TreeSet", "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.TimeUnit", "javax.annotation.PostConstruct", "javax.annotation.Resource", "javax.ejb.CreateException", "javax.ejb.EJB", "javax.ejb.Local", "javax.ejb.Singleton", "javax.ejb.Startup", "javax.ejb.Stateless", "javax.ejb.TransactionAttribute", "javax.ejb.TransactionAttributeType", "javax.enterprise.context.ApplicationScoped", "javax.enterprise.context.Dependent", "javax.enterprise.event.Event", "javax.enterprise.event.Observes", "javax.enterprise.inject.Produces", "javax.enterprise.inject.spi.BeanManager", "javax.enterprise.inject.spi.InjectionPoint", "javax.enterprise.util.AnnotationLiteral", "javax.inject.Inject", "javax.inject.Provider", "javax.inject.Qualifier", "javax.swing.JButton", "javax.xml.bind.annotation.XmlEnum", "javax.xml.bind.annotation.XmlEnumValue", "javax.xml.bind.annotation.XmlType", "org.apache.log4j.Level", "org.apache.log4j.Logger", "org.cocome.cloud.logic.registry.client.IApplicationHelper", "org.cocome.cloud.logic.stub.IEnterpriseManager", "org.cocome.cloud.logic.stub.IEnterpriseManagerService", "org.cocome.cloud.logic.stub.NotBoundException_Exception", "org.cocome.cloud.logic.stub.NotInDatabaseException_Exception", "org.cocome.cloud.registry.service.Names", "org.cocome.tradingsystem.cashdeskline.cashdesk.IllegalCashDeskStateException", "org.cocome.tradingsystem.inventory.application.store.EnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.IStoreInventoryLocal", "org.cocome.tradingsystem.inventory.application.store.NoSuchProductException", "org.cocome.tradingsystem.inventory.application.store.ProductOutOfStockException", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithStockItemTO", "org.cocome.tradingsystem.inventory.application.store.SaleTO", "org.cocome.tradingsystem.inventory.application.store.StoreWithEnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.SupplierTO", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseDataFactory", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseQuery", "org.cocome.tradingsystem.inventory.data.enterprise.IProduct", "org.cocome.tradingsystem.inventory.data.enterprise.IProductSupplier", "org.cocome.tradingsystem.inventory.data.persistence.IPersistenceContext", "org.cocome.tradingsystem.inventory.data.persistence.UpdateException", "org.cocome.tradingsystem.inventory.data.store.IOrderEntry", "org.cocome.tradingsystem.inventory.data.store.IProductOrder", "org.cocome.tradingsystem.inventory.data.store.IStockItem", "org.cocome.tradingsystem.inventory.data.store.IStore", "org.cocome.tradingsystem.inventory.data.store.IStoreDataFactory", "org.cocome.tradingsystem.inventory.data.store.IStoreQuery", "org.cocome.tradingsystem.util.exception.NotInDatabaseException", "org.cocome.tradingsystem.util.scope.CashDeskSessionScoped", "org.cocome.tradingsystem.util.scope.IContextRegistry", "org.cocome.tradingsystem.util.scope.RegistryKeys", "org.cocome.tradingsystem.util.scope.context.INamedSessionContext", "org.junit.After", "org.junit.Before", "org.junit.Test", "static java.lang.annotation.ElementType", "static java.util.concurrent.TimeUnit" ]
-  }, {
-    "name" : "store-logic-integrationtest",
-    "fullname" : "cloud-logic-service/cloud-store-logic/store-logic-integrationtest",
-    "id" : "b8cccb5",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic/store-logic-integrationtest",
-    "path" : "cloud-logic-service/cloud-store-logic/store-logic-integrationtest",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ ],
-    "dependencies" : [ "cloud-logic-service/cloud-store-logic/store-logic-ear" ],
-    "counts" : {
-      "types" : 0,
-      "sources" : 0,
-      "libraries" : 0,
-      "resources" : 2,
-      "definedLibraries" : 0,
-      "usedTypes" : 0,
-      "sourceRoots" : 0,
-      "dependencies" : 1
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ ],
-    "definedLibraries" : [ ],
-    "types" : [ ],
-    "usedTypes" : [ ]
-  }, {
-    "name" : "store-logic-webservice",
-    "fullname" : "cloud-logic-service/cloud-store-logic/store-logic-webservice",
-    "id" : "-28c17cce",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic/store-logic-webservice",
-    "path" : "cloud-logic-service/cloud-store-logic/store-logic-webservice",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/cloud-store-logic/store-logic-webservice/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-store-logic/store-logic-ejb", "cloud-logic-service/cloud-logic-core-api", "cloud-logic-service/cloud-logic-core-impl", "cloud-logic-service/cloud-logic-core-services", "cloud-logic-service/cloud-registry-client" ],
-    "counts" : {
-      "types" : 14,
-      "sources" : 14,
-      "libraries" : 42,
-      "resources" : 7,
-      "definedLibraries" : 1,
-      "usedTypes" : 78,
-      "sourceRoots" : 1,
-      "dependencies" : 5
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "javax.el:javax.el-api:3.0.1-b06", "javax.enterprise:cdi-api:2.0-PFD2", "javax.inject:javax.inject:1", "javax.interceptor:javax.interceptor-api:1.2.2", "javax.validation:validation-api:2.0.1.Final", "junit:junit:4.13.2", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final", "org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.el:jboss-el-api_2.2_spec:1.0.6.Final", "org.jboss.spec.javax.el:jboss-el-api_3.0_spec:1.0.11.Final", "org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec:2.1.29.1.Final", "org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.resource:jboss-connector-api_1.6_spec:1.0.1.Final", "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.0_spec:1.0.1.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.2_spec:1.0.2.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.3_spec:1.0.3.Final", "org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec:1.1.4.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.2.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec:1.0.5.Final", "org.jboss.spec:jboss-javaee-web-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0", "xalan:serializer:2.7.1", "xalan:xalan:2.7.1" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.cloud.logic.webservice.AbstractCashDeskAction", "org.cocome.cloud.logic.webservice.AbstractNamedService", "org.cocome.cloud.logic.webservice.IContextAction", "org.cocome.cloud.logic.webservice.NamedCashDeskService", "org.cocome.cloud.logic.webservice.cashdeskline.cashdeskservice.CashDesk", "org.cocome.cloud.logic.webservice.cashdeskline.cashdeskservice.barcodescanner.BarcodeScanner", "org.cocome.cloud.logic.webservice.cashdeskline.cashdeskservice.cardreader.CardReader", "org.cocome.cloud.logic.webservice.cashdeskline.cashdeskservice.cashbox.CashBox", "org.cocome.cloud.logic.webservice.cashdeskline.cashdeskservice.expresslight.ExpressLight", "org.cocome.cloud.logic.webservice.cashdeskline.cashdeskservice.printer.Printer", "org.cocome.cloud.logic.webservice.cashdeskline.cashdeskservice.userdisplay.UserDisplay", "org.cocome.cloud.logic.webservice.storeservice.StoreManager", "org.cocome.cloud.logic.webservice.storeservice.StoreManagerStartup", "org.cocome.cloud.logic.webservice.util.EJBExceptionHelper" ],
-    "usedTypes" : [ "java.io.Serializable", "java.net.URISyntaxException", "java.util.List", "java.util.Set", "javax.annotation.PostConstruct", "javax.annotation.Resource", "javax.ejb.CreateException", "javax.ejb.EJBException", "javax.ejb.Singleton", "javax.ejb.Startup", "javax.ejb.Stateless", "javax.enterprise.event.ObserverException", "javax.enterprise.inject.spi.BeanManager", "javax.inject.Inject", "javax.jws.WebService", "javax.servlet.ServletContext", "javax.xml.namespace.QName", "javax.xml.ws.WebServiceContext", "javax.xml.ws.handler.MessageContext", "org.apache.log4j.Logger", "org.cocome.cloud.logic.registry.client.IApplicationHelper", "org.cocome.cloud.logic.webservice.exception.UnhandledException", "org.cocome.cloud.registry.service.Names", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.ICashDesk", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.barcodescannerservice.IBarcodeScanner", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.cardreaderservice.ICardReader", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.cashboxservice.ICashBox", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.expresslightservice.IExpressLight", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.printerservice.IPrinter", "org.cocome.logic.webservice.cashdeskline.cashdeskservice.userdisplayservice.IUserDisplay", "org.cocome.logic.webservice.storeservice.IStoreManager", "org.cocome.tradingsystem.cashdeskline.cashdesk.ICashDeskModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.IllegalCashDeskStateException", "org.cocome.tradingsystem.cashdeskline.cashdesk.barcodescanner.IBarcodeScannerModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.cardreader.ICardReaderModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.ICashBoxModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.cashbox.IllegalInputException", "org.cocome.tradingsystem.cashdeskline.cashdesk.expresslight.IExpressLightModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.printer.IPrinterModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.IUserDisplayModel", "org.cocome.tradingsystem.cashdeskline.cashdesk.userdisplay.MessageKind", "org.cocome.tradingsystem.cashdeskline.datatypes.ControlKeyStroke", "org.cocome.tradingsystem.cashdeskline.datatypes.NumPadKeyStroke", "org.cocome.tradingsystem.cashdeskline.datatypes.PaymentMode", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderEntryTO", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderTO", "org.cocome.tradingsystem.inventory.application.store.IStoreInventoryLocal", "org.cocome.tradingsystem.inventory.application.store.IStoreInventoryManagerLocal", "org.cocome.tradingsystem.inventory.application.store.InvalidRollInRequestException", "org.cocome.tradingsystem.inventory.application.store.NoSuchProductException", "org.cocome.tradingsystem.inventory.application.store.NotImplementedException", "org.cocome.tradingsystem.inventory.application.store.ProductMovementTO", "org.cocome.tradingsystem.inventory.application.store.ProductOutOfStockException", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierAndStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierTO", "org.cocome.tradingsystem.inventory.application.store.SaleTO", "org.cocome.tradingsystem.inventory.application.store.StockItemTO", "org.cocome.tradingsystem.inventory.application.store.StoreWithEnterpriseTO", "org.cocome.tradingsystem.inventory.data.enterprise.IEnterpriseQuery", "org.cocome.tradingsystem.inventory.data.enterprise.IProduct", "org.cocome.tradingsystem.inventory.data.persistence.IPersistenceContext", "org.cocome.tradingsystem.inventory.data.persistence.UpdateException", "org.cocome.tradingsystem.inventory.data.store.IStockItem", "org.cocome.tradingsystem.inventory.data.store.IStore", "org.cocome.tradingsystem.inventory.data.store.IStoreDataFactory", "org.cocome.tradingsystem.inventory.data.store.IStoreQuery", "org.cocome.tradingsystem.util.exception.BaseException", "org.cocome.tradingsystem.util.exception.NotInDatabaseException", "org.cocome.tradingsystem.util.mvc.ContentChangedListener", "org.cocome.tradingsystem.util.mvc.IContentChangedListener", "org.cocome.tradingsystem.util.scope.CashDeskRegistry", "org.cocome.tradingsystem.util.scope.CashDeskSessionScoped", "org.cocome.tradingsystem.util.scope.ICashDeskRegistryFactory", "org.cocome.tradingsystem.util.scope.IContextRegistry", "org.cocome.tradingsystem.util.scope.RegistryKeys", "org.cocome.tradingsystem.util.scope.context.INamedSessionContext" ]
-  }, {
-    "name" : "java-old-utils",
-    "fullname" : "cloud-logic-service/java-old-utils",
-    "id" : "535c2a21",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/java-old-utils",
-    "path" : "cloud-logic-service/java-old-utils",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-logic-service/java-old-utils/src" ],
-    "dependencies" : [ ],
-    "counts" : {
-      "types" : 23,
-      "sources" : 23,
-      "libraries" : 0,
-      "resources" : 1,
-      "definedLibraries" : 0,
-      "usedTypes" : 76,
-      "sourceRoots" : 1,
       "dependencies" : 0
     },
     "runtimeLibrary" : "jdk8",
-    "libraries" : [ ],
+    "libraries" : [ "com.google.code.findbugs:jsr305:3.0.2", "net.sf.jopt-simple:jopt-simple:6.0-alpha-3", "org.apache.commons:commons-math3:3.6.1", "org.apiguardian:apiguardian-api:1.1.1", "org.easymock:easymock:4.2", "org.hamcrest:hamcrest:2.2", "org.junit-pioneer:junit-pioneer:1.3.0", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.jupiter:junit-jupiter:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.objenesis:objenesis:3.1", "org.openjdk.jmh:jmh-core:1.27", "org.openjdk.jmh:jmh-generator-annprocess:1.27", "org.opentest4j:opentest4j:1.2.0" ],
     "definedLibraries" : [ ],
-    "types" : [ "de.kit.ipd.java.utils.framework.statemachine.AbstractStateMachine", "de.kit.ipd.java.utils.framework.statemachine.CharStreamStateMachine", "de.kit.ipd.java.utils.framework.statemachine.Lexer", "de.kit.ipd.java.utils.framework.statemachine.LexerVisitor", "de.kit.ipd.java.utils.framework.statemachine.Parser", "de.kit.ipd.java.utils.framework.statemachine.ParserVisitor", "de.kit.ipd.java.utils.framework.statemachine.State", "de.kit.ipd.java.utils.framework.statemachine.StateMachine", "de.kit.ipd.java.utils.framework.table.Column", "de.kit.ipd.java.utils.framework.table.Row", "de.kit.ipd.java.utils.framework.table.Table", "de.kit.ipd.java.utils.framework.table.TableHeader", "de.kit.ipd.java.utils.framework.table.TableObjectFactory", "de.kit.ipd.java.utils.io.Utilities", "de.kit.ipd.java.utils.parsing.csv.CSVLexer", "de.kit.ipd.java.utils.parsing.csv.CSVParser", "de.kit.ipd.java.utils.parsing.html.HtmlParser", "de.kit.ipd.java.utils.strings.StringUtils", "de.kit.ipd.java.utils.time.TimeUtils", "de.kit.ipd.java.utils.xml.JAXBEngine", "de.kit.ipd.java.utils.xml.Marshable", "de.kit.ipd.java.utils.xml.TestingXML", "de.kit.ipd.java.utils.xml.XML" ],
-    "usedTypes" : [ "de.kit.ipd.java.utils.parsing.csv.CSVLexer.State4", "de.kit.ipd.java.utils.parsing.csv.CSVLexer.State5", "de.kit.ipd.java.utils.parsing.csv.CSVLexer.State6", "de.kit.ipd.java.utils.xml.XML.XMLOption", "de.kit.ipd.java.utils.xml.XML.XMLVisitor", "java.io.BufferedInputStream", "java.io.BufferedReader", "java.io.File", "java.io.FileInputStream", "java.io.FileNotFoundException", "java.io.FileOutputStream", "java.io.IOException", "java.io.InputStream", "java.io.InputStreamReader", "java.io.OutputStream", "java.io.Serializable", "java.io.StringReader", "java.io.StringWriter", "java.io.UnsupportedEncodingException", "java.io.Writer", "java.text.Format", "java.text.ParseException", "java.text.SimpleDateFormat", "java.util.ArrayList", "java.util.Calendar", "java.util.Date", "java.util.GregorianCalendar", "java.util.HashMap", "java.util.List", "java.util.Locale", "java.util.Map", "java.util.TimeZone", "java.util.regex.Pattern", "javax.xml.XMLConstants", "javax.xml.bind.JAXBContext", "javax.xml.bind.JAXBElement", "javax.xml.bind.JAXBException", "javax.xml.bind.Marshaller", "javax.xml.bind.PropertyException", "javax.xml.bind.SchemaOutputResolver", "javax.xml.bind.Unmarshaller", "javax.xml.bind.annotation.XmlAccessType", "javax.xml.bind.annotation.XmlAccessorType", "javax.xml.bind.annotation.XmlAttribute", "javax.xml.bind.annotation.XmlElement", "javax.xml.bind.annotation.XmlElementDecl", "javax.xml.bind.annotation.XmlElementWrapper", "javax.xml.bind.annotation.XmlRegistry", "javax.xml.bind.annotation.XmlRootElement", "javax.xml.bind.annotation.XmlType", "javax.xml.namespace.QName", "javax.xml.parsers.DocumentBuilder", "javax.xml.parsers.DocumentBuilderFactory", "javax.xml.parsers.ParserConfigurationException", "javax.xml.transform.OutputKeys", "javax.xml.transform.Result", "javax.xml.transform.Transformer", "javax.xml.transform.TransformerConfigurationException", "javax.xml.transform.TransformerException", "javax.xml.transform.TransformerFactory", "javax.xml.transform.TransformerFactoryConfigurationError", "javax.xml.transform.dom.DOMSource", "javax.xml.transform.stream.StreamResult", "javax.xml.transform.stream.StreamSource", "javax.xml.validation.Schema", "javax.xml.validation.SchemaFactory", "javax.xml.xpath.XPath", "javax.xml.xpath.XPathConstants", "javax.xml.xpath.XPathExpressionException", "javax.xml.xpath.XPathFactory", "org.w3c.dom.DOMException", "org.w3c.dom.Document", "org.w3c.dom.Node", "org.w3c.dom.NodeList", "org.xml.sax.InputSource", "org.xml.sax.SAXException" ]
-  }, {
-    "name" : "cloud-web-frontend",
-    "fullname" : "cloud-web-frontend",
-    "id" : "-50da76fd",
-    "moduleHome" : "D:/SPLGroup/example_repo/cocome-maven-project/cloud-web-frontend",
-    "path" : "cloud-web-frontend",
-    "properties" : {
-      "module.definition" : "configurationFile"
-    },
-    "sourceRoots" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-web-frontend/src/main/java" ],
-    "dependencies" : [ "cloud-logic-service/cloud-logic-core-api", "cloud-logic-service/cloud-logic-core-services", "cloud-logic-service/cloud-registry-client" ],
-    "counts" : {
-      "types" : 62,
-      "sources" : 62,
-      "libraries" : 44,
-      "resources" : 8,
-      "definedLibraries" : 1,
-      "usedTypes" : 94,
-      "sourceRoots" : 1,
-      "dependencies" : 3
-    },
-    "runtimeLibrary" : "jdk8",
-    "libraries" : [ "javax.el:javax.el-api:3.0.1-b06", "javax.enterprise:cdi-api:2.0-PFD2", "javax.faces:jsf-impl:1.2-20", "javax.inject:javax.inject:1", "javax.interceptor:javax.interceptor-api:1.2.2", "javax.validation:validation-api:2.0.1.Final", "junit:junit:4.13.2", "kieker-1.12", "org.apache.logging.log4j:log4j-1.2-api:2.14.1", "org.apache.logging.log4j:log4j-api:2.14.1", "org.apiguardian:apiguardian-api:1.1.1", "org.assertj:assertj-core:3.19.0", "org.hamcrest:hamcrest-core:1.3", "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final", "org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.el:jboss-el-api_2.2_spec:1.0.6.Final", "org.jboss.spec.javax.el:jboss-el-api_3.0_spec:1.0.11.Final", "org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec:2.1.29.1.Final", "org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.resource:jboss-connector-api_1.6_spec:1.0.1.Final", "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.0_spec:1.0.1.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.2_spec:1.0.2.Final", "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.3_spec:1.0.3.Final", "org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec:1.1.4.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.2.Final", "org.jboss.spec.javax.servlet:jboss-servlet-api_3.1_spec:1.0.2.Final", "org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec:1.0.1.Final", "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec:1.0.5.Final", "org.jboss.spec:jboss-javaee-web-6.0:3.0.3.Final", "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20", "org.jetbrains.kotlin:kotlin-stdlib:1.4.20", "org.junit.jupiter:junit-jupiter-api:5.8.0-M1", "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1", "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1", "org.junit.jupiter:junit-jupiter-params:5.8.0-M1", "org.junit.platform:junit-platform-commons:1.8.0-M1", "org.junit.platform:junit-platform-engine:1.8.0-M1", "org.junit.vintage:junit-vintage-engine:5.8.0-M1", "org.opentest4j:opentest4j:1.2.0", "xalan:serializer:2.7.1", "xalan:xalan:2.7.1" ],
-    "definedLibraries" : [ "junit:junit:4.13.1" ],
-    "types" : [ "org.cocome.cloud.web.connector.cashdeskconnector.CashDeskQuery", "org.cocome.cloud.web.connector.cashdeskconnector.ICashDeskQuery", "org.cocome.cloud.web.connector.enterpriseconnector.EnterpriseQuery", "org.cocome.cloud.web.connector.enterpriseconnector.IEnterpriseQuery", "org.cocome.cloud.web.connector.storeconnector.IStoreQuery", "org.cocome.cloud.web.connector.storeconnector.StoreQuery", "org.cocome.cloud.web.data.cashdeskdata.CashDeskDAO", "org.cocome.cloud.web.data.cashdeskdata.CashDeskViewData", "org.cocome.cloud.web.data.cashdeskdata.ICashDeskDAO", "org.cocome.cloud.web.data.cashdeskdata.ICashDeskViewData", "org.cocome.cloud.web.data.enterprisedata.EnterpriseConverter", "org.cocome.cloud.web.data.enterprisedata.EnterpriseDAO", "org.cocome.cloud.web.data.enterprisedata.EnterprisePersistence", "org.cocome.cloud.web.data.enterprisedata.EnterpriseViewData", "org.cocome.cloud.web.data.enterprisedata.IEnterpriseDAO", "org.cocome.cloud.web.data.enterprisedata.IEnterprisePersistence", "org.cocome.cloud.web.data.logindata.CredentialFactory", "org.cocome.cloud.web.data.logindata.DummyAuthenticator", "org.cocome.cloud.web.data.logindata.DummyPermission", "org.cocome.cloud.web.data.logindata.DummyUser", "org.cocome.cloud.web.data.logindata.IAuthenticator", "org.cocome.cloud.web.data.logindata.ICredential", "org.cocome.cloud.web.data.logindata.ICredentialFactory", "org.cocome.cloud.web.data.logindata.IPermission", "org.cocome.cloud.web.data.logindata.IUser", "org.cocome.cloud.web.data.logindata.PlainCredential", "org.cocome.cloud.web.data.logindata.UserRole", "org.cocome.cloud.web.data.storedata.IStoreDAO", "org.cocome.cloud.web.data.storedata.IStorePersistence", "org.cocome.cloud.web.data.storedata.OrderItem", "org.cocome.cloud.web.data.storedata.ProductConverter", "org.cocome.cloud.web.data.storedata.ProductDetails", "org.cocome.cloud.web.data.storedata.ProductWrapper", "org.cocome.cloud.web.data.storedata.StoreDAO", "org.cocome.cloud.web.data.storedata.StorePersistence", "org.cocome.cloud.web.data.storedata.StoreViewData", "org.cocome.cloud.web.events.ChangeViewEvent", "org.cocome.cloud.web.events.LoginEvent", "org.cocome.cloud.web.events.LogoutEvent", "org.cocome.cloud.web.frontend.cashdesk.CashDeskView", "org.cocome.cloud.web.frontend.enterprise.EnterpriseInformation", "org.cocome.cloud.web.frontend.enterprise.IEnterpriseInformation", "org.cocome.cloud.web.frontend.login.Login", "org.cocome.cloud.web.frontend.navigation.ILabelResolver", "org.cocome.cloud.web.frontend.navigation.INavigationElement", "org.cocome.cloud.web.frontend.navigation.INavigationMenu", "org.cocome.cloud.web.frontend.navigation.NavigationElement", "org.cocome.cloud.web.frontend.navigation.NavigationElementLabelResolver", "org.cocome.cloud.web.frontend.navigation.NavigationElements", "org.cocome.cloud.web.frontend.navigation.NavigationMenu", "org.cocome.cloud.web.frontend.navigation.NavigationViewStates", "org.cocome.cloud.web.frontend.store.IStoreInformation", "org.cocome.cloud.web.frontend.store.ReceiveOrderView", "org.cocome.cloud.web.frontend.store.ShowReportView", "org.cocome.cloud.web.frontend.store.ShowStockView", "org.cocome.cloud.web.frontend.store.StockOrderData", "org.cocome.cloud.web.frontend.store.StockOrderView", "org.cocome.cloud.web.frontend.store.StoreInformation", "org.cocome.cloud.web.frontend.util.InputValidator", "org.cocome.cloud.web.frontend.util.LoginFilter", "org.cocome.cloud.web.frontend.util.Messages", "org.cocome.cloud.web.frontend.util.NumberValidator" ],
-    "usedTypes" : [ "java.io.IOException", "java.io.Serializable", "java.lang.reflect.InvocationTargetException", "java.net.MalformedURLException", "java.util.ArrayList", "java.util.Collection", "java.util.Collections", "java.util.Date", "java.util.HashMap", "java.util.Iterator", "java.util.LinkedHashMap", "java.util.LinkedList", "java.util.List", "java.util.Locale", "java.util.Map", "java.util.Map.Entry", "java.util.ResourceBundle", "javax.annotation.PostConstruct", "javax.ejb.Local", "javax.enterprise.context.ApplicationScoped", "javax.enterprise.context.Conversation", "javax.enterprise.context.ConversationScoped", "javax.enterprise.context.RequestScoped", "javax.enterprise.context.SessionScoped", "javax.enterprise.event.Event", "javax.enterprise.event.Observes", "javax.enterprise.inject.Produces", "javax.faces.application.FacesMessage", "javax.faces.application.ResourceHandler", "javax.faces.bean.ManagedBean", "javax.faces.bean.ViewScoped", "javax.faces.component.UIComponent", "javax.faces.component.UIInput", "javax.faces.context.FacesContext", "javax.faces.convert.Converter", "javax.faces.convert.ConverterException", "javax.inject.Inject", "javax.inject.Named", "javax.servlet.Filter", "javax.servlet.FilterChain", "javax.servlet.FilterConfig", "javax.servlet.ServletException", "javax.servlet.ServletRequest", "javax.servlet.ServletResponse", "javax.servlet.annotation.WebFilter", "javax.servlet.http.HttpServletRequest", "javax.servlet.http.HttpServletResponse", "javax.servlet.http.HttpSession", "javax.validation.constraints.NotNull", "javax.xml.ws.WebServiceRef", "javax.xml.ws.soap.SOAPFaultException", "org.apache.log4j.Logger", "org.cocome.cloud.logic.registry.client.ApplicationHelper", "org.cocome.cloud.logic.registry.client.IApplicationHelper", "org.cocome.cloud.logic.stub.CreateException_Exception", "org.cocome.cloud.logic.stub.IBarcodeScanner", "org.cocome.cloud.logic.stub.IBarcodeScannerService", "org.cocome.cloud.logic.stub.ICardReader", "org.cocome.cloud.logic.stub.ICardReaderService", "org.cocome.cloud.logic.stub.ICashBox", "org.cocome.cloud.logic.stub.ICashBoxService", "org.cocome.cloud.logic.stub.ICashDesk", "org.cocome.cloud.logic.stub.ICashDeskService", "org.cocome.cloud.logic.stub.IEnterpriseManager", "org.cocome.cloud.logic.stub.IEnterpriseManagerService", "org.cocome.cloud.logic.stub.IExpressLight", "org.cocome.cloud.logic.stub.IExpressLightService", "org.cocome.cloud.logic.stub.IPrinter", "org.cocome.cloud.logic.stub.IPrinterService", "org.cocome.cloud.logic.stub.IStoreManager", "org.cocome.cloud.logic.stub.IStoreManagerService", "org.cocome.cloud.logic.stub.IUserDisplay", "org.cocome.cloud.logic.stub.IUserDisplayService", "org.cocome.cloud.logic.stub.IllegalCashDeskStateException_Exception", "org.cocome.cloud.logic.stub.IllegalInputException_Exception", "org.cocome.cloud.logic.stub.InvalidRollInRequestException_Exception", "org.cocome.cloud.logic.stub.NoSuchProductException_Exception", "org.cocome.cloud.logic.stub.NotBoundException_Exception", "org.cocome.cloud.logic.stub.NotInDatabaseException_Exception", "org.cocome.cloud.logic.stub.ProductOutOfStockException_Exception", "org.cocome.cloud.logic.stub.UnhandledException_Exception", "org.cocome.cloud.logic.stub.UpdateException_Exception", "org.cocome.cloud.registry.service.Names", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderEntryTO", "org.cocome.tradingsystem.inventory.application.store.ComplexOrderTO", "org.cocome.tradingsystem.inventory.application.store.EnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.ProductTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierAndStockItemTO", "org.cocome.tradingsystem.inventory.application.store.ProductWithSupplierTO", "org.cocome.tradingsystem.inventory.application.store.SaleTO", "org.cocome.tradingsystem.inventory.application.store.StockItemTO", "org.cocome.tradingsystem.inventory.application.store.StoreWithEnterpriseTO", "org.cocome.tradingsystem.inventory.application.store.SupplierTO" ]
+    "types" : [ "Unknown", "org.apache.commons.lang3.AnnotationUtils", "org.apache.commons.lang3.AnnotationUtilsTest", "org.apache.commons.lang3.ArchUtils", "org.apache.commons.lang3.ArchUtilsTest", "org.apache.commons.lang3.ArraySorter", "org.apache.commons.lang3.ArraySorterTest", "org.apache.commons.lang3.ArrayUtils", "org.apache.commons.lang3.ArrayUtilsAddTest", "org.apache.commons.lang3.ArrayUtilsInsertTest", "org.apache.commons.lang3.ArrayUtilsRemoveMultipleTest", "org.apache.commons.lang3.ArrayUtilsRemoveTest", "org.apache.commons.lang3.ArrayUtilsTest", "org.apache.commons.lang3.BitField", "org.apache.commons.lang3.BitFieldTest", "org.apache.commons.lang3.BooleanUtils", "org.apache.commons.lang3.BooleanUtilsTest", "org.apache.commons.lang3.CharEncoding", "org.apache.commons.lang3.CharEncodingTest", "org.apache.commons.lang3.CharRange", "org.apache.commons.lang3.CharRangeTest", "org.apache.commons.lang3.CharSequenceUtils", "org.apache.commons.lang3.CharSequenceUtilsTest", "org.apache.commons.lang3.CharSet", "org.apache.commons.lang3.CharSetTest", "org.apache.commons.lang3.CharSetUtils", "org.apache.commons.lang3.CharSetUtilsTest", "org.apache.commons.lang3.CharUtils", "org.apache.commons.lang3.CharUtilsPerfRun", "org.apache.commons.lang3.CharUtilsTest", "org.apache.commons.lang3.Charsets", "org.apache.commons.lang3.CharsetsTestCase", "org.apache.commons.lang3.ClassLoaderUtils", "org.apache.commons.lang3.ClassLoaderUtilsTest", "org.apache.commons.lang3.ClassPathUtils", "org.apache.commons.lang3.ClassPathUtilsTest", "org.apache.commons.lang3.ClassUtils", "org.apache.commons.lang3.ClassUtilsTest", "org.apache.commons.lang3.Conversion", "org.apache.commons.lang3.ConversionTest", "org.apache.commons.lang3.EnumUtils", "org.apache.commons.lang3.EnumUtilsTest", "org.apache.commons.lang3.Functions", "org.apache.commons.lang3.FunctionsTest", "org.apache.commons.lang3.HashSetvBitSetTest", "org.apache.commons.lang3.JavaVersion", "org.apache.commons.lang3.JavaVersionTest", "org.apache.commons.lang3.LocaleUtils", "org.apache.commons.lang3.LocaleUtilsTest", "org.apache.commons.lang3.NotImplementedException", "org.apache.commons.lang3.NotImplementedExceptionTest", "org.apache.commons.lang3.ObjectUtils", "org.apache.commons.lang3.ObjectUtilsTest", "org.apache.commons.lang3.RandomStringUtils", "org.apache.commons.lang3.RandomStringUtilsTest", "org.apache.commons.lang3.RandomUtils", "org.apache.commons.lang3.RandomUtilsTest", "org.apache.commons.lang3.Range", "org.apache.commons.lang3.RangeTest", "org.apache.commons.lang3.RegExUtils", "org.apache.commons.lang3.RegExUtilsTest", "org.apache.commons.lang3.SerializationException", "org.apache.commons.lang3.SerializationUtils", "org.apache.commons.lang3.SerializationUtilsTest", "org.apache.commons.lang3.Streams", "org.apache.commons.lang3.StreamsTest", "org.apache.commons.lang3.StringEscapeUtils", "org.apache.commons.lang3.StringEscapeUtilsTest", "org.apache.commons.lang3.StringUtils", "org.apache.commons.lang3.StringUtilsContainsTest", "org.apache.commons.lang3.StringUtilsEmptyBlankTest", "org.apache.commons.lang3.StringUtilsEqualsIndexOfTest", "org.apache.commons.lang3.StringUtilsIsTest", "org.apache.commons.lang3.StringUtilsStartsEndsWithTest", "org.apache.commons.lang3.StringUtilsSubstringTest", "org.apache.commons.lang3.StringUtilsTest", "org.apache.commons.lang3.StringUtilsTrimStripTest", "org.apache.commons.lang3.StringUtilsValueOfTest", "org.apache.commons.lang3.SystemUtils", "org.apache.commons.lang3.SystemUtilsTest", "org.apache.commons.lang3.ThreadUtils", "org.apache.commons.lang3.ThreadUtilsTest", "org.apache.commons.lang3.Validate", "org.apache.commons.lang3.ValidateTest", "org.apache.commons.lang3.arch.Processor", "org.apache.commons.lang3.builder.Builder", "org.apache.commons.lang3.builder.CompareToBuilder", "org.apache.commons.lang3.builder.CompareToBuilderTest", "org.apache.commons.lang3.builder.DefaultToStringStyleTest", "org.apache.commons.lang3.builder.Diff", "org.apache.commons.lang3.builder.DiffBuilder", "org.apache.commons.lang3.builder.DiffBuilderTest", "org.apache.commons.lang3.builder.DiffResult", "org.apache.commons.lang3.builder.DiffResultTest", "org.apache.commons.lang3.builder.DiffTest", "org.apache.commons.lang3.builder.Diffable", "org.apache.commons.lang3.builder.EqualsBuilder", "org.apache.commons.lang3.builder.EqualsBuilderTest", "org.apache.commons.lang3.builder.EqualsExclude", "org.apache.commons.lang3.builder.HashCodeBuilder", "org.apache.commons.lang3.builder.HashCodeBuilderAndEqualsBuilderTest", "org.apache.commons.lang3.builder.HashCodeBuilderTest", "org.apache.commons.lang3.builder.HashCodeExclude", "org.apache.commons.lang3.builder.IDKey", "org.apache.commons.lang3.builder.JsonToStringStyleTest", "org.apache.commons.lang3.builder.MultiLineToStringStyleTest", "org.apache.commons.lang3.builder.MultilineRecursiveToStringStyle", "org.apache.commons.lang3.builder.MultilineRecursiveToStringStyleTest", "org.apache.commons.lang3.builder.NoClassNameToStringStyleTest", "org.apache.commons.lang3.builder.NoFieldNamesToStringStyleTest", "org.apache.commons.lang3.builder.RecursiveToStringStyle", "org.apache.commons.lang3.builder.RecursiveToStringStyleTest", "org.apache.commons.lang3.builder.ReflectionDiffBuilder", "org.apache.commons.lang3.builder.ReflectionDiffBuilderTest", "org.apache.commons.lang3.builder.ReflectionToStringBuilder", "org.apache.commons.lang3.builder.ReflectionToStringBuilderConcurrencyTest", "org.apache.commons.lang3.builder.ReflectionToStringBuilderExcludeNullValuesTest", "org.apache.commons.lang3.builder.ReflectionToStringBuilderExcludeTest", "org.apache.commons.lang3.builder.ReflectionToStringBuilderExcludeWithAnnotationTest", "org.apache.commons.lang3.builder.ReflectionToStringBuilderMutateInspectConcurrencyTest", "org.apache.commons.lang3.builder.ReflectionToStringBuilderSummaryTest", "org.apache.commons.lang3.builder.ReflectionToStringBuilderTest", "org.apache.commons.lang3.builder.ShortPrefixToStringStyleTest", "org.apache.commons.lang3.builder.SimpleToStringStyleTest", "org.apache.commons.lang3.builder.StandardToStringStyle", "org.apache.commons.lang3.builder.StandardToStringStyleTest", "org.apache.commons.lang3.builder.ToStringBuilder", "org.apache.commons.lang3.builder.ToStringBuilderTest", "org.apache.commons.lang3.builder.ToStringExclude", "org.apache.commons.lang3.builder.ToStringStyle", "org.apache.commons.lang3.builder.ToStringStyleConcurrencyTest", "org.apache.commons.lang3.builder.ToStringStyleTest", "org.apache.commons.lang3.builder.ToStringSummary", "org.apache.commons.lang3.compare.ComparableUtils", "org.apache.commons.lang3.compare.ComparableUtilsTest", "org.apache.commons.lang3.compare.ObjectToStringComparator", "org.apache.commons.lang3.compare.ObjectToStringComparatorTest", "org.apache.commons.lang3.concurrent.AbstractCircuitBreaker", "org.apache.commons.lang3.concurrent.AbstractConcurrentInitializerTest", "org.apache.commons.lang3.concurrent.AtomicInitializer", "org.apache.commons.lang3.concurrent.AtomicInitializerTest", "org.apache.commons.lang3.concurrent.AtomicSafeInitializer", "org.apache.commons.lang3.concurrent.AtomicSafeInitializerTest", "org.apache.commons.lang3.concurrent.BackgroundInitializer", "org.apache.commons.lang3.concurrent.BackgroundInitializerTest", "org.apache.commons.lang3.concurrent.BasicThreadFactory", "org.apache.commons.lang3.concurrent.BasicThreadFactoryTest", "org.apache.commons.lang3.concurrent.CallableBackgroundInitializer", "org.apache.commons.lang3.concurrent.CallableBackgroundInitializerTest", "org.apache.commons.lang3.concurrent.CircuitBreaker", "org.apache.commons.lang3.concurrent.CircuitBreakingException", "org.apache.commons.lang3.concurrent.CircuitBreakingExceptionTest", "org.apache.commons.lang3.concurrent.Computable", "org.apache.commons.lang3.concurrent.ConcurrentException", "org.apache.commons.lang3.concurrent.ConcurrentInitializer", "org.apache.commons.lang3.concurrent.ConcurrentRuntimeException", "org.apache.commons.lang3.concurrent.ConcurrentUtils", "org.apache.commons.lang3.concurrent.ConcurrentUtilsTest", "org.apache.commons.lang3.concurrent.ConstantInitializer", "org.apache.commons.lang3.concurrent.ConstantInitializerTest", "org.apache.commons.lang3.concurrent.EventCountCircuitBreaker", "org.apache.commons.lang3.concurrent.EventCountCircuitBreakerTest", "org.apache.commons.lang3.concurrent.LazyInitializer", "org.apache.commons.lang3.concurrent.LazyInitializerTest", "org.apache.commons.lang3.concurrent.Memoizer", "org.apache.commons.lang3.concurrent.MemoizerTest", "org.apache.commons.lang3.concurrent.MultiBackgroundInitializer", "org.apache.commons.lang3.concurrent.MultiBackgroundInitializerTest", "org.apache.commons.lang3.concurrent.ThresholdCircuitBreaker", "org.apache.commons.lang3.concurrent.ThresholdCircuitBreakerTest", "org.apache.commons.lang3.concurrent.TimedSemaphore", "org.apache.commons.lang3.concurrent.TimedSemaphoreTest", "org.apache.commons.lang3.concurrent.locks.LockingVisitors", "org.apache.commons.lang3.concurrent.locks.LockingVisitorsTest", "org.apache.commons.lang3.event.EventListenerSupport", "org.apache.commons.lang3.event.EventListenerSupportTest", "org.apache.commons.lang3.event.EventUtils", "org.apache.commons.lang3.event.EventUtilsTest", "org.apache.commons.lang3.exception.AbstractExceptionContextTest", "org.apache.commons.lang3.exception.AbstractExceptionTest", "org.apache.commons.lang3.exception.CloneFailedException", "org.apache.commons.lang3.exception.CloneFailedExceptionTest", "org.apache.commons.lang3.exception.ContextedException", "org.apache.commons.lang3.exception.ContextedExceptionTest", "org.apache.commons.lang3.exception.ContextedRuntimeException", "org.apache.commons.lang3.exception.ContextedRuntimeExceptionTest", "org.apache.commons.lang3.exception.DefaultExceptionContext", "org.apache.commons.lang3.exception.DefaultExceptionContextTest", "org.apache.commons.lang3.exception.ExceptionContext", "org.apache.commons.lang3.exception.ExceptionUtils", "org.apache.commons.lang3.exception.ExceptionUtilsTest", "org.apache.commons.lang3.function.Failable", "org.apache.commons.lang3.function.FailableBiConsumer", "org.apache.commons.lang3.function.FailableBiFunction", "org.apache.commons.lang3.function.FailableBiPredicate", "org.apache.commons.lang3.function.FailableBooleanSupplier", "org.apache.commons.lang3.function.FailableCallable", "org.apache.commons.lang3.function.FailableConsumer", "org.apache.commons.lang3.function.FailableDoubleBinaryOperator", "org.apache.commons.lang3.function.FailableDoubleConsumer", "org.apache.commons.lang3.function.FailableDoubleFunction", "org.apache.commons.lang3.function.FailableDoublePredicate", "org.apache.commons.lang3.function.FailableDoubleSupplier", "org.apache.commons.lang3.function.FailableDoubleToIntFunction", "org.apache.commons.lang3.function.FailableDoubleToLongFunction", "org.apache.commons.lang3.function.FailableDoubleUnaryOperator", "org.apache.commons.lang3.function.FailableFunction", "org.apache.commons.lang3.function.FailableFunctionsTest", "org.apache.commons.lang3.function.FailableIntBinaryOperator", "org.apache.commons.lang3.function.FailableIntConsumer", "org.apache.commons.lang3.function.FailableIntFunction", "org.apache.commons.lang3.function.FailableIntPredicate", "org.apache.commons.lang3.function.FailableIntSupplier", "org.apache.commons.lang3.function.FailableIntToDoubleFunction", "org.apache.commons.lang3.function.FailableIntToLongFunction", "org.apache.commons.lang3.function.FailableIntUnaryOperator", "org.apache.commons.lang3.function.FailableLongBinaryOperator", "org.apache.commons.lang3.function.FailableLongConsumer", "org.apache.commons.lang3.function.FailableLongFunction", "org.apache.commons.lang3.function.FailableLongPredicate", "org.apache.commons.lang3.function.FailableLongSupplier", "org.apache.commons.lang3.function.FailableLongToDoubleFunction", "org.apache.commons.lang3.function.FailableLongToIntFunction", "org.apache.commons.lang3.function.FailableLongUnaryOperator", "org.apache.commons.lang3.function.FailableObjDoubleConsumer", "org.apache.commons.lang3.function.FailableObjIntConsumer", "org.apache.commons.lang3.function.FailableObjLongConsumer", "org.apache.commons.lang3.function.FailablePredicate", "org.apache.commons.lang3.function.FailableRunnable", "org.apache.commons.lang3.function.FailableShortSupplier", "org.apache.commons.lang3.function.FailableSupplier", "org.apache.commons.lang3.function.FailableToDoubleBiFunction", "org.apache.commons.lang3.function.FailableToDoubleFunction", "org.apache.commons.lang3.function.FailableToIntBiFunction", "org.apache.commons.lang3.function.FailableToIntFunction", "org.apache.commons.lang3.function.FailableToLongBiFunction", "org.apache.commons.lang3.function.FailableToLongFunction", "org.apache.commons.lang3.function.Objects", "org.apache.commons.lang3.function.ObjectsTest", "org.apache.commons.lang3.function.ToBooleanBiFunction", "org.apache.commons.lang3.function.TriFunction", "org.apache.commons.lang3.math.Fraction", "org.apache.commons.lang3.math.FractionTest", "org.apache.commons.lang3.math.IEEE754rUtils", "org.apache.commons.lang3.math.IEEE754rUtilsTest", "org.apache.commons.lang3.math.NumberUtils", "org.apache.commons.lang3.math.NumberUtilsTest", "org.apache.commons.lang3.mutable.Mutable", "org.apache.commons.lang3.mutable.MutableBoolean", "org.apache.commons.lang3.mutable.MutableBooleanTest", "org.apache.commons.lang3.mutable.MutableByte", "org.apache.commons.lang3.mutable.MutableByteTest", "org.apache.commons.lang3.mutable.MutableDouble", "org.apache.commons.lang3.mutable.MutableDoubleTest", "org.apache.commons.lang3.mutable.MutableFloat", "org.apache.commons.lang3.mutable.MutableFloatTest", "org.apache.commons.lang3.mutable.MutableInt", "org.apache.commons.lang3.mutable.MutableIntTest", "org.apache.commons.lang3.mutable.MutableLong", "org.apache.commons.lang3.mutable.MutableLongTest", "org.apache.commons.lang3.mutable.MutableObject", "org.apache.commons.lang3.mutable.MutableObjectTest", "org.apache.commons.lang3.mutable.MutableShort", "org.apache.commons.lang3.mutable.MutableShortTest", "org.apache.commons.lang3.reflect.ConstructorUtils", "org.apache.commons.lang3.reflect.ConstructorUtilsTest", "org.apache.commons.lang3.reflect.FieldUtils", "org.apache.commons.lang3.reflect.FieldUtilsTest", "org.apache.commons.lang3.reflect.InheritanceUtils", "org.apache.commons.lang3.reflect.InheritanceUtilsTest", "org.apache.commons.lang3.reflect.MemberUtils", "org.apache.commons.lang3.reflect.MethodUtils", "org.apache.commons.lang3.reflect.MethodUtilsTest", "org.apache.commons.lang3.reflect.TypeLiteral", "org.apache.commons.lang3.reflect.TypeLiteralTest", "org.apache.commons.lang3.reflect.TypeUtils", "org.apache.commons.lang3.reflect.TypeUtilsTest", "org.apache.commons.lang3.reflect.Typed", "org.apache.commons.lang3.reflect.testbed.Ambig", "org.apache.commons.lang3.reflect.testbed.Annotated", "org.apache.commons.lang3.reflect.testbed.AnotherChild", "org.apache.commons.lang3.reflect.testbed.AnotherParent", "org.apache.commons.lang3.reflect.testbed.Bar", "org.apache.commons.lang3.reflect.testbed.Foo", "org.apache.commons.lang3.reflect.testbed.GenericConsumer", "org.apache.commons.lang3.reflect.testbed.GenericParent", "org.apache.commons.lang3.reflect.testbed.GenericTypeHolder", "org.apache.commons.lang3.reflect.testbed.Grandchild", "org.apache.commons.lang3.reflect.testbed.Parent", "org.apache.commons.lang3.reflect.testbed.PrivatelyShadowedChild", "org.apache.commons.lang3.reflect.testbed.PublicChild", "org.apache.commons.lang3.reflect.testbed.PubliclyShadowedChild", "org.apache.commons.lang3.reflect.testbed.StaticContainer", "org.apache.commons.lang3.reflect.testbed.StaticContainerChild", "org.apache.commons.lang3.reflect.testbed.StringParameterizedChild", "org.apache.commons.lang3.stream.Streams", "org.apache.commons.lang3.stream.StreamsTest", "org.apache.commons.lang3.test.NotVisibleExceptionFactory", "org.apache.commons.lang3.text.CompositeFormat", "org.apache.commons.lang3.text.CompositeFormatTest", "org.apache.commons.lang3.text.ExtendedMessageFormat", "org.apache.commons.lang3.text.ExtendedMessageFormatTest", "org.apache.commons.lang3.text.FormatFactory", "org.apache.commons.lang3.text.FormattableUtils", "org.apache.commons.lang3.text.FormattableUtilsTest", "org.apache.commons.lang3.text.StrBuilder", "org.apache.commons.lang3.text.StrBuilderAppendInsertTest", "org.apache.commons.lang3.text.StrBuilderTest", "org.apache.commons.lang3.text.StrLookup", "org.apache.commons.lang3.text.StrLookupTest", "org.apache.commons.lang3.text.StrMatcher", "org.apache.commons.lang3.text.StrMatcherTest", "org.apache.commons.lang3.text.StrSubstitutor", "org.apache.commons.lang3.text.StrSubstitutorTest", "org.apache.commons.lang3.text.StrTokenizer", "org.apache.commons.lang3.text.StrTokenizerTest", "org.apache.commons.lang3.text.WordUtils", "org.apache.commons.lang3.text.WordUtilsTest", "org.apache.commons.lang3.text.translate.AggregateTranslator", "org.apache.commons.lang3.text.translate.CharSequenceTranslator", "org.apache.commons.lang3.text.translate.CodePointTranslator", "org.apache.commons.lang3.text.translate.EntityArrays", "org.apache.commons.lang3.text.translate.EntityArraysTest", "org.apache.commons.lang3.text.translate.JavaUnicodeEscaper", "org.apache.commons.lang3.text.translate.LookupTranslator", "org.apache.commons.lang3.text.translate.LookupTranslatorTest", "org.apache.commons.lang3.text.translate.NumericEntityEscaper", "org.apache.commons.lang3.text.translate.NumericEntityEscaperTest", "org.apache.commons.lang3.text.translate.NumericEntityUnescaper", "org.apache.commons.lang3.text.translate.NumericEntityUnescaperTest", "org.apache.commons.lang3.text.translate.OctalUnescaper", "org.apache.commons.lang3.text.translate.OctalUnescaperTest", "org.apache.commons.lang3.text.translate.UnicodeEscaper", "org.apache.commons.lang3.text.translate.UnicodeEscaperTest", "org.apache.commons.lang3.text.translate.UnicodeUnescaper", "org.apache.commons.lang3.text.translate.UnicodeUnescaperTest", "org.apache.commons.lang3.text.translate.UnicodeUnpairedSurrogateRemover", "org.apache.commons.lang3.text.translate.UnicodeUnpairedSurrogateRemoverTest", "org.apache.commons.lang3.time.CalendarUtils", "org.apache.commons.lang3.time.CalendarUtilsTest", "org.apache.commons.lang3.time.DateFormatUtils", "org.apache.commons.lang3.time.DateFormatUtilsTest", "org.apache.commons.lang3.time.DateParser", "org.apache.commons.lang3.time.DatePrinter", "org.apache.commons.lang3.time.DateUtils", "org.apache.commons.lang3.time.DateUtilsFragmentTest", "org.apache.commons.lang3.time.DateUtilsRoundingTest", "org.apache.commons.lang3.time.DateUtilsTest", "org.apache.commons.lang3.time.DurationFormatUtils", "org.apache.commons.lang3.time.DurationFormatUtilsTest", "org.apache.commons.lang3.time.DurationUtils", "org.apache.commons.lang3.time.DurationUtilsTest", "org.apache.commons.lang3.time.FastDateFormat", "org.apache.commons.lang3.time.FastDateFormatTest", "org.apache.commons.lang3.time.FastDateFormat_PrinterTest", "org.apache.commons.lang3.time.FastDateParser", "org.apache.commons.lang3.time.FastDateParserSDFTest", "org.apache.commons.lang3.time.FastDateParserTest", "org.apache.commons.lang3.time.FastDateParser_MoreOrLessTest", "org.apache.commons.lang3.time.FastDateParser_TimeZoneStrategyTest", "org.apache.commons.lang3.time.FastDatePrinter", "org.apache.commons.lang3.time.FastDatePrinterTest", "org.apache.commons.lang3.time.FastDatePrinterTimeZonesTest", "org.apache.commons.lang3.time.FastTimeZone", "org.apache.commons.lang3.time.FastTimeZoneTest", "org.apache.commons.lang3.time.FormatCache", "org.apache.commons.lang3.time.GmtTimeZone", "org.apache.commons.lang3.time.GmtTimeZoneTest", "org.apache.commons.lang3.time.Java15BugFastDateParserTest", "org.apache.commons.lang3.time.StopWatch", "org.apache.commons.lang3.time.StopWatchTest", "org.apache.commons.lang3.time.TimeZones", "org.apache.commons.lang3.time.WeekYearTest", "org.apache.commons.lang3.tuple.ImmutablePair", "org.apache.commons.lang3.tuple.ImmutablePairTest", "org.apache.commons.lang3.tuple.ImmutableTriple", "org.apache.commons.lang3.tuple.ImmutableTripleTest", "org.apache.commons.lang3.tuple.MutablePair", "org.apache.commons.lang3.tuple.MutablePairTest", "org.apache.commons.lang3.tuple.MutableTriple", "org.apache.commons.lang3.tuple.MutableTripleTest", "org.apache.commons.lang3.tuple.Pair", "org.apache.commons.lang3.tuple.PairTest", "org.apache.commons.lang3.tuple.Triple", "org.apache.commons.lang3.tuple.TripleTest" ],
+    "usedTypes" : [ "java.awt.Color", "java.awt.Insets", "java.beans.PropertyChangeEvent", "java.beans.PropertyChangeListener", "java.beans.PropertyChangeSupport", "java.beans.PropertyVetoException", "java.beans.VetoableChangeListener", "java.io.ByteArrayInputStream", "java.io.ByteArrayOutputStream", "java.io.CharArrayWriter", "java.io.File", "java.io.IOException", "java.io.InputStream", "java.io.ObjectInputStream", "java.io.ObjectOutputStream", "java.io.ObjectStreamClass", "java.io.OutputStream", "java.io.PrintStream", "java.io.PrintWriter", "java.io.Reader", "java.io.Serializable", "java.io.StringReader", "java.io.StringWriter", "java.io.UncheckedIOException", "java.io.UnsupportedEncodingException", "java.io.Writer", "java.lang.annotation.Annotation", "java.lang.annotation.ElementType", "java.lang.annotation.Retention", "java.lang.annotation.RetentionPolicy", "java.lang.annotation.Target", "java.lang.reflect.AccessibleObject", "java.lang.reflect.Array", "java.lang.reflect.Constructor", "java.lang.reflect.Field", "java.lang.reflect.GenericArrayType", "java.lang.reflect.GenericDeclaration", "java.lang.reflect.InvocationHandler", "java.lang.reflect.InvocationTargetException", "java.lang.reflect.Member", "java.lang.reflect.Method", "java.lang.reflect.Modifier", "java.lang.reflect.ParameterizedType", "java.lang.reflect.Proxy", "java.lang.reflect.Type", "java.lang.reflect.TypeVariable", "java.lang.reflect.UndeclaredThrowableException", "java.lang.reflect.WildcardType", "java.math.BigDecimal", "java.math.BigInteger", "java.math.RoundingMode", "java.net.URI", "java.net.URL", "java.net.URLClassLoader", "java.nio.CharBuffer", "java.nio.charset.Charset", "java.nio.charset.IllegalCharsetNameException", "java.nio.charset.StandardCharsets", "java.nio.charset.UnsupportedCharsetException", "java.nio.file.Files", "java.nio.file.Paths", "java.text.DateFormat", "java.text.DateFormatSymbols", "java.text.DecimalFormatSymbols", "java.text.FieldPosition", "java.text.Format", "java.text.MessageFormat", "java.text.Normalizer", "java.text.NumberFormat", "java.text.ParseException", "java.text.ParsePosition", "java.text.SimpleDateFormat", "java.time.Duration", "java.time.temporal.ChronoUnit", "java.util.ArrayList", "java.util.Arrays", "java.util.BitSet", "java.util.Calendar", "java.util.Collection", "java.util.Collections", "java.util.Comparator", "java.util.Date", "java.util.EnumMap", "java.util.EnumSet", "java.util.Enumeration", "java.util.Formattable", "java.util.Formatter", "java.util.GregorianCalendar", "java.util.HashMap", "java.util.HashSet", "java.util.Iterator", "java.util.LinkedHashMap", "java.util.LinkedHashSet", "java.util.LinkedList", "java.util.List", "java.util.ListIterator", "java.util.Locale", "java.util.Map", "java.util.Map.Entry", "java.util.NoSuchElementException", "java.util.Objects", "java.util.Properties", "java.util.Random", "java.util.Set", "java.util.StringJoiner", "java.util.StringTokenizer", "java.util.TimeZone", "java.util.TreeMap", "java.util.TreeSet", "java.util.UUID", "java.util.WeakHashMap", "java.util.concurrent.Callable", "java.util.concurrent.CancellationException", "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentMap", "java.util.concurrent.CopyOnWriteArrayList", "java.util.concurrent.CountDownLatch", "java.util.concurrent.ExecutionException", "java.util.concurrent.ExecutorService", "java.util.concurrent.Executors", "java.util.concurrent.Future", "java.util.concurrent.FutureTask", "java.util.concurrent.ScheduledExecutorService", "java.util.concurrent.ScheduledFuture", "java.util.concurrent.ScheduledThreadPoolExecutor", "java.util.concurrent.ThreadFactory", "java.util.concurrent.TimeUnit", "java.util.concurrent.atomic.AtomicInteger", "java.util.concurrent.atomic.AtomicLong", "java.util.concurrent.atomic.AtomicLongArray", "java.util.concurrent.atomic.AtomicReference", "java.util.concurrent.locks.Lock", "java.util.concurrent.locks.ReadWriteLock", "java.util.concurrent.locks.ReentrantReadWriteLock", "java.util.concurrent.locks.StampedLock", "java.util.function.BiConsumer", "java.util.function.BiFunction", "java.util.function.BiPredicate", "java.util.function.BinaryOperator", "java.util.function.BooleanSupplier", "java.util.function.Consumer", "java.util.function.DoubleBinaryOperator", "java.util.function.DoubleConsumer", "java.util.function.DoubleFunction", "java.util.function.DoublePredicate", "java.util.function.DoubleSupplier", "java.util.function.DoubleToIntFunction", "java.util.function.DoubleToLongFunction", "java.util.function.DoubleUnaryOperator", "java.util.function.Function", "java.util.function.IntBinaryOperator", "java.util.function.IntConsumer", "java.util.function.IntFunction", "java.util.function.IntPredicate", "java.util.function.IntSupplier", "java.util.function.IntToDoubleFunction", "java.util.function.IntToLongFunction", "java.util.function.IntUnaryOperator", "java.util.function.LongBinaryOperator", "java.util.function.LongConsumer", "java.util.function.LongFunction", "java.util.function.LongPredicate", "java.util.function.LongSupplier", "java.util.function.LongToDoubleFunction", "java.util.function.LongToIntFunction", "java.util.function.LongUnaryOperator", "java.util.function.ObjDoubleConsumer", "java.util.function.ObjIntConsumer", "java.util.function.ObjLongConsumer", "java.util.function.Predicate", "java.util.function.Supplier", "java.util.function.ToDoubleBiFunction", "java.util.function.ToDoubleFunction", "java.util.function.ToIntBiFunction", "java.util.function.ToIntFunction", "java.util.function.ToLongBiFunction", "java.util.function.ToLongFunction", "java.util.regex.Matcher", "java.util.regex.Pattern", "java.util.regex.PatternSyntaxException", "java.util.stream.Collector", "java.util.stream.Collectors", "java.util.stream.IntStream", "java.util.stream.Stream", "javax.annotation.Nonnull", "javax.annotation.Nullable", "javax.naming.event.ObjectChangeListener", "org.apache.commons.lang3.ClassUtils.Interfaces", "org.apache.commons.lang3.Functions.FailableBiConsumer", "org.apache.commons.lang3.Functions.FailableBiFunction", "org.apache.commons.lang3.Functions.FailableCallable", "org.apache.commons.lang3.Functions.FailableConsumer", "org.apache.commons.lang3.Functions.FailableFunction", "org.apache.commons.lang3.Functions.FailablePredicate", "org.apache.commons.lang3.Functions.FailableSupplier", "org.apache.commons.lang3.Streams.FailableStream", "org.apache.commons.lang3.arch.Processor.Arch", "org.apache.commons.lang3.builder.ToStringStyleTest.Person", "org.apache.commons.lang3.concurrent.locks.LockingVisitors.LockVisitor", "org.apache.commons.lang3.concurrent.locks.LockingVisitors.StampedLockVisitor", "org.apache.commons.lang3.stream.Streams.FailableStream", "org.easymock.EasyMock", "org.hamcrest.Matcher", "org.hamcrest.core.IsNot", "org.junit.jupiter.api.AfterEach", "org.junit.jupiter.api.Assertions", "org.junit.jupiter.api.BeforeAll", "org.junit.jupiter.api.BeforeEach", "org.junit.jupiter.api.Disabled", "org.junit.jupiter.api.DisplayName", "org.junit.jupiter.api.DisplayNameGeneration", "org.junit.jupiter.api.DisplayNameGenerator", "org.junit.jupiter.api.DynamicTest", "org.junit.jupiter.api.Nested", "org.junit.jupiter.api.Test", "org.junit.jupiter.api.TestFactory", "org.junit.jupiter.api.function.Executable", "org.junit.jupiter.params.ParameterizedTest", "org.junit.jupiter.params.provider.Arguments", "org.junit.jupiter.params.provider.MethodSource", "org.junitpioneer.jupiter.DefaultLocale", "org.junitpioneer.jupiter.DefaultTimeZone", "org.openjdk.jmh.annotations.Benchmark", "org.openjdk.jmh.annotations.BenchmarkMode", "org.openjdk.jmh.annotations.Mode", "org.openjdk.jmh.annotations.OutputTimeUnit", "org.openjdk.jmh.annotations.Scope", "org.openjdk.jmh.annotations.State", "org.xml.sax.SAXException", "static java.lang.annotation.ElementType", "static java.lang.annotation.RetentionPolicy", "static java.util.FormattableFlags", "static java.util.stream.Collectors", "static org.apache.commons.lang3.AnnotationUtilsTest.Stooge", "static org.apache.commons.lang3.ArraySorter", "static org.apache.commons.lang3.JavaVersion", "static org.apache.commons.lang3.compare.ComparableUtils", "static org.apache.commons.lang3.reflect.FieldUtils", "static org.easymock.EasyMock", "static org.hamcrest.MatcherAssert", "static org.hamcrest.Matchers", "static org.hamcrest.core.Is", "static org.hamcrest.core.IsEqual", "static org.hamcrest.core.IsNull", "static org.junit.jupiter.api.Assertions", "static org.junit.jupiter.api.Assumptions", "static org.junit.jupiter.api.DynamicTest", "static org.junit.jupiter.params.provider.Arguments" ]
   } ],
   "libraries" : [ {
     "name" : "jdk8",
@@ -494,77 +52,23 @@
     "libraryType" : "INVALID",
     "files" : [ ]
   }, {
-    "name" : "kieker-1.12",
-    "fullname" : "kieker-1.12",
-    "id" : "-43d64e6",
-    "libraryType" : "LOCAL",
-    "files" : [ "D:/SPLGroup/example_repo/cocome-maven-project/cloud-web-frontend/src/main/webapp/WEB-INF/lib/kieker-1.12.jar" ]
-  }, {
-    "name" : "javax.el:javax.el-api",
-    "fullname" : "javax.el:javax.el-api:3.0.1-b06",
-    "id" : "-50518c80",
+    "name" : "com.google.code.findbugs:jsr305",
+    "fullname" : "com.google.code.findbugs:jsr305:3.0.2",
+    "id" : "7a8e97f7",
     "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/javax/el/javax.el-api/3.0.1-b06/javax.el-api-3.0.1-b06.jar" ]
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar" ]
   }, {
-    "name" : "javax.enterprise:cdi-api",
-    "fullname" : "javax.enterprise:cdi-api:2.0-PFD2",
-    "id" : "-7021e3dd",
+    "name" : "net.sf.jopt-simple:jopt-simple",
+    "fullname" : "net.sf.jopt-simple:jopt-simple:6.0-alpha-3",
+    "id" : "-32629683",
     "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/javax/enterprise/cdi-api/2.0-PFD2/cdi-api-2.0-PFD2.jar" ]
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/net/sf/jopt-simple/jopt-simple/6.0-alpha-3/jopt-simple-6.0-alpha-3.jar" ]
   }, {
-    "name" : "javax.faces:jsf-impl",
-    "fullname" : "javax.faces:jsf-impl:1.2-20",
-    "id" : "2a6f3744",
+    "name" : "org.apache.commons:commons-math3",
+    "fullname" : "org.apache.commons:commons-math3:3.6.1",
+    "id" : "-716f681e",
     "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/javax/faces/jsf-impl/1.2-20/jsf-impl-1.2-20.jar" ]
-  }, {
-    "name" : "javax.inject:javax.inject",
-    "fullname" : "javax.inject:javax.inject:1",
-    "id" : "c92d491",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/javax/inject/javax.inject/1/javax.inject-1.jar" ]
-  }, {
-    "name" : "javax.interceptor:javax.interceptor-api",
-    "fullname" : "javax.interceptor:javax.interceptor-api:1.2.2",
-    "id" : "64d0b6ac",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/javax/interceptor/javax.interceptor-api/1.2.2/javax.interceptor-api-1.2.2.jar" ]
-  }, {
-    "name" : "javax.validation:validation-api",
-    "fullname" : "javax.validation:validation-api:2.0.1.Final",
-    "id" : "-18eedd8c",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/javax/validation/validation-api/2.0.1.Final/validation-api-2.0.1.Final.jar" ]
-  }, {
-    "name" : "junit:junit",
-    "fullname" : "junit:junit:4.13.2",
-    "id" : "-26d9d408",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar" ]
-  }, {
-    "name" : "net.bytebuddy:byte-buddy",
-    "fullname" : "net.bytebuddy:byte-buddy:1.10.20",
-    "id" : "-19c08b5c",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/net/bytebuddy/byte-buddy/1.10.20/byte-buddy-1.10.20.jar" ]
-  }, {
-    "name" : "net.bytebuddy:byte-buddy-agent",
-    "fullname" : "net.bytebuddy:byte-buddy-agent:1.10.20",
-    "id" : "-1fa226e4",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/net/bytebuddy/byte-buddy-agent/1.10.20/byte-buddy-agent-1.10.20.jar" ]
-  }, {
-    "name" : "org.apache.logging.log4j:log4j-1.2-api",
-    "fullname" : "org.apache.logging.log4j:log4j-1.2-api:2.14.1",
-    "id" : "-79b5466e",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/apache/logging/log4j/log4j-1.2-api/2.14.1/log4j-1.2-api-2.14.1.jar" ]
-  }, {
-    "name" : "org.apache.logging.log4j:log4j-api",
-    "fullname" : "org.apache.logging.log4j:log4j-api:2.14.1",
-    "id" : "1badda7a",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/apache/logging/log4j/log4j-api/2.14.1/log4j-api-2.14.1.jar" ]
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar" ]
   }, {
     "name" : "org.apiguardian:apiguardian-api",
     "fullname" : "org.apiguardian:apiguardian-api:1.1.1",
@@ -572,167 +76,35 @@
     "libraryType" : "MAVEN",
     "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/apiguardian/apiguardian-api/1.1.1/apiguardian-api-1.1.1.jar" ]
   }, {
-    "name" : "org.assertj:assertj-core",
-    "fullname" : "org.assertj:assertj-core:3.19.0",
-    "id" : "14e9c1f7",
+    "name" : "org.easymock:easymock",
+    "fullname" : "org.easymock:easymock:4.2",
+    "id" : "f4e71ae",
     "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/assertj/assertj-core/3.19.0/assertj-core-3.19.0.jar" ]
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/easymock/easymock/4.2/easymock-4.2.jar" ]
   }, {
-    "name" : "org.hamcrest:hamcrest-core",
-    "fullname" : "org.hamcrest:hamcrest-core:1.3",
-    "id" : "-28b7488",
+    "name" : "org.hamcrest:hamcrest",
+    "fullname" : "org.hamcrest:hamcrest:2.2",
+    "id" : "-7d9e5bf4",
     "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" ]
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar" ]
   }, {
-    "name" : "org.hibernate.javax.persistence:hibernate-jpa-2.0-api",
-    "fullname" : "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final",
-    "id" : "6ef11a5f",
+    "name" : "org.junit-pioneer:junit-pioneer",
+    "fullname" : "org.junit-pioneer:junit-pioneer:1.3.0",
+    "id" : "3dcd6df0",
     "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.1.Final/hibernate-jpa-2.0-api-1.0.1.Final.jar" ]
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit-pioneer/junit-pioneer/1.3.0/junit-pioneer-1.3.0.jar" ]
   }, {
-    "name" : "org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec",
-    "fullname" : "org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec:1.0.1.Final",
-    "id" : "4bfc256f",
+    "name" : "org.junit.jupiter:junit-jupiter",
+    "fullname" : "org.junit.jupiter:junit-jupiter:5.8.0-M1",
+    "id" : "35425993",
     "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/annotation/jboss-annotations-api_1.1_spec/1.0.1.Final/jboss-annotations-api_1.1_spec-1.0.1.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec",
-    "fullname" : "org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:1.0.2.Final",
-    "id" : "6b4a473b",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/ejb/jboss-ejb-api_3.1_spec/1.0.2.Final/jboss-ejb-api_3.1_spec-1.0.2.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.el:jboss-el-api_2.2_spec",
-    "fullname" : "org.jboss.spec.javax.el:jboss-el-api_2.2_spec:1.0.6.Final",
-    "id" : "23484df9",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/el/jboss-el-api_2.2_spec/1.0.6.Final/jboss-el-api_2.2_spec-1.0.6.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.el:jboss-el-api_3.0_spec",
-    "fullname" : "org.jboss.spec.javax.el:jboss-el-api_3.0_spec:1.0.11.Final",
-    "id" : "236ed90c",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/el/jboss-el-api_3.0_spec/1.0.11.Final/jboss-el-api_3.0_spec-1.0.11.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec",
-    "fullname" : "org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec:2.1.29.1.Final",
-    "id" : "53c0a527",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/faces/jboss-jsf-api_2.1_spec/2.1.29.1.Final/jboss-jsf-api_2.1_spec-2.1.29.1.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec",
-    "fullname" : "org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.1.Final",
-    "id" : "-25d62b47",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/interceptor/jboss-interceptors-api_1.1_spec/1.0.1.Final/jboss-interceptors-api_1.1_spec-1.0.1.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.resource:jboss-connector-api_1.6_spec",
-    "fullname" : "org.jboss.spec.javax.resource:jboss-connector-api_1.6_spec:1.0.1.Final",
-    "id" : "dcd4442",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/resource/jboss-connector-api_1.6_spec/1.0.1.Final/jboss-connector-api_1.6_spec-1.0.1.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.0_spec",
-    "fullname" : "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.0_spec:1.0.1.Final",
-    "id" : "-257546d",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/security/auth/message/jboss-jaspi-api_1.0_spec/1.0.1.Final/jboss-jaspi-api_1.0_spec-1.0.1.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.2_spec",
-    "fullname" : "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.2_spec:1.0.2.Final",
-    "id" : "-707a7410",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/servlet/jsp/jboss-jsp-api_2.2_spec/1.0.2.Final/jboss-jsp-api_2.2_spec-1.0.2.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.3_spec",
-    "fullname" : "org.jboss.spec.javax.servlet.jsp:jboss-jsp-api_2.3_spec:1.0.3.Final",
-    "id" : "-770256b0",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/servlet/jsp/jboss-jsp-api_2.3_spec/1.0.3.Final/jboss-jsp-api_2.3_spec-1.0.3.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec",
-    "fullname" : "org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec:1.1.4.Final",
-    "id" : "45344d22",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/servlet/jstl/jboss-jstl-api_1.2_spec/1.1.4.Final/jboss-jstl-api_1.2_spec-1.1.4.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec",
-    "fullname" : "org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec:1.0.2.Final",
-    "id" : "201b95cc",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/servlet/jboss-servlet-api_3.0_spec/1.0.2.Final/jboss-servlet-api_3.0_spec-1.0.2.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.servlet:jboss-servlet-api_3.1_spec",
-    "fullname" : "org.jboss.spec.javax.servlet:jboss-servlet-api_3.1_spec:1.0.2.Final",
-    "id" : "-1b528815",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/servlet/jboss-servlet-api_3.1_spec/1.0.2.Final/jboss-servlet-api_3.1_spec-1.0.2.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec",
-    "fullname" : "org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final",
-    "id" : "-76423046",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.1_spec/1.0.1.Final/jboss-transaction-api_1.1_spec-1.0.1.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec",
-    "fullname" : "org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec:1.0.1.Final",
-    "id" : "-46c6c71f",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/ws/rs/jboss-jaxrs-api_1.1_spec/1.0.1.Final/jboss-jaxrs-api_1.1_spec-1.0.1.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec",
-    "fullname" : "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.2_spec:1.0.5.Final",
-    "id" : "-4bc4dcf5",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/javax/xml/bind/jboss-jaxb-api_2.2_spec/1.0.5.Final/jboss-jaxb-api_2.2_spec-1.0.5.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec:jboss-javaee-all-6.0",
-    "fullname" : "org.jboss.spec:jboss-javaee-all-6.0:3.0.3.Final",
-    "id" : "-5cbb3d63",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jboss/spec/jboss-javaee-all-6.0/3.0.3.Final/jboss-javaee-all-6.0-3.0.3.Final.jar" ]
-  }, {
-    "name" : "org.jboss.spec:jboss-javaee-web-6.0",
-    "fullname" : "org.jboss.spec:jboss-javaee-web-6.0:3.0.3.Final",
-    "id" : "-36b6b1b0",
-    "libraryType" : "MAVEN",
-    "files" : [ ]
-  }, {
-    "name" : "org.jetbrains.kotlin:kotlin-stdlib",
-    "fullname" : "org.jetbrains.kotlin:kotlin-stdlib:1.4.20",
-    "id" : "3422ba78",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.4.20/kotlin-stdlib-1.4.20.jar" ]
-  }, {
-    "name" : "org.jetbrains.kotlin:kotlin-stdlib-jdk7",
-    "fullname" : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.20",
-    "id" : "-452efcad",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20/kotlin-stdlib-jdk7-1.4.20.jar" ]
-  }, {
-    "name" : "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
-    "fullname" : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20",
-    "id" : "22b23032",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20/kotlin-stdlib-jdk8-1.4.20.jar" ]
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit/jupiter/junit-jupiter/5.8.0-M1/junit-jupiter-5.8.0-M1.jar" ]
   }, {
     "name" : "org.junit.jupiter:junit-jupiter-api",
     "fullname" : "org.junit.jupiter:junit-jupiter-api:5.8.0-M1",
     "id" : "1902f4e6",
     "libraryType" : "MAVEN",
     "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.8.0-M1/junit-jupiter-api-5.8.0-M1.jar" ]
-  }, {
-    "name" : "org.junit.jupiter:junit-jupiter-engine",
-    "fullname" : "org.junit.jupiter:junit-jupiter-engine:5.8.0-M1",
-    "id" : "1902ef12",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.8.0-M1/junit-jupiter-engine-5.8.0-M1.jar" ]
-  }, {
-    "name" : "org.junit.jupiter:junit-jupiter-migrationsupport",
-    "fullname" : "org.junit.jupiter:junit-jupiter-migrationsupport:5.8.0-M1",
-    "id" : "-2402c48d",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit/jupiter/junit-jupiter-migrationsupport/5.8.0-M1/junit-jupiter-migrationsupport-5.8.0-M1.jar" ]
   }, {
     "name" : "org.junit.jupiter:junit-jupiter-params",
     "fullname" : "org.junit.jupiter:junit-jupiter-params:5.8.0-M1",
@@ -746,47 +118,29 @@
     "libraryType" : "MAVEN",
     "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit/platform/junit-platform-commons/1.8.0-M1/junit-platform-commons-1.8.0-M1.jar" ]
   }, {
-    "name" : "org.junit.platform:junit-platform-engine",
-    "fullname" : "org.junit.platform:junit-platform-engine:1.8.0-M1",
-    "id" : "4f7b02ce",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit/platform/junit-platform-engine/1.8.0-M1/junit-platform-engine-1.8.0-M1.jar" ]
-  }, {
-    "name" : "org.junit.vintage:junit-vintage-engine",
-    "fullname" : "org.junit.vintage:junit-vintage-engine:5.8.0-M1",
-    "id" : "41d07a64",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/junit/vintage/junit-vintage-engine/5.8.0-M1/junit-vintage-engine-5.8.0-M1.jar" ]
-  }, {
-    "name" : "org.mockito:mockito-core",
-    "fullname" : "org.mockito:mockito-core:3.8.0",
-    "id" : "555a62e1",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/mockito/mockito-core/3.8.0/mockito-core-3.8.0.jar" ]
-  }, {
     "name" : "org.objenesis:objenesis",
     "fullname" : "org.objenesis:objenesis:3.1",
     "id" : "3401be28",
     "libraryType" : "MAVEN",
     "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/objenesis/objenesis/3.1/objenesis-3.1.jar" ]
   }, {
+    "name" : "org.openjdk.jmh:jmh-core",
+    "fullname" : "org.openjdk.jmh:jmh-core:1.27",
+    "id" : "5fd1d7cf",
+    "libraryType" : "MAVEN",
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/openjdk/jmh/jmh-core/1.27/jmh-core-1.27.jar" ]
+  }, {
+    "name" : "org.openjdk.jmh:jmh-generator-annprocess",
+    "fullname" : "org.openjdk.jmh:jmh-generator-annprocess:1.27",
+    "id" : "1bdfcc66",
+    "libraryType" : "MAVEN",
+    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/openjdk/jmh/jmh-generator-annprocess/1.27/jmh-generator-annprocess-1.27.jar" ]
+  }, {
     "name" : "org.opentest4j:opentest4j",
     "fullname" : "org.opentest4j:opentest4j:1.2.0",
     "id" : "60daaf2d",
     "libraryType" : "MAVEN",
     "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar" ]
-  }, {
-    "name" : "xalan:serializer",
-    "fullname" : "xalan:serializer:2.7.1",
-    "id" : "-120da740",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/xalan/serializer/2.7.1/serializer-2.7.1.jar" ]
-  }, {
-    "name" : "xalan:xalan",
-    "fullname" : "xalan:xalan:2.7.1",
-    "id" : "6500f82a",
-    "libraryType" : "MAVEN",
-    "files" : [ "D:/Projects.github/java_projects/check_project/.m2/repository/xalan/xalan/2.7.1/xalan-2.7.1.jar" ]
   } ],
   "runtimeLibraries" : [ {
     "name" : "jdk8",
@@ -795,5 +149,5 @@
     "libraryType" : "INVALID",
     "files" : [ ]
   } ],
-  "mavenRepositories" : [ "http://repo.fusesource.com/nexus/content/groups/public/", "http://download.java.net/maven/2", "http://repo1.maven.org/maven2/", "http://download.java.net/maven/glassfish" ]
+  "mavenRepositories" : [ ]
 }
