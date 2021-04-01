@@ -50,7 +50,8 @@ public class MavenProject extends BaseProject {
     @Override
     public Module getModule(String nameOrId) {
         for (Module module : getModules()) {
-            if (((MavenModule) module).getMavenCoords().equals(nameOrId))
+            String mmcoords = ((MavenModule) module).getMavenCoords();
+            if (mmcoords.equals(nameOrId))
                 return module;
         }
 

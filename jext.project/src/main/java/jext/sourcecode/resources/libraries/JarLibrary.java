@@ -43,6 +43,11 @@ public class JarLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean isValid() {
+        return libraryFile.exists();
+    }
+
+    @Override
     public List<File> getFiles() {
         return Collections.singletonList(libraryFile);
     }

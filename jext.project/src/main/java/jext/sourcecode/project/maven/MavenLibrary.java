@@ -53,6 +53,12 @@ public class MavenLibrary extends BaseLibrary {
     // Properties
     // ----------------------------------------------------------------------
 
+    @Override
+    public boolean isValid() {
+        return getFile().exists()
+            && getFiles().stream().allMatch(File::exists);
+    }
+
     public MavenDownloader getMavenDownloader() {
         return this.md;
     }
@@ -114,17 +120,17 @@ public class MavenLibrary extends BaseLibrary {
     // Dependencies
     // ----------------------------------------------------------------------
 
-    @Override
-    public List<Library> getDependencies() {
-        if (dependencies != null)
-            return dependencies;
-
-        dependencies = getDependencies(coords).stream()
-            .map(dcoords -> new MavenLibrary(dcoords, md, project))
-            .collect(Collectors.toList());
-
-        return dependencies;
-    }
+    // @Override
+    // public List<Library> getDependencies() {
+    //     if (dependencies != null)
+    //         return dependencies;
+    //
+    //     dependencies = getDependencies(coords).stream()
+    //         .map(dcoords -> new MavenLibrary(dcoords, md, project))
+    //         .collect(Collectors.toList());
+    //
+    //     return dependencies;
+    // }
 
     private List<MavenCoords> getDependencies(MavenCoords coords) {
         return md.getDependencies(coords, MAX_DEPTH);

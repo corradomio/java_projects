@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -54,6 +55,35 @@ public class MavenModule extends BaseModule {
     }
 
     // ----------------------------------------------------------------------
+
+
+    @Override
+    public List<Module> getDependencies() {
+        if (dependencies != null)
+            return dependencies;
+
+        List<Module> dmodules = getMavenDependencies();
+        Set<Module> orderedDeps = getUsedTypesDependencies();
+        orderedDeps.addAll(dmodules);
+
+        this.dependencies = orderedDeps.isEmpty()
+            ? Collections.emptyList()
+            : new ArrayList<>(orderedDeps);
+
+        return this.dependencies;
+    }
+
+    private List<Module> getMavenDependencies() {
+        List<Module> dmodules = new ArrayList<>();
+        pom.getDependencies()
+            .stream()
+            .map(coords -> getProject().getModule(coords.toString()))
+            .filter(Objects::nonNull)
+            .forEach(dmodule -> {
+                dmodules.add(dmodule);
+            });
+        return dmodules;
+    }
 
     // @Override
     // public List<Module> getDependencies() {

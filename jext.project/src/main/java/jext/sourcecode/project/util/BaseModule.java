@@ -119,15 +119,19 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
     @Override
     public List<Module> getDependencies() {
-        //
-        // WARN: DON'T CALL IT directly!
-        //
-        // It is better to call 'getDependencies(false)'  because
-        // that method checks if 'dependencies' is already evaluated!
-        //
-
         if (dependencies != null)
             return dependencies;
+
+        Set<Module> orderedDeps = getUsedTypesDependencies();
+
+        this.dependencies = orderedDeps.isEmpty()
+            ? Collections.emptyList()
+            : new ArrayList<>(orderedDeps);
+
+        return this.dependencies;
+    }
+
+    protected Set<Module> getUsedTypesDependencies() {
 
         //
         // Identify a module dependency based on the following rule:
@@ -199,11 +203,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
             orderedDeps.add(dmodule);
         });
 
-        this.dependencies = orderedDeps.isEmpty()
-            ? Collections.emptyList()
-            : new ArrayList<>(orderedDeps);
-
-        return this.dependencies;
+        return orderedDeps;
     }
 
     // evaluate the recursive dependencies (breath first)

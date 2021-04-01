@@ -55,7 +55,7 @@ public class BuildGradleFile extends GradleFile {
      * Warn: it is not considered the 'Groovy syntax' of the file, but only
      *       its textual representation.
      */
-    public List<String> getRepositories() {
+    public Set<String> getRepositories() {
         Set<String> urlRepos = new HashSet<>();
 
         for (String line : content) {
@@ -85,7 +85,7 @@ public class BuildGradleFile extends GradleFile {
             }
         }
 
-        return new ArrayList<>(urlRepos);
+        return urlRepos;
     }
 
     // ----------------------------------------------------------------------

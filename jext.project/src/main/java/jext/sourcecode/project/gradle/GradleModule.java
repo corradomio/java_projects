@@ -35,8 +35,8 @@ public class GradleModule extends BaseModule {
     // private static final String COMPILE_CLASSPATH = "compileClasspath";
     // private static final String TEST_COMPILE_CLASSPATH = "testCompileClasspath";
 
-    // private List<Name> dmodules;
-    // private List<Library> dcoords;
+    private List<Name> dmodules;
+    private List<Library> dcoords;
     private BuildGradleFile buildGradle;
 
     // private SettingsGradleFile settingsGradle;
@@ -81,199 +81,193 @@ public class GradleModule extends BaseModule {
     // Properties
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public List<Module> getDependencies() {
-    //     if (dependencies != null)
-    //         return dependencies;
-    //
-    //     //
-    //     // Override 'BaseModule::getDependencies()' to reorder the
-    //     // dependencies based on the 'building system configuration file'
-    //     //
-    //
-    //     Set<Module> orderedDeps = new TreeSet<>(COMPARATOR);
-    //
-    //     List<Name> dnames = getGradleDependencies();
-    //
-    //     // speedup: dnames is empty
-    //     if (dnames.isEmpty())
-    //         return super.getDependencies();
-    //
-    //     dnames.forEach(dname -> {
-    //         Module dmodule = project.getModule(dname.toString());
-    //         if (dmodule != null)
-    //             orderedDeps.add(dmodule);
-    //     });
-    //
-    //     // speedup: Gradle dependencies is empty
-    //     if (orderedDeps.isEmpty())
-    //         return super.getDependencies();
-    //
-    //     // add the missing dependencies based on the module types intersection
-    //     orderedDeps.addAll(super.getDependencies());
-    //
-    //     this.dependencies = orderedDeps.isEmpty()
-    //         ? Collections.emptyList()
-    //         : new ArrayList<>(orderedDeps);
-    //
-    //     return this.dependencies;
-    // }
+    @Override
+    public List<Module> getDependencies() {
+        if (dependencies != null)
+            return dependencies;
+
+        //
+        // Override 'BaseModule::getDependencies()' to reorder the
+        // dependencies based on the 'building system configuration file'
+        //
+
+        Set<Module> orderedDeps = new TreeSet<>(COMPARATOR);
+
+        List<Name> dnames = getGradleDependencies();
+
+        // speedup: dnames is empty
+        if (dnames.isEmpty())
+            return super.getDependencies();
+
+        dnames.forEach(dname -> {
+            Module dmodule = project.getModule(dname.toString());
+            if (dmodule != null)
+                orderedDeps.add(dmodule);
+        });
+
+        // speedup: Gradle dependencies is empty
+        if (orderedDeps.isEmpty())
+            return super.getDependencies();
+
+        // add the missing dependencies based on the module types intersection
+        orderedDeps.addAll(super.getDependencies());
+
+        this.dependencies = orderedDeps.isEmpty()
+            ? Collections.emptyList()
+            : new ArrayList<>(orderedDeps);
+
+        return this.dependencies;
+    }
 
     // ----------------------------------------------------------------------
     // Libraries
     // ----------------------------------------------------------------------
 
-    // ----------------------------------------------------------------------
-
     @Override
     public Set<String> getMavenRepositories() {
-        // return buildGradle.getRepositories();
-        return getGradleProject().getMavenRepositories(this);
+        if (getGradleProject().isDependenciesResolved())
+            return getGradleProject().getMavenRepositories(this);
+        else
+            return buildGradle.getRepositories();
     }
 
     @Override
     protected List<Library> getMavenLibraries() {
-        // if (dcoords == null)
-        //     retrieveDependencies();
-        // return dcoords;
-        return getGradleProject().getMavenDependencies(this);
+        if (getGradleProject().isDependenciesResolved())
+            return getGradleProject().getMavenLibraries(this);
+        if (dcoords == null)
+            retrieveDependencies();
+        return dcoords;
     }
 
-    // private List<Name> getGradleDependencies() {
-    //     if (dmodules == null)
-    //         retrieveDependencies();
-    //     return dmodules;
-    // }
+    private List<Name> getGradleDependencies() {
+        if (dmodules == null)
+            retrieveDependencies();
+        return dmodules;
+    }
 
-    // private void retrieveDependencies() {
-    //
-    //     // initialize to avoid NullPointerException(s)
-    //     dmodules = Collections.emptyList();
-    //     dcoords = Collections.emptyList();
-    //
-    //     if (project.isAborted()) return;
-    //
-    //     logger.debugf("retrieveDependencies");
-    //
-    //     String dependenciesTask = toTask("dependencies");
-    //     ErrorsCollector err = new ErrorsCollector(logger);
-    //     DependenciesCollector collector = new DependenciesCollector();
-    //     LoggerCollector logcoll = new LoggerCollector(logger, collector);
-    //     try(ProjectConnection connection = getGradleProject().getConnection()) {
-    //         connection
-    //             .newBuild().forTasks(dependenciesTask)
-    //             .withArguments("--continue")
-    //             // .setStandardOutput(collector)            // this
-    //             .setStandardOutput(logcoll)                 // OR this
-    //             .setStandardError(err)
-    //             .run();
-    //     }
-    //     catch (BuildException e) {
-    //         String message = e.getCause().getMessage();
-    //         if (!message.contains("not found in root project"))
-    //             logger.error(e);
-    //     }
-    //     finally {
-    //         logcoll.close();
-    //         collector.close();
-    //         err.close();
-    //     }
-    //
-    //     // String gradleConfiguration = project.getProperties().getProperty(GradleProject.GRADLE_CONFIGURATION, COMPILE_CLASSPATH);
-    //     // 2021/02/22: it is necessary to collect MULTIPLE gradle configurations. At minimum:
-    //     //
-    //     //  1) all configurations containing 'default'
-    //     //  2) all configurations containing 'compile'
-    //     //  3) all configurations containing 'implementation' because 'compile' is deprecated
-    //     //  4) all configurations containing 'test' because we are include also the source files used for tests
-    //     //
-    //
-    //     Set<String> dmods = new HashSet<>();
-    //     Set<String> dlibs = new HashSet<>();
-    //
-    //     for (String configurationName : collector.getConfigurationNames()) {
-    //         if (!isConfigurationValid(configurationName))
-    //             continue;
-    //
-    //         dlibs.addAll(collector.getLibraries(configurationName));
-    //         dmods.addAll(collector.getProjects(configurationName));
-    //     }
-    //
-    //     MavenDownloader md = project.getLibraryDownloader();
-    //
-    //     List<MavenCoords> coords = dlibs.stream()
-    //         .map(MavenCoords::new)
-    //         .collect(Collectors.toList());
-    //     md.checkArtifacts(coords, false);
-    //
-    //     dmodules = dmods
-    //         .stream()
-    //         .map(name -> project.getModule(name))
-    //         .filter(Objects::nonNull)
-    //         .map(Module::getName)
-    //         .sorted()
-    //         .collect(Collectors.toList());
-    //
-    //     dcoords = coords
-    //         .stream()
-    //         .sorted()
-    //         .map(dcoords -> new MavenLibrary(dcoords, md, project))
-    //         .collect(Collectors.toList());
-    // }
+    private void retrieveDependencies() {
 
-    // private static boolean isConfigurationValid(String configurationName) {
-    //     for (String validName : VALID_NAMES)
-    //         if (configurationName.contains(validName))
-    //             return true;
-    //     return false;
-    // }
+        // initialize to avoid NullPointerException(s)
+        dmodules = Collections.emptyList();
+        dcoords = Collections.emptyList();
+
+        if (project.isAborted()) return;
+
+        logger.debugf("retrieveDependencies");
+
+        String dependenciesTask = toTask("dependencies");
+        ErrorsCollector err = new ErrorsCollector(logger);
+        DependenciesCollector collector = new DependenciesCollector();
+        LoggerCollector logcoll = new LoggerCollector(logger, collector);
+        try(ProjectConnection connection = getGradleProject().getConnection()) {
+            connection
+                .newBuild().forTasks(dependenciesTask)
+                .withArguments("--continue")
+                // .setStandardOutput(collector)            // this
+                .setStandardOutput(logcoll)                 // OR this
+                .setStandardError(err)
+                .run();
+        }
+        catch (BuildException e) {
+            String message = e.getCause().getMessage();
+            if (!message.contains("not found in root project"))
+                logger.error(e);
+        }
+        finally {
+            logcoll.close();
+            collector.close();
+            err.close();
+        }
+
+        // String gradleConfiguration = project.getProperties().getProperty(GradleProject.GRADLE_CONFIGURATION, COMPILE_CLASSPATH);
+        // 2021/02/22: it is necessary to collect MULTIPLE gradle configurations. At minimum:
+        //
+        //  1) all configurations containing 'default'
+        //  2) all configurations containing 'compile'
+        //  3) all configurations containing 'implementation' because 'compile' is deprecated
+        //  4) all configurations containing 'test' because we are include also the source files used for tests
+        //
+
+        Set<String> dmods = new HashSet<>();
+        Set<String> dlibs = new HashSet<>();
+
+        for (String configurationName : collector.getConfigurationNames()) {
+            if (!isConfigurationValid(configurationName))
+                continue;
+
+            dlibs.addAll(collector.getLibraries(configurationName));
+            dmods.addAll(collector.getProjects(configurationName));
+        }
+
+        MavenDownloader md = project.getLibraryDownloader();
+
+        List<MavenCoords> coords = dlibs.stream()
+            .map(MavenCoords::new)
+            .collect(Collectors.toList());
+        md.checkArtifacts(coords, false);
+
+        dmodules = dmods
+            .stream()
+            .map(name -> project.getModule(name))
+            .filter(Objects::nonNull)
+            .map(Module::getName)
+            .sorted()
+            .collect(Collectors.toList());
+
+        dcoords = coords
+            .stream()
+            .sorted()
+            .map(dcoords -> new MavenLibrary(dcoords, md, project))
+            .collect(Collectors.toList());
+    }
+
+    private static boolean isConfigurationValid(String configurationName) {
+        for (String validName : GradleProject.VALID_CONFIGURATIONS)
+            if (configurationName.contains(validName))
+                return true;
+        return false;
+    }
 
     // ----------------------------------------------------------------------
     // Modules
     // ----------------------------------------------------------------------
 
     // Used to retrieve the list of project modules
-    // public List<GradleModule> getModules(){
-    //
-    //     List<GradleModule> modules = new ArrayList<>();
-    //
-    //     String projectsTask = toTask("projects");
-    //     ErrorsCollector err = new ErrorsCollector(logger);
-    //     ProjectsCollector projects = new ProjectsCollector();
-    //     LoggerCollector logcoll = new LoggerCollector(logger, projects);
-    //     try(ProjectConnection connection = getGradleProject().getConnection()) {
-    //         connection
-    //             .newBuild().forTasks(projectsTask)
-    //                 .withArguments("--continue")
-    //             // .setStandardOutput(projects)             // this
-    //             .setStandardOutput(logcoll)                 // OR this
-    //             .setStandardError(err)
-    //             .run();
-    //     }
-    //     catch (BuildException e) {
-    //         String message = e.getCause().getMessage();
-    //         if (!message.contains("not found in root project"))
-    //             logger.error(e, e);
-    //     }
-    //     // catch (Throwable t) {
-    //     //     logger.error(t, t);
-    //     // }
-    //     finally {
-    //         projects.close();
-    //         err.close();
-    //     }
-    //
-    //     projects.forEach(name -> {
-    //         GradleModule module = (GradleModule) project.getModule(name);
-    //         if (module == null) {
-    //             module = new GradleModule(name, this);
-    //             getGradleProject().addGradleModule(module);
-    //         }
-    //         modules.add(module);
-    //     });
-    //
-    //     return modules;
-    // }
+    public List<GradleModule> getModules(){
+
+        List<GradleModule> modules = new ArrayList<>();
+
+        String projectsTask = toTask("projects");
+        ErrorsCollector err = new ErrorsCollector(logger);
+        ProjectsCollector projects = new ProjectsCollector();
+        LoggerCollector logcoll = new LoggerCollector(logger, projects);
+        try(ProjectConnection connection = getGradleProject().getConnection()) {
+            connection
+                .newBuild().forTasks(projectsTask)
+                    .withArguments("--continue")
+                // .setStandardOutput(projects)             // this
+                .setStandardOutput(logcoll)                 // OR this
+                .setStandardError(err)
+                .run();
+        }
+        catch (BuildException e) {
+            String message = e.getCause().getMessage();
+            if (!message.contains("not found in root project"))
+                logger.error(e, e);
+        }
+        finally {
+            projects.close();
+            err.close();
+        }
+
+        projects.forEach(name -> {
+            GradleModule module = (GradleModule) getGradleProject().newModule(name);
+            modules.add(module);
+        });
+
+        return modules;
+    }
 
     // ----------------------------------------------------------------------
     // Implementation

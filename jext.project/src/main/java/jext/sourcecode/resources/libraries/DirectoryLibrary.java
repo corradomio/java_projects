@@ -45,6 +45,11 @@ public class DirectoryLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean isValid() {
+        return libraryFile.exists() && libraryFile.isDirectory();
+    }
+
+    @Override
     public synchronized List<File> getFiles() {
         checkFilesNoSync();
         return libraryFiles;

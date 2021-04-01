@@ -25,6 +25,11 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
     }
 
     @Override
+    public boolean isValid() {
+        return false;
+    }
+
+    @Override
     public LibraryType getLibraryType() {
         return LibraryType.INVALID;
     }
@@ -44,10 +49,10 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
         return "0";
     }
 
-    @Override
-    public List<Library> getDependencies() {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Library> getDependencies() {
+    //     return Collections.emptyList();
+    // }
 
     @Override
     public List<File> getFiles() {

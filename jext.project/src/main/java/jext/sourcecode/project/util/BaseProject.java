@@ -194,7 +194,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         moduleDirs.forEach(moduleHome -> {
             Module module = newModule(moduleHome);
-            module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_FROM_CONFIGURATION_FILE);
+            module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_CONFIGURATION_FILE);
             modules.add(module);
         });
 
@@ -330,7 +330,7 @@ public abstract class BaseProject extends NamedObject implements Project {
             .filter(sourceRoot -> !isModuleHome(sourceRoot))
             .forEach(sourceRoot -> {
                 Module module = newModule(sourceRoot);
-                module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_FROM_SOURCE_ROOTS);
+                module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_SOURCE_ROOTS);
                 modules.add(module);
 
                 logger.warnf("Added module %s based on source root '%s'", module.getName(), module.getModuleHome());
@@ -360,7 +360,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         // if the ROOT module is not present it is ADDED
         if (!hasRootModule()) {
             Module rootModule = newModule(projectHome);
-            rootModule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_IS_MISSING);
+            rootModule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
             modules.add(rootModule);
 
             logger.warnf("Added Root module");

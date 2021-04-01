@@ -89,10 +89,10 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return FileUtils.digest(libraryFile);
     }
 
-    @Override
-    public List<Library> getDependencies() {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Library> getDependencies() {
+    //     return Collections.emptyList();
+    // }
 
     // @Override
     // public boolean isLocal() {

@@ -7,7 +7,15 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
+import jext.util.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -139,4 +147,48 @@ public class ProjectUtils {
         return mavenRepos;
     }
 
+    // ----------------------------------------------------------------------
+
+    public static long countCodeLines(File projectHome, String extension) {
+        long[] total = new long[1];
+        try {
+            Files.walkFileTree(projectHome.toPath(), new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    File file = dir.toFile();
+                    if (file.getName().startsWith("."))
+                        return FileVisitResult.SKIP_SUBTREE;
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                    File file = path.toFile();
+                    if (file.getName().endsWith(extension)) {
+                        List<String> lines = FileUtils.toStrings(file);
+                        long blankLines = lines
+                            .stream()
+                            .map(String::trim)
+                            .filter(String::isEmpty)
+                            .count();
+                        total[0] += lines.size() - blankLines;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path path, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+
+        }
+        return total[0];
+    }
 }

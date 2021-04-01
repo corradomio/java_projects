@@ -48,11 +48,10 @@ public interface Project extends IdNamed {
 
     String ROOT_MODULE_NAME = "";
     String MODULE_DEFINITION = "module.definition";
-    String MODULE_DEFINITION_AUTOMATIC = "automatic";
+    String MODULE_DEFINITION_BY_HEURISTIC = "heuristic";
     String MODULE_DEFINITION_BY_CONFIGURATION = "configuration";
-    String MODULE_DEFINITION_FROM_CONFIGURATION_FILE = "fromConfigurationFile";
-    String MODULE_DEFINITION_IS_MISSING = "wasMissing";
-    String MODULE_DEFINITION_FROM_SOURCE_ROOTS = "sourceRoots";
+    String MODULE_DEFINITION_BY_CONFIGURATION_FILE = "configurationFile";
+    String MODULE_DEFINITION_BY_SOURCE_ROOTS = "sourceRoots";
 
     // ----------------------------------------------------------------------
 

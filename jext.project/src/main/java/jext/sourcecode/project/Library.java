@@ -9,6 +9,14 @@ import java.util.Set;
 
 public interface Library extends IdNamed {
 
+    /**
+     * Check if the library is valid, that is the list of files
+     * returned by 'getFiles()' are present locally
+     *
+     * @return
+     */
+    boolean isValid();
+
     /** Project owner of this library */
     Project getProject();
 
@@ -20,11 +28,6 @@ public interface Library extends IdNamed {
     Module getModule();
     String getModuleId();
 
-    // /**
-    //  * If the library is defined locally (in a local jar)
-    //  */
-    // boolean isLocal();
-
     /** Library tpe */
     LibraryType getLibraryType();
 
@@ -34,10 +37,11 @@ public interface Library extends IdNamed {
     /** Local library file. For MAVEN libraries, it is the ".pom" file */
     File getFile();
 
+    /** An hash code of the file */
     String getDigest();
 
     /** Dependency libraries (MAVEN) */
-    List<? extends Library> getDependencies();
+    // List<? extends Library> getDependencies();
 
     /**
      * List of file composing this library.
@@ -66,8 +70,6 @@ public interface Library extends IdNamed {
     // Versions
 
     String getVersion();
-
-    // String getLatestVersion();
 
     String getLatest();
 

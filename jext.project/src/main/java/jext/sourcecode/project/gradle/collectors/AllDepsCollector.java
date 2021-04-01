@@ -2,9 +2,13 @@ package jext.sourcecode.project.gradle.collectors;
 
 import jext.io.LineOutputStream;
 import jext.util.LogDigester;
+import jext.util.SetUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -23,10 +27,11 @@ public class AllDepsCollector extends LineOutputStream {
 
     private LogDigester digester;
 
-    public Set<String> mavenRepos = new HashSet<>();
+    private Set<String> mavenRepos = new HashSet<>();
+    private Set<String> projectsCoords = new HashSet<>();
 
     // gradle project -> configuration -> set of libraries
-    public Map<String, Map<String, GradleDeps>> pdeps = new HashMap<>();
+    private Map<String, Map<String, GradleDeps>> pdeps = new HashMap<>();
 
     private String currentProject = "";
     private Map<String, GradleDeps> configurations;
@@ -54,12 +59,45 @@ public class AllDepsCollector extends LineOutputStream {
         // MavenRepository 'url'
         digester.addRule(STATE_PROJECT, "MavenRepository '([0-9A-Za-z_$%:/\\-]+)'", this::addMavenRepository);
 
+        // MavenCoords '...'
+        digester.addRule(STATE_PROJECT, "MavenCoords '([0-9A-Za-z_$:.-]+)'", this::addMavenCoords);
+
         // <configurationName>
         digester.addRule(STATE_CONFIGURATIONS, "([0-9A-Za-z_$]+).*", this::addConfiguration);
 
         // +--- org.jboss.logging:jboss-logging-processor:2.1.0.Final
         digester.addRule(STATE_DEPENDENCIES, "[\\s\\|\\\\+-]+([0-9A-Za-z_$:.-]+).*", this::addLibrary);
         digester.addRule(STATE_DEPENDENCIES, "", STATE_CONFIGURATIONS);
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public List<String> getGradleProjectNames() {
+        return new ArrayList<>(pdeps.keySet());
+    }
+
+    public boolean isGradleProject(String gradleProjectName) {
+        return pdeps.containsKey(gradleProjectName);
+    }
+
+    public  Set<String> getMavenLibraries(String gradleProjectName, String configurationName) {
+        Map<String, GradleDeps> deps = pdeps.getOrDefault(gradleProjectName, Collections.emptyMap());
+        if (!deps.containsKey(configurationName))
+            return Collections.emptySet();
+
+        // retrieve the list of registered libraries
+        Set<String> libraries = deps.get(configurationName).libraries;
+
+        // remove the local projects registered as maven libraries
+        libraries = SetUtils.difference(libraries, projectsCoords);
+
+        return libraries;
+    }
+
+    public Set<String> getMavenRepositories() {
+        return mavenRepos;
     }
 
     // ----------------------------------------------------------------------
@@ -86,6 +124,12 @@ public class AllDepsCollector extends LineOutputStream {
     private int addMavenRepository(int state, Matcher matcher, String line) {
         String mavenUrl = matcher.group(1);
         this.mavenRepos.add(mavenUrl);
+        return state;
+    }
+
+    private int addMavenCoords(int state, Matcher matcher, String line) {
+        String mavenCoords = matcher.group(1);
+        this.projectsCoords.add(mavenCoords);
         return state;
     }
 
