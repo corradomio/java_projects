@@ -10,6 +10,7 @@
     <modules>
         <module>jgrapht-core</module>
         <module>jgrapht-io</module>
+        <module>jgrapht-neo4j</module>
     </modules>
     <packaging>pom</packaging>
 

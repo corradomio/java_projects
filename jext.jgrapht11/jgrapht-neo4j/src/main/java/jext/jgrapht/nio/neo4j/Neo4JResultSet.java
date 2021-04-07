@@ -1,13 +1,12 @@
-package jext.graph.neo4j;
+package jext.jgrapht.nio.neo4j;
 
-import jext.graph.GraphIterator;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class Neo4JResultSet<T> implements GraphIterator<T> {
