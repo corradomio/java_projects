@@ -8,6 +8,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.GraphExporter;
 import org.jgrapht.nio.GraphImporter;
+import org.jgrapht.nio.csv.CSVExporter;
 import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.File;
@@ -31,8 +32,8 @@ public class App {
         ;
         imp.importGraph(g, new File("config/neo4j.properties"));
 
-        GraphExporter<String, DefaultEdge>  exp = new DOTExporter<>();
-        exp.exportGraph(g, new File("graph.dot"));
+        GraphExporter<String, DefaultEdge>  exp = new CSVExporter<>();
+        exp.exportGraph(g, new File("graph.csv"));
 
         Graphs.describe(g);
 
