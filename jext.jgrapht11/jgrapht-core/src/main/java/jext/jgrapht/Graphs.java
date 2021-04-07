@@ -274,6 +274,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // ----------------------------------------------------------------------
 
     public static <V, E> void describe(Graph<V, E> g) {
-        System.out.println("Graph: |V|=%d, |E|=%d\n");
+        System.out.printf("Graph: |V|=%d, |E|=%d\n", g.vertexSet().size(), g.edgeSet().size());
     }
 }
