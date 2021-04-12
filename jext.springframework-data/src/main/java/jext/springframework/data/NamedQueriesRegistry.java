@@ -36,34 +36,46 @@ public class NamedQueriesRegistry {
             </configuration>
      */
 
+    private static final String QUERIES = "/configuration/system/graphdb/namedqueries/query";
+    private static final String NAME = "name";
+
+    private File namedQueriesFile;
+    private long nqfTimestamp;
+
     private Map<String, String> namedQueries = new HashMap<>();
 
-    // /configuration/system/graphdb/namedqueries/query
-    private String queries = "/configuration/system/graphdb/namedqueries/query";
-    // name
-    private String name = "name";
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    public NamedQueriesRegistry(File namedQueriesFile) {
+        this.namedQueriesFile = namedQueriesFile;
+        this.nqfTimestamp = 0;
+    }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
-    public void setQueriesPath(String xpath) {
-        this.queries = xpath;
-    }
+    public String get(String name) {
+        if (this.nqfTimestamp < namedQueriesFile.lastModified())
+            loadQueries();
 
-    public void setQueryName(String name) {
-        this.name = name;
+        return namedQueries.get(name);
     }
 
     // ----------------------------------------------------------------------
     // Load Queries
     // ----------------------------------------------------------------------
 
-    public void loadQueries(String definitionQueries) {
-        loadQueries(new File(definitionQueries));
-    }
+    private void loadQueries(){
+        File definitionQueries = this.namedQueriesFile;
+        if (!definitionQueries.exists()) {
+            logger.error(String.format("Named queries file %s not found", definitionQueries.getAbsolutePath()));
+            this.nqfTimestamp = Long.MAX_VALUE;
+            return;
+        }
 
-    public void loadQueries(File definitionQueries){
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(false);
@@ -71,15 +83,24 @@ public class NamedQueriesRegistry {
             Document doc = builder.parse(definitionQueries);
 
             XPath xPath = XPathFactory.newInstance().newXPath();
-            NodeList nodeList = (NodeList) xPath.compile(queries).evaluate(doc, XPathConstants.NODESET);
+            NodeList nodeList = (NodeList) xPath.compile(QUERIES).evaluate(doc, XPathConstants.NODESET);
+
+            logger.info(String.format("configure [%s]", definitionQueries.getAbsolutePath()));
+
+            this.namedQueries.clear();
 
             for (int i = 0; i < nodeList.getLength(); ++i) {
                 Element query = (Element) nodeList.item(i);
-                String name = query.getAttribute(this.name);
+                String name = query.getAttribute(NAME);
                 String body = trim(query.getTextContent());
 
                 this.namedQueries.put(name, body);
+
+                logger.info(String.format("   %s", name));
             }
+            logger.info("done");
+
+            this.nqfTimestamp = definitionQueries.lastModified();
         }
         catch (Exception e) {
             logger.error(String.format("Unable to parse %s: %s", definitionQueries.toString(), e.toString()));
@@ -88,19 +109,14 @@ public class NamedQueriesRegistry {
 
     private static String trim(String s) {
         StringBuilder sb = new StringBuilder();
-        Arrays.asList(s.split("\n"))
-            .stream()
-            .map(part -> part.trim())
+        Arrays.stream(s.split("\n"))
+            .map(String::trim)
             .forEach(part -> {
                 if (sb.length() > 0)
                     sb.append("\n");
                 sb.append(part);
             });
         return sb.toString().trim();
-    }
-
-    public String get(String name) {
-        return namedQueries.get(name);
     }
 
 }

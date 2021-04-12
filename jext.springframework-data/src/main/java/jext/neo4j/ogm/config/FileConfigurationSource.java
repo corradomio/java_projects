@@ -1,7 +1,7 @@
 package jext.neo4j.ogm.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class FileConfigurationSource extends org.neo4j.ogm.config.FileConfigurationSource {
 
-    private static Logger logger = LogManager.getLogger(FileConfigurationSource.class);
+    private static Logger logger = LoggerFactory.getLogger(FileConfigurationSource.class);
 
     private Properties ref;
 

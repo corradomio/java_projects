@@ -4,7 +4,6 @@ import org.neo4j.ogm.model.QueryStatistics;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 
-import java.io.Serializable;
 import java.util.Map;
 
 public interface Neo4jOgmSessionExecutor<T> {

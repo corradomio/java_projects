@@ -29,9 +29,9 @@ import java.util.Optional;
 
 // @Repository
 public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleNeo4jRepository<T, ID>
-    implements Neo4jRepository<T, ID>
-    , CypherdslStatementExecutor<T>
-    , Neo4jOgmSessionExecutor<T>
+        implements Neo4jRepository<T, ID>
+        , CypherdslStatementExecutor<T>
+        , Neo4jOgmSessionExecutor<T>
 {
 
     // ----------------------------------------------------------------------
@@ -41,16 +41,12 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
     private static final String VERSION = "1.0.0";
     private Logger logger;
     private static Renderer cypherRenderer = Renderer.getDefaultRenderer();
-    private Class<T> domainClass;
-    private Session session;
+    private final Class<T> domainClass;
+    private final Session session;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
-
-    // public ExtendedNeo4jRepository(Neo4jOperations neo4jOperations, Neo4jEntityInformation<T, ID> entityInformation) {
-    //     super(neo4jOperations, entityInformation);
-    // }
 
     public ExtendedNeo4jRepository(Class<T> domainClass, Session session) {
         super(domainClass, session);
@@ -146,30 +142,30 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
         // ... RETURN n ORDER BY n.
         if (pageable.isPaged() && pageable.getSort().isSorted())
             statement = noReturn
-                .returning(variable)
-                .orderBy(OrderBy.of(pageable.getSort(), variable))
-                .skip(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .build();
+                    .returning(variable)
+                    .orderBy(OrderBy.of(pageable.getSort(), variable))
+                    .skip(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .build();
         else if (pageable.isPaged())
             statement = noReturn
-                .returning(variable)
-                .skip(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .build();
+                    .returning(variable)
+                    .skip(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .build();
         else if (pageable.getSort().isSorted())
             statement = noReturn
-                .returning(variable)
-                .orderBy(OrderBy.of(pageable.getSort(), variable))
-                .skip(0)
-                .build();
+                    .returning(variable)
+                    .orderBy(OrderBy.of(pageable.getSort(), variable))
+                    .skip(0)
+                    .build();
         else
             statement = noReturn.returning(variable)
-                .build();
+                    .build();
 
         String cypher = cypherRenderer.render(statement);
 
-        List<T> content = PageContent.toList(session.query(getDomainClass(), cypher, Collections.emptyMap()));
+        List<T> content = PageUtils.toList(session.query(getDomainClass(), cypher, Collections.emptyMap()));
 
         FunctionInvocation count = Functions.count(Cypher.anyNode(variable));
         statement = noReturn.returning(count).build();
@@ -195,40 +191,6 @@ public class ExtendedNeo4jRepository<T, ID extends Serializable> extends SimpleN
     public boolean exists(ExposesReturning noReturn, String variable) {
         return count(noReturn, variable) > 0;
     }
-
-    // ----------------------------------------------------------------------
-    // Find by Example
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // public <S extends T> Optional<S> findOne(Example<S> example) {
-    //     return Optional.empty();
-    // }
-    //
-    // @Override
-    // public <S extends T> List<S> findAll(Example<S> example) {
-    //     return Collections.emptyList();
-    // }
-    //
-    // @Override
-    // public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
-    //     return Collections.emptyList();
-    // }
-    //
-    // @Override
-    // public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
-    //     return Page.empty();
-    // }
-    //
-    // @Override
-    // public <S extends T> long count(Example<S> example) {
-    //     return 0;
-    // }
-    //
-    // @Override
-    // public <S extends T> boolean exists(Example<S> example) {
-    //     return false;
-    // }
 
     // ----------------------------------------------------------------------
     // End
