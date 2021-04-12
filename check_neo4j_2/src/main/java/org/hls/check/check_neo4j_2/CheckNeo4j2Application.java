@@ -1,15 +1,11 @@
 package org.hls.check.check_neo4j_2;
 
 import org.hls.check.check_neo4j_2.truffa.AtmRepository;
-import org.neo4j.cypherdsl.core.Cypher;
-import org.neo4j.cypherdsl.core.ExposesReturning;
-import org.neo4j.cypherdsl.core.Node;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScans;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 

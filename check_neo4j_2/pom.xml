@@ -11,21 +11,21 @@
     <groupId>org.hls.check</groupId>
     <artifactId>check_neo4j_2</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>check_neo4j_2</name>
-    <description>Demo project for Spring Boot</description>
+    <packaging>pom</packaging>
 
     <properties>
         <java.version>1.8</java.version>
     </properties>
 
     <modules>
-        <module>../jext.springframework</module>
+        <module>../jext.commons</module>
+        <module>../jext.springframework-data</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.springframework</artifactId>
+            <artifactId>jext.springframework-data</artifactId>
             <version>1.0</version>
         </dependency>
 
