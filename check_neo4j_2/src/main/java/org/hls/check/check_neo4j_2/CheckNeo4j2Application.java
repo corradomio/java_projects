@@ -1,13 +1,16 @@
 package org.hls.check.check_neo4j_2;
 
-import org.hls.check.check_neo4j_2.truffa.AtmRepository;
+import jext.springframework.data.Neo4JIndices;
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
+
+import java.io.IOException;
 
 @SpringBootApplication
 @EnableNeo4jRepositories()
@@ -20,14 +23,24 @@ public class CheckNeo4j2Application {
     }
 
     @Bean
-    CommandLineRunner demo1(AtmRepository repository) {
+    CommandLineRunner demo(Neo4JIndices indices) {
         return args -> {
-            repository.findAll( PageRequest.of(1, 10))
-                    .forEach(atm -> {
-                        System.out.printf("Atm %s: %s\n", atm.getId(), atm.getName());
-                    });
+            indices.getIndexes().forEach(id -> {
+                System.out.println(id);
+            });
         };
+
     }
+
+    // @Bean
+    // CommandLineRunner demo1(AtmRepository repository) {
+    //     return args -> {
+    //         repository.findAll( PageRequest.of(1, 10))
+    //                 .forEach(atm -> {
+    //                     System.out.printf("Atm %s: %s\n", atm.getId(), atm.getName());
+    //                 });
+    //     };
+    // }
 
     // @Bean
     // CommandLineRunner demo2(AtmRepository repository) {

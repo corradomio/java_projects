@@ -14,7 +14,17 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>8</java.version>
+
+        <spring.boot.version>2.4.0</spring.boot.version>
+        <spring.version>5.3.1</spring.version>
+        <spring.data.version>5.3.5.RELEASE</spring.data.version>
+        <spring.boot.version>2.4.0</spring.boot.version>
+        <log4j.version>2.13.3</log4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <lombok.version>1.18.16</lombok.version>
+        <cypherdsl.version>2020.1.1</cypherdsl.version>
+
     </properties>
 
     <modules>
@@ -29,9 +39,23 @@
             <version>1.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-log4j2 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring.boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>${spring.boot.version}</version>
         </dependency>
 
 <!--        <dependency>-->
