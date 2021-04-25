@@ -2,11 +2,9 @@ package jext.util;
 
 import jext.logging.Logger;
 
-import javax.xml.bind.DatatypeConverter;
-import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,24 +13,48 @@ import java.util.regex.Pattern;
 
 public class StringUtils {
 
+    private static final Logger logger = Logger.getLogger(StringUtils.class) ;
+
     private static final String EMPTY_STRING = "";
     private static final String[] EMPTY_ARRAY = new String[0];
-    private static Logger logger = Logger.getLogger(StringUtils.class) ;
 
+    // ----------------------------------------------------------------------
+    // Empty String
+    // Empty String Array
+    // ----------------------------------------------------------------------
 
     public static String empty() {
         return EMPTY_STRING;
     }
-
     public static String[] emptyArray() { return EMPTY_ARRAY; }
 
     public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
     }
+    public static boolean isNotEmpty(String s) { return s != null && s.length() > 0; }
+
+    // ----------------------------------------------------------------------
+    // Compose
+    // ----------------------------------------------------------------------
+    //  strings + separator -> <string1><separator><string2>...
+
+    public static String compose(Collection<String> v, String sep) {
+        if (v == null || v.size() == 0)
+            return "";
+
+        Iterator<String> it = v.iterator();
+        StringBuilder sb = new StringBuilder();
+        sb.append(it.next());
+        while(it.hasNext()) {
+            sb.append(sep);
+            sb.append(it.next());
+        }
+        return sb.toString();
+    }
 
     public static String compose(String[] v, String sep) {
         if (v == null || v.length == 0)
-            return EMPTY_STRING;
+            return "";
 
         StringBuilder sb = new StringBuilder();
         sb.append(v[0]);
@@ -43,11 +65,70 @@ public class StringUtils {
         return sb.toString();
     }
 
+    // ----------------------------------------------------------------------
+    // List<String <-> String[]
+    // ----------------------------------------------------------------------
+
+    public static String[] toArray(Collection<String> l) {
+        if (l == null || l.isEmpty())
+            return EMPTY_ARRAY;
+        String[] a = new String[l.size()];
+        int i=0;
+        for (String e : l) {
+            a[i++] = e;
+        }
+        return a;
+    }
+
+    /**
+     * Collect only not empty strings
+     */
+    public static List<String> asList(String[] strings) {
+        if (strings == null)
+            return Collections.emptyList();
+
+        List<String> slist = new ArrayList<>();
+        for (String s : strings) {
+            s = s.trim();
+            if (!s.isEmpty())
+                slist.add(s);
+        }
+        return slist;
+    }
+
+    /**
+     * As String.split() but return a List[String] instead than a String[]
+     */
+    public static List<String> split(String s, String sep) {
+        return asList(s.split(sep));
+    }
+
+    public static String[] append(Object obj, String s) {
+        if (obj instanceof String) {
+            return new String[]{
+                (String)obj,
+                s
+            };
+        }
+        else {
+            String[] a = (String[]) obj;
+            String[] r = new String[a.length + 1];
+            for (int i = 0; i < a.length; ++i)
+                r[i] = a[i];
+            r[a.length] = s;
+            return r;
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Replace
+    // ----------------------------------------------------------------------
+
     /**
      * Inside the string 'template', replace the variables '${varname}' with the value
      * presents in 'params'.
      *
-     * If 'varname' is not present in 'params', it will not replaced
+     * If 'varname' is not present in 'params', it will not replaces
      *
      * @param template template string
      * @param params parameters
@@ -81,8 +162,38 @@ public class StringUtils {
         return t;
     }
 
+    // ----------------------------------------------------------------------
+    // Parametric format
+    // ----------------------------------------------------------------------
+    // Replace "${name}" with the value in the dictionary
+
     public static String format(String template, Map<String, Object> params) {
         return replace(template, params);
+    }
+
+    // ----------------------------------------------------------------------
+    // Extract parts
+    // ----------------------------------------------------------------------
+    // s ::= a.b.c:
+    //      firstOf(s)  -> a
+    //      restOf(s)   -> b.c
+    //      prefixOf(s) -> a.b
+    //      lastOf(s)   -> c
+
+    public static String firstOf(String s, String sep) {
+        int pos = s.indexOf(sep);
+        if (pos != -1)
+            return s.substring(0, pos);
+        else
+            return empty();
+    }
+
+    public static String restOf(String s, String sep) {
+        int pos = s.indexOf(sep);
+        if (pos != -1)
+            return s.substring(pos+1);
+        else
+            return s;
     }
 
     public static String prefixOf(String s, String sep) {
@@ -98,75 +209,23 @@ public class StringUtils {
             return s;
     }
 
-    public static String trim(String s) {
-        s = s.replace('\n', ' ');
-        while(s.contains("  "))
-            s = s.replace("  ", " ");
-        return s.trim();
+    // ----------------------------------------------------------------------
+    // Misc
+    // ----------------------------------------------------------------------
+
+    /**
+     * Check is a character in 't' is present in 's'
+     */
+    public static boolean containsOneOf(String s, String t) {
+        for (int i=0; i<t.length(); ++i)
+            if (s.indexOf(t.charAt(i)) != -1)
+                return true;
+        return false;
     }
 
-    public static String digest(String s) {
-        return Integer.toHexString(s.hashCode());
-        // try {
-        //     MessageDigest md = MessageDigest.getInstance("MD5");
-        //     byte[] data = s.getBytes();
-        //
-        //     md.update(data, 0, data.length);
-        //
-        //     byte[] digest = md.digest();
-        //     int k = digest.length/2;
-        //
-        //     byte[] smalld = new byte[k];
-        //     for (int i=0; i< smalld.length; ++i)
-        //         smalld[i] = (byte)(digest[i] ^ digest[k+i]);// ^ digest[2*k+i] ^ digest[3*k+i]);
-        //
-        //     return DatatypeConverter.printHexBinary(smalld);
-        // }
-        // catch (Exception e) {
-        //     return "0";
-        // }
-    }
-
-    // public static long digest64(String s){
-    //     try {
-    //         MessageDigest md = MessageDigest.getInstance("MD5");
-    //
-    //         for(int i=0; i<s.length(); ++i) {
-    //             char ch = s.charAt(i);
-    //             md.update((byte)((ch     ) & 0xFF));
-    //             md.update((byte)((ch >> 8) & 0xFF));
-    //         }
-    //
-    //         byte[] digest = md.digest();
-    //         long[] smalld = new long[4];
-    //         for (int i=0; i< smalld.length; ++i)
-    //             smalld[i] = (digest[i] ^ digest[4+i]);
-    //
-    //         return (smalld[0] <<  8) |
-    //                      (smalld[1] << 16) |
-    //                      (smalld[2] << 32) |
-    //                      (smalld[3] << 48);
-    //     }
-    //     catch (Exception e) {
-    //         return 0L;
-    //     }
-    // }
-
-    private static Pattern LOWERCASE = Pattern.compile(
-        "[a-z0-9.$]+"
-    );
-
-    public static boolean isLowerCase(String s) {
-        return LOWERCASE.matcher(s).matches();
-    }
-
-    public static List<String> asList(String[] a) {
-        if (a == null)
-            return java.util.Collections.emptyList();
-        else
-            return Arrays.asList(a);
-    }
-
+    /**
+     * Safe substring
+     */
     public static String substring(String s, int start, int end) {
         if (start < 0)
             start = s.length() + start;
@@ -179,4 +238,59 @@ public class StringUtils {
         }
         return s.substring(start, end);
     }
+
+    /**
+     * Count how many times 't' is present in 's'
+     */
+    public static int count(String s, String t) {
+        int n = 0;
+        int pos = s.indexOf(t);
+        while (pos != -1) {
+            n++;
+            pos = s.indexOf(t, pos+t.length());
+        }
+        return n;
+    }
+
+    /**
+     * Replace '\n' with ' ' and multiple spaces with a single space
+     * Remove spaces from head and tail
+     */
+    public static String trim(String s) {
+        s = s.replace('\n', ' ');
+        while(s.contains("  "))
+            s = s.replace("  ", " ");
+        return s.trim();
+    }
+
+    /**
+     * String digest
+     */
+    public static String digest(String s) {
+        return Integer.toHexString(s.hashCode());
+        // try {
+        //     MessageDigest md = MessageDigest.getInstance("MD5");
+        //     byte[] data = s.getBytes();
+        //
+        //     md.update(data, 0, data.length);
+        //     byte[] digest = md.digest();
+        //
+        //     int k = digest.length/2;
+        //     byte[] digest64 = new byte[k];
+        //
+        //     for (int i=0; i<k; ++i)
+        //         digest64[i] = (byte)(digest[i] ^ digest[k+i]);
+        //
+        //     return DatatypeConverter.printHexBinary(digest64);
+        // }
+        // catch (Exception e) {
+        //     logger.error(e, e);
+        //     return "0";
+        // }
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

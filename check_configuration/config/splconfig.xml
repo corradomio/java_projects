@@ -1,6 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <splreposManager>
-    <workspace path="ciccio"/>
-  </splreposManager>
+
+    <!--
+        Configuration for the SPLReposManager
+      -->
+    <splreposManager>
+        <workspace path="ciccio12"/>
+    </splreposManager>
 </configuration>

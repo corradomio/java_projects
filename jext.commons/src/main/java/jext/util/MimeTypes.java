@@ -15,7 +15,7 @@ public class MimeTypes {
 
     private static final String UNKNOWN = "application/generic";
 
-    private static java.util.Map<String, String> MIMETYPES;
+    private static Map<String, String> MIMETYPES;
 
     public static String guessMimeType(File file) {
         return guessMimeType(file.getName());

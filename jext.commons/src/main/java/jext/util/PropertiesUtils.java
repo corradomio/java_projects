@@ -4,7 +4,6 @@ import jext.logging.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -13,12 +12,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 public class PropertiesUtils {
 
-    public static final Properties NO_PROPERTIES = new Properties();
+    public static final Properties NO_PROPERTIES = new Properties(){
+        @Override
+        public synchronized Object setProperty(String key, String value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public synchronized Object put(Object key, Object value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public synchronized void putAll(Map<?, ?> t) {
+            throw new UnsupportedOperationException();
+        }
+    };
     public static Properties empty() { return NO_PROPERTIES; }
 
     // ----------------------------------------------------------------------
@@ -30,54 +45,79 @@ public class PropertiesUtils {
     }
 
     public static Properties load(File propertiesFile) {
+        Properties properties = new Properties();
         try(InputStream iStream = new FileInputStream(propertiesFile)) {
-            Properties properties = new Properties();
             properties.load(iStream);
             return properties;
         }
         catch (IOException e) {
             Logger.getLogger(PropertiesUtils.class).error(e, e);
-            return new Properties();
+            return properties;
         }
+    }
+
+    public static Properties load(File propertiesFile, String prefix) {
+        Properties props = load(propertiesFile);
+        return filterProperties(props, prefix);
+    }
+
+    public static Properties filterProperties(Properties props, String prefix) {
+        Properties filtered = new Properties();
+        if (prefix == null)
+            prefix = "";
+        if (prefix.length() > 0 && !prefix.endsWith("."))
+            prefix = prefix + ".";
+
+        for (String name : props.stringPropertyNames())
+            if (name.startsWith(prefix)) {
+                String value = getString(props, name);
+                value = resolveValue(value, props);
+
+                String fname = name.substring(prefix.length());
+                filtered.setProperty(fname, value);
+            }
+        return filtered;
     }
 
     // ----------------------------------------------------------------------
     // Filter properties
     // ----------------------------------------------------------------------
 
-    /**
-     * Select the properties with the specified prefix and return a new
-     * Properties object with prefix stripped
-     *
-     * @param allprops properties
-     * @param prefix prefix to select
-     * @return
-     */
-    public static Properties filterProperties(Properties allprops, String prefix) {
-        if(!prefix.endsWith("."))
-            prefix = prefix + ".";
+    public static List<String> getValues(Properties properties, String name) {
+        return getValues(properties, name, ",", null);
+    }
 
-        Properties props = new Properties();
-        for(String name : allprops.stringPropertyNames())
-            if (name.startsWith(prefix))
-                props.put(name.substring(prefix.length()), allprops.getProperty(name));
-        return props;
+    public static List<String> getValues(Properties properties, String prefix, String sep, String defval) {
+        List<String> pvalues = new ArrayList<>();
+        for(String name : properties.stringPropertyNames()){
+            if (name.startsWith(prefix)) {
+                String value = properties.getProperty(name);
+                String[] values = value.split(sep);
+                pvalues.addAll(Arrays.asList(values));
+            }
+        }
+        if (pvalues.isEmpty() && defval != null) {
+            String[] values = defval.split(sep);
+            pvalues.addAll(Arrays.asList(values));
+        }
+
+        return pvalues;
     }
 
     // ----------------------------------------------------------------------
     // Get typed values
     // ----------------------------------------------------------------------
     private static Set<String> FALSE_VALUES = new HashSet<String>(){{
-        add("0");
-        add("false");
-        add("False");
-        add("FALSE");
-        add("f");
-        add("F");
-        add("#f");
-        add("#F");
-        add("off");
-        add("closed");
+       add("0");
+       add("false");
+       add("False");
+       add("FALSE");
+       add("f");
+       add("F");
+       add("#f");
+       add("#F");
+       add("off");
+       add("closed");
     }};
     private static Set<String> TRUE_VALUES = new HashSet<String>(){{
         add("1");
@@ -129,77 +169,6 @@ public class PropertiesUtils {
             return null;
         }
     }
-    
-    public static List<String> getValues(Properties properties, String name) {
-        return getValues(properties, name, ",", null);
-    }
-
-    public static List<String> getValues(Properties properties, String prefix, String sep, String defval) {
-        List<String> pvalues = new ArrayList<>(); 
-        for(String name : properties.stringPropertyNames()){
-            if (name.startsWith(prefix)) {
-                String value = properties.getProperty(name);
-                String[] values = value.split(sep);
-                pvalues.addAll(Arrays.asList(values));
-            }
-        }
-        if (pvalues.isEmpty() && defval != null) {
-            String[] values = defval.split(sep);
-            pvalues.addAll(Arrays.asList(values));
-        }
-
-        return pvalues;
-    }
-    
-    public static long getTimeoutMillis(Properties props, String name, long defvalue) {
-        String value = props.getProperty(name, null);
-        if (value == null)
-            return defvalue;
-        
-        int end = value.length()-1;
-        double seconds = 0.;
-        // 10s
-        if (value.endsWith("s"))
-            seconds = Double.parseDouble(value.substring(0, end));
-        // 10m
-        else if (value.endsWith("m"))
-            seconds = Double.parseDouble(value.substring(0, end))*60;
-        // 10h
-        else if (value.endsWith("h"))
-            seconds = Double.parseDouble(value.substring(0, end))*60*60;
-        // 10d
-        else if (value.endsWith("d"))
-            seconds = Double.parseDouble(value.substring(0, end))*24*60*60;
-        // dd:hh:mm:ss
-        else if (value.indexOf(':') != -1) {
-            String[] parts = value.split(":");
-            switch (parts.length) {
-                case 2:
-                    seconds = Double.parseDouble(parts[0])*60 
-                            + Double.parseDouble(parts[1]);
-                    break;
-                case 3:
-                    seconds = Double.parseDouble(parts[0])*60*60
-                            + Double.parseDouble(parts[1])*60
-                            + Double.parseDouble(parts[2]);
-                    break;
-                case 4:
-                    seconds = Double.parseDouble(parts[0])*24*60*60
-                            + Double.parseDouble(parts[1])*60*60
-                            + Double.parseDouble(parts[2])*60
-                            + Double.parseDouble(parts[3]);
-                    break;
-                default:
-                    seconds = Double.parseDouble(parts[0]);
-                    break;
-            }
-        }
-        else {
-            seconds = Double.parseDouble(value)/1000.;
-        }
-        
-        return (long)(seconds*1000);
-    }
 
     // ----------------------------------------------------------------------
     // resolve values
@@ -233,4 +202,15 @@ public class PropertiesUtils {
         return value.replace("@{", "${");
     }
 
+    public static List<String>[] splitNamesAndValues(Properties properties) {
+        List<String> names = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        for(String name : properties.stringPropertyNames()) {
+            String value = properties.getProperty(name);
+            names.add(name);
+            values.add(value);
+        }
+        List<String>[] result = new List[]{ names, values};
+        return result;
+    }
 }

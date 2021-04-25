@@ -1,5 +1,6 @@
 package jext.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -7,9 +8,6 @@ import jext.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class JSONUtils {
 
@@ -34,39 +32,27 @@ public class JSONUtils {
         return (T) mapper.readValue(jsonFile, objectType);
     }
 
-    public static <T> List<T> parseAll(File[] jsonFiles, Class<T> objectType) {
+    public static <T> T parse(String content, Class<T> objectType) {
         ObjectMapper mapper = newObjectMapper();
-        List<T> ilist = new ArrayList<>();
-
-        if (jsonFiles != null)
-        for(File jsonFile : jsonFiles) {
-            try {
-                T item = (T) mapper.readValue(jsonFile, objectType);
-                ilist.add(item);
-            }
-            catch(Exception e) {
-                logger.error(e);
-            }
+        try {
+            return (T) mapper.readValue(content, objectType);
+        } catch (JsonProcessingException e) {
+            logger.error(e, e);
+            return null;
         }
+    }
 
-        return ilist;
+    public static <T> String serialize(T data) {
+        ObjectMapper mapper = newObjectMapper();
+        try {
+            return mapper.writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            logger.error(e, e);
+            return "{}";
+        }
     }
 
     private static ObjectMapper newObjectMapper() {
         return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
-
-
-    public static Object get(Map<String, ?> map, String path) {
-        String[] steps = path.split("/");
-        Object current = map;
-        for(String step : steps) {
-            if (current == null)
-                return current;
-
-            current = ((Map<String, ?>) current).get(step);
-        }
-        return current;
-    }
-
 }

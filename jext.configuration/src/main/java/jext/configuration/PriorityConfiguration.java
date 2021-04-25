@@ -1,10 +1,10 @@
 package jext.configuration;
 
-public class PriorityConfigurations extends OverrideConfiguration {
+public class PriorityConfiguration extends OverrideConfiguration {
 
-    private static PriorityConfigurations instance = new PriorityConfigurations();
+    private static PriorityConfiguration instance = new PriorityConfiguration();
 
-    public static PriorityConfigurations getConfiguration() {
+    public static PriorityConfiguration getConfiguration() {
         return instance;
     }
 }

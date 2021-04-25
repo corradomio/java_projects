@@ -20,11 +20,8 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -71,13 +68,25 @@ public class FileUtils {
     //
     // ----------------------------------------------------------------------
 
-    public static int countComponents(File file) {
-        if (file == null)
-            return 0;
-        String path = getAbsolutePath(file);
-        return path.split("/").length;
+    // public static int countComponents(File file) {
+    //     if (file == null)
+    //         return 0;
+    //     String path = getAbsolutePath(file);
+    //     return path.split("/").length;
+    // }
+
+    public static File addExtension(File file, String ext) {
+        if (!ext.startsWith("."))
+            ext = "." + ext;
+        return new File(file.getParentFile(), file.getName() + ext);
     }
 
+    public static File addExtension(File file, int counter) {
+        if (counter <= 0)
+            return file;
+        else
+            return new File(file.getParentFile(), file.getName() + String.format(".%d", counter));
+    }
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
@@ -95,6 +104,12 @@ public class FileUtils {
         return path.startsWith("/") || path.indexOf(":/") == 1;
     }
 
+    public static String getAbsolutePath(File file) {
+        return normalize(file.getAbsolutePath());
+    }
+
+    // ----------------------------------------------------------------------
+
     public static File toFile(String baseDir, String path) {
         return toFile(new File(baseDir), path);
     }
@@ -105,6 +120,8 @@ public class FileUtils {
         else
             return new File(baseDir, path);
     }
+
+    // ----------------------------------------------------------------------
 
     public static String relativePath(File parentDir, File file) {
         String parentPath = normalize(parentDir.getAbsolutePath());
@@ -131,18 +148,14 @@ public class FileUtils {
             return rpath.substring(0, pos);
     }
 
-    public static String getAbsolutePath(File file) {
-        return normalize(file.getAbsolutePath());
-    }
-
-    public static String toCanonicalPath(File parentDir, String path) {
-        try {
-            return normalize(new File(parentDir, path).getCanonicalPath());
-        }
-        catch (IOException e) {
-            return normalize(new File(parentDir, path).getAbsolutePath());
-        }
-    }
+    // public static String toCanonicalPath(File parentDir, String path) {
+    //     try {
+    //         return normalize(new File(parentDir, path).getCanonicalPath());
+    //     }
+    //     catch (IOException e) {
+    //         return normalize(new File(parentDir, path).getAbsolutePath());
+    //     }
+    // }
 
     // ----------------------------------------------------------------------
     // addAll/deleteAll
@@ -153,6 +166,8 @@ public class FileUtils {
      * @param file a file or a directory
      */
     public static void deleteAll(File file) {
+        if (!file.exists())
+            return;
         if (file.isDirectory()) {
             // delete the files
             File[] children = file.listFiles(File::isFile);
@@ -172,10 +187,6 @@ public class FileUtils {
     // Recursive listFiles
     // ----------------------------------------------------------------------
 
-    public static List<File> listFiles(File directory) {
-        return asList(directory.listFiles());
-    }
-
     public static List<File> asList(File[] files) {
         if (files == null || files.length == 0)
             return Collections.emptyList();
@@ -183,9 +194,13 @@ public class FileUtils {
             return Arrays.asList(files);
     }
 
+    public static List<File> listFiles(File directory) {
+        return asList(directory.listFiles());
+    }
+
     // NOT recursive
     public static List<File> listFiles(File directory, String ext) {
-            return asList(directory.listFiles((dir, name) -> name.endsWith(ext)));
+        return asList(directory.listFiles((dir, name) -> name.endsWith(ext)));
     }
 
     /**
@@ -223,7 +238,7 @@ public class FileUtils {
         if (directory == null) return;
         collectedFiles.addAll(asList(directory.listFiles(file -> file.isFile() && filter.accept(file))));
         asList(directory.listFiles(File::isDirectory))
-                .forEach(sundir -> listFiles(collectedFiles, sundir, filter));
+            .forEach(sundir -> listFiles(collectedFiles, sundir, filter));
     }
 
     // ----------------------------------------------------------------------
@@ -261,30 +276,30 @@ public class FileUtils {
      *
      * it removes 'd:/a/b/c/d/e'
      */
-    public static Set<File> simplify(Collection<File> files) {
-        List<File> simplified = new ArrayList<>(files);
-        simplified.sort((o1, o2) -> (o2.getAbsolutePath().length() - o1.getAbsolutePath().length()));
-
-        boolean update = true;
-        while (update) {
-            update = false;
-            int n = simplified.size();
-
-            loop: for (int i=0; i<n; ++i) {
-                File o1 = simplified.get(i);
-                for (int j=i+1; j<n; ++j) {
-                    File o2 = simplified.get(j);
-                    if (FileUtils.isParent(o2, o1)) {
-                        simplified.remove(i);
-                        update = true;
-                        break loop;
-                    }
-                }
-            }
-        }
-
-        return new HashSet<>(simplified);
-    }
+    // public static Set<File> simplify(Collection<File> files) {
+    //     List<File> simplified = new ArrayList<>(files);
+    //     simplified.sort((o1, o2) -> (o2.getAbsolutePath().length() - o1.getAbsolutePath().length()));
+    //
+    //     boolean update = true;
+    //     while (update) {
+    //         update = false;
+    //         int n = simplified.size();
+    //
+    //         loop: for (int i=0; i<n; ++i) {
+    //             File o1 = simplified.get(i);
+    //             for (int j=i+1; j<n; ++j) {
+    //                 File o2 = simplified.get(j);
+    //                 if (FileUtils.isParent(o2, o1)) {
+    //                     simplified.remove(i);
+    //                     update = true;
+    //                     break loop;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    //     return new HashSet<>(simplified);
+    // }
 
     // ----------------------------------------------------------------------
     // Read a text file

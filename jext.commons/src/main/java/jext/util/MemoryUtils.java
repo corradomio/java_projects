@@ -14,9 +14,9 @@ public class MemoryUtils {
         return total - free;
     }
 
-    public static long freeMemory() {
+    public static long maxMemory() {
         Runtime rt = Runtime.getRuntime();
-        return rt.freeMemory();
+        return rt.maxMemory();
     }
 
     public static String format(float size) {

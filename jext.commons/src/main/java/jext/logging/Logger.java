@@ -45,6 +45,10 @@ public class Logger {
 
     public static void configure(File configFile) {
         if (!configured) {
+            // support for Log4j v2
+            System.setProperty("log4j.configurationFile", configFile.getAbsolutePath());
+
+            // support for Log4j v1
             if (configFile != null && configFile.exists()) {
                 DOMConfigurator.configureAndWatch(configFile.getAbsolutePath(), 15000);
             }

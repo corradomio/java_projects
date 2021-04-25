@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -245,6 +244,36 @@ public class JarUtils {
             return false;
         else
             return fa.containsClass(className);
+
+        // String entryName = className.replace('.', '/') + DOT_CLASS;
+        // if (libFile.getName().endsWith(DOT_JMOD))
+        //     entryName = "classes/" + entryName;
+        //
+        // // check for a top class
+        // try (JarFile jarFile = new JarFile(libFile)) {
+        //     ZipEntry entry = jarFile.getEntry(entryName);
+        //     if (entry != null)
+        //         return true;
+        // }
+        // catch (IOException e) {}
+        //
+        // // check for an inner class (containing '$')
+        // try (JarFile jarFile = new JarFile(libFile)) {
+        //     ZipEntry entry;
+        //     Enumeration<JarEntry> e = jarFile.entries();
+        //     while (e.hasMoreElements()) {
+        //         entry = e.nextElement();
+        //         if (entry != null && !entry.isDirectory() && entry.getName().endsWith(DOT_CLASS)) {
+        //             String thisName = entry.getName().replace('$', '/');
+        //             if (thisName.equals(entryName))
+        //                 return true;
+        //         }
+        //     }
+        // }
+        // catch (IOException e) {}
+        //
+        // // not found
+        // return false;
     }
 
     public static Set<String> listClassNames(File libFile) {
@@ -255,6 +284,18 @@ public class JarUtils {
             return Collections.emptySet();
         else
             return fa.listClassNames();
+
+        // if (!libFile.exists())
+        //     return Collections.emptySet();
+        //
+        // boolean jmod = libFile.getName().endsWith(DOT_JMOD);
+        // return listFileNames(libFile, DOT_CLASS)
+        //     .stream()
+        //     .map(path -> (jmod) ? path.substring(CLASSES.length()) : path)
+        //     .map(path -> path.substring(0, path.length()-DOT_CLASS.length())
+        //         .replace('/', '.')
+        //         .replace('$', '.'))
+        //     .collect(Collectors.toSet());
     }
 
     /**

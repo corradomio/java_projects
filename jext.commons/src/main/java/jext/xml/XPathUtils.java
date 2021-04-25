@@ -48,19 +48,13 @@ public class XPathUtils {
 
     private static ErrorHandler SKIP_ERROR_HANDLER = new ErrorHandler() {
         @Override
-        public void warning(SAXParseException exception) throws SAXException {
-
-        }
+        public void warning(SAXParseException exception) { }
 
         @Override
-        public void error(SAXParseException exception) throws SAXException {
-
-        }
+        public void error(SAXParseException exception) { }
 
         @Override
-        public void fatalError(SAXParseException exception) throws SAXException {
-
-        }
+        public void fatalError(SAXParseException exception) { }
     };
 
     // ----------------------------------------------------------------------
@@ -179,16 +173,35 @@ public class XPathUtils {
 
     private static String resolveParams(String text, Properties params, boolean original) {
         boolean updated = false;
-        if (text == null || text.length() == 0)
+        if (text == null || text.length() == 0 || params == null || params.isEmpty())
             return text;
+
         int pos = -1, end;
         while((pos = text.indexOf("${", pos+1)) != -1) {
+            String name, vvalue;
+
+            // handle '${name...'  (missing '}')
             end = text.indexOf("}", pos+1);
-            if (end == -1) continue;
-            String name = text.substring(pos+2,end);
-            if (params == null) continue;
-            if (!params.containsKey(name)) continue;
-            text = text.substring(0,pos) + params.getProperty(name) + text.substring(end+1);
+            if (end != -1)
+                name = text.substring(pos+2,end);
+            else
+                name = text.substring(pos+2);
+
+            // ${env:...}
+            if (name.startsWith("env:")) {
+                vvalue = System.getenv(name.substring(4));
+            }
+            else if (name.startsWith("sys:")) {
+                vvalue = System.getProperty(name.substring(4));
+            }
+            else {
+                vvalue = params.contains(name) ? params.get(name).toString() : null;
+            }
+
+            // if the value is null, doesn't replace "${...}"
+            if (vvalue == null) continue;
+
+            text = text.substring(0,pos) + vvalue + text.substring(end+1);
             updated = true;
             pos = -1;
         }
@@ -242,6 +255,14 @@ public class XPathUtils {
 
     // ----------------------------------------------------------------------
 
+    public static boolean getValue(Element elt, String xpath, boolean defaultValue, Properties params) {
+        String svalue = getValue(elt, xpath, EMPTY_VALUE, params);
+        if (svalue.length() == 0)
+            return defaultValue;
+        else
+            return Boolean.parseBoolean(svalue);
+    }
+
     public static int getValue(Element elt, String xpath, int defaultValue, Properties params) {
         String svalue = getValue(elt, xpath, EMPTY_VALUE, params);
         if (svalue.length() == 0)
@@ -250,12 +271,12 @@ public class XPathUtils {
             return Integer.parseInt(svalue);
     }
 
-    public static boolean getValue(Element elt, String xpath, boolean defaultValue, Properties params) {
+    public static long getValue(Element elt, String xpath, long defaultValue, Properties params) {
         String svalue = getValue(elt, xpath, EMPTY_VALUE, params);
         if (svalue.length() == 0)
             return defaultValue;
         else
-            return Boolean.parseBoolean(svalue);
+            return Long.parseLong(svalue);
     }
 
     // ----------------------------------------------------------------------
@@ -435,149 +456,182 @@ public class XPathUtils {
     public static Node selectNode(Element elt, String xpath, boolean create, Properties params) {
         Document owner = getOwnerDocument(elt);
         synchronized (owner) {
-        Node current = elt;
+            Node current = elt;
             if (xpath.startsWith("/"))
-            xpath = "<root>" + xpath;
+                xpath = "<root>" + xpath;
 
-        String[] steps = xpath.split("/");
-        for(String step : steps) {
+            String[] steps = xpath.split("/");
+            for (String step : steps) {
 
-            if(current == null)
-                break;
+                // no node
+                if (current == null)
+                    break;
 
-            // "."
-            if (step.length() == 0 || ".".equals(step))
-                continue;
-                // ".."
-            else if("..".equals(step))
-                current = current.getParentNode();
-                // "/..."
-            else if("<root>".equals(step))
-                    current = owner; //getOwnerDocument(current);
-                // "@attr"
-            else if (step.startsWith("@")) {
-                String aname = step.substring(1);
-                Attr attr = ((Element) current).getAttributeNode(aname);
-                if (attr == null && create) {
-                    ((Element) current).setAttribute(aname,  "");
-                    attr = ((Element) current).getAttributeNode(aname);
-                }
-                current = attr;
-            }
-            // #text | text()
-            else if (step.equals("#text") || step.equals("text()")) {
-                NodeList nl = current.getChildNodes();
-                for(int i=0; i<nl.getLength(); ++i) {
-                    Node node = nl.item(i);
-                    if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
-                        current = node;
-                        break;
-                    }
-                }
-            }
-            // name
-            else if (!step.contains("[")) {
-                Element selected = null;
-                NodeList nl = current.getChildNodes();
-                for(int i=0; i<nl.getLength(); ++i) {
-                    Node node = nl.item(i);
-                        if (node == null)
+                // "."
+                if (step.length() == 0 || ".".equals(step))
+                    continue;
+
+                    // ".."
+                else if ("..".equals(step))
+                    current = current.getParentNode();
+
+                    // "/..."
+                else if ("<root>".equals(step))
+                    current = owner;
+
+                    // "@attr"
+                else if (step.startsWith("@"))
+                    current = selectAttribute(current, step.substring(1), create);
+
+                // #text | text()
+                else if (step.equals("#text") || step.equals("text()")) {
+                    NodeList nl = current.getChildNodes();
+                    for (int i = 0; i < nl.getLength(); ++i) {
+                        Node node = nl.item(i);
+                        if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
+                            current = node;
                             break;
-                    if (node.getNodeType() != Node.ELEMENT_NODE)
-                        continue;
-                    if (!step.equals(((Element)node).getTagName()))
-                        continue;
-
-                    selected = (Element)node;
-                    break;
-                }
-
-                if(selected == null && create) {
-                        Document doc = owner; //getOwnerDocument(current);
-                    selected = doc.createElement(step);
-                    current.appendChild(selected);
-                }
-                current = selected;
-            }
-            // name[@attr=value] | name[@attr='value'] | name[@attr="value"]
-            else if(step.contains("[@")) {
-                Element selected = null;
-                String ename = enameOf(step);
-                String aname = anameOf(step);
-                String check = avalueOf(step, params);
-
-                NodeList nl = current.getChildNodes();
-
-                for(int i=0; i<nl.getLength(); ++i) {
-                    Node node = nl.item(i);
-                    if (node.getNodeType() != Node.ELEMENT_NODE)
-                        continue;
-                    if (!ename.equals(((Element)node).getTagName()))
-                        continue;
-
-                    String value = ((Element)node).getAttribute(aname);
-                    if(!check.equals(value))
-                        continue;
-
-                    selected = (Element)node;
-                    break;
-                }
-
-                if (selected == null && create) {
-                        Document doc = owner; //getOwnerDocument(current);
-                    selected = doc.createElement(ename);
-                    current.appendChild(selected);
-                    current = selected;
-                    Attr attr = doc.createAttribute(aname);
-                    attr.setTextContent(check);
-                    current.appendChild(attr);
-                }
-                current = selected;
-            }
-            // node[index]   ONE-based!!!!
-            else if(step.contains("[")) {
-                Element selected = null;
-                String ename = enameOf(step);
-                int oindex = indexOf(step, params);
-                int index = oindex;
-
-                NodeList nl = current.getChildNodes();
-
-                for(int i=0; i<nl.getLength() && index > 0; ++i) {
-                    Node node = nl.item(i);
-
-                    // not a <name>
-                    if (node.getNodeType() != Node.ELEMENT_NODE)
-                        continue;
-
-                    // not <ename>
-                    if (!ename.equals(((Element)node).getTagName()))
-                        continue;
-
-                    // not the correct position
-                    if (--index > 0)
-                        continue;
-
-                    selected = (Element)node;
-                    break;
-                }
-
-                if (index == -1) index = 1;
-
-                if (selected == null && create) {
-                        Document doc = owner; //getOwnerDocument(current);
-                    for(; index>0; --index) {
-                        selected = doc.createElement(ename);
-                        current.appendChild(selected);
+                        }
                     }
                 }
+                // name
+                else if (!step.contains("[") && !step.contains("("))
+                    current = selectElement(current, step, create);
 
-                current = selected;
+                // name[@attr=value] | name[@attr='value'] | name[@attr="value"]
+                else if (step.contains("[@") && step.contains("="))
+                    current = selectPredNode(current, step, create, params);
+
+                // node[@attr]
+                else if (step.contains("[@"))
+                    current = selectElementAttribute(current, step, create);
+
+                // node[index]   ONE-based!!!!
+                    // noe(index)   ZERO-based!!!
+                else if (step.contains("[") || step.contains("("))
+                    current = selectIndexedNode(current, step, create, params);
+            }
+
+            return current;
+        }
+    }
+
+    private static Node selectAttribute(Node current, String aname, boolean create) {
+        if (current == null)
+            return null;
+        Attr attr = ((Element) current).getAttributeNode(aname);
+        if (attr == null && create) {
+            ((Element) current).setAttribute(aname, "");
+            attr = ((Element) current).getAttributeNode(aname);
+        }
+        return attr;
+    }
+
+    private static Node selectElement(Node current, String step, boolean create) {
+        Element selected = null;
+        NodeList nl = current.getChildNodes();
+        for (int i = 0; i < nl.getLength(); ++i) {
+            Node node = nl.item(i);
+            if (node == null)
+                break;
+            if (node.getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            if (!step.equals(((Element) node).getTagName()))
+                continue;
+
+            selected = (Element) node;
+            break;
+        }
+
+        if (selected == null && create) {
+            Document doc = getOwnerDocument(current);
+            selected = doc.createElement(step);
+            current.appendChild(selected);
+        }
+        return selected;
+    }
+
+    private static Node selectPredNode(Node current, String step, boolean create, Properties params) {
+        Element selected = null;
+        String ename = enameOf(step);
+        String aname = anameOf(step);
+        String check = avalueOf(step, params);
+
+        NodeList nl = current.getChildNodes();
+
+        for (int i = 0; i < nl.getLength(); ++i) {
+            Node node = nl.item(i);
+            if (node.getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            if (!ename.equals(((Element) node).getTagName()))
+                continue;
+
+            String value = ((Element) node).getAttribute(aname);
+            if (!check.equals(value))
+                continue;
+
+            selected = (Element) node;
+            break;
+        }
+
+        if (selected == null && create) {
+            Document doc = getOwnerDocument(current);
+            selected = doc.createElement(ename);
+            current.appendChild(selected);
+            current = selected;
+            Attr attr = doc.createAttribute(aname);
+            attr.setTextContent(check);
+            current.appendChild(attr);
+        }
+        return selected;
+    }
+
+    private static Node selectIndexedNode(Node current, String step, boolean create, Properties params) {
+        Element selected = null;
+        String ename = enameOf(step);
+        int oindex = indexOf(step, params);
+        int index = oindex;
+
+        NodeList nl = current.getChildNodes();
+
+        for (int i = 0; i < nl.getLength() && index > 0; ++i) {
+            Node node = nl.item(i);
+
+            // not a <name>
+            if (node.getNodeType() != Node.ELEMENT_NODE)
+                continue;
+
+            // not <ename>
+            if (!ename.equals(((Element) node).getTagName()))
+                continue;
+
+            // not the correct position
+            if (--index > 0)
+                continue;
+
+            selected = (Element) node;
+            break;
+        }
+
+        if (index == -1) index = 1;
+
+        if (selected == null && create) {
+            Document doc = getOwnerDocument(current);
+            for (; index > 0; --index) {
+                selected = doc.createElement(ename);
+                current.appendChild(selected);
             }
         }
 
-        return current;
+        return selected;
     }
+
+    private static Node selectElementAttribute(Node current, String step, boolean create) {
+        String ename = enameOf(step);
+        String aname = anameOf(step);
+        current = selectElement(current, ename, create);
+        current = selectAttribute(current, aname, create);
+        return current;
     }
 
     // parent/step
@@ -600,6 +654,8 @@ public class XPathUtils {
     // ename[...]
     private static String enameOf(String step) {
         int pos = step.indexOf("[");
+        if (pos == -1)
+            pos = step.indexOf("(");
         return step.substring(0, pos);
     }
 
@@ -607,8 +663,9 @@ public class XPathUtils {
     private static String anameOf(String step) {
         int pos = step.indexOf("[@");
         int eq  = step.indexOf('=');
+        if (eq == -1)
+            eq = step.indexOf(']');
         return step.substring(pos+2, eq);
-
     }
 
     // ...[@attr=value] | ...[@attr='value'] | ...[@attr="value"]
@@ -627,17 +684,29 @@ public class XPathUtils {
     }
 
     // ...[index] | ...[-1] | ...[]
+    // ...(index) | ...(-1) | ...()
     private static int indexOf(String step, Properties params) {
         String sindex;
-        int pos = step.indexOf('[');
-        int end = step.indexOf(']');
+        int pos, end;
+        boolean one;
+        if (step.contains("[")) {
+            pos = step.indexOf('[');
+            end = step.indexOf(']');
+            one = true;
+        }
+        else {
+            pos = step.indexOf('(');
+            end = step.indexOf(')');
+            one = false;
+        }
 
         sindex = step.substring(pos+1, end);
         if (sindex.length() == 0)
             return -1;
 
         sindex = resolveParams(sindex, params, true);
-        return Integer.parseInt(sindex);
+        int index = Integer.parseInt(sindex);
+        return one && index > 0 ? index - 1 : index;
     }
 
     private static Document getOwnerDocument(Node node) {

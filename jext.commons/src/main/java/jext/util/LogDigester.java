@@ -9,6 +9,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class simulates the behavior of Apache Commons Digester.
+ * The idea is this:
+ * The standard output/error in intercepted using a pipe.
+ * The it is split in lines and each line is compared with a list of
+ * regular expressions. When a RE match the text, it is executed the
+ * registered action.
+ *
+ * In addition to this paradigm, it is added a state machine:
+ * 1) the rules are registered under a specific state
+ * 2) each rule can, or not, change the state
+ */
 public class LogDigester {
 
     private static Logger logger = Logger.getLogger(LogDigester.class);
@@ -54,7 +66,12 @@ public class LogDigester {
         }
     }
 
+    // [state, List[rules]]
     private Map<Integer, List<RuleMatcher>> matchers = new HashMap<>();
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public LogDigester() {
 
@@ -90,7 +107,7 @@ public class LogDigester {
             return;
 
         if (!matchers.containsKey(state)) {
-            logger.errorf("Unknown state %s with NO rules", state);
+            logger.errorf("Unknown state %s", state);
             matchers.put(state, new ArrayList<>());
         }
 

@@ -15,6 +15,10 @@ public class MapUtils {
         return fillMap(new TreeMap<>(), args);
     }
 
+    // public static <K, V> Map<K, V> asLinkedMap(Object ... args) {
+    //     return fillMap(new LinkedHashMap<>(), args);
+    // }
+
     private static <K, V> Map<K, V> fillMap(Map<K, V> map, Object[] args) {
         if (args == null || args.length == 0)
             return Collections.emptyMap();

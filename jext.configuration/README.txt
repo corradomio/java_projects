@@ -8,6 +8,13 @@ Configuration path expressions
     - node[@attribute]
 
 
+Variables
+---------
+
+    ${name}
+    ${sys:system_property}
+    ${env:environment_variable}
+
 
 Apache Commons Configuration
 ----------------------------
@@ -46,8 +53,8 @@ Apache Commons Configuration
                 CombinedConfiguration
                     DynamicCombinedConfiguration
                 SubnodeConfiguration
-                XMLPropertyListConfiguration        // OpenStep .plist file
                 PropertyListConfiguration           // OpenStep .plist file
+                XMLPropertyListConfiguration        // OpenStep .plist file
 
         FileBasedConfiguration (I)
             XMLConfiguration
@@ -57,8 +64,8 @@ Apache Commons Configuration
             PatternSubtreeConfigurationWrapper
             JSONConfiguration
             YAMLConfiguration
-            XMLPropertyListConfiguration        // OpenStep .plist file
             PropertyListConfiguration           // OpenStep .plist file
+            XMLPropertyListConfiguration        // OpenStep .plist file
 
 
     ConfigurationBuilder
@@ -73,7 +80,6 @@ Apache Commons Configuration
 
 Configuration Sources
 ---------------------
-
 
     PropertiesConfiguration Loads configuration values from a properties file.
     XMLConfiguration Takes values from an XML document.
@@ -109,8 +115,8 @@ Data Types
 ------------------------------
 
 
-            String capacity = cconfig.getString("capacity[@value]", "");
-            String expireAfterWrite = cconfig.getString("expireAfterWrite[@value]", "");
-            String expireAfterAccess = cconfig.getString("expireAfterAccess[@value]", "");
-            String softValues = cconfig.getString("softValues[@value]", "");
-            String weakValues = cconfig.getString("weakValues[@value]", "");
+    String capacity = cconfig.getString("capacity[@value]", "");
+    String expireAfterWrite = cconfig.getString("expireAfterWrite[@value]", "");
+    String expireAfterAccess = cconfig.getString("expireAfterAccess[@value]", "");
+    String softValues = cconfig.getString("softValues[@value]", "");
+    String weakValues = cconfig.getString("weakValues[@value]", "");

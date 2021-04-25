@@ -70,15 +70,12 @@ public class Parameters extends HashMap<String, Object> {
         return this;
     }
 
-    // public Parameters put_(String name, Object value) {
-    //     super.put(name, value);
-    //     return this;
-    // }
-
-    // public Parameters putAll_(Map m) {
-    //     super.putAll(m);
-    //     return this;
-    // }
+    public Parameters add(Properties props) {
+        props.forEach((k, v) -> {
+            add(k.toString(), v);
+        });
+        return this;
+    }
 
     public Parameters add(Map<String, Object> params) {
         if (params != null)
@@ -96,12 +93,20 @@ public class Parameters extends HashMap<String, Object> {
         return this;
     }
 
-    // public Parameters remove_(String name) {
-    //     super.remove(name);
-    //     return this;
-    // }
-
     // ----------------------------------------------------------------------
+
+    public String[] getStringArray(String name) {
+        if (!super.containsKey(name))
+            return null;
+        Object obj = super.get(name);
+        if (obj instanceof String[])
+            return (String[])obj;
+        String value = obj.toString();
+        if (value.contains(","))
+            return value.split(",");
+        else
+            return new String[]{ value };
+    }
 
     public String getString(String name) {
         return super.get(name).toString();
@@ -171,14 +176,13 @@ public class Parameters extends HashMap<String, Object> {
     // Operations
     // ----------------------------------------------------------------------
     // ?p1=v1&...
-    // ?p1=v1,...
 
     public Parameters parse(String query) {
         if (StringUtils.isEmpty(query))
             return this;
 
         String name, value;
-        String[] sparams = query.split("[?&;,]");
+        String[] sparams = query.split("[?&]");
         for(String param : sparams) {
             int pos = param.indexOf('=');
             if (pos != -1) {
@@ -190,8 +194,10 @@ public class Parameters extends HashMap<String, Object> {
                 value = "";
             }
 
-            if (name.length() > 0)
-                this.put(name, value);
+            if (name.length() == 0)
+                continue;
+
+            this.put(name, value);
         }
 
         return this;

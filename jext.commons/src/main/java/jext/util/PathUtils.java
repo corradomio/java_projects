@@ -18,11 +18,17 @@ public class PathUtils {
     /**
      * Change '\' in '/'
      * Remove '/' from the head of the path
+     * Remove '/' from '/D:/...'
      */
     public static String normalize(String path) {
         if (path == null) return EMPTY_PATH;
         path = path.replace(BACK_SLASH, SLASH);
-        while(path.startsWith(SLASH)) path = path.substring(1);
+
+        // "/<letter>:/..."
+        if (path.startsWith("/") && path.indexOf(":") == 2)
+            path = path.substring(1);
+
+        // while(path.startsWith(SLASH)) path = path.substring(1);
         return path;
     }
 
@@ -47,16 +53,18 @@ public class PathUtils {
             return String.format("%s/%s", prefix, suffix);
     }
 
-    public static String concat(String prefix, String... suffixes) {
-        String suffix = StringUtils.compose(suffixes, SLASH);
-        return concat(prefix, suffix);
-    }
-
     /**
      * Check if path is valid (!= null and length > 0)
      */
     public static boolean isValid(String path) {
         return path != null && path.length() > 0;
+    }
+
+    public static boolean isAbsolute(String path) {
+        return path.startsWith("/")
+            || path.startsWith("\\")
+            || path.contains(":/")
+            || path.contains(":\\");
     }
 
     /**
@@ -67,7 +75,8 @@ public class PathUtils {
      * @return the relative path
      */
     public static String relativePath(String basePath, String currentPath) {
-        assert currentPath.startsWith(basePath);
+        if (basePath == null || !currentPath.startsWith(basePath))
+            return currentPath;
 
         if (basePath.equals(currentPath))
             return EMPTY_PATH;
