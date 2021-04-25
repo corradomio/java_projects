@@ -1,16 +1,12 @@
 package org.hls.check.check_neo4j_2;
 
 import jext.springframework.data.Neo4JIndices;
-import org.neo4j.ogm.session.Session;
-import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
-
-import java.io.IOException;
 
 @SpringBootApplication
 @EnableNeo4jRepositories()
@@ -26,7 +22,7 @@ public class CheckNeo4j2Application {
     CommandLineRunner demo(Neo4JIndices indices) {
         return args -> {
             indices.getIndexes().forEach(id -> {
-                System.out.println(id);
+                System.out.println(id.name);
             });
         };
 
