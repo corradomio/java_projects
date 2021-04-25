@@ -1,5 +1,8 @@
 package jext.configuration;
 
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+
 /**
  * This class permit to have a partial view on the configuration
  * file.
@@ -18,7 +21,7 @@ public class InnerConfiguration implements Configuration {
     }
 
     // ----------------------------------------------------------------------
-    // Operations
+    // Read Operations
     // ----------------------------------------------------------------------
 
     @Override
@@ -49,6 +52,20 @@ public class InnerConfiguration implements Configuration {
     @Override
     public String getString(String key, String defaultValue) {
         return root.getString(pkeyOf(key), defaultValue);
+    }
+
+    // ----------------------------------------------------------------------
+    // Write Operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void setProperty(String key, Object value) {
+        root.setProperty(pkeyOf(key), value);
+    }
+
+    @Override
+    public void save() throws IOException, TransformerException {
+        root.save();
     }
 
     // ----------------------------------------------------------------------

@@ -1,6 +1,8 @@
 package jext.configuration;
 
+import javax.xml.transform.TransformerException;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +37,13 @@ public class OverrideConfiguration implements Configuration {
         Collections.reverse(reversedConfig);
     }
 
+    public void save() throws IOException, TransformerException {
+        if (configurations.size() > 1)
+            getOverrideConfiguration().save();
+    }
+
     // ----------------------------------------------------------------------
-    // Properties
+    // Read Properties
     // ----------------------------------------------------------------------
 
     /**
@@ -45,6 +52,10 @@ public class OverrideConfiguration implements Configuration {
      */
     public Configuration getDefaultConfiguration() {
         return configurations.get(0);
+    }
+
+    public Configuration getOverrideConfiguration() {
+        return reversedConfig.get(0);
     }
 
     /**
@@ -94,4 +105,14 @@ public class OverrideConfiguration implements Configuration {
                 return config.getString(key);
         return defaultValue;
     }
+
+    // ----------------------------------------------------------------------
+    // Write Properties
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void setProperty(String key, Object value) {
+        getOverrideConfiguration().setProperty(key, value);
+    }
+
 }

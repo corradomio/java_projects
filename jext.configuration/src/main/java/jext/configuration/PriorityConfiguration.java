@@ -7,4 +7,5 @@ public class PriorityConfiguration extends OverrideConfiguration {
     public static PriorityConfiguration getConfiguration() {
         return instance;
     }
+
 }

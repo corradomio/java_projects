@@ -1,5 +1,8 @@
 package jext.configuration;
 
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+
 public interface Configuration {
 
     boolean containsKey(String key);
@@ -16,4 +19,8 @@ public interface Configuration {
     String  getString(String key, String defaultValue);
 
     Configuration configurationAt(String key);
+
+    void setProperty(String key, Object value);
+
+    void save() throws IOException, TransformerException;
 }

@@ -8,7 +8,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.transform.TransformerException;
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 public class XMLConfiguration implements Configuration {
@@ -31,7 +33,7 @@ public class XMLConfiguration implements Configuration {
     }
 
     // ----------------------------------------------------------------------
-    // Operations
+    // Read Operations
     // ----------------------------------------------------------------------
 
     @Override
@@ -68,6 +70,22 @@ public class XMLConfiguration implements Configuration {
     public String getString(String key, String defaultValue) {
         check();
         return XPathUtils.getValue(root, xpathOf(key), defaultValue);
+    }
+
+    // ----------------------------------------------------------------------
+    // Write Operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void setProperty(String key, Object value) {
+        check();
+        String svalue = value != null ? value.toString() : null;
+        XPathUtils.setValue(root, xpathOf(key), svalue, properties);
+    }
+
+    @Override
+    public void save() throws IOException, TransformerException {
+        XPathUtils.serialize(doc, configurationFile);
     }
 
     // ----------------------------------------------------------------------
