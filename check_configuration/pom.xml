@@ -7,10 +7,31 @@
     <groupId>org.hls.check</groupId>
     <artifactId>check_configuration</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <modules>
+        <module>../jext.commons</module>
+        <module>../jext.configuration</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.configuration</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
 
 </project>

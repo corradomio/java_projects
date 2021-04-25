@@ -1,5 +1,9 @@
 package jext.configuration;
 
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +13,15 @@ import java.util.List;
  * Some files can be not existent.
  * When a
  */
-public class ConfigurationsWithDefaults {
+public class Configurable extends PriorityConfigurable {
 
-    private static ConfigurationsWithDefaults instance;
+    private static Configurable instance;
 
-    public synchronized static ConfigurationsWithDefaults getConfigurations() {
+    public synchronized static Configurable getConfigurable() {
         if (instance != null)
             return instance;
 
-        instance = new ConfigurationsWithDefaults();
+        instance = new Configurable();
         instance.configure();
 
         return instance;
@@ -35,6 +39,15 @@ public class ConfigurationsWithDefaults {
     }
 
     public void configure() {
-
+        Configurations configs = new Configurations();
+        for (File configurationFile : configurationFiles) {
+            FileBasedConfigurationBuilder<XMLConfiguration> builder = configs.xmlBuilder(configurationFile);
+            this.addConfiguration(new FileHierarchicalConfigurable(this, builder));
+        }
     }
+
+    public void save() {
+        this.peek().save();
+    }
+
 }

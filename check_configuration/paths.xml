@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+  <processing stage="qa">
+    <paths>
+      <path>/data/path1</path>
+      <path>/data/otherpath</path>
+      <path>/var/log</path>
+    </paths>
+  </processing>
+  <newProperty>newValue</newProperty>
+  <newProperty>newValue</newProperty>
+  <newProperty>newValue</newProperty>
+</configuration>
