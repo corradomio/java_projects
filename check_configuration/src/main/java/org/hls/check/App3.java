@@ -21,7 +21,7 @@ public class App3 {
 
         System.out.println(c.getString("workspace[@path]"));
 
-        c.setProperty("workspace[@path]", "changedDir");
+        c.setProperty("homePath", "changedDir");
         c.save();
     }
 }

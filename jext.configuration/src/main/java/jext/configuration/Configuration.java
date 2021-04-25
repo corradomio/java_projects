@@ -1,6 +1,7 @@
 package jext.configuration;
 
 import java.io.IOException;
+import java.util.Properties;
 
 public interface Configuration {
 
@@ -16,13 +17,12 @@ public interface Configuration {
     default long getLong(String key) { return getLong(key, 0); }
     default String getString(String key) { return getString(key, null); }
 
+    Properties getProperties(String key);
 
     boolean getBoolean(String key, boolean defaultValue);
     int     getInt(String key, int defaultValue);
     long    getLong(String key, long defaultValue);
     String  getString(String key, String defaultValue);
-
-    Configuration configurationAt(String key);
 
     void setProperty(String key, Object value);
 

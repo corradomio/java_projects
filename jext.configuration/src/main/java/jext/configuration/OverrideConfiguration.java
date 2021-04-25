@@ -12,7 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public class OverrideConfiguration implements Configuration {
+
+public class OverrideConfiguration implements HierarchicalConfiguration {
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -95,7 +96,7 @@ public class OverrideConfiguration implements Configuration {
      * Retrieve a sub configuration
      */
     @Override
-    public Configuration configurationAt(String key) {
+    public HierarchicalConfiguration configurationAt(String key) {
         return new InnerConfiguration(key, this);
     }
 

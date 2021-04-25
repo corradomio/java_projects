@@ -2,20 +2,22 @@ package jext.configuration;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * This class permit to have a partial view on the configuration
  * file.
  */
-public class InnerConfiguration implements Configuration {
-    private Configuration root;
+public class InnerConfiguration implements HierarchicalConfiguration {
+    private HierarchicalConfiguration root;
     private String ikey;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public InnerConfiguration(String ikey, Configuration root) {
+    public InnerConfiguration(String ikey, HierarchicalConfiguration root) {
         this.ikey = ikey;
         this.root = root;
     }
@@ -44,9 +46,18 @@ public class InnerConfiguration implements Configuration {
     // ----------------------------------------------------------------------
 
     @Override
-    public Configuration configurationAt(String key) {
-        return new InnerConfiguration(pkeyOf(key), root);
+    public HierarchicalConfiguration configurationAt(String key) {
+        return root.configurationAt(pkeyOf(key));
     }
+
+    @Override
+    public List<HierarchicalConfiguration> configurationsAt(String key) {
+        return root.configurationsAt(pkeyOf(key));
+    }
+
+    // ----------------------------------------------------------------------
+    // Read Operations
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean containsKey(String key) {
@@ -71,6 +82,12 @@ public class InnerConfiguration implements Configuration {
     @Override
     public String getString(String key, String defaultValue) {
         return root.getString(pkeyOf(key), defaultValue);
+    }
+
+
+    @Override
+    public Properties getProperties(String key) {
+        return root.getProperties(pkeyOf(key));
     }
 
     // ----------------------------------------------------------------------

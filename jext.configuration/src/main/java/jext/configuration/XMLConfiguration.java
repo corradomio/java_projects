@@ -12,9 +12,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-public class XMLConfiguration implements Configuration {
+public class XMLConfiguration implements HierarchicalConfiguration {
 
     private static Logger logger = Logger.getLogger(XMLConfiguration.class);
 
@@ -83,9 +85,24 @@ public class XMLConfiguration implements Configuration {
     // ----------------------------------------------------------------------
 
     @Override
-    public Configuration configurationAt(String key) {
+    public HierarchicalConfiguration configurationAt(String key) {
         return new InnerConfiguration(key, this);
     }
+
+    @Override
+    public List<HierarchicalConfiguration> configurationsAt(String key) {
+        int n = XPathUtils.selectNodes(root, xpathOf(key)).size();
+        List<HierarchicalConfiguration> configList = new ArrayList<>();
+        for (int i=0; i<n; ++i) {
+            String ikey = String.format("%s(%d)", key, i);
+            configList.add(new InnerConfiguration(ikey, this));
+        }
+        return configList;
+    }
+
+    // ----------------------------------------------------------------------
+    // Read Operations
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean containsKey(String key) {
@@ -116,6 +133,12 @@ public class XMLConfiguration implements Configuration {
     public String getString(String key, String defaultValue) {
         check();
         return XPathUtils.getValue(root, xpathOf(key), defaultValue);
+    }
+
+    @Override
+    public Properties getProperties(String key) {
+        check();
+        return XPathUtils.getProperties(root, xpathOf(key));
     }
 
     // ----------------------------------------------------------------------
