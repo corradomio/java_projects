@@ -1,30 +1,127 @@
 package jext.springframework.data;
 
+import jext.logging.Logger;
 import jext.springframework.data.indices.IndexCollection;
 import jext.springframework.data.indices.IndexDescriptor;
+import jext.util.PropertiesUtils;
+import jext.xml.XPathUtils;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Element;
 
-import java.util.Arrays;
+import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @Service
 public class Neo4JIndices {
 
+    private Logger logger = Logger.getLogger(Neo4JIndices.class);
+
     @Autowired
     private SessionFactory sessionFactory;
+
+    private String dbversion;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
+    /*
+            <indices>
+                <drop name=":splproject(refId)" version="3.">
+                    DROP INDEX ON :splproject(refId)
+                </drop>
+                <drop name=":project(refId)" version="3.">
+                    DROP INDEX ON :project(refId)
+                </drop>
+                <index name="spl_fulltext_name_index">
+                    CALL db.index.fulltext.createNodeIndex("${name}",
+                        ["project","module","type","comment","method","library","component","feature"],
+                        ["name"],
+                        {analyzer: "standard", eventually_consistent: "true"}
+                    )
+                </index>
+            </indices>
+     */
 
     public Neo4JIndices() {
+
+    }
+
+    public void composeIndices(File indicesFile) {
+        try {
+            Element elt = XPathUtils.parse(indicesFile).getDocumentElement();
+
+            this.dbversion = getVersion();
+            IndexCollection indexes = getIndexes();
+
+            dropIndices(elt, indexes);
+            createIndices(elt, indexes);
+        }
+        catch (Throwable t) {
+            logger.errorf("Unable to parse %s: %s", indicesFile, t);
+        }
+
+    }
+
+    private void dropIndices(Element elt, IndexCollection indices) {
+        Properties props = new Properties();
+
+        // drop indices
+        XPathUtils.selectNodes(elt, "/configuration/system/graphdb/indices/drop")
+            .forEach(din -> {
+                String name = din.getAttribute("name");
+                String version = din.getAttribute("version");
+
+                // the index is for a specific Neo4J version
+                if (!version.isEmpty() && !dbversion.startsWith(version))
+                    return;
+
+                props.setProperty("name", name);
+                String stmt = XPathUtils.getValue(din, "text()").trim();
+                stmt = PropertiesUtils.resolveValue(stmt, props);
+
+                dropIndex(name, stmt, indices);
+            });
+
+    }
+
+    private void dropIndex(String name, String stmt, IndexCollection indices) {
+        if (!indices.containsIndex(name)) return;
+        if (stmt.isEmpty()) return;
+    }
+
+    private void createIndices(Element elt, IndexCollection indices) {
+        Properties props = new Properties();
+
+        // create indices
+        XPathUtils.selectNodes(elt, "/configuration/system/graphdb/indices/index")
+            .forEach(din -> {
+                String name = din.getAttribute("name");
+                String version = din.getAttribute("version");
+
+                // the index is for a specific Neo4J version
+                if (!version.isEmpty() && !dbversion.startsWith(version))
+                    return;
+
+                props.setProperty("name", name);
+                String stmt = XPathUtils.getValue(din, "text()").trim();
+                stmt = PropertiesUtils.resolveValue(stmt, props);
+
+                createIndex(name, stmt, indices);
+            });
+
+    }
+
+    private void createIndex(String name, String stmt, IndexCollection indices) {
+        if (indices.containsIndex(name)) return;
+        if (stmt.isEmpty()) return;
 
     }
 
@@ -49,6 +146,22 @@ public class Neo4JIndices {
     //      db.index.fulltext.queryRelationships
     //
     //      CALL db.index.fulltext.listAvailableAnalyzers()
+    //
+    // -- Neo4j 4.2
+    //
+    //      CREATE [BTREE] INDEX [index_name] [IF NOT EXISTS] FOR (n:LabelName) ON (n.propertyName)
+    //             [OPTIONS "{" option: value[, ...] "}"]
+    //      CREATE [BTREE] INDEX [index_name] [IF NOT EXISTS] FOR (n:LabelName) ON (n.propertyName_1, ...)
+    //             [OPTIONS "{" option: value[, ...] "}"]
+    //
+    //      DROP INDEX index_name [IF EXISTS]
+    //
+    //      SHOW [ALL|BTREE] INDEX[ES] [BRIEF|VERBOSE [OUTPUT]]
+    //
+    //      DROP INDEX ON :LabelName(propertyName)                  -- deprecated
+    //      DROP INDEX ON :LabelName (n.propertyName_1, ...)        -- deprecated
+    //
+    //  Note: fulltext indices are the same
     //
 
     // single property index
@@ -82,6 +195,19 @@ public class Neo4JIndices {
     // }
     //
 
+    /**
+     * Retrieve the Neo4J version.
+     * @return the version number (for example '3.5.23')
+     */
+    public String getVersion() {
+        String s = "CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition;";
+
+        Session session = sessionFactory.openSession();
+
+        Result result = session.query(s, Collections.emptyMap());
+        return (String) result.iterator().next().get("version");
+    }
+
     public IndexCollection getIndexes() {
         IndexCollection indices = new IndexCollection();
         Session session = sessionFactory.openSession();
@@ -90,19 +216,15 @@ public class Neo4JIndices {
         while (it.hasNext()) {
             Map<String, Object> rec = it.next();
 
-            IndexDescriptor idesc = new IndexDescriptor();
-            idesc.name = (String) rec.get("indexName");
-            idesc.description = (String) rec.get("description");
-            idesc.type = (String) rec.get("type");
-
-            // tokenNames: String[]
-            idesc.labels.addAll(Arrays.asList((String[])rec.get("tokenNames")));
-            // properties: String[]
-            idesc.properties.addAll(Arrays.asList((String[])rec.get("properties")));
+            IndexDescriptor idesc = new IndexDescriptor(rec);
 
             indices.add(idesc);
         }
         return indices;
+    }
+
+    public void createIndex(String indexStatement) {
+
     }
 
     public void createSinglePropertyIndex(List<String> labels, String property) {
@@ -116,7 +238,6 @@ public class Neo4JIndices {
     }
 
     public void createSinglePropertyIndex(String label, String property) {
-
         String s = String.format("CREATE INDEX ON :%s(%s)", label, property);
         Session session = sessionFactory.openSession();
         session.query(s, Collections.emptyMap());

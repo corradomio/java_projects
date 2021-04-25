@@ -1,19 +1,22 @@
 package jext.springframework.data.indices;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class IndexDescriptor {
     // single/multi label:
     //      'Unnamed index'
     // fulltext:
-    //      name assigned to the fulltext index
+    //      name assigned in the statement
     public String name;
 
     // single/multi label:
-    //      INDEX ON :type(refId,...)
+    //      INDEX ON :label(property,...)
+    //      INDEX ON :label(property_1, ...)
     // fulltext:
-    //      INDEX ON NODE:project, module, source, type, comment, method, field, library, component, feature(name)
+    //      INDEX ON NODE:label_1, ...(property_1, ....)
     //
     public String description;
 
@@ -29,23 +32,60 @@ public class IndexDescriptor {
     // list of properties (can be only 1)
     public List<String> properties = new ArrayList<>();
 
-    /**
-     * Index name.
-     * For the fulltext indices, it is the specified name,
-     * for the label/property indices is ":label(property,...)"
-     * as available in "description"
-     */
-    public String getName() {
+
+    // single property index
+    //
+    // {
+    //      provider={version=1.0, key=native-btree},
+    //      indexName='Unnamed index',
+    //      description='INDEX ON :type(refId)',
+    //      progress=100.0,
+    //      tokenNames=['component'],
+    //      state=ONLINE,
+    //      id=14,
+    //      type='node_label_property',
+    //      failureMessage='',
+    //      properties=['refId']
+    // }
+    //
+    // full text index
+    //
+    // {
+    //      provider={version=1.0, key=fulltext},
+    //      indexName='spl_fulltext_index',
+    //      description='INDEX ON NODE:project, module, source, type, comment, method, field, library, component, feature(name)',
+    //      progress=100.0,
+    //      tokenNames=['project', 'module', 'source', 'type', 'comment', 'method', 'field', 'library', 'component', 'feature'],
+    //      state=ONLINE,
+    //      id=7,
+    //      type='node_fulltext',
+    //      failureMessage='',
+    //      properties=['name']
+    // }
+    //
+
+    public IndexDescriptor(Map<String, Object> rec) {
+        this.name = (String) rec.get("indexName");
+        this.description = (String) rec.get("description");
+        this.type = (String) rec.get("type");
+
+        // tokenNames: String[]
+        this.labels.addAll(Arrays.asList((String[])rec.get("tokenNames")));
+        // properties: String[]
+        this.properties.addAll(Arrays.asList((String[])rec.get("properties")));
+
         if ("Unnamed index".equals(name))
-            return nameOf(description);
-        else
-            return name;
+            name = nameOf(description);
     }
 
     private static String nameOf(String description) {
-        // INDEX ON :type(refId,...)
+        // INDEX ON :type(refId,...) -> ":type(refId)"
+        // remove ALL spaces
         int pos = description.indexOf(':');
-        return description.substring(pos);
+        String name = description.substring(pos);
+        while(name.contains(" "))
+            name = name.replace(" ", "");
+        return name;
     }
 
     @Override
