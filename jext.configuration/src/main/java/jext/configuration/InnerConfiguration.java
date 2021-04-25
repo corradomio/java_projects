@@ -21,6 +21,25 @@ public class InnerConfiguration implements Configuration {
     }
 
     // ----------------------------------------------------------------------
+    // IO Operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean isChanged() {
+        return root.isChanged();
+    }
+
+    @Override
+    public void load() throws IOException {
+        root.load();
+    }
+
+    @Override
+    public void save() throws IOException {
+        root.save();
+    }
+
+    // ----------------------------------------------------------------------
     // Read Operations
     // ----------------------------------------------------------------------
 
@@ -61,11 +80,6 @@ public class InnerConfiguration implements Configuration {
     @Override
     public void setProperty(String key, Object value) {
         root.setProperty(pkeyOf(key), value);
-    }
-
-    @Override
-    public void save() throws IOException, TransformerException {
-        root.save();
     }
 
     // ----------------------------------------------------------------------

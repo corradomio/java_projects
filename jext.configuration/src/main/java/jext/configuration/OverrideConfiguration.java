@@ -1,11 +1,16 @@
 package jext.configuration;
 
-import javax.xml.transform.TransformerException;
+import com.sun.istack.internal.Nullable;
+import jext.util.FileUtils;
+import jext.xml.XPathUtils;
+import org.w3c.dom.Element;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 public class OverrideConfiguration implements Configuration {
 
@@ -28,18 +33,46 @@ public class OverrideConfiguration implements Configuration {
     }
 
     // ----------------------------------------------------------------------
+    // IO Operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean isChanged() {
+        for(Configuration configuration : configurations)
+            if (configuration.isChanged())
+                return true;
+        return false;
+    }
+
+    @Override
+    public void load() throws IOException {
+        for(Configuration configuration : configurations)
+            if (configuration.isChanged())
+                configuration.load();
+    }
+
+    @Override
+    public void save() throws IOException {
+        for(Configuration configuration : configurations)
+            configuration.save();
+    }
+
+    // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
 
+    public void setConfigurationFile(File configurationFile) {
+        addConfigurationFile(configurationFile);
+        // retrieve the override file
+        File overrideFile = getOverrideFile(configurationFile);
+        addConfigurationFile(overrideFile);
+    }
+
     public void addConfigurationFile(File configurationFile) {
+        if (configurationFile == null) return;
         configurations.add(new XMLConfiguration(configurationFile));
         reversedConfig = new ArrayList<>(configurations);
         Collections.reverse(reversedConfig);
-    }
-
-    public void save() throws IOException, TransformerException {
-        if (configurations.size() > 1)
-            getOverrideConfiguration().save();
     }
 
     // ----------------------------------------------------------------------
@@ -115,4 +148,21 @@ public class OverrideConfiguration implements Configuration {
         getOverrideConfiguration().setProperty(key, value);
     }
 
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
+    @Nullable
+    private File getOverrideFile(File configurationFile) {
+        try {
+            Element root = XPathUtils.parse(configurationFile).getDocumentElement();
+            Properties properties = XPathUtils.getProperties(root);
+            String path = XPathUtils.getValue(root, "override[@path]", "config-override.xml", properties);
+            if (FileUtils.isAbsolute(path))
+                return new File(path);
+            else
+                return new File(configurationFile.getParentFile(), path);
+        } catch (Exception e) { }
+        return null;
+    }
 }

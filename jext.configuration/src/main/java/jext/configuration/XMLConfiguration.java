@@ -2,12 +2,13 @@ package jext.configuration;
 
 import jext.logging.Logger;
 import jext.util.FileUtils;
-import jext.util.PropertiesUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class XMLConfiguration implements Configuration {
     private Document doc;
     private Element root;
     private Properties properties;
+    private boolean updated;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -30,6 +32,50 @@ public class XMLConfiguration implements Configuration {
     public XMLConfiguration(File configurationFile) {
         this.configurationFile = configurationFile;
         this.timestamp = -1;
+    }
+
+    // ----------------------------------------------------------------------
+    // IO Operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean isChanged() {
+        if (this.timestamp != 0 && !configurationFile.exists())
+            return true;
+        else if (this.timestamp == 0 && !configurationFile.exists())
+            return false;
+        else
+            return this.timestamp != configurationFile.lastModified();
+    }
+
+    @Override
+    public void load() throws IOException {
+        try {
+            if (configurationFile.exists()) {
+                this.doc = XPathUtils.parse(configurationFile);
+                this.root = this.doc.getDocumentElement();
+                this.timestamp = configurationFile.lastModified();
+            } else {
+                this.doc = XPathUtils.parse("<configuration/>");
+                this.root = this.doc.getDocumentElement();
+                this.timestamp = 0;
+            }
+            this.properties = XPathUtils.getProperties(this.root);
+            this.updated = false;
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public void save() throws IOException {
+        if (updated)
+        try {
+            XPathUtils.serialize(doc, configurationFile);
+            this.updated = false;
+        } catch (TransformerException e) {
+            throw new IOException(e);
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -81,11 +127,7 @@ public class XMLConfiguration implements Configuration {
         check();
         String svalue = value != null ? value.toString() : null;
         XPathUtils.setValue(root, xpathOf(key), svalue, properties);
-    }
-
-    @Override
-    public void save() throws IOException, TransformerException {
-        XPathUtils.serialize(doc, configurationFile);
+        updated = true;
     }
 
     // ----------------------------------------------------------------------
@@ -98,18 +140,9 @@ public class XMLConfiguration implements Configuration {
 
     private void check()  {
         try {
-            if (!configurationFile.exists() && this.timestamp != 0) {
-                this.doc = XPathUtils.parse("<configuration/>");
-                this.root = this.doc.getDocumentElement();
-                this.timestamp = 0;
-            }
-            else if (timestamp != configurationFile.lastModified()) {
-                this.doc = XPathUtils.parse(configurationFile);
-                this.root = this.doc.getDocumentElement();
-                this.timestamp = configurationFile.lastModified();
-            }
-            this.properties = XPathUtils.getProperties(this.root);
-        } catch (Exception e) {
+            if (isChanged())
+                load();
+        } catch (IOException e) {
             logger.errorf("Unable to parse configuration file %s", FileUtils.getAbsolutePath(configurationFile));
         }
     }

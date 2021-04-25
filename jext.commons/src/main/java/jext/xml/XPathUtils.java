@@ -173,7 +173,7 @@ public class XPathUtils {
 
     private static String resolveParams(String text, Properties params, boolean original) {
         boolean updated = false;
-        if (text == null || text.length() == 0 || params == null || params.isEmpty())
+        if (text == null || text.length() == 0)
             return text;
 
         int pos = -1, end;
@@ -195,7 +195,7 @@ public class XPathUtils {
                 vvalue = System.getProperty(name.substring(4));
             }
             else {
-                vvalue = params.contains(name) ? params.get(name).toString() : null;
+                vvalue = params.containsKey(name) ? params.get(name).toString() : null;
             }
 
             // if the value is null, doesn't replace "${...}"

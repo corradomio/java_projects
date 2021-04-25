@@ -1,9 +1,13 @@
 package jext.configuration;
 
-import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 public interface Configuration {
+
+    boolean isChanged();
+
+    void load() throws IOException;
+    void save() throws IOException;
 
     boolean containsKey(String key);
 
@@ -22,5 +26,5 @@ public interface Configuration {
 
     void setProperty(String key, Object value);
 
-    void save() throws IOException, TransformerException;
+
 }

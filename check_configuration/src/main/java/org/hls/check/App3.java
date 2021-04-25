@@ -11,8 +11,9 @@ public class App3 {
 
     public static void main(String[] args) throws IOException, TransformerException {
         PriorityConfiguration config = PriorityConfiguration.getConfiguration();
-        config.addConfigurationFile(new File("config/splserver.xml"));
-        config.addConfigurationFile(new File("config/splconfig.xml"));
+        config.setConfigurationFile(new File("config/splserver.xml"));
+        // config.addConfigurationFile(new File("config/splserver.xml"));
+        // config.addConfigurationFile(new File("config/splconfig.xml"));
 
         System.out.println(config.getString("splreposManager.workspace[@path]"));
 
