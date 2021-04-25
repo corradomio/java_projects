@@ -1,0 +1,1139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--
+        Configuration for the SPLReposManager
+      -->
+    <splreposManager>
+        <!--<workspace path="/Users/ahmed/Desktop/SPL/Repos"/>-->
+        <!--<workspace path="${sys:user.home}/Desktop/SPL/Repos" />-->
+        <!--<workspace path="D:/SPLGroup/spl-workspaces/AhmedWorkspace"/>-->
+        <!--<workspace path="D:/SPLGroup/spl-workspaces/BTProjects2"/>-->
+        <!--<workspace path="D:/SPLGroup/spl-workspaces/spl-workspace"/>-->
+        <workspace path="D:/SPLGroup/spl-workspaces/dev-workspace/workspace"/>
+    </splreposManager>
+
+
+    <confidentialManager>
+        <!--
+            Password used for encrypt/decrypt confidential information
+          -->
+        <password value="system.password"/>
+
+    </confidentialManager>
+
+    <!--
+        System configuration:
+
+        Note: if a path starts with '/' or '<disk>:/' is considered a ABSOLUTE path, otherwise a RELATIVE path.
+              The HOME path is the directory where the web application is installed
+      -->
+    <system>
+
+        <!--
+            Map specific web sites to 'VFileSystem protocols' used to access them
+
+            (PARTIALLY implemented!)
+          -->
+        <vfilesystems>
+            <vfilesystem url="http://github.com" protocol="http+git"/>
+            <vfilesystem url="https://github.com" protocol="https+git"/>
+        </vfilesystems>
+
+        <!-- uploads path="${sys:user.home}/.spl/uploads"/ -->
+        <!--uploads path="D:/SPLGroup/uploads"/-->
+        <uploads path="${sys:user.home}/.spl/uploads"/>
+
+        <!--
+            Thread pool used to execute in background some simple operations.
+            Note: this pool IS NOT used to execute the MAIN 'TASKs' like 'dependency analysis',
+                  'component analysis', ...
+            but only simple/fast tasks as, for example, to delete something.
+          -->
+        <threadpool threads="1"/>
+
+        <!--
+            Thread pool used to execute in background the MAIN 'TASKs', very long operations:
+
+                - download from remote repository
+                - dependency analysis
+                - component analysis
+                - feature analysis
+                - ...
+          -->
+        <taskpool threads="8"/>
+
+        <!--
+            Configuration file for Log4j and timeout (in milliseconds) used for the timed/debugf logging
+          -->
+        <logging timeout="3000" path="WEB-INF/log4j.xml"/>
+
+        <!--
+            WebSocket
+                KeepAlive timout (in milliseconds)
+                Progress timeout (in milliseconds)
+         -->
+        <messages>
+            <keepalive timeout="20000" />
+            <progress  timeout="10000"/>
+        </messages>
+
+        <!--
+            The directory can be ABSOLUTE (it needs to start with "/") or RELATIVE to the webapp home
+        -->
+
+        <!--
+            Neo4j configurations
+          -->
+        <graphdb>
+            <properties>
+                <!--
+                    DEPRECATED CONFIGURATION
+                    WARNING:  SPL 2.8
+                        the properties to access to Neo4J are read from
+
+                        "application.properties"
+                  -->
+            </properties>
+
+            <!--
+                List of indices that MUST exist to support SPL.
+                When SPL accesses to the DB for the first time, it check if all indices are
+                existent. If an index is not existent, it is automatically created.
+
+                It is possible to "drop" some index, if it is present.
+                This permit to replace an index with another one.
+                The 'drop' operation is executed BEFORE to add new indices.
+
+                'version' is used to specify the Neo4J version. The version is compared
+                by "startsWith". If Neo4J has version '3.5.23', it matches the following
+                versions:
+
+                    - '3.'
+                    - '3.5.'
+                    - '3.5.23'
+
+                 It is better to add the '.', otherwise, using only '3', we can match Neo4J
+                 version '3*.*.*' that is, each version starting with a '3'.
+
+                Note: IT IS ABSOLUTELY WRONG to drop an index and to create another one with the SAME name!
+                Note: to create the index nale, ALL SPACES are removed
+              -->
+            <indices>
+                <!--
+                <drop name=":component(refId)" version="3.">
+                    DROP INDEX ON :component(refId)
+                </drop>
+                <drop name=":feature(refId)" version="3.">
+                    DROP INDEX ON ${name}
+                </drop>
+                <drop name="spl_fulltext_index">
+                    CALL db.index.fulltext.drop("${name}")
+                </drop>
+                -->
+
+                <!-- Indices on 'refId' -->
+
+                <index name=":type(refId)" version="3.">
+                    CREATE INDEX ON :type(refId)
+                </index>
+                <index name=":method(refId)" version="3.">
+                    CREATE INDEX ON :method(refId)
+                </index>
+                <index name=":parameter(refId)" version="3.">
+                    CREATE INDEX ON :parameter(refId)
+                </index>
+                <index name=":field(refId)" version="3.">
+                    CREATE INDEX ON :field(refId)
+                </index>
+                <index name=":comment(refId)" version="3.">
+                    CREATE INDEX ON :comment(refId)
+                </index>
+                <index name=":component(refId)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+                <index name=":feature(refId)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+
+                <!-- indices on 'name' -->
+
+                <index name=":type(name)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+                <index name=":method(name)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+                <index name=":parameter(name)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+                <index name=":field(name)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+                <index name=":comment(name)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+                <index name=":component(name)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+                <index name=":feature(name)" version="3.">
+                    CREATE INDEX ON ${name}
+                </index>
+
+                <!-- FullText -->
+
+                <index name="spl_fulltext_name_index">
+                    CALL db.index.fulltext.createNodeIndex("${name}",
+                    ["module","type","method","library","component","feature"],
+                    ["name"],
+                    {analyzer: "standard", eventually_consistent: "true"}
+                    )
+                </index>
+            </indices>
+
+            <!--
+
+              -->
+            <namedqueries>
+                <!--
+                    There are TWO type of parameters:
+
+                    1) ${name}:  is a TEXT parameters, resolved during the statement preparation
+                    2) $name:    is a QUERY parameter, resolved by the database driver
+
+                    Note: it is possible doesn't specify the RETURN part.
+                          Based on the method used, this part will be added automatically
+
+                    Uses 'n' as the ALIAS fro the node to return
+                  -->
+                <query name="findTypeClosure">
+                    MATCH (f:type {projectId: $projectId}) -[:uses*]-> (n:type {projectId: $projectId}
+                </query>
+                <query name="findConnectedComponents">
+                    MATCH (n:component {projectId: $projectId, depth: $depth})
+                    WITH n, size( (n) -[:uses]- () ) AS degree
+                    WHERE degree > 0
+                </query>
+                <query name="findSingletonComponents">
+                    MATCH (n:component {projectId: $projectId, depth: $depth})
+                    WITH n, size( (n) -[:contains]-> () ) AS idegree,
+                    size( (n) -[:uses]- () ) AS odegree
+                    WHERE idegree = 1 AND odegree = 0
+                </query>
+                <query name="findOneInOneOutComponents">
+                    MATCH (p:component {projectId: $projectId, depth: $depth})
+                           -[:uses]->
+                           (n:component {projectId: $projectId, depth: $depth})
+                    WITH p,n, size( (p) -[:uses]-> ( ) ) AS podegree,
+                              size( ( ) -[:uses]-> (n) ) AS nidegree,
+                              size( (n) -[:uses]-> ( ) ) AS nodegree
+                    WHERE podegree = 1 AND nidegree = 1 AND nodegree &lt;= 1
+                    RETURN id(p) AS pid, id(n) AS nid
+                </query>
+                <query name="collapseCycleIntoOneComponent">
+                    MATCH (c:component) WHERE id(c) IN $ids AS nodes
+                    CALL apoc.refactor.mergeNodes( nodes, {properties:"discard", mergeRels:true} )
+                    YIELD node
+                    MATCH(n:component) WHERE id(n) = $id
+                    RETURN id(n)
+                </query>
+                <query name="findComponentTypes">
+                    MATCH (c:component {projectId: $projectId, depth:0})
+                    -[:contains]->(n:type {projectId: $projectId})
+                    WHERE n.role &lt;&gt; "UNKNOWN"
+                </query>
+                <query name="findComponentTypesByID">
+                    MATCH (c:component {projectId: $projectId, depth:0})
+                    -[:contains]->(n:type {projectId: $projectId})
+                    WHERE n.role &lt;&gt; "UNKNOWN" AND id(c) = $componentId
+                </query>
+                <query name="findRecursiveComponentTypes">
+                    MATCH (c:component {projectId: $projectId, depth:$depth})
+                          -[:contains*${depth}]->(u:component {projectId: $projectId,depth:0})
+                          -[:contains]->(n:type {projectId: $projectId})
+                    WHERE n.role &lt;&gt; "UNKNOWN"
+                </query>
+                <query name="findRecursiveComponentTypesByID">
+                    MATCH (c:component {projectId: $projectId, depth:$depth})
+                    -[:contains*${depth}]->(u:component {projectId: $projectId,depth:0})
+                    -[:contains]->(n:type {projectId: $projectId})
+                    WHERE n.role &lt;&gt; "UNKNOWN" AND id(c) = $componentId
+                </query>
+
+                <!--
+                        delete the nodes with is specified by the list 'ids'
+                  -->
+                <query name="deleteComponents">
+                    MATCH (c:component) WHERE id(c) IN $ids DETACH DELETE(c)
+                </query>
+
+                <!--
+                        nodes without INPUT edges
+                  -->
+                <query name="findTypesWithoutInEdge">
+                    MATCH (n:type {projectId: $projectId}, type='type' )
+                    WITH n, size( ()-[:uses]->(n) ) as idegree
+                    WHERE idegree=0
+                </query>
+
+                <!--
+                        nodes without OUTPUT edges
+                        Note: ANY type of node
+                  -->
+                <query name="findTypesWithoutOutEdge">
+                    MATCH (n:type {projectId: $projectId} )
+                    WITH n, size((n)-[:uses]->()) as odegree
+                    WHERE odegree=0
+                </query>
+
+                <!--
+                        VALID types (with 'role'<>'UNKNOWN')
+                  -->
+                <query name="findValidTypes">
+                    MATCH (n:type {projectId: $projectId, type:'type'})
+                </query>
+
+                <!--
+                        nodes WITH OUTPUT edges towards VALID nodes (with 'role'<>'UNKNOWN' or 'type'=="type")
+                  -->
+                <query name="findTypesWithValidOutEdges">
+                    MATCH (n:type {projectId: $projectId, type:'type'}) -[:uses]-> (t:type {projectId: $projectId, type:'type'})
+                </query>
+                <!--
+                        VALID nodes (with 'role' <> 'UNKNOWN') WITH INPUT edges
+                  -->
+                <query name="findValidTypesWithInEdges">
+                    MATCH (t:type {projectId: $projectId, type:'type'}) -[:uses]-> (n:type {projectId: $projectId, type:'type'})
+                </query>
+                <!--
+                        find the component with the highest degree
+                  -->
+                <query name="findNodeWithHighestDegree">
+                    MATCH (n) WHERE toString(id(n)) IN $ids
+                    WITH n
+                    MATCH (u)-[:uses]->(n)
+                    WHERE NOT toString(id(u)) IN $ids
+                    WITH n, count(*) AS degree
+                    RETURN n.name AS name
+                    ORDER BY degree DESC, n.name
+                    LIMIT 1
+                </query>
+
+                <!--
+                  -->
+                <query name="findComponentsLevelOne">
+                    MATCH (c:feature {projectId: $projectId})
+                    -[:contains]->(u:component {projectId: $projectId})
+                    -[:contains]->(n:component {projectId: $projectId})
+                    WHERE id(c) = $featureId
+                </query>
+
+                <!--<query name="findProjectGraph">-->
+                    <!--MATCH (n {projectId: $projectId})-->
+                    <!--WHERE n:type OR n:component OR n:feature-->
+                <!--</query>-->
+<!--                <query name="findProjectGraph">-->
+<!--                    MATCH (n {projectId: $projectId})-->
+<!--                    WHERE (n:type AND (n.role="CLASS" OR n.role="INTERFACE" OR n.role="ENUM")) OR (n:component AND n.depth &lt;&gt; 0)-->
+<!--                </query>-->
+                <query name="findProjectGraph">
+                    OPTIONAL MATCH (n1:feature {projectId:$projectId, role:"FEATURE"})
+                    WITH collect(distinct n1) as c1
+
+                    OPTIONAL MATCH (n2:component {projectId:$projectId, depth: 1})
+                    WITH collect(distinct n2) + c1 as c2
+
+                    OPTIONAL MATCH (n3:type {projectId:$projectId})
+                    WHERE (n3.role="CLASS" OR n3.role="INTERFACE" OR n3.role="ENUM")
+                    WITH collect(distinct n3) + c2 as c3
+
+                    UNWIND c3 as n
+                </query>
+                <query name="findComponentsByDepth">
+                    MATCH (n:component {projectId: $projectId})
+                    WHERE n.depth = $depth
+                </query>
+                <query name="findEdgesBetweenFeatureAndDepthOne">
+                    MATCH (from:feature {projectId: $projectId})
+                    -[n:contains*2]->(to:component {projectId: $projectId, depth: 1})
+                    RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+                </query>
+                <query name="findEdgesBetweenDepthTwoAndOne">
+                    MATCH (from:component {projectId: $projectId, depth: 2})
+                    -[n:contains]->(to:component {projectId: $projectId, depth: 1})
+                    RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+                </query>
+                <query name="findEdgesBetweenComponentsAndTypes">
+                    MATCH (from:component {projectId: $projectId})
+                    -[n:contains*2]->(to:type {projectId: $projectId})
+                    WHERE id(from) in $id
+                    RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+                </query>
+                <query name="findFeaturesWithIDs">
+                    MATCH (n:feature {projectId: $projectId})
+                    WHERE id(n) in $id
+                </query>
+                <query name="findComponentsWithIDs">
+                    MATCH (n:component {projectId: $projectId})
+                    WHERE id(n) in $id
+                </query>
+                <query name="findComponentsConnectedtoFeaturesWithIDs">
+                    MATCH (m:feature {projectId: $projectId})
+                    -[:contains*2]->(n:component {projectId: $projectId, depth:1})
+                    WHERE id(m) in $id
+                </query>
+                <query name="findComponentsConnectedWithIDs">
+                    MATCH (m:component {projectId: $projectId})
+                    -[:contains]->(n:component {projectId: $projectId})
+                    WHERE id(m) in $id
+                </query>
+                <query name="findTypesFromComponentsWithIDs">
+                    MATCH (m:component {projectId: $projectId})
+                    -[:contains*]->(n:type {projectId: $projectId})
+                    WHERE id(m) in $id
+                </query>
+                <query name="findTypesFromFeaturesWithIDs">
+                    MATCH (m:feature {projectId: $projectId})
+                    -[:contains*]->(n:type {projectId: $projectId})
+                    WHERE id(m) in $id
+                </query>
+                <query name="findEdgesBetweenFeatureAndDepthOneWithIDs">
+                    MATCH (from:feature {projectId: $projectId})
+                    -[n:contains*2]->(to:component {projectId: $projectId, depth: 1})
+                    WHERE id(from) in $id
+                    RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+                </query>
+                <query name="findEdgesBetweenDepthTwoAndOneWithIDs">
+                    MATCH (from:component {projectId: $projectId, depth: 2})
+                    -[n:contains]->(to:component {projectId: $projectId, depth: 1})
+                    WHERE id(from) in $id
+                    RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+                </query>
+                <query name="findFeaturesfromComponents">
+                    MATCH(n:feature {projectId:$projectId})-[:contains*]->(m:component {projectId:$projectId})
+                    WHERE id(m) in [x in $id | toInt(x)]
+                </query>
+                <query name="getTypeModules">
+                    Match (n:type {projectId: $projectId})
+                    OPTIONAL MATCH (n)-[]->(m:source)-[]->(o:module)
+                    return distinct id(n) as id,o.name as name
+                </query>
+                <query name="getTypeModulesWithIDs">
+                    Match (n:type {projectId: $projectId})
+                    WHERE id(n) in $id
+                    OPTIONAL MATCH (n)-[]->(m:source)-[]->(o:module)
+                    return distinct id(n) as id,o.name as name
+                </query>
+                <query name="getNodeNeighbors">
+                    MATCH (p1:type {projectId: $projectId}), (p2:type {projectId: $projectId})
+                    WITH p1, p2
+                    MATCH p = (p1)-[:uses]-(p2)
+                    WITH p1, p2
+                    ORDER BY id(p2)
+                    WITH p1, COLLECT(id(p2)) as neighbors
+                    Return id(p1) as id, p1.fullname as name, neighbors
+                    Order by id(p1)
+                </query>
+<!--                <query name="getNodeNeighborsType">-->
+<!--                    MATCH (p1:type {projectId: $projectId, type: "type"}), (p2:type {projectId: $projectId, type: "type"})-->
+<!--                    WITH p1, p2-->
+<!--                    MATCH p = (p1)-[:uses]-(p2)-->
+<!--                    WITH p1, p2-->
+<!--                    ORDER BY id(p2)-->
+<!--                    WITH p1, COLLECT(id(p2)) as neighbors-->
+<!--                    Return id(p1) as id, p1.fullname as name, neighbors-->
+<!--                    Order by id(p1)-->
+<!--                </query>-->
+                <query name="getNodeNeighborsType">
+                    MATCH (p1:type {projectId: $projectId, type: "type"})
+                    OPTIONAL MATCH p = (p1)-[:uses]-(p2:type {projectId: $projectId, type: "type"})
+                    WITH p1, p2
+                    ORDER BY id(p2)
+                    WITH p1, COLLECT(id(p2)) as neighbors
+                    Return id(p1) as id, p1.fullname as name, neighbors
+                    Order by id(p1)
+                </query>
+<!--                <query name="getNodeFeatureCount">-->
+<!--                    Match (m:feature {projectId: $projectId})-[:contains*]->(n:type {projectId: $projectId})-->
+<!--                    With n, count(distinct m) as features-->
+<!--                    return id(n) as id, n.fullname as name, features Order by id(n)-->
+<!--                </query>-->
+                <query name="getNodeFeatureCount">
+                    MATCH (n:type {projectId: $projectId, type:"type"})
+                    OPTIONAL MATCH (m:feature {projectId:$projectId})-[:contains*4]->(n)
+                    WITH n, COUNT(DISTINCT m) AS features
+                    RETURN id(n) AS id, n.fullname AS name, features
+                    ORDER BY id(n)
+                </query>
+                <query name="setCoreScores">
+                    unwind $nodes as n
+                    Match (m)
+                    Where id(m) = toInt(n.id)
+                    set m.score = n.score
+                </query>
+                <query name="getCoreScores">
+                    Match(n:type {projectId:$projectId})
+                    return id(n) as id, n.fullname as name, ((toFloat($alpha)*n.score[0]) + ((1.0-toFloat($alpha))*n.score[1])) as score
+                    Order by score DESC
+                </query>
+                <query name="findTypesWithKCore">
+                    MATCH (n:type {projectId: $projectId})
+                    WHERE n.score[1] > $threshold
+                </query>
+                <query name="getCoreScoresType">
+                    Match(n:type {projectId:$projectId, type: "type"})
+                    return id(n) as id, n.fullname as name, ((toFloat($alpha)*n.score[0]) + ((1.0-toFloat($alpha))*n.score[1])) as score
+                    Order by score DESC
+                </query>
+                <query name="DeleteCoreScores">
+                    Match(n:type {projectId:$projectId})
+                    REMOVE n.score
+                </query>
+                <query name="findIntegrationPoints">
+                    With $id as ids
+                    Match p=shortestPath((f2)-[r:contains*]->(t:type {projectId:$projectId, type:'type'}))
+                    where id(f2) in [i in ids| toInt(i)]
+                    WITH t, size(ids) as inputCnt, count(DISTINCT f2) as cnt,collect ([n in nodes(p) where "feature" in labels(n) OR "type" in labels(n) or ("component" in labels(n) and n.depth = 1)| n]) as paths
+                    where inputCnt = cnt
+                    unwind paths as pat
+                    return pat[0].name as Features, pat[1].name as Components, pat[2].name as Types
+                </query>
+                <query name="findIntegrationPointsWithLibraries">
+                    With $id as ids
+                    Match p=shortestPath((f2)-[r:contains*]->(t:type {projectId:$projectId, type:'type'}))
+                    where id(f2) in [i in ids| toInt(i)]
+                    WITH t, size(ids) as inputCnt, count(DISTINCT f2) as cnt,collect ([f2,t]) as paths
+                    where inputCnt = cnt
+                    unwind paths as pat
+                    Optional Match (x)-[:uses]->(:type {projectId:$projectId,type:"reftype"})-[:memberOf]->(l:library {projectId:$projectId})
+                    where id(x) = id(last(pat))
+                    with pat, collect(distinct l.name) as libs
+                    unwind (CASE libs WHEN [] then [null] else libs end) as lib
+                    return head(labels(head(pat))) as elementType, head(pat).name as Elements, last(pat).name as Types, lib as Libraries
+                </query>
+                <query name="checkSetFeatureTypesCount">
+                    Match(n:feature {projectId:$projectId})
+                    where (NOT exists(n.classes) OR NOT exists(n.complexity)) AND n.role &lt;&gt; "PROJECT"
+                </query>
+                <query name="setFeatureTypesCount">
+                    Match(f:feature {projectId:$projectId})-[:contains*4]->(t:type {projectId:$projectId,type:'type'})
+                    with f, collect(distinct t) as types, count(distinct t) as cnt
+                    with f, cnt, reduce(total = 0, type IN types | total + type.score[1]) as complexity
+                    set f.classes = cnt, f.complexity = complexity
+                </query>
+                <query name="getFeatureTypesCount">
+                    Match(n:feature {projectId:$projectId, role:"FEATURE"})
+                    return id(n) as id, n.fullname as fullName, n.name as name, n.classes as classes, n.complexity as complexity
+                    Order by classes DESC, complexity DESC
+                </query>
+                <query name="getFeatureFattiness">
+                    Match(n:feature {projectId:$projectId})
+                    where exists(n.complexity)
+                    with max(n.complexity) as maxC
+                    Match(n:feature {projectId:$projectId})
+                    where exists(n.complexity)
+                    return id(n) as id, n.complexity as complexity, n.name as name, n.fullname as fullname, (n.complexity >= 0.7*maxC) as fat
+                    order by complexity desc
+                </query>
+                <query name="checkSetComponentTypesCount">
+                    Match(n:component {projectId:$projectId})
+                    where NOT exists(n.classes) AND n.role &lt;&gt; "PROJECT"
+                </query>
+                <query name="setComponentTypesCount">
+                    Match(c:component {projectId:$projectId})-[:contains*]->(t:type {projectId:$projectId,type:'type'})
+                    with c, count(distinct t) as types
+                    set c.classes = types
+                </query>
+                <query name="getComponentTypesCount">
+                    Match(c:component {projectId:$projectId})
+                    Where c.role &lt;&gt; "PROJECT" AND ($all OR c.depth = $depth)
+                    return id(c) as id, c.fullname as fullName, c.name as name, c.classes as classes, c.depth as depth
+                    Order by classes DESC
+                </query>
+                <query name="getFeatureTypes">
+                    Match(f:feature {projectId:$projectId})-[:contains*4]->(t:type {projectId:$projectId,type:'type'})
+                    Where id(f) = $id
+                    return distinct id(t) as id, t.fullname as fullName, t.name as name, t.score[1] as kCore
+                    Order by id
+                </query>
+                <query name="getTypeFeatures">
+                    Match(f:feature {projectId:$projectId})-[:contains*4]->(t:type {projectId:$projectId,type:'type'})
+                    Where id(t) = $id
+                    return distinct id(f) as id, f.fullname as fullName, f.name as name, f.classes as classes
+                    Order by id
+                </query>
+                <query name="getModulesWTypes">
+                    Match (s:source {projectId:$projectId})-[:memberOf]->(n:module {projectId:$projectId})
+                    return distinct id(n) as id, n.name as name, n.fullname as fullName
+                </query>
+                <query name="findModulesIP">
+                    Match (t1:type {projectId:$projectId, type:"type"})-[:memberOf*2]->(n1:module), (t2:type {projectId:$projectId, type:"type"})-[:memberOf*2]->(n2:module)
+                    where id(n1) = toInt($id1) and id(n2) = toInt($id2)
+                    with t1,t2, n1.name as n1n, n2.name as n2n
+                    MATCH p = (t1)-[:uses]-(t2)
+                    WITH t1, t2, n1n, n2n
+                    ORDER BY id(t2)
+                    WITH t1, COLLECT(t2.name) as neighbors, n1n, n2n
+                    unwind neighbors as nbr
+                    return n1n as Modules1, t1.name as Types1,nbr as Types2, n2n as Modules2
+                </query>
+                <query name="getModelsSize">
+                    match (t:type {projectId:$projectId})
+                    where t.role &lt;&gt; "PROJECT" AND t.type &lt;&gt; "reftype"
+                    with count(t) as types
+                    match (c:component {projectId:$projectId})
+                    where c.role &lt;&gt; "PROJECT"
+                    with types, count(c) as components
+                    match (f:feature {projectId:$projectId})
+                    where f.role &lt;&gt; "PROJECT"
+                    with types, components, count(f) as features
+                    return types, components, features
+                </query>
+                <query name="mergeTokens">
+                    MATCH (n:token {projectId:$projectId})
+                    WITH n.name as name, collect(n) as nodes
+                    CALL apoc.refactor.mergeNodes(nodes) yield node
+                    return count(*)
+                </query>
+                <query name="deleteDuplicateTokenRelationships">
+                    MATCH (n:token {projectId:$projectId})-[relation:follows]->(t:token {projectId:$projectId})
+                    WITH n, t, tail(collect(relation)) AS surplusRelations
+                    UNWIND surplusRelations AS surplusRelation
+                    DELETE surplusRelation
+                    return count(n)
+                </query>
+                <query name="deleteTokensWithoutRelationships">
+                    MATCH (n:token {projectId:$projectId})
+                    WHERE NOT (n)-[]-()
+                    DELETE n
+                    return count(n)
+                </query>
+                <query name="clusterFeaturesByDesignPatterns">
+                    Call algo.louvain.stream('Match (n:feature {projectId:$projectId})-[:contains*]->(m:type {projectId:$projectId}) where n.name = m.name return distinct id(m) as id
+                    UNION MATCH(t:token {projectId:$projectId}) where t.name in $keywords return distinct id(t) as id',
+                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) RETURN id(n1) as source, id(n2) as target
+                    UNION Match (n1:type {projectId:$projectId})-[:uses]->(n2:type {projectId:$projectId}) RETURN id(n1) as source, id(n2) as target',
+                    {graph:"cypher",params:{projectId:$projectId,keywords:$keywords}})
+                    YIELD nodeId, community
+                    With community, collect(distinct nodeId) as ids
+                    return community, ids
+                    Order by community
+                </query>
+                <query name="clusterTypesByDesignPatterns">
+                    Call algo.louvain.stream('Match (m:type {projectId:$projectId,type:"type"}) WHERE m.role&lt;&gt;"ANNOTATION" return distinct id(m) as id
+                    UNION MATCH(t:token {projectId:$projectId}) where t.name in $keywords return distinct id(t) as id',
+                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) RETURN id(n1) as source, id(n2) as target',
+                    {graph:"cypher",params:{projectId:$projectId,keywords:$keywords}})
+                    YIELD nodeId, community
+                    With community, collect(distinct nodeId) as ids
+                    return community, ids
+                    Order by community
+                </query>
+                <query name="clusterNodesByTokensInitial">
+                    Call algo.louvain.stream('Match (m:type {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id UNION MATCH(t:token {projectId:$projectId}) where NOT t.name in $keywords return distinct id(t) as id',
+                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',
+                    {graph:"cypher",params:{projectId:$projectId,ids:$id,keywords:$keywords}})
+                    YIELD nodeId, community
+                    With community, collect(distinct nodeId) as ids
+                    return community, ids
+                    Order by community
+                </query>
+                <query name="clusterNodesByTokens">
+                    Call algo.louvain.stream('Match (m {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id',
+                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',
+                    {graph:"cypher",params:{projectId:$projectId,ids:$id}})
+                    YIELD nodeId, community
+                    With community, collect(distinct nodeId) as ids
+                    return community, ids
+                    Order by community
+                </query>
+<!--                <query name="clusterNodesByTokensInitialWithPercentage">-->
+<!--                    Call algo.louvain.stream('Match (m:type {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id UNION MATCH(m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] WITH n, COUNT(DISTINCT id(m)) as count with max(count) as Max Match(m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] With n, Count(DISTINCT id(m)) as count, Max where (count &lt; $percentage*Max) AND (NOT n.name IN $keywords) return id(n) as id',-->
+<!--                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',-->
+<!--                    {graph:"cypher",params:{projectId:$projectId,ids:$id,keywords:$keywords,percentage:$percentage}})-->
+<!--                    YIELD nodeId, community-->
+<!--                    With community, collect(distinct nodeId) as ids-->
+<!--                    return community, ids-->
+<!--                    Order by community-->
+<!--                </query>-->
+<!--                <query name="clusterNodesByTokensInitialWithPercentageReverse">-->
+<!--                    Call algo.louvain.stream('Match (m:type {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id UNION MATCH(m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] WITH n, COUNT(DISTINCT id(m)) as count with max(count) as Max Match(m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] With n, Count(DISTINCT id(m)) as count, Max where (count >= $percentage*Max) AND (NOT n.name IN $keywords) return id(n) as id',-->
+<!--                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',-->
+<!--                    {graph:"cypher",params:{projectId:$projectId,ids:$id,keywords:$keywords,percentage:$percentage}})-->
+<!--                    YIELD nodeId, community-->
+<!--                    With community, collect(distinct nodeId) as ids-->
+<!--                    return community, ids-->
+<!--                    Order by community-->
+<!--                </query>-->
+<!--                <query name="clusterNodesByTokensWithPercentage">-->
+<!--                    Call algo.louvain.stream('Match (m:type {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id UNION MATCH(m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] AND id(n) in [x in $ids| toInt(x)] WITH n, COUNT(DISTINCT id(m)) as count with max(count) as Max Match(m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId}) where id(m) in [x in $ids| toInt(x)] With n, Count(DISTINCT id(m)) as count, Max where (count &lt; $percentage*Max) return id(n) as id',-->
+<!--                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',-->
+<!--                    {graph:"cypher",params:{projectId:$projectId,ids:$id,percentage:$percentage}})-->
+<!--                    YIELD nodeId, community-->
+<!--                    With community, collect(distinct nodeId) as ids-->
+<!--                    return community, ids-->
+<!--                    Order by community-->
+<!--                </query>-->
+                <query name="clusterNodesByTokensWithPercentage">
+                    Call algo.louvain.stream('Match (m:type {projectId:$projectId}) where id(m) in [x in $ids| toInteger(x)] return distinct id(m) as id UNION MATCH(m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId}) Where id(m) in [x in $ids| toInteger(x)] AND id(n) in [x in $ids| toInteger(x)] WITH n, COUNT(DISTINCT id(m)) as count return id(n) as id order by count, n.name limit toInteger(ceil($percentage*$nToken))',
+                    'Match (n1:type {projectId:$projectId})-[:context]->(n2:token {projectId:$projectId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',
+                    {graph:"cypher",params:{projectId:$projectId,ids:$id,percentage:$percentage,nToken:$nToken}})
+                    YIELD nodeId, community
+                    With community, collect(distinct nodeId) as ids
+                    return community, ids
+                    Order by community
+                </query>
+                <query name="writeTypeClusters1">
+                    unwind $nodes as n
+                    Match (m)
+                    Where id(m) = toInt(n.id)
+                    set m.clusterT = n.cluster
+                </query>
+                <query name="writeFeatureClusters1">
+                    unwind $nodes as n
+                    Match (m)
+                    Where id(m) = toInt(n.id)
+                    set m.clusterF = n.cluster
+                </query>
+                <query name="writeTypeClusters2">
+                    unwind $nodes as n
+                    Match (m)
+                    Where id(m) = toInt(n.id)
+                    set m.clusterT2 = n.cluster
+                </query>
+                <query name="writeFeatureClusters2">
+                    unwind $nodes as n
+                    Match (m)
+                    Where id(m) = toInt(n.id)
+                    set m.clusterF2 = n.cluster
+                </query>
+<!--                <query name="writeFeatureClusters">-->
+<!--                    unwind $nodes as n-->
+<!--                    Match (m) where id(m) = toInt(n.id)-->
+<!--                    CALL apoc.do.when(labels(m)[0] = "token","set n.clusterF = $cluster","Match (m)-[:contains*]->(n) Where n.name = m.name set m.clusterF = $cluster", {n:m, cluster:n.cluster}) YIELD value-->
+<!--                    return value-->
+<!--                </query>-->
+<!--                <query name="getTokenClusterCount">-->
+<!--                    Match (m:type {projectId:$projectId}) where EXISTS(m.cluster)-->
+<!--                    with m.cluster as cluster, count(distinct id(m)) as count-->
+<!--                    Match (n:token {projectId:$projectId})-->
+<!--                    where n.cluster = cluster-->
+<!--                    return n.name as name, n.cluster as cluster, count-->
+<!--                    order by cluster-->
+<!--                </query>-->
+                <query name="getTypeClusters1">
+                    Match (m:type {projectId:$projectId})
+                    where EXISTS(m.clusterT)
+                    return id(m) as id, m.name as name, m.fullname as fullname, m.clusterT as cluster, 0.75*m.score[0]+0.25*m.score[1] as score
+                    order by cluster, name
+                </query>
+                <query name="getFeatureClusters1">
+                    Match (m:type {projectId:$projectId})
+                    where EXISTS(m.clusterF)
+                    return id(m) as id, m.name as name, m.fullname as fullname, m.clusterF as cluster
+                    order by cluster, name
+                </query>
+                <query name="getTypeClusters2">
+                    Match (m:type {projectId:$projectId})
+                    where EXISTS(m.clusterT2)
+                    return id(m) as id, m.name as name, m.fullname as fullname, m.clusterT2 as cluster, 0.75*m.score[0]+0.25*m.score[1] as score
+                    order by cluster, name
+                </query>
+                <query name="getFeatureClusters2">
+                    Match (m:type {projectId:$projectId})
+                    where EXISTS(m.clusterF2)
+                    return id(m) as id, m.name as name, m.fullname as fullname, m.clusterF2 as cluster
+                    order by cluster, name
+                </query>
+                <query name="DeleteClusters">
+                    Match(n {projectId:$projectId})
+                    REMOVE n.clusterT,n.clusterF,n.clusterT2,n.clusterF2
+                </query>
+                <query name="findTypeClusterToken1">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT STARTS WITH $cluster AND m.clusterT STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT STARTS WITH $cluster AND m.clusterT STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+                <query name="findTypeClusterTokenExact1">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT = $cluster AND m.clusterT = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT = $cluster AND m.clusterT = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+                <query name="findFeatureClusterToken1">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF STARTS WITH $cluster AND m.clusterF STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF STARTS WITH $cluster AND m.clusterF STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+                <query name="findFeatureClusterTokenExact1">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF = $cluster AND m.clusterF = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF = $cluster AND m.clusterF = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+                <query name="findTypeClusterToken2">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT2 STARTS WITH $cluster AND m.clusterT2 STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT2 STARTS WITH $cluster AND m.clusterT2 STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+                <query name="findTypeClusterTokenExact2">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT2 = $cluster AND m.clusterT2 = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterT2 = $cluster AND m.clusterT2 = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+                <query name="findFeatureClusterToken2">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF2 STARTS WITH $cluster AND m.clusterF2 STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF2 STARTS WITH $cluster AND m.clusterF2 STARTS with $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+                <query name="findFeatureClusterTokenExact2">
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF2 = $cluster AND m.clusterF2 = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count
+                    with max(count) as Max
+                    MATCH (m:type {projectId:$projectId})-[:context]->(n:token {projectId:$projectId})
+                    WHERE n.clusterF2 = $cluster AND m.clusterF2 = $cluster
+                    WITH n, COUNT(DISTINCT id(m)) as count, Max
+                    where count = Max
+                    return n.name as name
+                </query>
+
+                <query name="getDependencyGraph">
+                    MATCH (from:type {projectId:$projectId,type:'type'}) -[:uses]-> (to:type {projectId:$projectId,type:'type'})
+                    RETURN id(from) AS idFrom,id(to) AS idTo
+                </query>
+                <query name="getComponentGraph">
+                    MATCH (from:component {projectId:$projectId, depth:$depth})
+                    -[:uses]->
+                    (to:component {projectId:$projectId, depth:$depth})
+                    RETURN id(from) AS idFrom,id(to) AS idTo
+                </query>
+                <query name="getIsInterfaceOrExtended">
+                    match (n:type {projectId:$projectId})-[r:uses]->(m:type {projectId:$projectId})
+                    with m, collect(distinct(r.uses)) as uses
+                    return m.fullname as fullname,  ('implements' in uses) as isInterface, ('extends' in uses) as isExtended
+                </query>
+                <query name="getTypeImplementationsById">
+                    match (n:type {projectId:$projectId})-[r:uses]->(m:type {projectId:$projectId})
+                    where id(m) = $id AND r.uses = "implements"
+                </query>
+                <query name="getTypeImplementationsByIds">
+                    match (n:type {projectId:$projectId})-[r:uses]->(m:type {projectId:$projectId})
+                    where id(m) in $id AND r.uses = "implements"
+                </query>
+                <query name="getTypeImplementationsAndExtendsByIds">
+                    match (n:type {projectId:$projectId})-[r:uses]->(m:type {projectId:$projectId})
+                    where id(m) in $id AND (r.uses = "implements" OR r.uses = "extends")
+                </query>
+                <query name="findTypeClosureAlgorithm">
+                    Match (from) where id(from) = $id
+                    CALL algo.shortestPaths.stream(from, null,{nodeQuery:'Match(n:type {projectId:$projectId}) return id(n) as id',relationshipQuery: 'Match (n1:type {projectId:$projectId})-[e:uses]->(n2:type {projectId:$projectId}) RETURN id(n1) as source, id(n2) as target',graph:'cypher',params:{projectId:$projectId}})
+                    YIELD nodeId as ids, distance
+                    Where algo.isFinite(distance) = true
+                    with ids
+                    Match(n) where id(n) = ids
+                </query>
+                <query name="getTypeOutgoingNeighbors">
+                    Match(t:type {projectId:$projectId})-[uses]->(n:type {projectId:$projectId})
+                    where id(t) = $id
+                </query>
+                <query name="getTokenCount">
+                    Match(n:token {projectId:$projectId})
+                    Optional Match(t:type {projectId:$projectId})-[:context]->(n)
+                    with n, count(distinct t) as count
+                    return id(n) as id, n.name as name, count
+                    Order by count, name
+                </query>
+
+                <query name="findTypesWithoutCountMethods">
+                    MATCH (n:type {projectId:$projectId}) WHERE NOT EXISTS(n.countMethods)
+                </query>
+                <query name="countEntryPointsAndMethods">
+                    MATCH (n:type {projectId:$projectId}) WHERE id(n) IN $ids RETURN
+                        sum(n.countMethods) AS nMethods,
+                        sum(n.countEntryPoints) as nEpMethods
+                </query>
+            </namedqueries>
+        </graphdb>
+    </system>
+
+    <!--
+        Configuration for the ExternalLibraryManager
+
+        It is possible to configure, for each language, a list of directories
+        containing the description files of the libraries
+
+        downloadTimeout: (millis) timeout between two consecutive downloads
+        checkTimeout:   (seconds) timeout between two consecutive download of files
+            that changes in the time: version, metadata, etc
+
+        <repository> list of default repositories to check
+        <downloads>  root directory where to download the files
+      -->
+    <extlibsManager>
+        <maven downloadTimeout="500"
+               checkTimeout="86400"
+            >
+            <!-- repository url="http://central.maven.org/maven2/"/ -->
+            <repository url="https://repo1.maven.org/maven2"/>
+            <repository url="https://repo.maven.apache.org/maven2"/>
+            <repository url="https://mvnrepository.com/artifact/" />
+            <repository url="https://repo.spring.io/plugins-release/" />
+            <repository url="https://plugins.gradle.org/m2/" />
+            <repository url="https://repo.gradle.org/gradle/libs-releases-local/" />
+        </maven>
+
+        <!--
+            other languages available
+          -->
+        <downloads path="${sys:user.home}/.spl/.extlib"/>
+
+        <language name="java">
+            <!--
+                An 'aggregate library' is a library composed of multiple library descriptors.
+                It is possible to specify that a folder is an 'aggregate library' using
+                the property 'name'
+
+                With 'name' is possible to assign to the folder the name of the 'aggregate library'
+                It is possible to assign multiple names, separating the names by ',' (comma)
+                WITHOUT spaces!
+              -->
+
+            <!-- Java -->
+            <!-- path value="WEB-INF/extlibs/java/jdk/jdk7"   name="jdk7,jdk1.7" / -->
+            <!-- path value="WEB-INF/extlibs/java/jdk/jdk10"  name="jdk9,jdk10" / -->
+            <path value="config/extlibs/java/jdk/jdk8"   name="jdk7,jdk1.7,jdk8,jdk1.8" />
+            <path value="config/extlibs/java/jdk/jdk14"  name="jdk9,jdk10,jdk11,jdk12,jdk13,jdk14" />
+
+            <!-- Android -->
+            <!--
+                https://www.javatpoint.com/android-versions
+                Code name       Version         Api
+                no_name         1.0             1
+                no_name         1.1             2
+                Cupcake         1.5             3
+                Donut           1.6             4
+                Eclair          2.0 - 2.1       5 - 7
+                Froyo           2.2 - 2.2.3     8
+                Gingerbread     2.3 - 2.3.7     9 - 10
+                Honeycomb       3.0 - 3.2.6     11 - 13
+                Ice Cream       4.0 - 4.0.4     14 - 15
+                Jelly Bean      4.1 - 4.3.1     16 - 18
+                KitKat          4.4 - 4.4.4     19 - 20
+                Lollipop        5.0 - 5.1.1     21 - 22
+                Marshmallow     6.0 - 6.0.1     23
+                Nougat          7.0             24
+                Nougat          7.1.0 - 7.1.2   25
+                Oreo            8.0 - 8.1       26 - 27
+                Pie             9.0             28
+                Android 10      10.0            29
+                Android 11      11.0            30
+              -->
+            <path value="config/extlibs/java/android/api30"
+                  name="marshmallow,lollipop,adk5,adk4,adk3oreo,nougart,adk8,adk6,r,q,pie,adk10,adk9"
+            />
+
+        </language>
+    </extlibsManager>
+
+    <!--
+        Default configurations for models analysis
+      -->
+    <models>
+        <source>
+
+        </source>
+
+        <dependency>
+            <!-- keep some old reports -->
+            <property name="keepReports" value="3"/>
+
+            <!--
+                max number of lines to analyze a source file.
+                files with more lines will be skipped
+
+                0 -> no limits
+              -->
+            <property name="size.limit" value="0"/>
+            <!--
+                max time to analyze a single file ('time.limit')
+                or a single method ('method.limit')
+
+                Formats:
+                    [[dd:]hh:]mm:ss
+                    {value}ms
+                    {value}s
+                    {value}m
+                    {value}h
+
+               'dd','hh','mm','ss' must be integers
+               {value} can be an integer or a real value
+
+               0 -> no limits
+               however it can be a good idea to assign some reasonable value
+            -->
+            <property name="time.limit" value="5m" />
+            <property name="method.limit" value="10s" />
+
+            <!--
+                Approximated memory allocated for each line of code.
+                This value is used to guess the memory used during the analysis
+                and to decide if the analysis can start or it is necessary
+                to wait that some running analysis terminate.
+              -->
+            <property name="line.allocatedMemory" value="10KB" />
+
+            <!-- list of file extensions considered as 'resources' -->
+            <property name="module.resources.$" value=".xml,.properties,.json,.gradle,.project,.classpath" />
+            <!-- list of file extensions considered as 'source files' -->
+            <property name="module.sources.$" value=".java" />
+            <!-- list of file/directory names to exclude -->
+            <property name="module.exclude.$" value=".*" />
+        </dependency>
+
+        <component>
+            <property name="componentSamples" value="0"/>
+            <property name="componentTimeout" value="0"/>
+        </component>
+
+        <feature>
+
+        </feature>
+
+        <cluster>
+
+        </cluster>
+
+        <runtime>
+
+        </runtime>
+    </models>
+
+    <!--
+      -->
+    <runtime>
+
+    </runtime>
+
+    <!--
+        Cache configurations.
+        Each cache has a "qualified name".
+        If not specified, its configuration is inherited from the "parent names".
+        The default for the "root" cache (the cache with name "") is
+
+            - infinite capacity
+            - no expiry
+
+        However it is a good idea to define reasonable default values.
+        Available configuration elements:
+
+            - capacity          int
+            - expireAfterWrite  interval
+            - expireAfterAccess interval
+            - weakValues        boolean
+            - softValues        boolean
+
+        'interval' can be specified in several way:
+
+            '<int>'         in milliseconds
+            '<int> ms'      in milliseconds
+            '<int> s'       in seconds
+
+            'mm:ss' | 'hh:mm:ss' | 'dd:hh:mm:ss'   where
+                'ss': seconds
+                'mm': minutes
+                'hh': hours
+                'dd': days
+
+        Current used caches:
+
+            'dependency.<projectId>.library.types'
+            'dependency.<projectId>.module.types'
+            'dependency.<projectId>.module.allTypes'
+            'dependency.<projectId>.module.usedTypes'
+
+            'maven.normalizedCoords'
+            'maven.pom'
+
+            'web.lists'
+            'web.hrefMapper'
+
+      -->
+    <cacheManager>
+        <cache name="">
+            <capacity value="1024"/>
+            <expireAfterWrite value="1:00"/>
+        </cache>
+
+        <cache name="global">
+            <capacity value="1024"/>
+            <expireAfterWrite value="5:00"/>
+        </cache>
+
+        <cache name="web">
+            <capacity value="128"/>
+            <expireAfterWrite value="5:00"/>
+        </cache>
+
+        <cache name="web.hrefMapper">
+            <capacity value="4096"/>
+            <expireAfterWrite value="1:00:00"/>
+        </cache>
+
+        <cache name="maven">
+            <expireAfterWrite value="60:00"/>
+        </cache>
+
+        <cache name="system.dbcleanup">
+            <expireAfterWrite value="1:00"/>
+        </cache>
+
+        <cache name="dependency.*">
+            <!-- if an entry is not accessed after 3 minutes, can be delete -->
+            <expireAfterAccess value="5:00"/>
+            <softValues value="true"/>
+        </cache>
+
+    </cacheManager>
+
+</configuration>
