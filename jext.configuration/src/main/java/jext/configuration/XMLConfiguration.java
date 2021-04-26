@@ -136,6 +136,12 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     }
 
     @Override
+    public List<String> getList(String key) {
+        check();
+        return XPathUtils.getValues(root, xpathOf(key));
+    }
+
+    @Override
     public Properties getProperties(String key) {
         check();
         return XPathUtils.getProperties(root, xpathOf(key));
@@ -144,6 +150,12 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
     // Write Operations
     // ----------------------------------------------------------------------
+
+    @Override
+    public Object getProperty(String key) {
+        check();
+        return XPathUtils.getValue(root, xpathOf(key));
+    }
 
     @Override
     public void setProperty(String key, Object value) {

@@ -9,8 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 public class OverrideConfiguration implements HierarchicalConfiguration {
@@ -81,6 +84,26 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     /**
+     * Retrieve a sub configuration
+     */
+    @Override
+    public HierarchicalConfiguration configurationAt(String key) {
+        return new InnerConfiguration(key, this);
+    }
+
+    @Override
+    public List<HierarchicalConfiguration> configurationsAt(String key) {
+        List<HierarchicalConfiguration> configList = new ArrayList<>();
+        for(HierarchicalConfiguration config : reversedConfig)
+            configList.addAll(config.configurationsAt(key));
+        return configList;
+    }
+
+    // ----------------------------------------------------------------------
+    // Read Properties
+    // ----------------------------------------------------------------------
+
+    /**
      * The default configuration is the configuration defined in the first
      * file
      */
@@ -90,14 +113,6 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     public Configuration getOverrideConfiguration() {
         return reversedConfig.get(0);
-    }
-
-    /**
-     * Retrieve a sub configuration
-     */
-    @Override
-    public HierarchicalConfiguration configurationAt(String key) {
-        return new InnerConfiguration(key, this);
     }
 
     @Override
@@ -140,9 +155,37 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
         return defaultValue;
     }
 
+    @Override
+    public List<String> getList(String key) {
+        Set<String> values = new TreeSet<>();
+        for(Configuration config : reversedConfig)
+            if (config.containsKey(key))
+                values.addAll(config.getList(key));
+        return new ArrayList<>(values);
+    }
+
+    @Override
+    public Properties getProperties(String key) {
+        Properties properties = new Properties();
+        // keep this order to ensure that the properties
+        // defined in the "override" file will override
+        // the properties defined in the "default" configration file"
+        for (Configuration config : configurations)
+            properties.putAll(config.getProperties(key));
+        return properties;
+    }
+
     // ----------------------------------------------------------------------
     // Write Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public Object getProperty(String key) {
+        for(Configuration config : reversedConfig)
+            if (config.containsKey(key))
+                return config.getProperty(key);
+        return null;
+    }
 
     @Override
     public void setProperty(String key, Object value) {

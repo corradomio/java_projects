@@ -46,7 +46,7 @@ public class InnerConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     @Override
-    public HierarchicalConfiguration configurationAt(String key) {
+    public Configuration configurationAt(String key) {
         return root.configurationAt(pkeyOf(key));
     }
 
@@ -84,6 +84,11 @@ public class InnerConfiguration implements HierarchicalConfiguration {
         return root.getString(pkeyOf(key), defaultValue);
     }
 
+    @Override
+    public List<String> getList(String key) {
+        return root.getList(pkeyOf(key));
+    }
+
 
     @Override
     public Properties getProperties(String key) {
@@ -93,6 +98,11 @@ public class InnerConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
     // Write Operations
     // ----------------------------------------------------------------------
+
+    @Override
+    public Object getProperty(String key) {
+        return root.getProperty(pkeyOf(key));
+    }
 
     @Override
     public void setProperty(String key, Object value) {
