@@ -1,9 +1,9 @@
 package jext.cache.imcache;
 
+import com.cetsoft.imcache.cache.builder.CacheBuilder;
 import com.cetsoft.imcache.cache.builder.HeapCacheBuilder;
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
-import com.cetsoft.imcache.cache.builder.CacheBuilder;
 import jext.time.TimeUtils;
 
 import java.util.Properties;

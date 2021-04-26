@@ -8,16 +8,15 @@ import jext.cache.util.Unique;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class EHCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
-    private String name;
+    private final String name;
     private CacheManager manager;
-    private EHCacheProvider provider;
-    private org.ehcache.Cache<K, V> innerCache;
-    private Unique<K> uniqueKeys = new Unique<>();
-    private Properties properties;
+    private final EHCacheProvider provider;
+    private final org.ehcache.Cache<K, V> innerCache;
+    private final Unique<K> uniqueKeys = new Unique<>();
+    private final Properties properties;
 
     EHCache(String name, org.ehcache.Cache<K, V> innerCache, EHCacheProvider provider, Properties properties) {
         this.name = name;

@@ -8,15 +8,14 @@ import jext.cache.util.Unique;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class IMCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
-    private String name;
+    private final String name;
     private CacheManager manager;
-    private com.cetsoft.imcache.cache.Cache<K, V> innerCache;
-    private Unique<K> uniqueKeys = new Unique<>();
-    private Properties properties;
+    private final com.cetsoft.imcache.cache.Cache<K, V> innerCache;
+    private final Unique<K> uniqueKeys = new Unique<>();
+    private final Properties properties;
 
     IMCache(String name, com.cetsoft.imcache.cache.Cache<K, V> innerCache, Properties properties) {
         this.name = name;

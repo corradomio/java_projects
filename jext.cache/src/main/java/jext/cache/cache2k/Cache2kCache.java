@@ -8,16 +8,15 @@ import jext.cache.util.Unique;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class Cache2kCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private long lastAccess;
-    private String name;
+    private final String name;
     private CacheManager manager;
-    private org.cache2k.Cache<K, V> innerCache;
-    private Unique<K> uniqueKeys = new Unique<>();
-    private Properties properties;
+    private final org.cache2k.Cache<K, V> innerCache;
+    private final Unique<K> uniqueKeys = new Unique<>();
+    private final Properties properties;
 
     Cache2kCache(String name, org.cache2k.Cache<K, V> innerCache, Properties properties) {
         this.name = name;

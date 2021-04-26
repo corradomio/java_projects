@@ -4,11 +4,9 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.cache.ManagedCache;
 
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class AccessCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 

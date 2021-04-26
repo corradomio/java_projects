@@ -2,8 +2,8 @@ package jext.cache.cache2k;
 
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
-import jext.util.PropertiesUtils;
 import jext.time.TimeUtils;
+import jext.util.PropertiesUtils;
 import org.cache2k.Cache2kBuilder;
 
 import java.util.Properties;

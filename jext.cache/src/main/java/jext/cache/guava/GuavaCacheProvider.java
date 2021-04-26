@@ -3,8 +3,8 @@ package jext.cache.guava;
 import com.google.common.cache.CacheBuilder;
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
-import jext.util.PropertiesUtils;
 import jext.time.TimeUtils;
+import jext.util.PropertiesUtils;
 
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;

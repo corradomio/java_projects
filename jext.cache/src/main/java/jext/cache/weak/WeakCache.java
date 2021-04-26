@@ -8,14 +8,13 @@ import java.util.Properties;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class WeakCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private final String name;
     private CacheManager manager;
-    private WeakHashMap<K, V> innerCache;
-    private Properties properties;
+    private final WeakHashMap<K, V> innerCache;
+    private final Properties properties;
 
     WeakCache(String name, WeakHashMap<K, V> innerCache, Properties properties) {
         this.name = name;

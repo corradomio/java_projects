@@ -7,13 +7,12 @@ import jext.cache.ManagedCache;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class CaffeineCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
-    private String name;
-    private com.github.benmanes.caffeine.cache.Cache<K, V> innerCache;
-    private Properties properties;
+    private final String name;
+    private final com.github.benmanes.caffeine.cache.Cache<K, V> innerCache;
+    private final Properties properties;
     private CacheManager manager;
 
     CaffeineCache(String name, com.github.benmanes.caffeine.cache.Cache<K, V> innerCache, Properties properties) {

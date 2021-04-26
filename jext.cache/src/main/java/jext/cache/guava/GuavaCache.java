@@ -4,18 +4,16 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.cache.ManagedCache;
 
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class GuavaCache<K, V> implements Cache<K, V>, ManagedCache<K, V> {
 
     private final String name;
     private CacheManager manager;
     private final com.google.common.cache.Cache<K,V> innerCache;
-    private Properties properties;
+    private final Properties properties;
 
     GuavaCache(String name, com.google.common.cache.Cache<K, V> innerCache, Properties properties) {
         this.name = name;
