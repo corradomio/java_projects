@@ -92,8 +92,8 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     }
 
     @Override
-    public List<HierarchicalConfiguration> configurationsAt(String key) {
-        List<HierarchicalConfiguration> configList = new ArrayList<>();
+    public List<Configuration> configurationsAt(String key) {
+        List<Configuration> configList = new ArrayList<>();
         for(HierarchicalConfiguration config : reversedConfig)
             configList.addAll(config.configurationsAt(key));
         return configList;

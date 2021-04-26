@@ -86,13 +86,15 @@ public class XMLConfiguration implements HierarchicalConfiguration {
 
     @Override
     public HierarchicalConfiguration configurationAt(String key) {
+        check();
         return new InnerConfiguration(key, this);
     }
 
     @Override
-    public List<HierarchicalConfiguration> configurationsAt(String key) {
+    public List<Configuration> configurationsAt(String key) {
+        check();
         int n = XPathUtils.selectNodes(root, xpathOf(key)).size();
-        List<HierarchicalConfiguration> configList = new ArrayList<>();
+        List<Configuration> configList = new ArrayList<>();
         for (int i=0; i<n; ++i) {
             String ikey = String.format("%s(%d)", key, i);
             configList.add(new InnerConfiguration(ikey, this));
@@ -170,6 +172,10 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     private String xpathOf(String key) {
+        // - node.node                 node/node
+        // - node(index)               node[index]
+        // - node[@attribute]          node/@attribute
+
         return key.replace(".", "/");
     }
 

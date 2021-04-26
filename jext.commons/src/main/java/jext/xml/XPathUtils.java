@@ -504,16 +504,9 @@ public class XPathUtils {
                     current = selectAttribute(current, step.substring(1), create);
 
                 // #text | text()
-                else if (step.equals("#text") || step.equals("text()")) {
-                    NodeList nl = current.getChildNodes();
-                    for (int i = 0; i < nl.getLength(); ++i) {
-                        Node node = nl.item(i);
-                        if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
-                            current = node;
-                            break;
-                        }
-                    }
-                }
+                else if (step.equals("#text") || step.equals("text()"))
+                    current = selectTextNode(current, step, create);
+
                 // name
                 else if (!step.contains("[") && !step.contains("("))
                     current = selectElement(current, step, create);
@@ -527,7 +520,7 @@ public class XPathUtils {
                     current = selectElementAttribute(current, step, create);
 
                 // node[index]   ONE-based!!!!
-                    // noe(index)   ZERO-based!!!
+                // noe(index)   ZERO-based!!!
                 else if (step.contains("[") || step.contains("("))
                     current = selectIndexedNode(current, step, create, params);
             }
@@ -607,14 +600,18 @@ public class XPathUtils {
     }
 
     private static Node selectIndexedNode(Node current, String step, boolean create, Properties params) {
+        // ename(index) | ename[index]
         Element selected = null;
         String ename = enameOf(step);
+
+        // original index ZERO-based
         int oindex = indexOf(step, params);
-        int index = oindex;
+        // current index ZERO-based
+        int cindex = oindex;
 
         NodeList nl = current.getChildNodes();
 
-        for (int i = 0; i < nl.getLength() && index > 0; ++i) {
+        for (int i = 0; i < nl.getLength() && cindex >= 0; ++i) {
             Node node = nl.item(i);
 
             // not a <name>
@@ -626,18 +623,18 @@ public class XPathUtils {
                 continue;
 
             // not the correct position
-            if (--index > 0)
+            if (--cindex > 0)
                 continue;
 
             selected = (Element) node;
             break;
         }
 
-        if (index == -1) index = 1;
+        if (cindex == -1) cindex = 1;
 
         if (selected == null && create) {
             Document doc = getOwnerDocument(current);
-            for (; index > 0; --index) {
+            for (; cindex > 0; --cindex) {
                 selected = doc.createElement(ename);
                 current.appendChild(selected);
             }
@@ -649,8 +646,21 @@ public class XPathUtils {
     private static Node selectElementAttribute(Node current, String step, boolean create) {
         String ename = enameOf(step);
         String aname = anameOf(step);
-        current = selectElement(current, ename, create);
+        if (!ename.isEmpty())
+            current = selectElement(current, ename, create);
         current = selectAttribute(current, aname, create);
+        return current;
+    }
+
+    private static Node selectTextNode(Node current, String step, boolean create) {
+        NodeList nl = current.getChildNodes();
+        for (int i = 0; i < nl.getLength(); ++i) {
+            Node node = nl.item(i);
+            if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
+                current = node;
+                break;
+            }
+        }
         return current;
     }
 
@@ -711,7 +721,7 @@ public class XPathUtils {
     private static int indexOf(String step, Properties params) {
         String sindex;
         int pos, end;
-        boolean one;
+        boolean one;    // is 1-based or 0-based
         if (step.contains("[")) {
             pos = step.indexOf('[');
             end = step.indexOf(']');

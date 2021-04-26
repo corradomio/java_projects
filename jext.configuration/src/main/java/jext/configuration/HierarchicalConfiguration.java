@@ -6,5 +6,5 @@ public interface HierarchicalConfiguration extends Configuration {
 
     Configuration configurationAt(String key);
 
-    List<HierarchicalConfiguration> configurationsAt(String key);
+    List<Configuration> configurationsAt(String key);
 }

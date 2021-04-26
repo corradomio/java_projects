@@ -51,7 +51,7 @@ public class InnerConfiguration implements HierarchicalConfiguration {
     }
 
     @Override
-    public List<HierarchicalConfiguration> configurationsAt(String key) {
+    public List<Configuration> configurationsAt(String key) {
         return root.configurationsAt(pkeyOf(key));
     }
 
@@ -114,10 +114,10 @@ public class InnerConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     private String pkeyOf(String key) {
-        if (ikey.isEmpty())
-            return key;
         if (key.isEmpty())
             return ikey;
+        else if (ikey.isEmpty())
+            return key;
         else
             return String.format("%s.%s", ikey, key);
     }

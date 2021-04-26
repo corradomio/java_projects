@@ -4,6 +4,7 @@ import jext.cache.CacheConfiguration;
 import jext.configuration.Configuration;
 import jext.configuration.HierarchicalConfiguration;
 import jext.configuration.PriorityConfiguration;
+import jext.logging.Logger;
 
 import java.io.File;
 import java.util.Properties;
@@ -11,6 +12,7 @@ import java.util.Properties;
 public class App5 {
 
     public static void main(String[] args) {
+        Logger.configure();
 
         PriorityConfiguration pconfig = PriorityConfiguration.getConfiguration();
         pconfig.setConfigurationFile(new File("config/splserver.xml"));

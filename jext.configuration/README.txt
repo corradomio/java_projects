@@ -1,11 +1,39 @@
-Configuration path expressions
-------------------------------
+Configuration path syntax
+-------------------------
 
     Skip the root tag in a XML configuration file
 
-    - node.node
-    - node(index)
-    - node[@attribute]
+    - node.node                 node/node
+    - node(index)               node[index]
+    - node[@attribute]          node/@attribute
+
+
+XPath syntax
+------------
+
+    - node
+    - /...      root node
+    - //        recursive search
+    - .         THIS node
+    - ..        PARENT node
+    - @         attribute
+
+
+    node
+    /node
+    node1/node2
+    //node
+    node1//node2
+    //@lang
+
+    node[index]
+    node[last()]
+    node[position() < index]
+    node[@attr=value]
+    *
+    *@
+    node()
+
 
 
 Variables
