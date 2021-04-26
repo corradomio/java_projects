@@ -6,7 +6,6 @@ import jext.util.LogDigester;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 
 /*

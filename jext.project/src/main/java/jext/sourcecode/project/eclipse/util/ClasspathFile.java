@@ -75,7 +75,7 @@ public class ClasspathFile {
 
     public List<File> getSourceDirs() {
         List<File> dirs = new ArrayList<>();
-        XPathUtils.selectNodes(elt, "classpathentry[@kind='src']")
+        XPathUtils.selectElements(elt, "classpathentry[@kind='src']")
                 .forEach(esrc -> {
                     String path = XPathUtils.getValue(esrc, "@path", "");
                     String combineaccessrules = XPathUtils.getValue(esrc, "@combineaccessrules", "");
@@ -91,7 +91,7 @@ public class ClasspathFile {
 
     public List<String> getModuleDependencies() {
         List<String> dmodules = new ArrayList<>();
-        XPathUtils.selectNodes(elt, "classpathentry[@kind='src']")
+        XPathUtils.selectElements(elt, "classpathentry[@kind='src']")
                 .forEach(esrc -> {
                     String path = XPathUtils.getValue(esrc, "@path", "");
                     String combineaccessrules = XPathUtils.getValue(esrc, "@combineaccessrules", "");
@@ -105,7 +105,7 @@ public class ClasspathFile {
 
     public List<String> getMavenLibraries() {
         List<String> mavenLibs = new ArrayList<>();
-        XPathUtils.selectNodes(elt, "classpathentry[@kind='var']")
+        XPathUtils.selectElements(elt, "classpathentry[@kind='var']")
                 .forEach(elib -> {
                     String path = XPathUtils.getValue(elib, "@path", "");
                     if (!path.startsWith("M2_REPO/")) return;
@@ -116,7 +116,7 @@ public class ClasspathFile {
 
     public List<File> getLocalLibraries() {
         List<File> localLibs = new ArrayList<>();
-        XPathUtils.selectNodes(elt, "classpathentry[@kind='lib']")
+        XPathUtils.selectElements(elt, "classpathentry[@kind='lib']")
                 .forEach(esrc -> {
                     String path = XPathUtils.getValue(esrc, "@path", "");
                     if (!path.isEmpty())

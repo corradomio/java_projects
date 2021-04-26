@@ -12,7 +12,6 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.project.util.NamedObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ReferencedType extends NamedObject implements RefType {

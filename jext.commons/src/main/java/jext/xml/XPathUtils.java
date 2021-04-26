@@ -238,9 +238,9 @@ public class XPathUtils {
 
     public static List<String> getValues(Element elt, String xpath, int limit, Properties params) {
         List<String> values = new ArrayList<>();
-        List<Element> selected = selectNodes(elt, xpath, limit, params);
+        List<Node> selected = selectNodes(elt, xpath, limit, params);
 
-        for(Element sel : selected) {
+        for(Node sel : selected) {
             String value = sel.getTextContent().trim();
             value = resolveValue(value, params);
             values.add(value);
@@ -285,15 +285,15 @@ public class XPathUtils {
 
     public static List<String> getValues(Element elt, String xpath) {
         List<String> values = new ArrayList<>();
-        List<Element> nodes = selectNodes(elt, xpath);
-        for(Element node : nodes)
+        List<Node> nodes = selectNodes(elt, xpath);
+        for(Node node : nodes)
             values.add(node.getTextContent().trim());
         return values;
     }
 
     public static List<String> getValues(Element elt, String xpath, String attribute) {
         List<String> values = new ArrayList<>();
-        List<Element> nodes = selectNodes(elt, xpath);
+        List<Element> nodes = selectElements(elt, xpath);
         for(Element node : nodes)
             values.add(node.getAttribute(attribute));
         return values;
@@ -314,7 +314,7 @@ public class XPathUtils {
 
     public static Properties getProperties(Element elt) {
         Properties properties = new Properties();
-        for(Element pelt : selectNodes(elt, "property")) {
+        for(Element pelt : selectElements(elt, "property")) {
             String name = getValue(pelt, "@name");
             String value = getValue(pelt, "@value", null);
             if (value == null)
@@ -375,7 +375,7 @@ public class XPathUtils {
     // Select nodes
     // ----------------------------------------------------------------------
 
-    public static List<Element> selectNodes(Element elt, String xpath) {
+    public static List<Node> selectNodes(Element elt, String xpath) {
         return selectNodes(elt, xpath, Integer.MAX_VALUE, NO_PROPERTIES);
     }
 
@@ -389,52 +389,72 @@ public class XPathUtils {
      * @param params
      * @return
      */
-    public static List<Element> selectNodes(Element elt, String xpath, int limit, Properties params) {
+    public static List<Node> selectNodes(Element elt, String xpath, int limit, Properties params) {
         Document owner = getOwnerDocument(elt);
         synchronized (owner) {
-        List<Element> selected = new ArrayList<>();
-        String aname = null, avalue = "";
+            List<Node> selected = new ArrayList<>();
+            String aname = null, avalue = "";
 
-        if (xpath.startsWith("/"))
-            xpath = "<root>" + xpath;
+            if (xpath.startsWith("/"))
+                xpath = "<root>" + xpath;
 
-        // parent/elt
-        // parent/elt[@attr='value']
+            // parent/elt
+            // parent/elt[@attr='value']
 
-        String parentPath  = parentOf(xpath);
-        String step = stepOf(xpath);
+            String parentPath = parentOf(xpath);
+            String step = stepOf(xpath);
 
-        if (step.contains("[")) {
-            aname = anameOf(step);
-            avalue = avalueOf(step, params);
-            step = enameOf(step);
-        }
-
-        Element parentNode = (Element)selectNode(elt, parentPath, false, params);
-        if (parentNode == null)
-            return selected;
-
-        NodeList children = parentNode.getChildNodes();
-        for(int i=0; i<children.getLength(); ++i) {
-            Node node = children.item(i);
-            if (node.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-            if(!"*".equals(step) && !node.getNodeName().equals(step))
-                continue;
-
-            Element enode = (Element)node;
-
-            if (aname != null) {
-                String value = enode.getAttribute(aname);
-                if (!avalue.equals(value))
-                    continue;
+            // ename[@aname=avalue]
+            // ename[@name]
+            if (step.contains("[")) {
+                aname = anameOf(step);
+                avalue = avalueOf(step, params);
+                // KEEP last
+                step = enameOf(step);
             }
 
-            selected.add((Element)node);
-        }
+            Element parentNode = (Element) selectNode(elt, parentPath, false, params);
+            if (parentNode == null)
+                return selected;
 
-        return selected;
+            NodeList children = parentNode.getChildNodes();
+            for (int i = 0; i < children.getLength(); ++i) {
+                Node node = children.item(i);
+                if (node.getNodeType() != Node.ELEMENT_NODE)
+                    continue;
+                if (!"*".equals(step) && !node.getNodeName().equals(step))
+                    continue;
+
+                Element enode = (Element) node;
+
+                // check for "ename[@aname=avalue]"
+                if (aname != null && avalue != null) {
+                    String value = enode.getAttribute(aname);
+                    if (!avalue.equals(value))
+                        continue;
+                }
+                // check for "ename[@aname]"
+                else if (aname != null) {
+                    Node attr = ((Element)node).getAttributeNode(aname);
+                    selected.add(attr);
+                }
+                else {
+                    selected.add(node);
+                }
+
+            }
+
+            return selected;
+        }
     }
+
+    public static List<Element> selectElements(Element elt, String xpath) {
+        return selectElements(elt, xpath, Integer.MAX_VALUE, NO_PROPERTIES);
+    }
+
+    public static List<Element> selectElements(Element elt, String xpath, int limit, Properties params) {
+        List<?> nodes = selectNodes(elt, xpath, limit, params);
+        return (List<Element>) nodes;
     }
 
     // ----------------------------------------------------------------------
@@ -672,6 +692,9 @@ public class XPathUtils {
     private static String avalueOf(String step, Properties params) {
         int eq  = step.indexOf('=');
         int end = step.indexOf(']');
+        if (eq == -1)
+            return null;
+
         String value = step.substring(eq+1,end).trim();
 
         if (value.startsWith("'") && value.endsWith("'"))

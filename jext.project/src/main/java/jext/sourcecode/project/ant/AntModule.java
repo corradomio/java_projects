@@ -1,12 +1,12 @@
 package jext.sourcecode.project.ant;
 
-import jext.sourcecode.project.maven.MavenLibrary;
-import jext.sourcecode.project.ant.util.IvyFile;
-import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.project.Library;
-import jext.sourcecode.project.Project;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
+import jext.sourcecode.project.Library;
+import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ant.util.IvyFile;
+import jext.sourcecode.project.maven.MavenLibrary;
+import jext.sourcecode.project.util.BaseModule;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -28,7 +28,7 @@ public class AntModule extends BaseModule {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public AntModule(File moduleHome, Project project) {
+    AntModule(File moduleHome, Project project) {
         super(moduleHome, project);
         findIvyFile();
     }
@@ -62,4 +62,9 @@ public class AntModule extends BaseModule {
             .map(lcoords -> new MavenLibrary(lcoords, md, project))
             .collect(Collectors.toList());
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

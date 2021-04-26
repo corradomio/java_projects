@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefinedMethod extends NamedObject implements Method {
 
+    private String declaration;
     private RefType ownerType;
     private RefType returnType = ReferencedType.JAVA_LANG_VOID;
     private List<Parameter> parameters = new ArrayList<>();
@@ -27,17 +28,18 @@ public class DefinedMethod extends NamedObject implements Method {
     // Constructor
     // ----------------------------------------------------------------------
 
-    // public DefinedMethod(Name methodName, int nParams, String signature) {
-    //     super(new MethodNameObject(methodName, nParams, signature));
-    //     this.ownerType = new ReferencedType(getName().getParent());
-    //     this.callIndex = new AtomicInteger();
-    // }
+    public DefinedMethod(RefType ownerType, String methodName, int nParams) {
+        this(ownerType, methodName, nParams, null, null);
+    }
 
-    public DefinedMethod(RefType ownerType, String methodName, int nParams, String signature) {
+    public DefinedMethod(RefType ownerType,
+                         String methodName, int nParams,
+                         String signature, String declaration) {
         super(new MethodNameObject(ownerType.getName(), methodName, nParams, toSignature(methodName, nParams, signature)));
         this.ownerType = ownerType;
         this.callIndex = new AtomicInteger();
         this.lastCallName = getMethodName();
+        this.declaration = declaration;
     }
 
     private static String toSignature(String methodName, int nParams, String signature) {
@@ -75,11 +77,6 @@ public class DefinedMethod extends NamedObject implements Method {
     }
 
     @Override
-    public String getSignature() {
-        return getMethodName().getSignature();
-    }
-
-    @Override
     public RefType getType() {
         return returnType;
     }
@@ -104,25 +101,16 @@ public class DefinedMethod extends NamedObject implements Method {
         return ownerType.getId();
     }
 
-    // private void composeSignature() {
-    //     StringBuilder sb = new StringBuilder();
-    //     sb.append(returnType.getName().getName())
-    //         .append(" ")
-    //         .append(getName().getName())
-    //         .append("(");
-    //
-    //     boolean rest = false;
-    //     for(Parameter p : parameters) {
-    //         if (rest) sb.append(",");
-    //         sb.append(p.getType().getName().getName())
-    //             .append(" ")
-    //             .append(p.getName().getName());
-    //         rest = true;
-    //     }
-    //     sb.append(")");
-    //
-    //     signature = sb.toString();
-    // }
+
+    @Override
+    public String getSignature() {
+        return getMethodName().getSignature();
+    }
+
+    @Override
+    public String getDeclaration() {
+        return declaration;
+    }
 
     // ----------------------------------------------------------------------
     // Operations

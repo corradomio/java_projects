@@ -45,7 +45,7 @@ public class IvyFile {
 
     public List<MavenCoords> getDependencyCoords() {
         List<MavenCoords> dependencies = new ArrayList<>();
-        XPathUtils.selectNodes(module, "dependencies/dependency")
+        XPathUtils.selectElements(module, "dependencies/dependency")
                 .forEach(dep -> {
                     String groupId = XPathUtils.getValue(dep, "@org");
                     String artifactId = XPathUtils.getValue(dep, "@name");

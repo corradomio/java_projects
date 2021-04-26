@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class CacheManager {
+public class CacheManager implements CacheConfig {
 
     // ----------------------------------------------------------------------
     // Static methods
@@ -208,7 +208,7 @@ public class CacheManager {
 
         String name = "";
         Properties properties;
-        for(Element cache : XPathUtils.selectNodes(configuration, "cache")) {
+        for(Element cache : XPathUtils.selectElements(configuration, "cache")) {
             try {
                 name = XPathUtils.getValue(cache, "@name");
                 properties = XPathUtils.getProperties(cache);

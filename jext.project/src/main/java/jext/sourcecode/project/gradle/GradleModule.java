@@ -1,17 +1,17 @@
 package jext.sourcecode.project.gradle;
 
+import jext.maven.MavenCoords;
+import jext.maven.MavenDownloader;
 import jext.name.Name;
-import jext.sourcecode.project.gradle.util.BuildGradleFile;
-import jext.sourcecode.project.maven.MavenLibrary;
+import jext.sourcecode.project.Library;
+import jext.sourcecode.project.Module;
 import jext.sourcecode.project.gradle.collectors.DependenciesCollector;
 import jext.sourcecode.project.gradle.collectors.ErrorsCollector;
 import jext.sourcecode.project.gradle.collectors.LoggerCollector;
 import jext.sourcecode.project.gradle.collectors.ProjectsCollector;
+import jext.sourcecode.project.gradle.util.BuildGradleFile;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.project.Library;
-import jext.sourcecode.project.Module;
-import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.ProjectConnection;
 
@@ -32,38 +32,22 @@ public class GradleModule extends BaseModule {
     // ----------------------------------------------------------------------
 
     private static final String BUILD_GRADLE = GradleProject.BUILD_GRADLE;
-    // private static final String COMPILE_CLASSPATH = "compileClasspath";
-    // private static final String TEST_COMPILE_CLASSPATH = "testCompileClasspath";
 
     private List<Name> dmodules;
     private List<Library> dcoords;
     private BuildGradleFile buildGradle;
 
-    // private SettingsGradleFile settingsGradle;
-    //
-    // private static String[] VALID_NAMES = {
-    //     "default",
-    //     "implementation",
-    //     "compile",
-    //     "test"
-    // };
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public GradleModule(GradleProject project) {
+    GradleModule(GradleProject project) {
         super(project.getProjectHome(), project);
         init();
     }
 
-    public GradleModule(File moduleHome, GradleProject project) {
+    GradleModule(File moduleHome, GradleProject project) {
         super(moduleHome, project);
-        init();
-    }
-
-    public GradleModule(String name, GradleModule parent) {
-        super(new File(parent.getModuleHome(), name), parent.getProject());
         init();
     }
 
@@ -284,4 +268,9 @@ public class GradleModule extends BaseModule {
         else
             return String.format("%s:%s", gradleProject, taskName);
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

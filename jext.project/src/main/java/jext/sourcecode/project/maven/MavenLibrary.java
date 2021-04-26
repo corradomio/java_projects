@@ -1,18 +1,18 @@
 package jext.sourcecode.project.maven;
 
-import jext.name.Name;
-import jext.sourcecode.resources.type.ReferencedType;
-import jext.sourcecode.resources.BaseLibrary;
-import jext.sourcecode.project.Library;
-import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.Project;
-import jext.sourcecode.project.RefType;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
 import jext.maven.Version;
+import jext.name.Name;
+import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryType;
+import jext.sourcecode.project.Project;
+import jext.sourcecode.project.RefType;
+import jext.sourcecode.resources.BaseLibrary;
+import jext.sourcecode.resources.type.ReferencedType;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 
@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 public class MavenLibrary extends BaseLibrary {

@@ -1,7 +1,7 @@
 package jext.sourcecode.project.util;
 
-import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Source;
 
 import java.io.File;
 import java.util.AbstractList;

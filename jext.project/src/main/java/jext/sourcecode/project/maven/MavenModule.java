@@ -1,12 +1,12 @@
 package jext.sourcecode.project.maven;
 
-import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.project.Library;
-import jext.sourcecode.project.Module;
-import jext.sourcecode.project.Project;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
+import jext.sourcecode.project.Library;
+import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Project;
+import jext.sourcecode.project.util.BaseModule;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class MavenModule extends BaseModule {
@@ -31,7 +30,7 @@ public class MavenModule extends BaseModule {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public MavenModule(File moduleHome, Project project) {
+    MavenModule(File moduleHome, Project project) {
         super(moduleHome, project);
         this.pom = new MavenPom(moduleHome);
     }
@@ -40,22 +39,11 @@ public class MavenModule extends BaseModule {
     // Properties
     // ----------------------------------------------------------------------
 
-    // Override 'BaseModule::getId()' to use the 'module Maven coords'
-    // @Override
-    // public String getId() {
-    //
-    //     if (pom.exists())
-    //         return pom.getCoords().toString();
-    //     else
-    //         return super.getId();
-    // }
-
     public String getMavenCoords() {
         return pom.getCoords().toString();
     }
 
     // ----------------------------------------------------------------------
-
 
     @Override
     public List<Module> getDependencies() {
@@ -84,47 +72,6 @@ public class MavenModule extends BaseModule {
             });
         return dmodules;
     }
-
-    // @Override
-    // public List<Module> getDependencies() {
-    //     if (dependencies != null)
-    //         return dependencies;
-    //
-    //     //
-    //     // Override 'BaseModule::getDependencies()' to reorder the
-    //     // dependencies based on the 'building system configuration file'
-    //     //
-    //
-    //     Set<Module> orderedDeps = new TreeSet<>(COMPARATOR);
-    //
-    //     List<MavenCoords> dcoords = pom.getDependencyCoords();
-    //
-    //     // speedup: dcoords is empty
-    //     if (dcoords.isEmpty())
-    //         return super.getDependencies();
-    //
-    //     // retrieve the list of module dependencies based on
-    //     // the Maven configuration file ('pom.xml')
-    //     dcoords.forEach(coords -> {
-    //         Module dmodule = project.getModule(coords.toString());
-    //         if (dmodule != null) {
-    //             orderedDeps.add(dmodule);
-    //         }
-    //     });
-    //
-    //     // speedup: Maven dependencies is empty
-    //     if (orderedDeps.isEmpty())
-    //         return super.getDependencies();
-    //
-    //     // add the missing dependencies based on the module types intersection
-    //     orderedDeps.addAll(super.getDependencies());
-    //
-    //     this.dependencies = orderedDeps.isEmpty()
-    //         ? Collections.emptyList()
-    //         : new ArrayList<>(orderedDeps);
-    //
-    //     return this.dependencies;
-    // }
 
     @Override
     public Set<String> getMavenRepositories() {

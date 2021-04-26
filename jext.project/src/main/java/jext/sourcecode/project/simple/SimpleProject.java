@@ -1,7 +1,7 @@
 package jext.sourcecode.project.simple;
 
-import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.util.BaseProject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +52,8 @@ public class SimpleProject extends BaseProject {
 
         findModulesByJavaSourceRoots();
         addRootModule();
+        addParentModules();
+        sortModules();
 
         return modules;
     }

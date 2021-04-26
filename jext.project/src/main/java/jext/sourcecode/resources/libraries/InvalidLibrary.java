@@ -2,7 +2,6 @@ package jext.sourcecode.resources.libraries;
 
 import jext.name.Name;
 import jext.name.PathName;
-import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;

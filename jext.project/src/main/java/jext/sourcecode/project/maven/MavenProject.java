@@ -1,7 +1,7 @@
 package jext.sourcecode.project.maven;
 
-import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.util.BaseProject;
 
 import java.io.File;
 import java.util.Properties;

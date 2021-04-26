@@ -1,12 +1,9 @@
 package jext.sourcecode.project.simple;
 
-import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.util.BaseModule;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 
 
 public class SimpleModule extends BaseModule {
@@ -19,7 +16,7 @@ public class SimpleModule extends BaseModule {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public SimpleModule(File moduleHome, Project project) {
+    SimpleModule(File moduleHome, Project project) {
         super(moduleHome, project);
     }
 

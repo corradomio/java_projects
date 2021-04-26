@@ -1,13 +1,13 @@
 package jext.sourcecode.project.eclipse;
 
+import jext.maven.MavenCoords;
+import jext.maven.MavenDownloader;
+import jext.sourcecode.project.Library;
+import jext.sourcecode.project.Project;
 import jext.sourcecode.project.eclipse.util.ClasspathFile;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.project.Library;
-import jext.sourcecode.project.Project;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
-import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
 
 import java.io.File;
 import java.util.List;
@@ -25,7 +25,7 @@ public class EclipseModule extends BaseModule {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public EclipseModule(File moduleHome, Project project) {
+    EclipseModule(File moduleHome, Project project) {
         super(moduleHome, project);
         this.classpathFile = new ClasspathFile(moduleHome);
     }
@@ -66,5 +66,9 @@ public class EclipseModule extends BaseModule {
             .map(coords -> new MavenLibrary(coords, md, project))
             .collect(Collectors.toList());
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

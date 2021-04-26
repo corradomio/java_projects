@@ -1,15 +1,15 @@
 package jext.sourcecode.project;
 
+import jext.logging.Logger;
 import jext.maven.MavenDownloader;
 import jext.name.Name;
 import jext.name.PathName;
-import jext.sourcecode.resources.libraries.JavaLibraryFinder;
 import jext.sourcecode.project.ant.AntProject;
 import jext.sourcecode.project.eclipse.EclipseProject;
 import jext.sourcecode.project.gradle.GradleProject;
 import jext.sourcecode.project.maven.MavenProject;
 import jext.sourcecode.project.simple.SimpleProject;
-import jext.logging.Logger;
+import jext.sourcecode.resources.libraries.JavaLibraryFinder;
 import jext.util.Parameters;
 import jext.util.StringUtils;
 

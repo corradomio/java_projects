@@ -20,4 +20,5 @@ public interface Method extends IdNamed {
     String  getOwnerTypeId();
 
     String getSignature();
+    String getDeclaration();
 }

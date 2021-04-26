@@ -21,10 +21,10 @@ public class FileSets {
 
     public void configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
-        XPathUtils.selectNodes(selected, "directory")
+        XPathUtils.selectElements(selected, "directory")
                 .forEach(this::configureFileSet);
 
-        XPathUtils.selectNodes(selected, "filename")
+        XPathUtils.selectElements(selected, "filename")
                 .forEach(this::configureFileSet);
     }
 

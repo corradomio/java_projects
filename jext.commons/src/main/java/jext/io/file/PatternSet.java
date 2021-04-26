@@ -18,7 +18,7 @@ public class PatternSet {
 
     public void configure(Element elt, String xpath) {
         Element selected = (Element) XPathUtils.selectNode(elt, xpath);
-        XPathUtils.selectNodes(selected, "filename")
+        XPathUtils.selectElements(selected, "filename")
                 .forEach(incl -> {
                     String pattern = XPathUtils.getValue(incl, "@name");
                     addPattern(pattern);

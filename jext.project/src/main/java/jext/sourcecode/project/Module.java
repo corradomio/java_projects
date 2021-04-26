@@ -9,14 +9,6 @@ import java.util.Set;
 
 public interface Module extends RefIdNamed {
 
-    // /** Module id */
-    // String getId();
-    //
-    // String getRefId();
-    //
-    // /** Module name */
-    // Name getName();
-
     /** Owner project */
     Project getProject();
 
@@ -34,6 +26,9 @@ public interface Module extends RefIdNamed {
     /** Module dependencies */
     List<Module> getDependencies();
 
+    /** Sub modules */
+    // List<Module> getSubModules(boolean recursive);
+
     // -- sources
 
     /** Sources available inside the module */
@@ -42,11 +37,12 @@ public interface Module extends RefIdNamed {
     /** Source roots */
     Set<File> getSourceRoots();
 
-    /** Retrieve a source by id/full name/name */
+    /** Retrieve a source by id/fullname/name */
     Source getSource(String name);
 
     // -- libraries
 
+    /** Maven repositories defined in the module */
     Set<String> getMavenRepositories();
 
     /** Module runtime library */
@@ -58,7 +54,7 @@ public interface Module extends RefIdNamed {
     /** Libraries used by the module (local & remote) */
     List<Library> getDeclaredLibraries();
 
-    /** Retrieve a library by id/full name/name */
+    /** Retrieve the library by id/fullname/name */
     Library getLibrary(String nameOrId);
 
     // -- resources
@@ -66,12 +62,16 @@ public interface Module extends RefIdNamed {
     /** Resources used by the module */
     List<Resource> getResources();
 
+    /** Retrieve the resource by name or id/fullname/name */
     Resource getResource(String nameOrId);
 
     // -- types
 
+    /** check if the module contains types */
+    boolean isEmpty();
+
     /** List of types defined inside the module */
-    Set<RefType> getTypes();
+    Set<? extends Type> getTypes();
 
     /** List of types used (in imports) in the implementations */
     Set<RefType> getUsedTypes();

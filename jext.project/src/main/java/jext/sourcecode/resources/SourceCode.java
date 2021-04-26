@@ -1,9 +1,9 @@
 package jext.sourcecode.resources;
 
-import jext.sourcecode.resources.java.JavaSourceCode;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.util.SourceInfo;
+import jext.sourcecode.resources.java.JavaSourceCode;
 import jext.util.FileUtils;
 
 import java.io.File;

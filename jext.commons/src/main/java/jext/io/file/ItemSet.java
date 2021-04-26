@@ -85,13 +85,13 @@ public class ItemSet {
         for(String pattern : patterns)
             addPattern(pattern, true);
 
-        XPathUtils.selectNodes(elt, "include")
+        XPathUtils.selectElements(elt, "include")
                 .forEach(incl -> {
                     String pattern = XPathUtils.getValue(incl, "@name");
                     addPattern(pattern, false);
                 });
 
-        XPathUtils.selectNodes(elt, "exclude")
+        XPathUtils.selectElements(elt, "exclude")
                 .forEach(incl -> {
                     String pattern = XPathUtils.getValue(incl, "@name");
                     addPattern(pattern, true);

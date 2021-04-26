@@ -1,13 +1,13 @@
 package jext.sourcecode.resources.java;
 
-import jext.name.Name;
-import jext.sourcecode.resources.type.ImplementedType;
-import jext.sourcecode.resources.SourceCode;
 import jext.java.FastJavaParser;
+import jext.java.TypeRole;
+import jext.name.Name;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
-import jext.java.TypeRole;
+import jext.sourcecode.resources.SourceCode;
+import jext.sourcecode.resources.type.ImplementedType;
 import jext.sourcecode.resources.type.ReferencedType;
 
 import java.io.File;

@@ -1,7 +1,7 @@
 package jext.sourcecode.project;
 
-import jext.name.IdNamed;
 import jext.maven.MavenDownloader;
+import jext.name.IdNamed;
 
 import java.io.File;
 import java.util.List;

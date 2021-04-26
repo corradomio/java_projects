@@ -13,6 +13,7 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Source;
+import jext.sourcecode.project.Type;
 import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
@@ -106,17 +107,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // Module dependencies
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public List<Module> getDependencies(boolean recursive) {
-    //     if (dependencies == null)
-    //         dependencies = getDependencies();
-    //
-    //     if (!recursive)
-    //         return dependencies;
-    //     else
-    //         return getRecursiveDependencies();
-    // }
-
     @Override
     public List<Module> getDependencies() {
         if (dependencies != null)
@@ -179,7 +169,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         // Union of LOCAL DEFINED types PLUS types DEFINED inside the LOCAL libraries
         // WHY to include the external libraries??
         // It is enough to use ONLY the types defined in the current module and other modules!
-        Set<RefType> definedTypes = getTypes();
+        Set<Type> definedTypes = getTypes();
 
         // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
         //Set<RefType> usedTypes = SetUtils.differenceOrdered(getUsedTypes(), definedTypes);
@@ -191,7 +181,8 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
             // EXTERNAL DEFINED types: all EXTERNAL DEFINED types MINUS LOCAL DEFINED types
             // to be sure to consider ONLY effective types NOT DEFINED locally
-            Set<RefType> dtypes = SetUtils.differenceOrdered(dmodule.getTypes(), definedTypes);
+            Set<Type> ddefinedTypes = new HashSet<>(dmodule.getTypes());
+            Set<RefType> dtypes = new HashSet<>(SetUtils.differenceOrdered(ddefinedTypes, definedTypes));
 
             // LOCAL USED types available in the EXTERNAL DEFINED types
             Set<RefType> itypes = SetUtils.intersectionOrdered(usedTypes, dtypes);
@@ -205,23 +196,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
         return orderedDeps;
     }
-
-    // evaluate the recursive dependencies (breath first)
-    // private List<Module> getRecursiveDependencies() {
-    //     Queue<Module> toVisit = new LinkedList<>(getDependencies());
-    //     Set<Module> visited = new HashSet<>();
-    //
-    //     while (!toVisit.isEmpty()) {
-    //         Module dmodule = toVisit.remove();
-    //         if (visited.contains(dmodule))
-    //             continue;
-    //
-    //         visited.add(dmodule);
-    //         toVisit.addAll(dmodule.getDependencies());
-    //     }
-    //
-    //     return new ArrayList<>(visited);
-    // }
 
     // ----------------------------------------------------------------------
     // Module content
@@ -269,8 +243,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
             source.getSourceRoot().ifPresent(sourceRoot ->
                 sourceRoots.add(sourceRoot));
         }
-
-
 
         return sourceRoots;
     }
@@ -341,11 +313,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     protected List<Library> getLocalLibraries() {
         List<File> jarFiles = new ArrayList<>();
 
-        // check the module directory
-        // {
-        //     FileUtils.listFiles(jarFiles, moduleRoot, FileFilters.IS_JAR);
-        // }
-
         // check the sub directories (are EXCLUDED the subdirectories that
         // contain modules)
         getDirectories().forEach(dir ->{
@@ -410,7 +377,12 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // ----------------------------------------------------------------------
 
     @Override
-    public Set<RefType> getTypes() {
+    public boolean isEmpty() {
+        return getSources().isEmpty();
+    }
+
+    @Override
+    public Set<Type> getTypes() {
 
         // cache names:
         //
@@ -418,10 +390,10 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         //
 
         String cacheName = String.format("dependency.%s.module.types", project.getId());
-        Cache<String, Set<RefType>> cache = CacheManager.getCache(cacheName);
+        Cache<String, Set<Type>> cache = CacheManager.getCache(cacheName);
 
         return cache.get(getId(), () -> {
-            Set<RefType> types = new TreeSet<>();
+            Set<Type> types = new TreeSet<>();
 
             getSources().forEach(source ->
                         types.addAll(source.getTypes()));
@@ -433,7 +405,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     @Override
     public Set<RefType> getUsedTypes() {
         // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
-        Set<RefType> definedTypes = getTypes();
+        Set<RefType> definedTypes = new HashSet<>(getTypes());
 
         // cache names:
         //
@@ -499,5 +471,9 @@ public abstract class BaseModule extends ReferencedObject implements Module {
             this.getSources().size()
         );
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

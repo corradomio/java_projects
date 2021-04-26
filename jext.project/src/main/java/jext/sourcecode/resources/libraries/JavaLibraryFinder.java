@@ -9,9 +9,9 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.util.Parameters;
+import jext.util.StringUtils;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -210,7 +210,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     // ----------------------------------------------------------------------
 
     private void addRepositories(String listUrls) {
-        List<String> repositories = Arrays.asList(listUrls.split(","));
+        List<String> repositories = StringUtils.split(listUrls,",");
         downloader.addRepositories(repositories);
     }
 

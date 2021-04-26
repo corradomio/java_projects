@@ -1,7 +1,7 @@
 package jext.sourcecode.project.maven;
 
-import jext.name.Name;
 import jext.maven.MavenCoords;
+import jext.name.Name;
 
 public class MavenName implements Name {
 

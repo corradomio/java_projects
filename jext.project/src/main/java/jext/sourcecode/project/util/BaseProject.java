@@ -1,24 +1,25 @@
 package jext.sourcecode.project.util;
 
+import jext.io.file.FilePatterns;
+import jext.java.FastJavaParser;
+import jext.logging.Logger;
+import jext.maven.MavenDownloader;
+import jext.name.Name;
 import jext.name.PathName;
-import jext.sourcecode.project.maven.LibrarySet;
-import jext.sourcecode.resources.ResourceFile;
-import jext.sourcecode.resources.SourceCode;
+import jext.nio.file.FilteredFileVisitor;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
-import jext.io.file.FilePatterns;
-import jext.logging.Logger;
-import jext.maven.MavenDownloader;
-import jext.nio.file.FilteredFileVisitor;
+import jext.sourcecode.project.maven.LibrarySet;
+import jext.sourcecode.resources.ResourceFile;
+import jext.sourcecode.resources.SourceCode;
 import jext.util.Bag;
 import jext.util.FileUtils;
 import jext.util.HashBag;
 import jext.util.PropertiesUtils;
-import jext.java.FastJavaParser;
 import jext.util.StringUtils;
 
 import java.io.File;
@@ -161,6 +162,8 @@ public abstract class BaseProject extends NamedObject implements Project {
         findModulesByScan();
         findModulesByJavaSourceRoots();
         addRootModule();
+        addParentModules();
+        sortModules();
 
         return modules;
     }
@@ -357,16 +360,14 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected void addRootModule() {
         logger.debug("addRootModule");
 
+        if (hasRootModule()) return;
+
         // if the ROOT module is not present it is ADDED
-        if (!hasRootModule()) {
-            Module rootModule = newModule(projectHome);
-            rootModule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
-            modules.add(rootModule);
+        Module rootModule = newModule(projectHome);
+        rootModule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
+        modules.add(rootModule);
 
-            logger.warnf("Added Root module");
-        }
-
-        modules.sort(Comparator.comparing(m -> m.getName().getFullName()));
+        logger.warnf("Added Root module");
     }
 
     private boolean hasRootModule() {
@@ -374,6 +375,45 @@ public abstract class BaseProject extends NamedObject implements Project {
             if (module.getName().getFullName().equals(ROOT_MODULE_NAME))
                 return true;
         return false;
+    }
+
+    // ----------------------------------------------------------------------
+
+    protected void addParentModules() {
+        logger.debug("addParentModules");
+
+        boolean[] added = new boolean[1];
+        Set<Name> mnames = new HashSet<>();
+
+        // populate 'mnames'
+        modules.forEach(module -> mnames.add(module.getName()));
+
+        // check for all parents
+        getModules().forEach(module -> {
+            // skip the root module
+            Name mname = module.getName();
+            if (mname.isRoot()) return;
+
+            // check if the parent module is present
+            Name pname = mname.getParent();
+            if (mnames.contains(pname)) return;
+
+            // the parent module is missing
+            // the moduleHome is the parent directory
+            File pmoduleHome = module.getModuleHome().getParentFile();
+            Module pmodule = newModule(pmoduleHome);
+            pmodule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
+            // register the name
+            mnames.add(pmodule.getName());
+            added[0] = true;
+
+            logger.warnf("Added missing parent module %s", pmodule.getName().getFullName());
+        });
+    }
+
+    protected void sortModules() {
+        // order the modules in lexicographic/depth order
+        modules.sort(Comparator.comparing(m -> m.getName().getFullName()));
     }
 
     // ----------------------------------------------------------------------

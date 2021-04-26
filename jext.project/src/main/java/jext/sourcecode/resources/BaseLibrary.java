@@ -1,21 +1,19 @@
 package jext.sourcecode.resources;
 
+import jext.logging.Logger;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
-import jext.sourcecode.project.util.NamedObject;
 import jext.sourcecode.project.Project;
-import jext.logging.Logger;
+import jext.sourcecode.project.util.NamedObject;
 import jext.util.FileUtils;
 import jext.util.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 
 public abstract class BaseLibrary extends NamedObject implements Library {
