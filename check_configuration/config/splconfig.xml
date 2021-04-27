@@ -6,6 +6,7 @@
       -->
     <splreposManager>
         <workspace path="changedDir"/>
-    <homePath>changedDir</homePath>
+        <homePath>changedDir</homePath>
     </splreposManager>
+
 </configuration>

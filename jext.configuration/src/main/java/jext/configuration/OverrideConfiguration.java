@@ -1,39 +1,42 @@
 package jext.configuration;
 
-import com.sun.istack.internal.Nullable;
+import jext.logging.Logger;
 import jext.util.FileUtils;
-import jext.xml.XPathUtils;
-import org.w3c.dom.Element;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
 
 public class OverrideConfiguration implements HierarchicalConfiguration {
+
+    private static final Logger logger = Logger.getLogger(OverrideConfiguration.class);
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
-    /** Configurations */
-    private List<XMLConfiguration> configurations = new ArrayList<>();
+    /** Main configuration file */
+    private File configurationFile;
+    private File overrideFile;
 
-    /** Reverse configuration order */
-    private List<XMLConfiguration> reversedConfig = new ArrayList<>();
+    /** Configurations */
+    private XMLConfiguration configuration;
+    private XMLConfiguration overrideConfig;
+    private List<XMLConfiguration> configurations;
+    private List<XMLConfiguration> reversedConfig;
+
+    private Map<String, Object> globalProps;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public OverrideConfiguration() {
-
+        this.globalProps = new HashMap<>();
     }
 
     // ----------------------------------------------------------------------
@@ -42,23 +45,25 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     @Override
     public boolean isChanged() {
-        for(Configuration configuration : configurations)
-            if (configuration.isChanged())
-                return true;
-        return false;
+        return configuration.isChanged() || overrideConfig.isChanged();
     }
 
     @Override
-    public void load() throws IOException {
-        for(Configuration configuration : configurations)
-            if (configuration.isChanged())
-                configuration.load();
+    public void load() {
+        if (configuration.isChanged()) {
+            configuration.load();
+        }
+        if (overrideConfig.isChanged()) {
+            overrideConfig.load();
+        }
     }
 
     @Override
-    public void save() throws IOException {
-        for(Configuration configuration : configurations)
+    public void save() {
+        if (configuration.isChanged())
             configuration.save();
+        if (overrideConfig.isChanged())
+            overrideConfig.save();
     }
 
     // ----------------------------------------------------------------------
@@ -66,22 +71,32 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     public void setConfigurationFile(File configurationFile) {
-        addConfigurationFile(configurationFile);
-        // retrieve the override file
-        File overrideFile = getOverrideFile(configurationFile);
-        addConfigurationFile(overrideFile);
-    }
+        this.configurationFile = configurationFile;
+        this.configuration = new XMLConfiguration(this.configurationFile);
+        this.configuration.load();
 
-    public void addConfigurationFile(File configurationFile) {
-        if (configurationFile == null) return;
-        configurations.add(new XMLConfiguration(configurationFile));
-        reversedConfig = new ArrayList<>(configurations);
-        Collections.reverse(reversedConfig);
+        this.overrideFile = getOverrideFile();
+        this.overrideConfig = new XMLConfiguration(this.overrideFile);
+        this.overrideConfig.load();
+
+        this.configurations = new ArrayList<XMLConfiguration>(){{
+            add(configuration);
+            add(overrideConfig);
+        }};
+        this.reversedConfig = new ArrayList<XMLConfiguration>(){{
+            add(overrideConfig);
+            add(configuration);
+        }};
     }
 
     // ----------------------------------------------------------------------
     // Read Properties
     // ----------------------------------------------------------------------
+
+    /** Main configuration file */
+    public File getConfigurationFile() {
+        return this.configurationFile;
+    }
 
     /**
      * Retrieve a sub configuration
@@ -108,11 +123,11 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
      * file
      */
     public Configuration getDefaultConfiguration() {
-        return configurations.get(0);
+        return configuration;
     }
 
     public Configuration getOverrideConfiguration() {
-        return reversedConfig.get(0);
+        return overrideConfig;
     }
 
     @Override
@@ -149,6 +164,9 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     @Override
     public String getString(String key, String defaultValue) {
+        if (key.startsWith("@"))
+            return (String) globalProps.getOrDefault(key, defaultValue);
+
         for(Configuration config : reversedConfig)
             if (config.containsKey(key))
                 return config.getString(key);
@@ -157,11 +175,11 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     @Override
     public List<String> getList(String key) {
-        Set<String> values = new TreeSet<>();
+        List<String> values = new ArrayList<>();
         for(Configuration config : reversedConfig)
             if (config.containsKey(key))
                 values.addAll(config.getList(key));
-        return new ArrayList<>(values);
+        return values;
     }
 
     @Override
@@ -189,24 +207,48 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     @Override
     public void setProperty(String key, Object value) {
-        getOverrideConfiguration().setProperty(key, value);
+        if (key.startsWith("@"))
+            this.globalProps.put(key, value);
+        else
+            getOverrideConfiguration().setProperty(key, value);
     }
 
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
 
-    @Nullable
-    private File getOverrideFile(File configurationFile) {
-        try {
-            Element root = XPathUtils.parse(configurationFile).getDocumentElement();
-            Properties properties = XPathUtils.getProperties(root);
-            String path = XPathUtils.getValue(root, "override[@path]", "config-override.xml", properties);
-            if (FileUtils.isAbsolute(path))
-                return new File(path);
-            else
-                return new File(configurationFile.getParentFile(), path);
-        } catch (Exception e) { }
-        return null;
+    private File getOverrideFile() {
+        File overrideFile;
+        String path = configuration.getString("override[@path]", "config-override.xml");
+        path = path.replace('\\', '/');
+        if (path.startsWith("/") || path.indexOf(":/") == 1)
+            overrideFile = new File(path);
+        else
+            overrideFile = new File(getString("@homePath"), path);
+        if (!overrideFile.exists())
+            writeEmptyConfiguration(overrideFile);
+        return overrideFile;
     }
+
+    private void writeEmptyConfiguration(File overrideFile) {
+        FileUtils.mkdirs(overrideFile.getParentFile());
+        FileUtils.asFile(overrideFile,
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<configuration/>"
+        );
+    }
+
+    // private File getOverrideFile(File configurationFile) {
+    //     try {
+    //         Element root = XPathUtils.parse(configurationFile).getDocumentElement();
+    //         Properties properties = XPathUtils.getProperties(root);
+    //         String path = XPathUtils.getValue(root, "override[@path]", "config-override.xml", properties);
+    //         if (FileUtils.isAbsolute(path))
+    //             return new File(path);
+    //         else
+    //             return new File(configurationFile.getParentFile(), path);
+    //     } catch (Exception e) { }
+    //
+    //     return new File(configurationFile.getParentFile(), "config-override.xml");
+    // }
 }

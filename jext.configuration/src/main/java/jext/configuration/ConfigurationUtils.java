@@ -1,14 +1,21 @@
 package jext.configuration;
 
+import jext.util.FileUtils;
 import jext.util.StringUtils;
+import jext.util.TimeUtils;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ConfigurationUtils {
 
-    public static final String HOME_PATH = "homePath";
+    public static final String HOME_PATH = "@homePath";
+
+    public static File getHomeFolder(Configuration config) {
+        return new File(config.getString(HOME_PATH));
+    }
 
     /**
      * Read a list of keys having the form
@@ -58,5 +65,31 @@ public class ConfigurationUtils {
         }
 
         return props;
+    }
+
+    public static File getFile(Configuration config, String key) {
+        String path = config.getString(key);
+        if (path == null)
+            return null;
+        if (FileUtils.isAbsolute(path))
+            return new File(path);
+        else
+            return new File(getHomeFolder(config), path);
+    }
+
+    public static File getFile(Configuration config, String key, String defaultPath) {
+        String path = config.getString(key, defaultPath);
+        if (FileUtils.isAbsolute(path))
+            return new File(path);
+        else
+            return new File(getHomeFolder(config), path);
+    }
+
+    public static long/*milliseconds*/ getTimeout(Configuration config, String key, long defaultValue) {
+        return getTimeout(config, key, String.valueOf(defaultValue));
+    }
+    public static long/*milliseconds*/ getTimeout(Configuration config, String key, String defaultValue) {
+        String interval = config.getString(key, String.valueOf(defaultValue));
+        return TimeUtils.parse(interval);
     }
 }

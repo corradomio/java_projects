@@ -32,12 +32,12 @@ public class InnerConfiguration implements HierarchicalConfiguration {
     }
 
     @Override
-    public void load() throws IOException {
+    public void load() {
         root.load();
     }
 
     @Override
-    public void save() throws IOException {
+    public void save() {
         root.save();
     }
 
@@ -106,7 +106,10 @@ public class InnerConfiguration implements HierarchicalConfiguration {
 
     @Override
     public void setProperty(String key, Object value) {
-        root.setProperty(pkeyOf(key), value);
+        if (key.startsWith("@"))
+            root.setProperty(key, value);
+        else
+            root.setProperty(pkeyOf(key), value);
     }
 
     // ----------------------------------------------------------------------
@@ -117,6 +120,8 @@ public class InnerConfiguration implements HierarchicalConfiguration {
         if (key.isEmpty())
             return ikey;
         else if (ikey.isEmpty())
+            return key;
+        else if (key.startsWith("@"))
             return key;
         else
             return String.format("%s.%s", ikey, key);

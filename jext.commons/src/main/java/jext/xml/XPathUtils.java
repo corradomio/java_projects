@@ -623,7 +623,7 @@ public class XPathUtils {
                 continue;
 
             // not the correct position
-            if (--cindex > 0)
+            if (--cindex >= 0)
                 continue;
 
             selected = (Element) node;

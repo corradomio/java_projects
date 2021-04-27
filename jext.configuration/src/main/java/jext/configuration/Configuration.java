@@ -8,8 +8,8 @@ public interface Configuration {
 
     boolean isChanged();
 
-    void load() throws IOException;
-    void save() throws IOException;
+    void load();
+    void save();
 
     boolean containsKey(String key);
 
@@ -29,6 +29,4 @@ public interface Configuration {
     List<String> getList(String key);
 
     void setProperty(String key, Object value);
-
-
 }

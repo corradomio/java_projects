@@ -20,6 +20,7 @@ public class XMLConfiguration implements HierarchicalConfiguration {
 
     private static Logger logger = Logger.getLogger(XMLConfiguration.class);
 
+    private Configuration parent;
     private File configurationFile;
     private long timestamp;
     private Document doc;
@@ -51,32 +52,35 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     }
 
     @Override
-    public void load() throws IOException {
+    public void load() {
         try {
             if (configurationFile.exists()) {
-                this.doc = XPathUtils.parse(configurationFile);
-                this.root = this.doc.getDocumentElement();
-                this.timestamp = configurationFile.lastModified();
+                Document tdoc = XPathUtils.parse(configurationFile);
+                doc = tdoc;
+                root = doc.getDocumentElement();
             } else {
-                this.doc = XPathUtils.parse("<configuration/>");
-                this.root = this.doc.getDocumentElement();
-                this.timestamp = 0;
+                doc = XPathUtils.parse("<configuration/>");
+                root = this.doc.getDocumentElement();
+                timestamp = 0;
             }
-            this.properties = XPathUtils.getProperties(this.root);
-            this.updated = false;
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new IOException(e);
+            properties = XPathUtils.getProperties(root);
+            updated = false;
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            logger.errorf("Unable to parse %s", configurationFile);
         }
+
+        timestamp = configurationFile.lastModified();
     }
 
     @Override
-    public void save() throws IOException {
+    public void save() {
         if (updated)
         try {
             XPathUtils.serialize(doc, configurationFile);
-            this.updated = false;
-        } catch (TransformerException e) {
-            throw new IOException(e);
+            updated = false;
+            timestamp = configurationFile.lastModified();
+        } catch (TransformerException | IOException e) {
+            logger.errorf("Unable to save %s", configurationFile);
         }
     }
 
@@ -153,6 +157,10 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     // Write Operations
     // ----------------------------------------------------------------------
 
+    public void setParent(Configuration parent) {
+        this.parent = parent;
+    }
+
     @Override
     public Object getProperty(String key) {
         check();
@@ -162,6 +170,12 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     @Override
     public void setProperty(String key, Object value) {
         check();
+
+        if (parent != null && key.startsWith("@")) {
+            parent.setProperty(key, value);
+            return;
+        }
+
         String svalue = value != null ? value.toString() : null;
         XPathUtils.setValue(root, xpathOf(key), svalue, properties);
         updated = true;
@@ -180,12 +194,8 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     }
 
     private void check()  {
-        try {
-            if (isChanged())
-                load();
-        } catch (IOException e) {
-            logger.errorf("Unable to parse configuration file %s", FileUtils.getAbsolutePath(configurationFile));
-        }
+        if (isChanged())
+            load();
     }
 }
 
