@@ -5,8 +5,13 @@
         Configuration for the SPLReposManager
       -->
     <splreposManager>
-        <workspace path="C:\Users\Corrado Mio/Desktop/SPL/Repos-7398"/>
+        <workspace path="C:\Users\Corrado Mio/Desktop/SPL/Repos-1775"/>
         <homePath>changedDir</homePath>
     </splreposManager>
 
+<models>
+        <dependency>
+            <property name="size.limit" value="333"/>
+        </dependency>
+    </models>
 </configuration>

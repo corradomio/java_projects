@@ -51,6 +51,8 @@ public class XMLConfiguration implements HierarchicalConfiguration {
 
     @Override
     public boolean isChanged() {
+        if (this.updated)
+            return true;
         if (this.timestamp != 0 && !configurationFile.exists())
             return true;
         else if (this.timestamp == 0 && !configurationFile.exists())
@@ -198,7 +200,32 @@ public class XMLConfiguration implements HierarchicalConfiguration {
         // - node(index)               node[index]
         // - node[@attribute]          node/@attribute
 
-        return key.replace(".", "/");
+        if (!key.contains("."))
+            return key;
+
+        int state = 0; // 0 -> normal, 1 -> in String
+
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<key.length(); ++i) {
+            char ch = key.charAt(i);
+            if (ch == '.') {
+                if (state == 0)
+                    sb.append('/');
+                else
+                    sb.append(ch);
+            }
+            else if (ch == '\'' || ch == '"') {
+                if (state == 0)
+                    state = 1;
+                else
+                    state = 0;
+                sb.append(ch);
+            }
+            else
+                sb.append(ch);
+        }
+
+        return sb.toString();
     }
 
     private void check()  {

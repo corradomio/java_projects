@@ -592,9 +592,11 @@ public class XPathUtils {
             selected = doc.createElement(ename);
             current.appendChild(selected);
             current = selected;
-            Attr attr = doc.createAttribute(aname);
-            attr.setTextContent(check);
-            current.appendChild(attr);
+            ((Element)current).setAttribute(aname, check);
+
+            // Attr attr = doc.createAttribute(aname);
+            // attr.setTextContent(check);
+            // current.appendChild(attr);
         }
         return selected;
     }

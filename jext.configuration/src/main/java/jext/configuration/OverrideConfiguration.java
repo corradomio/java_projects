@@ -30,14 +30,12 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     private List<XMLConfiguration> configurations;
     private List<XMLConfiguration> reversedConfig;
 
-    private Map<String, Object> globalProps;
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public OverrideConfiguration() {
-        this.globalProps = new HashMap<>();
+
     }
 
     // ----------------------------------------------------------------------
@@ -179,9 +177,6 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     @Override
     public String getString(String key, String defaultValue) {
-        if (key.startsWith("@"))
-            return (String) globalProps.getOrDefault(key, defaultValue);
-
         for(Configuration config : reversedConfig)
             if (config.containsKey(key))
                 return config.getString(key);
@@ -223,10 +218,7 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     @Override
     public void setProperty(String key, Object value) {
-        if (key.startsWith("@"))
-            this.globalProps.put(key, value);
-        else
-            getOverrideConfiguration().setProperty(key, value);
+        getOverrideConfiguration().setProperty(key, value);
     }
 
     // ----------------------------------------------------------------------

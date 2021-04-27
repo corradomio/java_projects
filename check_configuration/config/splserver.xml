@@ -928,7 +928,7 @@
                 max number of lines to analyze a source file
                 0 -> no limits
               -->
-            <property name="size.limit" value="0"/>
+            <property name="size.limit" value="10000"/>
             <!--
                 max time to analyze a single file ('time.limit') or a
                 single method ('method.limit')

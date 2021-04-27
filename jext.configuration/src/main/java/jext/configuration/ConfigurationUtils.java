@@ -11,12 +11,6 @@ import java.util.Map;
 
 public class ConfigurationUtils {
 
-    // public static final String HOME_PATH = "@homePath";
-
-    // public static File getHomeFolder(Configuration config) {
-    //     return new File(config.getString(HOME_PATH));
-    // }
-
     /**
      * Read a list of keys having the form
      *
