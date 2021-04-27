@@ -42,6 +42,14 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     @Override
+    public File getHomeFolder() {
+        if (parent != null)
+            return parent.getHomeFolder();
+        else
+            return this.configurationFile.getParentFile();
+    }
+
+    @Override
     public boolean isChanged() {
         if (this.timestamp != 0 && !configurationFile.exists())
             return true;

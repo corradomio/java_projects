@@ -1,6 +1,7 @@
 package jext.configuration;
 
 import javax.xml.transform.TransformerException;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -25,6 +26,11 @@ public class InnerConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
     // IO Operations
     // ----------------------------------------------------------------------
+
+    @Override
+    public File getHomeFolder() {
+        return root.getHomeFolder();
+    }
 
     @Override
     public boolean isChanged() {

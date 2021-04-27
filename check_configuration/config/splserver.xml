@@ -4,14 +4,17 @@
     <!--
         Path relative to the directory containing this file
       -->
-    <override path="splconfig.xml"/>
+    <override path="config/splconfig.xml"/>
 
     <!--
         Configuration for the SPLReposManager
       -->
     <splreposManager>
         <!--<workspace path="/Users/ahmed/Desktop/SPL/Repos"/>-->
-        <workspace path="${sys:user.home}/Desktop/SPL/Repos" />
+        <workspace path="${sys:user.home}/Desktop/SPL/Repos" >
+            <label>Workspace</label>
+            <documentation>Workspace documentation</documentation>
+        </workspace>
         <!--<workspace path="D:/SPLGroup/spl-workspaces/AhmedWorkspace"/>-->
         <!--<workspace path="D:/SPLGroup/spl-workspaces/BTProjects2"/>-->
         <!--<workspace path="D:/SPLGroup/spl-workspaces/spl-workspace"/>-->

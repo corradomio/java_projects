@@ -20,6 +20,7 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     /** Main configuration file */
+    private File homeFolder;
     private File configurationFile;
     private File overrideFile;
 
@@ -70,13 +71,23 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     // Operations
     // ----------------------------------------------------------------------
 
+    // DEBUG
     public void setConfigurationFile(File configurationFile) {
+        File homeFolder = configurationFile.getAbsoluteFile().getParentFile().getParentFile();
+        setConfigurationFile(homeFolder, configurationFile);
+    }
+
+    public void setConfigurationFile(File homeFolder, File configurationFile) {
+        this.homeFolder = homeFolder;
+
         this.configurationFile = configurationFile;
         this.configuration = new XMLConfiguration(this.configurationFile);
+        this.configuration.setParent(this);
         this.configuration.load();
 
         this.overrideFile = getOverrideFile();
         this.overrideConfig = new XMLConfiguration(this.overrideFile);
+        this.configuration.setParent(this);
         this.overrideConfig.load();
 
         this.configurations = new ArrayList<XMLConfiguration>(){{
@@ -92,6 +103,10 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
     // Read Properties
     // ----------------------------------------------------------------------
+
+    public File getHomeFolder() {
+        return this.homeFolder;
+    }
 
     /** Main configuration file */
     public File getConfigurationFile() {
@@ -225,14 +240,14 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
         if (path.startsWith("/") || path.indexOf(":/") == 1)
             overrideFile = new File(path);
         else
-            overrideFile = new File(getString("@homePath"), path);
+            overrideFile = new File(homeFolder, path);
         if (!overrideFile.exists())
             writeEmptyConfiguration(overrideFile);
         return overrideFile;
     }
 
     private void writeEmptyConfiguration(File overrideFile) {
-        FileUtils.mkdirs(overrideFile.getParentFile());
+        FileUtils.mkdirs(overrideFile.getAbsoluteFile().getParentFile());
         FileUtils.asFile(overrideFile,
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<configuration/>"

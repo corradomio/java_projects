@@ -11,11 +11,11 @@ import java.util.Map;
 
 public class ConfigurationUtils {
 
-    public static final String HOME_PATH = "@homePath";
+    // public static final String HOME_PATH = "@homePath";
 
-    public static File getHomeFolder(Configuration config) {
-        return new File(config.getString(HOME_PATH));
-    }
+    // public static File getHomeFolder(Configuration config) {
+    //     return new File(config.getString(HOME_PATH));
+    // }
 
     /**
      * Read a list of keys having the form
@@ -74,7 +74,7 @@ public class ConfigurationUtils {
         if (FileUtils.isAbsolute(path))
             return new File(path);
         else
-            return new File(getHomeFolder(config), path);
+            return new File(config.getHomeFolder(), path);
     }
 
     public static File getFile(Configuration config, String key, String defaultPath) {
@@ -82,7 +82,7 @@ public class ConfigurationUtils {
         if (FileUtils.isAbsolute(path))
             return new File(path);
         else
-            return new File(getHomeFolder(config), path);
+            return new File(config.getHomeFolder(), path);
     }
 
     public static long/*milliseconds*/ getTimeout(Configuration config, String key, long defaultValue) {

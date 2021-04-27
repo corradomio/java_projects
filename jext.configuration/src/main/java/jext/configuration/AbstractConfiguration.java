@@ -1,9 +1,15 @@
 package jext.configuration;
 
+import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
 public class AbstractConfiguration implements HierarchicalConfiguration {
+    @Override
+    public File getHomeFolder() {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public boolean isChanged() {
         throw new UnsupportedOperationException();

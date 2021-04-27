@@ -5,7 +5,7 @@
         Configuration for the SPLReposManager
       -->
     <splreposManager>
-        <workspace path="changedDir"/>
+        <workspace path="C:\Users\Corrado Mio/Desktop/SPL/Repos-7398"/>
         <homePath>changedDir</homePath>
     </splreposManager>
 
