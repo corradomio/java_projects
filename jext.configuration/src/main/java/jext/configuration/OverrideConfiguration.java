@@ -187,9 +187,10 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
         Properties properties = new Properties();
         // keep this order to ensure that the properties
         // defined in the "override" file will override
-        // the properties defined in the "default" configration file"
+        // the properties defined in the "default" configuration file"
         for (Configuration config : configurations)
-            properties.putAll(config.getProperties(key));
+            if (config.containsKey(key))
+                properties.putAll(config.getProperties(key));
         return properties;
     }
 
