@@ -191,9 +191,11 @@ public class XPathUtils {
             if (name.startsWith("env:")) {
                 vvalue = System.getenv(name.substring(4));
             }
+            // ${sys:...}
             else if (name.startsWith("sys:")) {
                 vvalue = System.getProperty(name.substring(4));
             }
+            // ${name}
             else {
                 vvalue = params.containsKey(name) ? params.get(name).toString() : null;
             }
