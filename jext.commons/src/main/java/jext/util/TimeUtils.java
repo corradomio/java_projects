@@ -151,7 +151,7 @@ public class TimeUtils {
         // '3.5 s'
         else if (interval.endsWith("s"))
             return (long)(value*1000);
-        // '3.5 m'
+        // '3.5 m'  ==  '3.5 min'
         else if (interval.endsWith("m"))
             return (long)(value*60*1000);
         // '3.5 min'

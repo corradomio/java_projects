@@ -16,6 +16,7 @@
 
     <modules>
         <module>../jext.commons</module>
+        <module>../jext.collections</module>
         <module>../jext.maven</module>
         <module>../jext.cache</module>
         <module>../jext.concurrent</module>

@@ -77,7 +77,7 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     public void setConfigurationFile(File homeFolder, File configurationFile) {
         this.homeFolder = homeFolder;
-
+        
         this.configurationFile = configurationFile;
         this.configuration = new XMLConfiguration(this.configurationFile);
         this.configuration.setParent(this);
@@ -96,6 +96,10 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
             add(overrideConfig);
             add(configuration);
         }};
+    }
+
+    public void deleteOverrideConfiguration() {
+        writeEmptyConfiguration(overrideFile);
     }
 
     // ----------------------------------------------------------------------
@@ -218,7 +222,7 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
 
     @Override
     public void setProperty(String key, Object value) {
-        getOverrideConfiguration().setProperty(key, value);
+            getOverrideConfiguration().setProperty(key, value);
     }
 
     // ----------------------------------------------------------------------

@@ -11,7 +11,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -402,7 +401,7 @@ public class MavenPom implements MavenConst {
      */
     public Set<String> getRepositories() {
         Set<String> repoUrls = new HashSet<>();
-        for (Element elt : XPathUtils.selectNodes(project, REPOSITORIES)) {
+        for (Element elt : XPathUtils.selectElements(project, REPOSITORIES)) {
             String repoUrl = XPathUtils.getValue(elt, "url");
             if (isValid(repoUrl))
                 repoUrls.add(repoUrl);
@@ -426,7 +425,7 @@ public class MavenPom implements MavenConst {
      */
     public List<String> getModules() {
         List<String> modules = new ArrayList<>();
-        for (Element elt : XPathUtils.selectNodes(project, "modules/module")) {
+        for (Element elt : XPathUtils.selectElements(project, "modules/module")) {
             String relativePath = elt.getTextContent();
             if (isValid(relativePath)) {
                 modules.add(relativePath);
@@ -498,7 +497,7 @@ public class MavenPom implements MavenConst {
         List<MavenDependency> depList = new ArrayList<>();
         Properties props = getProperties();
         MavenCoords coords = getCoords();
-        XPathUtils.selectNodes(project, xpath)
+        XPathUtils.selectElements(project, xpath)
             .forEach(dep -> {
                 boolean optional = XPathUtils.getValue(dep, OPTIONAL, false, props);
                 String scope = XPathUtils.getValue(dep, SCOPE, SCOPE_COMPILE);

@@ -125,7 +125,7 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     }
 
     public boolean hasVersion() {
-        return !version.isEmpty() && !isRange(version);
+        return !version.isEmpty() && !isRange(version) && !isPattern(version);
     }
 
     public boolean isRange() {

@@ -179,7 +179,7 @@ public class XMLConfiguration implements HierarchicalConfiguration {
 
     @Override
     public void setProperty(String key, Object value) {
-        check();
+        //check();
 
         if (parent != null && key.startsWith("@")) {
             parent.setProperty(key, value);

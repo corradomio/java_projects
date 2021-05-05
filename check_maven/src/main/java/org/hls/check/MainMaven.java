@@ -24,7 +24,15 @@ public class MainMaven {
             .addRepository("https://repo1.maven.org/maven2")
             .addRepository("http://repository.primefaces.org")
             ;
-        MavenPom pom = new MavenPom(new File("C:\\Users\\Corrado Mio\\.spl\\.extlib\\org\\nd4j\\nd4j-api\\1.0.0-beta7\\nd4j-api-1.0.0-beta7.pom"), md);
+        MavenPom pom = new MavenPom(new File(
+            //"C:\\Users\\Corrado Mio\\.spl\\.extlib\\org\\nd4j\\nd4j-api\\1.0.0-beta7\\nd4j-api-1.0.0-beta7.pom"
+            // "D:\\Projects.github\\java_projects\\check_project\\.m2\\repository\\junit\\junit\\4.13.1\\junit-4.13.1.pom"
+            "C:\\Users\\Corrado Mio\\Downloads\\junit-4.13.1.pom"
+        ), md);
+
+        pom.getProperties().forEach((k,v)->{
+            System.out.printf("  %s: %s\n", k, v);
+        });
 
         pom.getDependencies().forEach(dep -> {
             System.out.println(dep);

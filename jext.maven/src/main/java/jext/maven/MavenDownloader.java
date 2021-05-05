@@ -11,7 +11,6 @@ import jext.util.concurrent.Parallel;
 import jext.xml.XPathUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -670,31 +669,13 @@ public class MavenDownloader implements MavenConst {
 
                 try {
                     downloadFromUrl(downloadedFile, downloadUrl);
-                }
-                catch (FileNotFoundException e) {
-                    //logger.errorf("FileNotFoundException %s", downloadUrl);
+                } catch (IOException e) {
                     excpt.addCause(e);
                     continue;
-                }
-                catch (UnknownHostException e) {
-                    //logger.errorf("UnknownHostException %s", downloadUrl);
+                } catch (Throwable e) {
                     excpt.addCause(e);
-                    continue;
+                    break;
                 }
-                catch (IOException e) {
-                    // String message = e.getMessage();
-                    // if (message.contains(" 403 ")) continue;
-                    // if (message.contains(" 401 ")) continue;
-                    // if (message.contains(" 301 ")) continue;
-
-                    //logger.errorf("IOException %s: %s", downloadUrl, e.getMessage());
-                    excpt.addCause(e);
-                    continue;
-                }
-                // catch (Throwable t) {
-                //     logger.errorf("Throwable %s: %s", downloadUrl, t);
-                //     break;
-                // }
 
                 // check if the downloaded file has the correct type
                 if (!isValidFileType(tempFile, type))

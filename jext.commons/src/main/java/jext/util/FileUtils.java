@@ -187,6 +187,13 @@ public class FileUtils {
     // Recursive listFiles
     // ----------------------------------------------------------------------
 
+    public static List<String> asList(String[] files) {
+        if (files == null || files.length == 0)
+            return Collections.emptyList();
+        else
+            return Arrays.asList(files);
+    }
+
     public static List<File> asList(File[] files) {
         if (files == null || files.length == 0)
             return Collections.emptyList();
