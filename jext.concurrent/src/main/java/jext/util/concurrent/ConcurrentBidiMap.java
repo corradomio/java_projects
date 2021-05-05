@@ -2,8 +2,6 @@ package jext.util.concurrent;
 
 import jext.util.BidiMap;
 
-import java.util.Collection;
-import java.util.Set;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
