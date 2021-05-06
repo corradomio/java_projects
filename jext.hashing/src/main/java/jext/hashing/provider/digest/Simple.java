@@ -6,13 +6,13 @@ import jext.hashing.provider.util.AlgorithmProvider;
 import java.security.MessageDigest;
 
 
-public class Sample {
+public class Simple {
 
     public static class Mappings extends AlgorithmProvider {
-        private static final String PREFIX = Sample.class.getName();
+        private static final String PREFIX = Simple.class.getName();
         @Override
         public void configure(ConfigurableProvider provider) {
-            provider.addAlgorithm("MessageDigest.Sample", PREFIX + "$Digest");
+            provider.addAlgorithm("MessageDigest.Simple", PREFIX + "$Digest");
         }
     }
 
