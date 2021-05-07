@@ -23,13 +23,9 @@ public class DistanceSensitiveProvider extends Provider implements ConfigurableP
      */
     public DistanceSensitiveProvider() {
         super(PROVIDER_NAME, 1.0, info);
-        AccessController.doPrivileged(new PrivilegedAction()
-        {
-            public Object run()
-            {
-                setup();
-                return null;
-            }
+        AccessController.doPrivileged((PrivilegedAction) () -> {
+            setup();
+            return null;
         });
     }
 
@@ -41,7 +37,7 @@ public class DistanceSensitiveProvider extends Provider implements ConfigurableP
     private static final String DIGEST_PACKAGE = "jext.hashing.provider.digest.";
     private static final String[] DIGESTS =
         {
-            "Sample"
+            "Simple"
         };
 
     private void loadAlgorithms(String packageName, String[] names)

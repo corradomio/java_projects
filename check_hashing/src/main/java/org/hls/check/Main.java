@@ -51,11 +51,7 @@ public class Main {
 
     public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException {
         MessageDigest md;
-
         Security.setProperty("crypto.policy", "unlimited");
-        int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
-        System.out.println("Max Key Size for AES : " + maxKeySize);
-        Provider p = new BouncyCastleProvider();
         Security.addProvider(new BouncyCastleProvider());
         Security.addProvider(new DistanceSensitiveProvider());
 
@@ -64,10 +60,9 @@ public class Main {
             showHashAlgorithms(provider, MessageDigest.class);
         }
 
-        md = MessageDigest.getInstance("MD5", "BC");
-        System.out.println(md.getClass());
-
         md = MessageDigest.getInstance("Simple", "DS");
+        System.out.println(md.getClass());
+        md = MessageDigest.getInstance("Simple");
         System.out.println(md.getClass());
     }
 }

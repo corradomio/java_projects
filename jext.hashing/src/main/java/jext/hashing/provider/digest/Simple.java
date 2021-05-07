@@ -18,17 +18,13 @@ public class Simple {
 
     public static class Digest extends MessageDigest {
 
-        /**
-         * Creates a message digest with the specified algorithm name.
-         *
-         * @param algorithm the standard name of the digest algorithm.
-         *                  See the MessageDigest section in the <a href=
-         *                  "{@docRoot}/../technotes/guides/security/StandardNames.html#MessageDigest">
-         *                  Java Cryptography Architecture Standard Algorithm Name Documentation</a>
-         *                  for information about standard algorithm names.
-         */
-        protected Digest(String algorithm) {
-            super(algorithm);
+        public Digest() {
+            super("Simple");
+        }
+
+        @Override
+        protected void engineReset() {
+
         }
 
         @Override
@@ -46,9 +42,5 @@ public class Simple {
             return new byte[0];
         }
 
-        @Override
-        protected void engineReset() {
-
-        }
     }
 }

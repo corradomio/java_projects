@@ -17,21 +17,17 @@ public class ClassUtil
             }
             else
             {
-                return (Class) AccessController.doPrivileged(new PrivilegedAction()
-                {
-                    public Object run()
+                return (Class) AccessController.doPrivileged((PrivilegedAction) () -> {
+                    try
                     {
-                        try
-                        {
-                            return Class.forName(className);
-                        }
-                        catch (Exception e)
-                        {
-                            // ignore - maybe log?
-                        }
-
-                        return null;
+                        return Class.forName(className);
                     }
+                    catch (Exception e)
+                    {
+                        // ignore - maybe log?
+                    }
+
+                    return null;
                 });
             }
         }
