@@ -67,9 +67,9 @@ public class Nilsimsa {
      *
      * @param data the data to consider in the update
      */
-    public Nilsimsa update(byte[] data) {
-        for (int ch : data) {
-            ch = ch & 0xff;
+    public Nilsimsa update(byte[] data, int offset, int len) {
+        for (int k=0,j=offset; k<len; ++k,++j) {
+            byte ch = data[j];
             count++;
 
             // incr accumulators for triplets
@@ -98,9 +98,9 @@ public class Nilsimsa {
         return this;
     }
 
-    public Nilsimsa update(String s) {
-        return update(s.getBytes());
-    }
+    // public Nilsimsa update(String s) {
+    //     return update(s.getBytes());
+    // }
 
     /**
      * Resets the Hash computation.
@@ -150,83 +150,83 @@ public class Nilsimsa {
     }
 
 
-    /**
-     * Compute the Nilsimsa digest for the given String.
-     *
-     * @param s the String to hash
-     * @return the Nilsimsa digest.
-     */
-    public byte[] digest(String s) {
-        return digest(s.getBytes());
-    }
+    // /**
+    //  * Compute the Nilsimsa digest for the given String.
+    //  *
+    //  * @param s the String to hash
+    //  * @return the Nilsimsa digest.
+    //  */
+    // public byte[] digest(String s) {
+    //     return digest(s.getBytes());
+    // }
 
 
-    /**
-     * Compute the Nilsimsa digest for the given String.
-     *
-     * @param data an array of bytes to hash
-     * @return the Nilsimsa digest.
-     */
-    public byte[] digest(byte[] data) {
-        reset();
-        update(data);
-        return digest();
-    }
+    // /**
+    //  * Compute the Nilsimsa digest for the given String.
+    //  *
+    //  * @param data an array of bytes to hash
+    //  * @return the Nilsimsa digest.
+    //  */
+    // public byte[] digest(byte[] data) {
+    //     reset();
+    //     update(data, 0, data.length);
+    //     return digest();
+    // }
 
-    /**
-     * Computes the Nilsimsa digest for the given byte array.
-     *
-     * @param data to hash
-     * @return the byte array's Nilsimsa hash.
-     */
-    public static Nilsimsa getHash(byte[] data) {
-        return new Nilsimsa().update(data);
-    }
+    // /**
+    //  * Computes the Nilsimsa digest for the given byte array.
+    //  *
+    //  * @param data to hash
+    //  * @return the byte array's Nilsimsa hash.
+    //  */
+    // public static Nilsimsa getHash(byte[] data) {
+    //     return new Nilsimsa().update(data);
+    // }
 
-    /**
-     * Computes the Nilsimsa digest for the given String.
-     *
-     * @param s the String to hash
-     * @return the String's Nilsimsa hash.
-     */
-    public static Nilsimsa getHash(String s) {
-        return getHash(s.getBytes());
-    }
+    // /**
+    //  * Computes the Nilsimsa digest for the given String.
+    //  *
+    //  * @param s the String to hash
+    //  * @return the String's Nilsimsa hash.
+    //  */
+    // public static Nilsimsa getHash(String s) {
+    //     return getHash(s.getBytes());
+    // }
 
-    /**
-     * Returns the hex digest of the current Nilsimsa object.
-     *
-     * @return a String representation of the current state of the Nilsimsa object.
-     */
-    public String hexdigest() {
-        StringBuilder s = new StringBuilder();
-        for (byte b : digest()) {
-            s.append(String.format("%02x", b).toUpperCase());
-        }
-        return s.toString();
-    }
+    // /**
+    //  * Returns the hex digest of the current Nilsimsa object.
+    //  *
+    //  * @return a String representation of the current state of the Nilsimsa object.
+    //  */
+    // public String hexdigest() {
+    //     StringBuilder s = new StringBuilder();
+    //     for (byte b : digest()) {
+    //         s.append(String.format("%02x", b).toUpperCase());
+    //     }
+    //     return s.toString();
+    // }
 
-    /**
-     * Compute the Nilsimsa hexDigest for the given String.
-     *
-     * @param data an array of bytes to hash
-     * @return the Nilsimsa hexdigest.
-     */
-    public String hexdigest(byte[] data) {
-        digest(data);
-        return hexdigest();
-    }
+    // /**
+    //  * Compute the Nilsimsa hexDigest for the given String.
+    //  *
+    //  * @param data an array of bytes to hash
+    //  * @return the Nilsimsa hexdigest.
+    //  */
+    // public String hexdigest(byte[] data) {
+    //     digest(data);
+    //     return hexdigest();
+    // }
 
-    /**
-     * Compute the Nilsimsa hexDigest for the given String.
-     *
-     * @param s the String to hash
-     * @return the Nilsimsa hexdigest.
-     */
-    public String hexdigest(String s) {
-        digest(s);
-        return hexdigest();
-    }
+    // /**
+    //  * Compute the Nilsimsa hexDigest for the given String.
+    //  *
+    //  * @param s the String to hash
+    //  * @return the Nilsimsa hexdigest.
+    //  */
+    // public String hexdigest(String s) {
+    //     digest(s);
+    //     return hexdigest();
+    // }
 
     /**
      * Compares a Nilsimsa object to the current one and return the number of bits that differ.

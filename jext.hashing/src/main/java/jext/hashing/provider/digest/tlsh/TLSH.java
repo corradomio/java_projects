@@ -32,6 +32,7 @@ package jext.hashing.provider.digest.tlsh;
     </text>
  */
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 public class TLSH {
@@ -39,10 +40,10 @@ public class TLSH {
     static final private int EFF_BUCKETS = 128;
     static final private int CODE_SIZE = 32;
     static final private int TLSH_CHECKSUM_LEN = 1;
-    static final private int TLSH_STRING_LEN = 70;
     static final private int SLIDING_WND_SIZE = 5;
-    static final private int RANGE_LVALUE = 256;
-    static final private int RANGE_QRATIO = 16;
+    // static final private int TLSH_STRING_LEN = 70;
+    // static final private int RANGE_LVALUE = 256;
+    // static final private int RANGE_QRATIO = 16;
     static final private float LOG_1_5 = 0.4054651f;
     static final private float LOG_1_3 = 0.26236426f;
     static final private float LOG_1_1 = 0.095310180f;
@@ -92,11 +93,12 @@ public class TLSH {
     }
 
     private int[] aBucket = null;
-    final private int[] slideWindow = new int[SLIDING_WND_SIZE];
+    private final int[] slideWindow = new int[SLIDING_WND_SIZE];
     private int dataLen = 0;
-    private boolean lshCodeValid = false;
-    LshBinStruct lshBin = new LshBinStruct();
-    private String lshCode = null;
+    // private boolean lshCodeValid = false;
+    private final LshBinStruct lshBin = new LshBinStruct();
+    private byte[] lshCode = null;
+    private int lshLen = 0;
 
     /* non interface methods */
 
@@ -106,23 +108,23 @@ public class TLSH {
         return ret;
     }
 
-    private String toHex(int[] buf) {
-        String ret = "";
-        for (int i = 0; i < buf.length; i++) {
-            if (buf[i] < 16)
-                ret += "0";
-            ret += Integer.toHexString(buf[i]);
-        }
-        return ret.toUpperCase();
-    }
+    // private String toHex(int[] buf) {
+    //     String ret = "";
+    //     for (int i = 0; i < buf.length; i++) {
+    //         if (buf[i] < 16)
+    //             ret += "0";
+    //         ret += Integer.toHexString(buf[i]);
+    //     }
+    //     return ret.toUpperCase();
+    // }
 
-    static private int[] fromHex(String s) {
-        int[] ret = new int[s.length() / 2];
-        for (int i = 0; i < s.length(); i += 2) {
-            ret[i / 2] = Integer.parseInt(s.substring(i, i + 2), 16);
-        }
-        return ret;
-    }
+    // static private int[] fromHex(String s) {
+    //     int[] ret = new int[s.length() / 2];
+    //     for (int i = 0; i < s.length(); i += 2) {
+    //         ret[i / 2] = Integer.parseInt(s.substring(i, i + 2), 16);
+    //     }
+    //     return ret;
+    // }
 
     private int bMapping(int salt, int i, int j, int k) {
         int h = 0;
@@ -261,31 +263,31 @@ public class TLSH {
         return (int) (i & 0xFF);
     }
 
-    static private int modDiff(int x, int y, int R) {
-        int dl;
-        int dr;
-        if (y > x) {
-            dl = (y - x);
-            dr = (x + R - y);
-        } else {
-            dl = (x - y);
-            dr = (y + R - x);
-        }
-        if (dl > dr)
-            return dr;
-        return dl;
-    }
+    // static private int modDiff(int x, int y, int R) {
+    //     int dl;
+    //     int dr;
+    //     if (y > x) {
+    //         dl = (y - x);
+    //         dr = (x + R - y);
+    //     } else {
+    //         dl = (x - y);
+    //         dr = (y + R - x);
+    //     }
+    //     if (dl > dr)
+    //         return dr;
+    //     return dl;
+    // }
 
-    static private int hDistance(int[] x, int[] y) {
-        int diff = 0;
-        for (int i = 0; i < x.length; i++) {
-            diff += bitPairsDiffTable[x[i]][y[i]];
-        }
-        return diff;
-    }
+    // static private int hDistance(int[] x, int[] y) {
+    //     int diff = 0;
+    //     for (int i = 0; i < x.length; i++) {
+    //         diff += bitPairsDiffTable[x[i]][y[i]];
+    //     }
+    //     return diff;
+    // }
 
 
-    public static int[][] generateTable() {
+    private static int[][] generateTable() {
         int[][] result = new int[256][256];
         for (int i = 0; i < 256; i++) {
             for (int j = 0; j < 256; j++) {
@@ -317,64 +319,68 @@ public class TLSH {
         bitPairsDiffTable = generateTable();
     }
 
-    /**
-     * class interface, public methods
-     *
-     * @param assignedBitPairsDiffTable
-     */
-    public TLSH(final int[][] assignedBitPairsDiffTable) {
-        bitPairsDiffTable = assignedBitPairsDiffTable;
-    }
+    // /**
+    //  * class interface, public methods
+    //  *
+    //  * @param assignedBitPairsDiffTable
+    //  */
+    // public TLSH(final int[][] assignedBitPairsDiffTable) {
+    //     bitPairsDiffTable = assignedBitPairsDiffTable;
+    // }
 
-    public void update(final String data) {
-        int j = this.dataLen % SLIDING_WND_SIZE;
-        int fedLen = this.dataLen;
-        if (this.aBucket == null) {
-            this.aBucket = new int[BUCKETS];
-        }
-        for (int i = 0; i < data.length(); i++) {
-            slideWindow[j] = (int) (data.charAt(i) & 0xff);
-            if (fedLen >= 4) {
-                int j1 = (j + SLIDING_WND_SIZE - 1) % SLIDING_WND_SIZE;
-                int j2 = (j + SLIDING_WND_SIZE - 2) % SLIDING_WND_SIZE;
-                int j3 = (j + SLIDING_WND_SIZE - 3) % SLIDING_WND_SIZE;
-                int j4 = (j + SLIDING_WND_SIZE - 4) % SLIDING_WND_SIZE;
-                for (int k = 0; k < TLSH_CHECKSUM_LEN; k++) {
-                    if (k == 0) {
-                        this.lshBin.checksum[k] = bMapping((int) 0, slideWindow[j], slideWindow[j1], this.lshBin.checksum[k]);
-                    } else {
-                        this.lshBin.checksum[k] = bMapping(this.lshBin.checksum[k - 1], slideWindow[j], slideWindow[j1], this.lshBin.checksum[k]);
-                    }
-                }
-                int r;
-                r = bMapping((int) 2, slideWindow[j], slideWindow[j1], slideWindow[j2]);
-                this.aBucket[r]++;
-                r = bMapping((int) 3, slideWindow[j], slideWindow[j1], slideWindow[j3]);
-                this.aBucket[r]++;
-                r = bMapping((int) 5, slideWindow[j], slideWindow[j2], slideWindow[j3]);
-                this.aBucket[r]++;
-                r = bMapping((int) 7, slideWindow[j], slideWindow[j2], slideWindow[j4]);
-                this.aBucket[r]++;
-                r = bMapping((int) 11, slideWindow[j], slideWindow[j1], slideWindow[j4]);
-                this.aBucket[r]++;
-                r = bMapping((int) 13, slideWindow[j], slideWindow[j3], slideWindow[j4]);
-                this.aBucket[r]++;
-            }
-
-            fedLen++;
-            j = (j + SLIDING_WND_SIZE + 1) % SLIDING_WND_SIZE;
-        }
-        this.dataLen += data.length();
-    }
+    // public void update(final byte[] data, int offset, int length) {
+    //     int j = this.dataLen % SLIDING_WND_SIZE;
+    //     int fedLen = this.dataLen;
+    //     if (this.aBucket == null) {
+    //         this.aBucket = new int[BUCKETS];
+    //     }
+    //     for (int i = 0; i < length; i++) {
+    //         slideWindow[j] = (int) (data[offset+i]);
+    //         if (fedLen >= 4) {
+    //             int j1 = (j + SLIDING_WND_SIZE - 1) % SLIDING_WND_SIZE;
+    //             int j2 = (j + SLIDING_WND_SIZE - 2) % SLIDING_WND_SIZE;
+    //             int j3 = (j + SLIDING_WND_SIZE - 3) % SLIDING_WND_SIZE;
+    //             int j4 = (j + SLIDING_WND_SIZE - 4) % SLIDING_WND_SIZE;
+    //             for (int k = 0; k < TLSH_CHECKSUM_LEN; k++) {
+    //                 if (k == 0) {
+    //                     this.lshBin.checksum[k] = bMapping((int) 0, slideWindow[j], slideWindow[j1], this.lshBin.checksum[k]);
+    //                 } else {
+    //                     this.lshBin.checksum[k] = bMapping(this.lshBin.checksum[k - 1], slideWindow[j], slideWindow[j1], this.lshBin.checksum[k]);
+    //                 }
+    //             }
+    //             int r;
+    //             r = bMapping((int) 2, slideWindow[j], slideWindow[j1], slideWindow[j2]);
+    //             this.aBucket[r]++;
+    //             r = bMapping((int) 3, slideWindow[j], slideWindow[j1], slideWindow[j3]);
+    //             this.aBucket[r]++;
+    //             r = bMapping((int) 5, slideWindow[j], slideWindow[j2], slideWindow[j3]);
+    //             this.aBucket[r]++;
+    //             r = bMapping((int) 7, slideWindow[j], slideWindow[j2], slideWindow[j4]);
+    //             this.aBucket[r]++;
+    //             r = bMapping((int) 11, slideWindow[j], slideWindow[j1], slideWindow[j4]);
+    //             this.aBucket[r]++;
+    //             r = bMapping((int) 13, slideWindow[j], slideWindow[j3], slideWindow[j4]);
+    //             this.aBucket[r]++;
+    //         }
+    //
+    //         fedLen++;
+    //         j = (j + SLIDING_WND_SIZE + 1) % SLIDING_WND_SIZE;
+    //     }
+    //     this.dataLen += length;
+    // }
 
     public void update(byte[] data) {
+        update(data, 0, data.length);
+    }
+
+    public void update(byte[] data, int offset, int length) {
         int j = this.dataLen % SLIDING_WND_SIZE;
         int fedLen = this.dataLen;
         if (this.aBucket == null) {
             this.aBucket = new int[BUCKETS];
         }
-        for (int i = 0; i < data.length; i++) {
-            slideWindow[j] = (int) data[i] & 0xff;
+        for (int i = 0; i < length; i++) {
+            slideWindow[j] = data[offset+i];
             if (fedLen >= 4) {
                 int j1 = (j + SLIDING_WND_SIZE - 1) % SLIDING_WND_SIZE;
                 int j2 = (j + SLIDING_WND_SIZE - 2) % SLIDING_WND_SIZE;
@@ -409,16 +415,10 @@ public class TLSH {
     }
 
     public void finale() { /* word final is reserved */
-        if (this.dataLen < 1024) {
-            // this.aBucket = null;
-            // return;
-            int rest = 1024-this.dataLen;
-            byte[] fill = new byte[rest];
-            for(int i=0; i<rest;++i)
-                fill[i] = 1;
-            fill[dataLen-1] = 0;
-            update(fill);
-        }
+        // if (this.dataLen < 1024) {
+        //     this.aBucket = null;
+        //     return;
+        // }
 
         int q1, q2, q3;
         int[] tmp = findQuartile(this.aBucket);
@@ -434,10 +434,10 @@ public class TLSH {
                 }
             }
         }
-        if (nonzero <= 2 * CODE_SIZE) {
-            aBucket = null;
-            return;
-        }
+        // if (nonzero <= 2 * CODE_SIZE) {
+        //     aBucket = null;
+        //     return;
+        // }
 
         for (int i = 0; i < CODE_SIZE; i++) {
             int h = 0;
@@ -459,16 +459,16 @@ public class TLSH {
         this.lshBin.lValue = lCapturing(this.dataLen);
         this.lshBin.setQLo((int) (((float) (q1 * 100.f) / (float) q3) % 16));
         this.lshBin.setQHi((int) (((float) (q2 * 100.f) / (float) q3) % 16));
-        this.lshCodeValid = true;
+        // this.lshCodeValid = true;
     }
 
-    public String hash() {
+    public byte[] hash() {
         if (this.lshCode != null) {
             return this.lshCode;
         }
-        if (!this.lshCodeValid) {
-            return null;
-        }
+        // if (!this.lshCodeValid) {
+        //     return null;
+        // }
         LshBinStruct tmp = new LshBinStruct();
         for (int k = 0; k < TLSH_CHECKSUM_LEN; k++) {
             tmp.checksum[k] = swapByte(this.lshBin.checksum[k]);
@@ -478,134 +478,150 @@ public class TLSH {
         for (int i = 0; i < CODE_SIZE; i++) {
             tmp.tmpCode[i] = this.lshBin.tmpCode[CODE_SIZE - 1 - i];
         }
-        this.lshCode = toHex(tmp.checksum);
-        this.lshCode += toHex(new int[]{tmp.lValue});
-        this.lshCode += toHex(new int[]{tmp.Q});
-        this.lshCode += toHex(tmp.tmpCode);
+        this.lshCode = new byte[4*TLSH_CHECKSUM_LEN + 4 + 4 + 4*CODE_SIZE];
+        this.lshLen = 0;
+        for (int i=0; i<TLSH_CHECKSUM_LEN; ++i)
+            addInt(tmp.checksum[i]);
+        addInt(tmp.lValue);
+        addInt(tmp.Q);
+        for (int i=0; i<CODE_SIZE; ++i)
+            addInt(tmp.tmpCode[i]);
+        // this.lshCode = toHex(tmp.checksum);
+        // this.lshCode += toHex(new int[]{tmp.lValue});
+        // this.lshCode += toHex(new int[]{tmp.Q});
+        // this.lshCode += toHex(tmp.tmpCode);
         return this.lshCode;
     }
 
-    public boolean compare(TLSH other) {
-        return this.lshCode.equals(other.lshCode);
+    private void addInt(int i) {
+        int j = this.lshLen;
+        this.lshCode[j++] = (byte)(i & 0xFF); i >>= 8;
+        this.lshCode[j++] = (byte)(i & 0xFF); i >>= 8;
+        this.lshCode[j++] = (byte)(i & 0xFF); i >>= 8;
+        this.lshCode[j++] = (byte)(i & 0xFF);
+        this.lshLen = j;
     }
 
-    final public int totalDiff(TLSH other, boolean lenDiff) {
-        int diff = 0;
+    // public boolean compare(TLSH other) {
+    //     return this.lshCode.equals(other.lshCode);
+    // }
 
-        if (lenDiff) {
-            int ldiff = modDiff(lshBin.lValue, other.lshBin.lValue, RANGE_LVALUE);
-            if (ldiff == 0)
-                diff = 0;
-            else if (ldiff == 1)
-                diff = 1;
-            else
-                diff += ldiff * 12;
-        }
+    // final public int totalDiff(TLSH other, boolean lenDiff) {
+    //     int diff = 0;
+    //
+    //     if (lenDiff) {
+    //         int ldiff = modDiff(lshBin.lValue, other.lshBin.lValue, RANGE_LVALUE);
+    //         if (ldiff == 0)
+    //             diff = 0;
+    //         else if (ldiff == 1)
+    //             diff = 1;
+    //         else
+    //             diff += ldiff * 12;
+    //     }
+    //
+    //     int q1diff = modDiff(lshBin.getQLo(), other.lshBin.getQLo(), RANGE_QRATIO);
+    //     if (q1diff <= 1)
+    //         diff += q1diff;
+    //     else
+    //         diff += (q1diff - 1) * 12;
+    //
+    //     int q2diff = modDiff(lshBin.getQHi(), other.lshBin.getQHi(), RANGE_QRATIO);
+    //     if (q2diff <= 1)
+    //         diff += q2diff;
+    //     else
+    //         diff += (q2diff - 1) * 12;
+    //
+    //     for (int k = 0; k < TLSH_CHECKSUM_LEN; k++) {
+    //         if (lshBin.checksum[k] != other.lshBin.checksum[k]) {
+    //             diff++;
+    //             break;
+    //         }
+    //     }
+    //
+    //     diff += hDistance(lshBin.tmpCode, other.lshBin.tmpCode);
+    //
+    //     return diff;
+    // }
 
-        int q1diff = modDiff(lshBin.getQLo(), other.lshBin.getQLo(), RANGE_QRATIO);
-        if (q1diff <= 1)
-            diff += q1diff;
-        else
-            diff += (q1diff - 1) * 12;
+    // static final public int totalDiff(final String hash1, final String hash2, final boolean lenDiff) {
+    //     int diff = 0;
+    //     int[] iHash1 = fromHex(hash1);
+    //     int[] iHash2 = fromHex(hash2);
+    //
+    //     if (lenDiff) {
+    //         int ldiff = modDiff(iHash1[TLSH_CHECKSUM_LEN], iHash2[TLSH_CHECKSUM_LEN], RANGE_LVALUE);
+    //         if (ldiff == 0)
+    //             diff = 0;
+    //         else if (ldiff == 1)
+    //             diff = 1;
+    //         else
+    //             diff += ldiff * 12;
+    //     }
+    //
+    //     int q1diff = modDiff(iHash1[TLSH_CHECKSUM_LEN + 1] & 0xf, iHash2[TLSH_CHECKSUM_LEN + 1] & 0xf, RANGE_QRATIO);
+    //     if (q1diff <= 1)
+    //         diff += q1diff;
+    //     else
+    //         diff += (q1diff - 1) * 12;
+    //
+    //     int q2diff = modDiff(iHash1[TLSH_CHECKSUM_LEN + 1] >> 4, iHash2[TLSH_CHECKSUM_LEN + 1] >> 4, RANGE_QRATIO);
+    //     if (q2diff <= 1)
+    //         diff += q2diff;
+    //     else
+    //         diff += (q2diff - 1) * 12;
+    //
+    //     for (int k = 0; k < TLSH_CHECKSUM_LEN; k++) {
+    //         if (iHash1[k] != iHash2[k]) {
+    //             diff++;
+    //             break;
+    //         }
+    //     }
+    //
+    //     diff += hDistance(Arrays.copyOfRange(iHash1, TLSH_CHECKSUM_LEN + 2, iHash1.length), Arrays.copyOfRange(iHash2, TLSH_CHECKSUM_LEN + 2, iHash2.length));
+    //
+    //     return diff;
+    // }
 
-        int q2diff = modDiff(lshBin.getQHi(), other.lshBin.getQHi(), RANGE_QRATIO);
-        if (q2diff <= 1)
-            diff += q2diff;
-        else
-            diff += (q2diff - 1) * 12;
-
-        for (int k = 0; k < TLSH_CHECKSUM_LEN; k++) {
-            if (lshBin.checksum[k] != other.lshBin.checksum[k]) {
-                diff++;
-                break;
-            }
-        }
-
-        diff += hDistance(lshBin.tmpCode, other.lshBin.tmpCode);
-
-        return diff;
-    }
-
-    static final public int totalDiff(final String hash1,
-                                      final String hash2, final boolean lenDiff) {
-        int diff = 0;
-        int[] iHash1 = fromHex(hash1);
-        int[] iHash2 = fromHex(hash2);
-
-        if (lenDiff) {
-            int ldiff = modDiff(iHash1[TLSH_CHECKSUM_LEN], iHash2[TLSH_CHECKSUM_LEN], RANGE_LVALUE);
-            if (ldiff == 0)
-                diff = 0;
-            else if (ldiff == 1)
-                diff = 1;
-            else
-                diff += ldiff * 12;
-        }
-
-        int q1diff = modDiff(iHash1[TLSH_CHECKSUM_LEN + 1] & 0xf, iHash2[TLSH_CHECKSUM_LEN + 1] & 0xf, RANGE_QRATIO);
-        if (q1diff <= 1)
-            diff += q1diff;
-        else
-            diff += (q1diff - 1) * 12;
-
-        int q2diff = modDiff(iHash1[TLSH_CHECKSUM_LEN + 1] >> 4, iHash2[TLSH_CHECKSUM_LEN + 1] >> 4, RANGE_QRATIO);
-        if (q2diff <= 1)
-            diff += q2diff;
-        else
-            diff += (q2diff - 1) * 12;
-
-        for (int k = 0; k < TLSH_CHECKSUM_LEN; k++) {
-            if (iHash1[k] != iHash2[k]) {
-                diff++;
-                break;
-            }
-        }
-
-        diff += hDistance(Arrays.copyOfRange(iHash1, TLSH_CHECKSUM_LEN + 2, iHash1.length), Arrays.copyOfRange(iHash2, TLSH_CHECKSUM_LEN + 2, iHash2.length));
-
-        return diff;
-    }
-
-    public static void main(String[] args) {
-        try {
-            TLSH ti1 = new TLSH();
-            TLSH ti2 = new TLSH();
-
-            String s = "This is a test for Jon Oliver. This is a string. Hello Hello Hello ";
-            while (s.length() < 1023) {
-                s += (char) ('A' + s.length() % 26);
-            }
-            s += (char) 0;
-            ti2.update(s);
-            ti2.finale();
-
-            s = "This is a test for Lili Diao. This is a string. Hello Hello Hello ";
-            while (s.length() < 511) {
-                s += (char) ('A' + s.length() % 26);
-            }
-            s += (char) 0;
-            ti1.update(s);
-            ti1.finale();
-
-            System.out.println("hash1 = " + ti1.hash());
-            System.out.println("hash2 = " + ti2.hash());
-
-            System.out.println("difference (same strings) = " + ti1.totalDiff(ti1, true));
-            System.out.println("difference (with len) = " + ti1.totalDiff(ti2, true));
-            System.out.println("difference (without len) = " + ti1.totalDiff(ti2, false));
-
-            s = "fgsfds";
-            for (int i = 0; i < 100000; i++)
-                s += (char) ('A' + i % 26);
-            TLSH ti3 = new TLSH();
-            ti3.update(s);
-            ti3.finale();
-            System.out.println("hash3 = " + ti3.hash());
-
-
-            System.out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    // public static void main(String[] args) {
+    //     try {
+    //         TLSH ti1 = new TLSH();
+    //         TLSH ti2 = new TLSH();
+    //
+    //         String s = "This is a test for Jon Oliver. This is a string. Hello Hello Hello ";
+    //         while (s.length() < 1023) {
+    //             s += (char) ('A' + s.length() % 26);
+    //         }
+    //         s += (char) 0;
+    //         ti2.update(s);
+    //         ti2.finale();
+    //
+    //         s = "This is a test for Lili Diao. This is a string. Hello Hello Hello ";
+    //         while (s.length() < 511) {
+    //             s += (char) ('A' + s.length() % 26);
+    //         }
+    //         s += (char) 0;
+    //         ti1.update(s);
+    //         ti1.finale();
+    //
+    //         System.out.println("hash1 = " + ti1.hash());
+    //         System.out.println("hash2 = " + ti2.hash());
+    //
+    //         System.out.println("difference (same strings) = " + ti1.totalDiff(ti1, true));
+    //         System.out.println("difference (with len) = " + ti1.totalDiff(ti2, true));
+    //         System.out.println("difference (without len) = " + ti1.totalDiff(ti2, false));
+    //
+    //         s = "fgsfds";
+    //         for (int i = 0; i < 100000; i++)
+    //             s += (char) ('A' + i % 26);
+    //         TLSH ti3 = new TLSH();
+    //         ti3.update(s);
+    //         ti3.finale();
+    //         System.out.println("hash3 = " + ti3.hash());
+    //
+    //
+    //         System.out.flush();
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 }

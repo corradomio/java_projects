@@ -19,6 +19,7 @@ public class TLSH {
     public static class Digest extends MessageDigest {
 
         private jext.hashing.provider.digest.tlsh.TLSH tlsh;
+        private final byte[] abyte = new byte[1];
 
         public Digest() {
             super("TLSH");
@@ -32,25 +33,19 @@ public class TLSH {
 
         @Override
         protected void engineUpdate(byte input) {
-            byte[] data = new byte[]{input};
-            this.tlsh.update(data);
+            this.abyte[0] = input;
+            this.tlsh.update(abyte);
         }
 
         @Override
         protected void engineUpdate(byte[] input, int offset, int len) {
-            if (offset == 0 && input.length == len)
-                this.tlsh.update(input);
-            else {
-                byte[] data = new byte[len];
-                System.arraycopy(input, offset, data, 0, len);
-                this.tlsh.update(data);
-            }
+            this.tlsh.update(input, offset, len);
         }
 
         @Override
         protected byte[] engineDigest() {
             this.tlsh.finale();
-            return this.tlsh.hash().getBytes();
+            return this.tlsh.hash();
         }
 
     }

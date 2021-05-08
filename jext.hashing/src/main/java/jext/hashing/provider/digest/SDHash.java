@@ -50,7 +50,7 @@ public class SDHash {
         @Override
         protected byte[] engineDigest() {
             this.tlsh.finale();
-            return this.tlsh.hash().getBytes();
+            return this.tlsh.hash();
         }
 
     }

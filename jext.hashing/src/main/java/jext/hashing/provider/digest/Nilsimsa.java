@@ -18,6 +18,7 @@ public class Nilsimsa {
     public static class Digest extends MessageDigest {
 
         private jext.hashing.provider.digest.nilsimsa.Nilsimsa nilsimsa;
+        private byte[] abyte = new byte[1];
 
         public Digest() {
             super("Nilsimsa");
@@ -31,19 +32,13 @@ public class Nilsimsa {
 
         @Override
         protected void engineUpdate(byte input) {
-            byte[] data = new byte[]{input};
-            this.nilsimsa.update(data);
+            this.abyte[0] = input;
+            this.nilsimsa.update(abyte, 0, abyte.length);
         }
 
         @Override
         protected void engineUpdate(byte[] input, int offset, int len) {
-            if (offset == 0 && input.length == len)
-                this.nilsimsa.update(input);
-            else {
-                byte[] data = new byte[len];
-                System.arraycopy(input, offset, data, 0, len);
-                this.nilsimsa.update(data);
-            }
+            this.nilsimsa.update(input, offset, len);
         }
 
         @Override
