@@ -1,5 +1,6 @@
 package org.hls.check;
 import jext.hashing.DistanceSensitiveProvider;
+import jext.hashing.MessageDigestUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.MessageDigest;
@@ -64,5 +65,11 @@ public class Main {
         System.out.println(md.getClass());
         md = MessageDigest.getInstance("Simple");
         System.out.println(md.getClass());
+
+        md = MessageDigest.getInstance("Nilsimsa");
+        md = MessageDigest.getInstance("TLSH");
+        System.out.println(MessageDigestUtils.getDigest(md, "Hello World"));
+        System.out.println(MessageDigestUtils.getDigest(md, "Hello Cruel World"));
+        System.out.println(MessageDigestUtils.getDigest(md, "Hello Cruel World 1"));
     }
 }

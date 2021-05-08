@@ -37,7 +37,9 @@ public class DistanceSensitiveProvider extends Provider implements ConfigurableP
     private static final String DIGEST_PACKAGE = "jext.hashing.provider.digest.";
     private static final String[] DIGESTS =
         {
-            "Simple"
+            "Simple",
+            "Nilsimsa",
+            "TLSH",
         };
 
     private void loadAlgorithms(String packageName, String[] names)

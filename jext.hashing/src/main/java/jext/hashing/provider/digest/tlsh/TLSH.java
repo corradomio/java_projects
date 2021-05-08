@@ -409,9 +409,15 @@ public class TLSH {
     }
 
     public void finale() { /* word final is reserved */
-        if (this.dataLen < 512) {
-            this.aBucket = null;
-            return;
+        if (this.dataLen < 1024) {
+            // this.aBucket = null;
+            // return;
+            int rest = 1024-this.dataLen;
+            byte[] fill = new byte[rest];
+            for(int i=0; i<rest;++i)
+                fill[i] = 1;
+            fill[dataLen-1] = 0;
+            update(fill);
         }
 
         int q1, q2, q3;
