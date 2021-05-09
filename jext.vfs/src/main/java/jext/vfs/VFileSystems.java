@@ -16,6 +16,7 @@ public class VFileSystems {
 
     private static final String URL = "url";
     private static Map<String, VFileSystemFactory> protocols = new HashMap<>();
+    private static Map<String, String> websites = new HashMap<>();
     private static Logger logger = Logger.getLogger(VFileSystems.class);
 
     static {
@@ -25,17 +26,32 @@ public class VFileSystems {
 
             for(String proto: props.stringPropertyNames()) {
                 String fclass = props.getProperty(proto);
+                try {
                 VFileSystemFactory factory = (VFileSystemFactory) Class.forName(fclass).newInstance();
-
                 protocols.put(proto, factory);
             }
-        } catch (Exception e) {
+                catch (Exception e) {
+                    websites.put(proto, fclass);
+                }
+            }
+        }
+        catch (Exception e) {
             logger.error(e, e);
         }
     }
 
     // ----------------------------------------------------------------------
     // Factory Methods
+    // ----------------------------------------------------------------------
+
+    public static void registerProtocol(String protocol, VFileSystemFactory factory) {
+        protocols.put(protocol, factory);
+    }
+    
+    public static void registerWebsite(String website, String protocol) {
+        websites.put(website.toLowerCase(), protocol);
+    }
+
     // ----------------------------------------------------------------------
 
     public static VFileSystem newFileSystem(String surl) throws VFileSystemException {
@@ -48,12 +64,31 @@ public class VFileSystems {
         return newFileSystem(surl, props);
     }
 
+    /**
+     * Select the correct VFileSystem based on the URL.
+     *
+     * @param surl URL of filesystem's home.
+     * @param props properties used to access the filesystem. For example, user & password
+     *              for FTP, Git, ...
+     * @return a virtual file system object
+     * @throws VFileSystemException
+     */
     public static VFileSystem newFileSystem(String surl, Properties props) throws VFileSystemException {
         URL url = new URL(surl);
-        if (!protocols.containsKey(url.getProtocol()))
-            throw new VFileSystemException("Unsupported protocol " + url.getProtocol());
+        String protocol;
 
-        VFileSystemFactory factory = protocols.get(url.getProtocol());
+        // check for 'protocol://<host>:<port>  ->  'new-protocol'
+        String website = url.getProtocolHostPort().toLowerCase();
+        if (websites.containsKey(website))
+            protocol = websites.get(website);
+        else
+            protocol = url.getProtocol();
+
+        if (!protocols.containsKey(protocol))
+            throw new VFileSystemException("Unsupported protocol for " + url.toString());
+
+        VFileSystemFactory factory = protocols.get(protocol);
+
         Properties nprops = new Properties();
         nprops.putAll(props);
         nprops.putAll(url.getParameters());

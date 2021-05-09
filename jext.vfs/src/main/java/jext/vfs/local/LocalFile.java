@@ -122,7 +122,8 @@ public class LocalFile extends AbstractFile {
         try {
             new FileOutputStream(file).close();
             return true;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return false;
         }
     }

@@ -1,18 +1,27 @@
 package jext.vfs.compress;
 
+import jext.compress.Archives;
 import jext.logging.Logger;
 import jext.net.URL;
-import jext.vfs.*;
+import jext.util.PathUtils;
+import jext.util.PropertiesUtils;
+import jext.vfs.AbstractFileSystem;
+import jext.vfs.VFile;
+import jext.vfs.VFileSelector;
+import jext.vfs.VFileSystem;
+import jext.vfs.VProgressMonitor;
 import jext.vfs.util.FileCount;
 import jext.vfs.util.ProgressMonitor;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 public class CompressFileSystem extends AbstractFileSystem {
@@ -23,29 +32,30 @@ public class CompressFileSystem extends AbstractFileSystem {
 
     private static Logger logger = Logger.getLogger(CompressFileSystem.class);
 
-    private static Map<String, Class<? extends ArchiveInputStream>> archivers = new HashMap<>();
+    // private static Map<String, Class<? extends ArchiveInputStream>> archivers = new HashMap<>();
+    //
+    // static {
+    //     try (InputStream inp = VFileSystems.class.getResourceAsStream("/jext/compress/archivers.properties")) {
+    //         Properties props = new Properties();
+    //         props.load(inp);
+    //
+    //         for(String atype: props.stringPropertyNames()) {
+    //             try {
+    //                 Class aclass = Class.forName(props.getProperty(atype));
+    //
+    //                 archivers.put(atype, aclass);
+    //             }
+    //             catch (Exception e) {
+    //                 logger.error(e, e);
+    //             }
+    //         }
+    //     }
+    //     catch (Exception e) {
+    //         logger.error(e, e);
+    //     }
+    // }
 
-    static {
-        try (InputStream inp = VFileSystems.class.getResourceAsStream("/jext/compress/archivers.properties")) {
-            Properties props = new Properties();
-            props.load(inp);
-
-            for(String atype: props.stringPropertyNames()) {
-                try {
-                    Class aclass = Class.forName(props.getProperty(atype));
-
-                    archivers.put(atype, aclass);
-                }
-                catch(Exception e) {
-                    logger.error(e, e);
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e, e);
-        }
-    }
-
-    private static final String HOME_FOLDER = "$homeFolder";
+    private static final String UPLOAD_HOME = "uploadHome";
 
     private File compressedFile = null;
 
@@ -88,7 +98,8 @@ public class CompressFileSystem extends AbstractFileSystem {
 
             return this;
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IOException(e);
         }
     }
@@ -156,14 +167,20 @@ public class CompressFileSystem extends AbstractFileSystem {
     // ----------------------------------------------------------------------
 
     private void initialize() throws FileNotFoundException {
-        String path = url.getPath();
-        String folder = props.getProperty(HOME_FOLDER, null);
+        // resolve "${...}"
+        String path = PropertiesUtils.resolveValue(url.getPath(), props);
+        path = PathUtils.normalize(path);
+        String folder = props.getProperty(UPLOAD_HOME, null);
         int pos;
 
-        if (folder != null)
+        compressedFile = new File(path);
+        if (!compressedFile.exists() && folder != null)
             compressedFile = new File(folder, path);
-        else
-            compressedFile = new File(path);
+
+        // if (folder != null)
+        //     compressedFile = new File(folder, path);
+        // else
+        //     compressedFile = new File(path);
 
         if (!compressedFile.exists())
             throw new FileNotFoundException(compressedFile.getAbsolutePath());
@@ -254,30 +271,11 @@ public class CompressFileSystem extends AbstractFileSystem {
 
     private ArchiveInputStream openArchive() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
-        String atype = extensionOf(compressedFile).toLowerCase();
-        Class aclass = archivers.getOrDefault(atype, null);
-        if (aclass == null)
-            throw new IOException(String.format("Unsupported archiver for file %s", compressedFile.getAbsolutePath()));
-
-        InputStream istream =  new FileInputStream(compressedFile);
-        ArchiveInputStream astream = (ArchiveInputStream) aclass.getConstructor(InputStream.class).newInstance(istream);
-        return astream;
+        return Archives.openArchive(compressedFile);
     }
 
     CEntry select(String path) {
         return entries.select(path);
-    }
-
-    private static String extensionOf(File file) {
-        int pos;
-        String name = file.getName();
-
-        // special handling for "name.tar.*"
-        if (name.contains(".tar."))
-            pos = name.lastIndexOf(".tar.");
-        else
-            pos = name.lastIndexOf('.');
-        return name.substring(pos+1);
     }
 
 }

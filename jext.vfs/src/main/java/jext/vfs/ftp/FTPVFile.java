@@ -1,7 +1,11 @@
 package jext.vfs.ftp;
 
 import jext.logging.Logger;
-import jext.vfs.*;
+import jext.vfs.AbstractFile;
+import jext.vfs.VFile;
+import jext.vfs.VFileContent;
+import jext.vfs.VFileSystem;
+import jext.vfs.VFileType;
 import jext.vfs.util.FilePath;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;

@@ -1,6 +1,10 @@
 package jext.vfs.compress;
 
-import jext.vfs.*;
+import jext.vfs.AbstractFile;
+import jext.vfs.VFile;
+import jext.vfs.VFileContent;
+import jext.vfs.VFileSystem;
+import jext.vfs.VFileType;
 
 import java.util.List;
 import java.util.stream.Collectors;

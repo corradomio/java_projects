@@ -1,7 +1,11 @@
 package jext.vfs.svn;
 
 import jext.net.URL;
-import jext.vfs.*;
+import jext.vfs.AbstractFileSystem;
+import jext.vfs.VFile;
+import jext.vfs.VFileSystem;
+import jext.vfs.VFileSystemException;
+import jext.vfs.VProgressMonitor;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;

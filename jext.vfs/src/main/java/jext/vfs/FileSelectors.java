@@ -28,4 +28,11 @@ public abstract class FileSelectors {
         }
     };
 
+    public static final VFileSelector IS_HIDDEN_FOLDER = new VFileSelector() {
+        @Override
+        public boolean accept(VFile file) {
+            return file.getName().startsWith(".") && file.isFolder();
+        }
+    };
+
 }

@@ -1,15 +1,26 @@
 package jext.vfs.git;
 
 import jext.net.URL;
-import jext.vfs.*;
+import jext.util.PropertiesUtils;
+import jext.vfs.AbstractFileSystem;
+import jext.vfs.VFile;
+import jext.vfs.VFileSelector;
+import jext.vfs.VFileSystem;
+import jext.vfs.VFileSystemException;
+import jext.vfs.VProgressMonitor;
 import jext.vfs.util.Authentication;
-import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 
 class GitProgressMonitor implements ProgressMonitor {
 
@@ -49,6 +60,15 @@ class GitProgressMonitor implements ProgressMonitor {
 public class GitFileSystem extends AbstractFileSystem {
 
     // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    public static final String BRANCH = "branch";
+    public static final String BARE = "bare";
+    public static final String SUBMODULES = "submodules";
+    public static final String NOCHECKOUT = "nocheckout";
+
+    // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
@@ -59,7 +79,7 @@ public class GitFileSystem extends AbstractFileSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public GitFileSystem(URL url, java.util.Properties props) {
+    public GitFileSystem(URL url, Properties props) {
         super(url, props);
     }
 
@@ -125,15 +145,16 @@ public class GitFileSystem extends AbstractFileSystem {
          */
 
         // check if it is necessary to use User&Password
+        Properties props = rroot.getFileSystem().getProperties();
         Authentication auth = rroot.getFileSystem().getAuthentication();
 
         Git result = null;
 
         try {
-
-            CloneCommand clone = Git.cloneRepository()
-                .setURI(url.getUrl(true))
+            CloneCommand clone = Git.cloneRepository();
+            clone.setURI(url.getUrl(true))
                 .setDirectory(lroot)
+                .setGitDir(new File(lroot, ".git"))
                 .setProgressMonitor(new GitProgressMonitor(pm));
 
             if (auth.isAuthenticated())
@@ -144,12 +165,33 @@ public class GitFileSystem extends AbstractFileSystem {
                 clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password));
             }
 
+            if (props.containsKey(BRANCH)) {
+                String branch = props.getProperty(BRANCH);
+                clone.setBranch(branch);
+            }
+
+            if (props.containsKey(BARE)) {
+                boolean bare = PropertiesUtils.getBoolean(props, BARE, false);
+                clone.setBare(bare);
+            }
+
+            if (props.containsKey(SUBMODULES)) {
+                boolean submodules = PropertiesUtils.getBoolean(props, SUBMODULES, false);
+                clone.setCloneSubmodules(submodules);
+            }
+
+            if (props.containsKey(NOCHECKOUT)) {
+                boolean nocheckout = PropertiesUtils.getBoolean(props, NOCHECKOUT, false);
+                clone.setNoCheckout(nocheckout);
+            }
+
             result = clone.call();
 
             pm.onSuccess();
         }
         catch(Exception e) {
             pm.onFailed(e);
+            throw new RuntimeException(e.getMessage());
         }
         finally {
             if (result != null)

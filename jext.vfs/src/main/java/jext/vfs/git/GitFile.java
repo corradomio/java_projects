@@ -1,6 +1,10 @@
 package jext.vfs.git;
 
-import jext.vfs.*;
+import jext.vfs.AbstractFile;
+import jext.vfs.VFile;
+import jext.vfs.VFileContent;
+import jext.vfs.VFileSystem;
+import jext.vfs.VFileType;
 import jext.vfs.util.FilePath;
 
 import java.util.Collections;

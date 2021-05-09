@@ -1,12 +1,20 @@
 package jext.vfs.svn;
 
 import jext.logging.Logger;
-import jext.vfs.*;
+import jext.vfs.AbstractFile;
+import jext.vfs.VFile;
+import jext.vfs.VFileContent;
+import jext.vfs.VFileSystem;
+import jext.vfs.VFileType;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SVNFile extends AbstractFile {

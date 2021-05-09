@@ -163,7 +163,7 @@ public abstract class AbstractFileSystem implements VFileSystem {
             fc.processFile(length);
             return true;
         }
-        catch (Throwable t) {
+        catch (IOException t) {
             logger.errorf("Unable to copy %s into %s: %s", rfile.getFileName().getPath(), lfile.getAbsolutePath(), t.toString());
             pm.onUpdate(1);
             return false;
@@ -185,7 +185,7 @@ public abstract class AbstractFileSystem implements VFileSystem {
                 valid &= deleteFiles(f, fc, pm);
         }
 
-        try {
+        // try {
             if (!file.delete()) {
                 logger.errorf("Unable to delete %s", file.getFileName().getPath());
                 valid = false;
@@ -197,12 +197,12 @@ public abstract class AbstractFileSystem implements VFileSystem {
                 fc.processFolder();
             else
                 fc.processFile(length);
-        }
-        catch(Throwable t) {
-            logger.errorf("Unable to delete %s: %s", file.getFileName().getPath(), t.toString());
-            pm.onUpdate(1);
-            return false;
-        }
+        // }
+        // catch (Throwable t) {
+        //     logger.errorf("Unable to delete %s: %s", file.getFileName().getPath(), t.toString());
+        //     pm.onUpdate(1);
+        //     return false;
+        // }
 
         return valid;
     }
