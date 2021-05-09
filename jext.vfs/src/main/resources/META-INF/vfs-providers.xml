@@ -1,0 +1,14 @@
+<providers>
+    <provider class-name="jext.commons.vfs2.provider.svn.SvnHttpFileProvider">
+        <scheme name="svn+http"/>
+        <if-available class-name="org.tmatesoft.svn.core.wc.SVNClientManager"/>
+    </provider>
+    <provider class-name="jext.commons.vfs2.provider.svn.SvnLocalFileProvider">
+        <scheme name="svn+file"/>
+        <if-available class-name="org.tmatesoft.svn.core.wc.SVNClientManager"/>
+    </provider>
+    <provider class-name="jext.commons.vfs2.provider.svn.SvnFileProvider">
+        <scheme name="svn"/>
+        <if-available class-name="org.tmatesoft.svn.core.wc.SVNClientManager"/>
+    </provider>
+</providers>
