@@ -6,7 +6,6 @@ import jext.net.URL;
 import jext.util.FileUtils;
 import jext.util.StringUtils;
 import jext.versioning.AbstractVersioningSystem;
-import jext.versioning.VersioningSystems;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -23,10 +22,10 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public LocalVersioningSystem(Properties properties) {
-        super(properties);
+    public LocalVersioningSystem(String surl, Properties properties) {
+        super(surl, properties);
 
-        URL url = new URL(properties.getProperty(VersioningSystems.URL));
+        URL url = new URL(surl);
         String excludePatterns = properties.getProperty(EXCLUDE, StringUtils.empty());
 
         if (excludePatterns.isEmpty())
@@ -60,4 +59,15 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
     public void update(File localDirectory) {
         FileUtils.align(sourceDirectory, localDirectory, excludeFilter);
     }
+
+    @Override
+    public void copy(File localDirectory, File savedDirectory) {
+        FileUtils.copy(localDirectory, savedDirectory, localExclude);
+    }
+
+    @Override
+    public void delete(File localDirectory) {
+        FileUtils.delete(localDirectory, localExclude);
+    }
+
 }

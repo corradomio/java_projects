@@ -5,7 +5,6 @@ import jext.net.URL;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -16,30 +15,23 @@ public abstract class VersioningSystems {
 
     public static final String URL = "url";
 
-    private static Map<String, Class<VersioningSystem>> protocols = new HashMap<>();
+    private static Map<String, VersioningSystemFactory> factories = new HashMap<>();
     static {
         loadProtocols();
     }
 
-    public static VersioningSystem newInstance(String url, Properties properties) {
-        Properties nprops = new Properties();
-        nprops.putAll(properties);
-        nprops.put(URL, url);
-        return newInstance(nprops);
-    }
-
     public static VersioningSystem newInstance(Properties properties) {
         String surl = properties.getProperty(URL);
+        return newInstance(surl, properties);
+    }
+
+    public static VersioningSystem newInstance(String surl, Properties properties) {
         URL url = new URL(surl);
         String protocol = url.getProtocol();
-        if (!protocols.containsKey(protocol))
+        if (!factories.containsKey(protocol))
             throw new VersioningSystemException("Unsupported protocol in " + surl);
-        Class<VersioningSystem> vsclass = protocols.get(protocol);
-        try {
-            return vsclass.getDeclaredConstructor(Properties.class).newInstance(properties);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new VersioningSystemException("Unable to create an istance of " + vsclass.getName(), e);
-        }
+        VersioningSystemFactory vsfactory = factories.get(protocol);
+        return vsfactory.newInstance(surl, properties);
     }
 
     private static void loadProtocols() {
@@ -51,10 +43,10 @@ public abstract class VersioningSystems {
                 String className = configuration.getProperty(protocol);
 
                 try {
-                    Class<VersioningSystem> vsclass = (Class<VersioningSystem>) Class.forName(className);
-                    protocols.put(protocol, vsclass);
+                    Class<VersioningSystemFactory> vsclass = (Class<VersioningSystemFactory>) Class.forName(className);
+                    factories.put(protocol, vsclass.getDeclaredConstructor().newInstance());
                 }
-                catch (ClassNotFoundException e) {
+                catch (Exception e) {
                     logger.error(e);
                 }
             }

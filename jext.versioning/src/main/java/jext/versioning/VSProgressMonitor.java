@@ -1,2 +1,4 @@
-package jext.versioning;public interface ProgressMonitor {
+package jext.versioning;
+
+public interface VSProgressMonitor {
 }

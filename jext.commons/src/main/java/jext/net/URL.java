@@ -117,7 +117,10 @@ public class URL  {
     public String getHostPortPath() {
         String hpp = hostPort;
         if (path != null && path.length() > 0)
-            hpp += "/" + path;
+            if (path.startsWith("/"))
+                hpp += path;
+            else
+                hpp += "/" + path;
         return hpp;
     }
 

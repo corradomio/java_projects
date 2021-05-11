@@ -237,7 +237,11 @@ public class FileUtils {
     // ----------------------------------------------------------------------
 
     public static void delete(File file) {
-        deleteAll(file);
+        delete(file, FalseFileFilter.INSTANCE);
+    }
+
+    public static void delete(File file, FileFilter exclude) {
+        deleteAll(file, exclude);
     }
 
     /**

@@ -1,6 +1,7 @@
 package jext.io.filters;
 
 import java.io.FileFilter;
+import java.util.Arrays;
 
 public class FileFilters {
 
@@ -26,7 +27,7 @@ public class FileFilters {
         return new NotFileFilter(filter);
     }
 
-    public static FileFilter wildcard(String pattern) {
-        return new WildcardFileFilter(pattern);
+    public static FileFilter wildcards(String ... patterns) {
+        return new WildcardFileFilter(Arrays.asList(patterns));
     }
 }

@@ -6,8 +6,7 @@ import java.util.Properties;
 
 public class CompressVersioningSystem extends AbstractVersioningSystem {
 
-    public CompressVersioningSystem(Properties properties) {
-        super(properties);
-
+    public CompressVersioningSystem(String surl, Properties properties) {
+        super(surl, properties);
     }
 }

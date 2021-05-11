@@ -24,7 +24,24 @@ import java.util.Properties;
 
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        Logger.configure();
+
+        Properties p = new Properties();
+        String url = "svn+http://svn.apache.org/repos/asf/ant/core/branches/ANT_18_BRANCH";
+
+        VersioningSystem vs = VersioningSystems.newInstance(url, p);
+        File local = new File("D:/Temp/ANT_18_BRANCH");
+
+        if (!vs.exists(local))
+            vs.checkout(local);
+        else
+            vs.update(local);
+
+        // vs.delete(local)
+    }
+
+    public static void main6(String[] args) throws Exception {
         Logger.configure();
 
         Properties p = new Properties();

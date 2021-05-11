@@ -1,18 +1,26 @@
 package jext.versioning;
 
+import jext.io.filters.FalseFileFilter;
+import jext.logging.Logger;
 import jext.net.URL;
+import jext.versioning.util.Authentication;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Properties;
 
 public abstract class AbstractVersioningSystem implements VersioningSystem {
 
     protected URL url;
-    protected Properties properties;
+    protected Properties properties = new Properties();
+    protected FileFilter localExclude;
+    protected Logger logger;
 
-    protected AbstractVersioningSystem(Properties properties) {
-        this.url = new URL(properties.getProperty(VersioningSystems.URL));
-        this.properties = properties;
+    protected AbstractVersioningSystem(String surl, Properties properties) {
+        this.url = new URL(surl);
+        this.properties.putAll(properties);
+        this.localExclude = FalseFileFilter.INSTANCE;
+        this.logger = Logger.getLogger(getClass());
     }
 
     @Override
@@ -41,8 +49,13 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
     }
 
     @Override
-    public void save(File savedDirectory) {
+    public void copy(File localDirectory, File savedDirectory) {
         throw new UnsupportedOperationException();
     }
 
+    // ----------------------------------------------------------------------
+
+    protected Authentication getAuthentication() {
+        return new Authentication(properties);
+    }
 }

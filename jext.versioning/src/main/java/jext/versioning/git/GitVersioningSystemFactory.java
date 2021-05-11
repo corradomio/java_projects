@@ -1,13 +1,13 @@
-package jext.versioning.local;
+package jext.versioning.git;
 
 import jext.versioning.VersioningSystem;
 import jext.versioning.VersioningSystemFactory;
 
 import java.util.Properties;
 
-public class LocalVersioningSystemFactory implements VersioningSystemFactory {
+public class GitVersioningSystemFactory implements VersioningSystemFactory {
     @Override
-    public VersioningSystem newVersioningSystem(String surl, Properties properties) {
-        return new LocalVersioningSystem(surl, properties);
+    public VersioningSystem newInstance(String surl, Properties properties) {
+        return new GitVersioningSystem(surl, properties);
     }
 }

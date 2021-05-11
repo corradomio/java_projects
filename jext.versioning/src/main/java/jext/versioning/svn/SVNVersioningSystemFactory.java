@@ -1,13 +1,13 @@
-package jext.versioning.local;
+package jext.versioning.svn;
 
 import jext.versioning.VersioningSystem;
 import jext.versioning.VersioningSystemFactory;
 
 import java.util.Properties;
 
-public class LocalVersioningSystemFactory implements VersioningSystemFactory {
+public class SVNVersioningSystemFactory implements VersioningSystemFactory {
     @Override
     public VersioningSystem newInstance(String surl, Properties properties) {
-        return new LocalVersioningSystem(surl, properties);
+        return new SVNVersioningSystem(surl, properties);
     }
 }

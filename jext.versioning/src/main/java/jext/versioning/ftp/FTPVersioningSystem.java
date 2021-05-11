@@ -6,8 +6,8 @@ import java.util.Properties;
 
 public class FTPVersioningSystem extends AbstractVersioningSystem {
 
-    public FTPVersioningSystem(Properties properties) {
-        super(properties);
+    public FTPVersioningSystem(String surl, Properties properties) {
+        super(surl, properties);
 
     }
 }
