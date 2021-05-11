@@ -1,2 +1,4 @@
-package jext.versioning.git;public class GitVersioningSystem {
+package jext.versioning.git;
+
+public class GitVersioningSystem {
 }

@@ -1,2 +1,4 @@
-package jext.versioning;public interface Branch {
+package jext.versioning;
+
+public interface Branch {
 }

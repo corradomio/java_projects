@@ -1,2 +1,4 @@
-package jext.versioning.svn;public class SVVersioningSystem {
+package jext.versioning.svn;
+
+public class SVNVersioningSystem {
 }

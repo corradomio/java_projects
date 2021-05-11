@@ -1,6 +1,6 @@
 package jext.vfs.compress;
 
-import jext.util.HashMap;
+import java.util.HashMap;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 
 import java.util.Map;

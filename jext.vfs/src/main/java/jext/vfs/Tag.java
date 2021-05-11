@@ -1,2 +1,5 @@
-package jext.vfs;public interface Tag {
+package jext.vfs;
+
+public interface Tag {
+
 }

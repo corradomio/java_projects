@@ -9,6 +9,8 @@ import jext.vfs.util.ProgressMonitor;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 public abstract class AbstractFileSystem implements VFileSystem {
@@ -210,6 +212,16 @@ public abstract class AbstractFileSystem implements VFileSystem {
     // ----------------------------------------------------------------------
     // Versioning
     // ----------------------------------------------------------------------
+
+    @Override
+    public List<Branch> getVersions() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void copyLocally(VProgressMonitor pm) {
+
+    }
 
     @Override
     public void update(File lroot, VFile rroot, VProgressMonitor pm) {

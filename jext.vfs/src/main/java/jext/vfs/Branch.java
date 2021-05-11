@@ -1,5 +1,6 @@
 package jext.vfs;
 
-public interface Version {
+public interface Branch {
 
+    String getName();
 }

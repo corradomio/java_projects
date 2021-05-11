@@ -1,2 +1,7 @@
-package jext.vfs.git;public class GitTag {
+package jext.vfs.git;
+
+import jext.vfs.Tag;
+
+public class GitTag implements Tag {
+
 }

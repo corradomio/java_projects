@@ -27,7 +27,7 @@
     -->
     <groupId>org.hls</groupId>
     <artifactId>jext.jgit</artifactId>
-    <version>3.0-DEV</version>
+    <version>1.0</version>
 
     <name>JGit - Core</name>
 

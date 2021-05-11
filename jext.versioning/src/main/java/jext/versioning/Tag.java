@@ -1,2 +1,4 @@
-package jext.versioning;public interface Tag {
+package jext.versioning;
+
+public interface Tag {
 }

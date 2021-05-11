@@ -4,6 +4,7 @@ import jext.vfs.util.Authentication;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 public interface VFileSystem {
@@ -27,7 +28,7 @@ public interface VFileSystem {
     Properties getProperties();
 
     /**
-     * Retrieve the informations about username/password
+     * Retrieve the information about username/password
      */
     Authentication getAuthentication();
 
@@ -42,6 +43,20 @@ public interface VFileSystem {
     void close();
 
     /**
+     * Delete recursively the specified directory in the remote filesystem
+     *
+     * @param root directory to delete
+     * @param pm progress monitor
+     */
+    void deleteAll(VFile root, VProgressMonitor pm);
+
+    //
+    // Support for Versioning Systems
+    //
+
+    List<Branch> getVersions();
+
+    /**
      * Clone the remote filesystem into local
      * @param lroot where to copy the remote files
      * @param root remote root to copy
@@ -53,17 +68,7 @@ public interface VFileSystem {
         copyInto(lroot, root, null, pm);
     }
 
-    /**
-     * Delete recursively the specified directory
-     *
-     * @param root directory to delete
-     * @param pm progress monitor
-     */
-    void deleteAll(VFile root, VProgressMonitor pm);
-
-    //
-    // Support for Versioning systems
-    //
+    void copyLocally(VProgressMonitor pm);
 
     /**
      * Update the local model with the content of the remote repository
