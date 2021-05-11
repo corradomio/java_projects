@@ -1,5 +1,6 @@
 package jext.util;
 
+import jext.io.filters.FalseFileFilter;
 import jext.logging.Logger;
 
 import javax.xml.bind.DatatypeConverter;
@@ -21,7 +22,9 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -65,28 +68,70 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // File properties
     // ----------------------------------------------------------------------
 
-    // public static int countComponents(File file) {
-    //     if (file == null)
-    //         return 0;
-    //     String path = getAbsolutePath(file);
-    //     return path.split("/").length;
-    // }
+    /**
+     * File name without extension
+     */
+    public static String getNameWithoutExt(File file) {
+        String name = file.getName();
+        int pos = name.lastIndexOf(".");
+        if (pos != -1)
+            name = name.substring(0, pos);
+        return name;
+    }
 
+    /**
+     * File extension
+     */
+    public static String getExtension(File file) {
+        String name = file.getName();
+        int pos = name.lastIndexOf(".");
+        if (pos != -1)
+            return name.substring(pos);
+        return "";
+    }
+
+    /**
+     * Add the file extension
+     */
     public static File addExtension(File file, String ext) {
         if (!ext.startsWith("."))
             ext = "." + ext;
         return new File(file.getParentFile(), file.getName() + ext);
     }
 
+    /**
+     * Add the file extension ".1", ".2", ...
+     */
     public static File addExtension(File file, int counter) {
         if (counter <= 0)
             return file;
         else
             return new File(file.getParentFile(), file.getName() + String.format(".%d", counter));
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    /**
+     * Check if a file or a directory is empty
+     */
+    public static boolean isEmpty(File file) {
+        if (!file.exists())
+            return true;
+        if (file.isFile())
+            return file.length() == 0;
+        if(file.isDirectory()) {
+            String[] names = file.list();
+            return names == null || names.length == 0;
+        }
+        else
+            return false;
+    }
+
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
@@ -104,12 +149,32 @@ public class FileUtils {
         return path.startsWith("/") || path.indexOf(":/") == 1;
     }
 
+    /**
+     * Retrieve the absolute path in 'normalized' form (\ -> /)
+     */
     public static String getAbsolutePath(File file) {
         return normalize(file.getAbsolutePath());
     }
 
+    private static String normalize(String p) {
+        p = p.replace('\\', '/');
+        // while (p.contains("//"))
+        //     p = p.replace("//", "/");
+        return p;
+    }
+
+    // ----------------------------------------------------------------------
+    //
     // ----------------------------------------------------------------------
 
+    /**
+     * Compose 'baseDir' with 'path' to create a File object BUT it check if
+     * 'path' is not an absolute path. In this case 'baseDir' is ignored
+     *
+     * @param baseDir base directory
+     * @param path relative or absolute path.
+     * @return a File object
+     */
     public static File toFile(String baseDir, String path) {
         return toFile(new File(baseDir), path);
     }
@@ -122,10 +187,22 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
-    public static String relativePath(File parentDir, File file) {
-        String parentPath = normalize(parentDir.getAbsolutePath());
-        String currentPath = normalize(file.getAbsolutePath());
+    /**
+     * Extract the 'relative path' as difference between 'parentFile' and
+     * 'currentFile' in such way that:
+     *
+     *      currentFile = new File(parentFile, relativePath)
+     *
+     * @param parentFile  parent file
+     * @param currentFile current file
+     * @return teh relative path
+     */
+    public static String relativePath(File parentFile, File currentFile) {
+        String parentPath = getAbsolutePath(parentFile);
+        String currentPath = getAbsolutePath(currentFile);
         if (!currentPath.startsWith(parentPath))
             return currentPath;
         String relativePath = currentPath.substring(parentPath.length());
@@ -134,10 +211,17 @@ public class FileUtils {
         return relativePath;
     }
 
-    public static String relativePathNoExt(File parentDir, File file) {
-        String rpath = relativePath(parentDir, file);
+    /**
+     * As 'relativePath' but strip the file extension
+     *
+     * @param parentFile  parent file
+     * @param currentFile current file
+     * @return teh relative path without extension
+     */
+    public static String relativePathNoExt(File parentFile, File currentFile) {
+        String rpath = relativePath(parentFile, currentFile);
         // if the file names starts with a '.', we don't strip the 'extension'
-        if (file.getName().startsWith("."))
+        if (currentFile.getName().startsWith("."))
             return rpath;
         // we check that the last '.' is located AFTER the last '/'
         int pos = rpath.lastIndexOf('.');
@@ -148,26 +232,28 @@ public class FileUtils {
             return rpath.substring(0, pos);
     }
 
-    // public static String toCanonicalPath(File parentDir, String path) {
-    //     try {
-    //         return normalize(new File(parentDir, path).getCanonicalPath());
-    //     }
-    //     catch (IOException e) {
-    //         return normalize(new File(parentDir, path).getAbsolutePath());
-    //     }
-    // }
-
     // ----------------------------------------------------------------------
     // addAll/deleteAll
     // ----------------------------------------------------------------------
+
+    public static void delete(File file) {
+        deleteAll(file);
+    }
 
     /**
      * Delete recursively the directory specified
      * @param file a file or a directory
      */
     public static void deleteAll(File file) {
+        deleteAll(file, FalseFileFilter.INSTANCE);
+    }
+
+    public static void deleteAll(File file, FileFilter exclude) {
         if (!file.exists())
             return;
+        if (exclude.accept(file))
+            return;
+
         if (file.isDirectory()) {
             // delete the files
             File[] children = file.listFiles(File::isFile);
@@ -179,19 +265,27 @@ public class FileUtils {
             if (subdirs != null) for (File subd : subdirs)
                 deleteAll(subd);
         }
+
+        if (file.isDirectory() && !isEmpty(file))
+            return;
+
         if (!file.delete())
-            logger.warnf("Unable to delete %s", file.getAbsolutePath());
+            logger.warnf("Unable to delete %s", getAbsolutePath(file));
     }
 
     // ----------------------------------------------------------------------
-    // Recursive listFiles
+    // asList
     // ----------------------------------------------------------------------
 
-    public static List<String> asList(String[] files) {
-        if (files == null || files.length == 0)
+    public static List<File> listFiles(File directory) {
+        return asList(directory.listFiles());
+    }
+
+    public static List<String> asList(String[] names) {
+        if (names == null || names.length == 0)
             return Collections.emptyList();
         else
-            return Arrays.asList(files);
+            return Arrays.asList(names);
     }
 
     public static List<File> asList(File[] files) {
@@ -201,9 +295,16 @@ public class FileUtils {
             return Arrays.asList(files);
     }
 
-    public static List<File> listFiles(File directory) {
-        return asList(directory.listFiles());
+    public static Set<String> asSet(String[] names) {
+        if (names == null || names.length == 0)
+            return Collections.emptySet();
+
+        return new HashSet<>(asList(names));
     }
+
+    // ----------------------------------------------------------------------
+    // NOT Recursive listFiles
+    // ----------------------------------------------------------------------
 
     // NOT recursive
     public static List<File> listFiles(File directory, String ext) {
@@ -232,6 +333,10 @@ public class FileUtils {
         return files;
     }
 
+    // ----------------------------------------------------------------------
+    // Recursive listFiles
+    // ----------------------------------------------------------------------
+
     // Recursive!
     public static List<File> listFiles(File directory, FileFilter filter) {
         if (directory == null) return Collections.emptyList();
@@ -249,64 +354,12 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
-    // File properties
-    // ----------------------------------------------------------------------
-
-    public static String getNameWithoutExt(File file) {
-        String name = file.getName();
-        int pos = name.lastIndexOf(".");
-        if (pos != -1)
-            name = name.substring(0, pos);
-        return name;
-    }
-
-    public static String getExtension(File file) {
-        String name = file.getName();
-        int pos = name.lastIndexOf(".");
-        if (pos != -1)
-            return name.substring(pos);
-        return "";
-    }
-
-    // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
     public static boolean isParent(File parent, File path) {
-        return normalize(path.getAbsolutePath()).startsWith(normalize(parent.getAbsolutePath()));
+        return getAbsolutePath(parent).startsWith(getAbsolutePath(parent));
     }
-
-    /**
-     * Remove all files that are a 'subfile' of other files: in
-     *
-     *      { 'd:/a/b/c', 'd:/a/b/c/d/e'}
-     *
-     * it removes 'd:/a/b/c/d/e'
-     */
-    // public static Set<File> simplify(Collection<File> files) {
-    //     List<File> simplified = new ArrayList<>(files);
-    //     simplified.sort((o1, o2) -> (o2.getAbsolutePath().length() - o1.getAbsolutePath().length()));
-    //
-    //     boolean update = true;
-    //     while (update) {
-    //         update = false;
-    //         int n = simplified.size();
-    //
-    //         loop: for (int i=0; i<n; ++i) {
-    //             File o1 = simplified.get(i);
-    //             for (int j=i+1; j<n; ++j) {
-    //                 File o2 = simplified.get(j);
-    //                 if (FileUtils.isParent(o2, o1)) {
-    //                     simplified.remove(i);
-    //                     update = true;
-    //                     break loop;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //
-    //     return new HashSet<>(simplified);
-    // }
 
     // ----------------------------------------------------------------------
     // Read a text file
@@ -388,10 +441,61 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
-    // Implementation
+    // Copy files & directories
     // ----------------------------------------------------------------------
 
     public static void copy(File sourceFile, File destinationFile) {
+        if (sourceFile.isFile())
+            copyFile(sourceFile, destinationFile);
+        else
+            copyDir(sourceFile, destinationFile, file -> false);
+    }
+
+    public static void copy(File sourceFile, File destinationFile, FileFilter exclude) {
+        if (sourceFile.isFile())
+            copyFile(sourceFile, destinationFile);
+        else
+            copyDir(sourceFile, destinationFile, exclude);
+    }
+
+    private static void copyDir(File sourceDir, File destinationDir, FileFilter exclude) {
+        if (!sourceDir.exists())
+            return;
+        if (!destinationDir.exists()) {
+            mkdirs(destinationDir);
+            destinationDir.setLastModified(sourceDir.lastModified());
+        }
+
+        // copy all files
+        File[] files = sourceDir.listFiles(File::isFile);
+        for (File sfile : files) {
+            if (exclude.accept(sfile))
+                continue;
+
+            String name = sfile.getName();
+            File dfile = new File(destinationDir, name);
+            copyFile(sfile, dfile);
+        }
+
+        // copy all sub dirs
+        File[] dirs = sourceDir.listFiles(File::isDirectory);
+        for (File sdir : dirs) {
+            if (exclude.accept(sdir))
+                continue;
+
+            String name = sdir.getName();
+            File ddir = new File(destinationDir, name);
+            copyDir(sdir, ddir, exclude);
+        }
+    }
+
+    private static void copyFile(File sourceFile, File destinationFile) {
+        // We SUPPOSE that IF both files have the SAME size and the SAME timestamp
+        // they are EQUAL and it is not necessary to copy.
+        if (sourceFile.exists() && destinationFile.exists() &&
+            sourceFile.length() == destinationFile.length() &&
+            sourceFile.lastModified() == destinationFile.lastModified())
+            return;
 
         try(InputStream in = new FileInputStream(sourceFile);
             OutputStream out = new FileOutputStream(destinationFile)) {
@@ -400,6 +504,9 @@ public class FileUtils {
         catch(IOException e) {
             logger.error(e, e);
         }
+
+        // align the timestamp
+        destinationFile.setLastModified(sourceFile.lastModified());
     }
 
     public static void copy(InputStream in, OutputStream out) {
@@ -417,15 +524,56 @@ public class FileUtils {
         directory.mkdirs();
     }
 
+
     // ----------------------------------------------------------------------
-    // Implementation
+    // Align files & directories
     // ----------------------------------------------------------------------
 
-    private static String normalize(String p) {
-        p = p.replace('\\', '/');
-        // while (p.contains("//"))
-        //     p = p.replace("//", "/");
-        return p;
+    /**
+     * Align the content of the source directory with the content of the
+     * destinaton directory
+     * @param sourceDir source directory
+     * @param destinationDir destination directory
+     */
+    public static void align(File sourceDir, File destinationDir) {
+        align(sourceDir, destinationDir, FalseFileFilter.INSTANCE);
     }
 
+    public static void align(File sourceDir, File destinationDir, FileFilter exclude) {
+        // 1) copy the sourceDir's content into destinationDir
+        copy(sourceDir, destinationDir, exclude);
+        // 2) delete the files present in destinationDir BUT NOT in sourceDir
+        delete(sourceDir, destinationDir, exclude);
+    }
+
+    public static void delete(File sourceFile, File destinationFile) {
+        delete(sourceFile, destinationFile, FalseFileFilter.INSTANCE);
+    }
+
+    public static void delete(File sourceFile, File destinationFile, FileFilter exclude) {
+        // sourceFile NOT exist  ->  destinationFile EXISTS
+        if (!sourceFile.exists() && destinationFile.exists()) {
+            delete(destinationFile);
+            return;
+        }
+        // sourceFile EXISTS BUT it is excluded -> destinationFile EXISTS
+        if (sourceFile.exists() && exclude.accept(sourceFile) && destinationFile.exists()) {
+            delete(destinationFile);
+            return;
+        }
+
+        if (!destinationFile.isDirectory()) {
+            return;
+        }
+
+        // compare the directory contents
+        List<File> files = asList(destinationFile.listFiles(File::isFile));
+        for (File file : files)
+            delete(new File(sourceFile, file.getName()), file, exclude);
+
+        // compare the sub directories
+        List<File> sdirs = asList(destinationFile.listFiles(File::isDirectory));
+        for (File sdir : sdirs)
+            delete(new File(sourceFile, sdir.getName()), sdir, exclude);
+    }
 }

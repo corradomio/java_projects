@@ -23,18 +23,28 @@ public class Wildcard {
     private String pattern;
     private Pattern compiled;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public Wildcard(String pattern) {
         if (isExtension(pattern))
             pattern = "*" + pattern;
-
         this.pattern = pattern;
         compile();
     }
 
+    // ----------------------------------------------------------------------
+    // Accept
+    // ----------------------------------------------------------------------
+
     public boolean accept(String text) {
         return compiled.matcher(text).matches();
     }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
 
     private void compile() {
         StringBuilder regex = new StringBuilder();

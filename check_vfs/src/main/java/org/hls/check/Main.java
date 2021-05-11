@@ -1,5 +1,8 @@
 package org.hls.check;
 
+import jext.logging.Logger;
+import jext.versioning.VersioningSystem;
+import jext.versioning.VersioningSystems;
 import jext.vfs.VFile;
 import jext.vfs.VFileSystem;
 import jext.vfs.VFileSystems;
@@ -21,7 +24,25 @@ import java.util.Properties;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
+        Logger.configure();
+
+        Properties p = new Properties();
+        p.put("url", "file:///D:\\Projects.github\\java_projects\\check_vfs");
+        p.put("exclude", ".*,*.iml");
+        VersioningSystem vs = VersioningSystems.newInstance(p);
+
+        File local = new File("D:/Temp/cloned_check_vfs");
+
+        if (!vs.exists(local))
+            vs.checkout(local);
+        else
+            vs.update(local);
+
+        // vs.delete(local);
+    }
+
+    public static void main5(String[] args) throws IOException {
 
         // VFileSystems.newFileSystem("https://github.com/hub4j/github-api");
         Properties props = new Properties(){{
