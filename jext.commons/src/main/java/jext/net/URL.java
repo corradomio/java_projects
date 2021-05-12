@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
  *
  *      scheme[://authority][/path][?query][(#|!)fragment]
  *
- *      scheme      ::=  protocol[:protocol]*
- *                       protocol[+protocol]:*
+ *      scheme      ::=  [protocol:]* protocol:
+ *                       [protocol+]* protocol:
  *      protocol    ::=  any seq di chars, '.', '-', '+'
  *      auhority    ::=  [userinfo@]host[:port]
  *      userinfo    ::=  username[:password]
@@ -130,17 +130,19 @@ public class URL  {
         if (!skipFirstProtocol)
             return url;
 
+        // {protocol1}:...{protocol}://{rest}
+        // {protocol1}+...{protocol}://{rest}
+
         int pos = url.indexOf("://");
         String protocols = url.substring(0, pos);
 
         int ppos = protocols.indexOf(':');
         if (ppos == -1)
             ppos = protocols.indexOf('+');
-
         if (ppos == -1)
             return url;
-
-        return protocols.substring(ppos+1) + url.substring(pos);
+        else
+            return url.substring(ppos+1);
     }
 
     // ----------------------------------------------------------------------
@@ -155,12 +157,29 @@ public class URL  {
     // ----------------------------------------------------------------------
 
     private void normalize() {
+        //   \ -> /
         if (url.indexOf('\\') != -1)
             url = url.replace('\\', '/');
+
+        //  d:/...  ->  file:///d:/...
         if (url.indexOf(":/") == 1)
-            url = "/" + url;
+            url = "file:///" + url;
+
+        //  /... -> file:///...
         if (url.startsWith("/"))
             url = "file://" + url;
+
+        //  protocol://...//... -> protocol://.../...
+        int pos = url.indexOf("://")+3;
+        int ext = url.indexOf("//", pos);
+        while (ext != -1) {
+            url = url.substring(0, ext) + url.substring(ext+1);
+            ext = url.indexOf("//", pos);
+        }
+
+        //  remove last slash: .../ -> ...
+        while (url.endsWith("/"))
+            url = url.substring(0, url.length()-1);
     }
 
     private void xparse() {

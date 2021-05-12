@@ -1,4 +1,4 @@
-package jext.hashing;
+package jext.hashing.provider;
 
 import jext.hashing.provider.config.ConfigurableProvider;
 import jext.hashing.provider.util.AlgorithmProvider;

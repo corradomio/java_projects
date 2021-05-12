@@ -28,7 +28,9 @@ public class Main {
         Logger.configure();
 
         Properties p = new Properties();
-        String url = "svn+http://svn.apache.org/repos/asf/ant/core/branches/ANT_18_BRANCH";
+        p.put("branch", "ANT_18_BRANCH");
+        String url = "svn+http://svn.apache.org/repos/asf/ant/core";
+        // String url = "svn+http://svn.apache.org/repos/asf/ant/core/branches/ANT_18_BRANCH";
 
         VersioningSystem vs = VersioningSystems.newInstance(url, p);
         File local = new File("D:/Temp/ANT_18_BRANCH");

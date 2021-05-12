@@ -4,13 +4,13 @@ package jext.hash;
  *
  * @author Sam Harwell
  */
-public final class MurmurHash3 {
+public final class MurmurHash32 {
     private static final int C1 = 0xcc9e2d51;
     private static final int C2 = 0x1b873593;
 
     private final int seed;
 
-    public MurmurHash3(int seed) {
+    public MurmurHash32(int seed) {
         this.seed = seed;
     }
 

@@ -1,6 +1,7 @@
 package jext.versioning.svn;
 
 import jext.io.filters.FileFilters;
+import jext.net.URL;
 import jext.util.FileUtils;
 import jext.versioning.AbstractVersioningSystem;
 import jext.versioning.VersioningSystemException;
@@ -15,6 +16,7 @@ import org.tmatesoft.svn.core.auth.SVNAuthentication;
 import org.tmatesoft.svn.core.auth.SVNPasswordAuthentication;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -23,6 +25,9 @@ import java.util.Properties;
 public class SVNVersioningSystem  extends AbstractVersioningSystem {
 
     private static final String SVN = ".svn";
+    private static final String BRANCH = "branch";
+    private static final String TRUNK = "trunk";
+    private static final String BRANCHES = "branches";
 
     private final FileFilter svnExclude;
 
@@ -35,6 +40,34 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
         this.svnExclude = FileFilters.or(
             this.localExclude,
             FileFilters.wildcards(SVN));
+        updateUrl();
+    }
+
+    private void updateUrl() {
+        if (!properties.containsKey(BRANCH))
+            return;
+
+        // Default layout
+        //
+        //      [project_url]
+        //          trunk
+        //          branches
+        //              [branch1]
+        //              ...
+        //          tags
+        //              [tag1]
+        //              ...
+
+        String surl;
+        String branch = properties.getProperty(BRANCH);
+
+        if (TRUNK.equals(branch))
+            surl = String.format("%s/%s", url.getUrl(), branch);
+        else if (!branch.startsWith(BRANCHES))
+            surl = String.format("%s/branches/%s", url.getUrl(), branch);
+        else
+            surl = String.format("%s/%s", url.getUrl(), branch);
+        this.url = new URL(surl);
     }
 
     @Override
@@ -45,6 +78,15 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
 
     @Override
     public void checkout(File localDirectory) {
+        internalUpdate(localDirectory);
+    }
+
+    @Override
+    public void update(File localDirectory) {
+        internalUpdate(localDirectory);
+    }
+
+    private void internalUpdate(File localDirectory) {
         try {
             SVNURL svnUrl = SVNUtils.setup(this.url);
 
@@ -70,11 +112,14 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
                 clientManager.setAuthenticationManager(authManager);
             }
 
-            clientManager.getUpdateClient().doCheckout(svnUrl, localDirectory,
-                SVNRevision.HEAD,
+            SVNUpdateClient client = clientManager.getUpdateClient();
+            client.doCheckout(
+                svnUrl,
+                localDirectory,
+                SVNRevision.UNDEFINED,
                 SVNRevision.HEAD,
                 SVNDepth.UNKNOWN,
-                true);
+                false);
         }
         catch (Exception e) {
             throw new VersioningSystemException(e);
@@ -82,13 +127,8 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
     }
 
     @Override
-    public void update(File localDirectory) {
-        super.update(localDirectory);
-    }
-
-    @Override
     public void commit(File localDirectory) {
-        super.commit(localDirectory);
+
     }
 
     @Override

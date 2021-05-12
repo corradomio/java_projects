@@ -1,6 +1,6 @@
 package org.hls.check;
-import jext.hashing.DistanceSensitiveProvider;
-import jext.hashing.MessageDigestUtils;
+import jext.hashing.provider.DistanceSensitiveProvider;
+import jext.hashing.util.MessageDigestUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.MessageDigest;

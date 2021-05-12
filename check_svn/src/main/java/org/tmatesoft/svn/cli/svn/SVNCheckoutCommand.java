@@ -23,6 +23,7 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.internal.util.SVNPathUtil;
 import org.tmatesoft.svn.core.internal.wc.SVNErrorManager;
 import org.tmatesoft.svn.core.internal.wc.SVNPath;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import org.tmatesoft.svn.util.SVNLogType;
@@ -67,7 +68,8 @@ public class SVNCheckoutCommand extends SVNCommand {
         } else if (targets.size() == 1){
             SVNErrorManager.error(SVNErrorMessage.create(SVNErrorCode.CL_INSUFFICIENT_ARGS), SVNLogType.CLIENT);
         }
-        SVNUpdateClient client = getSVNEnvironment().getClientManager().getUpdateClient();
+        SVNClientManager clientManager = getSVNEnvironment().getClientManager();
+        SVNUpdateClient client = clientManager.getUpdateClient();
         if (!getSVNEnvironment().isQuiet()) {
             client.setEventHandler(new SVNNotifyPrinter(getSVNEnvironment(), true, false, false));
         }

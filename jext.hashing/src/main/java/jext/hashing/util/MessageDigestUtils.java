@@ -1,4 +1,4 @@
-package jext.hashing;
+package jext.hashing.util;
 
 import java.security.MessageDigest;
 
