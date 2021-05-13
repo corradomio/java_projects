@@ -17,6 +17,7 @@
     <modules>
         <module>../jext.vfs</module>
         <module>../jext.commons</module>
+        <module>../jext.collections</module>
         <module>../jext.compress</module>
         <module>../jext.jgit</module>
         <module>../jext.versioning</module>

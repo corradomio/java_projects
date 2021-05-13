@@ -34,6 +34,7 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
         try {
             RemoteFile root = connect();
             root.copyInto(localDirectory);
+            // root.dump(0);
         }
         catch (IOException e) {
             logger.error(e, e);
