@@ -21,6 +21,8 @@ class RemoteFile {
     private FTPFile ftpFile;
     private String path;
 
+    // ----------------------------------------------------------------------
+
     RemoteFile(FTPClient client, String path) {
         this.client = client;
         this.path = path;
@@ -31,6 +33,8 @@ class RemoteFile {
         this.ftpFile = ftpFile;
         this.path = PathUtils.concat(parent, ftpFile.getName());
     }
+
+    // ----------------------------------------------------------------------
 
     String getName() {
         return ftpFile == null ? "" : ftpFile.getName();
@@ -56,7 +60,9 @@ class RemoteFile {
         }
     }
 
-    public void copyInto(File file) throws IOException {
+    // ----------------------------------------------------------------------
+
+    void copyInto(File file) throws IOException {
         copy(file);
     }
 
@@ -90,7 +96,9 @@ class RemoteFile {
         };
     }
 
-    public void alignWith(File file) throws IOException {
+    // ----------------------------------------------------------------------
+
+    void alignWith(File file) throws IOException {
         // 1) copy
         copyInto(file);
         mergeWith(file);
@@ -100,7 +108,7 @@ class RemoteFile {
         if (!isDirectory())
             return;
 
-        Set<String> names = setNames();
+        Set<String> names = names();
         FileUtils.asList(dir.listFiles())
             .forEach(file -> {
                 if (!names.contains(file.getName()))
@@ -116,7 +124,7 @@ class RemoteFile {
         }
     }
 
-    private Set<String> setNames() throws IOException {
+    private Set<String> names() throws IOException {
         FTPFile[] ftpFiles = client.listFiles(path);
         if (ftpFiles == null || ftpFiles.length == 0)
             return Collections.emptySet();

@@ -20,18 +20,12 @@
         <module>../jext.collections</module>
         <module>../jext.compress</module>
         <module>../jext.jgit</module>
-        <module>../jext.versioning</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.vfs</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.versioning</artifactId>
             <version>1.0</version>
         </dependency>
 

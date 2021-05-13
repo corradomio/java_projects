@@ -22,7 +22,7 @@
 
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.collections</artifactId>
+            <artifactId>jext.compress</artifactId>
             <version>1.0</version>
         </dependency>
 

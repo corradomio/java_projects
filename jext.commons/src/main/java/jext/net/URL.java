@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 /**
  * parse a URL with the extended syntax:
  *
- *      scheme[://authority][/path][?query][(#|!)fragment]
+ *      scheme[://authority][/path][?query][(#|!|@)fragment]
  *
  *      scheme      ::=  [protocol:]* protocol:
  *                       [protocol+]* protocol:
@@ -67,7 +67,7 @@ public class URL  {
         "([^/?#!]{3,})" + "?" +     // schema (optional)
         "(//[^/?#!]*)"  + "?" +     // authority (optional)
         "(/[^?#!]*)"    + "?" +     // path (optional)
-        "(\\?[^#!]*)"   + "?" +     // query (optional)
+        "(\\?[^#!@]*)"  + "?" +     // query (optional)
         "((.*))"                    // fragment (optional)
     );
 
@@ -78,13 +78,34 @@ public class URL  {
     public URL(String url) {
         this.url = url;
         normalize();
-        xparse();
+        parse();
         parseParts();
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    public String getUrl() { return getUrl(false); }
+
+    public String getUrl(boolean skipFirstProtocol) {
+        if (!skipFirstProtocol)
+            return url;
+
+        // {protocol1}:...{protocol}://{rest}
+        // {protocol1}+...{protocol}://{rest}
+
+        int pos = url.indexOf("://");
+        String protocols = url.substring(0, pos);
+
+        int ppos = protocols.indexOf(':');
+        if (ppos == -1)
+            ppos = protocols.indexOf('+');
+        if (ppos == -1)
+            return url;
+        else
+            return url.substring(ppos+1);
+    }
 
     public boolean hasUserInfo() {
         return this.params.containsKey(USERNAME) && this.params.containsKey(PASSWORD);
@@ -93,10 +114,6 @@ public class URL  {
     public String getProtocol() {
         return protocol;
     }
-
-    public String getPath() { return path; }
-
-    public Map<String,String> getParameters() { return params; }
 
     public String getProtocols() {
         if (protocols.length <= 1)
@@ -124,26 +141,13 @@ public class URL  {
         return hpp;
     }
 
-    public String getUrl() { return getUrl(false); }
+    public String getPath() { return path; }
 
-    public String getUrl(boolean skipFirstProtocol) {
-        if (!skipFirstProtocol)
-            return url;
-
-        // {protocol1}:...{protocol}://{rest}
-        // {protocol1}+...{protocol}://{rest}
-
-        int pos = url.indexOf("://");
-        String protocols = url.substring(0, pos);
-
-        int ppos = protocols.indexOf(':');
-        if (ppos == -1)
-            ppos = protocols.indexOf('+');
-        if (ppos == -1)
-            return url;
-        else
-            return url.substring(ppos+1);
+    public String getFragment() {
+        return fragment;
     }
+
+    public Map<String,String> getParameters() { return params; }
 
     // ----------------------------------------------------------------------
     // Overrides
@@ -182,7 +186,7 @@ public class URL  {
             url = url.substring(0, url.length()-1);
     }
 
-    private void xparse() {
+    private void parse() {
         // scheme://authority/path?query#fragment!zpath
 
         Matcher mat = URL_PATTERN.matcher(url);
@@ -203,6 +207,8 @@ public class URL  {
             fragment = NONE;
         }
 
+        if (fragment.length() > 0)
+            fragment = fragment.substring(1);
     }
 
     private String group(Matcher mat, int g) {

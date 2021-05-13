@@ -1,6 +1,7 @@
 package jext.compress;
 
 import jext.logging.Logger;
+import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 
 import java.io.File;
@@ -40,17 +41,19 @@ public class Archives {
     }
 
     public static ArchiveInputStream openArchive(File compressedFile)
-        throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        throws IOException {
         String atype = extensionOf(compressedFile).toLowerCase();
         Class aclass = archivers.getOrDefault(atype, null);
         if (aclass == null)
             throw new IOException(String.format("Unsupported archiver for file %s", compressedFile.getAbsolutePath()));
 
         InputStream istream =  new FileInputStream(compressedFile);
-        ArchiveInputStream astream = (ArchiveInputStream) aclass.getConstructor(InputStream.class).newInstance(istream);
-        return astream;
+        try {
+            return (ArchiveInputStream) aclass.getConstructor(InputStream.class).newInstance(istream);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException  | NoSuchMethodException e) {
+            throw new IOException(e);
+        }
     }
-
 
     private static String extensionOf(File file) {
         int pos;
@@ -64,4 +67,13 @@ public class Archives {
         return name.substring(pos+1);
     }
 
+
+    public static ArchiveEntry select(ArchiveInputStream stream, String path) throws IOException {
+        ArchiveEntry entry;
+        while ((entry = stream.getNextEntry()) != null) {
+            if (entry.getName().equals(path))
+                return entry;
+        }
+        return null;
+    }
 }
