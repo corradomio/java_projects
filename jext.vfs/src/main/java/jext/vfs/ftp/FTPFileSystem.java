@@ -108,8 +108,6 @@ public class FTPFileSystem extends AbstractFileSystem {
         client = new FTPClient();
         config = new FTPClientConfig();
 
-
-
         client.configure(config);
 
         String hostPort = this.url.getHostPort();
