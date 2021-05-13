@@ -2,7 +2,6 @@ package jext.versioning.svn;
 
 import jext.io.filters.FileFilters;
 import jext.net.URL;
-import jext.util.FileUtils;
 import jext.versioning.AbstractVersioningSystem;
 import jext.versioning.VersioningSystemException;
 import jext.versioning.svn.util.SVNLogging;

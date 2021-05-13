@@ -1,7 +1,6 @@
 package jext.versioning.git;
 
 import jext.io.filters.FileFilters;
-import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import jext.versioning.AbstractVersioningSystem;
 import jext.versioning.VersioningSystemException;

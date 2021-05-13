@@ -1,14 +1,14 @@
 package jext.versioning.svn.util;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.logging.Level;
-
 import org.tmatesoft.svn.core.internal.util.SVNLogInputStream;
 import org.tmatesoft.svn.core.internal.util.SVNLogOutputStream;
 import org.tmatesoft.svn.core.internal.util.SVNLogStream;
 import org.tmatesoft.svn.util.ISVNDebugLog;
 import org.tmatesoft.svn.util.SVNLogType;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.logging.Level;
 
 /**
  * @version 1.3
