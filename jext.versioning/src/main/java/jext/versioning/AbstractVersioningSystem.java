@@ -3,6 +3,7 @@ package jext.versioning;
 import jext.io.filters.FalseFileFilter;
 import jext.logging.Logger;
 import jext.net.URL;
+import jext.util.FileUtils;
 import jext.versioning.util.Authentication;
 
 import java.io.File;
@@ -25,12 +26,10 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
 
     @Override
     public boolean exists(File localDirectory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void delete(File localDirectory) {
-        throw new UnsupportedOperationException();
+        if (!localDirectory.exists() || !localDirectory.isDirectory())
+            return false;
+        String[] content = localDirectory.list();
+        return content != null && content.length > 1;
     }
 
     @Override
@@ -48,12 +47,23 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
         throw new UnsupportedOperationException();
     }
 
+    // ----------------------------------------------------------------------
+
     @Override
     public void copy(File localDirectory, File savedDirectory) {
-        throw new UnsupportedOperationException();
+        FileUtils.copy(localDirectory, savedDirectory, copyExclude());
+    }
+
+    @Override
+    public void delete(File localDirectory) {
+        FileUtils.delete(localDirectory, localExclude);
     }
 
     // ----------------------------------------------------------------------
+
+    protected FileFilter copyExclude() {
+        return localExclude;
+    }
 
     protected Authentication getAuthentication() {
         return new Authentication(properties);

@@ -45,7 +45,7 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
     @Override
     public boolean exists(File localDirectory) {
         File gitDir = new File(localDirectory, GIT);
-        return localDirectory.exists() && gitDir.exists();
+        return super.exists(localDirectory) && gitDir.exists();
     }
 
     @Override
@@ -104,14 +104,11 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
         }
     }
 
-    @Override
-    public void copy(File localDirectory, File savedDirectory) {
-        FileUtils.copy(localDirectory, savedDirectory, gitExclude);
-    }
+    // ----------------------------------------------------------------------
 
     @Override
-    public void delete(File localDirectory) {
-        FileUtils.delete(localDirectory, localExclude);
+    protected FileFilter copyExclude() {
+        return gitExclude;
     }
 
 }

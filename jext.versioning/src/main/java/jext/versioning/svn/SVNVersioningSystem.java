@@ -73,7 +73,7 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
     @Override
     public boolean exists(File localDirectory) {
         File svnDir = new File(localDirectory, SVN);
-        return localDirectory.exists() && svnDir.exists();
+        return super.exists(localDirectory) && svnDir.exists();
     }
 
     @Override
@@ -126,19 +126,11 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
         }
     }
 
-    @Override
-    public void commit(File localDirectory) {
-
-    }
+    // ----------------------------------------------------------------------
 
     @Override
-    public void copy(File localDirectory, File savedDirectory) {
-        FileUtils.copy(localDirectory, savedDirectory, svnExclude);
-    }
-
-    @Override
-    public void delete(File localDirectory) {
-        FileUtils.delete(localDirectory, localExclude);
+    protected FileFilter copyExclude() {
+        return svnExclude;
     }
 
 }

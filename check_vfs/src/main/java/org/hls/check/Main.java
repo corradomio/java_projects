@@ -8,6 +8,7 @@ import jext.vfs.VFileSystem;
 import jext.vfs.VFileSystems;
 import jext.vfs.VProgressMonitor;
 import jext.vfs.util.ProgressMonitor;
+import jext.vfs.util.VFileUtils;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
@@ -24,7 +25,27 @@ import java.util.Properties;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        Logger.configure();
+
+        Properties p = new Properties();
+        p.put("username", "ftpuser");
+        p.put("password", "password");
+        String url = "ftp://192.168.0.143/jext.vfs";
+        VersioningSystem vs = VersioningSystems.newInstance(url, p);
+        File local = new File("D:/Temp/jext.vfs.cloned");
+
+        // VFileSystem vfs = VFileSystems.newFileSystem(url, p);
+        // vfs.connect();
+        // VFileUtils.dump(vfs);
+
+        if (!vs.exists(local))
+            vs.checkout(local);
+        else
+            vs.update(local);
+    }
+
+    public static void main7(String[] args) {
         Logger.configure();
 
         Properties p = new Properties();

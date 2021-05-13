@@ -40,16 +40,11 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
 
     @Override
     public boolean exists(File localDirectory) {
-        if (!localDirectory.exists() || !localDirectory.isDirectory())
-            return false;
-        String[] content = localDirectory.list();
-        return content != null && content.length > 1;
-
+        return super.exists(localDirectory);
     }
 
     @Override
     public void checkout(File localDirectory) {
-
         // copy the remote directory inside the local directory
         // (if the local directory doesn't exist, it will be created
         FileUtils.copy(sourceDirectory, localDirectory, excludeFilter);
@@ -58,16 +53,6 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
     @Override
     public void update(File localDirectory) {
         FileUtils.align(sourceDirectory, localDirectory, excludeFilter);
-    }
-
-    @Override
-    public void copy(File localDirectory, File savedDirectory) {
-        FileUtils.copy(localDirectory, savedDirectory, localExclude);
-    }
-
-    @Override
-    public void delete(File localDirectory) {
-        FileUtils.delete(localDirectory, localExclude);
     }
 
 }
