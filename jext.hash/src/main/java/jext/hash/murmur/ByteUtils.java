@@ -1,4 +1,4 @@
-package jext.hash;
+package jext.hash.murmur;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

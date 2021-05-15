@@ -1,2 +1,4 @@
-package jext.hash;public interface Hash {
+package jext.hash;
+
+public interface Hash {
 }

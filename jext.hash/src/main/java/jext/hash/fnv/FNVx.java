@@ -3,14 +3,19 @@ package jext.hash.fnv;
 import jext.hash.Hash;
 import jext.hash.HashAlgorithm;
 
-public class FNV1 implements HashAlgorithm {
+import java.math.BigInteger;
 
-    private long hash;
-    private long prime, offset;
+public class FNVx implements HashAlgorithm {
 
-    FNV1(long prime, long offset) {
+    private BigInteger hash;
+    private BigInteger prime, offset;
+    private boolean v;
+    private byte[] abyte = new byte[1];
+
+    FNVx(BigInteger prime, BigInteger offset, boolean v) {
         this.prime = prime;
         this.offset = offset;
+        this.v = v;
     }
 
     @Override
@@ -25,8 +30,15 @@ public class FNV1 implements HashAlgorithm {
     }
 
     public void update(byte data) {
-        hash = hash*prime;
-        hash = hash ^ data;
+        abyte[0] = data;
+        if (v) {
+            hash = hash.xor(new BigInteger(abyte));
+            hash = hash.multiply(prime);
+        }
+        else {
+            hash = hash.multiply(prime);
+            hash = hash.xor(new BigInteger(abyte));
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package jext.hash;
+package jext.hash.murmur;
 
 import sun.misc.Unsafe;
 
@@ -12,11 +12,11 @@ public class Platform {
     public static final int DOUBLE_ARRAY_OFFSET;
 
     static {
-        sun.misc.Unsafe unsafe;
+        Unsafe unsafe;
         try {
             Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
             unsafeField.setAccessible(true);
-            unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+            unsafe = (Unsafe) unsafeField.get(null);
         } catch (Throwable cause) {
             unsafe = null;
         }
