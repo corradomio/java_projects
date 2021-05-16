@@ -70,18 +70,18 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
     }
 
     @Override
-    public boolean exists(File localDirectory) {
+    public boolean exists() {
         File svnDir = new File(localDirectory, SVN);
-        return super.exists(localDirectory) && svnDir.exists();
+        return super.exists() && svnDir.exists();
     }
 
     @Override
-    public void checkout(File localDirectory) {
+    public void checkout() {
         internalUpdate(localDirectory);
     }
 
     @Override
-    public void update(File localDirectory) {
+    public void update() {
         internalUpdate(localDirectory);
     }
 
@@ -132,4 +132,12 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
         return svnExclude;
     }
 
+    // ----------------------------------------------------------------------
+    // Ignore support
+    // ----------------------------------------------------------------------
+
+    @Override
+    protected File getIgnoreFile() {
+        return new File(localDirectory, ".svnignore");
+    }
 }

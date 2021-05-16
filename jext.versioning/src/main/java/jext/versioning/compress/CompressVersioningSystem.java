@@ -20,6 +20,10 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
     private final File compressedFile;
     private final String base;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public CompressVersioningSystem(String surl, Properties properties) {
         super(surl, properties);
         String path = url.getPath();
@@ -27,8 +31,12 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
         base = url.getFragment();
     }
 
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
     @Override
-    public void checkout(File localDirectory) {
+    public void checkout() {
         try {
             copyInto(localDirectory);
         }
@@ -38,7 +46,7 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
     }
 
     @Override
-    public void update(File localDirectory) {
+    public void update() {
         try {
             copyInto(localDirectory);
             CompressedEntry root = scanArchive();
@@ -48,6 +56,10 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
             throw new VersioningSystemException(e);
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
 
     private void copyInto(File localDirectory) throws IOException {
         try (ArchiveInputStream aistream = Archives.openArchive(compressedFile)) {

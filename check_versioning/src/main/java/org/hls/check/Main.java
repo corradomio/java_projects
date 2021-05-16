@@ -15,13 +15,13 @@ public class Main {
         Properties p = new Properties();
 
         String url = "archive:///D:\\Projects.github\\java_projects\\jext.vfs.zip#jext.vfs";
-        VersioningSystem vs = VersioningSystems.newInstance(url, p);
         File local = new File("D:/Temp/jext.vfs.compressed");
+        VersioningSystem vs = VersioningSystems.newInstance(url, p, local);
 
-        if (!vs.exists(local))
-            vs.checkout(local);
+        if (!vs.exists())
+            vs.checkout();
         else
-            vs.update(local);
+            vs.update();
     }
 
     public static void main8(String[] args) throws IOException {
@@ -31,17 +31,17 @@ public class Main {
         p.put("username", "ftpuser");
         p.put("password", "password");
         String url = "ftp://192.168.0.143/jext.vfs";
-        VersioningSystem vs = VersioningSystems.newInstance(url, p);
         File local = new File("D:/Temp/jext.vfs.cloned");
+        VersioningSystem vs = VersioningSystems.newInstance(url, p, local);
 
         // VFileSystem vfs = VFileSystems.newFileSystem(url, p);
         // vfs.connect();
         // VFileUtils.dump(vfs);
 
-        if (!vs.exists(local))
-            vs.checkout(local);
+        if (!vs.exists())
+            vs.checkout();
         else
-            vs.update(local);
+            vs.update();
     }
 
     public static void main7(String[] args) {
@@ -52,13 +52,13 @@ public class Main {
         String url = "svn+http://svn.apache.org/repos/asf/ant/core";
         // String url = "svn+http://svn.apache.org/repos/asf/ant/core/branches/ANT_18_BRANCH";
 
-        VersioningSystem vs = VersioningSystems.newInstance(url, p);
         File local = new File("D:/Temp/ANT_18_BRANCH");
+        VersioningSystem vs = VersioningSystems.newInstance(url, p, local);
 
-        if (!vs.exists(local))
-            vs.checkout(local);
+        if (!vs.exists())
+            vs.checkout();
         else
-            vs.update(local);
+            vs.update();
 
         // vs.delete(local)
     }
@@ -69,14 +69,14 @@ public class Main {
         Properties p = new Properties();
         p.put("url", "file:///D:\\Projects.github\\java_projects\\check_vfs");
         p.put("exclude", ".*,*.iml");
-        VersioningSystem vs = VersioningSystems.newInstance(p);
 
         File local = new File("D:/Temp/cloned_check_vfs");
+        VersioningSystem vs = VersioningSystems.newInstance(p, local);
 
-        if (!vs.exists(local))
-            vs.checkout(local);
+        if (!vs.exists())
+            vs.checkout();
         else
-            vs.update(local);
+            vs.update();
 
         // vs.delete(local);
     }

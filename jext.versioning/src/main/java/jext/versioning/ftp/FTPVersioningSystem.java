@@ -17,20 +17,19 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
     private FTPClientConfig config;
 
     // ----------------------------------------------------------------------
-    //
+    // Constructor
     // ----------------------------------------------------------------------
 
     public FTPVersioningSystem(String surl, Properties properties) {
         super(surl, properties);
     }
 
-    @Override
-    public boolean exists(File localDirectory) {
-        return super.exists(localDirectory);
-    }
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
 
     @Override
-    public void checkout(File localDirectory) {
+    public void checkout() {
         try {
             RemoteFile root = connect();
             root.copyInto(localDirectory);
@@ -44,7 +43,7 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
     }
 
     @Override
-    public void update(File localDirectory) {
+    public void update() {
         try {
             RemoteFile root = connect();
             root.alignWith(localDirectory);
@@ -91,10 +90,6 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
         }
     }
 
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
     private void checkop() throws IOException {
         int reply = client.getReplyCode();
         if(!FTPReply.isPositiveCompletion(reply)) {
@@ -103,4 +98,12 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
         }
     }
 
+    // ----------------------------------------------------------------------
+    // Ignore support
+    // ----------------------------------------------------------------------
+
+    @Override
+    protected File getIgnoreFile() {
+        return new File(localDirectory, ".fileignore");
+    }
 }

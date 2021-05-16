@@ -3,6 +3,7 @@ package jext.versioning;
 import jext.logging.Logger;
 import jext.net.URL;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -23,6 +24,17 @@ public abstract class VersioningSystems {
     public static VersioningSystem newInstance(Properties properties) {
         String surl = properties.getProperty(URL);
         return newInstance(surl, properties);
+    }
+
+    public static VersioningSystem newInstance(Properties properties, File localDirectory) {
+        String surl = properties.getProperty(URL);
+        return newInstance(surl, properties, localDirectory);
+    }
+
+    public static VersioningSystem newInstance(String surl, Properties properties, File localDirectory) {
+        VersioningSystem vs = newInstance(surl, properties);
+        vs.setLocalDirectory(localDirectory);
+        return vs;
     }
 
     public static VersioningSystem newInstance(String surl, Properties properties) {

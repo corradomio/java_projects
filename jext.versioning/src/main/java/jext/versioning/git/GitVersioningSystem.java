@@ -42,13 +42,13 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
     // ----------------------------------------------------------------------
 
     @Override
-    public boolean exists(File localDirectory) {
+    public boolean exists() {
         File gitDir = new File(localDirectory, GIT);
-        return super.exists(localDirectory) && gitDir.exists();
+        return super.exists() && gitDir.exists();
     }
 
     @Override
-    public void checkout(File localDirectory) throws VersioningSystemException {
+    public void checkout() throws VersioningSystemException {
         File gitDir = new File(localDirectory, GIT);
         Authentication auth = getAuthentication();
 
@@ -84,7 +84,7 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
     }
 
     @Override
-    public void update(File localDirectory) throws VersioningSystemException {
+    public void update() throws VersioningSystemException {
         Authentication auth = getAuthentication();
 
         try(Git git = Git.open(localDirectory)) {
@@ -110,4 +110,12 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
         return gitExclude;
     }
 
+    // ----------------------------------------------------------------------
+    // Ignore support
+    // ----------------------------------------------------------------------
+
+    @Override
+    protected File getIgnoreFile() {
+        return new File(localDirectory, ".gitignore");
+    }
 }
