@@ -13,6 +13,11 @@ public class Configuration {
     public File snapshotsDirectory;
     public Properties properties;
     public Map<String, File> serviceFiles;
+    public String servicePath = ".spl";
+
+    public Configuration() {
+        
+    }
 
     public void addServiceFile(File serviceFile) {
         if (serviceFiles == null)
