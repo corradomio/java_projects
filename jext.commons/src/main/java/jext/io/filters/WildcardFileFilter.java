@@ -1,6 +1,7 @@
 package jext.io.filters;
 
 import jext.util.FileUtils;
+import jext.util.PathUtils;
 import jext.util.Wildcard;
 
 import java.io.File;
@@ -90,6 +91,14 @@ public class WildcardFileFilter implements FileFilter {
     public boolean accept(File file) {
         String path = FileUtils.getAbsolutePath(file);
         String name = file.getName();
+        for (WildcardMatcher m : matchers)
+            if (m.accept(path, name))
+                return true;
+        return false;
+    }
+
+    public boolean accept(String path) {
+        String name = PathUtils.getName(path);
         for (WildcardMatcher m : matchers)
             if (m.accept(path, name))
                 return true;

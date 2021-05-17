@@ -14,23 +14,23 @@ public interface SnapshotsSystem {
      * Save the local snapshot in a new subdirectory inside 'snapshotsDirectory'
      * @return
      */
-    SourcesSnapshot save();
+    Snapshot save();
 
     /**
      * List of saved snapshots
      */
-    List<SourcesSnapshot> listSnapshots();
+    List<Snapshot> listSnapshots();
 
     /**
      * Retrieve the specified snapshot
      */
-    SourcesSnapshot getSnapshot(String snapshotName);
+    Snapshot getSnapshot(String snapshotName);
 
     /**
      *
      * @param snapshotName
      */
     void rollback(String snapshotName);
-    void rollback(SourcesSnapshot snapshot);
+    void rollback(Snapshot snapshot);
 
 }

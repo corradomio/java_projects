@@ -1,5 +1,6 @@
 package jext.snapshots;
 
-public interface SourcesSnapshot {
+public interface Snapshot {
 
+    String getName();
 }

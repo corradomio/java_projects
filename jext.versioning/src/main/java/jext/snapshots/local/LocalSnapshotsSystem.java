@@ -1,17 +1,22 @@
 package jext.snapshots.local;
 
+import jext.io.filters.FileFilters;
 import jext.snapshots.SnapshotsSystem;
-import jext.snapshots.SourcesSnapshot;
+import jext.snapshots.Snapshot;
+import jext.util.FileUtils;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class LocalSnapshotsSystem implements SnapshotsSystem {
 
     private Properties properties = new Properties();
     private File localDirectory;
     private File snapshotsDirectory;
+    private FileFilter excludeFilter = FileFilters.none();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -46,17 +51,33 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     // ----------------------------------------------------------------------
 
     @Override
-    public SourcesSnapshot save() {
+    public Snapshot save() {
+        File snapshotDirectory = selectDirectory();
+
+        FileUtils.copy(localDirectory, snapshotDirectory, excludeFilter);
         return null;
     }
 
-    @Override
-    public List<SourcesSnapshot> listSnapshots() {
-        return null;
+    private File selectDirectory() {
+        int i=0;
+        File snapshotDirectory = new File(snapshotsDirectory, "v0");
+        while (snapshotDirectory.exists()) {
+            i += 1;
+            snapshotDirectory = new File(snapshotsDirectory, "v" + i);
+        }
+        return snapshotDirectory;
     }
 
     @Override
-    public SourcesSnapshot getSnapshot(String snapshotName) {
+    public List<Snapshot> listSnapshots() {
+        return FileUtils.listFiles(snapshotsDirectory)
+            .stream()
+            .map(LocalSnapshot::new)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public Snapshot getSnapshot(String snapshotName) {
         return null;
     }
 
@@ -66,7 +87,7 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     }
 
     @Override
-    public void rollback(SourcesSnapshot snapshot) {
+    public void rollback(Snapshot snapshot) {
 
     }
 }
