@@ -10,6 +10,7 @@ import jext.util.StringUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -53,10 +54,30 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
 
     @Override
     public Snapshot save() {
+        FileUtils.mkdirs(snapshotsDirectory);
         File snapshotDirectory = selectDirectory();
 
-        FileUtils.copy(localDirectory, snapshotDirectory, excludeFilter);
+        saveFiles(snapshotDirectory);
+        saveServiceFiles(snapshotDirectory);
+
         return new LocalSnapshot(snapshotDirectory);
+    }
+
+    private void saveFiles(File snapshotDirectory) {
+        FileUtils.mkdirs(snapshotDirectory);
+        FileUtils.copy(localDirectory, snapshotDirectory, excludeFilter);
+    }
+
+    private void saveServiceFiles(File snapshotDirectory) {
+        Map<String, File> serviceFiles = configuration.serviceFiles;
+        if (serviceFiles == null)
+            return;
+
+        for (String relativePath : serviceFiles.keySet()) {
+            File serviceFile = serviceFiles.get(relativePath);
+            File savedFile = new File(snapshotDirectory, relativePath);
+            FileUtils.copy(serviceFile, savedFile);
+        }
     }
 
     private File selectDirectory() {

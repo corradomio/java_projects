@@ -501,6 +501,10 @@ public class FileUtils {
             sourceFile.lastModified() == destinationFile.lastModified())
             return;
 
+        File parentFile = destinationFile.getParentFile();
+        if (!parentFile.exists())
+            mkdirs(parentFile);
+
         try(InputStream in = new FileInputStream(sourceFile);
             OutputStream out = new FileOutputStream(destinationFile)) {
             copy(in, out);
