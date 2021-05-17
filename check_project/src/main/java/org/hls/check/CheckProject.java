@@ -3,15 +3,13 @@ package org.hls.check;
 import jext.cache.CacheManager;
 import jext.logging.Logger;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectAnalyzer;
 import jext.sourcecode.project.Projects;
-import jext.sourcecode.project.util.ProjectInfo;
-import jext.util.JSONUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 public class CheckProject {
 
@@ -23,12 +21,16 @@ public class CheckProject {
             Project project = Projects.newProject(new File(
                     //"D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\elasticsearch"
                     // "D:\\SPLGroup\\example_repo\\cocome-maven-project"
-                "D:\\SPLGroup\\example_repo\\commons_lang"
+                    // "D:\\Projects.github\\other_projects\\commons-lang"
+                // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
+                "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
                 ),
                 PropertiesUtils.empty());
 
-            Map<String, ?> pinfo = ProjectInfo.analyze(project);
-            JSONUtils.save(new File("project-info.json"), pinfo);
+            ProjectAnalyzer.analyzeProject(project, new File("project-info.json"));
+            ProjectAnalyzer.analyzeSources(project, new File("source-info.json"));
+            ProjectAnalyzer.analyzeImplementation(project, new File("source-hash.json"));
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

@@ -10,18 +10,12 @@ import java.util.List;
  */
 public interface Type extends RefType {
 
-    Name getNamespace();
-
-    // -- Source defining this type
-
-    Source getSource();
+    /** Related object ids */
     String getSourceId();
-
-    // -- Module containing the source
-
-    Module getModule();
     String getModuleId();
     String getModuleRefId();
+
+    Name getNamespace();
 
     /**
      * Check if the type is a 'valid' type for analysis:
@@ -50,46 +44,10 @@ public interface Type extends RefType {
     List<? extends Method> getMethods();
 
     // ----------------------------------------------------------------------
-    // Score
+    // Navigate
     // ----------------------------------------------------------------------
 
-    /**
-     * If present:
-     *  score[0]: features-core
-     *  score[1]: k-core
-     */
-    // @Nullable
-    // List<Double> getScore();
-
-    // ----------------------------------------------------------------------
-    // Entrypoint
-    // ----------------------------------------------------------------------
-
-    /**
-     * Check is this type is an "entryPoint" after the runtime analysis
-     */
-    // boolean isEntryPoint();
-
-    // long[] getCountMethods();
-
-    // /**
-    //  * Set this type as an "entryPoint": during the "runtime analysis" there was
-    //  * a thread containing this class as FIRST class in the thread dump
-    //  */
-    // void setEntryPoint();
-
-    // ----------------------------------------------------------------------
-    // Dependencies with other models
-    // ----------------------------------------------------------------------
-
-    /**
-     * Components containing this type
-     */
-    // List<Component> getComponents();
-
-    /**
-     * Features containing this type (based on components contained in the features)
-     */
-    // List<Feature> getFeatures();
+    Source getSource();
+    Module getModule();
 
 }

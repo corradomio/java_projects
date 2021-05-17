@@ -1,4 +1,4 @@
-package jext.sourcecode.project.util;
+package jext.sourcecode.project;
 
 import jext.util.JSONUtils;
 
@@ -12,7 +12,8 @@ public class SourceInfo {
     public long blankLines;
     public long codeLines;
 
-    public void add(SourceInfo info) {
+    // executed in parallel!
+    public synchronized void add(SourceInfo info) {
         count += info.count;
         bytes += info.bytes;
         totalLines += info.totalLines;
@@ -20,9 +21,9 @@ public class SourceInfo {
         codeLines += info.codeLines;
     }
 
-    public void save(File sinfoFile) {
+    public void save(File jsonFile) {
         try {
-            JSONUtils.save(sinfoFile, this);
+            JSONUtils.save(jsonFile, this);
         } catch (IOException e) {
             //logger.error(e, e);
         }

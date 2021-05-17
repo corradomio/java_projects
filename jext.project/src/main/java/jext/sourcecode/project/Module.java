@@ -48,10 +48,24 @@ public interface Module extends RefIdNamed {
     /** Module runtime library */
     Library getRuntimeLibrary();
 
-    /** Libraries used by the module (local & remote) */
+    /**
+     * Libraries used by the module (local & remote) but with the highest version
+     * That is:
+     *      if this module uses a library with v1 but there is another module that
+     *      uses the same library with version v2
+     *
+     * this function return the library with v2 !
+     */
     List<Library> getLibraries();
 
-    /** Libraries used by the module (local & remote) */
+    /**
+     * Libraries used by the module (local & remote) with the version specified in the module
+     * That is:
+     *      if this module uses a library with version v1 but there is another module that
+     *      uses the same library with version v2
+     *
+     * this function return the library with v1 !
+     */
     List<Library> getDeclaredLibraries();
 
     /** Retrieve the library by id/fullname/name */

@@ -414,7 +414,7 @@ public class GradleProject extends BaseProject {
 
         }
         else if (System.getenv().containsKey(GRADLE_HOME)) {
-            File gradleHome = new File(System.getenv().get(GRADLE_HOME));
+            File gradleHome = new File(System.getenv(GRADLE_HOME));
 
             if (gradleHome.exists()) {
                 logger.infof("GRADLE_HOME defined: using local installation at %s", FileUtils.getAbsolutePath(gradleHome));

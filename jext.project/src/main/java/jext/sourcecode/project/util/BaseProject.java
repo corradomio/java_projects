@@ -382,14 +382,21 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected void addParentModules() {
         logger.debug("addParentModules");
 
-        boolean[] added = new boolean[1];
         Set<Name> mnames = new HashSet<>();
 
         // populate 'mnames'
         modules.forEach(module -> mnames.add(module.getName()));
 
+        // clone modules -> d)efined modules
+        List<Module> dmodules = new ArrayList<>(modules);
+
+        boolean[] updated = new boolean[]{true};
+
+        while (updated[0]) {
+            updated[0] = false;
+
         // check for all parents
-        getModules().forEach(module -> {
+            dmodules.forEach(module -> {
             // skip the root module
             Name mname = module.getName();
             if (mname.isRoot()) return;
@@ -405,10 +412,12 @@ public abstract class BaseProject extends NamedObject implements Project {
             pmodule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
             // register the name
             mnames.add(pmodule.getName());
-            added[0] = true;
+                modules.add(pmodule);
 
+                updated[0] = true;
             logger.warnf("Added missing parent module %s", pmodule.getName().getFullName());
         });
+    }
     }
 
     protected void sortModules() {

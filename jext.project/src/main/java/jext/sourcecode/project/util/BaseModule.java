@@ -2,7 +2,7 @@ package jext.sourcecode.project.util;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.io.util.FileFilters;
+import jext.io.filters.FileFilters;
 import jext.logging.Logger;
 import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
