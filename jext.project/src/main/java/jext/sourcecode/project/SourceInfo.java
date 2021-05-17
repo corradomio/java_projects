@@ -9,21 +9,27 @@ import java.util.TreeMap;
 
 public class SourceInfo {
 
+    private static final String VERSION_NUMBER = "1.1";
+
+    public long timestamp;
+    public String version;
+
     public long count;
     public long bytes;
     public long totalLines;
     public long blankLines;
     public long codeLines;
 
-    public Map<String, Map<String, String>> hashes;
+    public Map<String, Map<String, String>> modules;
 
     public SourceInfo() {
-        //this(false);
+
     }
 
-    public SourceInfo(boolean root) {
-        if (root)
-            hashes = new TreeMap<>();
+    public void init() {
+        this.modules = new TreeMap<>();
+        this.timestamp = System.currentTimeMillis();
+        this.version = VERSION_NUMBER;
     }
 
     // executed in parallel!
@@ -36,17 +42,21 @@ public class SourceInfo {
     }
 
     public synchronized void addDigest(String moduleName, String sourceName, String digest) {
-        if (!hashes.containsKey(moduleName))
-            hashes.put(moduleName, new TreeMap<>());
-        Map<String, String> sdmap = hashes.get(moduleName);
+        if (!modules.containsKey(moduleName))
+            modules.put(moduleName, new TreeMap<>());
+        Map<String, String> sdmap = modules.get(moduleName);
         sdmap.put(sourceName, digest);
     }
 
-    public void save(File jsonFile) {
-        try {
-            JSONUtils.save(jsonFile, this);
-        } catch (IOException e) {
-            //logger.error(e, e);
-        }
+    public boolean hasValidVersion() {
+        return VERSION_NUMBER.equals(version);
+    }
+
+    public void save(File jsonFile) throws IOException {
+        JSONUtils.save(jsonFile, this);
+    }
+
+    public static SourceInfo load(File jsonFile) throws IOException {
+        return JSONUtils.load(jsonFile, SourceInfo.class);
     }
 }

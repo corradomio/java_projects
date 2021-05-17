@@ -1,9 +1,11 @@
 package jext.snapshots.local;
 
 import jext.io.filters.FileFilters;
+import jext.snapshots.Configuration;
 import jext.snapshots.SnapshotsSystem;
 import jext.snapshots.Snapshot;
 import jext.util.FileUtils;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -13,6 +15,9 @@ import java.util.stream.Collectors;
 
 public class LocalSnapshotsSystem implements SnapshotsSystem {
 
+    private static final String EXCLUDE = "exclude";
+
+    private Configuration configuration;
     private Properties properties = new Properties();
     private File localDirectory;
     private File snapshotsDirectory;
@@ -22,32 +27,28 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public LocalSnapshotsSystem() {
+    public LocalSnapshotsSystem(Configuration configuration) {
+        this.configuration = configuration;
+        if (configuration.properties != null)
+            this.properties.putAll(configuration.properties);
+        this.localDirectory = configuration.localDirectory;
+        this.snapshotsDirectory = configuration.snapshotsDirectory;
 
+        makeExcludeFilter();
+    }
+
+    private void makeExcludeFilter() {
+        if (!properties.containsKey(EXCLUDE)) {
+            excludeFilter = FileFilters.none();
+            return;
+        }
+
+        List<String> patterns = StringUtils.split(properties.getProperty(EXCLUDE), ",");
+        excludeFilter = FileFilters.wildcards(patterns);
     }
 
     // ----------------------------------------------------------------------
-    // Configuration
-    // ----------------------------------------------------------------------
-
-    @Override
-    public SnapshotsSystem setProperties(Properties properties) {
-        this.properties.putAll(properties);
-        return this;
-    }
-
-    @Override
-    public SnapshotsSystem setLocalDirectory(File localDirectory) {
-        this.localDirectory = localDirectory;
-        return this;
-    }
-
-    @Override
-    public SnapshotsSystem setSnapshotsDirectory(File snapshotsDirectory) {
-        this.snapshotsDirectory = snapshotsDirectory;
-        return this;
-    }
-
+    // Operations
     // ----------------------------------------------------------------------
 
     @Override
@@ -55,15 +56,15 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
         File snapshotDirectory = selectDirectory();
 
         FileUtils.copy(localDirectory, snapshotDirectory, excludeFilter);
-        return null;
+        return new LocalSnapshot(snapshotDirectory);
     }
 
     private File selectDirectory() {
-        int i=0;
-        File snapshotDirectory = new File(snapshotsDirectory, "v0");
-        while (snapshotDirectory.exists()) {
-            i += 1;
+        File snapshotDirectory;
+        for (int i=0; true; ++i) {
             snapshotDirectory = new File(snapshotsDirectory, "v" + i);
+            if (!snapshotDirectory.exists())
+                break;
         }
         return snapshotDirectory;
     }

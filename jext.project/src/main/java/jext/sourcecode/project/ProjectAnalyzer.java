@@ -81,6 +81,7 @@ public class ProjectAnalyzer {
     // ----------------------------------------------------------------------
 
     private ProjectInfo analyzeProject() {
+        pinfo.init();
         pinfo.put("name", project.getName().getName());
         pinfo.put("fullname", project.getName().getFullName());
         pinfo.put("id", project.getId());
@@ -202,7 +203,8 @@ public class ProjectAnalyzer {
 
     private SourceInfo  analyzeSources() {
         // create the main map
-        SourceInfo sinfo = new SourceInfo(true);
+        SourceInfo sinfo = new SourceInfo();
+        sinfo.init();
         ProjectUtils.getSources(project)
             .parallelStream()
             .forEach(source -> analyzeSource(sinfo, source));

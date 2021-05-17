@@ -8,7 +8,28 @@ import java.util.LinkedHashMap;
 
 public class ProjectInfo extends LinkedHashMap<String, Object> {
 
+    private static final String TIMESTAMP = "timestamp";
+    private static final String VERSION = "version";
+    private static final String VERSION_NUMBER = "1.1";
+
+    public ProjectInfo() {
+
+    }
+
+    public void init() {
+        put(VERSION, VERSION_NUMBER);
+        put(TIMESTAMP, System.currentTimeMillis());
+    }
+
+    public boolean hasValidVersion() {
+        return VERSION_NUMBER.equals(get(VERSION));
+    }
+
     public void save (File jsonFile) throws IOException {
         JSONUtils.save(jsonFile, this);
+    }
+
+    public static ProjectInfo load(File jsonFile) throws IOException {
+        return JSONUtils.load(jsonFile, ProjectInfo.class);
     }
 }

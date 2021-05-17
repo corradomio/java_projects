@@ -2,6 +2,7 @@ package jext.io.filters;
 
 import java.io.FileFilter;
 import java.util.Arrays;
+import java.util.List;
 
 public class FileFilters {
 
@@ -34,5 +35,9 @@ public class FileFilters {
 
     public static FileFilter wildcards(String ... patterns) {
         return new WildcardFileFilter().addAll(Arrays.asList(patterns));
+    }
+
+    public static FileFilter wildcards(List<String> patterns) {
+        return new WildcardFileFilter().addAll(patterns);
     }
 }
