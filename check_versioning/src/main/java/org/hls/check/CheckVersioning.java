@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-public class Main {
+public class CheckVersioning {
 
     public static void main(String[] args) throws Exception {
         Logger.configure();

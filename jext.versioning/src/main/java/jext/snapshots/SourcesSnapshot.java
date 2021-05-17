@@ -1,4 +1,5 @@
-package jext.versioning;
+package jext.snapshots;
 
 public interface SourcesSnapshot {
+
 }

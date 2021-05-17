@@ -1,2 +1,4 @@
-package org.hls.check;public class CheckSnapshots {
+package org.hls.check;
+
+public class CheckSnapshots {
 }

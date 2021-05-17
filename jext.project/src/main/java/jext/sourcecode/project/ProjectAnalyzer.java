@@ -30,10 +30,10 @@ public class ProjectAnalyzer {
         sinfo.save(jsonFile);
     }
 
-    public static void analyzeImplementation(Project project, File jsonFile) throws IOException {
-        SourceHash shash = analyzeImplementation(project);
-        shash.save(jsonFile);
-    }
+    // public static void analyzeImplementation(Project project, File jsonFile) throws IOException {
+    //     SourceHash shash = analyzeImplementation(project);
+    //     shash.save(jsonFile);
+    // }
 
     // -----------------------------------------------------------------------
 
@@ -55,11 +55,11 @@ public class ProjectAnalyzer {
         return sinfo;
     }
 
-    public static SourceHash analyzeImplementation(Project project) {
-        ProjectAnalyzer analyzer = new ProjectAnalyzer(project);
-        SourceHash shash = analyzer.analyzeImplementation();
-        return shash;
-    }
+    // public static SourceHash analyzeImplementation(Project project) {
+    //     ProjectAnalyzer analyzer = new ProjectAnalyzer(project);
+    //     SourceHash shash = analyzer.analyzeImplementation();
+    //     return shash;
+    // }
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -201,7 +201,8 @@ public class ProjectAnalyzer {
     // ----------------------------------------------------------------------
 
     private SourceInfo  analyzeSources() {
-        SourceInfo sinfo = new SourceInfo();
+        // create the main map
+        SourceInfo sinfo = new SourceInfo(true);
         ProjectUtils.getSources(project)
             .parallelStream()
             .forEach(source -> analyzeSource(sinfo, source));
@@ -210,24 +211,28 @@ public class ProjectAnalyzer {
 
     private void analyzeSource(SourceInfo sinfo, Source source) {
         sinfo.add(source.getSourceInfo());
+        String moduleName = source.getModule().getName().getFullName();
+        String sourceName = source.getName().getFullName();
+        String digest = source.getDigest();
+        sinfo.addDigest(moduleName, sourceName, digest);
     }
 
     // ----------------------------------------------------------------------
     // Analyze source hashes
     // ----------------------------------------------------------------------
 
-    private SourceHash analyzeImplementation() {
-        SourceHash shash = new SourceHash();
-        ProjectUtils.getSources(project)
-            .parallelStream()
-            .forEach(source -> analyzeImplementation(shash, source));
-        return shash;
-    }
+    // private SourceHash analyzeImplementation() {
+    //     SourceHash shash = new SourceHash();
+    //     ProjectUtils.getSources(project)
+    //         .parallelStream()
+    //         .forEach(source -> analyzeImplementation(shash, source));
+    //     return shash;
+    // }
 
-    private void analyzeImplementation(SourceHash shash, Source source) {
-        String moduleName = source.getModule().getName().getFullName();
-        String sourceName = source.getName().getFullName();
-        String digest = source.getDigest();
-        shash.addHash(moduleName, sourceName, digest);
-    }
+    // private void analyzeImplementation(SourceHash shash, Source source) {
+    //     String moduleName = source.getModule().getName().getFullName();
+    //     String sourceName = source.getName().getFullName();
+    //     String digest = source.getDigest();
+    //     shash.addHash(moduleName, sourceName, digest);
+    // }
 }

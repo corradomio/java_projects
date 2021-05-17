@@ -19,6 +19,7 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
     protected FileFilter localExclude;
     protected Logger logger;
     protected File localDirectory;
+    protected File snapshotsDirectory;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -35,6 +36,14 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
     // Properties
     // ----------------------------------------------------------------------
 
+    @Override
+    public VersioningSystem setVersioning(String surl, Properties properties) {
+        this.url = new URL(surl);
+        this.properties.putAll(properties);
+        return this;
+    }
+
+    @Override
     public VersioningSystem setLocalDirectory(File localDirectory) {
         this.localDirectory = localDirectory;
         return this;
@@ -153,4 +162,11 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
     protected File getIgnoreFile() {
         return new File(localDirectory, ".fileignore");
     }
+
+    // ----------------------------------------------------------------------
+    // Snapshots
+    // ----------------------------------------------------------------------
+
+
+
 }
