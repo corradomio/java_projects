@@ -1,7 +1,7 @@
 package jext.snapshots.local;
 
 import jext.io.filters.FileFilters;
-import jext.snapshots.Configuration;
+import jext.snapshots.SnapshotsConfiguration;
 import jext.snapshots.SnapshotsSystem;
 import jext.snapshots.Snapshot;
 import jext.util.FileUtils;
@@ -18,7 +18,7 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
 
     private static final String EXCLUDE = "exclude";
 
-    private Configuration configuration;
+    private SnapshotsConfiguration configuration;
     private Properties properties = new Properties();
     private File localDirectory;
     private File snapshotsDirectory;
@@ -28,7 +28,7 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public LocalSnapshotsSystem(Configuration configuration) {
+    public LocalSnapshotsSystem(SnapshotsConfiguration configuration) {
         this.configuration = configuration;
         if (configuration.properties != null)
             this.properties.putAll(configuration.properties);

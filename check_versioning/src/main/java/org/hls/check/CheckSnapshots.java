@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.logging.Logger;
-import jext.snapshots.Configuration;
+import jext.snapshots.SnapshotsConfiguration;
 import jext.snapshots.SnapshotsSystem;
 import jext.snapshots.SnapshotsSystems;
 
@@ -14,7 +14,7 @@ public class CheckSnapshots {
         Logger.configure();
 
         File localDirectory = new File("D:\\SPLGroup\\spl-workspaces\\sample-project\\acmeair-monolithic-java-master");
-        Configuration config = new Configuration();
+        SnapshotsConfiguration config = new SnapshotsConfiguration();
         config.localDirectory = localDirectory;
         config.snapshotsDirectory = new File(localDirectory, ".spl\\snapshots");
         config.properties = new Properties();

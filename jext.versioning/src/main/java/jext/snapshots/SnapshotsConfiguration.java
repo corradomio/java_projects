@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class Configuration {
+public class SnapshotsConfiguration {
 
     public File localDirectory;
     public File snapshotsDirectory;
@@ -15,8 +15,8 @@ public class Configuration {
     public Map<String, File> serviceFiles;
     public String servicePath = ".spl";
 
-    public Configuration() {
-        
+    public SnapshotsConfiguration() {
+
     }
 
     public void addServiceFile(File serviceFile) {
