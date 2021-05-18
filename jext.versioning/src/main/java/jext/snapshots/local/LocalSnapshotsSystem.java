@@ -1,9 +1,9 @@
 package jext.snapshots.local;
 
 import jext.io.filters.FileFilters;
+import jext.snapshots.Snapshot;
 import jext.snapshots.SnapshotsConfiguration;
 import jext.snapshots.SnapshotsSystem;
-import jext.snapshots.Snapshot;
 import jext.util.FileUtils;
 import jext.util.StringUtils;
 
@@ -11,12 +11,14 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class LocalSnapshotsSystem implements SnapshotsSystem {
 
     private static final String EXCLUDE = "exclude";
+    static final String SERVICE_FILE = ".spl/source-info.json";
 
     private SnapshotsConfiguration configuration;
     private Properties properties = new Properties();
@@ -99,17 +101,40 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     }
 
     @Override
-    public Snapshot getSnapshot(String snapshotName) {
+    public Optional<Snapshot> getSnapshot(String snapshotName) {
+        if (CURRENT.equals(snapshotName))
+            return Optional.of(new LocalSnapshot(localDirectory, CURRENT));
+
+        if (FIRST.equals(snapshotName)) {
+            List<Snapshot> snapshots = listSnapshots();
+            if (snapshots.isEmpty())
+                return Optional.empty();
+            else
+                return Optional.of(snapshots.get(0));
+        }
+
+        if (LAST.equals(snapshotName)) {
+            List<Snapshot> snapshots = listSnapshots();
+            if (snapshots.isEmpty())
+                return Optional.empty();
+            else
+                return Optional.of(snapshots.get(snapshots.size()-1));
+        }
+
+        File snapshotDirectory = new File(snapshotsDirectory, snapshotName);
+        if (snapshotDirectory.exists())
+            return Optional.of(new LocalSnapshot(snapshotDirectory));
+        else
+            return Optional.empty();
+    }
+
+    @Override
+    public Snapshot rollback(String snapshotName) {
+        return rollback(getSnapshot(snapshotName).get());
+    }
+
+    @Override
+    public Snapshot rollback(Snapshot snapshot) {
         return null;
-    }
-
-    @Override
-    public void rollback(String snapshotName) {
-
-    }
-
-    @Override
-    public void rollback(Snapshot snapshot) {
-
     }
 }

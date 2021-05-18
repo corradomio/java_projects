@@ -35,10 +35,10 @@ public interface VersioningSystem {
 
     // -----------------------------------------------------------------------
 
-    /**
-     * Save the current local snapshot in another directory
-     */
-    void copy(File savedDirectory);
+    // /**
+    //  * Save the current local snapshot in another directory
+    //  */
+    // void copy(File savedDirectory);
 
     // -----------------------------------------------------------------------
 

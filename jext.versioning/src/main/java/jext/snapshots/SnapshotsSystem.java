@@ -1,30 +1,50 @@
 package jext.snapshots;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SnapshotsSystem {
 
     /**
+     * Special snapshot names
+     */
+    String FIRST = "first";
+    String LAST = "last";
+    String CURRENT = "current";
+
+    /**
      * Save the local snapshot in a new subdirectory inside 'snapshotsDirectory'
-     * @return
+     * @return the saved snapshot
      */
     Snapshot save();
 
     /**
-     * List of saved snapshots
+     * Ordered list of saved snapshots
      */
     List<Snapshot> listSnapshots();
 
     /**
-     * Retrieve the specified snapshot
+     * Retrieve the specified snapshot.
+     * Special names:
+     *
+     *      - "first"    first snapshot (it may not exist)
+     *      - "last":    last snapshot  (it may not exist)
+     *      - "current": current snapshot
      */
-    Snapshot getSnapshot(String snapshotName);
+    Optional<Snapshot> getSnapshot(String snapshotName);
 
     /**
+     * Restore the "current" snapshot with the specified snapshot,
+     * and delete the specified and all subsequent snapshots.
+     * Special names:
      *
-     * @param snapshotName
+     *      - "first"    first snapshot (it may not exist)
+     *      - "last":    last snapshot  (it may not exist)
+     *      - "current": current snapshot
+     *
+     * @return the current snapshot
      */
-    void rollback(String snapshotName);
-    void rollback(Snapshot snapshot);
+    Snapshot rollback(String snapshotName);
+    Snapshot rollback(Snapshot snapshot);
 
 }

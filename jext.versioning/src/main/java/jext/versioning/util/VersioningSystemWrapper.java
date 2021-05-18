@@ -38,10 +38,10 @@ public class VersioningSystemWrapper implements VersioningSystem {
         vs.delete();
     }
 
-    @Override
-    public void copy(File savedDirectory) {
-        vs.copy(savedDirectory);
-    }
+    // @Override
+    // public void copy(File savedDirectory) {
+    //     vs.copy(savedDirectory);
+    // }
 
     @Override
     public void addIgnore(String pattern) {

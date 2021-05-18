@@ -36,11 +36,6 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
     // Properties
     // ----------------------------------------------------------------------
 
-    public VersioningSystem setLocalDirectory(File localDirectory) {
-        this.localDirectory = localDirectory;
-        return this;
-    }
-
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
@@ -70,10 +65,10 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
 
     // ----------------------------------------------------------------------
 
-    @Override
-    public void copy(File savedDirectory) {
-        FileUtils.copy(localDirectory, savedDirectory, copyExclude());
-    }
+    // @Override
+    // public void copy(File savedDirectory) {
+    //     FileUtils.copy(localDirectory, savedDirectory, copyExclude());
+    // }
 
     @Override
     public void delete() {
