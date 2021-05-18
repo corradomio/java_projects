@@ -34,8 +34,8 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public SVNVersioningSystem(String surl, Properties properties) {
-        super(surl, properties);
+    public SVNVersioningSystem(String surl, Properties properties, File localDirectory) {
+        super(surl, properties, localDirectory);
         this.svnExclude = FileFilters.or(
             this.localExclude,
             FileFilters.wildcards(SVN));

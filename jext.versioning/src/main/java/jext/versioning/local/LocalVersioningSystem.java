@@ -24,8 +24,8 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public LocalVersioningSystem(String surl, Properties properties) {
-        super(surl, properties);
+    public LocalVersioningSystem(String surl, Properties properties, File localDirectory) {
+        super(surl, properties, localDirectory);
 
         URL url = new URL(surl);
         sourceDirectory = new File(url.getPath());

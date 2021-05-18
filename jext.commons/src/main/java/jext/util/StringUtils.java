@@ -3,6 +3,7 @@ package jext.util;
 import jext.logging.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -94,6 +95,21 @@ public class StringUtils {
                 slist.add(s);
         }
         return slist;
+    }
+
+    public static List<String> asList(Object obj) {
+        if (obj == null)
+            return Collections.emptyList();
+        if (obj instanceof String)
+            return Collections.singletonList((String)obj);
+        if (obj instanceof List)
+            return (List<String>)obj;
+        if (obj instanceof String[])
+            return Arrays.asList((String[]) obj);
+        if (obj instanceof Collection)
+            return new ArrayList<>((Collection)obj);
+        else
+            return Collections.singletonList(obj.toString());
     }
 
     /**

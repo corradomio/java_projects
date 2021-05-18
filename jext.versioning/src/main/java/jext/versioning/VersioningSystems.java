@@ -21,29 +21,18 @@ public abstract class VersioningSystems {
         loadProtocols();
     }
 
-    public static VersioningSystem newInstance(Properties properties) {
-        String surl = properties.getProperty(URL);
-        return newInstance(surl, properties);
-    }
-
     public static VersioningSystem newInstance(Properties properties, File localDirectory) {
         String surl = properties.getProperty(URL);
         return newInstance(surl, properties, localDirectory);
     }
 
     public static VersioningSystem newInstance(String surl, Properties properties, File localDirectory) {
-        VersioningSystem vs = newInstance(surl, properties);
-        vs.setLocalDirectory(localDirectory);
-        return vs;
-    }
-
-    public static VersioningSystem newInstance(String surl, Properties properties) {
         URL url = new URL(surl);
         String protocol = url.getProtocol();
         if (!factories.containsKey(protocol))
             throw new VersioningSystemException("Unsupported protocol in " + surl);
         VersioningSystemFactory vsfactory = factories.get(protocol);
-        return vsfactory.newInstance(surl, properties);
+        return vsfactory.newInstance(surl, properties, localDirectory);
     }
 
     private static void loadProtocols() {

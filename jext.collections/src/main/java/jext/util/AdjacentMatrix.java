@@ -5,6 +5,9 @@ package jext.util;
     https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4009766/
  */
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AdjacentMatrix {
 
     public interface Callable {
@@ -37,7 +40,8 @@ public class AdjacentMatrix {
     public AdjacentMatrix() { }
 
     public AdjacentMatrix add(String i, String j) {
-        vertices.addThis(i).add(j);
+        vertices.add(i);
+        vertices.add(j);
         edges.add(new Edge(i, j));
         return this;
     }

@@ -18,7 +18,7 @@ public class CheckSnapshots {
         config.localDirectory = localDirectory;
         config.snapshotsDirectory = new File(localDirectory, ".spl\\snapshots");
         config.properties = new Properties();
-        config.properties.setProperty("exclude", "local,.spl,.*");
+        config.properties.setProperty("exclude", "local,.*");
         config.addServiceFile(new File(localDirectory, ".spl/project-info.json"));
         config.addServiceFile(new File(localDirectory, ".spl/source-info.json"));
 

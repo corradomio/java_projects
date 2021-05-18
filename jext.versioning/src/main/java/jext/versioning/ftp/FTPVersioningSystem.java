@@ -20,8 +20,8 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public FTPVersioningSystem(String surl, Properties properties) {
-        super(surl, properties);
+    public FTPVersioningSystem(String surl, Properties properties, File localDirectory) {
+        super(surl, properties, localDirectory);
     }
 
     // ----------------------------------------------------------------------

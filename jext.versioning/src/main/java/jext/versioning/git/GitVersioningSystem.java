@@ -30,8 +30,8 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public GitVersioningSystem(String surl, Properties properties) {
-        super(surl, properties);
+    public GitVersioningSystem(String surl, Properties properties, File localDirectory) {
+        super(surl, properties, localDirectory);
         this.gitExclude = FileFilters.or(
             this.localExclude,
             FileFilters.wildcards(GIT));

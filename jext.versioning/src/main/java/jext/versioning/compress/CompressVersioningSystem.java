@@ -24,8 +24,8 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public CompressVersioningSystem(String surl, Properties properties) {
-        super(surl, properties);
+    public CompressVersioningSystem(String surl, Properties properties, File localDirectory) {
+        super(surl, properties, localDirectory);
         String path = url.getPath();
         compressedFile = new File(path);
         base = url.getFragment();
