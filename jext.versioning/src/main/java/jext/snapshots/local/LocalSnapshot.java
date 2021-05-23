@@ -16,6 +16,7 @@ public class LocalSnapshot implements Snapshot {
 
     private File directory;
     private String name;
+    private int snapshotId;
     private long timestamp;
     private SnapshotInfo sinfo;
 
@@ -24,12 +25,15 @@ public class LocalSnapshot implements Snapshot {
     // ----------------------------------------------------------------------
 
     LocalSnapshot(File directory) {
-        this(directory, directory.getName());
+        this.directory = directory;
+        this.name = directory.getName();
+        this.snapshotId = Integer.parseInt(this.name);
     }
 
-    LocalSnapshot(File directory, String name) {
+    LocalSnapshot(File directory, String name, int snapshotId) {
         this.directory = directory;
         this.name = name;
+        this.snapshotId = snapshotId;
     }
 
     // ----------------------------------------------------------------------
@@ -43,7 +47,7 @@ public class LocalSnapshot implements Snapshot {
 
     @Override
     public int getId() {
-        return Integer.parseInt(getName());
+        return snapshotId;
     }
 
     @Override

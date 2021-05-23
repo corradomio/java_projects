@@ -31,6 +31,8 @@ public interface SnapshotsSystem {
      *      - Snapshot.CURRENT      current snapshot
      */
     Optional<Snapshot> getSnapshot(String snapshotName);
+    Optional<Snapshot> getSnapshot(int snapshotId);
+    Snapshot getSnapshot();
 
     /**
      * Restore the "current" snapshot with the specified snapshot,

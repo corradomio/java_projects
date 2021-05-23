@@ -118,9 +118,33 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     }
 
     @Override
+    public Snapshot getSnapshot() {
+        int snapshotId = getNextSnapshotId();
+        return new LocalSnapshot(localDirectory, Snapshot.CURRENT, snapshotId);
+    }
+
+    private int getNextSnapshotId() {
+        File[] content = snapshotsDirectory.listFiles();
+        if (content == null)
+            return 0;
+        else
+            return content.length;
+    }
+
+    @Override
+    public Optional<Snapshot> getSnapshot(int snapshotId) {
+        List<Snapshot> snapshots = listSnapshots();
+        for (Snapshot snapshot : snapshots)
+            if (snapshot.getId() == snapshotId)
+                return Optional.of(snapshot);
+
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Snapshot> getSnapshot(String snapshotName) {
         if (Snapshot.CURRENT.equals(snapshotName))
-            return Optional.of(new LocalSnapshot(localDirectory, Snapshot.CURRENT));
+            return Optional.of(getSnapshot());
 
         List<Snapshot> snapshots = listSnapshots();
         int nSnapshots = snapshots.size();
@@ -154,6 +178,6 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
 
     @Override
     public Snapshot rollback(Snapshot snapshot) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
