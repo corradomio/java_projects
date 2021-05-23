@@ -16,6 +16,7 @@ public class LocalSnapshot implements Snapshot {
 
     private File directory;
     private String name;
+    private long timestamp;
     private SnapshotInfo sinfo;
 
     // ----------------------------------------------------------------------
@@ -40,23 +41,36 @@ public class LocalSnapshot implements Snapshot {
         return name;
     }
 
+    @Override
+    public int getId() {
+        return Integer.parseInt(getName());
+    }
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public SnapshotInfo getInfo() {
+        check();
+        return sinfo;
+    }
+
     // ----------------------------------------------------------------------
     // Comparison
     // ----------------------------------------------------------------------
 
     @Override
     public boolean equalsTo(Snapshot snapshot) {
-        check();
-
         LocalSnapshot that = (LocalSnapshot) snapshot;
-        return this.sinfo.equalsTo(that.sinfo);
+        return this.getInfo().equalsTo(that.getInfo());
     }
 
     @Override
     public SnapshotDifferences compareWith(Snapshot snapshot) {
         check();
         LocalSnapshot that = (LocalSnapshot) snapshot;
-        return this.sinfo.compareWith(that.sinfo);
+        return this.getInfo().compareWith(that.getInfo());
     }
 
     // ----------------------------------------------------------------------
@@ -85,6 +99,7 @@ public class LocalSnapshot implements Snapshot {
         try {
             File serviceFile = new File(directory, SERVICE_FILE);
             sinfo = JSONUtils.load(serviceFile, SnapshotInfo.class);
+            timestamp = serviceFile.lastModified();
         } catch (IOException e) {
             Logger.getLogger(Snapshot.class).error(e, e);
             sinfo = new SnapshotInfo();

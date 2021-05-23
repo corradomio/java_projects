@@ -6,11 +6,9 @@ import java.util.Optional;
 public interface SnapshotsSystem {
 
     /**
-     * Special snapshot names
+     * Delete all snapshots
      */
-    String FIRST = "first";
-    String LAST = "last";
-    String CURRENT = "current";
+    void delete();
 
     /**
      * Save the local snapshot in a new subdirectory inside 'snapshotsDirectory'
@@ -19,7 +17,7 @@ public interface SnapshotsSystem {
     Snapshot save();
 
     /**
-     * Ordered list of saved snapshots
+     * id- Ordered list of saved snapshots
      */
     List<Snapshot> listSnapshots();
 
@@ -27,9 +25,10 @@ public interface SnapshotsSystem {
      * Retrieve the specified snapshot.
      * Special names:
      *
-     *      - "first"    first snapshot (it may not exist)
-     *      - "last":    last snapshot  (it may not exist)
-     *      - "current": current snapshot
+     *      - Snapshot.FIRST        first snapshot (it may not exist)
+     *      - Snapshot.LAST         last snapshot  (it may not exist)
+     *      - Snapshot.PREVIOUS     previous to last snapshot  (it may not exist)
+     *      - Snapshot.CURRENT      current snapshot
      */
     Optional<Snapshot> getSnapshot(String snapshotName);
 

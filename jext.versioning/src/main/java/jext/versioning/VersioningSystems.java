@@ -2,6 +2,8 @@ package jext.versioning;
 
 import jext.logging.Logger;
 import jext.net.URL;
+import jext.util.FileUtils;
+import org.eclipse.jgit.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +29,9 @@ public abstract class VersioningSystems {
     }
 
     public static VersioningSystem newInstance(String surl, Properties properties, File localDirectory) {
+        if (StringUtils.isEmptyOrNull(surl))
+            surl = "novs:///" + FileUtils.getAbsolutePath(localDirectory);
+
         URL url = new URL(surl);
         String protocol = url.getProtocol();
         if (!factories.containsKey(protocol))

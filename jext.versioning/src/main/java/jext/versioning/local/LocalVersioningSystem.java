@@ -16,6 +16,7 @@ import java.util.Properties;
 
 public class LocalVersioningSystem extends AbstractVersioningSystem {
 
+    private static final String DEFAULT_EXCLUDES = ".*";
     private static final String EXCLUDE = "exclude";
     private FileFilter excludeFilter;
     private File sourceDirectory;
@@ -26,8 +27,6 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
 
     public LocalVersioningSystem(String surl, Properties properties, File localDirectory) {
         super(surl, properties, localDirectory);
-
-        URL url = new URL(surl);
         sourceDirectory = new File(url.getPath());
         composeExcludeFilter();
     }
@@ -42,16 +41,25 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
         List<String> ignorePatterns = FileUtils.toStrings(ignoreFile);
         List<String> excludePatterns = StringUtils.split(properties.getProperty(EXCLUDE, StringUtils.empty()), ",");
 
+        this.excludeFilter = FileFilters.wildcards(DEFAULT_EXCLUDES);
+
         if (excludePatterns.isEmpty() && ignorePatterns.isEmpty())
-            this.excludeFilter = FalseFileFilter.INSTANCE;
+            ;
         else if (ignorePatterns.isEmpty()) {
-            this.excludeFilter = new WildcardFileFilter(excludePatterns);
+            this.excludeFilter = FileFilters.or(
+                this.excludeFilter,
+                new WildcardFileFilter(excludePatterns)
+            );
         }
         else if (excludePatterns.isEmpty()) {
-            this.excludeFilter = new WildcardFileFilter(ignorePatterns);
+            this.excludeFilter = FileFilters.or(
+                this.excludeFilter,
+                new WildcardFileFilter(ignorePatterns)
+            );
         }
         else {
             this.excludeFilter = FileFilters.or(
+                this.excludeFilter,
                 new WildcardFileFilter(excludePatterns),
                 new WildcardFileFilter(ignorePatterns)
             );

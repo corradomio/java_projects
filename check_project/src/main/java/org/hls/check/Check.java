@@ -17,20 +17,6 @@ public class Check {
         CacheManager.configure();
         Parallel.setup();
 
-        Project p = Projects.newProject(new File(
-            // "D:\\SPLGroup\\BTProjects\\ForSalwa"
-            // "D:\\SPLGroup\\BTProjects\\cocome-maven-project"
-            // "D:\\SPLGroup\\example_repo\\deeplearning4j"
-            "D:\\SPLGroup\\example_repo\\hibernate-orm-master"
-            // "D:\\Projects\\java\\strange"
-            ), PropertiesUtils.empty()
-        ) ;
-
-        String name = p.getName().getName();
-
-        ProjectDump.yaml(p, new File(name + ".yaml"), ProjectDump.NO_TYPES | ProjectDump.NO_LIBRARIES);
-
-        System.out.println("Done");
-        Parallel.shutdown();
+        System.out.println(String.format("1-%s-2", "ciccio"));
     }
 }

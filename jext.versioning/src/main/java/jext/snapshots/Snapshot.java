@@ -1,8 +1,14 @@
 package jext.snapshots;
 
-import java.util.Optional;
-
 public interface Snapshot {
+
+    /**
+     * Special snapshot names
+     */
+    String FIRST = "$first";
+    String PREVIOUS = "$previous";
+    String LAST = "$last";
+    String CURRENT = "$current";
 
     enum Status {
         ADDED,
@@ -11,6 +17,10 @@ public interface Snapshot {
     }
 
     String getName();
+
+    int getId();
+
+    long getTimestamp();
 
     /**
      * Delete the current snapshot

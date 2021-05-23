@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 
 public class ProjectInfo extends LinkedHashMap<String, Object> {
 
-    private static final String TIMESTAMP = "timestamp";
     private static final String VERSION = "version";
     private static final String VERSION_NUMBER = "1.1";
 
@@ -18,7 +17,6 @@ public class ProjectInfo extends LinkedHashMap<String, Object> {
 
     public void init() {
         put(VERSION, VERSION_NUMBER);
-        put(TIMESTAMP, System.currentTimeMillis());
     }
 
     public boolean hasValidVersion() {

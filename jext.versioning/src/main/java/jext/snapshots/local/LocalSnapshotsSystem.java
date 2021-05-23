@@ -9,6 +9,7 @@ import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 public class LocalSnapshotsSystem implements SnapshotsSystem {
 
+    private static final String DEFAULT_EXCLUDES = ".*";
     private static final String EXCLUDE = "exclude";
     static final String SERVICE_FILE = ".spl/source-info.json";
 
@@ -41,18 +43,25 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     }
 
     private void makeExcludeFilter() {
-        if (!properties.containsKey(EXCLUDE)) {
-            excludeFilter = FileFilters.none();
+        excludeFilter = FileFilters.wildcards(DEFAULT_EXCLUDES);
+        if (!properties.containsKey(EXCLUDE))
             return;
-        }
 
         List<String> patterns = StringUtils.split(properties.getProperty(EXCLUDE), ",");
-        excludeFilter = FileFilters.wildcards(patterns);
+        excludeFilter = FileFilters.or(
+            FileFilters.wildcards(patterns),
+            excludeFilter
+        );
     }
 
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
+
+    @Override
+    public void delete() {
+        FileUtils.delete(snapshotsDirectory);
+    }
 
     @Override
     public Snapshot save() {
@@ -80,12 +89,15 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
             File savedFile = new File(snapshotDirectory, relativePath);
             FileUtils.copy(serviceFile, savedFile);
         }
+
+
     }
 
     private File selectDirectory() {
         File snapshotDirectory;
         for (int i=0; true; ++i) {
-            snapshotDirectory = new File(snapshotsDirectory, "v" + i);
+            String name = String.format("%04d", i);
+            snapshotDirectory = new File(snapshotsDirectory, name);
             if (!snapshotDirectory.exists())
                 break;
         }
@@ -97,35 +109,42 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
         return FileUtils.listFiles(snapshotsDirectory)
             .stream()
             .map(LocalSnapshot::new)
+            .sorted((o1, o2) -> {
+                long t1 = o1.getTimestamp();
+                long t2 = o2.getTimestamp();
+                return Long.compare(t1, t2);
+            })
             .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Snapshot> getSnapshot(String snapshotName) {
-        if (CURRENT.equals(snapshotName))
-            return Optional.of(new LocalSnapshot(localDirectory, CURRENT));
+        if (Snapshot.CURRENT.equals(snapshotName))
+            return Optional.of(new LocalSnapshot(localDirectory, Snapshot.CURRENT));
 
-        if (FIRST.equals(snapshotName)) {
-            List<Snapshot> snapshots = listSnapshots();
-            if (snapshots.isEmpty())
-                return Optional.empty();
-            else
+        List<Snapshot> snapshots = listSnapshots();
+        int nSnapshots = snapshots.size();
+
+        if (Snapshot.FIRST.equals(snapshotName)) {
+            if (nSnapshots != 0)
                 return Optional.of(snapshots.get(0));
         }
 
-        if (LAST.equals(snapshotName)) {
-            List<Snapshot> snapshots = listSnapshots();
-            if (snapshots.isEmpty())
-                return Optional.empty();
-            else
-                return Optional.of(snapshots.get(snapshots.size()-1));
+        if (Snapshot.LAST.equals(snapshotName)) {
+            if (nSnapshots != 0)
+                return Optional.of(snapshots.get(nSnapshots-1));
         }
 
-        File snapshotDirectory = new File(snapshotsDirectory, snapshotName);
-        if (snapshotDirectory.exists())
-            return Optional.of(new LocalSnapshot(snapshotDirectory));
-        else
-            return Optional.empty();
+        if (Snapshot.PREVIOUS.equals(snapshotName)) {
+            if (nSnapshots >= 2)
+                return Optional.of(snapshots.get(nSnapshots-2));
+        }
+
+        for (Snapshot snapshot : snapshots)
+            if (snapshot.getName().equals(snapshotName))
+                return Optional.of(snapshot);
+
+        return Optional.empty();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package jext.sourcecode.project;
 
 import jext.util.JSONUtils;
+import jext.util.MapUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +12,6 @@ public class SourceInfo {
 
     private static final String VERSION_NUMBER = "1.1";
 
-    public long timestamp;
     public String version;
 
     public long count;
@@ -28,8 +28,17 @@ public class SourceInfo {
 
     public void init() {
         this.modules = new TreeMap<>();
-        this.timestamp = System.currentTimeMillis();
         this.version = VERSION_NUMBER;
+    }
+
+    public Map<String, Object> getCounts() {
+        return MapUtils.asMap(
+            "count", count,
+            "bytes", bytes,
+            "totalLines", totalLines,
+            "blankLines", blankLines,
+            "codeLines", codeLines
+        );
     }
 
     // executed in parallel!
@@ -41,11 +50,12 @@ public class SourceInfo {
         codeLines += info.codeLines;
     }
 
-    public synchronized void addDigest(String moduleName, String sourceName, String digest) {
-        if (!modules.containsKey(moduleName))
-            modules.put(moduleName, new TreeMap<>());
-        Map<String, String> sdmap = modules.get(moduleName);
-        sdmap.put(sourceName, digest);
+    public synchronized void addDigest(String modulePath, String sourcePath, String digest) {
+        if (!modules.containsKey(modulePath)) {
+            modules.put(modulePath, new TreeMap<>());
+        }
+        Map<String, String> sdmap = modules.get(modulePath);
+        sdmap.put(sourcePath, digest);
     }
 
     public boolean hasValidVersion() {
