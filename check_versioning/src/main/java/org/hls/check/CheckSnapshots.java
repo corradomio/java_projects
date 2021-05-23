@@ -1,11 +1,13 @@
 package org.hls.check;
 
 import jext.logging.Logger;
+import jext.snapshots.Snapshot;
 import jext.snapshots.SnapshotsConfiguration;
 import jext.snapshots.SnapshotsSystem;
 import jext.snapshots.SnapshotsSystems;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Properties;
 
 public class CheckSnapshots {
@@ -24,7 +26,8 @@ public class CheckSnapshots {
 
         SnapshotsSystem ss = SnapshotsSystems.newInstance(config);
 
-        ss.save();
+        Snapshot s = ss.getSnapshot();
+        System.out.println(s.getId());
 
         ss.listSnapshots()
             .forEach(snapshot -> {
