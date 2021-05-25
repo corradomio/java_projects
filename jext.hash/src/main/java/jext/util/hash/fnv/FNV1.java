@@ -1,7 +1,7 @@
-package jext.hash.fnv;
+package jext.util.hash.fnv;
 
-import jext.hash.Hash;
-import jext.hash.HashAlgorithm;
+import jext.util.hash.Hash;
+import jext.util.hash.HashAlgorithm;
 
 public class FNV1 implements HashAlgorithm {
 

@@ -1,4 +1,4 @@
-package jext.hash.fnv;
+package jext.util.hash.fnv;
 
 import java.math.BigInteger;
 

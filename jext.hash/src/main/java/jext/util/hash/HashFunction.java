@@ -1,4 +1,4 @@
-package jext.hash;
+package jext.util.hash;
 
 public interface HashAlgorithm {
 
@@ -6,6 +6,6 @@ public interface HashAlgorithm {
 
     void update(byte[] data, int offset, int length);
 
-    Hash hash();
+    HashCode hash();
 
 }

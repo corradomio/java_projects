@@ -1,4 +1,4 @@
-package jext.hash.murmur;
+package jext.util.hash.murmur;
 
 public class MurmurHash128 {
 

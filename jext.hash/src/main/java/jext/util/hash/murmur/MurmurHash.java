@@ -1,4 +1,4 @@
-package jext.hash.murmur;
+package jext.util.hash.murmur;
 
 public class MurmurHash {
     // all methods static; private constructor.
