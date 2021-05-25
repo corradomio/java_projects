@@ -81,6 +81,21 @@ public class StringUtils {
         return a;
     }
 
+    public static List<String> asList(Object obj) {
+        if (obj == null)
+            return Collections.emptyList();
+        if (obj instanceof String)
+            return Collections.singletonList((String)obj);
+        if (obj instanceof List)
+            return (List<String>)obj;
+        if (obj instanceof String[])
+            return Arrays.asList((String[]) obj);
+        if (obj instanceof Collection)
+            return new ArrayList<>((Collection)obj);
+        else
+            return Collections.singletonList(obj.toString());
+    }
+
     /**
      * Collect only not empty strings
      */
@@ -95,21 +110,6 @@ public class StringUtils {
                 slist.add(s);
         }
         return slist;
-    }
-
-    public static List<String> asList(Object obj) {
-        if (obj == null)
-            return Collections.emptyList();
-        if (obj instanceof String)
-            return Collections.singletonList((String)obj);
-        if (obj instanceof List)
-            return (List<String>)obj;
-        if (obj instanceof String[])
-            return Arrays.asList((String[]) obj);
-        if (obj instanceof Collection)
-            return new ArrayList<>((Collection)obj);
-        else
-            return Collections.singletonList(obj.toString());
     }
 
     /**
@@ -284,25 +284,6 @@ public class StringUtils {
      */
     public static String digest(String s) {
         return Integer.toHexString(s.hashCode());
-        // try {
-        //     MessageDigest md = MessageDigest.getInstance("MD5");
-        //     byte[] data = s.getBytes();
-        //
-        //     md.update(data, 0, data.length);
-        //     byte[] digest = md.digest();
-        //
-        //     int k = digest.length/2;
-        //     byte[] digest64 = new byte[k];
-        //
-        //     for (int i=0; i<k; ++i)
-        //         digest64[i] = (byte)(digest[i] ^ digest[k+i]);
-        //
-        //     return DatatypeConverter.printHexBinary(digest64);
-        // }
-        // catch (Exception e) {
-        //     logger.error(e, e);
-        //     return "0";
-        // }
     }
 
     // ----------------------------------------------------------------------

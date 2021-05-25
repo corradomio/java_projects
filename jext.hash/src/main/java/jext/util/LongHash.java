@@ -1,4 +1,4 @@
-package jext.util.hash;
+package jext.util;
 
 import java.util.Collection;
 import java.util.Iterator;

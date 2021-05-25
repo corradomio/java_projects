@@ -1,2 +1,10 @@
-package org.hls.check;public class CheckHash {
+package org.hls.check;
+
+import java.security.MessageDigest;
+
+public class CheckHash {
+
+    public static void main(String[] args) {
+
+    }
 }

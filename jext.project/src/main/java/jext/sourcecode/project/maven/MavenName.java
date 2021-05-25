@@ -37,10 +37,9 @@ public class MavenName implements Name {
         return null;
     }
 
-    // @Override
-    // public String[] getParts() {
-    //     return coords.toString().split(":");
-    // }
+    // ----------------------------------------------------------------------
+    // Override
+    // ----------------------------------------------------------------------
 
     @Override
     public int compareTo(Name that) {

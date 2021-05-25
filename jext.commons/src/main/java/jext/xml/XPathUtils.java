@@ -476,6 +476,9 @@ public class XPathUtils {
      * @return
      */
     public static Node selectNode(Element elt, String xpath, boolean create, Properties params) {
+        if (elt == null)
+            return null;
+
         Document owner = getOwnerDocument(elt);
         synchronized (owner) {
             Node current = elt;

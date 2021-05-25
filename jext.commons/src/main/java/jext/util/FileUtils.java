@@ -19,6 +19,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,11 +38,18 @@ public class FileUtils {
     // Digest
     // ----------------------------------------------------------------------
 
+    private static MessageDigest algorithm() throws NoSuchAlgorithmException {
+        return MessageDigest.getInstance("MD5");
+    }
+
     public static String digest(File file) {
         if (!file.exists() || !file.isFile())
             return "0";
-        try(InputStream in = new FileInputStream(file)) {
-            return digest(in);
+
+        try {
+            MessageDigest md = algorithm();
+            update(md, file);
+            return toDigest(md);
         }
         catch (Exception e) {
             logger.error(e, e);
@@ -49,23 +57,35 @@ public class FileUtils {
         }
     }
 
-    public static String digest(InputStream in) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+    // public static String digest(InputStream in) {
+    //     try {
+    //         MessageDigest md = algorithm();
+    //         update(md, in);
+    //         return toDigest(md);
+    //     }
+    //     catch (Exception e) {
+    //         logger.error(e, e);
+    //         return "0";
+    //     }
+    // }
+
+    private static void update(MessageDigest md, File file) throws IOException {
+        try(InputStream in = new FileInputStream(file)) {
+            update(md, in);
+        }
+    }
+
+    private static void update(MessageDigest md, InputStream in) throws IOException {
             byte[] buffer = new byte[1024];
             int length;
-
             while ((length = in.read(buffer)) > 0)
                 md.update(buffer, 0, length);
+    }
 
+    private static String toDigest(MessageDigest md) {
             byte[] digest = md.digest();
             return DatatypeConverter.printHexBinary(digest);
         }
-        catch (Exception e) {
-            logger.error(e, e);
-            return "0";
-        }
-    }
 
     // ----------------------------------------------------------------------
     // File properties
@@ -559,27 +579,32 @@ public class FileUtils {
     }
 
     public static void delete(File sourceFile, File destinationFile, FileFilter exclude) {
+        if (exclude.accept(destinationFile))
+            return;
+        if (exclude.accept(sourceFile))
+            return;
+
         // sourceFile NOT exist  ->  destinationFile EXISTS
         if (!sourceFile.exists() && destinationFile.exists()) {
             delete(destinationFile);
             return;
         }
         // sourceFile EXISTS BUT it is excluded -> destinationFile EXISTS
-        if (sourceFile.exists() && exclude.accept(sourceFile) && destinationFile.exists()) {
-            delete(destinationFile);
-            return;
-        }
+        // if (sourceFile.exists() && exclude.accept(sourceFile) && destinationFile.exists()) {
+        //     delete(destinationFile);
+        //     return;
+        // }
 
         if (!destinationFile.isDirectory()) {
             return;
         }
 
-        // compare the directory contents
+        // compare directory contents
         List<File> files = asList(destinationFile.listFiles(File::isFile));
         for (File file : files)
             delete(new File(sourceFile, file.getName()), file, exclude);
 
-        // compare the sub directories
+        // compare sub directories
         List<File> sdirs = asList(destinationFile.listFiles(File::isDirectory));
         for (File sdir : sdirs)
             delete(new File(sourceFile, sdir.getName()), sdir, exclude);

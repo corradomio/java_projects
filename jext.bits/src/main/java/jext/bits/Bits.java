@@ -41,15 +41,15 @@ public class Bits {
     public static int shift(int a, int nbits) {
         if (nbits > 0)
             return a << nbits;
-        nbits = -nbits;
-        return a >>> nbits;
+        else
+            return a >>> (-nbits);
     }
 
     public static int signed_shift(int a, int nbits) {
         if (nbits > 0)
             return a << nbits;
-        nbits = -nbits;
-        return a >> nbits;
+        else
+        return a >> (-nbits);
     }
 
     /**
@@ -94,15 +94,15 @@ public class Bits {
     public static long shift(long a, int nbits) {
         if (nbits > 0)
             return a << nbits;
-        nbits = -nbits;
-        return a >>> nbits;
+        else
+        return a >>> (-nbits);
     }
 
     public static long signed_shift(long a, int nbits) {
         if (nbits > 0)
             return a << nbits;
-        nbits = -nbits;
-        return a >> nbits;
+        else
+            return a >> (-nbits);
     }
 
     public static long rotate(long a, int nbits) {

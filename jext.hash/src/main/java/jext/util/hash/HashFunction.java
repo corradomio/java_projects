@@ -1,11 +1,17 @@
 package jext.util.hash;
 
-public interface HashAlgorithm {
+public interface HashFunction {
 
-    void reset();
+    Hasher newHasher();
 
-    void update(byte[] data, int offset, int length);
+    /** newHasher().putBytes(input).hash() */
+    default HashCode hashBytes(byte[] input) {
+        return newHasher().putBytes(input).hash();
+    }
 
-    HashCode hash();
+    /** newHasher().putBytes(input, off, len).hash() */
+    default HashCode hashBytes(byte[] input, int off, int len) {
+        return newHasher().putBytes(input, off, len).hash();
+    }
 
 }

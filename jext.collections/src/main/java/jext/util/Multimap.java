@@ -13,4 +13,6 @@ public interface Multimap<K, V> {
     Set<K> keySet();
 
     int size();
+
+    void clear();
 }

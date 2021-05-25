@@ -113,6 +113,11 @@ public class DelayedTimer extends Thread {
             try {
                 start = System.currentTimeMillis();
 
+                List<Job> jobs;
+                synchronized (DelayedTimer.class) {
+                    jobs = new ArrayList<>(this.jobs);
+                }
+
                 for (Job job : jobs)
                     if (!terminate)
                         job.call();
@@ -129,10 +134,14 @@ public class DelayedTimer extends Thread {
     }
 
     private void submitJob(long timeout, Callback callback) {
+        synchronized (DelayedTimer.class) {
         jobs.add(new Job(timeout, callback));
+    }
     }
 
     private void deleteJob(Callback callback) {
+        synchronized (DelayedTimer.class) {
         jobs.remove(callback);
     }
+}
 }

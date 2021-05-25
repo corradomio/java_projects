@@ -57,6 +57,8 @@ public class MethodNameObject extends ObjectName implements MethodName {
     }
 
     // ----------------------------------------------------------------------
+    // Override
+    // ----------------------------------------------------------------------
 
     @Override
     public int hashCode() {
@@ -88,8 +90,6 @@ public class MethodNameObject extends ObjectName implements MethodName {
             return this.getSignature().compareTo(that.getSignature());
         return 0;
     }
-
-    // ----------------------------------------------------------------------
 
     @Override
     public String toString() {

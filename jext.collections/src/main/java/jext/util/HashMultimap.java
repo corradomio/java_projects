@@ -23,6 +23,7 @@ public class HashMultimap<K, V> implements Multimap<K, V> {
         return map.getOrDefault(key, defval);
     }
 
+
     @Override
     public Set<K> keySet() {
         return map.keySet();
@@ -31,5 +32,10 @@ public class HashMultimap<K, V> implements Multimap<K, V> {
     @Override
     public int size() {
         return map.size();
+    }
+
+    @Override
+    public void clear() {
+        map.clear();
     }
 }
