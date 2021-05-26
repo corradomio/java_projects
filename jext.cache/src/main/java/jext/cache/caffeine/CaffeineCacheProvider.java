@@ -3,7 +3,7 @@ package jext.cache.caffeine;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
-import jext.time.TimeUtils;
+import jext.util.TimeUtils;
 
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -19,11 +19,11 @@ public class CaffeineCacheProvider implements CacheProvider {
             cacheBuilder.maximumSize(Long.parseLong(properties.getProperty(CAPACITY)));
         }
         if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
-            long millis = TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_WRITE));
+            long millis = TimeUtils.parse(properties.getProperty(EXPIRE_AFTER_WRITE));
             cacheBuilder.expireAfterWrite(millis, TimeUnit.MILLISECONDS);
         }
         if (properties.containsKey(EXPIRE_AFTER_ACCESS)) {
-            long millis = TimeUtils.toMillis(properties.getProperty(EXPIRE_AFTER_ACCESS));
+            long millis = TimeUtils.parse(properties.getProperty(EXPIRE_AFTER_ACCESS));
             cacheBuilder.expireAfterAccess(millis, TimeUnit.MILLISECONDS);
         }
         if (properties.containsKey(WEAK_VALUES)) {

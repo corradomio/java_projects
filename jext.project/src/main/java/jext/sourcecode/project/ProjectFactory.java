@@ -7,6 +7,7 @@ import jext.name.PathName;
 import jext.sourcecode.project.ant.AntProject;
 import jext.sourcecode.project.eclipse.EclipseProject;
 import jext.sourcecode.project.gradle.GradleProject;
+import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.maven.MavenProject;
 import jext.sourcecode.project.simple.SimpleProject;
 import jext.sourcecode.resources.libraries.JavaLibraryFinder;
@@ -88,6 +89,8 @@ public class ProjectFactory {
             project = new EclipseProject(projectName, projectHome, properties);
         else if (SimpleProject.TYPE.equals(projectType))
             project = new SimpleProject(projectName, projectHome, properties);
+        else if (InfoProject.TYPE.equals(projectType))
+            project = new InfoProject(projectName, projectHome, properties);
         else if (SimpleProject.UNKNOWN.equals(projectType))
             project = new SimpleProject(projectName, projectHome, properties);
         else {
@@ -132,7 +135,7 @@ public class ProjectFactory {
 
     public static Project newProject(File projectHome, Properties properties) {
         String projectName = projectHome.getName();
-        String repositoryName = projectHome.getParentFile().getName();
+        String repositoryName = projectHome.getAbsoluteFile().getParentFile().getName();
         return newProject(new PathName(repositoryName, projectName), projectHome, properties);
     }
 

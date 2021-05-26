@@ -1,13 +1,13 @@
 package jext.security;
 
 import jext.logging.Logger;
-import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Base64;
 
 public class StringCipher {
 
@@ -46,7 +46,7 @@ public class StringCipher {
         try {
             Cipher cipher = getInstance(password, true);
             byte[] encryptedData = cipher.doFinal(value.getBytes());
-            return AES_ + new String(Base64.encodeBase64(encryptedData)).trim();
+            return AES_ + new String(Base64.getEncoder().encode(encryptedData)).trim();
         }
         catch (Exception e) {
             return value;
@@ -59,7 +59,7 @@ public class StringCipher {
         try {
             byte[] encryptedData = encrypted.substring(AES_.length()).getBytes();
             Cipher cipher = getInstance(password, false);
-            byte[] value = cipher.doFinal(Base64.decodeBase64(encryptedData));
+            byte[] value = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
             return new String(value);
         }
         catch (Exception e) {

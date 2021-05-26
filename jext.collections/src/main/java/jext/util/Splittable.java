@@ -1,2 +1,6 @@
-package jext.util;public class Splittable {
+package jext.util;
+
+public interface Splittable {
+
+    String[] split();
 }

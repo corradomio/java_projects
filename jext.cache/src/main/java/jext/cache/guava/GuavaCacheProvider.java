@@ -3,7 +3,7 @@ package jext.cache.guava;
 import com.google.common.cache.CacheBuilder;
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
-import jext.time.TimeUtils;
+import jext.util.TimeUtils;
 import jext.util.PropertiesUtils;
 
 import java.util.Properties;
@@ -20,11 +20,11 @@ public class GuavaCacheProvider implements CacheProvider {
             builder.maximumSize(capacity);
         }
         if (properties.containsKey(EXPIRE_AFTER_ACCESS)) {
-            long duration = TimeUtils.toMillis(PropertiesUtils.getString(properties, EXPIRE_AFTER_ACCESS));
+            long duration = TimeUtils.parse(PropertiesUtils.getString(properties, EXPIRE_AFTER_ACCESS));
             builder.expireAfterAccess(duration, TimeUnit.MILLISECONDS);
         }
         if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
-            long duration = TimeUtils.toMillis(PropertiesUtils.getString(properties, EXPIRE_AFTER_WRITE));
+            long duration = TimeUtils.parse(PropertiesUtils.getString(properties, EXPIRE_AFTER_WRITE));
             builder.expireAfterWrite(duration, TimeUnit.MILLISECONDS);
         }
         if (properties.containsKey(WEAK_VALUES)) {

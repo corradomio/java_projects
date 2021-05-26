@@ -3,6 +3,7 @@ package jext.sourcecode.project;
 import jext.sourcecode.project.ant.AntProject;
 import jext.sourcecode.project.eclipse.EclipseProject;
 import jext.sourcecode.project.gradle.GradleProject;
+import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.maven.MavenProject;
 import jext.sourcecode.project.simple.SimpleProject;
 import jext.sourcecode.project.util.CountNames;
@@ -44,6 +45,8 @@ public class GuessProjectType {
         List<File> directories;
         String projectType;
 
+        if (projectHome.isFile() && projectHome.getName().endsWith(".json"))
+            return InfoProject.TYPE;
         {
             // directories = Collections.singletonList(projectHome);
             // projectType = findMostFrequentType(directories, props);

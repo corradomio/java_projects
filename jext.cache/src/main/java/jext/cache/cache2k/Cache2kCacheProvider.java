@@ -2,7 +2,7 @@ package jext.cache.cache2k;
 
 import jext.cache.Cache;
 import jext.cache.CacheProvider;
-import jext.time.TimeUtils;
+import jext.util.TimeUtils;
 import jext.util.PropertiesUtils;
 import org.cache2k.Cache2kBuilder;
 
@@ -20,7 +20,7 @@ public class Cache2kCacheProvider implements CacheProvider {
             builder.entryCapacity(capacity);
         }
         if (properties.containsKey(EXPIRE_AFTER_WRITE)) {
-            long duration = TimeUtils.toMillis(PropertiesUtils.getString(properties, EXPIRE_AFTER_WRITE));
+            long duration = TimeUtils.parse(PropertiesUtils.getString(properties, EXPIRE_AFTER_WRITE));
             builder.expireAfterWrite(duration, TimeUnit.MILLISECONDS);
         }
 
