@@ -26,11 +26,11 @@ public class SourceRoots extends AbstractList<SourceRoot> {
     }
 
     public boolean add(Source source) {
-        Optional<File> optSourceRoot = source.getSourceRoot();
+        Optional<String> optSourceRoot = source.getSourceRoot();
         if (!optSourceRoot.isPresent())
             return false;
 
-        File sourceRoot = optSourceRoot.get();
+        File sourceRoot = new File(module.getModuleHome(), optSourceRoot.get());
         if (!rootsMap.containsKey(sourceRoot)) {
             SourceRoot sr = new SourceRoot(module, sourceRoot);
             rootsMap.put(sourceRoot, sr);

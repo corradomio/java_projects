@@ -1,2 +1,23 @@
-package jext.sourcecode.project.info;public class InfoRTLibrary {
+package jext.sourcecode.project.info.library;
+
+import jext.name.PathName;
+import jext.sourcecode.project.LibraryType;
+import jext.sourcecode.project.info.InfoModule;
+import jext.sourcecode.project.info.InfoProject;
+import jext.sourcecode.project.maven.MavenName;
+import jext.util.MapUtils;
+
+import java.util.Map;
+
+public class InfoRTLibrary extends InfoLibrary {
+
+    public InfoRTLibrary(InfoModule module, Map<String, Object> info) {
+        super(module, LibraryType.RUNTIME, info);
+        this.name = new PathName(MapUtils.get(info,"fullname"));
+    }
+
+    public InfoRTLibrary(InfoProject project, Map<String, Object> info) {
+        super(project, LibraryType.RUNTIME, info);
+        this.name = new PathName(MapUtils.get(info,"fullname"));
+    }
 }

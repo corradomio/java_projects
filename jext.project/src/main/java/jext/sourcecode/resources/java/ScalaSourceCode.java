@@ -17,7 +17,7 @@ public class ScalaSourceCode extends SourceCode {
     }
 
     @Override
-    public Optional<File> getSourceRoot() {
+    public Optional<String> getSourceRoot() {
         return Optional.empty();
     }
 

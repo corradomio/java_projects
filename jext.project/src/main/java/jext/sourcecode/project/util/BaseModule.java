@@ -241,7 +241,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         sourceRoots = new HashSet<>();
         for (Source source : getSources()) {
             source.getSourceRoot().ifPresent(sourceRoot ->
-                sourceRoots.add(sourceRoot));
+                sourceRoots.add(new File(moduleHome, sourceRoot)));
         }
 
         return sourceRoots;

@@ -2,6 +2,7 @@ package jext.util;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -15,9 +16,9 @@ public class MapUtils {
         return fillMap(new TreeMap<>(), args);
     }
 
-    // public static <K, V> Map<K, V> asLinkedMap(Object ... args) {
-    //     return fillMap(new LinkedHashMap<>(), args);
-    // }
+    public static <K, V> Map<K, V> asLinkedMap(Object ... args) {
+        return fillMap(new LinkedHashMap<>(), args);
+    }
 
     private static <K, V> Map<K, V> fillMap(Map<K, V> map, Object[] args) {
         if (args == null || args.length == 0)
@@ -32,6 +33,31 @@ public class MapUtils {
         }
 
         return map;
+    }
+
+    public static <E> E get(Map<String, Object> map, String... keys) {
+        if (keys == null || keys.length == 0)
+            return (E)map;
+
+        int l = keys.length - 1;
+        Map<String, Object> cmap = map;
+        for (int i=0; i<l; ++i)
+            cmap = (Map<String, Object>) cmap.get(keys[i]);
+        return (E)cmap.get(keys[l]);
+    }
+
+    public static <E> E getOrDefault(Map<String, Object> map, E defaultValue, String... keys) {
+        if (keys == null || keys.length == 0)
+            return (E)map;
+
+        int l = keys.length - 1;
+        Map<String, Object> cmap = map;
+        for (int i=0; i<l; ++i) {
+            cmap = (Map<String, Object>) cmap.get(keys[i]);
+            if (cmap == null)
+                return defaultValue;
+        }
+        return (E)cmap.getOrDefault(keys[l], defaultValue);
     }
 
 }

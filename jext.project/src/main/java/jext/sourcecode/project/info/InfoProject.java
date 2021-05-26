@@ -6,15 +6,23 @@ import jext.name.Named;
 import jext.name.PathName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
+import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.info.library.InfoInvalidLibrary;
+import jext.sourcecode.project.info.library.InfoLocalLibrary;
+import jext.sourcecode.project.info.library.InfoMavenLibrary;
+import jext.sourcecode.project.info.library.InfoRTLibrary;
 import jext.util.HashMap;
 import jext.util.JSONUtils;
+import jext.util.MapUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -34,14 +42,15 @@ public class InfoProject implements Project {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private Name name;
-    private String id;
+    private final Name name;
     private File infoFile;
     private File projectHome;
     private Properties properties;
     private LibraryFinder lfinder;
 
     private Map<String, Object> info;
+    private List<Module> modules;
+    private Set<Library> libraries;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -62,17 +71,18 @@ public class InfoProject implements Project {
             if (!this.infoFile.exists())
                 this.infoFile = new File(projectHome,".spl/project-info.json");
         }
-        this.id = Integer.toString(name.getFullName().hashCode(), 16);
-    }
 
-    @Override
-    public String getId() {
-        return id;
+        load();
     }
 
     @Override
     public Name getName() {
         return name;
+    }
+
+    @Override
+    public String getId() {
+        return MapUtils.get(info, "id");
     }
 
     @Override
@@ -82,12 +92,12 @@ public class InfoProject implements Project {
 
     @Override
     public String getProjectType() {
-        return null;
+        return MapUtils.get(info, "type");
     }
 
     @Override
     public Properties getProperties() {
-        return properties;
+        return MapUtils.get(info, "type");
     }
 
     @Override
@@ -113,21 +123,70 @@ public class InfoProject implements Project {
 
     @Override
     public List<Module> getModules() {
-        return null;
+        if (modules != null)
+            return modules;
+
+        modules = new ArrayList<>();
+        Map<String, Object> mminfos = MapUtils.get(info, "modules");
+        for (String mname: mminfos.keySet()) {
+            Map<String, Object> mminfo = MapUtils.get(mminfos, mname);
+            modules.add(new InfoModule(this, mminfo));
+        }
+
+        return modules;
     }
 
     @Override
     public Module getModule(String nameOrId) {
+        List<Module> modules = getModules();
+        for (Module m : modules) {
+            if (m.getName().getFullName().equals(nameOrId))
+                return m;
+            if (m.getId().equals(nameOrId))
+                return m;
+            if (m.getName().getName().equals(nameOrId))
+                return m;
+        }
+
         return null;
     }
 
     @Override
     public Set<Library> getLibraries() {
-        return null;
+        if (libraries != null)
+            return libraries;
+
+        libraries = new HashSet<>();
+        List<Map<String, Object>> linfos = MapUtils.get(info, "libraries");
+        for(Map<String, Object> linfo : linfos) {
+            Library l = composeLibrary(linfo);
+            libraries.add(l);
+        }
+
+        return libraries;
+    }
+
+    private Library composeLibrary(Map<String, Object> linfo) {
+        LibraryType libraryType = LibraryType.valueOf(MapUtils.get(linfo, "libraryType"));
+        if (LibraryType.MAVEN.equals(libraryType))
+            return new InfoMavenLibrary(this, linfo);
+        if (LibraryType.LOCAL.equals(libraryType))
+            return new InfoLocalLibrary(this, linfo);
+        if (LibraryType.RUNTIME.equals(libraryType))
+            return new InfoRTLibrary(this, linfo);
+        else
+            return new InfoInvalidLibrary(this, linfo);
     }
 
     @Override
     public Library getLibrary(String nameOrId) {
+        Set<Library> libraries = getLibraries();
+        for (Library library : libraries) {
+            if (library.getName().getFullName().equals(nameOrId))
+                return library;
+            if (library.getId().equals(nameOrId))
+                return library;
+        }
         return null;
     }
 
@@ -155,7 +214,7 @@ public class InfoProject implements Project {
     // Implementation
     // ----------------------------------------------------------------------
 
-    private void check() {
+    private void load() {
         if (info != null)
             return;
 

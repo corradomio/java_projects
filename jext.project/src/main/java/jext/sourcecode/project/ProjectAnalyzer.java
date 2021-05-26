@@ -77,7 +77,7 @@ public class ProjectAnalyzer {
         pinfo.put("fullname", project.getName().getFullName());
         pinfo.put("id", project.getId());
         pinfo.put("type", project.getProjectType());
-        pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
+        // pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
         pinfo.put("properties", project.getProperties());
 
         List<Module> modules = project.getModules();
@@ -128,7 +128,7 @@ public class ProjectAnalyzer {
         minfo.put("name", m.getName().getName());
         minfo.put("fullname", m.getName().getFullName());
         minfo.put("id", m.getId());
-        minfo.put("moduleHome", FileUtils.getAbsolutePath(m.getModuleHome()));
+        // minfo.put("moduleHome", FileUtils.getAbsolutePath(m.getModuleHome()));
         minfo.put("path", m.getPath());
         minfo.put("properties", m.getProperties());
 
@@ -157,25 +157,15 @@ public class ProjectAnalyzer {
             .collect(Collectors.toList()));
 
         // sources
-        Map<String, Object> sinfos = new TreeMap<>();
-        for (Source source : m.getSources())
-            sinfos.put(source.getName().getFullName(),
-                MapUtils.asMap(
-                    "name", source.getName().getName(),
-                    "fullname", source.getName().getFullName(),
-                    "id", source.getId(),
-                    "path", source.getPath(),
-                    "digest", source.getDigest()
-                    // ,
-                    // "types", source.getTypes().stream()
-                    //     .map(type -> type.getName().getFullName())
-                    //     .collect(Collectors.toList()),
-                    // "usedTypes", source.getUsedTypes().stream()
-                    //     .map(type -> type.getName().getFullName())
-                    //     .collect(Collectors.toList())
-                ));
+        // Map<String, Object> sinfos = new TreeMap<>();
+        // for (Source source : m.getSources())
+        //     sinfos.put(source.getName().getFullName(),
+        //         analyzeSource(source));
 
-        minfo.put("sources", sinfos);
+        minfo.put("sources", m.getSources()
+            .parallelStream()
+            .map(this::analyzeSource)
+            .collect(Collectors.toMap(sinfo -> (String)sinfo.get("fullname"), sinfo -> sinfo)));
 
         // runtime libraries
         minfo.put("runtimeLibrary", m.getRuntimeLibrary().getName().getFullName());
@@ -186,7 +176,7 @@ public class ProjectAnalyzer {
             .stream()
             .map(library -> library.getName().getFullName())
             .collect(Collectors.toList()));
-        minfo.put("definedLibraries",definedLibraries
+        minfo.put("declaredLibraries", m.getDeclaredLibraries()
             .stream()
             .map(library -> library.getName().getFullName())
             .collect(Collectors.toList()));
@@ -209,15 +199,42 @@ public class ProjectAnalyzer {
 
         linfo.put("name", l.getName().getName());
         linfo.put("fullname", l.getName().getFullName());
-        linfo.put("digest", l.getDigest());
         linfo.put("id", l.getId());
+        linfo.put("digest", l.getDigest());
         linfo.put("libraryType", l.getLibraryType());
+        linfo.put("version", l.getVersion());
         linfo.put("files", l.getFiles()
             .stream()
             .map(FileUtils::getAbsolutePath)
             .collect(Collectors.toList()));
 
         return linfo;
+    }
+
+    private Map<String, Object> analyzeSource(Source s) {
+        String sourceRoot;
+        if (s.getSourceRoot().isPresent())
+            sourceRoot = s.getSourceRoot().get();
+        else
+            sourceRoot = null;
+
+        return MapUtils.asMap(
+            "name", s.getName().getName()
+            ,"fullname", s.getName().getFullName()
+            ,"id", s.getId()
+            ,"path", s.getPath()
+            ,"digest", s.getDigest()
+            ,"language", s.getLanguage()
+            ,"mimeType", s.getMimeType()
+            ,"sourceInfo", s.getSourceInfo()
+            ,"sourceRoot", sourceRoot
+            ,"types", s.getTypes().stream()
+                .map(type -> type.getName().getFullName())
+                .collect(Collectors.toList())
+            // ,"usedTypes", s.getUsedTypes().stream()
+            //     .map(type -> type.getName().getFullName())
+            //     .collect(Collectors.toList())
+        );
     }
 
     // ----------------------------------------------------------------------

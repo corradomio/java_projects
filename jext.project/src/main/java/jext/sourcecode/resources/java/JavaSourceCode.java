@@ -9,6 +9,7 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.resources.SourceCode;
 import jext.sourcecode.resources.type.ImplementedType;
 import jext.sourcecode.resources.type.ReferencedType;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -26,8 +27,9 @@ public class JavaSourceCode extends SourceCode {
     }
 
     @Override
-    public Optional<File> getSourceRoot() {
-        return parser.getSourceRoot();
+    public Optional<String> getSourceRoot() {
+        Optional<File> sr = parser.getSourceRoot();
+        return sr.map(value -> FileUtils.relativePath(module.getModuleHome(), value));
     }
 
     @Override
