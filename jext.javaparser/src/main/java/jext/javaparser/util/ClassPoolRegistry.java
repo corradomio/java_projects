@@ -4,7 +4,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import jext.logging.Logger;
-import jext.util.FileUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;

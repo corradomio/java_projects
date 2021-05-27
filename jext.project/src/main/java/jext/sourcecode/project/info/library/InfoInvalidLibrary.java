@@ -1,7 +1,6 @@
 package jext.sourcecode.project.info.library;
 
 import jext.name.PathName;
-import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;

@@ -4,7 +4,6 @@ import jext.name.PathName;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
-import jext.sourcecode.project.maven.MavenName;
 import jext.util.MapUtils;
 
 import java.util.Map;

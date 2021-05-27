@@ -6,9 +6,9 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserClassDeclaration;
@@ -18,7 +18,6 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import jext.javaparser.resolution.ReferencedTypeUse;
-import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
 
 import javax.annotation.Nullable;
@@ -128,24 +127,18 @@ public class ContextTypeSolver3 extends CompositeTypeSolver {
     }
 
     @Nullable
+    public ResolvedType resolve(FieldAccessExpr n) {
+        // String name = n.getNameAsString();
+        String name = n.toString();
+        return resolve(name, n);
+    }
+
+    @Nullable
     public ResolvedType resolve(String name, Node n) {
         if (!JavaUtils.isClassName(name) || JavaUtils.isConstant(name))
             return null;
 
         Optional<ResolvedType> resolved = Optional.empty();
-        if (!resolved.isPresent())
-            resolved = resolveUsingNamedImports(name);
-        if (!resolved.isPresent())
-            resolved = resolveUsingStarImports(name);
-        if (!resolved.isPresent())
-            resolved = resolveUsingLocalClasses(name, n);
-        if (!resolved.isPresent())
-            resolved = resolveUsingCurrentPackage(name, n);
-        if (resolved.isPresent())
-            return resolved.get();
-        else
-            ; // return null;
-
         if (!resolved.isPresent())
             resolved = resolveUsingNamedImports(name);
         if (!resolved.isPresent())

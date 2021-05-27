@@ -1,6 +1,5 @@
 package jext.sourcecode.project.info.library;
 
-import jext.maven.MavenCoords;
 import jext.name.Name;
 import jext.name.Named;
 import jext.sourcecode.project.Library;
@@ -10,9 +9,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
-import jext.sourcecode.project.maven.MavenName;
 import jext.util.MapUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collections;
@@ -116,7 +113,7 @@ public abstract class InfoLibrary implements Library {
     }
 
     @Override
-    public int compareTo(@NotNull Named o) {
+    public int compareTo(Named o) {
         return getName().compareTo(o.getName());
     }
 }

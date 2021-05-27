@@ -14,7 +14,6 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.TypeUse;
 import jext.sourcecode.project.UseDirection;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -145,7 +144,7 @@ public class InfoType implements Type {
     }
 
     @Override
-    public int compareTo(@NotNull Named o) {
+    public int compareTo(Named o) {
         return getNamespace().compareTo(o.getName());
     }
 }

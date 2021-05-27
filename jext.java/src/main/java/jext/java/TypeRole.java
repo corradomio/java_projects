@@ -19,7 +19,7 @@ package jext.java;
 public enum TypeRole {
     UNKNOWN,        // unknown role | reference type
 
-    //PRIMITIVE,    // is a primitive (short|int|long|...|void)
+    PRIMITIVE,      // is a primitive (short|int|long|...|void)
     //VOID,         // as PRIMITIVE
 
     INTERFACE,      // is an interface

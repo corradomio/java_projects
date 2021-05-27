@@ -10,7 +10,6 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.SourceInfo;
 import jext.sourcecode.project.Type;
 import jext.util.MapUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collections;
@@ -104,7 +103,7 @@ public class InfoSource implements Source {
     }
 
     @Override
-    public int compareTo(@NotNull Named o) {
+    public int compareTo(Named o) {
         return getName().compareTo(o.getName());
     }
 }

@@ -4,7 +4,6 @@ import jext.exception.AbortedException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -46,12 +45,36 @@ public class Parallel {
     private static Queue<WaitingExecutorService> waiting;
     private static long TIMEOUT = 60000;
 
+    static class DefaultThreadFactory implements ThreadFactory {
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        DefaultThreadFactory() {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() :
+                Thread.currentThread().getThreadGroup();
+            namePrefix = "pool-" +
+                poolNumber.getAndIncrement() +
+                "-thread-";
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                namePrefix + threadNumber.getAndIncrement(),
+                0);
+            // if (t.isDaemon())
+            //     t.setDaemon(false);
+            // if (t.getPriority() != Thread.NORM_PRIORITY)
+            //     t.setPriority(Thread.NORM_PRIORITY);
+            t.setPriority(Thread.NORM_PRIORITY - 2);
+            return t;
+        }
+    }
+
     // decrease the thread priority used in Parallel
-    private static ThreadFactory threadFactory = r -> {
-        Thread thread = new Thread(r);
-        thread.setPriority(Thread.NORM_PRIORITY-2);
-        return thread;
-    };
+    private static ThreadFactory threadFactory = new DefaultThreadFactory();
 
     // ----------------------------------------------------------------------
 

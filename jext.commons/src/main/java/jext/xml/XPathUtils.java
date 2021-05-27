@@ -301,6 +301,28 @@ public class XPathUtils {
         return values;
     }
 
+    public static List<String> getValues(Element elt, String xpath, Properties params) {
+        List<String> values = new ArrayList<>();
+        List<Node> nodes = selectNodes(elt, xpath);
+        for(Node node : nodes) {
+            String value = node.getTextContent().trim();
+            value = resolveValue(value, params);
+            values.add(value);
+        }
+        return values;
+    }
+
+    public static List<String> getValues(Element elt, String xpath, String attribute, Properties params) {
+        List<String> values = new ArrayList<>();
+        List<Element> nodes = selectElements(elt, xpath);
+        for(Element node : nodes) {
+            String value = node.getAttribute(attribute);
+            value = resolveValue(value, params);
+            values.add(value);
+        }
+        return values;
+    }
+
     // ----------------------------------------------------------------------
     // getProperties()
     // ----------------------------------------------------------------------

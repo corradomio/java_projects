@@ -16,7 +16,6 @@ import jext.sourcecode.project.info.library.InfoRTLibrary;
 import jext.util.HashMap;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +49,9 @@ public class InfoProject implements Project {
 
     private Map<String, Object> info;
     private List<Module> modules;
+    private Map<String, Module> moduleMap;
     private Set<Library> libraries;
+    private Map<String, Library> libraryMap;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -97,7 +98,9 @@ public class InfoProject implements Project {
 
     @Override
     public Properties getProperties() {
-        return MapUtils.get(info, "type");
+        Properties properties = new Properties();
+        properties.putAll(MapUtils.get(info, "properties"));
+        return properties;
     }
 
     @Override
@@ -138,15 +141,26 @@ public class InfoProject implements Project {
 
     @Override
     public Module getModule(String nameOrId) {
-        List<Module> modules = getModules();
-        for (Module m : modules) {
-            if (m.getName().getFullName().equals(nameOrId))
-                return m;
-            if (m.getId().equals(nameOrId))
-                return m;
-            if (m.getName().getName().equals(nameOrId))
-                return m;
+        if (moduleMap == null) {
+            moduleMap = new java.util.TreeMap<>();
+            getModules().forEach(m -> {
+                moduleMap.put(m.getId(), m);
+                moduleMap.put(m.getName().getFullName(), m);
+            });
         }
+
+        if (moduleMap.containsKey(nameOrId))
+            return moduleMap.get(nameOrId);
+
+        // List<Module> modules = getModules();
+        // for (Module m : modules) {
+        //     if (m.getName().getFullName().equals(nameOrId))
+        //         return m;
+        //     if (m.getId().equals(nameOrId))
+        //         return m;
+        //     if (m.getName().getName().equals(nameOrId))
+        //         return m;
+        // }
 
         return null;
     }
@@ -180,13 +194,26 @@ public class InfoProject implements Project {
 
     @Override
     public Library getLibrary(String nameOrId) {
-        Set<Library> libraries = getLibraries();
-        for (Library library : libraries) {
-            if (library.getName().getFullName().equals(nameOrId))
-                return library;
-            if (library.getId().equals(nameOrId))
-                return library;
+        if (libraryMap == null) {
+            libraryMap = new java.util.TreeMap<>();
+            getLibraries().forEach(l -> {
+                libraryMap.put(l.getId(), l);
+                libraryMap.put(l.getName().getFullName(), l);
+                libraryMap.put(l.getName().getName(), l);
+            });
         }
+
+        if (libraryMap.containsKey(nameOrId))
+            return libraryMap.get(nameOrId);
+
+        // Set<Library> libraries = getLibraries();
+        // for (Library library : libraries) {
+        //     if (library.getName().getFullName().equals(nameOrId))
+        //         return library;
+        //     if (library.getId().equals(nameOrId))
+        //         return library;
+        // }
+
         return null;
     }
 
@@ -206,7 +233,7 @@ public class InfoProject implements Project {
     }
 
     @Override
-    public int compareTo(@NotNull Named o) {
+    public int compareTo(Named o) {
         return name.compareTo(o.getName());
     }
 

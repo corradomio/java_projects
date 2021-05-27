@@ -342,7 +342,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         }
         catch (RuntimeException e) {
             String message = e.getMessage();
-            // Throwable cause = e.getCause();
             if (message == null)
                 logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), mce.toString(), e.getMessage(), filename);
             else if (message.contains("cannot be resolved"))
@@ -439,7 +438,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         }
         catch (RuntimeException e) {
             String message = e.getMessage();
-            // Throwable cause = e.getCause();
             if (message == null)
                 logger.errorf("[%s] %s: %s - %s", e.getClass().getSimpleName(), oce.toString(), e.getMessage(), filename);
             else if (message.contains("cannot be resolved"))

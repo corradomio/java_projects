@@ -2,122 +2,111 @@ package jext.javaparser.util;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
-import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
-import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.resolution.types.ResolvedIntersectionType;
+import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.resolution.types.ResolvedUnionType;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.javaparser.exception.ResolveTimeoutException;
+import jext.javaparser.resolution.ReferencedTypeUse;
 import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
 import jext.lang.JavaUtils;
-import jext.logging.Logger;
 import jext.util.PropertiesUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 public class JPUtils {
 
-    private static Logger logger = Logger.getLogger(JPUtils.class);
+    // private static Logger logger = Logger.getLogger(JPUtils.class);
+    // private static final Class<?> INITIALIZER_DECLARATION = InitializerDeclaration.class;
+    // private static final Class<?> METHOD_DECLARATION = MethodDeclaration.class;
+    // private static final Class<?> CONSTRUCTOR_DECLARATION = ConstructorDeclaration.class;
+    // private static final Class<?> OBJECT_CREATION_EXPR = ObjectCreationExpr.class;
+    // private static final Class<?> CLASS_OR_INTERFACE = ObjectCreationExpr.class;
 
-    private static final Class<?> INITIALIZER_DECLARATION = InitializerDeclaration.class;
-    private static final Class<?> METHOD_DECLARATION = MethodDeclaration.class;
-    private static final Class<?> CONSTRUCTOR_DECLARATION = ConstructorDeclaration.class;
-    private static final Class<?> OBJECT_CREATION_EXPR = ObjectCreationExpr.class;
-    private static final Class<?> CLASS_OR_INTERFACE = ObjectCreationExpr.class;
 
     // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
-    public static void setSymbolSolver(CompilationUnit cu, TypeSolver ts) {
-        JavaSymbolSolver symbolResolver = new JavaSymbolSolver(ts);
-        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+    public static ResolvedType getDeclaringType(ResolvedMethodDeclaration rdecl) {
+        String packageName = rdecl.getPackageName();
+        String className = rdecl.getClassName();
+
+        return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
     }
 
-    public static void removeSymbolSolver(CompilationUnit cu) {
-        cu.removeData(Node.SYMBOL_RESOLVER_KEY);
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public static List<ResolvedType> getTypeElements(ResolvedUnionType rtype) {
+        try {
+            Field elements = rtype.getClass().getDeclaredField("elements");
+            elements.setAccessible(true);
+            return (List<ResolvedType>) elements.get(rtype);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    public static List<ResolvedType> getTypeElements(ResolvedIntersectionType rtype) {
+        try {
+            Field elements = rtype.getClass().getDeclaredField("elements");
+            elements.setAccessible(true);
+            return (List<ResolvedType>) elements.get(rtype);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return Collections.emptyList();
+        }
     }
 
     // ----------------------------------------------------------------------
-
-    // public static MethodCallScope findMethodCallScope(Node n) {
-    //     Optional<Node> current = n.getParentNode();
-    //     while(current.isPresent()) {
-    //         Class<?> clazz = current.get().getClass();
     //
-    //         if (INITIALIZER_DECLARATION.equals(clazz))
-    //             return new MethodCallScope((InitializerDeclaration)n);
-    //
-    //         if (METHOD_DECLARATION.equals(clazz))
-    //             return new MethodCallScope((MethodDeclaration)n);
-    //
-    //         if (CONSTRUCTOR_DECLARATION.equals(clazz))
-    //             return new MethodCallScope((ConstructorDeclaration)n);
-    //     }
-    //     return MethodCallScope.unavailable();
-    // }
-
     // ----------------------------------------------------------------------
 
-    // public static Optional<InitializerDeclaration> findInitializerDeclaration(Node n) {
-    //     Optional<Node> current = n.getParentNode();
-    //     while(current.isPresent()) {
-    //         Class<?> clazz = current.get().getClass();
-    //
-    //         // found a methods declaration
-    //         if (clazz.equals(MethodDeclaration.class))
-    //             return Optional.empty();
-    //
-    //         // found an initializer
-    //         if (clazz.equals(InitializerDeclaration.class))
-    //             return Optional.of((InitializerDeclaration)current.get());
-    //
-    //         current = current.get().getParentNode();
-    //     }
-    //     return Optional.empty();
-    // }
+    public static Optional<CompilationUnit> findCompilationUnit(Node n) {
+        Optional<Node> optNode = n.getParentNode();
+        while (optNode.isPresent()) {
+            Node node = optNode.get();
+            Class<?> declClass = node.getClass();
+            if (declClass.equals(CompilationUnit.class))
+                return Optional.of((CompilationUnit) node);
+            if (declClass.equals(ClassOrInterfaceDeclaration.class))
+                return Optional.empty();
+            if (declClass.equals(LocalClassDeclarationStmt.class))
+                return Optional.empty();
+            if (declClass.equals(ObjectCreationExpr.class))
+                return Optional.empty();
+            if (declClass.equals(EnumDeclaration.class))
+                return Optional.empty();
 
-    // public static Optional<MethodDeclaration> findMethodDeclaration(Node n) {
-    //     Optional<Node> current = n.getParentNode();
-    //     while(current.isPresent()) {
-    //         Class<?> clazz = current.get().getClass();
-    //
-    //         // found a methods declaration
-    //         if (clazz.equals(MethodDeclaration.class))
-    //             return Optional.of((MethodDeclaration)current.get());
-    //
-    //         // found an initializer
-    //         if (clazz.equals(InitializerDeclaration.class))
-    //             return Optional.empty();
-    //
-    //         current = current.get().getParentNode();
-    //     }
-    //     return Optional.empty();
-    // }
-
-    // ----------------------------------------------------------------------
+            optNode = node.getParentNode();
+        }
+        return Optional.empty();
+    }
 
     public static Optional<Node> findParentDeclaration(Node n) {
         Optional<Node> optDecl = n.getParentNode();
@@ -143,49 +132,49 @@ public class JPUtils {
         return Optional.empty();
     }
 
-    public static boolean isTypeParameter(NameExpr n) {
-        String symbol = n.getNameAsString();
-        return isTypeParameter(symbol, n);
-    }
+    // public static boolean isTypeParameter(NameExpr n) {
+    //     String symbol = n.getNameAsString();
+    //     return isTypeParameter(symbol, n);
+    // }
 
-    public static boolean isTypeParameter(ClassOrInterfaceType n) {
-        String symbol = n.getNameAsString();
-        return isTypeParameter(symbol, n);
-    }
+    // public static boolean isTypeParameter(ClassOrInterfaceType n) {
+    //     String symbol = n.getNameAsString();
+    //     return isTypeParameter(symbol, n);
+    // }
 
     public static boolean isTypeParameter(String symbol, Node n) {
         // Note: this test reduce A LOT the speed of analysis
         // We use a simple heuristic: a symbol can be a type parameter is it is composed by
         // 1 or 2 characters
 
-        return symbol.length() < 3;
+        // return symbol.length() < 3;
 
-        // Optional<Node> optParent = n.getParentNode();
-        // while(optParent.isPresent()) {
-        //     Node node = optParent.get();
-        //
-        //     if (node instanceof ClassOrInterfaceDeclaration) {
-        //         ClassOrInterfaceDeclaration decl = ((ClassOrInterfaceDeclaration) node).asClassOrInterfaceDeclaration();
-        //         for (TypeParameter p : decl.getTypeParameters())
-        //             if (p.getNameAsString().equals(symbol))
-        //                 return true;
-        //     }
-        //     if (node instanceof MethodDeclaration) {
-        //         MethodDeclaration decl = ((MethodDeclaration) node).asMethodDeclaration();
-        //         for (TypeParameter p : decl.getTypeParameters())
-        //             if (p.getNameAsString().equals(symbol))
-        //                 return true;
-        //     }
-        //     if (node instanceof ConstructorDeclaration) {
-        //         ConstructorDeclaration decl = ((ConstructorDeclaration) node).asConstructorDeclaration();
-        //         for (TypeParameter p : decl.getTypeParameters())
-        //             if (p.getNameAsString().equals(symbol))
-        //                 return true;
-        //     }
-        //
-        //     optParent = node.getParentNode();
-        // }
-        // return false;
+        Optional<Node> optParent = n.getParentNode();
+        while(optParent.isPresent()) {
+            Node node = optParent.get();
+
+            if (node instanceof ClassOrInterfaceDeclaration) {
+                ClassOrInterfaceDeclaration decl = ((ClassOrInterfaceDeclaration) node).asClassOrInterfaceDeclaration();
+                for (TypeParameter p : decl.getTypeParameters())
+                    if (p.getNameAsString().equals(symbol))
+                        return true;
+            }
+            if (node instanceof MethodDeclaration) {
+                MethodDeclaration decl = ((MethodDeclaration) node).asMethodDeclaration();
+                for (TypeParameter p : decl.getTypeParameters())
+                    if (p.getNameAsString().equals(symbol))
+                        return true;
+            }
+            if (node instanceof ConstructorDeclaration) {
+                ConstructorDeclaration decl = ((ConstructorDeclaration) node).asConstructorDeclaration();
+                for (TypeParameter p : decl.getTypeParameters())
+                    if (p.getNameAsString().equals(symbol))
+                        return true;
+            }
+
+            optParent = node.getParentNode();
+        }
+        return false;
     }
 
     public static boolean isMethodReferenceExpr(ClassOrInterfaceType n) {
@@ -201,11 +190,10 @@ public class JPUtils {
         return false;
     }
 
-    /**
-     * Find the class containing this method declaration
-     * @param n node
-     * @return ClassOrInterfaceDeclaration
-     */
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public static Optional<ClassOrInterfaceDeclaration> findClassOrInterfaceDeclaration(Node n) {
         Optional<Node> optDecl = n.getParentNode();
         while(optDecl.isPresent()) {
@@ -225,46 +213,6 @@ public class JPUtils {
         }
         return Optional.empty();
     }
-
-    // public static Optional<EnumDeclaration> findEnumDeclaration(Node n) {
-    //     Optional<Node> optDecl = n.getParentNode();
-    //     while(optDecl.isPresent()) {
-    //         Node declaration = optDecl.get();
-    //         Class<?> declClass = declaration.getClass();
-    //         if (declClass.equals(ClassOrInterfaceDeclaration.class))
-    //             return Optional.empty();
-    //         if (declClass.equals(LocalClassDeclarationStmt.class))
-    //             return Optional.empty();
-    //
-    //         if (declClass.equals(ObjectCreationExpr.class))
-    //             return Optional.empty();
-    //         if (declClass.equals(EnumDeclaration.class))
-    //             return Optional.of((EnumDeclaration)declaration);
-    //
-    //         optDecl = declaration.getParentNode();
-    //     }
-    //     return Optional.empty();
-    // }
-
-    // public static Optional<ObjectCreationExpr> findObjectCreationExpr(Node n) {
-    //     Optional<Node> optDecl = n.getParentNode();
-    //     while(optDecl.isPresent()) {
-    //         Node declaration = optDecl.get();
-    //         Class<?> declClass = declaration.getClass();
-    //         if (declClass.equals(ClassOrInterfaceDeclaration.class))
-    //             return Optional.empty();
-    //         if (declClass.equals(LocalClassDeclarationStmt.class))
-    //             return Optional.empty();
-    //
-    //         if (declClass.equals(ObjectCreationExpr.class))
-    //             return Optional.of((ObjectCreationExpr)declaration);
-    //         if (declClass.equals(EnumDeclaration.class))
-    //             return Optional.empty();
-    //
-    //         optDecl = declaration.getParentNode();
-    //     }
-    //     return Optional.empty();
-    // }
 
     private  static Optional<ClassOrInterfaceDeclaration> findParentClassOrInterfaceDeclaration(Node n) {
         Optional<Node> optDecl = n.getParentNode();
@@ -344,6 +292,8 @@ public class JPUtils {
     }
 
     // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private static Map<TypeSolver, ?> getJavaParserFacadeTypeSolversMap() {
         try {
@@ -376,6 +326,10 @@ public class JPUtils {
                 tsmap.remove(ts);
         }
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private static class JavaParserFacadeCache implements Cache<Object, Object> {
         private Map<TypeSolver, ?> tsmap;

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -204,6 +205,12 @@ public class FileUtils {
             return new File(path);
         else
             return new File(baseDir, path);
+    }
+
+    public static List<File> toFile(File baseDir, List<String> paths) {
+        return paths.stream()
+            .map(path -> toFile(baseDir, path))
+            .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------

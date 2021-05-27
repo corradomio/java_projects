@@ -12,7 +12,6 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.BaseVoidVisitorAdapter;
-import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
@@ -183,8 +182,6 @@ public class Analysis extends BaseVoidVisitorAdapter {
         //
         // cu.accept(new LogVisitorAdapter<Object, Object>(), null);
 
-        SolveSymbolsVisitor ss = new SolveSymbolsVisitor();
-        ss.analyze(cu, ts);
 
     }
 }

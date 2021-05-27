@@ -23,7 +23,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +31,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +39,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -59,6 +58,9 @@ public class MavenDownloader implements MavenConst {
 
     /** List of repositories to try */
     private final Set<String> repoUrls = new HashSet<>();
+
+    /**List of flatten directories where to search other missing libraries */
+    private final List<File> localDirs = new ArrayList<>();
 
     /** Directory where to download the files */
     private File downloadDir = new File(".m2/repository");
@@ -95,8 +97,9 @@ public class MavenDownloader implements MavenConst {
      */
     public MavenDownloader newDownloader() {
         return new MavenDownloader()
-            .setDownload(downloadDir)
+            .setDownloadDirectory(downloadDir)
             .addRepositories(repoUrls)
+            .addLocalDirectories(localDirs)
             .setDownloadTimeout(downloadTimeout)
             .setCheckTimeout(checkTimeout)
             .setParallelDownloads(parallelDownloads)
@@ -109,7 +112,7 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
 
     /** Directory where to download the artifacts */
-    public MavenDownloader setDownload(File downloadDir) {
+    public MavenDownloader setDownloadDirectory(File downloadDir) {
         this.downloadDir = downloadDir;
         return this;
     }
@@ -130,6 +133,18 @@ public class MavenDownloader implements MavenConst {
     /** Repositories where to search the artifacts */
     public MavenDownloader addRepositories(Collection<String> repoUrls) {
         repoUrls.forEach(this::addRepository);
+        return this;
+    }
+
+    /** Directory where to search missing libraries */
+    public MavenDownloader addLocalDirectory(File localDir) {
+        this.localDirs.add(localDir);
+        return this;
+    }
+
+    /** Directories where to search missing libraries */
+    public MavenDownloader addLocalDirectories(Collection<File> localDirs) {
+        localDirs.forEach(this::addLocalDirectory);
         return this;
     }
 
@@ -184,6 +199,10 @@ public class MavenDownloader implements MavenConst {
      */
     public File getArtifact(MavenCoords coords) {
         coords = normalize(coords);
+
+        Optional<File> localFile = getInFlattenDirs(coords, MavenType.ARTIFACT);
+        if (localFile.isPresent())
+            return localFile.get();
 
         // compose the local file
         File artifactFile = getFile(coords, MavenType.ARTIFACT);
@@ -528,8 +547,23 @@ public class MavenDownloader implements MavenConst {
     // MavenCoords -> File & Url
     // ----------------------------------------------------------------------
 
+    private Optional<File> getInFlattenDirs(MavenCoords coords, MavenType type) {
+        String relativePath = getRelativePath(coords, type);
+        for (File flattenDir : localDirs) {
+            File file = new File(flattenDir, relativePath);
+            if (file.exists())
+                return Optional.of(file);
+        }
+        return Optional.empty();
+    }
+
     // Compose the file from the object type
     private File getFile(MavenCoords coords, MavenType type) {
+        String relativePath = getRelativePath(coords, type);
+        return new File(downloadDir, relativePath);
+    }
+
+    private String getRelativePath(MavenCoords coords, MavenType type) {
         String relativePath;
         String groupId = coords.groupId.replace('.', '/');
         String artifactId = coords.artifactId;
@@ -572,7 +606,7 @@ public class MavenDownloader implements MavenConst {
             default:
                 throw new UnsupportedOperationException(type.toString());
         }
-        return new File(downloadDir, relativePath);
+        return relativePath;
     }
 
     // Invalid file flag:  '<file>.invalid'

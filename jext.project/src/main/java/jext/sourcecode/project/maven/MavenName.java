@@ -7,6 +7,9 @@ public class MavenName implements Name {
 
     private MavenCoords coords;
 
+    public MavenName(String coords) {
+        this(new MavenCoords(coords));
+    }
 
     public MavenName(MavenCoords coords) {
         this.coords = coords;

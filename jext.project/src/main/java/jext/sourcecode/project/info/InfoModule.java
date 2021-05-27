@@ -11,7 +11,6 @@ import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.util.MapUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,10 +26,12 @@ public class InfoModule implements Module {
     private InfoProject project;
     private Map<String, Object> info;
     private List<Source> sources;
+    private Name name;
 
     InfoModule(InfoProject project, Map<String, Object> info) {
         this.project = project;
         this.info = info;
+        this.name = new PathName(MapUtils.get(info, "fullname"));
     }
 
     @Override
@@ -40,7 +41,7 @@ public class InfoModule implements Module {
 
     @Override
     public Name getName() {
-        return new PathName(MapUtils.get(info, "name"));
+        return name;
     }
 
     @Override
@@ -55,7 +56,9 @@ public class InfoModule implements Module {
 
     @Override
     public Properties getProperties() {
-        return MapUtils.get(info, "properties");
+        Properties properties = new Properties();
+        properties.putAll(MapUtils.get(info, "properties"));
+        return properties;
     }
 
     @Override
@@ -176,7 +179,7 @@ public class InfoModule implements Module {
     }
 
     @Override
-    public int compareTo(@NotNull Named o) {
+    public int compareTo(Named o) {
         return getName().compareTo(o.getName());
     }
 }

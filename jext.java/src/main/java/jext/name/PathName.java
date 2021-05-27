@@ -22,6 +22,8 @@ public class PathName implements Name {
     // ----------------------------------------------------------------------
 
     public PathName(String path) {
+        if (path == null)
+            throw new NullPointerException();
         this.path = PathUtils.normalize(path);
     }
 

@@ -61,14 +61,15 @@ public class JarTypeSolver implements TypeSolver {
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
-        JarFile jarFile = new JarFile(pathToJar);
-        JarEntry entry;
-        Enumeration<JarEntry> e = jarFile.entries();
-        while (e.hasMoreElements()) {
-            entry = e.nextElement();
-            if (entry != null && !entry.isDirectory() && entry.getName().endsWith(".class")) {
-                String name = entryPathToClassName(entry.getName());
-                classpathElements.put(name, new ClasspathElement(jarFile, entry));
+        try (JarFile jarFile = new JarFile(pathToJar)) {
+            JarEntry entry;
+            Enumeration<JarEntry> e = jarFile.entries();
+            while (e.hasMoreElements()) {
+                entry = e.nextElement();
+                if (entry != null && !entry.isDirectory() && entry.getName().endsWith(".class")) {
+                    String name = entryPathToClassName(entry.getName());
+                    classpathElements.put(name, new ClasspathElement(jarFile, entry));
+                }
             }
         }
     }

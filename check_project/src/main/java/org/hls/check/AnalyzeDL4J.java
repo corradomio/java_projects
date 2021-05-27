@@ -4,7 +4,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
-import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserRootsTypeSolver;
@@ -103,8 +102,6 @@ public class AnalyzeDL4J {
 
             CompilationUnit cu = JavaParserPool.getPool().parse(srcFile).getResult().get();
 
-            SolveSymbolsVisitor ss = new SolveSymbolsVisitor();
-            ss.analyze(cu, ts);
         }
         catch(Throwable t){
             System.err.println(t.getClass());
