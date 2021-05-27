@@ -5,9 +5,7 @@ import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 
@@ -229,7 +227,7 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     // Implementation
     // ----------------------------------------------------------------------
 
-    private File getOverrideFile() {
+    public File getOverrideFile() {
         File overrideFile;
         String path = configuration.getString("override[@path]", "config-override.xml");
         path = path.replace('\\', '/');

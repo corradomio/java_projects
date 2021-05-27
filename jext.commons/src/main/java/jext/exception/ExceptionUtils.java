@@ -16,14 +16,17 @@ public class ExceptionUtils {
         StringBuilder sb = new StringBuilder(message);
         Throwable cause = t.getCause();
         messages.add(t.getMessage());
-        while (cause != null) {
+
+        Throwable prev = null;
+        while (cause != null && cause != prev) {
             message = cause.getMessage();
-            if (messages.contains(message))
-                continue;
+            if (!messages.contains(message)) {
             sb.append("\n  [").append(messages.size()).append("] ")
                 .append(message);
             messages.add(message);
-            cause = cause.getCause();
+            }
+            prev = cause;
+            cause = prev.getCause();
         }
         return sb.toString();
     }

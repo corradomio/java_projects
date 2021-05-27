@@ -80,20 +80,6 @@ public class ObjectName implements Name {
         return name;
     }
 
-    // @Override
-    // public String[] getParts() {
-    //     return name.split("\\.");
-    // }
-
-    // ----------------------------------------------------------------------
-    // Operations
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // public Name compose(String name) {
-    //     return new ObjectName(this.name, name);
-    // }
-
     // ----------------------------------------------------------------------
     // Override
     // ----------------------------------------------------------------------

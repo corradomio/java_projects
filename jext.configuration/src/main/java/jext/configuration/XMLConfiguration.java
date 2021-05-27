@@ -148,13 +148,13 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     @Override
     public String getString(String key, String defaultValue) {
         check();
-        return XPathUtils.getValue(root, xpathOf(key), defaultValue);
+        return XPathUtils.getValue(root, xpathOf(key), defaultValue, properties);
     }
 
     @Override
     public List<String> getList(String key) {
         check();
-        return XPathUtils.getValues(root, xpathOf(key));
+        return XPathUtils.getValues(root, xpathOf(key), properties);
     }
 
     @Override

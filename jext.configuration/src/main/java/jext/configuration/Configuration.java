@@ -4,6 +4,15 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+/*
+    Supported syntax:
+
+        node1.node2                 retrieve the value of the node
+        node[@attribute]            retrieve the value of 'attribute'
+        node[@attribute='value']    select the node with attribute having the specified value
+
+ */
+
 public interface Configuration {
 
     /** Home folder used to resolve relative paths */
