@@ -63,6 +63,12 @@ public class ProjectDifferences {
         return addedModules;
     }
 
+    public List<Module> getRemovedModules(Project project) {
+        return getModules(Status.REMOVED).stream()
+            .map(moduleName -> project.getModule(moduleName))
+            .collect(Collectors.toList());
+    }
+
     private List<String> getModules(Status status) {
         // if (stateModules.containsKey(status))
         //     return stateModules.get(status);
@@ -95,6 +101,25 @@ public class ProjectDifferences {
         }
 
         return addedSources;
+    }
+
+    public List<Source> getRemovedSources(Project project) {
+
+        // add sources of removed modules
+        List<Source> removedSources = new ArrayList<>();
+        for (Module module : getRemovedModules(project))
+            removedSources.addAll(module.getSources());
+
+        // scan sources module by module
+        for (String moduleName : diffSources.keySet()) {
+            Module module = project.getModule(moduleName);
+            Map<String, Status> moduleSources = diffSources.get(moduleName);
+            for (String sourceName : moduleSources.keySet())
+                if (Status.REMOVED.equals(moduleSources.get(sourceName)))
+                    removedSources.add(module.getSource(sourceName));
+        }
+
+        return removedSources;
     }
 
     // ----------------------------------------------------------------------
