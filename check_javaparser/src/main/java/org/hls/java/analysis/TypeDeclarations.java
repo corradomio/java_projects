@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
+import jext.javaparser.analysis.BaseVoidVisitorAdapter;
 import jext.javaparser.analysis.ContextVisitorAdapter;
 import jext.javaparser.util.JPUtils;
 
@@ -26,8 +27,8 @@ public class TypeDeclarations extends ContextVisitorAdapter {
     //
     // ----------------------------------------------------------------------
 
-    public void analyze(CompilationUnit cu, TypeSolver ts) {
-        super.analyze(cu, ts);
+    public BaseVoidVisitorAdapter analyze(CompilationUnit cu, TypeSolver ts) {
+        return super.analyze(cu, ts);
     }
 
     // ----------------------------------------------------------------------

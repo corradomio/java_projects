@@ -47,7 +47,7 @@ public class Analyze {
                     // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\bookstore"
                 ), PropertiesUtils.empty());
 
-            project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
+            project.getLibraryDownloader().setDownloadDirectory(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
 
             ProjectDump.dump(project, ProjectDump.NO_LIBRARIES | ProjectDump.NO_TYPES | ProjectDump.NO_DEPENDENCIES);
 

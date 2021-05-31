@@ -6,7 +6,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import jext.cache.CacheManager;
-import jext.io.util.FileFilters;
+import jext.io.filters.FileFilters;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
@@ -115,7 +115,7 @@ public class Check {
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\alt-rt.jar")));
             // ts.add(cptss.getTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8")));
 
-            JPUtils.setSymbolSolver(cu, ts);
+            // JPUtils.setSymbolSolver(cu, ts);
 
             cu.findAll(MethodCallExpr.class).forEach(Check::analyze);
         }

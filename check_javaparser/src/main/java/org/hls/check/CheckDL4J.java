@@ -4,10 +4,7 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
-import jext.javaparser.analysis.SolveSymbolsVisitor;
-import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
@@ -19,7 +16,6 @@ import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 import org.hls.java.analysis.MemberDeclarations;
-import org.hls.java.analysis.TypeDeclarations;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +38,7 @@ public class CheckDL4J {
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
                 ), PropertiesUtils.empty());
 
-            project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
+            project.getLibraryDownloader().setDownloadDirectory(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
 
             ProjectDump.yaml(project, new File(project.getName().getName() + ".yaml"), 0);
 

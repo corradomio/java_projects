@@ -1,6 +1,5 @@
 package org.hls.check;
 
-import com.github.javaparser.JavaParser;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
@@ -14,7 +13,10 @@ public class DumpAST {
         Logger.configure();
         CacheManager.configure();
 
-        File source = new File("D:\\SPLGroup\\BTProjects\\DEUM\\src\\optimtools\\problems\\trap\\Trap.java");
+        File source = new File(
+        // "D:\\SPLGroup\\BTProjects\\DEUM\\src\\optimtools\\problems\\trap\\Trap.java"
+            "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\cocome-maven-project\\cloud-logic-service\\cloud-logic-core-impl\\src\\main\\java\\org\\cocome\\tradingsystem\\inventory\\data\\enterprise\\Product.java"
+        );
 
         JavaParserPool jpp = JavaParserPool.getPool();;
 

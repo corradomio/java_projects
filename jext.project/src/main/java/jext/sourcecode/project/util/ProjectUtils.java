@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 public class ProjectUtils {
@@ -50,25 +51,43 @@ public class ProjectUtils {
         return null;
     }
 
+    public static List<File> getSourceRoots(Project project) {
+        File projectHome = project.getProjectHome();
+        Set<File> roots = new HashSet<>();
+        getSources(project).forEach(source -> {
+            Optional<String> sr = source.getSourceRoot();
+            sr.ifPresent(sourceRoot -> roots.add(new File(projectHome, sourceRoot)));
+        });
+        return new ArrayList<>(roots);
+    }
+
+    public static Set<File> getLibraryFiles(Project project) {
+        Set<File> lfiles = new HashSet<>();
+        project.getLibraries().forEach(library -> {
+            lfiles.addAll(library.getFiles());
+        });
+        return lfiles;
+    }
+
     // ----------------------------------------------------------------------
 
-    public static List<Resource> getResources(Project project) {
-        List<Resource> resources = new ArrayList<>();
+    // public static List<Resource> getResources(Project project) {
+    //     List<Resource> resources = new ArrayList<>();
+    //
+    //     for (Module module : project.getModules())
+    //         resources.addAll(module.getResources());
+    //
+    //     return resources;
+    // }
 
-        for (Module module : project.getModules())
-            resources.addAll(module.getResources());
-
-        return resources;
-    }
-
-    public static Resource getResource(Project project, String nameOrId) {
-        for (Module module : project.getModules()) {
-            Resource resource = module.getResource(nameOrId);
-            if (resource != null)
-                return resource;
-        }
-        return null;
-    }
+    // public static Resource getResource(Project project, String nameOrId) {
+    //     for (Module module : project.getModules()) {
+    //         Resource resource = module.getResource(nameOrId);
+    //         if (resource != null)
+    //             return resource;
+    //     }
+    //     return null;
+    // }
 
     // ----------------------------------------------------------------------
 

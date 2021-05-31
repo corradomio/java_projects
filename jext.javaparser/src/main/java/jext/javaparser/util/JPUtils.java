@@ -12,12 +12,14 @@ import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
+import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedIntersectionType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedUnionType;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
@@ -46,6 +48,10 @@ public class JPUtils {
     // private static final Class<?> OBJECT_CREATION_EXPR = ObjectCreationExpr.class;
     // private static final Class<?> CLASS_OR_INTERFACE = ObjectCreationExpr.class;
 
+    public static void setSymbolSolver(CompilationUnit cu, TypeSolver ts) {
+        SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
+        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+    }
 
     // ----------------------------------------------------------------------
     //

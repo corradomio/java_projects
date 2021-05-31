@@ -43,7 +43,7 @@ public class CheckAST {
                     "D:\\Projects.github\\java_projects\\check_java_syntax"
                 ), PropertiesUtils.empty());
 
-            project.getLibraryDownloader().setDownload(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
+            project.getLibraryDownloader().setDownloadDirectory(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
 
             // ProjectDump.dump(project, ProjectDump.NO_LIBRARIES | ProjectDump.NO_TYPES | ProjectDump.NO_DEPENDENCIES);
 
