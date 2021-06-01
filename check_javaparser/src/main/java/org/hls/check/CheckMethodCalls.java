@@ -7,6 +7,7 @@ import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
 import jext.javaparser.util.JPUtils;
@@ -26,10 +27,12 @@ public class CheckMethodCalls {
         // ts = new JDKTypeSolver(new File("D:\\Java\\MiniJdk\\Jdk8"));
         pool = JavaParserPool.getPool();
 
-        FileUtils.listFiles(
-            //new File("data\\bookstore\\src\\main\\java")
-            // new File("D:\\Projects.github\\java_projects\\jext.cache")
-            new File("src_only")
+        FileUtils.listFiles(new File(
+            // "data\\bookstore\\src\\main\\java"
+            // "D:\\Projects.github\\java_projects\\jext.cache"
+            // "src_only"
+            "D:\\Temp\\etisala-project-ebtic"
+            )
             ,
             pathname -> true)
             .stream()
@@ -48,7 +51,7 @@ public class CheckMethodCalls {
 
     static void analyze(CompilationUnit cu) {
         ClassPoolRegistry cpr = new ClassPoolRegistry().addJdk(new File("D:\\Java\\Jdk8.0.x64"));
-        CombinedTypeSolver ts = new CombinedTypeSolver();
+        CompositeTypeSolver ts = new CompositeTypeSolver();
         ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
         ts.add(new ClassPoolRegistryTypeSolver(cpr));
 

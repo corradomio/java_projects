@@ -42,10 +42,10 @@ public class JavaParserPoolTypeSolver extends BaseTypeSolver {
     // Extended operations
     // ----------------------------------------------------------------------
 
-    public JavaParserPoolTypeSolver withPool(JavaParserPool pool) {
-        this.pool = pool;
-        return this;
-    }
+    // public JavaParserPoolTypeSolver withPool(JavaParserPool pool) {
+    //     this.pool = pool;
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Extended operations

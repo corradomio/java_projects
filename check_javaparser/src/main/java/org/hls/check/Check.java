@@ -12,7 +12,6 @@ import jext.javaparser.analysis.LogVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
-import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.concurrent.Parallel;

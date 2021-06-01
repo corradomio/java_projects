@@ -82,7 +82,7 @@ public class CheckDL4J {
 
         ContextTypeSolver ts = new ContextTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver(cpr));
-        ts.add(new JavaParserPoolTypeSolver().withPool(pool));
+        ts.add(new JavaParserPoolTypeSolver(pool));
 
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {

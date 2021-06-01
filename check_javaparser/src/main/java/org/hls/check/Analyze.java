@@ -95,7 +95,7 @@ public class Analyze {
 
         CompositeTypeSolver ts = new CachedTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver(cpr));
-        ts.add(new JavaParserPoolTypeSolver().withPool(pool));
+        ts.add(new JavaParserPoolTypeSolver(pool));
         ts.add(new ContextSolvedSymbolsTypeSolver(css, us));
 
         ParseResult<CompilationUnit> result = pool.parse(source);
