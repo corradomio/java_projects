@@ -7,6 +7,10 @@ import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
 import jext.logging.Logger;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class LogVoidVisitorAdapter<A> extends VoidVisitorWithDefaults<A> {
 
     // ----------------------------------------------------------------------
@@ -17,6 +21,8 @@ public class LogVoidVisitorAdapter<A> extends VoidVisitorWithDefaults<A> {
 
     protected CompilationUnit cu;
     protected String fileName;
+    protected Set<Class<?>> exclude = new HashSet<>();
+    protected Set<Class<?>> include = new HashSet<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -24,6 +30,16 @@ public class LogVoidVisitorAdapter<A> extends VoidVisitorWithDefaults<A> {
 
     public LogVoidVisitorAdapter() {
 
+    }
+
+    public LogVoidVisitorAdapter<A> exclude(Class<?>... classes) {
+        exclude.addAll(Arrays.asList(classes));
+        return this;
+    }
+
+    public LogVoidVisitorAdapter<A> include(Class<?>... classes) {
+        include.addAll(Arrays.asList(classes));
+        return this;
     }
 
     // ----------------------------------------------------------------------
@@ -46,6 +62,16 @@ public class LogVoidVisitorAdapter<A> extends VoidVisitorWithDefaults<A> {
         if (n instanceof Name) return;
         if (n instanceof SimpleName) return;
 
+        Class<?> c = n.getClass();
+
+        if (!exclude.isEmpty()) {
+            if (exclude.contains(c))
+                return;
+        }
+        else if (!include.isEmpty()) {
+            if (!include.contains(c))
+                return;
+        }
         System.out.printf("[%s] %s\n", getClassName(n), toString(n));
     }
 

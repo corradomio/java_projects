@@ -2,6 +2,8 @@ package org.hls.check;
 
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
@@ -57,7 +59,8 @@ public class CheckMethodCalls {
 
         JPUtils.setSymbolSolver(cu, ts);
 
-        LogVoidVisitorAdapter<Void> lva = new LogVoidVisitorAdapter<>();
+        LogVoidVisitorAdapter<Void> lva = new LogVoidVisitorAdapter<Void>()
+            .include(MethodCallExpr.class, ObjectCreationExpr.class);
         lva.analyze(cu);
     }
 }
