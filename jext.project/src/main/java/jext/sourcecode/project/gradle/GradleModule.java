@@ -116,13 +116,24 @@ public class GradleModule extends BaseModule {
     }
 
     @Override
-    protected List<Library> getMavenLibraries() {
+    protected void collectGradleLibraries(Set<Library> collectedLibraries) {
         if (getGradleProject().isDependenciesResolved())
-            return getGradleProject().getMavenLibraries(this);
+            collectedLibraries.addAll(getGradleProject().getMavenLibraries(this));
+
         if (dcoords == null)
             retrieveDependencies();
-        return dcoords;
+
+        collectedLibraries.addAll(dcoords);
     }
+
+    // @Override
+    // protected List<Library> getMavenLibraries() {
+    //     if (getGradleProject().isDependenciesResolved())
+    //         return getGradleProject().getMavenLibraries(this);
+    //     if (dcoords == null)
+    //         retrieveDependencies();
+    //     return dcoords;
+    // }
 
     private List<Name> getGradleDependencies() {
         if (dmodules == null)

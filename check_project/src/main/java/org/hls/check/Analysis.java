@@ -169,7 +169,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
         ts.add(new JarTypeSolver()
             .addJdk(new File("D:\\Java\\Jdk1.8.0.x64"))
             .addAll(libs));
-        module.getSourceRoots().forEach(src -> {
+        module.getSourceRootDirectories().forEach(src -> {
             ts.add(new JavaParserTypeSolver(src));
         });
 

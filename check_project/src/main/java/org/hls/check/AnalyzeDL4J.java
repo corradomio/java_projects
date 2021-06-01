@@ -41,7 +41,7 @@ public class AnalyzeDL4J {
 
         pool = JavaParserPool.getPool().withCache();
         dl4j.getModules().forEach(module -> {
-            pool.addAll(module.getSourceRoots());
+            pool.addAll(module.getSourceRootDirectories());
         });
 
         File JDK = new File("D:\\Java\\Jdk1.8.0.x64");
@@ -83,9 +83,9 @@ public class AnalyzeDL4J {
             // current module
             // JavaParserPoolTypeSolver mts = new JavaParserPoolTypeSolver(pool);
             JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver().withCache();
-            mts.addAll(module.getSourceRoots());
+            mts.addAll(module.getSourceRootDirectories());
             module.getDependencies().forEach(dmodule -> {
-                mts.addAll(dmodule.getSourceRoots());
+                mts.addAll(dmodule.getSourceRootDirectories());
             });
 
             // runtime library

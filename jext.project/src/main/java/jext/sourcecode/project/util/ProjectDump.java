@@ -2,7 +2,6 @@ package jext.sourcecode.project.util;
 
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Project;
-import jext.util.FileUtils;
 import jext.util.SetUtils;
 
 import java.io.BufferedOutputStream;
@@ -72,7 +71,7 @@ public class ProjectDump {
             });
             spaces(stream, 2).print("sourceRoots:\n");
             m.getSourceRoots().forEach(sr -> {
-                spaces(stream, 3).printf("- %s\n", FileUtils.relativePath(m.getModuleHome(), sr));
+                spaces(stream, 3).printf("- %s\n", sr);
             });
 
             if ((noFlags & NO_DEPENDENCIES) == 0) {

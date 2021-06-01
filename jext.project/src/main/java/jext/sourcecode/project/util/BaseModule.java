@@ -4,17 +4,22 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.io.filters.FileFilters;
 import jext.logging.Logger;
+import jext.maven.MavenCoords;
+import jext.maven.MavenDownloader;
+import jext.maven.MavenPom;
 import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.project.ant.util.IvyFile;
+import jext.sourcecode.project.eclipse.util.ClasspathFile;
 import jext.sourcecode.project.maven.LibrarySet;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
@@ -45,10 +50,10 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     protected File moduleHome;
 
     protected List<File> directories;
-    protected List<Library> libraries;
+    protected Set<Library> libraries;
     protected List<Module> dependencies;
     protected List<Source> sources;
-    protected Set<File> sourceRoots;
+    protected Set<String> sourceRoots;
 
     protected Logger logger;
 
@@ -101,6 +106,13 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     @Override
     public File getModuleHome() {
         return this.moduleHome;
+    }
+
+    @Override
+    public List<File> getSourceRootDirectories() {
+        return getSourceRoots().stream()
+            .map(sourceRoot -> new File(moduleHome, sourceRoot))
+            .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------
@@ -234,14 +246,14 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     }
 
     @Override
-    public Set<File> getSourceRoots() {
+    public Set<String> getSourceRoots() {
         if (sourceRoots != null)
             return sourceRoots;
 
         sourceRoots = new HashSet<>();
         for (Source source : getSources()) {
             source.getSourceRoot().ifPresent(sourceRoot ->
-                sourceRoots.add(new File(moduleHome, sourceRoot)));
+                sourceRoots.add(sourceRoot));
         }
 
         return sourceRoots;
@@ -269,21 +281,97 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     }
 
     @Override
-    public List<Library> getLibraries() {
+    public Set<Library> getLibraries() {
         LibrarySet projectLibraries = (LibrarySet) project.getLibraries();
         return projectLibraries.resolveAll(getDeclaredLibraries());
     }
 
     @Override
-    public List<Library> getDeclaredLibraries() {
+    public Set<Library> getDeclaredLibraries() {
         if (libraries != null)
             return libraries;
 
-        libraries = new ArrayList<>();
-        libraries.addAll(getLocalLibraries());
-        libraries.addAll(getMavenLibraries());
+        libraries = new HashSet<>();
+
+        collectLibraries(libraries);
 
         return libraries;
+    }
+
+    protected void collectLibraries(Set<Library> collectedLibraries) {
+        collectLocalLibraries(collectedLibraries);
+        collectEclipseLibraries(collectedLibraries);
+        collectIvyLibraries(collectedLibraries);
+        collectMavenLibraries(collectedLibraries);
+        collectGradleLibraries(collectedLibraries);
+    }
+
+    protected void collectLocalLibraries(Set<Library> collectedLibraries) {
+        List<File> jarFiles = new ArrayList<>();
+        getDirectories().forEach(dir ->{
+            FileUtils.listFiles(jarFiles, dir, FileFilters.IS_JAR);
+        });
+
+        jarFiles.stream()
+            .map(jarFile -> ArchiveUtils.newLibrary(jarFile, this))
+            .forEach(library -> collectedLibraries.add(library));
+    }
+
+    protected void collectEclipseLibraries(Set<Library> collectedLibraries) {
+        ClasspathFile classpathFile = new ClasspathFile(moduleHome);
+        if (!classpathFile.exists())
+            return;
+
+        List<MavenCoords> coordList = classpathFile.getMavenLibraries()
+            .stream()
+            .map(MavenCoords::new)
+            .collect(Collectors.toList());
+
+        MavenDownloader md = project.getLibraryDownloader();
+        // md.checkArtifacts(coordList);
+
+        coordList
+            .stream()
+            .map(coords -> new MavenLibrary(coords, md, project))
+            .forEach(collectedLibraries::add);
+    }
+
+    protected void collectIvyLibraries(Set<Library> collectedLibraries) {
+        List<IvyFile> ivyFiles = FileUtils.asList(getModuleHome().listFiles((dir, name) -> name.startsWith("ivy")))
+            .stream()
+            .map(IvyFile::new)
+            .collect(Collectors.toList());
+
+        if (ivyFiles.isEmpty())
+            return;
+
+        List<MavenCoords> coordList = new ArrayList<>();
+        ivyFiles.forEach(ivyFile -> {
+            coordList.addAll(ivyFile.getDependencyCoords());
+        });
+
+        MavenDownloader md = project.getLibraryDownloader();
+        // md.checkArtifacts(coordList);
+        // coordList.sort(Comparator.naturalOrder());
+
+        coordList.stream()
+            .map(lcoords -> new MavenLibrary(lcoords, md, project))
+            .forEach(collectedLibraries::add);
+    }
+
+    protected void collectGradleLibraries(Set<Library> collectedLibraries) {
+
+    }
+
+    protected void collectMavenLibraries(Set<Library> collectedLibraries) {
+        MavenDownloader md = project.getLibraryDownloader();
+        MavenPom mavenPom = new MavenPom(moduleHome, md);
+        if (!mavenPom.exists())
+            return;
+
+        mavenPom.getDependencyCoords().stream()
+            .map(coords -> new MavenLibrary(coords, md, project))
+            .forEach(collectedLibraries::add);
     }
 
     @Override
@@ -310,26 +398,26 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     /**
      * List of local libraries (*.jar files)
      */
-    protected List<Library> getLocalLibraries() {
-        List<File> jarFiles = new ArrayList<>();
-
-        // check the sub directories (are EXCLUDED the subdirectories that
-        // contain modules)
-        getDirectories().forEach(dir ->{
-            FileUtils.listFiles(jarFiles, dir, FileFilters.IS_JAR);
-        });
-
-        return new HashSet<>(jarFiles).stream()
-            .map(jarFile -> ArchiveUtils.newLibrary(jarFile, this))
-            .collect(Collectors.toList());
-    }
+    // protected List<Library> getLocalLibraries() {
+    //     List<File> jarFiles = new ArrayList<>();
+    //
+    //     // check the sub directories (are EXCLUDED the subdirectories that
+    //     // contain modules)
+    //     getDirectories().forEach(dir ->{
+    //         FileUtils.listFiles(jarFiles, dir, FileFilters.IS_JAR);
+    //     });
+    //
+    //     return new HashSet<>(jarFiles).stream()
+    //         .map(jarFile -> ArchiveUtils.newLibrary(jarFile, this))
+    //         .collect(Collectors.toList());
+    // }
 
     /**
      * List of Maven libraries, specified by a Maven Coordinate
      */
-    protected List<Library> getMavenLibraries() {
-        return Collections.emptyList();
-    }
+    // protected List<Library> getMavenLibraries() {
+    //     return Collections.emptyList();
+    // }
 
     @Override
     public Set<String> getMavenRepositories() {
@@ -340,37 +428,37 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // Resources
     // ----------------------------------------------------------------------
 
-    @Override
-    public List<Resource> getResources() {
+    // @Override
+    // public List<Resource> getResources() {
+    //
+    //     List<Resource> resources = new ArrayList<>();
+    //
+    //     // local resources
+    //     resources.addAll(getBaseProject().getResources(moduleHome, this));
+    //
+    //     // sub resources
+    //     getDirectories().forEach(dir -> {
+    //         List<Resource> reslist = getBaseProject().getResources(dir, this);
+    //         resources.addAll(reslist);
+    //     });
+    //
+    //     return resources;
+    // }
 
-        List<Resource> resources = new ArrayList<>();
-
-        // local resources
-        resources.addAll(getBaseProject().getResources(moduleHome, this));
-
-        // sub resources
-        getDirectories().forEach(dir -> {
-            List<Resource> reslist = getBaseProject().getResources(dir, this);
-            resources.addAll(reslist);
-        });
-
-        return resources;
-    }
-
-    @Override
-    public Resource getResource(String nameOrId) {
-        for (Resource resource : getResources()) {
-            if (resource.getId().equals(nameOrId))
-                return resource;
-            if (resource.getName().getFullName().equals(nameOrId))
-                return resource;
-            if (resource.getName().getName().equals(nameOrId))
-                return resource;
-            if (resource.getPath().equals(nameOrId))
-                return resource;
-        }
-        return null;
-    }
+    // @Override
+    // public Resource getResource(String nameOrId) {
+    //     for (Resource resource : getResources()) {
+    //         if (resource.getId().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getName().getFullName().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getName().getName().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getPath().equals(nameOrId))
+    //             return resource;
+    //     }
+    //     return null;
+    // }
 
     // ----------------------------------------------------------------------
     // Types

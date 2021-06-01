@@ -39,7 +39,7 @@ import static jext.maven.MavenCoords.isValid;
 public class MavenPom implements MavenConst {
 
     // ----------------------------------------------------------------------
-    // Private Fields
+    // Invalid Maven POM
     // ----------------------------------------------------------------------
 
     private static MavenPom INVALID = new MavenPom();
@@ -54,12 +54,13 @@ public class MavenPom implements MavenConst {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    static final String EMPTY_POM =
+    private static final String EMPTY_POM =
         "<?xml version='1.0' encoding='UTF-8'?>\n" +
             "<project xmlns='http://maven.apache.org/POM/4.0.0'/>";
 
-    public static final String POM = "pom.xml";
+    private static final String POM = "pom.xml";
 
+    private static final String PROJECT = "project";
     private static final String PARENT_POM = "../pom.xml";
     private static final String DM_RELOCATION = "distributionManagement/relocation";
     private static final String DM_DEPENDENCIES = "dependencyManagement/dependencies/dependency";
@@ -81,7 +82,11 @@ public class MavenPom implements MavenConst {
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected MavenPom() { }
+    protected MavenPom() {
+        mavenprops = PropertiesUtils.empty();
+        localprops = PropertiesUtils.empty();
+        parseFile();
+    }
 
     public MavenPom(File pomFile) {
         this(pomFile, null);
@@ -101,7 +106,7 @@ public class MavenPom implements MavenConst {
     }
 
     private void parseFile() {
-        if (pomFile.exists())
+        if (pomFile != null && pomFile.exists())
         try {
             this.project = XPathUtils.parse(pomFile).getDocumentElement();
         }
@@ -178,10 +183,27 @@ public class MavenPom implements MavenConst {
     // Predicates
     // ----------------------------------------------------------------------
 
-    /** Check if '.pom' file exists */
+    /** Check if the file exists and it is a POM file */
     public boolean exists() {
-        return pomFile.exists();
+        // file doesn't exist
+        if (!pomFile.exists())
+            return false;
+
+        // root XML node is null
+        if (project == null)
+            return false;
+
+        // root XML node is not <project>
+        if (!PROJECT.equals(project.getNodeName()))
+            return false;
+
+        return true;
     }
+
+    // /** Check if '.pom' file exists */
+    // public boolean exists() {
+    //     return pomFile.exists();
+    // }
 
     /** Check if '[relocation]' exists */
     public boolean isRelocated() {

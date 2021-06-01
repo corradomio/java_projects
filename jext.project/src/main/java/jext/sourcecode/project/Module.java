@@ -21,28 +21,28 @@ public interface Module extends RefIdNamed {
     /** Module home directory (physical path) */
     File getModuleHome();
 
+    /** Source root directories */
+    List<File> getSourceRootDirectories();
+
     // -- modules
 
     /** Module dependencies */
     List<Module> getDependencies();
-
-    /** Sub modules */
-    // List<Module> getSubModules(boolean recursive);
 
     // -- sources
 
     /** Sources available inside the module */
     List<Source> getSources();
 
-    /** Source roots */
-    Set<File> getSourceRoots();
+    /** Source roots (relative paths respect moduleHome) */
+    Set<String> getSourceRoots();
 
     /** Retrieve a source by id/fullname/name */
     Source getSource(String name);
 
     // -- libraries
 
-    /** Maven repositories defined in the module */
+    /** Maven repository urls defined in the module */
     Set<String> getMavenRepositories();
 
     /** Module runtime library */
@@ -56,7 +56,7 @@ public interface Module extends RefIdNamed {
      *
      * this function return the library with v2 !
      */
-    List<Library> getLibraries();
+    Set<Library> getLibraries();
 
     /**
      * Libraries used by the module (local & remote) with the version specified in the module
@@ -66,18 +66,19 @@ public interface Module extends RefIdNamed {
      *
      * this function return the library with v1 !
      */
-    List<Library> getDeclaredLibraries();
+    Set<Library> getDeclaredLibraries();
 
     /** Retrieve the library by id/fullname/name */
     Library getLibrary(String nameOrId);
 
     // -- resources
+    // 01/06/2021: not necessary
 
-    /** Resources used by the module */
-    List<Resource> getResources();
+    // /** Resources used by the module */
+    // List<Resource> getResources();
 
-    /** Retrieve the resource by name or id/fullname/name */
-    Resource getResource(String nameOrId);
+    // /** Retrieve the resource by name or id/fullname/name */
+    // Resource getResource(String nameOrId);
 
     // -- types
 

@@ -1,17 +1,13 @@
 package jext.sourcecode.project.eclipse;
 
-import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.eclipse.util.ClasspathFile;
-import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 
 import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class EclipseModule extends BaseModule {
 
@@ -43,29 +39,58 @@ public class EclipseModule extends BaseModule {
     }
 
     @Override
-    protected List<Library> getLocalLibraries() {
-        return classpathFile.getLocalLibraries()
+    protected void collectLocalLibraries(Set<Library> collectedLibraries) {
+        super.collectLocalLibraries(collectedLibraries);
+        classpathFile.getLocalLibraries()
             .stream()
+            .filter(jarFile -> jarFile.exists())
             .map(jarFile -> ArchiveUtils.newLibrary(jarFile, this))
-            .collect(Collectors.toList());
+            .forEach(collectedLibraries::add);
     }
 
-    @Override
-    protected List<Library> getMavenLibraries() {
+    // @Override
+    // protected void collectEclipseLibraries(Set<Library> collectedLibraries) {
+    //     List<MavenCoords> coordList = classpathFile.getMavenLibraries()
+    //         .stream()
+    //         .map(MavenCoords::new)
+    //         .collect(Collectors.toList());
+    //
+    //     MavenDownloader md = project.getLibraryDownloader();
+    //     // md.checkArtifacts(coordList);
+    //
+    //     coordList
+    //         .stream()
+    //         .map(coords -> new MavenLibrary(coords, md, project))
+    //         .forEach(collectedLibraries::add);
+    // }
 
-        List<MavenCoords> coordList = classpathFile.getMavenLibraries()
-            .stream()
-            .map(MavenCoords::new)
-            .collect(Collectors.toList());
+    // @Override
+    // protected List<Library> getLocalLibraries() {
+    //     List<Library> localLibraries = super.getLocalLibraries();
+    //     classpathFile.getLocalLibraries()
+    //         .stream()
+    //         .filter(jarFile -> jarFile.exists())
+    //         .map(jarFile -> ArchiveUtils.newLibrary(jarFile, this))
+    //         .forEach(localLibraries::add);
+    //     return localLibraries;
+    // }
 
-        MavenDownloader md = project.getLibraryDownloader();
-        // md.checkArtifacts(coordList);
-
-        return coordList
-            .stream()
-            .map(coords -> new MavenLibrary(coords, md, project))
-            .collect(Collectors.toList());
-    }
+    // @Override
+    // protected List<Library> getMavenLibraries() {
+    //
+    //     List<MavenCoords> coordList = classpathFile.getMavenLibraries()
+    //         .stream()
+    //         .map(MavenCoords::new)
+    //         .collect(Collectors.toList());
+    //
+    //     MavenDownloader md = project.getLibraryDownloader();
+    //     // md.checkArtifacts(coordList);
+    //
+    //     return coordList
+    //         .stream()
+    //         .map(coords -> new MavenLibrary(coords, md, project))
+    //         .collect(Collectors.toList());
+    // }
 
     // ----------------------------------------------------------------------
     // End

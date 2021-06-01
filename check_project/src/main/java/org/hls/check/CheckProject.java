@@ -24,13 +24,14 @@ public class CheckProject {
                 // "D:\\SPLGroup\\example_repo\\cocome-maven-project"
                 // "D:\\Projects.github\\other_projects\\commons-lang"
                 // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
-                "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
                 // "D:/SPLGroup/spl-workspaces/_anis_project/JunoWS-2021"
+                "D:\\SPLGroup\\spl-workspaces\\etsalat-workspace\\Etisalat\\etisala-project-ebtic"
                 ),
                 PropertiesUtils.empty());
 
             ProjectAnalyzer.analyzeProject(project, new File("project-info.json"));
-            ProjectAnalyzer.analyzeSources(project, new File("source-info.json"));
+            // ProjectAnalyzer.analyzeSources(project, new File("source-info.json"));
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -86,11 +86,11 @@ public class LibrarySet extends AbstractSet<Library> {
             return mavenLibraries.get(library.getName().getName());
     }
 
-    public List<Library> resolveAll(List<Library> libraries) {
+    public Set<Library> resolveAll(Set<Library> libraries) {
         return libraries.stream()
             .map(this::resolve)
             .sorted()
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     public void checkArtifacts() {

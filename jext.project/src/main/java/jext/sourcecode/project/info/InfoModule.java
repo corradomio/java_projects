@@ -7,7 +7,6 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.util.MapUtils;
@@ -15,6 +14,7 @@ import jext.util.MapUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -28,11 +28,19 @@ public class InfoModule implements Module {
     private List<Source> sources;
     private Name name;
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     InfoModule(InfoProject project, Map<String, Object> info) {
         this.project = project;
         this.info = info;
         this.name = new PathName(MapUtils.get(info, "fullname"));
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public String getId() {
@@ -72,6 +80,14 @@ public class InfoModule implements Module {
     }
 
     @Override
+    public List<File> getSourceRootDirectories() {
+        File moduleHome = getModuleHome();
+        return getSourceRoots().stream()
+            .map(sourceRoot -> new File(moduleHome, sourceRoot))
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Module> getDependencies() {
         List<String> mdepends = MapUtils.get(info, "dependencies");
         return mdepends.stream()
@@ -95,11 +111,12 @@ public class InfoModule implements Module {
     }
 
     @Override
-    public Set<File> getSourceRoots() {
-        List<String> sroots = MapUtils.get(info, "sourceRoots");
-        return sroots.stream()
-            .map(sroot -> new File(getModuleHome(), sroot))
-            .collect(Collectors.toSet());
+    public Set<String> getSourceRoots() {
+        //List<String> sroots = MapUtils.get(info, "sourceRoots");
+        // return sroots.stream()
+            // .map(sroot -> new File(getModuleHome(), sroot))
+            // .collect(Collectors.toSet());
+        return new HashSet<>(MapUtils.get(info, "sourceRoots"));
     }
 
     @Override
@@ -126,24 +143,24 @@ public class InfoModule implements Module {
     }
 
     @Override
-    public List<Library> getLibraries() {
+    public Set<Library> getLibraries() {
         List<String> libraries = MapUtils.get(info, "libraries");
         return libraries.stream()
             .map(name -> project.getLibrary(name))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     @Override
-    public List<Library> getDeclaredLibraries() {
+    public Set<Library> getDeclaredLibraries() {
         List<String> libraries = MapUtils.get(info, "declaredLibraries");
         return libraries.stream()
             .map(name -> project.getLibrary(name))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     @Override
     public Library getLibrary(String nameOrId) {
-        List<Library> libraries = getDeclaredLibraries();
+        Set<Library> libraries = getDeclaredLibraries();
         for (Library library : libraries) {
             if (library.getName().getFullName().equals(nameOrId))
                 return library;
@@ -153,15 +170,23 @@ public class InfoModule implements Module {
         return null;
     }
 
-    @Override
-    public List<Resource> getResources() {
-        return Collections.emptyList();
-    }
+    // ----------------------------------------------------------------------
+    // Resources
+    // ----------------------------------------------------------------------
 
-    @Override
-    public Resource getResource(String nameOrId) {
-        return null;
-    }
+    // @Override
+    // public List<Resource> getResources() {
+    //     return Collections.emptyList();
+    // }
+
+    // @Override
+    // public Resource getResource(String nameOrId) {
+    //     return null;
+    // }
+
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isEmpty() {
