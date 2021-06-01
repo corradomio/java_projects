@@ -15,6 +15,8 @@ public class CompositeTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
 
     protected List<TypeSolver> elements = new ArrayList<>();
+    private List<TypeSolverExt> elementsExt = new ArrayList<>();
+
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -35,6 +37,8 @@ public class CompositeTypeSolver extends BaseTypeSolver {
 
     public CompositeTypeSolver add(TypeSolver ts) {
         this.elements.add(ts);
+        if (ts instanceof TypeSolverExt)
+            this.elementsExt.add((TypeSolverExt) ts);
         ts.setParent(this);
         return this;
     }
@@ -50,8 +54,8 @@ public class CompositeTypeSolver extends BaseTypeSolver {
 
     @Override
     public boolean isNamespace(String name) {
-        for (TypeSolver typeSolver : elements) {
-            if (((TypeSolverExt)typeSolver).isNamespace(name))
+        for (TypeSolverExt tsx : elementsExt) {
+            if (tsx.isNamespace(name))
                 return true;
         }
         return false;

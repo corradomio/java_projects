@@ -20,7 +20,7 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
         UNSOLVED = SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
 
     protected Logger logger;
-    protected TypeSolverExt parent;
+    protected TypeSolver parent;
     protected String name;
 
     // ----------------------------------------------------------------------
@@ -58,10 +58,8 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
         if (parent == this) {
             throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
         }
-        if (parent instanceof TypeSolverExt)
-            this.parent = (TypeSolverExt) parent;
-        else
-            this.parent = new TypeSolverExtWrapper(parent);
+
+        this.parent = parent;
     }
 
     // ----------------------------------------------------------------------
