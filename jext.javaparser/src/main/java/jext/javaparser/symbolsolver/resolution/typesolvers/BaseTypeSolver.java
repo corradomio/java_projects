@@ -58,7 +58,10 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
         if (parent == this) {
             throw new IllegalStateException("The parent of this TypeSolver cannot be itself.");
         }
-        this.parent = (TypeSolverExt) parent;
+        if (parent instanceof TypeSolverExt)
+            this.parent = (TypeSolverExt) parent;
+        else
+            this.parent = new TypeSolverExtWrapper(parent);
     }
 
     // ----------------------------------------------------------------------
