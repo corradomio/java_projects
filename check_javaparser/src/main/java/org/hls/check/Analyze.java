@@ -42,9 +42,10 @@ public class Analyze {
                 new File(
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
                     // "D:\\SPLGroup\\spl-workspaces\\ext-workspace\\BTProjects\\DEUM"
-                    "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
+                    // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
                     // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\bookstore"
+                    "D:\\Temp\\etisala-project-ebtic"
                 ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownloadDirectory(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
@@ -55,7 +56,7 @@ public class Analyze {
 
             pool = JavaParserPool.getPool().withCache();
             project.getModules().forEach(module -> {
-                pool.addAll(module.getSourceRoots());
+                pool.addAll(module.getSourceRootDirectories());
             });
 
             log.infof("ClassPoolRegistry");
@@ -93,7 +94,7 @@ public class Analyze {
         System.out.printf("== %s ==\n", source.getName());
 
         CompositeTypeSolver ts = new CachedTypeSolver();
-        ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
+        ts.add(new ClassPoolRegistryTypeSolver(cpr));
         ts.add(new JavaParserPoolTypeSolver().withPool(pool));
         ts.add(new ContextSolvedSymbolsTypeSolver(css, us));
 

@@ -60,4 +60,31 @@ public class MapUtils {
         return (E)cmap.getOrDefault(keys[l], defaultValue);
     }
 
+    public static int getOrDefault(Map<String, Object> map, String key, int defval) {
+        if (!map.containsKey(key))
+            return defval;
+        Object value = map.get(key);
+        if (value instanceof Integer)
+            return (Integer) value;
+        if (value instanceof Long)
+            return ((Long) value).intValue();
+        if (value instanceof String)
+            return Integer.parseInt((String) value);
+        else
+            return Integer.parseInt(value.toString());
+    }
+
+    public static long getOrDefault(Map<String, Object> map, String key, long defval) {
+        if (!map.containsKey(key))
+            return defval;
+        Object value = map.get(key);
+        if (value instanceof Integer)
+            return ((Integer) value).longValue();
+        if (value instanceof Long)
+            return (Long) value;
+        if (value instanceof String)
+            return Long.parseLong((String) value);
+        else
+            return Integer.parseInt(value.toString());
+    }
 }

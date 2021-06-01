@@ -13,6 +13,7 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
@@ -428,37 +429,37 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // Resources
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public List<Resource> getResources() {
-    //
-    //     List<Resource> resources = new ArrayList<>();
-    //
-    //     // local resources
-    //     resources.addAll(getBaseProject().getResources(moduleHome, this));
-    //
-    //     // sub resources
-    //     getDirectories().forEach(dir -> {
-    //         List<Resource> reslist = getBaseProject().getResources(dir, this);
-    //         resources.addAll(reslist);
-    //     });
-    //
-    //     return resources;
-    // }
+    @Override
+    public List<Resource> getResources() {
 
-    // @Override
-    // public Resource getResource(String nameOrId) {
-    //     for (Resource resource : getResources()) {
-    //         if (resource.getId().equals(nameOrId))
-    //             return resource;
-    //         if (resource.getName().getFullName().equals(nameOrId))
-    //             return resource;
-    //         if (resource.getName().getName().equals(nameOrId))
-    //             return resource;
-    //         if (resource.getPath().equals(nameOrId))
-    //             return resource;
-    //     }
-    //     return null;
-    // }
+        List<Resource> resources = new ArrayList<>();
+
+        // local resources
+        resources.addAll(getBaseProject().getResources(moduleHome, this));
+
+        // sub resources
+        getDirectories().forEach(dir -> {
+            List<Resource> reslist = getBaseProject().getResources(dir, this);
+            resources.addAll(reslist);
+        });
+
+        return resources;
+    }
+
+    @Override
+    public Resource getResource(String nameOrId) {
+        for (Resource resource : getResources()) {
+            if (resource.getId().equals(nameOrId))
+                return resource;
+            if (resource.getName().getFullName().equals(nameOrId))
+                return resource;
+            if (resource.getName().getName().equals(nameOrId))
+                return resource;
+            if (resource.getPath().equals(nameOrId))
+                return resource;
+        }
+        return null;
+    }
 
     // ----------------------------------------------------------------------
     // Types

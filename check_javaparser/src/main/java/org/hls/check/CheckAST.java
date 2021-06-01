@@ -51,7 +51,7 @@ public class CheckAST {
 
             pool = JavaParserPool.getPool().withCache();
             project.getModules().forEach(module -> {
-                pool.addAll(module.getSourceRoots());
+                pool.addAll(module.getSourceRootDirectories());
             });
 
             log.infof("ClassPoolRegistry");

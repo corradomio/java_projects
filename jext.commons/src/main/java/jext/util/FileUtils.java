@@ -225,7 +225,7 @@ public class FileUtils {
      *
      * @param parentFile  parent file
      * @param currentFile current file
-     * @return teh relative path
+     * @return the relative path
      */
     public static String relativePath(File parentFile, File currentFile) {
         String parentPath = getAbsolutePath(parentFile);

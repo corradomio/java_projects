@@ -4,6 +4,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.util.FileUtils;
@@ -69,23 +70,23 @@ public class ProjectUtils {
 
     // ----------------------------------------------------------------------
 
-    // public static List<Resource> getResources(Project project) {
-    //     List<Resource> resources = new ArrayList<>();
-    //
-    //     for (Module module : project.getModules())
-    //         resources.addAll(module.getResources());
-    //
-    //     return resources;
-    // }
+    public static List<Resource> getResources(Project project) {
+        List<Resource> resources = new ArrayList<>();
 
-    // public static Resource getResource(Project project, String nameOrId) {
-    //     for (Module module : project.getModules()) {
-    //         Resource resource = module.getResource(nameOrId);
-    //         if (resource != null)
-    //             return resource;
-    //     }
-    //     return null;
-    // }
+        for (Module module : project.getModules())
+            resources.addAll(module.getResources());
+
+        return resources;
+    }
+
+    public static Resource getResource(Project project, String nameOrId) {
+        for (Module module : project.getModules()) {
+            Resource resource = module.getResource(nameOrId);
+            if (resource != null)
+                return resource;
+        }
+        return null;
+    }
 
     // ----------------------------------------------------------------------
 

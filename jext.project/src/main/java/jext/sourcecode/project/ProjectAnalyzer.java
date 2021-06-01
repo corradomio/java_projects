@@ -139,7 +139,7 @@ public class ProjectAnalyzer {
 
         // object counts
         minfo.put("counts", MapUtils.asMap(
-            // "resources", m.getResources().size(),
+            "resources", m.getResources().size(),
             "sources", m.getSources().size(),
             "sourceRoots", m.getSourceRoots().size(),
             "dependencies", m.getDependencies().size(),

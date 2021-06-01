@@ -50,9 +50,9 @@ public class MimeTypes {
                 String ext = parts[0].trim();
                 String type = parts[1].trim();
 
-                if (mimetypes.containsKey(ext))
-                    logger.warn(String.format("Mimetype %s (%s) redefined as %s", ext, mimetypes.get(ext), type));
-                mimetypes.put(parts[0].trim(), parts[1].trim());
+                // if (mimetypes.containsKey(ext))
+                //     logger.warn(String.format("Mimetype %s (%s) redefined as %s", ext, mimetypes.get(ext), type));
+                mimetypes.put(ext, type);
             }
 
         }

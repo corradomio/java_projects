@@ -8,6 +8,7 @@ import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
+import jext.javaparser.util.ClassPoolRegistry;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 import jext.util.FileUtils;
@@ -46,9 +47,10 @@ public class CheckMethodCalls {
     }
 
     static void analyze(CompilationUnit cu) {
+        ClassPoolRegistry cpr = new ClassPoolRegistry().addJdk(new File("D:\\Java\\Jdk8.0.x64"));
         CombinedTypeSolver ts = new CombinedTypeSolver();
         ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
-        ts.add(new ClassPoolRegistryTypeSolver().addJdk(new File("D:\\Java\\Jdk8.0.x64")));
+        ts.add(new ClassPoolRegistryTypeSolver(cpr));
 
         JPUtils.setSymbolSolver(cu, ts);
 

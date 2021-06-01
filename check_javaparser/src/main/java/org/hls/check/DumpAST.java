@@ -18,7 +18,7 @@ public class DumpAST {
             "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\cocome-maven-project\\cloud-logic-service\\cloud-logic-core-impl\\src\\main\\java\\org\\cocome\\tradingsystem\\inventory\\data\\enterprise\\Product.java"
         );
 
-        JavaParserPool jpp = JavaParserPool.getPool();;
+        JavaParserPool jpp = JavaParserPool.getPool();
 
         jpp.parse(source).ifSuccessful(cu -> {
             new LogVoidVisitorAdapter<>().analyze(cu);

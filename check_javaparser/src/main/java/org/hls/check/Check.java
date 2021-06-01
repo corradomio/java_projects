@@ -11,6 +11,7 @@ import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
+import jext.javaparser.util.ClassPoolRegistry;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 import jext.util.FileUtils;
@@ -104,12 +105,13 @@ public class Check {
 
     static void analyze(CompilationUnit cu) {
         try {
+            ClassPoolRegistry cpr = new ClassPoolRegistry().add(new File("D:\\Java\\MiniJdk\\Jdk8"), "jdk8");
             CombinedTypeSolver ts = new CombinedTypeSolver();
             // ContextTypeSolver ts = new ContextTypeSolver();
             // ts.add(new JavaParserTypeSolver(new File("data\\bookstore\\src\\main\\java")));
             ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
             // ts.add(new JavaParserTypeSolver(new File("src_only")));
-            ts.add(new ClassPoolRegistryTypeSolver().add(new File("D:\\Java\\MiniJdk\\Jdk8"), "jdk8"));
+            ts.add(new ClassPoolRegistryTypeSolver(cpr));
             // ts.add(new ReflectionTypeSolver());
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\rt.jar")));
             // ts.add(new JarTypeSolver(new File("D:\\Java\\MiniJdk\\jdk8\\alt-rt.jar")));

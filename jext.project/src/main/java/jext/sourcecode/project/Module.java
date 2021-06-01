@@ -74,11 +74,11 @@ public interface Module extends RefIdNamed {
     // -- resources
     // 01/06/2021: not necessary
 
-    // /** Resources used by the module */
-    // List<Resource> getResources();
+    /** Resources used by the module */
+    List<Resource> getResources();
 
-    // /** Retrieve the resource by name or id/fullname/name */
-    // Resource getResource(String nameOrId);
+    /** Retrieve the resource by name or id/fullname/name */
+    Resource getResource(String nameOrId);
 
     // -- types
 

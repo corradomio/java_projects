@@ -39,7 +39,7 @@ public class CheckMini {
             .forEach(source -> {
                 System.out.println(source.getAbsolutePath());
                 ContextTypeSolver ts = new ContextTypeSolver();
-                ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
+                ts.add(new ClassPoolRegistryTypeSolver(cpr));
                 ts.add(new JavaParserPoolTypeSolver(pool));
 
                 ParseResult<CompilationUnit> result = pool.parse(source);

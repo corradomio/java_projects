@@ -40,7 +40,7 @@ public class CheckDL4JSingle {
             pool = JavaParserPool.getPool().withCache();
 
             project.getModules().forEach(module -> {
-                pool.addAll(module.getSourceRoots());
+                pool.addAll(module.getSourceRootDirectories());
             });
 
             cpr = new ClassPoolRegistry()
@@ -68,7 +68,7 @@ public class CheckDL4JSingle {
         System.out.printf("== %s ==\n", source.getName());
 
         ContextTypeSolver ts = new ContextTypeSolver();
-        ts.add(new ClassPoolRegistryTypeSolver().withClassPoolRegistry(cpr));
+        ts.add(new ClassPoolRegistryTypeSolver(cpr));
         ts.add(new JavaParserPoolTypeSolver(pool));
 
         ParseResult<CompilationUnit> result = pool.parse(source);

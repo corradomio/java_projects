@@ -37,33 +37,33 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
     public ClassPoolRegistryTypeSolver(String name, ClassPoolRegistry classPoolRegistry) {
         super(name);
         this.classPoolRegistry = classPoolRegistry;
-        if (classPoolRegistry.isEmpty())
-            throw new IllegalArgumentException("classPoolRegistry can not be empty");
+        // if (classPoolRegistry.isEmpty())
+        //     throw new IllegalArgumentException("classPoolRegistry can not be empty");
     }
 
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
 
-    public ClassPoolRegistryTypeSolver withClassPoolRegistry(ClassPoolRegistry classPoolRegistry) {
-        this.classPoolRegistry = classPoolRegistry;
-        return this;
-    }
+    // public ClassPoolRegistryTypeSolver withClassPoolRegistry(ClassPoolRegistry classPoolRegistry) {
+    //     this.classPoolRegistry = classPoolRegistry;
+    //     return this;
+    // }
 
-    public ClassPoolRegistryTypeSolver add(File libraryFile, String libraryName) {
-        this.classPoolRegistry.add(libraryFile, libraryName);
-        return this;
-    }
+    // public ClassPoolRegistryTypeSolver add(File libraryFile, String libraryName) {
+    //     this.classPoolRegistry.add(libraryFile, libraryName);
+    //     return this;
+    // }
 
-    public ClassPoolRegistryTypeSolver addAll(List<File> libraryFiles, String libraryName) {
-        this.classPoolRegistry.addAll(libraryFiles, libraryName);
-        return this;
-    }
+    // public ClassPoolRegistryTypeSolver addAll(List<File> libraryFiles, String libraryName) {
+    //     this.classPoolRegistry.addAll(libraryFiles, libraryName);
+    //     return this;
+    // }
 
-    public ClassPoolRegistryTypeSolver addJdk(File jdk) {
-        this.classPoolRegistry.addJdk(jdk);
-        return this;
-    }
+    // public ClassPoolRegistryTypeSolver addJdk(File jdk) {
+    //     this.classPoolRegistry.addJdk(jdk);
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Extended operations

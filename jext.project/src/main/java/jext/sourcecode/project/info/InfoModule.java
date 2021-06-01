@@ -7,6 +7,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.util.MapUtils;
@@ -167,6 +168,16 @@ public class InfoModule implements Module {
             if (library.getId().equals(nameOrId))
                 return library;
         }
+        return null;
+    }
+
+    @Override
+    public List<Resource> getResources() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Resource getResource(String nameOrId) {
         return null;
     }
 
