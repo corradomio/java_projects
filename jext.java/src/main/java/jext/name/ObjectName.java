@@ -32,8 +32,6 @@ public class ObjectName implements Name {
     // ----------------------------------------------------------------------
 
     public ObjectName(String name) {
-        if (name == null)
-            throw new NullPointerException();
         this.name = name;
     }
 

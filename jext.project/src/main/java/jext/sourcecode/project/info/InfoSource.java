@@ -7,7 +7,7 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
-import jext.sourcecode.project.SourceInfo;
+import jext.sourcecode.project.util.SourceInfo;
 import jext.sourcecode.project.Type;
 import jext.util.MapUtils;
 

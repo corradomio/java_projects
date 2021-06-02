@@ -177,7 +177,7 @@ public class FastJavaParser {
             return sourceFile.getParentFile();
         if (!path.endsWith(relativePath))
             return null;
-        int sep = path.indexOf(relativePath);
+        int sep = path.lastIndexOf(relativePath);
         if (sep == -1)
             return null;
 

@@ -1,6 +1,8 @@
 package jext.sourcecode.project;
 
+import jext.sourcecode.project.util.ModulesInfo;
 import jext.sourcecode.project.util.ProjectUtils;
+import jext.sourcecode.project.util.SourceInfo;
 import jext.util.FileUtils;
 import jext.util.MapUtils;
 import jext.util.SetUtils;
@@ -191,18 +193,19 @@ public class ProjectAnalyzer {
     }
 
     private Map<String, Object> analyzeLibrary(Library l) {
-        Map<String, Object> linfo = new LinkedHashMap<>();
-
-        linfo.put("name", l.getName().getName());
-        linfo.put("fullname", l.getName().getFullName());
-        linfo.put("id", l.getId());
-        linfo.put("digest", l.getDigest());
-        linfo.put("libraryType", l.getLibraryType());
-        linfo.put("version", l.getVersion());
-        linfo.put("files", l.getFiles()
+        Map<String, Object> linfo = MapUtils.asLinkedMap(
+            "name", l.getName().getName(),
+            "fullname", l.getName().getFullName(),
+            "id", l.getId(),
+            "digest", l.getDigest(),
+            "libraryType", l.getLibraryType(),
+            "version", l.getVersion(),
+            "valid", l.isValid(),
+            "files", l.getFiles()
             .stream()
             .map(FileUtils::getAbsolutePath)
-            .collect(Collectors.toList()));
+                .collect(Collectors.toList())
+        );
 
         return linfo;
     }
@@ -239,20 +242,20 @@ public class ProjectAnalyzer {
 
     private SourceInfo  analyzeSources() {
         // create the main map
-        SourceInfo sinfo = new SourceInfo();
-        sinfo.init();
+        ModulesInfo minfo = new ModulesInfo();
+        minfo.init();
         ProjectUtils.getSources(project)
             .parallelStream()
-            .forEach(source -> analyzeSource(sinfo, source));
-        return sinfo;
+            .forEach(source -> analyzeSource(minfo, source));
+        return minfo;
     }
 
-    private void analyzeSource(SourceInfo sinfo, Source source) {
-        sinfo.add(source.getSourceInfo());
+    private void analyzeSource(ModulesInfo minfo, Source source) {
+        minfo.add(source.getSourceInfo());
         String modulePath = source.getModule().getName().getFullName();
         String sourcePath = source.getName().getFullName();
         String digest = source.getDigest();
-        sinfo.addDigest(modulePath, sourcePath, digest);
+        minfo.addDigest(modulePath, sourcePath, digest);
     }
 
 }

@@ -666,9 +666,10 @@ public class MavenDownloader implements MavenConst {
 
         MultipleException excpt = new MultipleException(String.format("Unable to download %s for %s", type, coords));
 
-        // if 'coords' are marked as 'invalid', skip (with timeout)
+        // if 'coords' are marked as 'invalid', skip then (with timeout)
         if (isInvalidType(coords, type)) {
-            excpt.addCause(new RuntimeException("Invalid coordinates"));
+            excpt.addCause(new RuntimeException("Invalid Maven coordinates: " + coords.toString()));
+            logger.warnf("Maven artifact %s invalid (because marked with '.invalid' flag file)", coords);
             return excpt;
         }
 
