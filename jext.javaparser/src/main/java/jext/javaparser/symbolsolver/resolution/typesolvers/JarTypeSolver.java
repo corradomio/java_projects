@@ -117,9 +117,9 @@ public class JarTypeSolver implements TypeSolver {
 
     @Override
     public ResolvedReferenceTypeDeclaration solveType(String name) throws UnsolvedSymbolException {
-        SymbolReference<ResolvedReferenceTypeDeclaration> ref = tryToSolveType(name);
-        if (ref.isSolved()) {
-            return ref.getCorrespondingDeclaration();
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveType(name);
+        if (solved.isSolved()) {
+            return solved.getCorrespondingDeclaration();
         } else {
             throw new UnsolvedSymbolException(name);
         }

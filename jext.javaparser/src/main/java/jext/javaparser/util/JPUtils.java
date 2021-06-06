@@ -1,5 +1,7 @@
 package jext.javaparser.util;
 
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -424,4 +426,23 @@ public class JPUtils {
         return new JavaParserFacadeCache(getJavaParserFacadeTypeSolversMap());
     }
 
+    // ----------------------------------------------------------------------
+    // Problems
+    // ----------------------------------------------------------------------
+
+    public static String getProblemMessages(ParseResult<CompilationUnit> result) {
+        List<Problem> problems = result.getProblems();
+        if (problems.isEmpty())
+            return "no problems";
+        if (problems.size() == 1)
+            return result.getProblem(0).getMessage();
+
+        StringBuilder sb = new StringBuilder();
+        for (Problem problem : result.getProblems()) {
+            if (sb.length() > 0)
+                sb.append("\n");
+            sb.append(problem.getMessage());
+        }
+        return sb.toString();
+    }
 }

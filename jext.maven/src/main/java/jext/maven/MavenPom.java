@@ -70,7 +70,7 @@ public class MavenPom implements MavenConst {
 
     private MavenDownloader downloader;
 
-    private Logger logger = MavenDownloader.logger;
+    private Logger logger = Logger.getLogger(MavenDownloader.class);
     private File pomFile;
     private Element project;
 

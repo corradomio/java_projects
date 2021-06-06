@@ -3,6 +3,7 @@ package jext.javaparser.util;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
+import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
 import javax.annotation.Nullable;
@@ -193,6 +194,7 @@ public class ClassPoolRegistry {
                     String className = epc.toClassName(entryName);
                     String namespace = epc.toNamespace(entryName);
                     addElement(className, namespace, libraryFile, entry, libraryName);
+                    addNamespace(namespace);
                 }
             }
         }
@@ -201,7 +203,7 @@ public class ClassPoolRegistry {
         }
     }
 
-    protected void addElement(String name, String namespace, File libraryFile, JarEntry entry, String libraryName) {
+    private void addElement(String name, String namespace, File libraryFile, JarEntry entry, String libraryName) {
         if (classpathElements.containsKey(name))
             return;
 
@@ -212,6 +214,16 @@ public class ClassPoolRegistry {
         element.libraryName = libraryName;
 
         classpathElements.put(name, element);
+    }
+
+    private void addNamespace(String namespace) {
+        if (namespaces.contains(namespace))
+            return;
+
+        while(namespace.contains(".")) {
+            namespaces.add(namespace);
+            namespace = JavaUtils.namespaceOf(namespace);
+        }
         namespaces.add(namespace);
     }
 

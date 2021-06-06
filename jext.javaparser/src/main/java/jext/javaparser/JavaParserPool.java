@@ -11,7 +11,9 @@ import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -86,6 +88,20 @@ public class JavaParserPool {
     private static final int CACHE_SIZE_UNSET = -1;
 
     // ----------------------------------------------------------------------
+    // Listeners on parsed files
+    // ----------------------------------------------------------------------
+
+    public interface ParsedFile {
+        void parsed(ParseResult<CompilationUnit> result, File file);
+    }
+
+    private final List<ParsedFile> listeners = new ArrayList<>();
+
+    public void addListener(ParsedFile l) {
+        listeners.add(l);
+    }
+
+    // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
@@ -112,21 +128,17 @@ public class JavaParserPool {
         this.parserConfiguration = parserConfiguration;
         this.namespaces = new ConcurrentSkipListSet<>();
         // this.cacheSizeLimit = cacheSizeLimit;
-        this.logger = Logger.getLogger(getClass(), name);
 
         // this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
         // this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
         // this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
+
+        this.logger = Logger.getLogger(getClass(), name);
     }
 
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
-
-    // public JavaParserPool withUniqueSymbols(UniqueSymbols uniqueSymbols) {
-    //     this.uniqueSymbols = uniqueSymbols;
-    //     return this;
-    // }
 
     public JavaParserPool withCache() {
         return withCache(this.name);
@@ -242,16 +254,18 @@ public class JavaParserPool {
     //
     private /*synchronized*/ ParseResult<CompilationUnit> parse(Path srcFile) {
         if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
-            return new ParseResult<>(
+            return parsedFile(new ParseResult<>(
                 null,
                 new ArrayList<Problem>() {{
                     add(new Problem("FileNotFoundException", TokenRange.INVALID,
                         new FileNotFoundException(srcFile.toString())));
                 }},
-                new CommentsCollection());
+                new CommentsCollection()),
+                srcFile);
         }
 
         try {
+            // try to use the cache if possible
             return parsedFiles.getChecked(srcFile, () -> {
                 // logger.debugft("... parse %s", srcFile);
                 // ParseResult<CompilationUnit> result =
@@ -269,12 +283,13 @@ public class JavaParserPool {
         }
         catch (ExecutionException e) {
             logger.errorf("Unable to parse %s: %s", srcFile, e);
-            return new ParseResult<>(
+            return parsedFile(new ParseResult<>(
                 null,
                 new ArrayList<Problem>() {{
                     add(new Problem("ExecutionException", TokenRange.INVALID, e));
                 }},
-                new CommentsCollection());
+                new CommentsCollection()),
+                srcFile);
         }
     }
 
@@ -295,6 +310,7 @@ public class JavaParserPool {
 
             result = new JavaParser(parserConfiguration)
                     .parse(COMPILATION_UNIT, provider(srcFile));
+
             if (result.isSuccessful()) {
                 result.ifSuccessful(cu -> {
                     // if (uniqueSymbols != null)
@@ -305,14 +321,14 @@ public class JavaParserPool {
             }
             ++count;
         }
-        return result;
+
+        return parsedFile(result, srcFile);
     }
 
     /**
      * Note: that this parse only files directly contained in this directory.
      *       It does not traverse recursively all children directory.
      */
-
     private List<CompilationUnit> parseDirectory(Path srcDirectory, boolean recursively) {
         try {
             return parsedDirectories.getChecked(srcDirectory.toAbsolutePath(), () -> {
@@ -339,74 +355,24 @@ public class JavaParserPool {
     }
 
     // ----------------------------------------------------------------------
-    // Resolve
+    // Unparsed files
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-    //     try {
-    //         return foundTypes.get(name, () -> {
-    //             SymbolReference<ResolvedReferenceTypeDeclaration> result = tryToSolveTypeUncached(name);
-    //             if (result.isSolved()) {
-    //                 return SymbolReference.solved(result.getCorrespondingDeclaration());
-    //             }
-    //             return result;
-    //         });
-    //     }
-    //     catch (ExecutionException e) {
-    //         throw new RuntimeException(e);
-    //     }
-    // }
-    //
-    // private SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveTypeUncached(String name) {
-    //     String[] nameElements = name.split("\\.");
-    //
-    //     for(Path srcDir : sourceRoots)
-    //     for (int i = nameElements.length; i > 0; i--) {
-    //         StringBuilder filePath = new StringBuilder(srcDir.toAbsolutePath().toString());
-    //         for (int j = 0; j < i; j++) {
-    //             filePath.append("/")
-    //                 .append(nameElements[j]);
-    //         }
-    //         filePath.append(".java");
-    //
-    //         StringBuilder typeName = new StringBuilder();
-    //         for (int j = i - 1; j < nameElements.length; j++) {
-    //             if (j != i - 1) {
-    //                 typeName.append(".");
-    //             }
-    //             typeName.append(nameElements[j]);
-    //         }
-    //
-    //         // As an optimization we first try to look in the canonical position where we expect to find the file
-    //         Path srcFile = Paths.get(filePath.toString());
-    //         {
-    //             Optional<CompilationUnit> compilationUnit = parse(srcFile);
-    //             if (compilationUnit.isPresent()) {
-    //                 Optional<com.github.javaparser.ast.body.TypeDeclaration<?>> astTypeDeclaration
-    //                     = Navigator.findType(compilationUnit.get(), typeName.toString());
-    //                 if (astTypeDeclaration.isPresent()) {
-    //                     return SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(astTypeDeclaration.get()));
-    //                 }
-    //             }
-    //         }
-    //
-    //         // If this is not possible we parse all files
-    //         // We try just in the same package, for classes defined in a file not named as the class itself
-    //         {
-    //             List<CompilationUnit> compilationUnits = parseDirectory(srcFile.getParent());
-    //             for (CompilationUnit compilationUnit : compilationUnits) {
-    //                 Optional<com.github.javaparser.ast.body.TypeDeclaration<?>> astTypeDeclaration
-    //                     = Navigator.findType(compilationUnit, typeName.toString());
-    //                 if (astTypeDeclaration.isPresent()) {
-    //                     return SymbolReference.solved(JavaParserFacade.get(this).getTypeDeclaration(astTypeDeclaration.get()));
-    //                 }
-    //             }
-    //         }
-    //     }
-    //
-    //     return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
-    // }
+    private ParseResult<CompilationUnit> parsedFile(ParseResult<CompilationUnit> result, Path srcFile) {
+        return parsedFile(result, srcFile.toFile());
+    }
+
+    private ParseResult<CompilationUnit> parsedFile(ParseResult<CompilationUnit> result, File srcFile) {
+        listeners.forEach(l -> l.parsed(result, srcFile));
+        // if (!result.isSuccessful())
+        //     logger.errorf("Unable to parse for problems %s\n  %s", JPUtils.getProblemMessages(result),
+        //         FileUtils.getAbsolutePath(srcFile));
+        return result;
+    }
+
+    // ----------------------------------------------------------------------
+    // Resolve
+    // ----------------------------------------------------------------------
 
     public Optional<TypeDeclaration<?>> tryToSolveType(String name) {
 
@@ -431,13 +397,18 @@ public class JavaParserPool {
                     filePath.append("/")
                         .append(nameElements[j]);
                 }
+
+                // check for namespaces
                 if (isDirectory(name, new File(filePath.toString())))
                     break;
 
+                // check for file ".java"
                 filePath.append(".java");
                 if (!new File(filePath.toString()).exists())
                     continue;
 
+                // IT IS a ".java" file!
+                // compose the new typename
                 StringBuilder typeName = new StringBuilder();
                 for (int j = i - 1; j < nameElements.length; j++) {
                     if (j != i - 1) {
@@ -449,7 +420,8 @@ public class JavaParserPool {
                 // As an optimization we first try to look in the canonical position where we expect to find the file
                 Path srcFile = Paths.get(filePath.toString());
                 {
-                    Optional<CompilationUnit> compilationUnit = parse(srcFile).getResult();
+                    ParseResult<CompilationUnit> result = parse(srcFile);
+                    Optional<CompilationUnit> compilationUnit = result.getResult();
                     if (compilationUnit.isPresent()) {
                         Optional<com.github.javaparser.ast.body.TypeDeclaration<?>> astTypeDeclaration
                             = Navigator.findType(compilationUnit.get(), typeName.toString());

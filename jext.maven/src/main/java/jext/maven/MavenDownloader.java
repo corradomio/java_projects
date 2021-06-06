@@ -52,7 +52,9 @@ public class MavenDownloader implements MavenConst {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    static Logger logger = Logger.getLogger(MavenDownloader.class);
+    static Logger slog = Logger.getLogger(MavenDownloader.class);
+
+    Logger logger = Logger.getLogger(MavenDownloader.class);
 
     // ----------------------------------------------------------------------
 
@@ -110,6 +112,10 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
+
+    public Logger getLogger() {
+        return logger;
+    }
 
     /** Directory where to download the artifacts */
     public MavenDownloader setDownloadDirectory(File downloadDir) {
@@ -669,7 +675,7 @@ public class MavenDownloader implements MavenConst {
         // if 'coords' are marked as 'invalid', skip then (with timeout)
         if (isInvalidType(coords, type)) {
             excpt.addCause(new RuntimeException("Invalid Maven coordinates: " + coords.toString()));
-            logger.warnf("Maven artifact %s invalid (because marked with '.invalid' flag file)", coords);
+            logger.warnc(coords.toString(), "Maven artifact %s invalid (because marked with '.invalid' flag file)", coords);
             return excpt;
         }
 
@@ -908,7 +914,7 @@ public class MavenDownloader implements MavenConst {
     private static void mkdirs(File file) {
         File parentDir = file.getParentFile();
         if (!parentDir.exists() && !parentDir.mkdirs())
-            logger.errorf("Unable to create the directory %s", parentDir);
+            slog.errorf("Unable to create the directory %s", parentDir);
     }
 
     private static void delete(File file) {
@@ -932,7 +938,7 @@ public class MavenDownloader implements MavenConst {
             return new String(b, 0, r, Charset.defaultCharset());
         }
         catch (Exception e) {
-            logger.error(e, e);
+            slog.error(e, e);
             return "";
         }
     }
@@ -948,7 +954,7 @@ public class MavenDownloader implements MavenConst {
             }
         }
         catch (IOException e) {
-            logger.errorf("Unable to read %s: %s", file, e);
+            slog.errorf("Unable to read %s: %s", file, e);
         }
         return lines;
     }

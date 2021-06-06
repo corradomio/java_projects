@@ -326,11 +326,12 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver {
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
         try {
             return foundTypes.getChecked(name, () -> {
-                SymbolReference<ResolvedReferenceTypeDeclaration> result = tryToSolveTypeUncached(name);
-                if (result.isSolved()) {
-                    return SymbolReference.solved(result.getCorrespondingDeclaration());
+                SymbolReference<ResolvedReferenceTypeDeclaration>
+                    solved = tryToSolveTypeUncached(name);
+                if (solved.isSolved()) {
+                    return SymbolReference.solved(solved.getCorrespondingDeclaration());
                 }
-                return result;
+                return solved;
             });
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
