@@ -2,6 +2,32 @@ package jext.math.linear.dense;
 
 public class Linear {
 
+    // {0,...}
+    public static float[] zeros(int n) {
+        return new float[n];
+    }
+
+    // {1,...}
+    public static float[] ones(int n) {
+        float[] v = new float[n];
+        for (int i=0; i<n; ++i)
+            v[i] = 1.f;
+        return v;
+    }
+
+    public static float[] zeros(int n, int m) {
+        return zeros(n*m);
+    }
+
+    // {{1,...},{0,1,...},...}
+    public static float[] identity(int n, int m) {
+        float[] mat = zeros(n*m);
+        int k = Math.min(n, m);
+        for (int i=0; i<k; ++i)
+            mat[i*n+i] = 1;
+        return mat;
+    }
+
     // ----------------------------------------------------------------------
     // dot products
     // ----------------------------------------------------------------------
@@ -50,6 +76,16 @@ public class Linear {
         for (int r=0,i=0,l=0; r<n; ++r,++i)
             for (int j=0; j<m; ++l,++j)
                 R[l] = dot(A, i, B, j, k);
+    }
+
+    // R = u outer v
+    public static void outer(float[] R, float[] u, float[] v) {
+        int m = u.length;
+        int n = v.length;
+        int k=0;
+        for (int i=0; i<m; ++i)
+            for (int j=0; j<n; ++j)
+                R[k++] = u[i]*v[j];
     }
 
     // ----------------------------------------------------------------------
@@ -134,17 +170,30 @@ public class Linear {
 
     // r = s*A.u + t*v
     public static void linear(float[] r, float s, float[] A, float[] u, float t, float[] v) {
-        // r = A.u
-        dot(r, A, u);
-        // r = s*r + t*v
-        linear(r, s, r, t, v);
+        if (s == 1 && t == 0) {
+            dot(r, A, u);
+        }
+        else {
+            // r = A.u
+            dot(r, A, u);
+            // r = s*r + t*v
+            linear(r, s, r, t, v);
+        }
     }
 
     // R = s*C.A + t*B
     public static void linear(float[] R, float s, float[] A, float[] B, float t, float[] C, int k) {
-        // R = A.B
-        dot(R, A, B, k);
-        // R = s*R + t*C
-        linear(R, s, R, t, C);
+        if (s == 1 && t == 0) {
+            dot(R, A, B, k);
+        }
+        else {
+            // R = A.B
+            dot(R, A, B, k);
+            // R = s*R + t*C
+            linear(R, s, R, t, C);
+        }
     }
+
+    // ----------------------------------------------------------------------
+
 }

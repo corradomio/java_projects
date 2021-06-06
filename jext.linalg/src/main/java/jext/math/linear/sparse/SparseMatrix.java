@@ -10,10 +10,15 @@ public class SparseMatrix extends BaseSparse implements Matrix {
     private Data data;
 
     public SparseMatrix(int[] rows, int[] cols, float[] data, int n, int m) {
-        this.dim = new Dim(n, m);
-        this.data = new Data(rows, cols, data);
+        this(new Data(rows, cols, data), n, m);
     }
 
+    public SparseMatrix(Data data, int n, int m) {
+        this.dim = new Dim(n, m);
+        this.data = data;
+    }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public Matrix set(int i, int j, float v) {
@@ -26,6 +31,12 @@ public class SparseMatrix extends BaseSparse implements Matrix {
         return data.get(i, j);
     }
 
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Matrix dot(Matrix B) {
+        return null;
+    }
 
     @Override
     public Matrix linear(float s, float t, Matrix B) {

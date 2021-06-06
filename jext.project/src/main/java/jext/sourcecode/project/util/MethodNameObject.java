@@ -71,10 +71,17 @@ public class MethodNameObject extends ObjectName implements MethodName {
     @Override
     public boolean equals(Object obj) {
         MethodName that = (MethodName) obj;
+
+        // both method have a signature
+        if (this.hasSignature() && that.hasSignature())
         return this.getFullName().equals(that.getFullName())
             && this.getNumOfParams() == that.getNumOfParams()
             && this.hasSignature() == that.hasSignature()
-            && (this.hasSignature() && this.getSignature().equals(that.getSignature()) || !this.hasSignature());
+                && (this.getSignature().equals(that.getSignature()));
+        // some method don't have the signature
+        else
+            return this.getFullName().equals(that.getFullName())
+                && this.getNumOfParams() == that.getNumOfParams();
     }
 
     @Override

@@ -1,17 +1,18 @@
 package jext.math.linear;
 
 import jext.math.linear.dense.DenseMatrix;
+import jext.math.linear.dense.DiagMatrix;
 import jext.math.linear.dense.Linear;
 
 public class Matrices {
 
-    // public static DenseMatrix identity(Dim dim) {
-    //     return identity(dim.dim(0));
-    // }
+    public static DenseMatrix identity(Dim dim) {
+        return identity(dim.dim(0));
+    }
 
-    // public static DenseMatrix identity(int n) {
-    //     return matrix(Linear.diagonal(n, n, 1));
-    // }
+    public static DenseMatrix identity(int n) {
+        return matrix(jext.math.linear.dense.Linear.identity(n, n));
+    }
 
     public static DenseMatrix zeros(Dim dim) {
         return zeros(dim.dim(0), dim.dim(1));
@@ -43,5 +44,28 @@ public class Matrices {
             for (int j=0; j<m; ++j,++k)
                 data[k] = mat[i][j];
         return new DenseMatrix(data, n);
+    }
+
+    public static DiagMatrix diag(float[] v) {
+        return new DiagMatrix(v);
+    }
+
+    // -- Print
+
+    public static void print(Matrix mat) {
+        int m = mat.dim(0);
+        int n = mat.dim(1);
+        if (m ==0 || n == 0) {
+            System.out.println("{{ }}");
+            return;
+        }
+        System.out.println("{");
+        for (int i=0; i<m; ++i) {
+            System.out.printf("  { %.3f", mat.get(i, 0));
+            for (int j=1; j<n; ++j)
+                System.out.printf(", %.3f", mat.get(i, j));
+            System.out.println(" }");
+        }
+        System.out.println("}");
     }
 }

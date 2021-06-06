@@ -12,14 +12,11 @@ public class Vectors {
     }
 
     public static DenseVector zeros(int n) {
-        return vector(new float[n]);
+        return vector(jext.math.linear.dense.Linear.zeros(n));
     }
 
     public static DenseVector ones(int n) {
-        float[] ones = new float[n];
-        for (int i=0; i<n; ++i)
-            ones[i] = 1;
-        return vector(ones);
+        return vector(jext.math.linear.dense.Linear.ones(n));
     }
 
     public static DenseVector vector(float[] v) {
@@ -38,5 +35,20 @@ public class Vectors {
 
     public static SparseVector sparse(float[] v) {
         return new SparseVector(v);
+    }
+
+    // -- Print
+
+    public static void print(Vector v) {
+        int n = v.length();
+        if (n == 0) {
+            System.out.println("{ }");
+            return;
+        }
+
+        System.out.printf("{ %.3f", v.get(0));
+        for(int i=1; i<n; ++i)
+            System.out.printf(", %.3f", v.get(i));
+        System.out.println(" }");
     }
 }

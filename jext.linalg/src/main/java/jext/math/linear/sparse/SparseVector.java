@@ -1,9 +1,12 @@
 package jext.math.linear.sparse;
 
 import jext.math.linear.Dim;
+import jext.math.linear.Matrix;
 import jext.math.linear.Type;
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
+import jext.math.linear.dense.DenseVector;
+import jext.math.linear.dense.DiagMatrix;
 import jext.util.Arrays;
 
 public class SparseVector extends BaseSparse implements Vector {
@@ -22,6 +25,7 @@ public class SparseVector extends BaseSparse implements Vector {
         this.data = new Data(idxs, data);
     }
 
+    // ----------------------------------------------------------------------
 
     @Override
     public Vector set(int i, float v) {
@@ -34,6 +38,20 @@ public class SparseVector extends BaseSparse implements Vector {
         return data.get(i, 0);
     }
 
+    // ----------------------------------------------------------------------
+
+    @Override
+    public float norm() {
+        return (float) Math.sqrt(Linear.dot(data, data));
+    }
+
+    @Override
+    public Vector versor() {
+        float s = this.norm();
+        SparseVector r = Vectors.sparse(dim);
+        Linear.linear(r.data, 1/s, this.data, 0, null);
+        return r;
+    }
 
     @Override
     public Vector linear(float s, float t, Vector v) {
@@ -42,6 +60,27 @@ public class SparseVector extends BaseSparse implements Vector {
         Linear.linear(res.data, s, this.data, t, that.data);
         return res;
     }
+
+    @Override
+    public float dot(Vector v) {
+        SparseVector that = (SparseVector) v;
+        return Linear.dot(this.data, that.data);
+    }
+
+    @Override
+    public Matrix outer(Vector v) {
+        SparseVector that = (SparseVector) v;
+        Data r = new Data();
+        Linear.outer(r, this.data, that.data);
+        return new SparseMatrix(r, this.dim(0), that.dim(0));
+    }
+
+    @Override
+    public Matrix diag() {
+        return null;
+    }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean equals(Object obj) {

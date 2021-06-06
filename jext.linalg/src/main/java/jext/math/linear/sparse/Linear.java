@@ -37,6 +37,12 @@ public class Linear {
         return s;
     }
 
+    public static void outer(Data R, Data u, Data v) {
+        for(Loc i : u)
+            for(Loc j : v)
+                R.set(i.at(), j.at(), u.get(i)*v.get(j));
+    }
+
     // ----------------------------------------------------------------------
     // Linear combinations
     // ----------------------------------------------------------------------
@@ -45,8 +51,17 @@ public class Linear {
     // R = s*A + t*B
     public static void linear(Data r, float s, Data u, float t, Data v) {
         Coords c = u.union(v);
-        for (Loc loc : c)
-            r.set(loc, s*u.get(loc) + t*v.get(loc));
+        // s == 1 && t == 0
+        if (s == 1 && t == 0)
+            for (Loc loc : c)  r.set(loc, u.get(loc));
+        else if (t == 0)
+            for (Loc loc : c)  r.set(loc, s*u.get(loc));
+        else if (s == 0 && t == 1)
+            for (Loc loc : c)  r.set(loc, v.get(loc));
+        else if (s == 0)
+            for (Loc loc : c)  r.set(loc, t*v.get(loc));
+        else
+            for (Loc loc : c)  r.set(loc, s*u.get(loc) + t*v.get(loc));
     }
 
 

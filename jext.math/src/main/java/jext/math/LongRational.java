@@ -1,57 +1,75 @@
 package jext.math;
 
-import sun.plugin.dom.exception.InvalidStateException;
+public class LongRational extends Number implements Comparable<LongRational> {
 
-public class LongFraction extends Number implements Comparable<LongFraction> {
+    // ----------------------------------------------------------------------
+    // Factory methods
+    // ----------------------------------------------------------------------
+    // https://www.johndcook.com/blog/2010/10/20/best-rational-approximation/
 
-    public static LongFraction from(double x, int ndigits) {
+    public static LongRational from(double x) {
+        return from(x, 1.e-4);
+    }
+
+    public static LongRational from(double x, double dx) {
+        boolean neg = x < 0;
+        if (neg) x = -x;
         long ip = (long)x;
-        long p = 1;
-        x = x - ip;
-        LongFraction l = new LongFraction(ip, p);
-        while (ndigits-- > 0) {
-            p *= 10;
-            x *= 10;
-            ip = (long)x;
-            x = x - ip;
-            l = l.add(new LongFraction(ip, p));
-        }
+        LongRational l = fromfp(x-ip, dx);
+        l.num += ip*l.den;
+        if (neg) l.num = -l.num;
         return l;
     }
 
-    private long num;
-    private long den;
+    private static LongRational fromfp(double x, double dx) {
+        long a=0,b=1,c=1,d=1;
+        long N = (long)(1/dx);
 
-    public LongFraction() {
-        this(0,1);
+        assert(x < 1 && dx < 1);
+
+        while (b <= N && d <= N) {
+            double m = (0.+a+c)/(0.+b+d);
+            if (x == m) {
+                if (b+d <= N)
+                    return new LongRational(a+c,b+d);
+                else if (d < b)
+                    return new LongRational(c, d);
+                else
+                    return new LongRational(a, b);
+            }
+            else if (x > m) {
+                a = a+c;
+                b = b+d;
+            }
+            else {
+                c = a+c;
+                d = b+d;
+            }
+        }
+        if (b > N)
+            return new LongRational(c, d);
+        else
+            return new LongRational(a, b);
     }
 
-    public LongFraction(long num) {
-        this(num,1);
+    public static LongRational from(long num) {
+        return new LongRational(num, 1);
     }
 
-    public LongFraction(long n, long d) {
-        this.num = n;
-        this.den = d;
-        if (den == 0)
-            throw new InvalidStateException("Denominator can be not 0");
-
-        long f = gcd(num, den);
-        if (f != 1) {
-            num /= f;
-            den /= f;
-        }
-        if (den < 0) {
-            num = -num;
-            den = -den;
-        }
+    public static LongRational from(long num, long den) {
+        return new LongRational(num, den);
     }
 
     // ----------------------------------------------------------------------
     // Arithmetic
     // ----------------------------------------------------------------------
 
-    public static long gcd(long a, long b) {
+    private static long lcm(long a, long b) {
+        long c = gcd(a, b);
+        return a*b/c;
+    }
+
+    private static long gcd(long a, long b) {
         long t;
         while (b!=0) {
             t = b;
@@ -74,67 +92,113 @@ public class LongFraction extends Number implements Comparable<LongFraction> {
     }
 
     // ----------------------------------------------------------------------
+    // Fields
+    // ----------------------------------------------------------------------
+
+    private long num;
+    private long den;
+
+    // ----------------------------------------------------------------------
+    // Constructors
+    // ----------------------------------------------------------------------
+
+    public LongRational() {
+        this(0,1);
+    }
+
+    public LongRational(long num) {
+        this(num,1);
+    }
+
+    public LongRational(long n, long d) {
+        this.num = n;
+        this.den = d;
+        if (den == 0)
+            throw new ArithmeticException("Denominator is 0");
+
+        long f = gcd(num, den);
+        if (f != 1) {
+            num /= f;
+            den /= f;
+        }
+        if (den < 0) {
+            num = -num;
+            den = -den;
+        }
+    }
+
+    // ----------------------------------------------------------------------
     // Arithmetic
     // ----------------------------------------------------------------------
 
-    public LongFraction add(long that) {
-        return add(new LongFraction(that));
+    public LongRational add(long that) {
+        return add(new LongRational(that));
     }
 
-    public LongFraction subtract(long that) {
-        return subtract(new LongFraction(that));
+    public LongRational subtract(long that) {
+        return subtract(new LongRational(that));
     }
 
-    public LongFraction multiply(long that) {
-        return multiply(new LongFraction(that));
+    public LongRational multiply(long that) {
+        return multiply(new LongRational(that));
     }
 
-    public LongFraction divide(long that) {
-        return divide(new LongFraction(that));
+    public LongRational divide(long that) {
+        return divide(new LongRational(that));
     }
 
-    public LongFraction add(LongFraction that) {
-        return new LongFraction(this.num*that.den + that.num*this.den, this.den*that.den);
-    }
-
-    public LongFraction subtract(LongFraction that) {
-        return new LongFraction(this.num*that.den - that.num*this.den, this.den*that.den);
-    }
-
-    public LongFraction multiply(LongFraction that) {
-        return new LongFraction(this.num*that.num, this.den*that.den);
-    }
-
-    public LongFraction divide(LongFraction that) {
-        return new LongFraction(this.num*that.den, this.den*that.num);
-    }
-
-    public LongFraction pow(int exp) {
-        if (exp == 0)
-            return new LongFraction(1);
-        if (exp > 0)
-            return new LongFraction(pow(num, exp), pow(den, exp));
+    public LongRational add(LongRational that) {
+        if (this.den == that.den)
+            return new LongRational(this.num + that.num, that.den);
         else
-            return new LongFraction(pow(den, -exp), pow(num, -exp));
+            return new LongRational(this.num*that.den + that.num*this.den, this.den*that.den);
     }
 
-    public LongFraction abs() {
+    public LongRational subtract(LongRational that) {
+        if (this.den == that.den)
+            return new LongRational(this.num - that.num, that.den);
+        else
+            return new LongRational(this.num*that.den - that.num*this.den, this.den*that.den);
+    }
+
+    public LongRational multiply(LongRational that) {
+        return new LongRational(this.num*that.num, this.den*that.den);
+    }
+
+    public LongRational divide(LongRational that) {
+        return new LongRational(this.num*that.den, this.den*that.num);
+    }
+
+    public LongRational pow(int exp) {
+        if (exp == 0)
+            return new LongRational(1);
+        if (exp > 0)
+            return new LongRational(pow(num, exp), pow(den, exp));
+        else
+            return new LongRational(pow(den, -exp), pow(num, -exp));
+    }
+
+    public LongRational abs() {
         if (num > 0)
             return this;
         else
             return negate();
     }
 
-    public LongFraction negate() {
-        return new LongFraction(-num, den);
+    public LongRational negate() {
+        return new LongRational(-num, den);
     }
 
-    public LongFraction min(LongFraction that) {
+    public LongRational reciprocal() {
+        return new LongRational(den, num);
+    }
+
+    public LongRational min(LongRational that) {
         int cmp = compareTo(that);
         return (cmp < 0) ? this : that;
     }
 
-    public LongFraction max(LongFraction that) {
+    public LongRational max(LongRational that) {
         int cmp = compareTo(that);
         return (cmp > 0) ? this : that;
     }
@@ -177,24 +241,40 @@ public class LongFraction extends Number implements Comparable<LongFraction> {
 
     @Override
     public String toString() {
-        return String.format("%d/%d", num, den);
+        if (den == 1)
+            return Long.toString(num);
+        else
+            return String.format("%d/%d", num, den);
     }
 
     @Override
     public boolean equals(Object obj) {
-        LongFraction that = (LongFraction) obj;
+        LongRational that = (LongRational) obj;
         return this.num == that.num && this.den == that.den;
     }
 
     @Override
     public int hashCode() {
-        return (int)(num*31 + den);
+        if (den == 1)
+            return Long.hashCode(num);
+        else
+            return Long.hashCode(den)*31 + Long.hashCode(num);
     }
 
     @Override
-    public int compareTo(LongFraction that) {
-        long l1 = this.num*that.den;
-        long l2 = that.num*this.den;
+    public int compareTo(LongRational that) {
+        long l1;
+        long l2;
+
+        if (this.den == that.den) {
+            l1 = this.num;
+            l2 = that.num;
+        }
+        else {
+            l1 = this.num*that.den;
+            l2 = that.num*this.den;
+        }
+
         if (l1 < l2)
             return -1;
         if (l1 > l2)

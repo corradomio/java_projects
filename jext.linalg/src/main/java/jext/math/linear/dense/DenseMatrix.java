@@ -3,7 +3,6 @@ package jext.math.linear.dense;
 import jext.math.linear.Dim;
 import jext.math.linear.Matrices;
 import jext.math.linear.Matrix;
-import jext.math.linear.Type;
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
 
@@ -16,6 +15,8 @@ public class DenseMatrix extends BaseDense implements Matrix {
         this.dim = new Dim(n, mat.length/n);
     }
 
+    // ----------------------------------------------------------------------
+
     @Override
     public Matrix set(int i, int j, float v) {
         int at = i*dim(1) + j;
@@ -27,6 +28,16 @@ public class DenseMatrix extends BaseDense implements Matrix {
     public float get(int i, int j) {
         int at = i*dim(1) + j;
         return data[at];
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Matrix dot(Matrix B) {
+        DenseMatrix that = (DenseMatrix) B;
+        DenseMatrix res = Matrices.zeros(dim.dim(0), B.dim(1));
+        Linear.dot(res.data, this.data, that.data, dim.dim(1));
+        return res;
     }
 
     // R = s*A + t*B
@@ -44,12 +55,12 @@ public class DenseMatrix extends BaseDense implements Matrix {
     // r = s*A.u + t.v
     @Override
     public Vector linear(float s, Vector u, float t, Vector v) {
-        if (dim(0) != v.dim(0) || dim(1) != v.dim(0))
+        if (dim(1) != u.dim(0) || dim(0) != v.dim(0))
             throw new IllegalArgumentException("Invalid dimensions");
 
         DenseVector du = (DenseVector) u;
         DenseVector dv = (DenseVector) v;
-        DenseVector res = Vectors.zeros(u.dim());
+        DenseVector res = Vectors.zeros(v.dim());
         Linear.linear(res.data, s, this.data, du.data, t, dv.data);
         return res;
     }
@@ -63,6 +74,8 @@ public class DenseMatrix extends BaseDense implements Matrix {
         Linear.linear(res.data, s, dc.data, this.data, t, db.data, C.dim().dim(1));
         return res;
     }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public int hashCode() {

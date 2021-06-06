@@ -10,6 +10,9 @@ public interface Matrix {
     Matrix set(int i, int j, float v);
     float  get(int i, int j);
 
+    // R = A.B
+    Matrix dot(Matrix B);
+
     // R = s*A + t*B
     Matrix linear(float s, float t, Matrix B);
 
