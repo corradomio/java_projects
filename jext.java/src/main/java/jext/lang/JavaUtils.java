@@ -128,10 +128,18 @@ public class JavaUtils {
     //
 
 
+    private static Pattern INNER_CLASSNAME = Pattern.compile("[A-Z$][0-9A-Za-z_$]*(\\.[A-Z$][0-9A-Za-z_$]*)+");
     private static Pattern CLASSNAME  = Pattern.compile("[A-Z$][0-9A-Za-z_$]*");
     private static Pattern IDENTIFIER = Pattern.compile("[a-z_$][0-9A-Za-z_$]*");
     private static Pattern CONSTANT = Pattern.compile("[0-9A-Z_$]+");
+    private static Pattern NAMESPACE = Pattern.compile("[0-9a-z_$.]+");
     private static String SPECIAL_CHARS = "|?<(,:";
+
+
+    public static boolean isNamespace(String symbol) {
+        // a namespace is composed by lowercase characters and '.'
+        return NAMESPACE.matcher(symbol).matches();
+    }
 
     public static boolean isConstant(String symbol) {
         // a constant is composed only by uppercase characters
@@ -147,7 +155,8 @@ public class JavaUtils {
         // in general, a class starts with an uppercase letter
         // or it contains "." to fully qualified
 
-        return symbol.contains(".") || CLASSNAME.matcher(symbol).matches();
+        //return symbol.contains(".") || CLASSNAME.matcher(symbol).matches();
+        return CLASSNAME.matcher(symbol).matches() || INNER_CLASSNAME.matcher(symbol).matches();
     }
 
     public static boolean isQualified(String symbol) {

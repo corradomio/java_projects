@@ -9,6 +9,12 @@ public class Mathx {
     public static double log2(double x) { return x == 0? 0. : Math.log(x)/Math.log(2); }
     public static double chop(double x) { return x < 0 ? 0. : x; }
 
+    public static int chop(int min, int x, int max) {
+        if (x < min) return min;
+        if (x > max) return max;
+        return x;
+    }
+
     public static boolean inRange(double x, double min, double max) {
         return inRange(x, min, max, true, true);
     }
