@@ -1,9 +1,8 @@
 package org.hls.check;
 
-import jext.math.distribution.CDFSampling;
 import jext.math.distribution.ContinuousDistribution;
 import jext.math.distribution.NormalDistribution;
-import jext.math.distribution.RejectionSampling;
+import jext.math.distribution.RejectSampling;
 import jext.math.distribution.Sampling;
 import jext.math.random.JavaRandomGenerator;
 import jext.math.random.RandomGenerator;
@@ -22,11 +21,11 @@ public class Main {
 
         Sampling s;
         // s = new CDFSampling(cd, rg);
-        s = new RejectionSampling(cd, rg);
+        s = new RejectSampling(cd, rg);
 
         for(int i=0; i<10; ++i) {
             double f = s.sample();
-            
+
         }
     }
 }

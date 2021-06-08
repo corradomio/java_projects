@@ -2,14 +2,14 @@ package jext.math.distribution;
 
 import jext.math.random.RandomGenerator;
 
-public class RejectionSampling implements Sampling {
+public class RejectSampling implements Sampling {
 
     private final Distribution distribution;
     private RandomGenerator generator;
     private double a, ab;
     private final double eps = 1.e-8;
 
-    public RejectionSampling(Distribution cd, RandomGenerator rg) {
+    public RejectSampling(Distribution cd, RandomGenerator rg) {
         this.distribution = cd;
         this.generator = rg;
         this.a = distribution.lowerLimit();
