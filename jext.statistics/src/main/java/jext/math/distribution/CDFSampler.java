@@ -23,11 +23,11 @@ public class CDFSampler implements Sampler {
         double f = distribution.cdf(c);
         double eps = 1.e-8;
 
-        while ((b-a) > eps && (f-p) > eps) {
+        while ((b-a) > eps || (f-p) > eps) {
             if (f < r)
-                b = c;
-            else
                 a = c;
+            else
+                b = c;
             c = (a+b)/2;
             p = f;
             f = distribution.cdf(c);
