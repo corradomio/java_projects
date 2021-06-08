@@ -28,12 +28,12 @@ public class NormalDistribution implements ContinuousDistribution {
 
     @Override
     public double lowerLimit() {
-        return mu-100*ro;
+        return mu-10*ro;
     }
 
     @Override
     public double upperLimit() {
-        return mu+100*ro;
+        return mu+10*ro;
     }
 
     @Override

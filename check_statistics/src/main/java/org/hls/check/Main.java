@@ -1,9 +1,10 @@
 package org.hls.check;
 
-import jext.math.Interval;
-import jext.math.distribution.CDFSampler;
+import jext.math.distribution.CDFSampling;
 import jext.math.distribution.ContinuousDistribution;
 import jext.math.distribution.NormalDistribution;
+import jext.math.distribution.RejectionSampling;
+import jext.math.distribution.Sampling;
 import jext.math.random.JavaRandomGenerator;
 import jext.math.random.RandomGenerator;
 
@@ -19,12 +20,13 @@ public class Main {
         RandomGenerator rg = new JavaRandomGenerator();
         ContinuousDistribution cd = new NormalDistribution();
 
-        for (double x : Interval.from(-2,2,.1))
-            System.out.printf("% .1f: %.6f, %.6f\n", x, cd.pdf(x), cd.cdf(x));
+        Sampling s;
+        // s = new CDFSampling(cd, rg);
+        s = new RejectionSampling(cd, rg);
 
-        CDFSampler sampler = new CDFSampler(cd, rg);
-
-        for(int i=0; i<10; ++i)
-            System.out.println(sampler.sample());
+        for(int i=0; i<10; ++i) {
+            double f = s.sample();
+            
+        }
     }
 }
