@@ -1,2 +1,6 @@
-package jext.math.distribution;public interface Sampler {
+package jext.math.distribution;
+
+public interface Sampler {
+
+    double sample();
 }

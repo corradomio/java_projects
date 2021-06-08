@@ -1,13 +1,11 @@
 package org.hls.check;
 
-import java.util.Collections;
+import java.util.Optional;
 
 public class App {
 
     public static void main(String[] args) {
-
-        Object v = Collections.emptyList();
-        String[] list = (String[]) v;
-
+        System.out.println(Math.acos(-10));
+        System.out.println(Optional.ofNullable(null).orElse("none"));
     }
 }
