@@ -6,7 +6,7 @@ import jext.math.linear.Matrix;
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
 
-public class App {
+public class App1 {
 
     public static void main(String[] args) {
 

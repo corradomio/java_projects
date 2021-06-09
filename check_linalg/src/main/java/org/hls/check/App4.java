@@ -1,11 +1,13 @@
 package org.hls.check;
 
+import jext.math.linear.Vector;
+import jext.math.linear.Vectors;
 import jext.math.linear.sparse.SparseVector;
 
 public class App4 {
 
     public static void main(String[] args) {
-        SparseVector sv = new SparseVector(10);
+        Vector sv = Vectors.sparse(10);
 
         System.out.println(sv);
 
@@ -14,8 +16,8 @@ public class App4 {
         sv.set(0, 0.5f);
         sv.set(9, 99);
 
-        for (int i=0; i<10; ++i) {
-            System.out.printf("%d:%f\n", i, sv.get(i));
+        for (int i=0; i<sv.dim(0); ++i) {
+            System.out.printf("%d: %f\n", i, sv.get(i));
         }
 
 
