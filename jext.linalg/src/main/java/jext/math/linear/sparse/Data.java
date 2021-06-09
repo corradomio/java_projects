@@ -1,99 +1,248 @@
 package jext.math.linear.sparse;
 
-import jext.math.linear.sparse.util.Loc;
 import jext.util.Arrays;
 
-public class Data extends Coords implements Iterable<Loc> {
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-    float[] data;
+public class SparseData {
 
-    public Data() {
-        super();
-        this.data = new float[0];
+    static class Loc {
+        int r, c;
+
+        Loc() { }
+        Loc(int r) {
+            this.r = r;
+        }
+        Loc(int r, int c) {
+            this.r = r;
+            this.c = c;
+        }
+        Loc(Loc l) {
+            r = l.r;
+            c = l.c;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            Loc that = (Loc) obj;
+            return this.r == that.r && this.c == that.c;
+        }
+
+        @Override
+        public int hashCode() {
+            if (c == 0)
+                return r;
+            else
+                return c<<27 | r;
+        }
     }
 
-    public Data(int[] rows, float[] data) {
-        super(coordsOf(rows, new int[rows.length]), data.length);
-        if (rows.length != data.length)
-            throw new IllegalArgumentException("Different rows or data lengths");
+    private static final int[] NO_IDXS = new int[0];
+    private static final float[] NO_DATA = new float[0];
+
+    private int n;
+    private int[] rows;
+    private int[] cols;
+    private float[] data;
+
+    SparseData() {
+        n = 0;
+        rows = NO_IDXS;
+        cols = NO_IDXS;
+        data = NO_DATA;
+    }
+
+    SparseData(int[] rows, float[] data, int n) {
+        this.n = n;
+        this.rows = rows;
+        this.cols = new int[rows.length];
         this.data = data;
     }
 
-    public Data(int[] rows, int[] cols, float[] data) {
-        super(coordsOf(rows, cols), rows.length);
-        if (rows.length != data.length || cols.length != data.length)
-            throw new IllegalArgumentException("Different rows or cols or data lengths");
+    SparseData(int[] rows, int[] cols, float[] data, int n) {
+        this.n = n;
+        this.rows = rows;
+        this.cols = cols;
         this.data = data;
     }
 
-    private static long[] coordsOf(int[] rows, int[] cols) {
-        int n = rows.length;
-        long[] coords = new long[n];
-        for (int i=0; i<n; ++i)
-            coords[i] = locOf(rows[i], cols[i]);
-        return coords;
+    // vector
+
+    void add(int i, float v) {
+        add(i, 0, v);
     }
 
-    public int length() {
-        return data.length;
+    void set(int i, float v) {
+        set(i, 0, v);
     }
 
-    //
-    // get & set
-    //
+    // matrix
 
-    public float get(long loc) {
-        int at = locate(loc, false);
-        return at != -1 ? data[at] : 0;
-    }
-    public float get(Loc l) { return get(l.loc); }
-    public float get(int i, int j) {
-        return get(locOf(i, j));
-    }
-
-    public void set(long loc, float v) {
-        alloc();
-        int at = locate(loc, true);
-        coords[at] = loc;
+    void add(int i, int j, float v) {
+        int at = alloc();
+        rows[at] = i;
+        cols[at] = j;
         data[at] = v;
     }
-    public void set(Loc l, float v) { set(l.loc, v); }
-    public void set(int i, int j, float v) { set(locOf(i, j), v); }
 
-    // ----------------------------------------------------------------------
-
-    protected void allocate(int nlen) {
-        super.allocate(nlen);
-        if (data.length < nlen)
-            data = Arrays.copyOf(data, nlen);
+    void set(int i, int j, float v) {
+        int at = find(i, j);
+        if (at == -1)
+            add(i, j, v);
+        else
+            data[at] = v;
     }
 
-    protected void move(int  srcPos, int destPos, int length) {
-        super.move(srcPos, destPos, length);
-        Arrays.move(data, srcPos, destPos, length);
+    private int find(int i, int j) {
+        for (int at=0; at<n; ++at)
+            if (rows[at] == i && cols[at] == j)
+                return at;
+        return -1;
     }
 
     private int alloc() {
-        int at = n;
-        if (n+1 <= data.length)
-            return at;
+        n += 1;
+        if (n<data.length)
+            return n;
 
-        int len = Arrays.lengthOf(n+1);
-        coords = Arrays.copyOf(coords, len);
-        data   = Arrays.copyOf(data,   len);
+        rows = Arrays.copyOf(rows, n+15);
+        cols = Arrays.copyOf(cols, n+15);
+        data = Arrays.copyOf(data, n+15);
+        return n-1;
+    }
 
-        return at;
+    // ------------------------------------------------
+
+    private abstract class IterIt implements Iterable<Loc>, Iterator<Loc> {
+        protected Loc l;
+        protected int at;
+
+        IterIt() {
+            at = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return at < n;
+        }
+
+        @Override
+        public Iterator<Loc> iterator() {
+            return this;
+        }
+
     }
 
     // ----------------------------------------------------------------------
 
-    @Override
-    public boolean equals(Object obj) {
-        Data that = (Data) obj;
-        Coords coords = this.union(that);
-        for (Loc l : coords)
-            if (this.get(l) != that.get(l))
-                return false;
-        return true;
+    private class RowsIt extends IterIt {
+        private Loc t = new Loc();
+        private Set<Loc> visited = new HashSet<>();
+
+        @Override
+        public Loc next() {
+            l.r = rows[at];
+            find();
+            return l;
+        }
+
+        private void find() {
+            visited.add(new Loc(l));
+            while (at < n) {
+                t.r = rows[at];
+                if (visited.contains(t))
+                    ++at;
+                else break;
+            }
+        }
     }
+
+    public Iterable<Loc> rows() {
+        return new RowsIt();
+    }
+
+    // ----------------------------------------------------------------------
+
+    private class ColsIt extends IterIt {
+        private Loc t = new Loc();
+        private Set<Loc> visited = new HashSet<>();
+
+        @Override
+        public Loc next() {
+            l.c = cols[at];
+            find();
+            return l;
+        }
+
+        private void find() {
+            visited.add(new Loc(l));
+            while (at < n) {
+                t.c = cols[at];
+                if (visited.contains(t))
+                    ++at;
+                else break;
+            }
+        }
+    }
+
+    public Iterable<Loc> cols() {
+        return new ColsIt();
+    }
+
+    // ----------------------------------------------------------------------
+
+    private class ColRowsIt extends IterIt {
+
+        ColRowsIt(int col) {
+            l.c = col;
+            while(at < n && cols[at] != l.c)
+                ++at;
+        }
+
+        @Override
+        public Loc next() {
+            l.r = rows[at];
+            find();
+            return l;
+        }
+
+        private void find() {
+            while (at < n && cols[at] != l.c)
+                ++at;
+        }
+    }
+
+    public Iterable<Loc> rows(int col) {
+        return new ColRowsIt(col);
+    }
+
+    // ----------------------------------------------------------------------
+
+    private class RowColsIt extends IterIt {
+
+        RowColsIt(int row) {
+            l.r = row;
+            while(at < n && rows[at] != l.r)
+                ++at;
+        }
+
+        @Override
+        public Loc next() {
+            l.c = cols[at];
+            find();
+            return l;
+        }
+
+        private void find() {
+            while (at < n && rows[at] != l.r)
+                ++at;
+        }
+    }
+
+    public Iterable<Loc> cols(int row) {
+        return new RowColsIt(row);
+    }
+
 }
