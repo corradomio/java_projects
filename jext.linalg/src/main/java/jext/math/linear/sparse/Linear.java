@@ -1,20 +1,11 @@
 package jext.math.linear.sparse;
 
-import jext.math.linear.sparse.util.Loc;
-
 public class Linear {
 
     // s = u . v
     public static float dot(Data u, Data v) {
-        Coords c = u.intersection(v);
-        // Coords c = u;
-        // float s = 0;
-        // for (Loc loc : c)
-        //     s += u.get(loc)*v.get(loc);
-        // return s;
-        // if (u.n > v.n) { Data t = u; u = v; v = t; }
         float s = 0;
-        for (Loc i : c)
+        for (Loc i : u.rows())
             s += u.get(i)*v.get(i);
         return s;
     }
@@ -22,25 +13,35 @@ public class Linear {
     // R = A[i:].v
     public static float dot(Data A, int i, Data v) {
         float s = 0;
-        for(Loc r : A.row(i))
-            for (Loc c : v)
+        for(Loc r : A.cols(i))
+            for (Loc c : v.rows())
                 s += A.get(r)*v.get(c);
         return s;
     }
 
-    // R = A[i:].B[:j]
+    // R[ij] = A[i:].B[:j]
     public static float dot(Data A, int i, Data B, int j) {
         float s = 0;
-        for(Loc r : A.row(i))
-            for (Loc c : B.col(j))
-                s += A.get(r)*B.get(c);
+        for(Loc c : A.cols(i))
+            for(Loc r : B.rows(j))
+                s += A.get(c)*B.get(r);
         return s;
     }
 
+    // R = A.B
+    public static void dot(Data R, Data A, Data B) {
+        for(Loc r : A.rows())
+            for (Loc c : B.cols()) {
+                float v = dot(A, (int) r.r, B, (int) c.c);
+                R.add(r.r, c.c, v);
+            }
+    }
+
+    // R = u outer v
     public static void outer(Data R, Data u, Data v) {
-        for(Loc i : u)
-            for(Loc j : v)
-                R.set(i.at(), j.at(), u.get(i)*v.get(j));
+        for(Loc i : u.rows())
+            for(Loc j : v.rows())
+                R.set(i.r, j.r, u.get(i)*v.get(j));
     }
 
     // ----------------------------------------------------------------------
@@ -50,19 +51,28 @@ public class Linear {
     // r = s*u + t*v
     // R = s*A + t*B
     public static void linear(Data r, float s, Data u, float t, Data v) {
-        Coords c = u.union(v);
         // s == 1 && t == 0
+
+        Coords c = u.union(v);
+
+        // (1,0) r = u
         if (s == 1 && t == 0)
-            for (Loc loc : c)  r.set(loc, u.get(loc));
+            for (Loc loc : u)  r.set(loc, u.get(loc));
+        // (s,0) r = s*u
         else if (t == 0)
-            for (Loc loc : c)  r.set(loc, s*u.get(loc));
+            for (Loc loc : u)  r.set(loc, s*u.get(loc));
+        // (0,1) r = v
         else if (s == 0 && t == 1)
-            for (Loc loc : c)  r.set(loc, v.get(loc));
+            for (Loc loc : v)  r.set(loc, v.get(loc));
+        // (0,t) r = t*v
         else if (s == 0)
-            for (Loc loc : c)  r.set(loc, t*v.get(loc));
+            for (Loc loc : v)  r.set(loc, t*v.get(loc));
+        // (1,1) r = u + v
+        else if (s == 1 && t == 1)
+            for (Loc loc : c)  r.set(loc, u.get(loc) + v.get(loc));
+        // (s,t) r = s*u + t*v
         else
             for (Loc loc : c)  r.set(loc, s*u.get(loc) + t*v.get(loc));
     }
-
 
 }

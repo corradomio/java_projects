@@ -1,8 +1,7 @@
-package org.hls.check;
+package jext.main;
 
 import jext.math.linear.Vector;
 import jext.math.linear.Vectors;
-import jext.math.linear.sparse.SparseVector;
 
 public class App4 {
 

@@ -11,7 +11,7 @@ public class ToString {
 
     public static String toStringAsVector(Data data) {
         int n = data.n;
-        long[] coords = data.coords;
+        int[] coords = data.rows;
         float[] values = data.data;
         StringBuilder sb = new StringBuilder("{ ");
         for (int i=0; i<n; ++i)

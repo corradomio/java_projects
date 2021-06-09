@@ -10,9 +10,14 @@ import java.util.Arrays;
 
 public class DenseMatrix extends BaseDense implements Matrix {
 
-    public DenseMatrix(float[] mat, int n) {
+    public DenseMatrix(Dim dim) {
+        this.dim = dim;
+        this.data = new float[dim.dims[0]*dim.dims[1]];
+    }
+
+    public DenseMatrix(float[] mat, int nrows) {
+        this.dim = new Dim(nrows, mat.length/nrows);
         this.data = mat;
-        this.dim = new Dim(n, mat.length/n);
     }
 
     // ----------------------------------------------------------------------
@@ -35,8 +40,8 @@ public class DenseMatrix extends BaseDense implements Matrix {
     @Override
     public Matrix dot(Matrix B) {
         DenseMatrix that = (DenseMatrix) B;
-        DenseMatrix res = Matrices.zeros(dim.dim(0), B.dim(1));
-        Linear.dot(res.data, this.data, that.data, dim.dim(1));
+        DenseMatrix res = Matrices.zeros(dim.dims[0], B.dim(1));
+        Linear.dot(res.data, this.data, that.data, dim(1));
         return res;
     }
 
@@ -71,7 +76,7 @@ public class DenseMatrix extends BaseDense implements Matrix {
         DenseMatrix dc = (DenseMatrix) C;
         DenseMatrix db = (DenseMatrix) B;
         DenseMatrix res = Matrices.zeros(B.dim());
-        Linear.linear(res.data, s, dc.data, this.data, t, db.data, C.dim().dim(1));
+        Linear.linear(res.data, s, dc.data, this.data, t, db.data, C.dim().dims[1]);
         return res;
     }
 
@@ -91,6 +96,6 @@ public class DenseMatrix extends BaseDense implements Matrix {
 
     @Override
     public String toString() {
-        return ToString.toString(data, dim.dim(1),"%.03f");
+        return ToString.toString(data, dim.dims[1],"%.03f");
     }
 }

@@ -1,8 +1,7 @@
-package org.hls.check;
+package jext.main;
 
 import jext.math.linear.Dim;
 import jext.math.linear.Matrices;
-import jext.math.linear.Matrix;
 import jext.math.linear.sparse.Loc;
 import jext.math.linear.sparse.SparseMatrix;
 
@@ -15,7 +14,6 @@ public class App6 {
             .set(1, 1,1)
             .set(2,2,2)
             .set(3,3,3);
-
 
         // SparseMatrix m = Matrices.sparse(4,4);
         //

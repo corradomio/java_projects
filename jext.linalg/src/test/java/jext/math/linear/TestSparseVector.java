@@ -43,7 +43,7 @@ public class TestSparseVector extends Assertions {
     }
 
     @Test
-    void testassignment() {
+    void testAssignment() {
         Vector v1 = Vectors.sparse(new float[]{ 2,0,2,0});
         Vector v2 = Vectors.sparse(new float[]{ 0,1,0,1});
         Vector r1 = v1.linear(1,0,v2);

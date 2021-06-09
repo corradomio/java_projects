@@ -20,7 +20,7 @@ public class BaseDense {
 
     // @Override
     public int dim(int idim) {
-        return dim.dim(idim);
+        return dim.dims[idim];
     }
 
     // @Override

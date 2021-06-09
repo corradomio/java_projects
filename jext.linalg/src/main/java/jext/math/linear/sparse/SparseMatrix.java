@@ -1,20 +1,22 @@
 package jext.math.linear.sparse;
 
 import jext.math.linear.Dim;
+import jext.math.linear.Matrices;
 import jext.math.linear.Matrix;
-import jext.math.linear.Type;
 import jext.math.linear.Vector;
 
 public class SparseMatrix extends BaseSparse implements Matrix {
 
-    private Data data;
-
-    public SparseMatrix(int[] rows, int[] cols, float[] data, int n, int m) {
-        this(new Data(rows, cols, data), n, m);
+    public SparseMatrix(Dim dim) {
+        this(new Data(), dim);
     }
 
-    public SparseMatrix(Data data, int n, int m) {
-        this.dim = new Dim(n, m);
+    public SparseMatrix(int[] rows, int[] cols, float[] data, Dim dim) {
+        this(new Data(rows, cols, data), dim);
+    }
+
+    public SparseMatrix(Data data, Dim dim) {
+        this.dim = dim;
         this.data = data;
     }
 
@@ -33,9 +35,30 @@ public class SparseMatrix extends BaseSparse implements Matrix {
 
     // ----------------------------------------------------------------------
 
+    public Iterable<Loc> rows() {
+        return data.rows();
+    }
+
+    public Iterable<Loc> cols() {
+        return data.cols();
+    }
+
+    public Iterable<Loc> rows(int c) {
+        return data.rows(c);
+    }
+
+    public Iterable<Loc> cols(int r) {
+        return data.cols(r);
+    }
+
+    // ----------------------------------------------------------------------
+
     @Override
     public Matrix dot(Matrix B) {
-        return null;
+        SparseMatrix that = (SparseMatrix) B;
+        SparseMatrix r = Matrices.sparse(this.dim(0), that.dim(1));
+        Linear.dot(r.data, this.data, that.data);
+        return r;
     }
 
     @Override

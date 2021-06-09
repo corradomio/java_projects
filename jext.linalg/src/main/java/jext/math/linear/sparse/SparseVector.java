@@ -11,18 +11,14 @@ import jext.util.Arrays;
 
 public class SparseVector extends BaseSparse implements Vector {
 
-    public SparseVector(int n) {
-        this.dim = new Dim(n);
+    public SparseVector(Dim dim) {
+        this.dim = dim;
         this.data = new Data();
     }
 
-    public SparseVector(float[] data) {
-        this(Arrays.indices(data.length), data, data.length);
-    }
-
-    public SparseVector(int[] idxs, float[] data, int n) {
-        this.dim = new Dim(n);
-        this.data = new Data(idxs, data);
+    public SparseVector(Data data, Dim dim) {
+        this.dim = dim;
+        this.data = data;
     }
 
     // ----------------------------------------------------------------------
@@ -72,7 +68,7 @@ public class SparseVector extends BaseSparse implements Vector {
         SparseVector that = (SparseVector) v;
         Data r = new Data();
         Linear.outer(r, this.data, that.data);
-        return new SparseMatrix(r, this.dim(0), that.dim(0));
+        return new SparseMatrix(r, new Dim(this.dim(0), that.dim(0)));
     }
 
     @Override

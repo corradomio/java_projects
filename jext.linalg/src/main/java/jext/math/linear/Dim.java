@@ -3,7 +3,7 @@ package jext.math.linear;
 import java.util.Arrays;
 
 public class Dim {
-    private int[] dims;
+    public int[] dims;
 
     public Dim(int n) {
         dims = new int[]{n};
@@ -17,9 +17,9 @@ public class Dim {
         return dims.length;
     }
 
-    public int dim(int idim) {
-        return dims[idim];
-    }
+    // public int dim(int idim) {
+    //     return dims[idim];
+    // }
 
     @Override
     public boolean equals(Object obj) {
@@ -30,7 +30,7 @@ public class Dim {
             return false;
         // same dimensions
         for (int i=0; i<k; ++i)
-            if (this.dim(i) != that.dim(i))
+            if (this.dims[i] != that.dims[i])
                 return false;
         return true;
     }
@@ -43,9 +43,9 @@ public class Dim {
     public boolean conform(Dim that) {
         if (rank() == 1)
             // vector
-            return this.dim(0)  == that.dim(0);
+            return this.dims[0]  == that.dims[0];
         else
             // matrix
-            return this.dim(1)  == that.dim(0);
+            return this.dims[1]  == that.dims[0];
     }
 }

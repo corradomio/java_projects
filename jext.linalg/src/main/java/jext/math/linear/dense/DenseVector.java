@@ -11,9 +11,14 @@ import java.util.Arrays;
 
 public class DenseVector extends BaseDense implements Vector {
 
+    public DenseVector(Dim dim) {
+        this.dim = dim;
+        this.data = new float[dim.dims[0]];
+    }
+
     public DenseVector(float[] v) {
-        this.data = v;
         this.dim = new Dim(v.length);
+        this.data = v;
     }
 
     // ----------------------------------------------------------------------

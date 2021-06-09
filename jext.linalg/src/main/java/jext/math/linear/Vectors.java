@@ -1,18 +1,20 @@
 package jext.math.linear;
 
 import jext.math.linear.dense.DenseVector;
+import jext.math.linear.sparse.Data;
 import jext.math.linear.sparse.SparseVector;
+import jext.util.Arrays;
 
 public class Vectors {
 
     // -- Dense vectors
 
-    public static DenseVector zeros(Dim dim) {
-        return zeros(dim.dim(0));
+    public static DenseVector zeros(int n) {
+        return zeros(new Dim(n));
     }
 
-    public static DenseVector zeros(int n) {
-        return vector(jext.math.linear.dense.Linear.zeros(n));
+    public static DenseVector zeros(Dim dim) {
+        return new DenseVector(dim);
     }
 
     public static DenseVector ones(int n) {
@@ -25,16 +27,26 @@ public class Vectors {
 
     // -- Sparse vectors
 
-    public static SparseVector sparse(Dim dim) {
-        return sparse(dim.dim(0));
+    public static SparseVector sparse(int n) {
+        return sparse(new Dim(n));
     }
 
-    public static SparseVector sparse(int n) {
-        return new SparseVector(n);
+    public static SparseVector sparse(Dim dim) {
+        return new SparseVector(dim);
     }
 
     public static SparseVector sparse(float[] v) {
-        return new SparseVector(v);
+        int n = v.length;
+        return sparse(Arrays.indices(n), v, n);
+    }
+
+    public static SparseVector sparse(int[] c, float[] v, int n) {
+        return sparse(c, v, new Dim(n));
+    }
+
+    public static SparseVector sparse(int[] c, float[] v, Dim dim) {
+        Data data = new Data(c, v);
+        return new SparseVector(data, dim);
     }
 
     // -- Print

@@ -3,7 +3,9 @@ package jext.math.linear.sparse;
 import jext.math.linear.Dim;
 import jext.math.linear.Type;
 
-public class BaseSparse {
+import java.util.Iterator;
+
+public class BaseSparse implements Iterable<Loc> {
 
     public Data data;
     public Dim dim;
@@ -20,12 +22,16 @@ public class BaseSparse {
 
     // @Override
     public int dim(int idim) {
-        return dim.dim(idim);
+        return dim.dims[idim];
     }
 
     // @Override
     public int length() {
         return data.length();
+    }
+
+    public Iterator<Loc> iterator() {
+        return data.iterator();
     }
 
 }

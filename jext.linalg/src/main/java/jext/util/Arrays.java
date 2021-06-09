@@ -118,6 +118,10 @@ public class Arrays {
         return java.util.Arrays.copyOf(a, n);
     }
 
+    public static int[] copyOf(int[] a, int n) {
+        return java.util.Arrays.copyOf(a, n);
+    }
+
     public static boolean equals(long[] a, long[] b, int n) {
         for(int i=0; i<n; ++i)
             if (a[i] != b[i])
