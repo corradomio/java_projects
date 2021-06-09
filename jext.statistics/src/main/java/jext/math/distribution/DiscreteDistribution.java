@@ -6,7 +6,7 @@ package jext.math.distribution;
 public interface DiscreteDistribution extends Distribution {
 
     /** Mass distribution function */
-    double mdf(int x);
+    double pdf(int x);
 
     /** Cumulative distribution function */
     double cdf(int x);
