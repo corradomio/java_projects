@@ -162,7 +162,7 @@ public class FTPVFile extends AbstractFile {
             String path = getpath(false);
             return getcli().storeFile(path, new ByteArrayInputStream(EMPTY));
         }
-        catch(IOException e) {
+        catch (IOException e) {
             logger.error(e, e);
             return false;
         }
@@ -174,7 +174,7 @@ public class FTPVFile extends AbstractFile {
             String path = getpath(false);
             return getcli().makeDirectory(path);
         }
-        catch(IOException e) {
+        catch (IOException e) {
             logger.error(e, e);
             return false;
         }

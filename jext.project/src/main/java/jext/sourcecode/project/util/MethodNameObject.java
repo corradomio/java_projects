@@ -100,7 +100,7 @@ public class MethodNameObject extends ObjectName implements MethodName {
 
     @Override
     public String toString() {
-        return getSignature();
+        return String.format("%s/%d", getName(), getNumOfParams());
     }
 
 }

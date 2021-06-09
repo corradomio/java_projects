@@ -19,6 +19,5 @@ public interface Name extends Comparable<Name> {
 
     String getFullName();
 
-    // String[] getParts();
-
+    int hashCode();
 }

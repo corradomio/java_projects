@@ -67,7 +67,7 @@ public class SVNFileContent implements VFileContent {
             repo.getFile(path, -1, fprops, baos);
             return new ByteArrayInputStream(baos.toByteArray());
         }
-        catch(SVNException e) {
+        catch (SVNException e) {
             throw new IOException(e);
         }
     }

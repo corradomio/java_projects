@@ -336,7 +336,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                 module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_SOURCE_ROOTS);
                 modules.add(module);
 
-                logger.warnf("Added module %s based on source root '%s'", module.getName(), module.getModuleHome());
+                logger.warnf("Added module %s based on source root\n  %s", module.getName(), module.getModuleHome());
             });
     }
 

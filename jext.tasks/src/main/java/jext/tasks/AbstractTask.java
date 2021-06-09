@@ -66,34 +66,19 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
         void fireStatusChanged(TaskStatus previousStatus) {
             for (TaskStatusListener l : listeners) {
-                // try {
-                    l.onStatusChanged(previousStatus,AbstractTask.this);
-                // }
-                // catch (Throwable t) {
-                //     logger.error(t);
-                // }
+                l.onStatusChanged(previousStatus,AbstractTask.this);
             }
         }
 
         void fireProgressChanged() {
             for (TaskStatusListener l : listeners) {
-                // try {
-                    l.onProgressChanged(AbstractTask.this);
-                // }
-                // catch (Throwable t) {
-                //     logger.error(t);
-                // }
+                l.onProgressChanged(AbstractTask.this);
             }
         }
 
         void fireDone() {
             for (TaskStatusListener l : listeners) {
-                // try {
-                    l.onDone(AbstractTask.this);
-                // }
-                // catch (Throwable t) {
-                //     logger.error(t);
-                // }
+                l.onDone(AbstractTask.this);
             }
         }
     }
@@ -130,6 +115,9 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     public String getType() { return taskType; }
 
     @Override
+    public String getExtendedType() { return taskType; }
+
+    @Override
     public String getMessage() { return message; }
 
     @Override
@@ -139,12 +127,18 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
     @Override
     public boolean isTerminated() {
+        if (future == null) return false;
         return future.isCancelled() || future.isDone();
     }
 
     @Override
+    public boolean hasRequirements() {
+        return false;
+    }
+
+    @Override
     public TaskRequirements getRequirements() {
-        return TaskRequirements.noRequirements();
+        throw new UnsupportedOperationException();
     }
 
     public void setParameters(Parameters params) {

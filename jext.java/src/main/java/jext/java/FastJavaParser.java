@@ -69,6 +69,12 @@ public class FastJavaParser {
     // Parse the source code
     // ----------------------------------------------------------------------
 
+    // DEBUG
+    public FastJavaParser clear() {
+        parsed = false;
+        return this;
+    }
+
     private TypeRole parse() {
         if (parsed)
             return role;

@@ -100,14 +100,20 @@ public interface GraphSession extends AutoCloseable {
     Map<String, Object> getNodeValues(String nodeId);
 
     /**
-     * Get the property values for the nodes
-     */
-    List<Map<String, Object>> getNodesValues(List<String> nodeIds);
-
-    /**
      * Delete the node
      */
     boolean deleteNode(String nodeId);
+
+    // ----------------------------------------------------------------------
+    // Operations on node list
+    // ----------------------------------------------------------------------
+
+    long countNodes(String nodeType, Map<String,Object> nodeProps);
+
+    /**
+     * Get the property values for the nodes
+     */
+    List<Map<String, Object>> getNodesValues(List<String> nodeIds);
 
     /**
      * Delete the nodes
@@ -117,7 +123,11 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Delete the nodes with the specified properties
      */
-    void deleteNodes(String nodeType, Map<String,Object> nodeProps);
+    void deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
+
+    default void deleteNodes(String nodeType, Map<String,Object> nodeProps) {
+        deleteNodes(nodeType, nodeProps, 0);
+    }
 
     // ----------------------------------------------------------------------
 
@@ -333,6 +343,14 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     Query queryUsing(String queryName,  Map<String,Object> queryParams);
+
+    void executeUsing(String queryName, Map<String,Object> queryParams);
+
+    // ----------------------------------------------------------------------
+    // Query using named queries
+    // ----------------------------------------------------------------------
+
+    Query queryUsingFullText(String query,  Map<String,Object> queryParams);
 
     // ----------------------------------------------------------------------
     // End

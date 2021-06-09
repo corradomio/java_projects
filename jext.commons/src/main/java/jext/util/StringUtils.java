@@ -119,6 +119,11 @@ public class StringUtils {
         return asList(s.split(sep));
     }
 
+    /**
+     * Append s to obj.
+     * If obj is a String,   creates and array of 2 elements
+     * If obj is a String[], creates a new array with s appended at the end
+     */
     public static String[] append(Object obj, String s) {
         if (obj instanceof String) {
             return new String[]{

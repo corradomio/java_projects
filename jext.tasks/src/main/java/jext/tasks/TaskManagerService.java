@@ -44,25 +44,25 @@ public class TaskManagerService implements TaskManager, Runnable {
     // Fields
     // ----------------------------------------------------------------------
 
-    private Logger logger = Logger.getLogger(TaskManager.class);
+    private final Logger logger = Logger.getLogger(TaskManager.class);
 
     // executor service used to execute tasks with or wthout requirements
-    private ExecutorService executor;
+    private final ExecutorService executor;
     // thread used to check is some task is in the running queue but it is terminated
     // (this is an error, in theory it is not possible, BUT it can happen)
     // it is used also to execute tasks with requirement if the requirements are
     // satisfied
-    private Thread watchdog;
+    private final Thread watchdog;
 
     // lock used to synchronize the access to 'tasks' map
     private final Object lock = new Object();
     // map of waiting/running tasks
-    private Map<String, Task> tasks = new HashMap<>();
+    private final Map<String, Task> tasks = new HashMap<>();
     // waiting queue for tasks with requirements > 0 (for now just memory)
-    private Queue<Task> waitingHeavyTasks = new LinkedList<>();
+    private final Queue<Task> waitingHeavyTasks = new LinkedList<>();
 
     // n of threads used in 'executor'
-    private int nthreads;
+    private final int nthreads;
     // if this service is terminated
     private transient boolean terminated;
 
@@ -85,13 +85,13 @@ public class TaskManagerService implements TaskManager, Runnable {
     // Tasks
     // ----------------------------------------------------------------------
 
-    /**
-     * Check if the task with the specified is id running
-     */
-    public boolean isRunning(String taskId) {
-        Optional<Task> task = getTask(taskId);
-        return task.isPresent();
-    }
+    // /**
+    //  * Check if the task with the specified is id running
+    //  */
+    // public boolean isRunning(String taskId) {
+    //     Optional<Task> task = getTask(taskId);
+    //     return task.isPresent();
+    // }
 
     /**
      * Retrieve the task with the specified id
@@ -105,12 +105,12 @@ public class TaskManagerService implements TaskManager, Runnable {
         }
     }
 
-    public Optional<Task> getTask(Task task) {
-        if (task == null)
-            return Optional.empty();
-        else
-            return getTask(task.getId());
-    }
+    // public Optional<Task> getTask(Task task) {
+    //     if (task == null)
+    //         return Optional.empty();
+    //     else
+    //         return getTask(task.getId());
+    // }
 
     /**
      * Retrieve the list of all tasks (waiting & running)
@@ -128,7 +128,7 @@ public class TaskManagerService implements TaskManager, Runnable {
     /**
      * Retrieve the list of tasks of the specified type
      *
-     * @param type
+     * @param type the class name that implements the task
      */
     public List<Task> listTasks(String type) {
         return listTasks().stream()
@@ -165,7 +165,7 @@ public class TaskManagerService implements TaskManager, Runnable {
             return listRunningTasks().size();
     }
 
-    public int getThreadPoolSize() {
+    public int getPoolThreads() {
         if (executor instanceof ThreadPoolExecutor)
             return ((ThreadPoolExecutor)executor).getPoolSize();
         else
@@ -176,24 +176,46 @@ public class TaskManagerService implements TaskManager, Runnable {
     // Operations
     // ----------------------------------------------------------------------
 
+    public boolean submitIfNew(Task task) {
+        if (task.getStatus() != TaskStatus.CREATED)
+            throw new RuntimeException("Wrong task status: " + task.getStatus());
+
+        synchronized (lock) {
+            for (Task other : tasks.values())
+                if (other.getExtendedType().equals(task.getExtendedType()))
+                    return false;
+            internalSubmit(task);
+            return true;
+        }
+    }
+
     public TaskManager submit(Task task) {
 
         if (task.getStatus() != TaskStatus.CREATED)
             throw new RuntimeException("Wrong task status: " + task.getStatus());
 
         synchronized (lock) {
-
-            if (isHeavyTask(task)) {
-                task.waiting(this, null);
-                waitingHeavyTasks.add(task);
-                tasks.put(task.getId(), task);
-            }
-            else {
-                Future<?> future = executor.submit(task);
-                task.waiting(this, future);
-            }
+            internalSubmit(task);
         }
         return this;
+    }
+
+    private void internalSubmit(Task task) {
+        tasks.put(task.getId(), task);
+
+        if (isHeavyTask(task)) {
+            // if there are no heavy tasks running, we can call the GC to
+            // obtain more memory free
+            if (!isHeavyTaskRunning())
+                clearMemory();
+
+            task.waiting(this, null);
+            waitingHeavyTasks.add(task);
+        }
+        else {
+            Future<?> future = executor.submit(task);
+            task.waiting(this, future);
+        }
     }
 
     public TaskManager abort(String taskId) {
@@ -272,16 +294,37 @@ public class TaskManagerService implements TaskManager, Runnable {
             // there are no heavy tasks waiting
             if (waitingHeavyTasks.isEmpty())
                 return false;
+
+            // there are heavy tasks waiting
             // there are no heavy tasks running
             if (!isHeavyTaskRunning())
                 return true;
 
-            // check just the memory
-            Task heavyTask = waitingHeavyTasks.peek();
-            long memoryNeeded = heavyTask.getRequirements().getMemoryRequirements(1);
+            // PROBLEM: you suppose that we have several heavy just started, and they
+            //   have not allocated all memory. In this case, we can start ALL waiting
+            //   heavy tasks.
+            // SOLUTION:
+            //   1) we collect the requirements from all running heavy task
+            //   2) we retrieve the current allocated resources
+            //   3) we take the max from 1) and 2) and we consider this value as
+            //      the already used resources
+            //   4) we evaluate the freeMemory as totalMemory - 3)
+            //   5) if there is enough memory for the new task, we start it.
 
-            // it can submit the task IF there is enough memory available
-            return (memoryNeeded <= MemoryUtils.freeMemory());
+            Task heavyTask = waitingHeavyTasks.peek();
+
+            TaskRequirements needed = new TaskRequirements();
+            // add the requirement for the running heavy tasks
+            addHeavyTasksRunningRequirements(needed);
+
+            // check just the memory
+            long neededMemory = Math.max(needed.getMemoryRequirements(), MemoryUtils.allocatedMemory());
+            long freeMemory = MemoryUtils.maxMemory() - neededMemory;
+            long taskMemory = heavyTask.getRequirements().getMemoryRequirements();
+
+            // it can be submitted IF there is enough memory available
+            boolean canSubmit = (taskMemory <= freeMemory);
+            return canSubmit;
         }
     }
 
@@ -295,22 +338,30 @@ public class TaskManagerService implements TaskManager, Runnable {
     }
 
     private boolean isHeavyTask(Task task) {
-        TaskRequirements treq = task.getRequirements();
-        return treq != null && treq != TaskRequirements.noRequirements();
+        return task.hasRequirements();
     }
 
     private boolean isHeavyTaskRunning() {
-        for (Task task : tasks.values()) {
-            if (isHeavyTask(task))
-                return true;
+        synchronized (lock) {
+            for (Task task : tasks.values())
+                if (task.getStatus() == TaskStatus.RUNNING && isHeavyTask(task))
+                    return true;
         }
         return false;
+    }
+
+    private void addHeavyTasksRunningRequirements(TaskRequirements req) {
+        synchronized (lock) {
+            for (Task task : tasks.values())
+                if (task.getStatus() == TaskStatus.RUNNING && isHeavyTask(task))
+                    req.add(task.getRequirements());
+        }
     }
 
     private void removeTerminatedTasks() {
         List<String> terminated = new ArrayList<>();
         synchronized (lock) {
-            tasks.values().stream().forEach(task -> {
+            tasks.values().forEach(task -> {
                 if (task.isTerminated())
                     terminated.add(task.getId());
             });
@@ -320,5 +371,23 @@ public class TaskManagerService implements TaskManager, Runnable {
             });
         }
     }
+
+
+    // ----------------------------------------------------------------------
+    // GC
+    // ----------------------------------------------------------------------
+
+    private static final long GC_TIMOUT = 60*1000; // 1 minute
+    private long gcTimestamp;
+
+    private void clearMemory() {
+        long now = System.currentTimeMillis();
+        long delta = now - gcTimestamp;
+        if (delta < GC_TIMOUT) return;
+
+        gcTimestamp = now;
+        System.gc();
+    }
+
 
 }

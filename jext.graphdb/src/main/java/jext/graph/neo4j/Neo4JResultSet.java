@@ -1,11 +1,11 @@
 package jext.graph.neo4j;
 
 import jext.graph.GraphIterator;
+import jext.util.HashSet;
+import jext.util.Set;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -245,6 +245,8 @@ public class Parallel {
             futures = executor.invokeAll(tasks);
         } catch (InterruptedException e) {
 
+        } catch (Throwable t) {
+
         }
         while (futures.stream().anyMatch(f -> !f.isDone())) {
             sleep(500);

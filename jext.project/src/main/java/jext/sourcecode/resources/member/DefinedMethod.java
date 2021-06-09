@@ -36,6 +36,10 @@ public class DefinedMethod extends NamedObject implements Method {
                          String methodName, int nParams,
                          String signature, String declaration) {
         super(new MethodNameObject(ownerType.getName(), methodName, nParams, toSignature(methodName, nParams, signature)));
+
+        // remove spaces
+        if (declaration != null)
+            declaration = declaration.trim();
         this.ownerType = ownerType;
         this.callIndex = new AtomicInteger();
         this.lastCallName = getMethodName();
@@ -43,18 +47,19 @@ public class DefinedMethod extends NamedObject implements Method {
     }
 
     private static String toSignature(String methodName, int nParams, String signature) {
-        methodName = StringUtils.lastOf(methodName, ".");
-        if (signature != null)
-            return JavaUtils.toPlainMethodSignature(signature);
-        else
-            return JavaUtils.toPlainMethodSignature(methodName, nParams);
+        // methodName = StringUtils.lastOf(methodName, ".");
+        // if (signature != null)
+        //     return JavaUtils.toPlainMethodSignature(signature);
+        // else
+        //     return JavaUtils.toPlainMethodSignature(methodName, nParams);
+        return signature;
     }
 
     // ----------------------------------------------------------------------
     // Setters
     // ----------------------------------------------------------------------
 
-    public void setType(RefType returnType) {
+    public void setReturnType(RefType returnType) {
         if (returnType != null)
             this.returnType = returnType;
         else

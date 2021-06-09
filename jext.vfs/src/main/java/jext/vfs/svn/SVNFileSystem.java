@@ -69,7 +69,7 @@ public class SVNFileSystem extends AbstractFileSystem {
 
             logger.infof("Connected to %s", url);
         }
-        catch(SVNException e) {
+        catch (SVNException e) {
             throw new IOException(e);
         }
 

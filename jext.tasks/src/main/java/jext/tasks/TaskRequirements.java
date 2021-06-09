@@ -2,15 +2,12 @@ package jext.tasks;
 
 public class TaskRequirements {
 
-    public static TaskRequirements NO_REQUIREMENTS = new TaskRequirements(0, 0);
-
-    public static TaskRequirements noRequirements() {
-        return NO_REQUIREMENTS;
-    }
-
-
     private long memoryRequirementsInBytes;
     private long timeRequirementsInSeconds;
+
+    public TaskRequirements() {
+        this(0, 0);
+    }
 
     public TaskRequirements(long memoryRequirementsInBytes) {
         this(memoryRequirementsInBytes, 0);
@@ -21,8 +18,28 @@ public class TaskRequirements {
         this.timeRequirementsInSeconds = timeRequirementsInSecond;
     }
 
-    public long getMemoryRequirements(long unitInBytes) {
-        if (unitInBytes <= 0) unitInBytes = 1;
-        return memoryRequirementsInBytes/unitInBytes;
+    public long getMemoryRequirements() {
+        return memoryRequirementsInBytes;
     }
+
+    public void add(TaskRequirements req) {
+        memoryRequirementsInBytes += req.memoryRequirementsInBytes;
+        timeRequirementsInSeconds += req.timeRequirementsInSeconds;
+    }
+
+    public TaskRequirements max(TaskRequirements req) {
+        if (req == null)
+            return this;
+
+        // if (memoryRequirementsInBytes >= req.memoryRequirementsInBytes && timeRequirementsInSeconds >= req.timeRequirementsInSeconds)
+        //     return this;
+        // if (memoryRequirementsInBytes <= req.memoryRequirementsInBytes && timeRequirementsInSeconds <= req.timeRequirementsInSeconds)
+        //     return req;
+
+        TaskRequirements max = new TaskRequirements();
+        max.memoryRequirementsInBytes = Math.max(this.memoryRequirementsInBytes, req.memoryRequirementsInBytes);
+        max.timeRequirementsInSeconds = Math.max(this.timeRequirementsInSeconds, req.timeRequirementsInSeconds);
+        return max;
+    }
+
 }

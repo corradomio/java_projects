@@ -17,12 +17,18 @@ public interface Task extends Runnable {
     String getId();
 
     /**
-     * Task type (a generic string)
+     * Task type: the class name that implements the task)
      */
     String getType();
 
+    /**
+     * The task type extended with information about project & model
+     */
+    String getExtendedType();
+
     boolean isTerminated();
 
+    boolean hasRequirements();
     TaskRequirements getRequirements();
 
     // ----------------------------------------------------------------------

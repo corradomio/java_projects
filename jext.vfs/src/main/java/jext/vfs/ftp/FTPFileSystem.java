@@ -78,7 +78,7 @@ public class FTPFileSystem extends AbstractFileSystem {
                 client.disconnect();
 
         }
-        catch(IOException e) {
+        catch (IOException e) {
             logger.error(e, e);
         }
         finally {
