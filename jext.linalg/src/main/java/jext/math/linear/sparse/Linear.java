@@ -14,8 +14,7 @@ public class Linear {
     public static float dot(Data A, int i, Data v) {
         float s = 0;
         for(Loc r : A.cols(i))
-            for (Loc c : v.rows())
-                s += A.get(r)*v.get(c);
+            s += A.get(r)*v.get(r.c);
         return s;
     }
 
@@ -23,8 +22,7 @@ public class Linear {
     public static float dot(Data A, int i, Data B, int j) {
         float s = 0;
         for(Loc c : A.cols(i))
-            for(Loc r : B.rows(j))
-                s += A.get(c)*B.get(r);
+            s += A.get(c)*B.get(c.c, j);
         return s;
     }
 
@@ -32,7 +30,7 @@ public class Linear {
     public static void dot(Data R, Data A, Data B) {
         for(Loc r : A.rows())
             for (Loc c : B.cols()) {
-                float v = dot(A, (int) r.r, B, (int) c.c);
+                float v = dot(A, r.r, B, c.c);
                 R.add(r.r, c.c, v);
             }
     }

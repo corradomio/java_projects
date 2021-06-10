@@ -1,5 +1,7 @@
 package jext.util;
 
+import static java.lang.Math.abs;
+
 public class Arrays {
 
     // ----------------------------------------------------------------------
@@ -146,6 +148,22 @@ public class Arrays {
     public static boolean equals(float[] a, float[] b, int n) {
         for(int i=0; i<n; ++i)
             if (a[i] != b[i])
+                return false;
+        return true;
+    }
+
+    // ----------------------------------------------------------------------
+
+    public static boolean equals(int[] a, int[] b, int n) {
+        for(int i=0; i<n; ++i)
+            if (a[i] != b[i])
+                return false;
+        return true;
+    }
+
+    public static boolean equals(float[] a, float[] b, int n, float eps) {
+        for(int i=0; i<n; ++i)
+            if (abs(a[i]-b[i]) > eps)
                 return false;
         return true;
     }

@@ -1,13 +1,12 @@
 package org.hls.check;
 
+import jext.math.linear.Linalg;
 import jext.math.linear.Vector;
-import jext.math.linear.Vectors;
-import jext.math.linear.sparse.SparseVector;
 
 public class App4 {
 
     public static void main(String[] args) {
-        Vector sv = Vectors.sparse(10);
+        Vector sv = Linalg.sparse(10);
 
         System.out.println(sv);
 

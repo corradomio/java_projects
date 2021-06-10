@@ -1,13 +1,9 @@
 package jext.math.linear.sparse;
 
 import jext.math.linear.Dim;
+import jext.math.linear.Linalg;
 import jext.math.linear.Matrix;
-import jext.math.linear.Type;
 import jext.math.linear.Vector;
-import jext.math.linear.Vectors;
-import jext.math.linear.dense.DenseVector;
-import jext.math.linear.dense.DiagMatrix;
-import jext.util.Arrays;
 
 public class SparseVector extends BaseSparse implements Vector {
 
@@ -44,7 +40,7 @@ public class SparseVector extends BaseSparse implements Vector {
     @Override
     public Vector versor() {
         float s = this.norm();
-        SparseVector r = Vectors.sparse(dim);
+        SparseVector r = Linalg.sparse(dim);
         Linear.linear(r.data, 1/s, this.data, 0, null);
         return r;
     }
@@ -52,7 +48,7 @@ public class SparseVector extends BaseSparse implements Vector {
     @Override
     public Vector linear(float s, float t, Vector v) {
         SparseVector that = (SparseVector) v;
-        SparseVector res = Vectors.sparse(dim);
+        SparseVector res = Linalg.sparse(dim);
         Linear.linear(res.data, s, this.data, t, that.data);
         return res;
     }

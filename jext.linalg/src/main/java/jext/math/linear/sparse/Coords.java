@@ -4,6 +4,7 @@ import jext.util.Arrays;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 public class Coords implements Iterable<Loc> {
@@ -236,6 +237,28 @@ public class Coords implements Iterable<Loc> {
     protected void allocate() {
         rows = Arrays.copyOf(rows, n + 15);
         cols = Arrays.copyOf(cols, n + 15);
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public String toString() {
+        return String.format("Coords[%d]", n);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(java.util.Arrays.hashCode(rows), java.util.Arrays.hashCode(cols));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Coords that = (Coords) obj;
+        if (this.n != that.n)
+            return false;
+        return Arrays.equals(this.rows, that.rows, n)
+            && Arrays.equals(this.cols, that.cols, n);
     }
 
 }

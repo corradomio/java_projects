@@ -1,10 +1,9 @@
 package jext.math.linear.dense;
 
 import jext.math.linear.Dim;
-import jext.math.linear.Matrices;
+import jext.math.linear.Linalg;
 import jext.math.linear.Matrix;
 import jext.math.linear.Vector;
-import jext.math.linear.Vectors;
 
 import java.util.Arrays;
 
@@ -15,8 +14,8 @@ public class DenseMatrix extends BaseDense implements Matrix {
         this.data = new float[dim.dims[0]*dim.dims[1]];
     }
 
-    public DenseMatrix(float[] mat, int nrows) {
-        this.dim = new Dim(nrows, mat.length/nrows);
+    public DenseMatrix(float[] mat, Dim dim) {
+        this.dim = dim;
         this.data = mat;
     }
 
@@ -40,7 +39,7 @@ public class DenseMatrix extends BaseDense implements Matrix {
     @Override
     public Matrix dot(Matrix B) {
         DenseMatrix that = (DenseMatrix) B;
-        DenseMatrix res = Matrices.zeros(dim.dims[0], B.dim(1));
+        DenseMatrix res = Linalg.matrix(dim.dims[0], B.dim(1));
         Linear.dot(res.data, this.data, that.data, dim(1));
         return res;
     }
@@ -52,7 +51,7 @@ public class DenseMatrix extends BaseDense implements Matrix {
             throw new IllegalArgumentException("Invalid dimensions");
 
         DenseMatrix that = (DenseMatrix) B;
-        DenseMatrix res = Matrices.zeros(dim);
+        DenseMatrix res = Linalg.matrix(dim);
         Linear.linear(res.data, s, this.data, t, that.data);
         return res;
     }
@@ -65,7 +64,7 @@ public class DenseMatrix extends BaseDense implements Matrix {
 
         DenseVector du = (DenseVector) u;
         DenseVector dv = (DenseVector) v;
-        DenseVector res = Vectors.zeros(v.dim());
+        DenseVector res = Linalg.vector(v.dim());
         Linear.linear(res.data, s, this.data, du.data, t, dv.data);
         return res;
     }
@@ -75,7 +74,7 @@ public class DenseMatrix extends BaseDense implements Matrix {
     public Matrix linear(float s, Matrix C, float t, Matrix B) {
         DenseMatrix dc = (DenseMatrix) C;
         DenseMatrix db = (DenseMatrix) B;
-        DenseMatrix res = Matrices.zeros(B.dim());
+        DenseMatrix res = Linalg.matrix(B.dim());
         Linear.linear(res.data, s, dc.data, this.data, t, db.data, C.dim().dims[1]);
         return res;
     }

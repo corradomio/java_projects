@@ -33,6 +33,10 @@ public class Data extends Coords {
         return get(l.r, l.c);
     }
 
+    float get(int i) {
+        return get(i, 0);
+    }
+
     float get(int i, int j) {
         int at = find(i, j);
         if (at == -1)

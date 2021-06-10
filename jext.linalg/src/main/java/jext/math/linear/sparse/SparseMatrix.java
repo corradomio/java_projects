@@ -1,7 +1,7 @@
 package jext.math.linear.sparse;
 
 import jext.math.linear.Dim;
-import jext.math.linear.Matrices;
+import jext.math.linear.Linalg;
 import jext.math.linear.Matrix;
 import jext.math.linear.Vector;
 
@@ -9,10 +9,6 @@ public class SparseMatrix extends BaseSparse implements Matrix {
 
     public SparseMatrix(Dim dim) {
         this(new Data(), dim);
-    }
-
-    public SparseMatrix(int[] rows, int[] cols, float[] data, Dim dim) {
-        this(new Data(rows, cols, data), dim);
     }
 
     public SparseMatrix(Data data, Dim dim) {
@@ -56,7 +52,7 @@ public class SparseMatrix extends BaseSparse implements Matrix {
     @Override
     public Matrix dot(Matrix B) {
         SparseMatrix that = (SparseMatrix) B;
-        SparseMatrix r = Matrices.sparse(this.dim(0), that.dim(1));
+        SparseMatrix r = Linalg.sparse(this.dim(0), that.dim(1));
         Linear.dot(r.data, this.data, that.data);
         return r;
     }

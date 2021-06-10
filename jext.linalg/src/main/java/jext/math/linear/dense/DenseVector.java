@@ -1,12 +1,10 @@
 package jext.math.linear.dense;
 
 import jext.math.linear.Dim;
+import jext.math.linear.Linalg;
 import jext.math.linear.Matrix;
-import jext.math.linear.Type;
 import jext.math.linear.Vector;
-import jext.math.linear.Vectors;
 
-import javax.sound.sampled.Line;
 import java.util.Arrays;
 
 public class DenseVector extends BaseDense implements Vector {
@@ -44,7 +42,7 @@ public class DenseVector extends BaseDense implements Vector {
     @Override
     public Vector versor() {
         float s = this.norm();
-        DenseVector r = Vectors.zeros(dim);
+        DenseVector r = Linalg.vector(dim);
         Linear.linear(r.data, 1/s, this.data, 0, null);
         return r;
     }
@@ -52,7 +50,7 @@ public class DenseVector extends BaseDense implements Vector {
     @Override
     public Vector linear(float s, float t, Vector v) {
         DenseVector that = (DenseVector) v;
-        DenseVector r = Vectors.zeros(dim);
+        DenseVector r = Linalg.vector(dim);
         Linear.linear(r.data, s, this.data, t, that.data);
         return r;
     }
@@ -69,7 +67,7 @@ public class DenseVector extends BaseDense implements Vector {
         int r = this.length()*that.length();
         float[] R = new float[r];
         Linear.outer(R, this.data, that.data);
-        return new DenseMatrix(R, this.length());
+        return Linalg.matrix(R, this.length());
     }
 
     @Override

@@ -1,8 +1,7 @@
 package org.hls.check;
 
 import jext.math.linear.Dim;
-import jext.math.linear.Matrices;
-import jext.math.linear.Matrix;
+import jext.math.linear.Linalg;
 import jext.math.linear.sparse.Loc;
 import jext.math.linear.sparse.SparseMatrix;
 
@@ -26,7 +25,7 @@ public class App6 {
         // m.set(2,3, 3);
         // m.set(3,0, 4);
 
-        Matrices.print(m);
+        Linalg.print(m);
 
         for(Loc l : m)
             System.out.printf("%d, %d\n", l.r, l.c);
@@ -39,17 +38,5 @@ public class App6 {
             for(Loc l : m.rows(col))
                 System.out.printf("%d: %d, %d\n", col, l.r, l.c);
 
-        //
-        // for(Loc r : m.rows()) {
-        //     System.out.println(r.loc);
-        // }
-        //
-        // for(Loc c : m.cols()) {
-        //     System.out.println(c.loc);
-        // }
-
-        // Matrix r = m.dot(m);
-        //
-        // Matrices.print(r);
     }
 }

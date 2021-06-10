@@ -1,22 +1,21 @@
 package org.hls.check;
 
 
-import jext.math.linear.Matrices;
+import jext.math.linear.Linalg;
 import jext.math.linear.Matrix;
 import jext.math.linear.Vector;
-import jext.math.linear.Vectors;
 
 public class App1 {
 
     public static void main(String[] args) {
 
-        Vector u = Vectors.ones(10);
-        Vector v = Vectors.ones(10);
+        Vector u = Linalg.ones(10);
+        Vector v = Linalg.ones(10);
 
         Vector r = u.linear(2, 3, v);
         System.out.println(r);
 
-        Matrix m = Matrices.zeros(2,3);
+        Matrix m = Linalg.matrix(2,3);
         System.out.println(m);
 
         // Random rnd = new Random();
