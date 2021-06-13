@@ -10,12 +10,9 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.SolveSymbolsVisitor;
-import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import jext.javaparser.util.ClassPoolRegistry;
 import jext.logging.Logger;
 import jext.util.FileUtils;

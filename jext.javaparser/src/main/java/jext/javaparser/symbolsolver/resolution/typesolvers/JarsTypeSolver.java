@@ -21,40 +21,43 @@ import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JarTypeSolver implements TypeSolver {
+public class JarsTypeSolver implements TypeSolver {
 
     private TypeSolver parent;
     private Map<String, ClasspathElement> classpathElements = new HashMap<>();
     private ClassPool classPool = new ClassPool(false);
 
-    public JarTypeSolver() {
+    public JarsTypeSolver() {
 
     }
 
-    public JarTypeSolver add(File pathToJar) {
+    public JarsTypeSolver(File... fileOrDir) {
+        addAll(Arrays.asList(fileOrDir));
+    }
+
+    public JarsTypeSolver add(File pathToJar) {
         try {
             addPathToJar(pathToJar.getCanonicalPath());
         } catch (IOException e) { }
         return this;
     }
 
-    public JarTypeSolver addAll(List<File> paths) {
-        for (File path : paths)
-            add(path);
+    public JarsTypeSolver addAll(List<File> paths) {
+        paths.forEach(this::add);
         return this;
     }
 
-    public JarTypeSolver addAll(File directory) {
+    public JarsTypeSolver addAll(File directory) {
         return addAll(Arrays.asList(directory.listFiles(f -> f.getName().endsWith(".java"))));
     }
 
-    public JarTypeSolver addJdk(File jdkHome) {
+    public JarsTypeSolver addJdk(File jdkHome) {
         addAll(new File(jdkHome, "lib"));
         addAll(new File(jdkHome, "jre/lib"));
         return this;
     }
 
-    private void addPathToJar(String pathToJar) throws IOException {
+    private void addPathToJar(String pathToJar) {
         try {
             classPool.appendClassPath(pathToJar);
             classPool.appendSystemPath();
@@ -71,6 +74,9 @@ public class JarTypeSolver implements TypeSolver {
                     classpathElements.put(name, new ClasspathElement(jarFile, entry));
                 }
             }
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

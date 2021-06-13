@@ -9,6 +9,7 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.AnnotationDeclaration;
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.CompactConstructorDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -17,6 +18,7 @@ import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.ReceiverParameter;
+import com.github.javaparser.ast.body.RecordDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.JavadocComment;
@@ -199,6 +201,18 @@ public class ListVisitorAdapter<R, A> implements GenericVisitor<R, A> {
     }
 
     @Override
+    public R visit(RecordDeclaration n, A arg) {
+        vlist.forEach(self -> self.visit(n, arg));
+        return null;
+    }
+
+    @Override
+    public R visit(CompactConstructorDeclaration n, A arg) {
+        vlist.forEach(self -> self.visit(n, arg));
+        return null;
+    }
+
+    @Override
     public R visit(ClassOrInterfaceType n, A arg) {
         vlist.forEach(self -> self.visit(n, arg));
         return null;
@@ -363,6 +377,11 @@ public class ListVisitorAdapter<R, A> implements GenericVisitor<R, A> {
     @Override
     public R visit(LocalClassDeclarationStmt n, A arg) {
         vlist.forEach(self -> self.visit(n, arg));
+        return null;
+    }
+
+    @Override
+    public R visit(LocalRecordDeclarationStmt n, A arg) {
         return null;
     }
 

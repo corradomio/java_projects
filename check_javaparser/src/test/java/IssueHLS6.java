@@ -1,31 +1,34 @@
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
-public class IssueHLS5 {
+public class IssueHLS6 {
 
     public static void main(String[] args) {
         String code =
             "package a.b.c.d;\n" +
                 "\n" +
-                "import java.lang.reflect.Type;\n" +
+                "import java.util.Calendar;\n" +
+                "import java.util.Date;\n" +
                 "\n" +
-                "public class TestHLS5 {\n" +
-                "    private static void appendRecursiveTypes(final StringBuilder builder, final int[] recursiveTypeIndexes,\n" +
-                "                                             final Type[] argumentTypes) {\n" +
-                "        for (int i = 0; i < recursiveTypeIndexes.length; i++) {\n" +
-                "            appendAllTo(builder.append('<'), \", \", argumentTypes[i].toString()).append('>');\n" +
+                "public class TestHLS6 {\n" +
+                "    String format(final Object obj) {\n" +
+                "        if (obj instanceof Date) {\n" +
+                "            return format((Date) obj);\n" +
+                "        } else if (obj instanceof Calendar) {\n" +
+                "            return format((Calendar) obj);\n" +
+                "        } else if (obj instanceof Long) {\n" +
+                "            return format(((Long) obj).longValue());\n" +
+                "        } else {\n" +
+                "            throw new IllegalArgumentException(\"Unknown class: \" +\n" +
+                "                (obj == null ? \"<null>\" : obj.getClass().getName()));\n" +
                 "        }\n" +
-                "    }\n" +
-                "    private static <T> StringBuilder appendAllTo(final StringBuilder builder, final String sep,\n" +
-                "                                                 @SuppressWarnings(\"unchecked\") final T... types) {\n" +
-                "        return builder;\n" +
                 "    }\n" +
                 "\n" +
                 "}";
@@ -36,14 +39,14 @@ public class IssueHLS5 {
         CompilationUnit cu = StaticJavaParser.parse(code);
 
         (new VoidVisitorAdapter<Void>() {
-            public void visit(MethodCallExpr n, Void arg) {
+            @Override
+            public void visit(ObjectCreationExpr n, Void arg) {
                 try {
                     n.resolve();
                 }
-                catch (Exception e) {
-                    System.out.println(e);
+                catch (Throwable t) {
+                    System.out.println(t);
                 }
-                super.visit(n, arg);
             }
 
         }).visit(cu, null);

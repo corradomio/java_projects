@@ -7,14 +7,7 @@
     <groupId>org.hls.check</groupId>
     <artifactId>check_math</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <dependencies>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.math</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+
     <packaging>pom</packaging>
 
     <properties>
@@ -25,7 +18,14 @@
 
     <modules>
         <module>../jext.math</module>
-        <module>../jext.linalg</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.math</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>

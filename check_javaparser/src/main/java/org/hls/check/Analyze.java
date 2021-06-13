@@ -45,7 +45,8 @@ public class Analyze {
                     // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
                     // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\bookstore"
-                    "D:\\Temp\\etisala-project-ebtic"
+                    // "D:\\Temp\\etisala-project-ebtic"
+                    "D:\\SPLGroup\\spl_workspaces.1\\example_repo_1\\commons_lang"
                 ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownloadDirectory(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));

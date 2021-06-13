@@ -1,5 +1,6 @@
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
@@ -7,32 +8,26 @@ import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
-public class IssueHLS4 {
+public class IssueHLS5 {
 
     public static void main(String[] args) {
         String code =
             "package a.b.c.d;\n" +
                 "\n" +
-                "import java.util.Collection;\n" +
-                "import java.util.Collections;\n" +
-                "import java.util.Iterator;\n" +
-                "import java.util.NoSuchElementException;\n" +
+                "import java.lang.reflect.Type;\n" +
                 "\n" +
-                "public class TestHLS4 {\n" +
-                "\n" +
-                "    public static void main(String[] args) {\n" +
-                "        Collection<Character> emptySet = Collections.emptySet();\n" +
-                "        final Iterator<Character> emptySetIt = emptySet.iterator();\n" +
-                "        assertThrows(NoSuchElementException.class, emptySetIt::next);\n" +
+                "public class TestHLS5 {\n" +
+                "    private static void appendRecursiveTypes(final StringBuilder builder, final int[] recursiveTypeIndexes,\n" +
+                "                                             final Type[] argumentTypes) {\n" +
+                "        for (int i = 0; i < recursiveTypeIndexes.length; i++) {\n" +
+                "            appendAllTo(builder.append('<'), \", \", argumentTypes[i].toString()).append('>');\n" +
+                "        }\n" +
+                "    }\n" +
+                "    private static <T> StringBuilder appendAllTo(final StringBuilder builder, final String sep,\n" +
+                "                                                 @SuppressWarnings(\"unchecked\") final T... types) {\n" +
+                "        return builder;\n" +
                 "    }\n" +
                 "\n" +
-                "    interface Executable {\n" +
-                "        void execute() throws Throwable;\n" +
-                "    }\n" +
-                "\n" +
-                "    private static void assertThrows(Class<?> clazz, Executable executable) {\n" +
-                "\n" +
-                "    }\n" +
                 "}";
         TypeSolver typeSolver = new CombinedTypeSolver(
             new ReflectionTypeSolver()
@@ -41,8 +36,13 @@ public class IssueHLS4 {
         CompilationUnit cu = StaticJavaParser.parse(code);
 
         (new VoidVisitorAdapter<Void>() {
-            public void visit(ClassOrInterfaceType n, Void arg) {
-                System.out.printf("ClassOrInterfaceType %s\n", n.toString());
+            public void visit(MethodCallExpr n, Void arg) {
+                try {
+                    n.resolve();
+                }
+                catch (Exception e) {
+                    System.out.println(e);
+                }
                 super.visit(n, arg);
             }
 
