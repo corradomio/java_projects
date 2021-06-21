@@ -9,7 +9,6 @@ import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,10 +21,10 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     private static final String EXCLUDE = "exclude";
     static final String SERVICE_FILE = ".spl/source-info.json";
 
-    private SnapshotsConfiguration configuration;
-    private Properties properties = new Properties();
-    private File localDirectory;
-    private File snapshotsDirectory;
+    private final SnapshotsConfiguration configuration;
+    private final Properties properties = new Properties();
+    private final File localDirectory;
+    private final File snapshotsDirectory;
     private FileFilter excludeFilter = FileFilters.none();
 
     // ----------------------------------------------------------------------
@@ -135,7 +134,7 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
     public Optional<Snapshot> getSnapshot(int snapshotId) {
         List<Snapshot> snapshots = listSnapshots();
         for (Snapshot snapshot : snapshots)
-            if (snapshot.getId() == snapshotId)
+            if (snapshot.getRevision() == snapshotId)
                 return Optional.of(snapshot);
 
         return Optional.empty();
@@ -171,13 +170,13 @@ public class LocalSnapshotsSystem implements SnapshotsSystem {
         return Optional.empty();
     }
 
-    @Override
-    public Snapshot rollback(String snapshotName) {
-        return rollback(getSnapshot(snapshotName).get());
-    }
-
-    @Override
-    public Snapshot rollback(Snapshot snapshot) {
-        throw new UnsupportedOperationException();
-    }
+    // @Override
+    // public Snapshot rollback(String snapshotName) {
+    //     return rollback(getSnapshot(snapshotName).get());
+    // }
+    //
+    // @Override
+    // public Snapshot rollback(Snapshot snapshot) {
+    //     throw new UnsupportedOperationException();
+    // }
 }

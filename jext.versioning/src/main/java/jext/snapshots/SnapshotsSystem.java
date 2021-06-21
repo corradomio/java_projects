@@ -32,6 +32,8 @@ public interface SnapshotsSystem {
      */
     Optional<Snapshot> getSnapshot(String snapshotName);
     Optional<Snapshot> getSnapshot(int snapshotId);
+
+    /** Retrieve the CURRENT snapshot */
     Snapshot getSnapshot();
 
     /**
@@ -45,7 +47,7 @@ public interface SnapshotsSystem {
      *
      * @return the current snapshot
      */
-    Snapshot rollback(String snapshotName);
-    Snapshot rollback(Snapshot snapshot);
+    // Snapshot rollback(String snapshotName);
+    // Snapshot rollback(Snapshot snapshot);
 
 }

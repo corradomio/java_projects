@@ -73,7 +73,6 @@ public class KCoreAnalyzer {
             if(Integer.parseInt(node.get("id").toString()) == id)
                 return node;
         }
-
         return null;
     }
 }

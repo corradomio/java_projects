@@ -201,10 +201,8 @@ public class ProjectAnalyzer {
             "libraryType", l.getLibraryType(),
             "version", l.getVersion(),
             "valid", l.isValid(),
-            "files", l.getFiles()
-            .stream()
-            .map(FileUtils::getAbsolutePath)
-                .collect(Collectors.toList())
+            "file", FileUtils.getAbsolutePath(l.getFile()),
+            "files", FileUtils.getAbsolutePaths(l.getFiles())
         );
 
         return linfo;
@@ -230,9 +228,6 @@ public class ProjectAnalyzer {
             ,"types", s.getTypes().stream()
                 .map(type -> type.getName().getFullName())
                 .collect(Collectors.toList())
-            // ,"usedTypes", s.getUsedTypes().stream()
-            //     .map(type -> type.getName().getFullName())
-            //     .collect(Collectors.toList())
         );
     }
 

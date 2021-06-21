@@ -1,5 +1,6 @@
 package jext.sourcecode.project.util;
 
+import jext.name.Name;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
@@ -17,12 +18,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProjectUtils {
+
+    public static List<Module> getModules(Project project, List<Name> moduleNames) {
+        if (moduleNames.isEmpty())
+            return Collections.emptyList();
+
+        return moduleNames.stream()
+            .map(moduleName -> project.getModule(moduleName.getFullName()))
+            .collect(Collectors.toList());
+    }
 
     public static List<Source> getSources(Project project) {
         List<Source> sources = new ArrayList<>();

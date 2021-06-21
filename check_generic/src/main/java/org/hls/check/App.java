@@ -1,11 +1,15 @@
 package org.hls.check;
 
+import jext.util.ArrayUtils;
+
+import java.util.Arrays;
 import java.util.Optional;
 
 public class App {
 
     public static void main(String[] args) {
-        System.out.println(Math.acos(-10));
-        System.out.println(Optional.ofNullable(null).orElse("none"));
+        int[] range = ArrayUtils.range(10);
+        range = Arrays.copyOf(range, 15);
+        System.out.println(range[0]);
     }
 }

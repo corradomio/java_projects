@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -174,6 +175,7 @@ public class FileUtils {
      * Retrieve the absolute path in 'normalized' form (\ -> /)
      */
     public static String getAbsolutePath(File file) {
+        if (file == null) return null;
         return normalize(file.getAbsolutePath());
     }
 
@@ -182,6 +184,28 @@ public class FileUtils {
         // while (p.contains("//"))
         //     p = p.replace("//", "/");
         return p;
+    }
+
+    public static List<String> getAbsolutePaths(Collection<File> files) {
+        return files.stream()
+            .map(FileUtils::getAbsolutePath)
+            .collect(Collectors.toList());
+    }
+
+    public static File toFile(String path) {
+        if (path == null)
+            return null;
+        else
+            return new File(path);
+    }
+
+    public static List<File> toFiles(Collection<String> paths) {
+        if (paths == null)
+            return Collections.emptyList();
+        else
+            return paths.stream()
+                .map(File::new)
+                .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------

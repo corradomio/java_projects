@@ -18,12 +18,20 @@
 
     <modules>
         <module>../jext.math</module>
+        <module>../jext.linalg</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.math</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.linalg</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>

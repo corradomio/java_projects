@@ -45,6 +45,7 @@ public class InfoProject implements Project {
     private File infoFile;
     private File projectHome;
     private Properties properties;
+    private Predicate<String> selector;
     private LibraryFinder lfinder;
 
     private Map<String, Object> info;
@@ -72,9 +73,14 @@ public class InfoProject implements Project {
             if (!this.infoFile.exists())
                 this.infoFile = new File(projectHome,".spl/project-info.json");
         }
+        this.selector = (p) -> true;
 
         load();
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public Name getName() {
@@ -88,7 +94,7 @@ public class InfoProject implements Project {
 
     @Override
     public void setResourceFilter(Predicate<String> selector) {
-
+        this.selector = selector;
     }
 
     @Override
@@ -206,6 +212,15 @@ public class InfoProject implements Project {
         if (libraryMap.containsKey(nameOrId))
             return libraryMap.get(nameOrId);
 
+        // check for Maven libraries
+        if (nameOrId.contains(":")) {
+            int pos = nameOrId.lastIndexOf(":");
+            nameOrId = nameOrId.substring(0, pos);
+        }
+
+        if (libraryMap.containsKey(nameOrId))
+            return libraryMap.get(nameOrId);
+
         // Set<Library> libraries = getLibraries();
         // for (Library library : libraries) {
         //     if (library.getName().getFullName().equals(nameOrId))
@@ -240,6 +255,10 @@ public class InfoProject implements Project {
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+
+    boolean isAccepted(String path) {
+        return this.selector.test(path);
+    }
 
     private void load() {
         if (info != null)

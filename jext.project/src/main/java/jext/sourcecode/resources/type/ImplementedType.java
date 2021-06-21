@@ -17,6 +17,9 @@ import jext.sourcecode.project.util.NamedObject;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import static jext.lang.JavaUtils.PUBLIC;
 
 public class ImplementedType extends NamedObject implements Type {
 
@@ -85,6 +88,21 @@ public class ImplementedType extends NamedObject implements Type {
     @Override
     public Type asType() {
         return this;
+    }
+
+    @Override
+    public Set<String> getModifiers() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public String getVisibility() {
+        return PUBLIC;
+    }
+
+    @Override
+    public Set<String> getStructure() {
+        return Collections.emptySet();
     }
 
     // -- type role

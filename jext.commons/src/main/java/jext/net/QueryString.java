@@ -40,7 +40,7 @@ public class QueryString extends HashMap<String, String> {
         //                      [;key=value]*
         // <([{\^-=$!|]})?*+.>
         String name, value;
-        String[] params = queryString.split("[?&;,]");
+        String[] params = queryString.split("[?&;]");
         for(String param : params) {
             int pos = param.indexOf('=');
             if (pos != -1) {

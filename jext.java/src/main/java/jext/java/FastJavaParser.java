@@ -1,6 +1,5 @@
 package jext.java;
 
-import jext.lang.JavaUtils;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.ObjectName;
@@ -12,6 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 public class FastJavaParser {
+
+    private static final String PACKAGE = "package ";
+    private static final String IMPORT_STATIC = "import static ";
+    private static final String IMPORT = "import ";
+    private static final String PUBLIC = "public ";
+    private static final String CLASS = "class ";
+    private static final String INTERFACE = "interface ";
+    private static final String ENUM = "enum ";
+    private static final String ANNOTATION = "@interface ";
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -84,7 +92,7 @@ public class FastJavaParser {
         String namespace = "";
         boolean exit = false;
 
-        List<String> lines = FileUtils.toStrings(sourceFile, JavaUtils.PUBLIC);
+        List<String> lines = FileUtils.toStrings(sourceFile, PUBLIC);
         for (String line : lines) {
             if (exit) break;
 
@@ -96,18 +104,18 @@ public class FastJavaParser {
                 // package ...
             else if (line.isEmpty())
                 continue;
-            else if (line.startsWith(JavaUtils.PACKAGE)) {
+            else if (line.startsWith(PACKAGE)) {
                 namespace = parseNamespace(line);
             }
             // import static ...
-            else if (line.startsWith(JavaUtils.IMPORT_STATIC)) {
+            else if (line.startsWith(IMPORT_STATIC)) {
                 // import static <namespace>.<name>.<symbol>;
                 Name refType = parseImport(line);
                 refType = refType.getParent();
                 this.classImports.add(refType);
             }
             // import ...
-            else if (line.startsWith(JavaUtils.IMPORT)) {
+            else if (line.startsWith(IMPORT)) {
                 Name refType = parseImport(line);
                 if (line.contains(".*;"))
                     this.namespaceImports.add(refType.getParent());
@@ -115,16 +123,16 @@ public class FastJavaParser {
                     this.classImports.add(refType);
             }
             // [public] [abstract] [final] [static] class|enum|[@]interface <name>[typeParams] { ...
-            else if (line.contains(JavaUtils.CLASS)) {
+            else if (line.contains(CLASS)) {
                 this.role = TypeRole.CLASS;
                 exit = true;
-            } else if (line.contains(JavaUtils.INTERFACE)) {
+            } else if (line.contains(INTERFACE)) {
                 this.role = TypeRole.INTERFACE;
                 exit = true;
-            } else if (line.contains(JavaUtils.ENUM)) {
+            } else if (line.contains(ENUM)) {
                 this.role = TypeRole.ENUM;
                 exit = true;
-            } else if (line.contains(JavaUtils.ANNOTATION)) {
+            } else if (line.contains(ANNOTATION)) {
                 this.role = TypeRole.ANNOTATION;
                 exit = true;
             } else {

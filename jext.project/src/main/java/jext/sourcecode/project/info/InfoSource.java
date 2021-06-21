@@ -20,13 +20,25 @@ import java.util.stream.Collectors;
 
 public class InfoSource implements Source {
 
-    private InfoModule module;
-    private Map<String, Object> info;
+    private final InfoModule module;
+    private final Map<String, Object> info;
+    private final Name name;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     InfoSource(InfoModule module, Map<String, Object> info) {
+        if (info == null)
+            throw new NullPointerException();
         this.module = module;
         this.info = info;
+        this.name = new PathName(MapUtils.get(info, "fullname"));
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public String getId() {
@@ -35,7 +47,7 @@ public class InfoSource implements Source {
 
     @Override
     public Name getName() {
-        return new PathName(MapUtils.get(info, "fullname"));
+        return name;
     }
 
     @Override
@@ -45,7 +57,7 @@ public class InfoSource implements Source {
 
     @Override
     public File getFile() {
-        return new File(module.getModuleHome(), getPath());
+        return new File(module.getProject().getProjectHome(), getPath());
     }
 
     @Override

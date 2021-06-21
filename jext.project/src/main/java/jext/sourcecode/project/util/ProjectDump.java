@@ -18,6 +18,7 @@ public class ProjectDump {
     public static final int NO_LIBRARIES = 0x0001;
     public static final int NO_TYPES = 0x0002;
     public static final int NO_DEPENDENCIES = 0x0004;
+    public static final int NO_SOURCES = 0x0008;
 
     public static void dump(Project project, long noFlags) {
         new ProjectDump().yamlProject(project, System.out, noFlags);
@@ -69,11 +70,19 @@ public class ProjectDump {
             m.getProperties().forEach((n, v) -> {
                 spaces(stream, 3).printf("%s: %s\n", n, v);
             });
+
             spaces(stream, 2).print("sourceRoots:\n");
             m.getSourceRoots().forEach(sr -> {
                 spaces(stream, 3).printf("- %s\n", sr);
             });
 
+            if ((noFlags & NO_SOURCES) == 0) {
+                spaces(stream, 2).print("sources:\n");
+                m.getSources().forEach(s -> {
+                    spaces(stream, 3).printf("- %s\n", s.getName().getFullName());
+                    spaces(stream, 3).printf("- %s\n", s.getId());
+                });
+            }
             if ((noFlags & NO_DEPENDENCIES) == 0) {
                 spaces(stream, 2).print("dependencies:\n");
                 m.getDependencies().forEach(d -> {

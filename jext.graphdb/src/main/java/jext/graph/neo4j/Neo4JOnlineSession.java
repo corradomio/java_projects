@@ -43,12 +43,24 @@ public class Neo4JOnlineSession implements GraphSession {
         AND
     }
 
-    private static final String FULLNAME = "fullname";
-    private static final String NAMESPACE = "namespace";
+    // private static final String FULLNAME = "fullname";
+    // private static final String NAMESPACE = "namespace";
     private static final String N = "n";
     private static final String E = "e";
     private static final int MAX_DELETE_NODES = 16*1024;
     private static final int MAX_DELETE_EDGES = 128*1024;
+
+    // ----------------------------------------------------------------------
+    // Special handled parameters
+    // ----------------------------------------------------------------------
+
+    private static final String LABELS = "labels";
+    private static final String REFIDS = "refIds";
+
+    // special parameters:   [revision, n]
+    // is converted in       n.revisionPresence[$revision]
+    // 'revisionPresence' is a boolean vector
+    private static final String REVISION = "revision";
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -156,8 +168,8 @@ public class Neo4JOnlineSession implements GraphSession {
         // query
         // labels ONLY if size > 0
         // refIds ONLY if size > 0
-        boolean hasLabels = queryParams.containsKey("labels") && !((Collection<String>)queryParams.get("labels")).isEmpty();
-        boolean hasRefIds = queryParams.containsKey("refIds") && !((Collection<String>)queryParams.get("refIds")).isEmpty();
+        boolean hasLabels = queryParams.containsKey(LABELS) && !((Collection<String>)queryParams.get(LABELS)).isEmpty();
+        boolean hasRefIds = queryParams.containsKey(REFIDS) && !((Collection<String>)queryParams.get(REFIDS)).isEmpty();
 
         String stmt = "CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n ";
         if (hasLabels && hasRefIds)
@@ -544,18 +556,47 @@ public class Neo4JOnlineSession implements GraphSession {
         allProps.putAll(edgeProps);
         allProps.putAll(toProps);
 
-        String s = String.format("MATCH (from:%s %s) %s (to:%s %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
-            fromType,
-            fblock,
-            eblock,
-            toType,
-            tblock
-        );
+        String s;
+        if (fromType == null && toType == null)
+            s = String.format("MATCH (from %s) %s (to %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+                fblock,
+                eblock,
+                tblock
+            );
+        else if (fromType == null)
+            s = String.format("MATCH (from %s) %s (to:%s %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+                fblock,
+                eblock,
+                toType,
+                tblock
+            );
+        else if (toType == null)
+            s = String.format("MATCH (from:%s %s) %s (to %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+                fromType,
+                fblock,
+                eblock,
+                tblock
+            );
+        else
+            s = String.format("MATCH (from:%s %s) %s (to:%s %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+                fromType,
+                fblock,
+                eblock,
+                toType,
+                tblock
+            );
 
-        if(edgeType.equals("uses"))
+        if(edgeType != null && edgeType.equals("uses"))
             s = s +", e.uses as uses";
 
-        return new Neo4JQuery(this, N, s, allProps);
+        return new Neo4JQuery(this, E, s, allProps);
+    }
+
+
+    @Override
+    public Query queryEdges(String edgeType, String fromId, Collection<String> toIds,
+                            Map<String, Object> edgeProps) {
+        return queryEdges(edgeType, Collections.singletonList(fromId), toIds, edgeProps);
     }
 
     @Override
@@ -622,16 +663,6 @@ public class Neo4JOnlineSession implements GraphSession {
         return newProps;
     }
 
-    // private static Map<String, Object> queryEdgeProps24(Map<String, Object> edgeProps) {
-    //     if (!edgeProps.containsKey(EDGE_TYPE))
-    //         return edgeProps;
-    //
-    //     Parameters newProps = Parameters.params(edgeProps);
-    //     newProps.put(USES, edgeProps.get(EDGE_TYPE));
-    //     newProps.remove(EDGE_TYPE);
-    //     return newProps;
-    // }
-
     // END
 
     @Override
@@ -691,7 +722,7 @@ public class Neo4JOnlineSession implements GraphSession {
                     Map<String, Object> edgeProps)
     {
         String eblock = eblock(E, edgeType, direction, recursive, null);
-        String wblock = wblock(E, edgeProps, false);
+        String wblock = wblock(E, edgeProps, WhereType.WHERE);
         String s;
 
         if (recursive) {
@@ -992,7 +1023,7 @@ public class Neo4JOnlineSession implements GraphSession {
                         .intValue();
                     total += count;
                     if (count > 0)
-                    logger.debugft("Deleted %d edges %s", total, params);
+                        logger.debugft("Deleted %d edges %s", total, params);
                 }
             }
             else {
@@ -1003,10 +1034,10 @@ public class Neo4JOnlineSession implements GraphSession {
                             .counters()
                             .nodesDeleted())
                         .intValue();
-                total += count;
+                    total += count;
                     if (count > 0)
-                logger.debugft("Deleted %d nodes %s", total, params);
-            }
+                        logger.debugft("Deleted %d nodes %s", total, params);
+                }
             }
             // if (edge)
             //     while((count = result.consume().counters().relationshipsDeleted()) > 0) {
@@ -1058,15 +1089,15 @@ public class Neo4JOnlineSession implements GraphSession {
         //       DA RIMUOVERE!!!!
         //
         // if the node contains 'fullname' but not 'namespace', inserts it
-        if (body.containsKey(FULLNAME) && !body.containsKey(NAMESPACE)) {
-            // full.name
-            String namespace = "";
-            String fullName = body.get(FULLNAME).toString();
-            int pos = fullName.lastIndexOf('.');
-            if (pos != -1)
-                namespace = fullName.substring(0, pos);
-            body.put(NAMESPACE, namespace);
-        }
+        // if (body.containsKey(FULLNAME) && !body.containsKey(NAMESPACE)) {
+        //     // full.name
+        //     String namespace = "";
+        //     String fullName = body.get(FULLNAME).toString();
+        //     int pos = fullName.lastIndexOf('.');
+        //     if (pos != -1)
+        //         namespace = fullName.substring(0, pos);
+        //     body.put(NAMESPACE, namespace);
+        // }
 
         return body;
     }
@@ -1133,9 +1164,14 @@ public class Neo4JOnlineSession implements GraphSession {
         StringBuilder sb = new StringBuilder("{");
         for(String param : params.keySet()) {
 
+            // parameter value is null
             if (params.get(param) == null)
                 continue;
+            // parameter value is a collection
             if (params.get(param) instanceof Collection)
+                continue;
+            // parameter is "revision"
+            if (REVISION.equals(param))
                 continue;
 
             if (sb.length() > 1)
@@ -1209,20 +1245,32 @@ public class Neo4JOnlineSession implements GraphSession {
         if (params == null || params.isEmpty())
             return "";
 
+        String stmt;
         StringBuilder sb = new StringBuilder();
 
-        for (String key : params.keySet()) {
-            Object value = params.get(key);
+        for (String param : params.keySet()) {
+            Object value = params.get(param);
 
             if (value != null && !(value instanceof Collection))
                 continue;
 
+            // append "... AND "
             if (sb.length() > 0) sb.append(" AND ");
 
-            if (value != null)
-                sb.append(alias).append(".").append(key).append(" in $").append(alias).append(key);
-            else
-                sb.append("EXISTS(").append(alias).append(".").append(key).append(")");
+            // convert [param, null] in "EXISTS(n.param)"
+            if (value == null) {
+                stmt = String.format("EXISTS(%s.%s)", alias, param);
+            }
+            // convert ["revision", n] in "revisionPresence[$revision]"
+            else if (REVISION.equals(param)) {
+                stmt = String.format("revisionPresence[$%s]", param);
+            }
+            // convert [param, value: a collection] in "n.param IN $param"
+            else {
+                stmt = String.format("%s.%s IN $%s", alias, param, param);
+            }
+
+            sb.append(stmt);
         }
 
         if (sb.length() == 0)
@@ -1236,29 +1284,29 @@ public class Neo4JOnlineSession implements GraphSession {
         }
     }
 
-    private static String wblock(String alias, Map<String, Object> wparams, boolean where) {
-        if (wparams == null || wparams.size() == 0)
-            return "";
-
-        int cond = 0;
-        StringBuilder sb = new StringBuilder();
-        if(where)
-            sb.append("WHERE ");
-        else
-            sb.append(" AND ");
-        for(String param : wparams.keySet()) {
-            if (cond > 0)
-                sb.append(" AND ");
-
-            if (wparams.get(param) instanceof Collection)
-                sb.append(String.format("%s.%s in $%s%s", alias, param, alias, param));
-            else
-                sb.append(String.format("%s.%s = $%s%s", alias, param, alias, param));
-            ++cond;
-        }
-
-        return sb.toString();
-    }
+    // private static String wblock(String alias, Map<String, Object> wparams, boolean where) {
+    //     if (wparams == null || wparams.size() == 0)
+    //         return "";
+    //
+    //     int cond = 0;
+    //     StringBuilder sb = new StringBuilder();
+    //     if(where)
+    //         sb.append("WHERE ");
+    //     else
+    //         sb.append(" AND ");
+    //     for(String param : wparams.keySet()) {
+    //         if (cond > 0)
+    //             sb.append(" AND ");
+    //
+    //         if (wparams.get(param) instanceof Collection)
+    //             sb.append(String.format("%s.%s IN $%s%s", alias, param, alias, param));
+    //         else
+    //             sb.append(String.format("%s.%s = $%s%s", alias, param, alias, param));
+    //         ++cond;
+    //     }
+    //
+    //     return sb.toString();
+    // }
 
     /**
      * Create the edge syntax block

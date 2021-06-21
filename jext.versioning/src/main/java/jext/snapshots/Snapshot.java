@@ -18,7 +18,7 @@ public interface Snapshot {
 
     String getName();
 
-    int getId();
+    int getRevision();
 
     long getTimestamp();
 

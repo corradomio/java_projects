@@ -46,7 +46,7 @@ public class LocalSnapshot implements Snapshot {
     }
 
     @Override
-    public int getId() {
+    public int getRevision() {
         return snapshotId;
     }
 

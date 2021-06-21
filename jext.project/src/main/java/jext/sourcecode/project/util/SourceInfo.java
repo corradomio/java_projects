@@ -9,6 +9,9 @@ import java.util.Map;
 
 public class SourceInfo {
 
+    protected static final String VERSION_NUMBER = "1.1";
+    public String version;
+
     public long count;
     public long bytes;
     public long totalLines;
@@ -16,7 +19,7 @@ public class SourceInfo {
     public long codeLines;
 
     public SourceInfo() {
-
+        version = VERSION_NUMBER;
     }
 
     public Map<String, Object> getCounts() {
@@ -45,4 +48,9 @@ public class SourceInfo {
     public static SourceInfo load(File jsonFile) throws IOException {
         return JSONUtils.load(jsonFile, SourceInfo.class);
     }
+
+    public boolean hasValidVersion() {
+        return VERSION_NUMBER.equals(version);
+    }
+
 }

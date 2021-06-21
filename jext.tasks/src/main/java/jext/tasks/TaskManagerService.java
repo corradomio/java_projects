@@ -120,7 +120,8 @@ public class TaskManagerService implements TaskManager, Runnable {
 
         synchronized (lock) {
             allTasks.addAll(tasks.values());
-            allTasks.addAll(waitingHeavyTasks);
+            // all heavy tasks are ALREADY registered in 'tasks'
+            //allTasks.addAll(waitingHeavyTasks);
         }
         return allTasks;
     }
@@ -190,7 +191,6 @@ public class TaskManagerService implements TaskManager, Runnable {
     }
 
     public TaskManager submit(Task task) {
-
         if (task.getStatus() != TaskStatus.CREATED)
             throw new RuntimeException("Wrong task status: " + task.getStatus());
 

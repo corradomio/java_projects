@@ -1,6 +1,9 @@
 package jext.sourcecode.project;
 
 import jext.logging.Logger;
+import jext.name.Name;
+import jext.name.PathName;
+import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 
@@ -12,17 +15,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * A 'project difference' is composed by a list of differences between the content of
+ * two different 'project-info' files.
+ *
+ * The 'current' project structure is saved in the file 'project-info.json'.
+ * The project structure with 'revision 'rev' (an integer >=0) is saved in the file
+ * 'project-info-[rev].json'.
+ *
+ * The differences between two project structures can be:
+ *
+ *  - module ADDED: the module has been added to the project
+ *  - module DELETED: the module has been deleted from the project
+ *  - module CHANGED: the module contains
+ *                    ADDED and/or DELETED source files or
+ *                    ADDED and/or DELETED libraries
+ *
+ *  - source ADDED: the source file has been added to the module
+ *  - source DELETED: the source file has been deleted from the module
+ *  - source CHANGED: the content of the source file is changed
+ *
+ * If a module is ADDED or DELETED, this implies automatically that all module's
+ * source files are ADDED or DELETED.
+ *
+ */
 public class ProjectDifferences {
 
     public enum Status {
         ADDED,
-        REMOVED,
+        DELETED,
         CHANGED
     }
 
-    public Map<String, Status> diffModules = new HashMap<>();
-    public Map<String, Map<String, Status>> diffSources = new HashMap<>();
-    public Map<String, Map<String, Status>> diffLibraries = new HashMap<>();
+    public final Map<String, Status> diffModules = new HashMap<>();
+    public final Map<String, Map<String, Status>> diffSources = new HashMap<>();
+    public final Map<String, Map<String, Status>> diffLibraries = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -47,48 +74,32 @@ public class ProjectDifferences {
     //
     // ----------------------------------------------------------------------
 
-    // local cache to speedup the operations
-    // private final Map<Status, List<String>> stateModules = new HashMap<>();
-
-    private List<Module> addedModules;
-    private List<Source> addedSources;
-
-    public List<Module> getAddedModules(Project project) {
-        if (addedModules != null)
-            return addedModules;
-
-        addedModules = getModules(Status.ADDED).stream()
-            .map(moduleName -> project.getModule(moduleName))
-            .collect(Collectors.toList());
-        return addedModules;
+    // local cache to speedup some operations
+    public List<Name> getAddedModules() {
+        return getModules(Status.ADDED);
     }
 
-    public List<Module> getRemovedModules(Project project) {
-        return getModules(Status.REMOVED).stream()
-            .map(moduleName -> project.getModule(moduleName))
-            .collect(Collectors.toList());
+    public List<Name> getDeletedModules() {
+        return getModules(Status.DELETED);
     }
 
-    private List<String> getModules(Status status) {
+    private List<Name> getModules(Status status) {
         // if (stateModules.containsKey(status))
         //     return stateModules.get(status);
 
-        List<String> modules = new ArrayList<>();
+        List<Name> modules = new ArrayList<>();
         for(String moduleName : diffModules.keySet())
             if (status.equals(diffModules.get(moduleName)))
-                modules.add(moduleName);
+                modules.add(new PathName(moduleName));
         // stateModules.put(status, modules);
         return modules;
     }
 
     public List<Source> getAddedSources(Project project) {
-        if (addedSources != null)
-            return addedSources;
-
-        addedSources = new ArrayList<>();
+        List<Source> addedSources = new ArrayList<>();
 
         // add sources of added modules
-        for (Module module : getAddedModules(project))
+        for (Module module : ProjectUtils.getModules(project, getAddedModules()))
             addedSources.addAll(module.getSources());
 
         // scan sources module by module
@@ -103,23 +114,12 @@ public class ProjectDifferences {
         return addedSources;
     }
 
-    public List<Source> getRemovedSources(Project project) {
+    public List<String> getDeletedSources() {
 
-        // add sources of removed modules
-        List<Source> removedSources = new ArrayList<>();
-        for (Module module : getRemovedModules(project))
-            removedSources.addAll(module.getSources());
+        // add sources of deleted modules
+        List<String> deletedSources = new ArrayList<>();
 
-        // scan sources module by module
-        for (String moduleName : diffSources.keySet()) {
-            Module module = project.getModule(moduleName);
-            Map<String, Status> moduleSources = diffSources.get(moduleName);
-            for (String sourceName : moduleSources.keySet())
-                if (Status.REMOVED.equals(moduleSources.get(sourceName)))
-                    removedSources.add(module.getSource(sourceName));
-        }
-
-        return removedSources;
+        return deletedSources;
     }
 
     // ----------------------------------------------------------------------
@@ -130,13 +130,24 @@ public class ProjectDifferences {
     private Map<String, Object> this_revision;
     private Map<String, Object> that_revision;
 
-    public void compareRevisions(File thisProjectInfo, File thatProjectInfo) {
+    /**
+     * This method is used when no 'previous' revision exists.
+     * In this case, it contains only a list of ADDED modules
+     */
+    public void compareRevisions(File srcProjectInfo, File dstProjectInfo) {
         try {
-            this_revision = JSONUtils.load(thisProjectInfo, HashMap.class);
-            that_revision = JSONUtils.load(thatProjectInfo, HashMap.class);
+            if (srcProjectInfo == null || srcProjectInfo.equals(dstProjectInfo)) {
+                that_revision = JSONUtils.load(dstProjectInfo, HashMap.class);
 
-            compareModules();
-            compareDigests();
+                allAddedModules();
+            }
+            else {
+                this_revision = JSONUtils.load(srcProjectInfo, HashMap.class);
+                that_revision = JSONUtils.load(dstProjectInfo, HashMap.class);
+
+                compareModules();
+                compareDigests();
+            }
         }
         catch (IOException e) {
             Logger.getLogger(ProjectDifferences.class).error(e, e);
@@ -145,6 +156,13 @@ public class ProjectDifferences {
             this_revision = null;
             that_revision = null;
         }
+    }
+
+    private void allAddedModules() {
+        Map<String, Object> that_modules = MapUtils.get(that_revision, "modules");
+        that_modules.keySet().forEach(module -> {
+            addModuleStatus(module, Status.ADDED);
+        });
     }
 
     private void compareModules() {
@@ -165,10 +183,10 @@ public class ProjectDifferences {
                 this.addModuleStatus(moduleName, Status.CHANGED);
         }
 
-        // check REMOVED modules
+        // check DELETED modules
         for (String moduleName : that_modules.keySet())
             if (!this_modules.containsKey(moduleName))
-                this.addModuleStatus(moduleName, Status.REMOVED);
+                this.addModuleStatus(moduleName, Status.DELETED);
     }
 
     private void compareDigests() {
@@ -199,10 +217,10 @@ public class ProjectDifferences {
                     this.addFileStatus(moduleName, sourceName, Status.CHANGED);
             }
 
-            // check REMOVED sources
+            // check DELETED sources
             for (String sourceName : that_sources.keySet()) {
                 if (!this_sources.containsKey(sourceName))
-                    this.addFileStatus(moduleName, sourceName, Status.REMOVED);
+                    this.addFileStatus(moduleName, sourceName, Status.DELETED);
             }
         }
     }

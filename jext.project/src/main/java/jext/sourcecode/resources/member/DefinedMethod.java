@@ -11,9 +11,13 @@ import jext.sourcecode.resources.type.ReferencedType;
 import jext.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static jext.lang.JavaUtils.PUBLIC;
 
 public class DefinedMethod extends NamedObject implements Method {
 
@@ -79,6 +83,21 @@ public class DefinedMethod extends NamedObject implements Method {
     @Override
     public MethodName getMethodName() {
         return (MethodName) getName();
+    }
+
+    @Override
+    public Set<String> getModifiers() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public String getVisibility() {
+        return PUBLIC;
+    }
+
+    @Override
+    public Set<String> getStructure() {
+        return Collections.emptySet();
     }
 
     @Override

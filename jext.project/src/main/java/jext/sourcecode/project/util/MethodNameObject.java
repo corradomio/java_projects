@@ -63,7 +63,7 @@ public class MethodNameObject extends ObjectName implements MethodName {
     @Override
     public int hashCode() {
         if (signature != null)
-            return Objects.hash(getFullName(), signature, nParams);
+            return Objects.hash(getFullName(), signature);
         else
             return Objects.hash(getFullName(), nParams);
     }
@@ -75,9 +75,7 @@ public class MethodNameObject extends ObjectName implements MethodName {
         // both method have a signature
         if (this.hasSignature() && that.hasSignature())
         return this.getFullName().equals(that.getFullName())
-            && this.getNumOfParams() == that.getNumOfParams()
-            && this.hasSignature() == that.hasSignature()
-                && (this.getSignature().equals(that.getSignature()));
+                && this.getSignature().equals(that.getSignature());
         // some method don't have the signature
         else
             return this.getFullName().equals(that.getFullName())

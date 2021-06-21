@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 
@@ -94,6 +96,21 @@ public class StringUtils {
             return new ArrayList<>((Collection)obj);
         else
             return Collections.singletonList(obj.toString());
+    }
+
+    public static Set<String> asSet(Object obj) {
+        if (obj == null)
+            return Collections.emptySet();
+        if (obj instanceof String)
+            return Collections.singleton((String)obj);
+        if (obj instanceof List)
+            return new HashSet<String>((List)obj);
+        if (obj instanceof String[])
+            return new HashSet<>(Arrays.asList((String[]) obj));
+        if (obj instanceof Collection)
+            return new HashSet<String>((Collection)obj);
+        else
+            return Collections.singleton(obj.toString());
     }
 
     /**

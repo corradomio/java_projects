@@ -3,7 +3,6 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.debug.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,17 +67,14 @@ public class CompositeTypeSolver extends BaseTypeSolver {
 
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-        SymbolReference<ResolvedReferenceTypeDeclaration> solved = UNSOLVED;
-
-        if (name.contains("Processor"))
-            Debug.nop();
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         for (TypeSolver typeSolver : elements) {
             solved = typeSolver.tryToSolveType(name);
             if (solved.isSolved())
-                break;
+                return solved;
         }
-        return solved;
+        return UNSOLVED;
     }
 
 }

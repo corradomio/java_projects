@@ -9,6 +9,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
+import jext.util.FileUtils;
 import jext.util.MapUtils;
 
 import java.io.File;
@@ -25,6 +26,9 @@ public abstract class InfoLibrary implements Library {
     protected Map<String, Object> info;
     protected LibraryType libraryType;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public InfoLibrary(InfoModule module, LibraryType libraryType, Map<String, Object> info) {
         this((InfoProject)(module.getProject()), libraryType, info);
@@ -89,12 +93,12 @@ public abstract class InfoLibrary implements Library {
 
     @Override
     public File getFile() {
-        throw new UnsupportedOperationException();
+        return FileUtils.toFile(MapUtils.get(info, "file"));
     }
 
     @Override
     public List<File> getFiles() {
-        throw new UnsupportedOperationException();
+        return FileUtils.toFiles(MapUtils.get(info, "files"));
     }
 
     @Override

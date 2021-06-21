@@ -17,16 +17,27 @@ import jext.sourcecode.project.UseDirection;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import static jext.lang.JavaUtils.PUBLIC;
 
 public class InfoType implements Type {
 
     private InfoSource source;
     private Name name;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     InfoType(InfoSource source, String typeName) {
         this.source = source;
         this.name = new ObjectName(typeName);
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     @Override
     public String getId() {
@@ -76,6 +87,21 @@ public class InfoType implements Type {
     @Override
     public Type asType() {
         return this;
+    }
+
+    @Override
+    public Set<String> getModifiers() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public String getVisibility() {
+        return PUBLIC;
+    }
+
+    @Override
+    public Set<String> getStructure() {
+        return Collections.emptySet();
     }
 
     @Override

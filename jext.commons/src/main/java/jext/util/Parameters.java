@@ -26,8 +26,8 @@ public class Parameters extends HashMap<String, Object> {
 
     public static Parameters params() { return new Parameters(); }
 
-    public static Parameters params(Map<String, Object> params) {
-        return params().add(params);
+    public static Parameters params(Map<String, ?> params) {
+        return params().add((Map<String, Object>) params);
     }
 
     public static Parameters params(String name, Object value, Object... a) {

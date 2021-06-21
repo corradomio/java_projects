@@ -367,7 +367,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         rootModule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
         modules.add(rootModule);
 
-        logger.warnf("Added Root module");
+        logger.warnf("Added Root module\n  %s", FileUtils.getAbsolutePath(projectHome ));
     }
 
     private boolean hasRootModule() {

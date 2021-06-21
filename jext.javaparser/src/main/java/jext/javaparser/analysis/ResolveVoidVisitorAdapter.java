@@ -34,7 +34,6 @@ import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.resolution.Resolvable;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.debug.Debug;
 
 public class ResolveVoidVisitorAdapter extends BaseVoidVisitorAdapter {
 
@@ -368,9 +367,6 @@ public class ResolveVoidVisitorAdapter extends BaseVoidVisitorAdapter {
 
     @Override
     public void visit(FieldAccessExpr n, Void arg) {
-        if (n.toString().contains("Processor."))
-            Debug.nop();
-
         try {
             n.resolve();
         }

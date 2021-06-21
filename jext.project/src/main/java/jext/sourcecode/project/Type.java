@@ -3,6 +3,7 @@ package jext.sourcecode.project;
 import jext.name.Name;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Type implementation.
@@ -16,6 +17,10 @@ public interface Type extends RefType {
     String getModuleRefId();
 
     Name getNamespace();
+
+    Set<String> getModifiers();
+    String getVisibility();
+    Set<String> getStructure();
 
     /**
      * Check if the type is a 'valid' type for analysis:

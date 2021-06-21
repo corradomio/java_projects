@@ -1,5 +1,6 @@
 package jext.sourcecode.project.info;
 
+import jext.debug.Debug;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.PathName;
@@ -24,16 +25,18 @@ import java.util.stream.Collectors;
 
 public class InfoModule implements Module {
 
-    private InfoProject project;
-    private Map<String, Object> info;
+    private final InfoProject project;
+    private final Map<String, Object> info;
+    private final Name name;
     private List<Source> sources;
-    private Name name;
 
     // ----------------------------------------------------------------------
-    //
+    // Constructor
     // ----------------------------------------------------------------------
 
     InfoModule(InfoProject project, Map<String, Object> info) {
+        if (info == null)
+            throw new NullPointerException();
         this.project = project;
         this.info = info;
         this.name = new PathName(MapUtils.get(info, "fullname"));
@@ -104,7 +107,8 @@ public class InfoModule implements Module {
         sources = new ArrayList<>();
         Map<String, Object> sinfos = MapUtils.get(info, "sources");
         for (String fullname : sinfos.keySet()) {
-            Map<String, Object> sinfo = MapUtils.get(info, fullname);
+            Map<String, Object> sinfo = MapUtils.get(sinfos, fullname);
+            if (project.isAccepted(MapUtils.get(sinfo, "path")))
             sources.add(new InfoSource(this, sinfo));
         }
 
@@ -113,10 +117,6 @@ public class InfoModule implements Module {
 
     @Override
     public Set<String> getSourceRoots() {
-        //List<String> sroots = MapUtils.get(info, "sourceRoots");
-        // return sroots.stream()
-            // .map(sroot -> new File(getModuleHome(), sroot))
-            // .collect(Collectors.toSet());
         return new HashSet<>(MapUtils.get(info, "sourceRoots"));
     }
 
@@ -145,18 +145,30 @@ public class InfoModule implements Module {
 
     @Override
     public Set<Library> getLibraries() {
-        List<String> libraries = MapUtils.get(info, "libraries");
-        return libraries.stream()
-            .map(name -> project.getLibrary(name))
-            .collect(Collectors.toSet());
+        List<String> libraryNames = MapUtils.get(info, "libraries");
+        Set<Library> libraries = new HashSet<>();
+        libraryNames.forEach(libraryName -> {
+            Library library = project.getLibrary(libraryName);
+            if (library != null)
+                libraries.add(library);
+            else
+                Debug.nop();
+        });
+        return libraries;
     }
 
     @Override
     public Set<Library> getDeclaredLibraries() {
-        List<String> libraries = MapUtils.get(info, "declaredLibraries");
-        return libraries.stream()
-            .map(name -> project.getLibrary(name))
-            .collect(Collectors.toSet());
+        List<String> libraryNames = MapUtils.get(info, "declaredLibraries");
+        Set<Library> libraries = new HashSet<>();
+        libraryNames.forEach(libraryName -> {
+            Library library = project.getLibrary(libraryName);
+            if (library != null)
+                libraries.add(library);
+            else
+                Debug.nop();
+        });
+        return libraries;
     }
 
     @Override

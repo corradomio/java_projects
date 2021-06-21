@@ -200,8 +200,10 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Retrieve the edge list: the list of pairs (from -> to)
      *
-     * @param edgeType edge type
+     * @param edgeType edge type (can be null)
+     * @param fromType node type (can be null)
      * @param fromProps properties of the 'from' nodes
+     * @param toType node type (can be null)
      * @param toProps properties of the 'to' nodes
      * @param edgeProps properties of the edges
      * @return a list of maps with keys:
@@ -218,7 +220,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Retrieve the edges between the specified nodes
      *
-     * @param edgeType edge type
+     * @param edgeType edge type (can be null)
      * @param fromIds source node ids
      * @param toIds target node ids
      * @param edgeProps properties of the edges
@@ -233,11 +235,13 @@ public interface GraphSession extends AutoCloseable {
                      Map<String, Object> edgeProps);
     Query queryEdges(String edgeType, Collection<String> ids,
                      Map<String, Object> edgeProps);
+    Query queryEdges(String edgeType, String foromId, Collection<String> toIds,
+                     Map<String, Object> edgeProps);
 
     /**
      * Select the edges between the specified nodes
      *
-     * @param edgeType edge type
+     * @param edgeType edge type (can be null)
      * @param fromId source node
      * @param toId destination node
      * @param direction direction of the edge (Input, Output, Any)
@@ -342,7 +346,7 @@ public interface GraphSession extends AutoCloseable {
     // Query using named queries
     // ----------------------------------------------------------------------
 
-    Query queryUsing(String queryName,  Map<String,Object> queryParams);
+    Query queryUsing(String queryName, Map<String,Object> queryParams);
 
     void executeUsing(String queryName, Map<String,Object> queryParams);
 
