@@ -1,8 +1,10 @@
 package jext.sourcecode.project;
 
 import jext.util.FileUtils;
+import jext.util.JSONUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 public class ProjectRevisions {
 
@@ -10,6 +12,9 @@ public class ProjectRevisions {
     public static int CURRENT_REVISION = -1;
 
     private final File splDirectory;
+    private int srcRevision;
+    private int dstRevision;
+    private ProjectDifferences pdiff;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -19,6 +24,9 @@ public class ProjectRevisions {
         this.splDirectory = splDirectory;
     }
 
+    // ----------------------------------------------------------------------
+    // Files
+    // ----------------------------------------------------------------------
 
     public File getProjectInfo() {
         return getProjectInfo(CURRENT_REVISION);
@@ -71,27 +79,44 @@ public class ProjectRevisions {
      * @return list of differences
      */
     public ProjectDifferences compareWithRevision(int rev) {
-        File curProjectInfo = getProjectInfo();
-        File revProjectInfo = getProjectInfo(rev);
+        File srcProjectInfo = getProjectInfo(rev);
+        File dstProjectInfo = getProjectInfo();
 
-        ProjectDifferences pdiff = new ProjectDifferences();
+        this.srcRevision = rev;
+        this.dstRevision = getCurrentRevision();
+
+        pdiff = new ProjectDifferences();
         if (rev == NO_REVISION)
-            pdiff.compareRevisions(null, curProjectInfo);
+            pdiff.compareProjects(null, dstProjectInfo);
         else
-            pdiff.compareRevisions(curProjectInfo, revProjectInfo);
+            pdiff.compareProjects(srcProjectInfo, dstProjectInfo);
 
+        saveDifferences();
         return pdiff;
     }
 
     /**
      * Save the current 'project-info.json' file as 'project-info-[revision].json'
      */
-    public void save() {
+    public void saveRevision() {
         int rev = getCurrentRevision();
-        File revProjectInfo = getProjectInfo(rev);
+
         File curProjectInfo = getProjectInfo();
+        File revProjectInfo = getProjectInfo(rev);
 
         FileUtils.copy(curProjectInfo, revProjectInfo);
+    }
+
+    public void saveDifferences() {
+        String diffName;
+        if (srcRevision == NO_REVISION)
+            diffName = String.format("differences-none-%04d.json", dstRevision);
+        else
+            diffName = String.format("differences-%04d-%04d.json", srcRevision, dstRevision);
+
+        try {
+            JSONUtils.save(new File(splDirectory, diffName), pdiff);
+        } catch (IOException e) { }
     }
 
     /**
@@ -102,8 +127,14 @@ public class ProjectRevisions {
         int rev = getLastRevision();
         if (rev < 0) return;
 
-        ProjectDifferences pdiff = getDifferences(rev);
-        if (pdiff.isEmpty()) delete(rev);
+        ProjectDifferences pdiff = new ProjectDifferences();
+
+        File revProjectInfo = getProjectInfo(rev);
+        File curProjectInfo = getProjectInfo(CURRENT_REVISION);
+        pdiff.compareProjects(curProjectInfo, revProjectInfo);
+
+        if (pdiff.isEmpty())
+            delete(rev);
     }
 
     /**
@@ -126,16 +157,15 @@ public class ProjectRevisions {
         FileUtils.delete(revProjectInfo);
     }
 
-    // @Override
-    public ProjectDifferences getDifferences(int rev) {
+    private ProjectDifferences getDifferences(int rev) {
 
-        ProjectDifferences pdiff = new ProjectDifferences();
+        pdiff = new ProjectDifferences();
         if (rev == getCurrentRevision())
             return pdiff;
 
         File revProjectInfo = getProjectInfo(rev);
         File curProjectInfo = getProjectInfo(CURRENT_REVISION);
-        pdiff.compareRevisions(curProjectInfo, revProjectInfo);
+        pdiff.compareProjects(curProjectInfo, revProjectInfo);
 
         return pdiff;
     }

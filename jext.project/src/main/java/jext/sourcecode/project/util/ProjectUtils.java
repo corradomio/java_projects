@@ -1,6 +1,6 @@
 package jext.sourcecode.project.util;
 
-import jext.name.Name;
+import jext.logging.Logger;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
@@ -9,6 +9,7 @@ import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.util.FileUtils;
+import jext.util.tuples.Tuple2;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,14 +28,64 @@ import java.util.stream.Collectors;
 
 public class ProjectUtils {
 
-    public static List<Module> getModules(Project project, List<Name> moduleNames) {
+    private static Logger logger = Logger.getLogger(ProjectUtils.class);
+
+    public static List<Module> getModules(Project project, List<String> moduleNames) {
         if (moduleNames.isEmpty())
             return Collections.emptyList();
 
         return moduleNames.stream()
-            .map(moduleName -> project.getModule(moduleName.getFullName()))
+            .map(moduleName -> project.getModule(moduleName))
             .collect(Collectors.toList());
     }
+
+    public static List<Source> getSources(Project project, List<Tuple2<String,String>> moduleSources) {
+        List<Source> sources = new ArrayList<>();
+
+        for (Tuple2<String, String> p : moduleSources) {
+            String moduleName = p.get1();
+            String sourceName = p.get2();
+
+            Module module = project.getModule(moduleName);
+            if (module == null) {
+                logger.errorf("Module %s not found in project %s", moduleName, project.getName().getFullName());
+                continue;
+            }
+
+                Source source = module.getSource(sourceName);
+                if (source == null) {
+                    logger.errorf("Source %s not found in module %s of project %s", sourceName, moduleName, project.getName().getFullName());
+                    continue;
+                }
+
+                sources.add(source);
+            }
+
+        return sources;
+    }
+
+    // public static List<Source> getSources(Project project, Map<String, List<String>> moduleSources) {
+    //     List<Source> sources = new ArrayList<>();
+    //
+    //     for(String moduleName : moduleSources.keySet()) {
+    //         Module module = project.getModule(moduleName);
+    //         if (module == null) {
+    //             logger.errorf("Module %s not found in project %s", moduleName, project.getName().getFullName());
+    //             continue;
+    //         }
+    //
+    //         for (String sourceName : moduleSources.get(moduleName)) {
+    //             Source source = module.getSource(sourceName);
+    //             if (source == null) {
+    //                 logger.errorf("Source %s not found in module %s of project %s", sourceName, moduleName, project.getName().getFullName());
+    //                 continue;
+    //             }
+    //
+    //             sources.add(source);
+    //         }
+    //     }
+    //     return sources;
+    // }
 
     public static List<Source> getSources(Project project) {
         List<Source> sources = new ArrayList<>();

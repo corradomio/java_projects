@@ -1,11 +1,11 @@
 package jext.sourcecode.project;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jext.logging.Logger;
-import jext.name.Name;
-import jext.name.PathName;
-import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
+import jext.util.SetUtils;
+import jext.util.tuples.Tuple2;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * A 'project difference' is composed by a list of differences between the content of
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * If a module is ADDED or DELETED, this implies automatically that all module's
  * source files are ADDED or DELETED.
  *
+ * The direction is from src_revision to dst_revision
  */
 public class ProjectDifferences {
 
@@ -46,6 +48,11 @@ public class ProjectDifferences {
         DELETED,
         CHANGED
     }
+
+    @JsonIgnore
+    public int srcRevision;
+    @JsonIgnore
+    public int dstRevision;
 
     public final Map<String, Status> diffModules = new HashMap<>();
     public final Map<String, Map<String, Status>> diffSources = new HashMap<>();
@@ -56,7 +63,8 @@ public class ProjectDifferences {
     // ----------------------------------------------------------------------
 
     public ProjectDifferences() {
-
+        srcRevision = -1;
+        dstRevision = -1;
     }
 
     // ----------------------------------------------------------------------
@@ -66,6 +74,7 @@ public class ProjectDifferences {
     /**
      * Check the there are no differences
      */
+    @JsonIgnore
     public boolean isEmpty() {
         return diffModules.isEmpty() && diffSources.isEmpty() && diffLibraries.isEmpty();
     }
@@ -74,76 +83,136 @@ public class ProjectDifferences {
     //
     // ----------------------------------------------------------------------
 
-    // local cache to speedup some operations
-    public List<Name> getAddedModules() {
+    /**
+     * Select the modules added in the project
+     */
+    @JsonIgnore
+    public List<String> getAddedModules() {
         return getModules(Status.ADDED);
     }
 
-    public List<Name> getDeletedModules() {
+    /**
+     * Select the modules deleted from the project
+     */
+    @JsonIgnore
+    public List<String> getDeletedModules() {
         return getModules(Status.DELETED);
     }
 
-    private List<Name> getModules(Status status) {
-        // if (stateModules.containsKey(status))
-        //     return stateModules.get(status);
-
-        List<Name> modules = new ArrayList<>();
+    private List<String> getModules(Status status) {
+        List<String> selectedModules = new ArrayList<>();
         for(String moduleName : diffModules.keySet())
             if (status.equals(diffModules.get(moduleName)))
-                modules.add(new PathName(moduleName));
-        // stateModules.put(status, modules);
-        return modules;
-    }
-
-    public List<Source> getAddedSources(Project project) {
-        List<Source> addedSources = new ArrayList<>();
-
-        // add sources of added modules
-        for (Module module : ProjectUtils.getModules(project, getAddedModules()))
-            addedSources.addAll(module.getSources());
-
-        // scan sources module by module
-        for (String moduleName : diffSources.keySet()) {
-            Module module = project.getModule(moduleName);
-            Map<String, Status> moduleSources = diffSources.get(moduleName);
-            for (String sourceName : moduleSources.keySet())
-                if (Status.ADDED.equals(moduleSources.get(sourceName)))
-                    addedSources.add(module.getSource(sourceName));
-        }
-
-        return addedSources;
-    }
-
-    public List<String> getDeletedSources() {
-
-        // add sources of deleted modules
-        List<String> deletedSources = new ArrayList<>();
-
-        return deletedSources;
+                selectedModules.add(moduleName);
+        return selectedModules;
     }
 
     // ----------------------------------------------------------------------
-    // compareRevisions
+
+    /**
+     * Select the sources added to each module
+     *
+     * @return a the map [moduleName, list[sourceName]]
+     */
+    @JsonIgnore
+    public List<Tuple2<String,String>> getAddedSources() {
+        return getModuleSources(Status.ADDED);
+    }
+
+    /**
+     * Select the sources deleted from each module
+     *
+     * @return a the map [moduleName, list[sourceName]]
+     */
+    @JsonIgnore
+    public List<Tuple2<String,String>> getDeletedSources() {
+        return getModuleSources(Status.DELETED);
+    }
+
+    /**
+     * Select the sources changed in each module
+     *
+     * @return a the map [moduleName, list[sourceName]]
+     */
+    @JsonIgnore
+    public List<Tuple2<String, String>> getChangedSources() {
+        return getModuleSources(Status.CHANGED);
+    }
+
+    private List<Tuple2<String,String>> getModuleSources(Status status) {
+        List<Tuple2<String,String>> selectedSources = new ArrayList<>();
+
+        for (String moduleName : diffSources.keySet()) {
+            Map<String, Status> moduleSources = diffSources.get(moduleName);
+            for (String sourceName : moduleSources.keySet()) {
+                if (status.equals(moduleSources.get(sourceName)))
+                    selectedSources.add(new Tuple2<>(moduleName, sourceName));
+            }
+
+        }
+        return selectedSources;
+    }
+
+    // /**
+    //  * Select the sources added to each module
+    //  *
+    //  * @return a the map [moduleName, list[sourceName]]
+    //  */
+    // @JsonIgnore
+    // public Map<String, List<String>> getAddedSources() {
+    //     return getModuleSources(Status.ADDED);
+    // }
+
+    // /**
+    //  * Select the sources deleted from each module
+    //  *
+    //  * @return a the map [moduleName, list[sourceName]]
+    //  */
+    // @JsonIgnore
+    // public Map<String, List<String>> getDeletedSources() {
+    //     return getModuleSources(Status.DELETED);
+    // }
+
+    // private Map<String, List<String>> getModuleSources(Status status) {
+    //     Map<String, List<String>> selectedSources = new HashMap<>();
+    //
+    //     for (String moduleName : diffSources.keySet()) {
+    //         List<String> sourceNames = new ArrayList<>();
+    //
+    //         Map<String, Status> moduleSources = diffSources.get(moduleName);
+    //         for (String sourceName : moduleSources.keySet()) {
+    //             if (status.equals(moduleSources.get(sourceName)))
+    //                 sourceNames.add(sourceName);
+    //         }
+    //
+    //         if (!sourceNames.isEmpty())
+    //             selectedSources.put(moduleName, sourceNames);
+    //     }
+    //     return selectedSources;
+    // }
+
+    // ----------------------------------------------------------------------
+    // compareProjects
     // ----------------------------------------------------------------------
 
     // Used temporary!
-    private Map<String, Object> this_revision;
-    private Map<String, Object> that_revision;
+    private Map<String, Object> src_project;
+    private Map<String, Object> dst_project;
 
     /**
      * This method is used when no 'previous' revision exists.
      * In this case, it contains only a list of ADDED modules
      */
-    public void compareRevisions(File srcProjectInfo, File dstProjectInfo) {
+    public void compareProjects(File srcProjectInfo, File dstProjectInfo) {
         try {
             if (srcProjectInfo == null || srcProjectInfo.equals(dstProjectInfo)) {
-                that_revision = JSONUtils.load(dstProjectInfo, HashMap.class);
+                dst_project = JSONUtils.load(dstProjectInfo, HashMap.class);
 
                 allAddedModules();
             }
             else {
-                this_revision = JSONUtils.load(srcProjectInfo, HashMap.class);
-                that_revision = JSONUtils.load(dstProjectInfo, HashMap.class);
+                src_project = JSONUtils.load(srcProjectInfo, HashMap.class);
+                dst_project = JSONUtils.load(dstProjectInfo, HashMap.class);
 
                 compareModules();
                 compareDigests();
@@ -153,74 +222,75 @@ public class ProjectDifferences {
             Logger.getLogger(ProjectDifferences.class).error(e, e);
         }
         finally {
-            this_revision = null;
-            that_revision = null;
+            src_project = null;
+            dst_project = null;
         }
     }
 
     private void allAddedModules() {
-        Map<String, Object> that_modules = MapUtils.get(that_revision, "modules");
-        that_modules.keySet().forEach(module -> {
+        Map<String, Object> dst_modules = MapUtils.get(dst_project, "modules");
+        dst_modules.keySet().forEach(module -> {
             addModuleStatus(module, Status.ADDED);
         });
     }
 
     private void compareModules() {
-        Map<String, Object> this_modules = MapUtils.get(this_revision, "modules");
-        Map<String, Object> that_modules = MapUtils.get(that_revision, "modules");
+        Map<String, Object> src_modules = MapUtils.get(src_project, "modules");
+        Map<String, Object> dst_modules = MapUtils.get(dst_project, "modules");
 
         // check ADDED/CHANGED modules
-        for (String moduleName : this_modules.keySet()) {
-            if (!that_modules.containsKey(moduleName)) {
-                this.addModuleStatus(moduleName, Status.ADDED);
+        for (String moduleName : dst_modules.keySet()) {
+            if (!src_modules.containsKey(moduleName)) {
+                addModuleStatus(moduleName, Status.ADDED);
                 continue;
             }
 
-            int this_sources_count = MapUtils.get(this_modules, moduleName, "counts", "sources");
-            int that_sources_count = MapUtils.get(that_modules, moduleName, "counts", "sources");
+            Map<String, Object> src_module_sources_map = MapUtils.get(src_modules, moduleName, "sources");
+            Map<String, Object> dst_module_sources_map = MapUtils.get(dst_modules, moduleName, "sources");
+            Set<String> src_module_sources = src_module_sources_map.keySet();
+            Set<String> dst_module_sources = dst_module_sources_map.keySet();
 
-            if (this_sources_count != that_sources_count)
-                this.addModuleStatus(moduleName, Status.CHANGED);
+            if (!SetUtils.simmdiff(src_module_sources, dst_module_sources).isEmpty())
+                addModuleStatus(moduleName, Status.CHANGED);
         }
 
         // check DELETED modules
-        for (String moduleName : that_modules.keySet())
-            if (!this_modules.containsKey(moduleName))
-                this.addModuleStatus(moduleName, Status.DELETED);
+        for (String moduleName : src_modules.keySet())
+            if (!dst_modules.containsKey(moduleName))
+                addModuleStatus(moduleName, Status.DELETED);
     }
 
     private void compareDigests() {
-        Map<String, Object> this_modules = MapUtils.get(this_revision, "modules");
-        Map<String, Object> that_modules = MapUtils.get(that_revision, "modules");
+        Map<String, Object> src_modules = MapUtils.get(src_project, "modules");
+        Map<String, Object> dst_modules = MapUtils.get(dst_project, "modules");
 
         // loop on modules
-        for (String moduleName : this_modules.keySet()) {
+        for (String moduleName : src_modules.keySet()) {
             // skip added module
-            if (!that_modules.containsKey(moduleName)) {
+            if (!dst_modules.containsKey(moduleName)) {
                 continue;
             }
 
-            Map<String, Object> this_sources = MapUtils.get(this_modules, moduleName, "sources");
-            Map<String, Object> that_sources = MapUtils.get(that_modules, moduleName, "sources");
+            Map<String, Object> src_sources = MapUtils.get(src_modules, moduleName, "sources");
+            Map<String, Object> dst_sources = MapUtils.get(dst_modules, moduleName, "sources");
 
             // check ADDED/CHANGED sources
-            for (String sourceName : this_sources.keySet()) {
-
-                if (!that_sources.containsKey(sourceName)) {
-                    this.addFileStatus(moduleName, sourceName, Status.ADDED);
+            for (String sourceName : dst_sources.keySet()) {
+                if (!src_sources.containsKey(sourceName)) {
+                    addFileStatus(moduleName, sourceName, Status.ADDED);
                     continue;
                 }
 
-                String this_digest = MapUtils.get(this_sources, sourceName, "digest");
-                String that_digest = MapUtils.get(that_sources, sourceName, "digest");
-                if (!this_digest.equals(that_digest))
-                    this.addFileStatus(moduleName, sourceName, Status.CHANGED);
+                String src_digest = MapUtils.get(src_sources, sourceName, "digest");
+                String dst_digest = MapUtils.get(dst_sources, sourceName, "digest");
+                if (!src_digest.equals(dst_digest))
+                    addFileStatus(moduleName, sourceName, Status.CHANGED);
             }
 
             // check DELETED sources
-            for (String sourceName : that_sources.keySet()) {
-                if (!this_sources.containsKey(sourceName))
-                    this.addFileStatus(moduleName, sourceName, Status.DELETED);
+            for (String sourceName : src_sources.keySet()) {
+                if (!dst_sources.containsKey(sourceName))
+                    addFileStatus(moduleName, sourceName, Status.DELETED);
             }
         }
     }
@@ -228,6 +298,24 @@ public class ProjectDifferences {
     private /*synchronized*/ void addModuleStatus(String moduleName, Status status) {
         // can be processed in parallel
         diffModules.put(moduleName, status);
+
+        if (Status.ADDED.equals(status)) {
+            Map<String, Map<String, Object>> sources = MapUtils.get(dst_project, "modules", moduleName, "sources");
+            sources.keySet().forEach(sourceName -> {
+                if (!diffSources.containsKey(moduleName))
+                    diffSources.put(moduleName, new TreeMap<>());
+                diffSources.get(moduleName).put(sourceName, Status.ADDED);
+            });
+        }
+
+        if (Status.DELETED.equals(status)) {
+            Map<String, Map<String, Object>> sources = MapUtils.get(src_project, "modules", moduleName, "sources");
+            sources.keySet().forEach(sourceName -> {
+                if (!diffSources.containsKey(moduleName))
+                    diffSources.put(moduleName, new TreeMap<>());
+                diffSources.get(moduleName).put(sourceName, Status.DELETED);
+            });
+        }
     }
 
     private /*synchronized*/ void addFileStatus(String moduleName, String sourceName, Status status) {
@@ -235,5 +323,27 @@ public class ProjectDifferences {
         if (!diffSources.containsKey(moduleName))
             diffSources.put(moduleName, new HashMap<>());
         diffSources.get(moduleName).put(sourceName, status);
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public void dump() {
+        System.out.println("Modules:");
+        diffModules.forEach((m, s) -> {
+            System.out.printf("  %s: %s\n", m, s);
+        });
+        System.out.println("Libraries:");
+        diffLibraries.forEach((m, s) -> {
+            System.out.printf("  %s: %s\n", m, s);
+        });
+        System.out.println("Sources:");
+        diffSources.forEach((m, s) -> {
+            System.out.printf("  Module %s:\n", m);
+            s.forEach((src, status) -> {
+                System.out.printf("    %s:  %s\n", src, status);
+            });
+        });
     }
 }
