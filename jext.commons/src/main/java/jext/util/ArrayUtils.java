@@ -1,6 +1,7 @@
 package jext.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 public class ArrayUtils {
 
@@ -40,6 +41,50 @@ public class ArrayUtils {
         return -1;
     }
 
+    public static int[] asIntArray(Object v) {
+        if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
+            return new int[0];
+        if (v instanceof Integer)
+            return new int[]{ (int)v };
+        if (v instanceof Long)
+            return new int[]{ ((Long)v).intValue() };
+        if (v instanceof int[])
+            return (int[]) v;
+
+        Collection c = ((Collection) v);
+        int n = c.size();
+        int[] a = new int[n];
+        int i=0;
+        for (Object e : c) {
+            if (e instanceof Integer)
+                a[i++] = ((Integer)e);
+            else if (e instanceof Long)
+                a[i++] = ((Long)e).intValue();
+            else
+                a[i++] = Integer.parseInt(e.toString());
+        }
+        return a;
+    }
+
+    public static boolean[] asBooleanArray(Object v) {
+        if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
+            return new boolean[0];
+        if (v instanceof Boolean)
+            return new boolean[]{ (boolean)v };
+
+        Collection c = ((Collection) v);
+        int n = c.size();
+        boolean[] a = new boolean[n];
+        int i=0;
+        for (Object e : c) {
+            if (e instanceof Boolean)
+                a[i++] = ((boolean)e);
+            else
+                a[i++] = Boolean.parseBoolean(e.toString());
+        }
+        return a;
+    }
+
     // ----------------------------------------------------------------------
     // append
     // ----------------------------------------------------------------------
@@ -62,15 +107,24 @@ public class ArrayUtils {
     // set
     // ----------------------------------------------------------------------
 
+    public static boolean get(boolean[] a, int index) {
+        if (a == null || a.length == 0 || index < 0)
+            return true;
+        if (index >= a.length)
+            return false;
+        else
+            return a[index];
+    }
+
     public static boolean[] set(int index, boolean v) {
         return set(null, index, v);
     }
 
     public static boolean[] set(boolean[] a, int index, boolean v) {
-        if (index <= -1)
-            index = a.length + index + 1;
         if (a == null)
             a = new boolean[index+1];
+        if (index <= -1)
+            index = a.length + index + 1;
         if (a.length <= index)
             a = Arrays.copyOf(a, index+1);
         a[index] = v;

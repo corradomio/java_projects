@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  *      scheme:[//authority][/path][!/zpath]
  *
  */
-public class URL  {
+public class URL {
 
     public static final String URL = "url";
 
@@ -137,7 +137,7 @@ public class URL  {
             if (path.startsWith("/"))
                 hpp += path;
             else
-                hpp += "/" + path;
+            hpp += "/" + path;
         return hpp;
     }
 
@@ -318,5 +318,8 @@ public class URL  {
         System.out.println(String.format("hostPort:  %s", hostPort));
         System.out.println(String.format("  host:    %s", host));
         System.out.println(String.format("  port:    %s", port));
+        System.out.println(String.format("params"));
+        for(String key : params.keySet())
+            System.out.println(String.format("  %s:\t%s", key, params.get(key)));
     }
 }

@@ -1,7 +1,5 @@
 package jext.net;
 
-import jext.util.StringUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
