@@ -1,4 +1,4 @@
-package jext.util;
+package jext.hash;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,10 +40,10 @@ public class IntegerHash {
             return hashCode((double[]) o);
         if (o instanceof Object[])
             return hashCode((Object[]) o);
-        // if (o instanceof Long)
-        //     return ((Long) o).intValue();
-        // if (o instanceof Double)
-        //     return (int)Double.doubleToLongBits((Double) o);
+            // if (o instanceof Long)
+            //     return ((Long) o).intValue();
+            // if (o instanceof Double)
+            //     return (int)Double.doubleToLongBits((Double) o);
         else
             return o.hashCode();
     }
