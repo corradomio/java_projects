@@ -11,10 +11,11 @@ public class CheckDifferences {
         // pd.compareProjects(new File("project-info-0000.json"), new File("project-info.json"));
         // pd.compareProjects(new File("project-info-0001.json"), new File("project-info.json"));
         // pd.compareProjects(new File("project-info-0001.json"), new File("project-info-0000.json"));
-        // pd.compareRevisions(new File("project-info.json"), new File("project-info-0000.json"));
-        pd.compareProjects(
-            new File("D:\\Projects.github\\java_projects\\check_modules\\.spl\\project-info-0000.json"),
-            new File("D:\\Projects.github\\java_projects\\check_modules\\.spl\\project-info.json"));
+        pd.compareProjects(new File("project-info-0002.json"), new File("project-info.json"));
+        // pd.compareProjects(new File("project-info.json"), new File("project-info-0000.json"));
+        // pd.compareProjects(
+        //     new File("D:\\Projects.github\\java_projects\\check_modules\\.spl\\project-info-0000.json"),
+        //     new File("D:\\Projects.github\\java_projects\\check_modules\\.spl\\project-info.json"));
         pd.dump();
     }
 }

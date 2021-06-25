@@ -3,13 +3,13 @@ package jext.sourcecode.project.util;
 import jext.logging.Logger;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.ModuleSource;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.util.FileUtils;
-import jext.util.tuples.Tuple2;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,27 +39,25 @@ public class ProjectUtils {
             .collect(Collectors.toList());
     }
 
-    public static List<Source> getSources(Project project, List<Tuple2<String,String>> moduleSources) {
+    public static List<Source> getSources(Project project, List<ModuleSource> moduleSources) {
         List<Source> sources = new ArrayList<>();
 
-        for (Tuple2<String, String> p : moduleSources) {
-            String moduleName = p.get1();
-            String sourceName = p.get2();
+        for (ModuleSource ms : moduleSources) {
 
-            Module module = project.getModule(moduleName);
+            Module module = project.getModule(ms.module);
             if (module == null) {
-                logger.errorf("Module %s not found in project %s", moduleName, project.getName().getFullName());
+                logger.errorf("Module %s not found in project %s", ms.module, project.getName().getFullName());
                 continue;
             }
 
-                Source source = module.getSource(sourceName);
-                if (source == null) {
-                    logger.errorf("Source %s not found in module %s of project %s", sourceName, moduleName, project.getName().getFullName());
-                    continue;
-                }
-
-                sources.add(source);
+            Source source = module.getSource(ms.source);
+            if (source == null) {
+                logger.errorf("Source %s not found in module %s of project %s", ms.source, ms.module, project.getName().getFullName());
+                continue;
             }
+
+            sources.add(source);
+        }
 
         return sources;
     }

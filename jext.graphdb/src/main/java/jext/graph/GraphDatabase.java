@@ -31,7 +31,7 @@ public interface GraphDatabase {
     /**
      * Register a dictionary of named queries
      *
-     * @param namedQueries
+     * @param namedQueries a map 'name -> Cypher statement'
      */
     void registerQueries(Map<String, String> namedQueries);
 }

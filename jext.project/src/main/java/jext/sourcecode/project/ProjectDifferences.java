@@ -5,7 +5,6 @@ import jext.logging.Logger;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 import jext.util.SetUtils;
-import jext.util.tuples.Tuple2;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,7 +114,7 @@ public class ProjectDifferences {
      * @return a the map [moduleName, list[sourceName]]
      */
     @JsonIgnore
-    public List<Tuple2<String,String>> getAddedSources() {
+    public List<ModuleSource> getAddedSources() {
         return getModuleSources(Status.ADDED);
     }
 
@@ -125,7 +124,7 @@ public class ProjectDifferences {
      * @return a the map [moduleName, list[sourceName]]
      */
     @JsonIgnore
-    public List<Tuple2<String,String>> getDeletedSources() {
+    public List<ModuleSource> getDeletedSources() {
         return getModuleSources(Status.DELETED);
     }
 
@@ -135,61 +134,23 @@ public class ProjectDifferences {
      * @return a the map [moduleName, list[sourceName]]
      */
     @JsonIgnore
-    public List<Tuple2<String, String>> getChangedSources() {
+    public List<ModuleSource> getChangedSources() {
         return getModuleSources(Status.CHANGED);
     }
 
-    private List<Tuple2<String,String>> getModuleSources(Status status) {
-        List<Tuple2<String,String>> selectedSources = new ArrayList<>();
+    private List<ModuleSource> getModuleSources(Status status) {
+        List<ModuleSource> selectedSources = new ArrayList<>();
 
         for (String moduleName : diffSources.keySet()) {
             Map<String, Status> moduleSources = diffSources.get(moduleName);
             for (String sourceName : moduleSources.keySet()) {
                 if (status.equals(moduleSources.get(sourceName)))
-                    selectedSources.add(new Tuple2<>(moduleName, sourceName));
+                    selectedSources.add(new ModuleSource(moduleName, sourceName));
             }
 
         }
         return selectedSources;
     }
-
-    // /**
-    //  * Select the sources added to each module
-    //  *
-    //  * @return a the map [moduleName, list[sourceName]]
-    //  */
-    // @JsonIgnore
-    // public Map<String, List<String>> getAddedSources() {
-    //     return getModuleSources(Status.ADDED);
-    // }
-
-    // /**
-    //  * Select the sources deleted from each module
-    //  *
-    //  * @return a the map [moduleName, list[sourceName]]
-    //  */
-    // @JsonIgnore
-    // public Map<String, List<String>> getDeletedSources() {
-    //     return getModuleSources(Status.DELETED);
-    // }
-
-    // private Map<String, List<String>> getModuleSources(Status status) {
-    //     Map<String, List<String>> selectedSources = new HashMap<>();
-    //
-    //     for (String moduleName : diffSources.keySet()) {
-    //         List<String> sourceNames = new ArrayList<>();
-    //
-    //         Map<String, Status> moduleSources = diffSources.get(moduleName);
-    //         for (String sourceName : moduleSources.keySet()) {
-    //             if (status.equals(moduleSources.get(sourceName)))
-    //                 sourceNames.add(sourceName);
-    //         }
-    //
-    //         if (!sourceNames.isEmpty())
-    //             selectedSources.put(moduleName, sourceNames);
-    //     }
-    //     return selectedSources;
-    // }
 
     // ----------------------------------------------------------------------
     // compareProjects
@@ -252,7 +213,7 @@ public class ProjectDifferences {
 
             if (!SetUtils.simmdiff(src_module_sources, dst_module_sources).isEmpty())
                 addModuleStatus(moduleName, Status.CHANGED);
-        }
+            }
 
         // check DELETED modules
         for (String moduleName : src_modules.keySet())
@@ -283,8 +244,10 @@ public class ProjectDifferences {
 
                 String src_digest = MapUtils.get(src_sources, sourceName, "digest");
                 String dst_digest = MapUtils.get(dst_sources, sourceName, "digest");
-                if (!src_digest.equals(dst_digest))
+                if (!src_digest.equals(dst_digest)) {
                     addFileStatus(moduleName, sourceName, Status.CHANGED);
+                    addModuleStatus(moduleName, Status.CHANGED);
+                }
             }
 
             // check DELETED sources

@@ -74,7 +74,7 @@ public interface GraphSession extends AutoCloseable {
      * @return
      */
     @Nullable
-    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String, Object> nodeProps);
+    String/*nodeId*/ findNode(String nodeType, Map<String, Object> nodeProps);
 
     // ----------------------------------------------------------------------
     // Operations on a single node
@@ -135,11 +135,12 @@ public interface GraphSession extends AutoCloseable {
      * Add/update the node properties
      *
      * @param nodeId nodeId
-     * @param updateProps properties to update
+     * @param nodeProps properties to update
      */
-    void setNodeProperties(String nodeId, Map<String,Object> updateProps);
+    void setNodeProperties(String nodeId, Map<String,Object> nodeProps);
     void setNodeProperty(String nodeId, String name, Object value);
-    void setNodesProperties(List<String> nodeIds, Map<String,Object> updateProps);
+    void setNodeProperty(String nodeId, String name, int index, Object value);
+    void setNodesProperties(List<String> nodeIds, Map<String,Object> nodeProps);
 
     void deleteNodeProperty(String nodeId, String name);
     void deleteNodesProperties(List<String> nodeId, Collection<String> names);

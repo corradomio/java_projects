@@ -17,6 +17,8 @@
     <modules>
         <module>../jext.graphdb</module>
         <module>../jext.commons</module>
+        <module>../jext.cache</module>
+        <module>../jext.neo4j-procedures</module>
     </modules>
 
     <dependencies>

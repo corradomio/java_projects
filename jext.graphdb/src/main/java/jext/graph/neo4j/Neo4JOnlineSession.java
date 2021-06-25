@@ -1,12 +1,16 @@
 package jext.graph.neo4j;
 
+import jext.cache.Cache;
+import jext.cache.CacheManager;
 import jext.graph.Direction;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
 import jext.graph.NodeDegree;
+import jext.graph.NodeId;
 import jext.graph.Query;
 import jext.logging.Logger;
+import jext.util.ArrayUtils;
 import jext.util.Parameters;
 import jext.util.StringUtils;
 import org.neo4j.driver.Driver;
@@ -31,6 +35,17 @@ import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.asIds;
 import static jext.graph.NodeId.toId;
 
+/*
+    Properties map:
+
+        name, value                     n.name = value
+        name, array[]                   n.name in array[]
+        name, Collection                n.name in Collection
+        name[index], value              n.name[index] = value
+        name[index], array[]            n.name[index] in array[]
+        name[index], collection         n.name[index] in collection
+ */
+
 public class Neo4JOnlineSession implements GraphSession {
 
     // ----------------------------------------------------------------------
@@ -47,6 +62,7 @@ public class Neo4JOnlineSession implements GraphSession {
     // private static final String NAMESPACE = "namespace";
     private static final String N = "n";
     private static final String E = "e";
+    private static final String NONE = "";
     private static final int MAX_DELETE_NODES = 16*1024;
     private static final int MAX_DELETE_EDGES = 128*1024;
 
@@ -58,18 +74,19 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String REFIDS = "refIds";
 
     // special parameters:   [revision, n]
-    // is converted in       n.revisionPresence[$revision]
-    // 'revisionPresence' is a boolean vector
+    // is converted in       n.inRevision[$revision]
+    // 'inRevision' is a boolean vector
     private static final String REVISION = "revision";
 
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
 
-    private Logger logger = Logger.getLogger(Neo4JOnlineSession.class);
+    private static final Logger logger = Logger.getLogger(Neo4JOnlineSession.class);
 
-    private Neo4JOnlineDatabase graphdb;
-    private Driver driver;
+    private final Neo4JOnlineDatabase graphdb;
+    private final Driver driver;
+    private final Cache<String, Map<String, Object>> cache;
     private Session session;
 
     // ----------------------------------------------------------------------
@@ -79,6 +96,7 @@ public class Neo4JOnlineSession implements GraphSession {
     Neo4JOnlineSession(Neo4JOnlineDatabase graphdb) {
         this.graphdb = graphdb;
         this.driver = graphdb.getdriver();
+        this.cache = CacheManager.getCache("system.neo4j.cache");
     }
 
     // ----------------------------------------------------------------------
@@ -93,7 +111,6 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     public Neo4JOnlineSession connect() {
-        // close();
         session = driver.session();
         return this;
     }
@@ -105,10 +122,10 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void close() {
-        if (session != null) {
-            session.close();
-            session = null;
-        }
+        if (session== null)
+            return;
+        session.close();
+        session = null;
     }
 
     // ----------------------------------------------------------------------
@@ -131,26 +148,39 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     // ----------------------------------------------------------------------
+    // Clear from cache
+    // ----------------------------------------------------------------------
+
+    private void removeFromCache(String nodeId) {
+        this.cache.remove(nodeId);
+    }
+
+    private void removeFromCache(Collection<String> nodeIds) {
+        nodeIds.forEach(this::removeFromCache);
+    }
+
+    // ----------------------------------------------------------------------
     // Named Queries
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryUsing(String queryName,  Map<String,Object> queryParams) {
+    public Query queryUsing(String queryName,  Map<String,Object> params) {
         String query = graphdb.getQuery(queryName);
 
-        String stmt = StringUtils.format(query, queryParams);
+        String s = StringUtils.format(query, params);
 
-        return new Neo4JQuery(this, N, stmt, queryParams);
+        return new Neo4JQuery(this, N, s, params);
     }
 
     @Override
     public void executeUsing(String queryName, Map<String,Object> params) {
         String query = graphdb.getQuery(queryName);
 
+        // replace ${name} with 'name' value
         String s = StringUtils.format(query, params);
 
         try {
-            Result result = session.run(s, params);
+            session.run(s, params);
         }
         catch (Throwable t) {
             logStmt(s, params, t);
@@ -171,15 +201,15 @@ public class Neo4JOnlineSession implements GraphSession {
         boolean hasLabels = queryParams.containsKey(LABELS) && !((Collection<String>)queryParams.get(LABELS)).isEmpty();
         boolean hasRefIds = queryParams.containsKey(REFIDS) && !((Collection<String>)queryParams.get(REFIDS)).isEmpty();
 
-        String stmt = "CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n ";
+        String s = "CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n ";
         if (hasLabels && hasRefIds)
-            stmt += "WHERE labels(n) = $labels AND n.refId IN $refIds ";
+            s += "WHERE labels(n) = $labels AND n.refId IN $refIds ";
         else if (hasLabels)
-            stmt += "WHERE labels(n) = $labels ";
+            s += "WHERE labels(n) = $labels ";
         else if (hasRefIds)
-            stmt += "WHERE n.refId IN $refIds ";
+            s += "WHERE n.refId IN $refIds ";
 
-        return new Neo4JQuery(this, N, stmt, queryParams);
+        return new Neo4JQuery(this, N, s, queryParams);
     }
 
     // ----------------------------------------------------------------------
@@ -198,30 +228,37 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
-        String pblock = pblock(nodeProps);
+        Map<String, Object> arrayProps = null;
+        if (hasIndexedProperties(nodeProps))
+            arrayProps = extractIndexedProperties(nodeProps);
+
+        String pblock = pblock(NONE, nodeProps);
         String s = String.format("CREATE (n:%s %s) RETURN id(n)", nodeType, pblock);
-        return this.create(s, nodeProps);
+        String nodeId = this.create(s, nodeProps);
+        setNodeArrayProperties(nodeId, arrayProps);
+        return nodeId;
     }
 
     @Override
     public boolean deleteNode(String nodeId) {
         if (nodeId == null)
             return false;
-
         Parameters params = Parameters.params(
             "id", asId(nodeId));
-        String s = String.format("MATCH (n) WHERE id(n) = $id DETACH DELETE n");
+        String s = "MATCH (n) WHERE id(n) = $id DETACH DELETE n";
         this.delete(s, params, false);
+        removeFromCache(nodeId);
         return true;
     }
 
     @Override
     public Map<String, Object> getNodeValues(String nodeId) {
-        Parameters params = Parameters.params(
-            "id", asId(nodeId));
-        String s = String.format("MATCH (n) WHERE id(n) = $id RETURN n");
-
-        return this.retrieve(N, s, params);
+        return this.cache.get(nodeId, () -> {
+            Parameters params = Parameters.params(
+                "id", asId(nodeId));
+            String s = "MATCH (n) WHERE id(n) = $id RETURN n";
+            return this.retrieve(N, s, params);
+        });
     }
 
     // ----------------------------------------------------------------------
@@ -230,7 +267,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long countNodes(String nodeType, Map<String,Object> nodeProps) {
-        String pblock = pblock(nodeProps);
+        String pblock = pblock(NONE, nodeProps);
         String s;
 
         if (nodeType == null)
@@ -254,7 +291,8 @@ public class Neo4JOnlineSession implements GraphSession {
             deleteSomeNodes(((List<String>)nodeIds).subList(0, MAX_DELETE_NODES));
             nodeIds = ((List<String>)nodeIds).subList(MAX_DELETE_NODES, n);
         }
-        deleteSomeNodes(nodeIds);
+        if (!nodeIds.isEmpty())
+            deleteSomeNodes(nodeIds);
     }
 
     private void deleteSomeNodes(Collection<String> nodeIds) {
@@ -268,7 +306,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void deleteNodes(String nodeType, Map<String, Object> nodeProps, long count) {
-        String pblock = pblock(nodeProps);
+        String pblock = pblock(NONE, nodeProps);
         String s;
 
         if (nodeType == null && count <= 0)
@@ -280,11 +318,6 @@ public class Neo4JOnlineSession implements GraphSession {
         else
             s = String.format("MATCH (n:%s %s) WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, count);
 
-        // if (nodeType == null)
-        //     s = String.format("MATCH (n %s) WITH n LIMIT %d DETACH DELETE n", pblock, count);
-        // else
-        //     s = String.format("MATCH (n:%s %s) WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, count);
-
         this.delete(s, nodeProps, false);
     }
 
@@ -294,52 +327,167 @@ public class Neo4JOnlineSession implements GraphSession {
     public List<Map<String, Object>> getNodesValues(List<String> nodeIds) {
         Parameters params = Parameters.params(
             "id", asIds(nodeIds));
-
-        String s = String.format("MATCH (n) WHERE id(n) IN $id RETURN n");
+        String s = "MATCH (n) WHERE id(n) IN $id RETURN n";
 
         return this.retrieveAllIter(N, s, params, false).toList();
     }
 
     // ----------------------------------------------------------------------
-    // Set properties
+    // Indexed properties: name[index]
+    // ----------------------------------------------------------------------
+
+    private static boolean isIndexedProperty(String name) {
+        return name.contains("[");
+    }
+
+    private static boolean hasIndexedProperties(Map<String, Object> props) {
+        for (String param : props.keySet())
+            if (isIndexedProperty(param))
+                return true;
+        return false;
+    }
+
+    private static Map<String, Object> extractIndexedProperties(Map<String, Object> props) {
+        Map<String, Object> aprops = new HashMap<>();
+        for (String param : new HashSet<>(props.keySet()))
+            if (isIndexedProperty(param)) {
+                aprops.put(param, props.get(param));
+                props.remove(param);
+            }
+        return aprops;
+    }
+
+    // name[index] -> name
+    private static String nameOf(String indexed) {
+        int pos = indexed.indexOf('[');
+        return indexed.substring(0, pos);
+    }
+
+    // name[index] -> index
+    private static int indexOf(String indexed) {
+        int pos = indexed.indexOf('[');
+        String index = indexed.substring(pos+1, indexed.length()-1);
+        return Integer.parseInt(index);
+    }
+
     // ----------------------------------------------------------------------
 
     @Override
-    public void setNodeProperties(String nodeId, Map<String, Object> updateProps) {
-        if (updateProps == null || updateProps.size() == 0)
+    public void setNodeProperties(String nodeId, Map<String, Object> nodeProps) {
+        Map<String, Object> arrayProps = null;
+
+        // check if there are 'name[index]'
+        if (hasIndexedProperties(nodeProps))
+            arrayProps = extractIndexedProperties(nodeProps);
+
+        setNodeSimpleProperties(nodeId, nodeProps);
+        setNodeArrayProperties(nodeId, arrayProps);
+        removeFromCache(nodeId);
+    }
+
+    private void setNodeSimpleProperties(String nodeId, Map<String, Object> nodeProps) {
+        if (nodeProps == null || nodeProps.isEmpty())
             return;
 
-        String sblock = sblock(N, updateProps);
+        String sblock = sblock(N, nodeProps);
         Parameters params = Parameters.params(
             "id", asId(nodeId))
-            .add(N, updateProps);
+            .add(N, nodeProps);
         String s = String.format("MATCH (n) WHERE id(n) = $id %s", sblock);
         this.execute(s, params);
+    }
+
+    private void setNodeArrayProperties(String nodeId, Map<String, Object> arrayProps) {
+        if (arrayProps == null || arrayProps.isEmpty())
+            return;
+
+        for (String nameIndex : arrayProps.keySet())
+            setNodeProperty(nodeId, nameOf(nameIndex), indexOf(nameIndex), arrayProps.get(nameIndex));
     }
 
     @Override
     public void setNodeProperty(String nodeId, String name, Object value) {
         if (value == null) {
             deleteNodeProperty(nodeId, name);
-        } else {
-            Parameters params = new Parameters();
-            params.put(name, value);
+        }
+        else if (isIndexedProperty(name)) {
+            setNodeProperty(nodeId, nameOf(name), indexOf(name), value);
+        }
+        else {
+            Parameters params = Parameters.params(
+                name, value
+            );
             setNodeProperties(nodeId, params);
         }
     }
 
     @Override
-    public void setNodesProperties(List<String> nodeIds, Map<String, Object> updateProps) {
-        if (updateProps == null || updateProps.isEmpty() || nodeIds == null || nodeIds.isEmpty())
+    public void setNodeProperty(String nodeId, String name, int index, Object value) {
+        Parameters params = Parameters.params(
+            "id", NodeId.asId(nodeId),
+            "name", name,
+            "index", index,
+            "value", value);
+
+        String s = StringUtils.format(
+            "MATCH (n) " +
+                "WHERE id(n) = $id " +
+                "SET n.${name} = apoc.coll.setOrExtend(n.${name}, $index, $value) " +
+                "RETURN n", params);
+        this.execute(s, params);
+    }
+
+    @Override
+    public void setNodesProperties(List<String> nodeIds, Map<String, Object> nodeProps) {
+        if (nodeProps == null || nodeProps.isEmpty() || nodeIds == null || nodeIds.isEmpty())
             return;
 
-        String sblock = sblock(N, updateProps);
+        Map<String, Object> arrayProps = null;
+        if (hasIndexedProperties(nodeProps))
+            arrayProps = extractIndexedProperties(nodeProps);
+
+        setNodesSimpleProperties(nodeIds, nodeProps);
+        setNodesArrayProperties(nodeIds, arrayProps);
+        removeFromCache(nodeIds);
+    }
+
+    private void setNodesSimpleProperties(List<String> nodeIds, Map<String, Object> nodeProps) {
+        String sblock = sblock(N, nodeProps);
         Parameters params = Parameters.params(
             "ids", asIds(nodeIds))
-            .add(N, updateProps);
+            .add(N, nodeProps);
         String s = String.format("MATCH (n) WHERE id(n) IN $ids %s", sblock);
         this.execute(s, params);
     }
+
+    private void setNodesArrayProperties(List<String> nodeIds, Map<String, Object> arrayProps) {
+        for (String nodeId : nodeIds)
+            setNodeArrayProperties(nodeId, arrayProps);
+    }
+
+    // private static Collection<?> setArrayValue(Collection<?> array, int index, Object value) {
+    //     if (array == null)
+    //         array = Collections.emptyList();
+    //     List<Object> list = new ArrayList<>(array);
+    //     int n = list.size();
+    //     Object lastValue;
+    //     if (list.size() > 0)
+    //         lastValue = list.get(n-1);
+    //     else if (value instanceof Boolean)
+    //         lastValue = false;
+    //     else if (value instanceof Integer)
+    //         lastValue = 0;
+    //     else if (value instanceof Long)
+    //         lastValue = 0L;
+    //     else if (value instanceof String)
+    //         lastValue = "";
+    //     else
+    //         throw new IllegalArgumentException("Unsupported value " + value);
+    //     while (list.size() <= index)
+    //         list.add(lastValue);
+    //     list.set(index, value);
+    //     return list;
+    // }
 
     // ----------------------------------------------------------------------
     // Delete properties
@@ -357,7 +505,9 @@ public class Neo4JOnlineSession implements GraphSession {
             "ids", asIds(nodeIds));
         String s = String.format("MATCH (n) WHERE id(n) IN $ids REMOVE %s", ablock);
         this.execute(s, params);
+        removeFromCache(nodeIds);
     }
+
 
     // ----------------------------------------------------------------------
     // Delete ALL
@@ -366,6 +516,7 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public void deleteAll() {
         queryNodes(null, null).delete();
+        this.cache.clear();
     }
 
     // ----------------------------------------------------------------------
@@ -374,7 +525,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Query queryNodes(String nodeType, Map<String, Object> nodeProps) {
-        String pblock = pblock(nodeProps);
+        String pblock = pblock(NONE, nodeProps);
         String wblock = wblock(N, nodeProps, WhereType.WHERE);
         String s;
 
@@ -476,7 +627,7 @@ public class Neo4JOnlineSession implements GraphSession {
             String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps
     ){
         String eblock = eblock(E, edgeType, direction, false, edgeProps); //recursive has to be false for algorithm
-        String pblock = pblock(nodeProps);
+        String pblock = pblock(NONE, nodeProps);
 
         Parameters allParams = new Parameters();
         allParams.putAll(nodeProps);
@@ -508,7 +659,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String nodeType, String edgeType, NodeDegree ndegree,
         Map<String, Object> nodeProps, Map<String, Object> edgeProps) {
 
-        String pblock = pblock(nodeProps);
+        String pblock = pblock(NONE, nodeProps);
         String dblock = dblock(N, edgeType, ndegree, edgeProps);
 
         Parameters allProps = new Parameters();
@@ -547,9 +698,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String toType,   Map<String, Object> toProps,
         Map<String, Object> edgeProps) {
 
-        String fblock = pblock(fromProps);
+        String fblock = pblock(NONE, fromProps);
         String eblock = eblock(E, edgeType, Direction.Output, false, edgeProps);
-        String tblock = pblock(toProps);
+        String tblock = pblock(NONE, toProps);
 
         Parameters allProps = new Parameters();
         allProps.putAll(fromProps);
@@ -667,7 +818,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps) {
-
         //
         // SPL v2.4 COMPATIBILITY. See above
         //
@@ -805,7 +955,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Map<String, Object> getEdgeProperties(String edgeId) {
-        String s = String.format("MATCH ()-[e]-() WHERE id(e) = $id RETURN e LIMIT 1");
+        String s = String.format("MATCH ()-[e]-() WHERE id(e) = $id RETURN e");
         Parameters params = Parameters.params(
             "id", asId(edgeId));
         return this.retrieve("e", s, params, true);
@@ -959,6 +1109,7 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+
     private void logStmt(String s, Map<String, Object> params) {
         logStmt(s, params, null);
     }
@@ -992,9 +1143,11 @@ public class Neo4JOnlineSession implements GraphSession {
 
     private static String asString(Object value) {
         if (value == null) return "null";
-        if (value instanceof String) return String.format("'%s'", value.toString());
+        if (value instanceof String) return String.format("'%s'", value);
         return value.toString();
     }
+
+    // ----------------------------------------------------------------------
 
     void execute(String s, Map<String, Object> params) {
         logStmt(s, params);
@@ -1146,37 +1299,38 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     // ----------------------------------------------------------------------
-    
+
     /**
      * Create the block:
      *
-     *      { param: $param, ... }
+     *      { param: $[prefix]param, ... }
      *
      */
-    private static String pblock(Map<String, Object> params) {
-        return pblock("", params);
-    }
-
     private static String pblock(String prefix, Map<String, Object> params) {
         if (params == null || params.size() == 0)
             return "";
 
         StringBuilder sb = new StringBuilder("{");
         for(String param : params.keySet()) {
+            Object value = params.get(param);
 
-            // parameter value is null
-            if (params.get(param) == null)
+            // value is null
+            if (value == null)
                 continue;
-            // parameter value is a collection
-            if (params.get(param) instanceof Collection)
+            // value is a collection
+            if (value instanceof Collection)
                 continue;
             // parameter is "revision"
             if (REVISION.equals(param))
                 continue;
+            // param is 'param[index]'
+            if (isIndexedProperty(param))
+                continue;
 
             if (sb.length() > 1)
                 sb.append(",");
-            sb.append(param).append(": $").append(prefix).append(param);
+
+            sb.append(param).append(":$").append(prefix).append(param);
         }
         return sb.append("}").toString();
     }
@@ -1193,18 +1347,17 @@ public class Neo4JOnlineSession implements GraphSession {
 
         StringBuilder sb = new StringBuilder("{");
         for(String param : params.keySet()) {
+            Object value = params.get(param);
+
             if (sb.length() > 1)
                 sb.append(",");
 
             sb.append(param).append(": ");
 
-            if(params.get(param) instanceof String || params.get(param) instanceof Character)
-                sb.append("\"");
-
-            sb.append(params.get(param));
-
-            if(params.get(param) instanceof String || params.get(param) instanceof Character)
-                sb.append("\"");
+            if (value instanceof String || value instanceof Character)
+                sb.append("\"").append(value).append("\"");
+            else
+                sb.append(value);
         }
         return sb.append("}").toString();
     }
@@ -1212,7 +1365,7 @@ public class Neo4JOnlineSession implements GraphSession {
     /**
      * Create the block
      *
-     *      SET n.param = $param, ...
+     *      SET n.param = $nparam, ...
      *
      */
     private static String sblock(String alias, Map<String, Object> params) {
@@ -1239,19 +1392,22 @@ public class Neo4JOnlineSession implements GraphSession {
      *
      * @param params parameters
      * @param where if to include the WHERE keyword or AND
-     * @return
      */
     private static String wblock(String alias, Map<String, Object> params, WhereType where) {
         if (params == null || params.isEmpty())
             return "";
 
-        String stmt;
+        String s;
         StringBuilder sb = new StringBuilder();
 
-        for (String param : params.keySet()) {
+        for (String param : new HashSet<>(params.keySet())) {
             Object value = params.get(param);
 
-            if (value != null && !(value instanceof Collection))
+            String pname = pnameOf(param);
+            if (!pname.equals(param)) params.put(pname, value);
+
+            if (value != null && !(value instanceof Collection)
+                && !REVISION.equals(param) && !isIndexedProperty(param))
                 continue;
 
             // append "... AND "
@@ -1259,61 +1415,86 @@ public class Neo4JOnlineSession implements GraphSession {
 
             // convert [param, null] in "EXISTS(n.param)"
             if (value == null) {
-                stmt = String.format("EXISTS(%s.%s)", alias, param);
+                s = String.format("EXISTS(%s.%s)", alias, param);
             }
-            // convert ["revision", n] in "revisionPresence[$revision]"
+            // convert ["revision", n] in "inRevision[$revision]"
             else if (REVISION.equals(param)) {
-                stmt = String.format("revisionPresence[$%s]", param);
+                s = revisionCondition(alias, param, params);
+            }
+            else if (!(value instanceof Collection)) {
+                s = String.format("%s.%s = $%s", alias, param, pname);
             }
             // convert [param, value: a collection] in "n.param IN $param"
             else {
-                stmt = String.format("%s.%s IN $%s", alias, param, param);
+                s = String.format("%s.%s IN $%s", alias, param, pname);
             }
 
-            sb.append(stmt);
+            sb.append(s);
         }
 
         if (sb.length() == 0)
             return sb.toString();
 
         switch (where) {
-            case NONE: return sb.toString();
-            case AND: return sb.insert(0, " AND ").toString();
+            // case NONE: return sb.toString();
+            case AND:  return sb.insert(0, " AND ").toString();
             case WHERE: return sb.insert(0, " WHERE ").toString();
             default: return sb.toString();
         }
     }
 
-    // private static String wblock(String alias, Map<String, Object> wparams, boolean where) {
-    //     if (wparams == null || wparams.size() == 0)
-    //         return "";
-    //
-    //     int cond = 0;
-    //     StringBuilder sb = new StringBuilder();
-    //     if(where)
-    //         sb.append("WHERE ");
-    //     else
-    //         sb.append(" AND ");
-    //     for(String param : wparams.keySet()) {
-    //         if (cond > 0)
-    //             sb.append(" AND ");
-    //
-    //         if (wparams.get(param) instanceof Collection)
-    //             sb.append(String.format("%s.%s IN $%s%s", alias, param, alias, param));
-    //         else
-    //             sb.append(String.format("%s.%s = $%s%s", alias, param, alias, param));
-    //         ++cond;
-    //     }
-    //
-    //     return sb.toString();
-    // }
+    // name        -> name
+    // name[index] -> nameindex
+    private static String pnameOf(String p) {
+        if (!p.contains("["))
+            return p;
+        else
+            return p.replace("[", "").replace("]", "");
+    }
+
+    /*
+        [revision, 0 | [0,1,...]] ->
+            n.inRevision[0]
+            n.inRevision[0] OR n.inRevision[1] ...
+     */
+    private static String revisionCondition(String alias, String param, Map<String, Object> params) {
+        Object value = params.get(param);
+
+        // check if value is a simple integer
+        if (value instanceof Integer) {
+            int rev = (int) value;
+            return String.format("%s.inRevision[%d]", alias, rev);
+        }
+
+        // convert a collection in a 'int[]'
+        if (value instanceof Collection)
+            value = ArrayUtils.asIntArray(value);
+
+        int[] revs = (int[]) value;
+
+        if (revs.length == 0)
+            return "false";
+        if (revs.length == 1)
+            return String.format("%s.inRevision[%d]", alias, revs[0]);
+
+        // revs.length > 1
+        StringBuilder sb =  new StringBuilder("(");
+        sb.append(String.format("%s.inRevision[%d]", alias, revs[0]));
+        for (int i=1; i<revs.length; ++i) {
+            sb.append(" OR ")
+              .append(String.format("%s.inRevision[%d]", alias, revs[i]));
+        }
+        sb.append(")");
+
+        return sb.toString();
+    }
 
     /**
      * Create the edge syntax block
      *
-     *       -[e:edgeType {...}]-         Any
-     *       -[e:edgeType {...}]->        Output
-     *      <-[e:edgeType {...}]-         Input
+     *       -[e:etype {...}]-         Any
+     *       -[e:etype {...}]->        Output
+     *      <-[e:etype {...}]-         Input
      *
      */
     private static String eblock(String alias, String edgeType, Direction direction, boolean recursive,
@@ -1345,10 +1526,10 @@ public class Neo4JOnlineSession implements GraphSession {
     /**
      * Create the 'degree syntax' block
      *
-     *      WITH n, size( (n)  -[:ETYPE]-> () ) AS outdegree
-     *      WITH n, size( (n) <-[:ETYPE]-  () ) AS indegree
-     *      WITH n, size( (n) <-[:ETYPE]-  () ) AS indegree, size( (n)  -[:ETYPE]-> () ) AS outdegree
-     *      WITH n, size( (n)  -[:ETYPE]-  () ) AS degree
+     *      WITH n, size( (n)  -[:etype]-> () ) AS outdegree
+     *      WITH n, size( (n) <-[:etype]-  () ) AS indegree
+     *      WITH n, size( (n) <-[:etype]-  () ) AS indegree, size( (n)  -[:ETYPE]-> () ) AS outdegree
+     *      WITH n, size( (n)  -[:etype]-  () ) AS degree
      *
      *      WHERE ??degree > ${}
      *
@@ -1356,7 +1537,7 @@ public class Neo4JOnlineSession implements GraphSession {
     private static String dblock(String alias, String edgeType, NodeDegree ndegree, Map<String, Object> edgeProps) {
 
         String dblock;
-        String eprops = pblock(edgeProps);
+        String eprops = pblock(NONE, edgeProps);
 
         Parameters dparams = Parameters.params(
             "nalias", alias,
