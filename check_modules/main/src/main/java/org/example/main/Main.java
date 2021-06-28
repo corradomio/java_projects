@@ -1,4 +1,4 @@
-package org.exmaple.main;
+package org.example.main;
 
 import org.example.m1.Module1;
 import org.example.m2.Module2;
