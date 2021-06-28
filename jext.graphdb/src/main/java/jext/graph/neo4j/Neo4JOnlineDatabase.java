@@ -9,6 +9,7 @@ import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.exceptions.DatabaseException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -34,11 +35,11 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     private static Logger logger = Logger.getLogger(Neo4JOnlineDatabase.class);
 
-    private URL url;
-    private Properties props = new Properties();
+    private final URL url;
+    private final Properties props;
     private Driver driver;
 
-    private Map<String, String> namedQueries = new HashMap<>();
+    private final Map<String, String> namedQueries = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -102,8 +103,13 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     @Override
     public GraphSession connect() {
+        return connect(Collections.emptyMap());
+    }
+
+    @Override
+    public GraphSession connect(Map<String, Object> params) {
         Neo4JOnlineSession session = new Neo4JOnlineSession(this);
-        return session.connect();
+        return session.connect(params);
     }
 
     @Override

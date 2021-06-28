@@ -58,8 +58,8 @@ public class Neo4JOnlineSession implements GraphSession {
         AND
     }
 
-    // private static final String FULLNAME = "fullname";
-    // private static final String NAMESPACE = "namespace";
+    private static final String FULLNAME = "fullname";
+    private static final String NAMESPACE = "namespace";
     private static final String N = "n";
     private static final String E = "e";
     private static final String NONE = "";
@@ -86,8 +86,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     private final Neo4JOnlineDatabase graphdb;
     private final Driver driver;
-    private final Cache<String, Map<String, Object>> cache;
     private Session session;
+    private Cache<String, Map<String, Object>> cache;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -96,7 +96,6 @@ public class Neo4JOnlineSession implements GraphSession {
     Neo4JOnlineSession(Neo4JOnlineDatabase graphdb) {
         this.graphdb = graphdb;
         this.driver = graphdb.getdriver();
-        this.cache = CacheManager.getCache("system.neo4j.cache");
     }
 
     // ----------------------------------------------------------------------
@@ -110,9 +109,19 @@ public class Neo4JOnlineSession implements GraphSession {
     // Connect/Disconnect
     // ----------------------------------------------------------------------
 
-    public Neo4JOnlineSession connect() {
+    public Neo4JOnlineSession connect(Map<String, Object> params) {
+        if (params == null)
+            params = Collections.emptyMap();
         session = driver.session();
+        assignCache(params);
         return this;
+    }
+
+    private void assignCache(Map<String, Object> params) {
+        String cacheName = "system.neo4j.cache";
+        if (params.containsKey("cache.name"))
+            cacheName = "system.neo4j.cache." + params.get("cache.name").toString();
+        cache = CacheManager.getCache(cacheName);
     }
 
     @Override
@@ -151,16 +160,16 @@ public class Neo4JOnlineSession implements GraphSession {
     // Clear from cache
     // ----------------------------------------------------------------------
 
-    public void clearCache() {
+    private void clearCache() {
         this.cache.clear();
     }
 
-    public void removeFromCache(String nodeId) {
-        this.cache.remove(nodeId);
+    private void removeFromCache(Collection<String> nodeIds) {
+        nodeIds.forEach(this::removeFromCache);
     }
 
-    public void removeFromCache(Collection<String> nodeIds) {
-        nodeIds.forEach(this::removeFromCache);
+    private void removeFromCache(String nodeId) {
+        this.cache.remove(nodeId);
     }
 
     // ----------------------------------------------------------------------
@@ -190,8 +199,6 @@ public class Neo4JOnlineSession implements GraphSession {
             logStmt(s, params, t);
             throw t;
         }
-
-        clearCache();
     }
 
     // ----------------------------------------------------------------------
@@ -226,6 +233,9 @@ public class Neo4JOnlineSession implements GraphSession {
     public boolean existsNode(String nodeId) {
         if (nodeId == null)
             return false;
+        if (cache.containsKey(nodeId))
+            return true;
+
         Parameters params = Parameters.params(
             "id", asId(nodeId));
         String s = "MATCH (n) WHERE id(n) = $id RETURN count(n)";
@@ -253,18 +263,29 @@ public class Neo4JOnlineSession implements GraphSession {
             "id", asId(nodeId));
         String s = "MATCH (n) WHERE id(n) = $id DETACH DELETE n";
         this.delete(s, params, false);
-        removeFromCache(nodeId);
+        cache.remove(nodeId);
         return true;
     }
 
     @Override
-    public Map<String, Object> getNodeValues(String nodeId) {
+    public Map<String, Object> getNodeValues(String nodeId, boolean cached) {
+        if (!cached)
+            return getNodeValues(nodeId);
+
         return this.cache.get(nodeId, () -> {
             Parameters params = Parameters.params(
                 "id", asId(nodeId));
             String s = "MATCH (n) WHERE id(n) = $id RETURN n";
             return this.retrieve(N, s, params);
         });
+    }
+
+    @Override
+    public Map<String, Object> getNodeValues(String nodeId) {
+        Parameters params = Parameters.params(
+            "id", asId(nodeId));
+        String s = "MATCH (n) WHERE id(n) = $id RETURN n";
+        return this.retrieve(N, s, params);
     }
 
     // ----------------------------------------------------------------------
@@ -388,7 +409,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         setNodeSimpleProperties(nodeId, nodeProps);
         setNodeArrayProperties(nodeId, arrayProps);
-        removeFromCache(nodeId);
+        cache.remove(nodeId);
     }
 
     private void setNodeSimpleProperties(String nodeId, Map<String, Object> nodeProps) {
@@ -401,6 +422,7 @@ public class Neo4JOnlineSession implements GraphSession {
             .add(N, nodeProps);
         String s = String.format("MATCH (n) WHERE id(n) = $id %s", sblock);
         this.execute(s, params);
+        cache.remove(nodeId);
     }
 
     private void setNodeArrayProperties(String nodeId, Map<String, Object> arrayProps) {
@@ -441,6 +463,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 "SET n.${name} = apoc.coll.setOrExtend(n.${name}, $index, $value) " +
                 "RETURN n", params);
         this.execute(s, params);
+        cache.remove(nodeId);
     }
 
     @Override
@@ -454,7 +477,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
         setNodesSimpleProperties(nodeIds, nodeProps);
         setNodesArrayProperties(nodeIds, arrayProps);
-        removeFromCache(nodeIds);
     }
 
     private void setNodesSimpleProperties(Collection<String> nodeIds, Map<String, Object> nodeProps) {
@@ -478,6 +500,7 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public void deleteNodeProperty(String nodeId, String name) {
         deleteNodesProperties(Collections.singletonList(nodeId), Collections.singleton(name));
+        cache.remove(nodeId);
     }
 
     @Override
@@ -487,7 +510,6 @@ public class Neo4JOnlineSession implements GraphSession {
             "ids", asIds(nodeIds));
         String s = String.format("MATCH (n) WHERE id(n) IN $ids REMOVE %s", ablock);
         this.execute(s, params);
-        removeFromCache(nodeIds);
     }
 
 
@@ -594,7 +616,12 @@ public class Neo4JOnlineSession implements GraphSession {
 
     Query selectNodes(Collection<String> ids, String nodeType,  Map<String, Object> nodeProps) {
         String pblock = pblock(N, nodeProps);
-        String s = String.format("MATCH (n: %s %s) WHERE id(n) in $id", nodeType, pblock);
+        String s;
+
+        if (nodeType == null)
+            s = String.format("MATCH (n %s) WHERE id(n) in $id", pblock);
+        else
+            s = String.format("MATCH (n:%s %s) WHERE id(n) in $id", nodeType, pblock);
 
         Parameters params = Parameters.params(
             "id", asIds(ids))
@@ -1224,15 +1251,15 @@ public class Neo4JOnlineSession implements GraphSession {
         //       DA RIMUOVERE!!!!
         //
         // if the node contains 'fullname' but not 'namespace', inserts it
-        // if (body.containsKey(FULLNAME) && !body.containsKey(NAMESPACE)) {
-        //     // full.name
-        //     String namespace = "";
-        //     String fullName = body.get(FULLNAME).toString();
-        //     int pos = fullName.lastIndexOf('.');
-        //     if (pos != -1)
-        //         namespace = fullName.substring(0, pos);
-        //     body.put(NAMESPACE, namespace);
-        // }
+        if (body.containsKey(FULLNAME) && !body.containsKey(NAMESPACE)) {
+            // full.name
+            String namespace = "";
+            String fullName = body.get(FULLNAME).toString();
+            int pos = fullName.lastIndexOf('.');
+            if (pos != -1)
+                namespace = fullName.substring(0, pos);
+            body.put(NAMESPACE, namespace);
+        }
 
         return body;
     }

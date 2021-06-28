@@ -98,6 +98,7 @@ public interface GraphSession extends AutoCloseable {
      * Get the property values of the node
      */
     Map<String, Object> getNodeValues(String nodeId);
+    Map<String, Object> getNodeValues(String nodeId, boolean cached);
 
     /**
      * Delete the node
@@ -360,14 +361,6 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     Query queryUsingFullText(String query,  Map<String,Object> queryParams);
-
-    // ----------------------------------------------------------------------
-    // Cache
-    // ----------------------------------------------------------------------
-
-    void clearCache();
-    void removeFromCache(String nodeId);
-    void removeFromCache(Collection<String> ids);
 
     // ----------------------------------------------------------------------
     // End
