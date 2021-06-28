@@ -151,11 +151,15 @@ public class Neo4JOnlineSession implements GraphSession {
     // Clear from cache
     // ----------------------------------------------------------------------
 
-    private void removeFromCache(String nodeId) {
+    public void clearCache() {
+        this.cache.clear();
+    }
+
+    public void removeFromCache(String nodeId) {
         this.cache.remove(nodeId);
     }
 
-    private void removeFromCache(Collection<String> nodeIds) {
+    public void removeFromCache(Collection<String> nodeIds) {
         nodeIds.forEach(this::removeFromCache);
     }
 
@@ -186,6 +190,8 @@ public class Neo4JOnlineSession implements GraphSession {
             logStmt(s, params, t);
             throw t;
         }
+
+        clearCache();
     }
 
     // ----------------------------------------------------------------------
@@ -438,7 +444,7 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public void setNodesProperties(List<String> nodeIds, Map<String, Object> nodeProps) {
+    public void setNodesProperties(Collection<String> nodeIds, Map<String, Object> nodeProps) {
         if (nodeProps == null || nodeProps.isEmpty() || nodeIds == null || nodeIds.isEmpty())
             return;
 
@@ -451,7 +457,7 @@ public class Neo4JOnlineSession implements GraphSession {
         removeFromCache(nodeIds);
     }
 
-    private void setNodesSimpleProperties(List<String> nodeIds, Map<String, Object> nodeProps) {
+    private void setNodesSimpleProperties(Collection<String> nodeIds, Map<String, Object> nodeProps) {
         String sblock = sblock(N, nodeProps);
         Parameters params = Parameters.params(
             "ids", asIds(nodeIds))
@@ -460,34 +466,10 @@ public class Neo4JOnlineSession implements GraphSession {
         this.execute(s, params);
     }
 
-    private void setNodesArrayProperties(List<String> nodeIds, Map<String, Object> arrayProps) {
+    private void setNodesArrayProperties(Collection<String> nodeIds, Map<String, Object> arrayProps) {
         for (String nodeId : nodeIds)
             setNodeArrayProperties(nodeId, arrayProps);
     }
-
-    // private static Collection<?> setArrayValue(Collection<?> array, int index, Object value) {
-    //     if (array == null)
-    //         array = Collections.emptyList();
-    //     List<Object> list = new ArrayList<>(array);
-    //     int n = list.size();
-    //     Object lastValue;
-    //     if (list.size() > 0)
-    //         lastValue = list.get(n-1);
-    //     else if (value instanceof Boolean)
-    //         lastValue = false;
-    //     else if (value instanceof Integer)
-    //         lastValue = 0;
-    //     else if (value instanceof Long)
-    //         lastValue = 0L;
-    //     else if (value instanceof String)
-    //         lastValue = "";
-    //     else
-    //         throw new IllegalArgumentException("Unsupported value " + value);
-    //     while (list.size() <= index)
-    //         list.add(lastValue);
-    //     list.set(index, value);
-    //     return list;
-    // }
 
     // ----------------------------------------------------------------------
     // Delete properties
@@ -499,7 +481,7 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public void deleteNodesProperties(List<String> nodeIds, Collection<String> names) {
+    public void deleteNodesProperties(Collection<String> nodeIds, Collection<String> names) {
         String ablock = ablock(N, names);
         Parameters params = Parameters.params(
             "ids", asIds(nodeIds));
@@ -672,20 +654,20 @@ public class Neo4JOnlineSession implements GraphSession {
         return new Neo4JQuery(this, N, s, allProps);
     }
 
-    @Override
-    public Query queryNodesWithDegree(
-        List<String> ids, String edgeType, NodeDegree ndegree,
-        Map<String, Object> edgeProps) {
-        String dblock = dblock(N, edgeType, ndegree, edgeProps);
-
-        Parameters params = Parameters.params(
-            "ids", asIds(ids)
-        );
-
-        String s = String.format("MATCH (n) %s AND id(n) IN $ids", dblock);
-
-        return new Neo4JQuery(this, N, s, params);
-    }
+    // @Override
+    // public Query queryNodesWithDegree(
+    //     List<String> ids, String edgeType, NodeDegree ndegree,
+    //     Map<String, Object> edgeProps) {
+    //     String dblock = dblock(N, edgeType, ndegree, edgeProps);
+    //
+    //     Parameters params = Parameters.params(
+    //         "ids", asIds(ids)
+    //     );
+    //
+    //     String s = String.format("MATCH (n) %s AND id(n) IN $ids", dblock);
+    //
+    //     return new Neo4JQuery(this, N, s, params);
+    // }
 
     // ----------------------------------------------------------------------
     // All Edges

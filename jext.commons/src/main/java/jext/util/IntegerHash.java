@@ -9,15 +9,39 @@ import java.util.Objects;
 
 public class IntegerHash {
 
+    public static int digest(Object value) {
+        return hashCode(value);
+    }
+
     public static int hash(Object... values) {
         return Objects.hash(values);
     }
 
+    // ----------------------------------------------------------------------
+    // Hash code of collections & maps
+    // ----------------------------------------------------------------------
+
+    public static <E> int hashCode(List<E> c) {
+        return c.hashCode();
+    }
+
+    public static <E> int hashCode(Collection<E> c) {
+        return c.hashCode();
+    }
+
+    public static <K,V> int hashCode(Map<K, V> m) {
+        return m.hashCode();
+    }
+
+    // ----------------------------------------------------------------------
+    // Hash code of objects
+    // ----------------------------------------------------------------------
+
     public static int hashCode(Object o) {
         if (o == null)
             return 0;
-        if (o instanceof String)    // speedup
-            return o.hashCode();
+        // if (o instanceof String)
+        //     return hashCode((String) o);
         // if (o instanceof List)
         //     return hashCode((List<?>) o);
         // if (o instanceof Collection)
@@ -49,18 +73,49 @@ public class IntegerHash {
     }
 
     // ----------------------------------------------------------------------
-    // Continue to compose hash code
+    // Hash code of arrays
     // ----------------------------------------------------------------------
 
-    /** Compose all hashes */
-    public static int concat(int... hashes) {
-        if (hashes == null || hashes.length == 0)
-            return 0;
-        int result = 0;
-        for (int hash : hashes)
-            result = result*31 + hash;
-        return result;
+    public static int hashCode(long a[]) {
+        return Arrays.hashCode(a);
     }
+
+    public static int hashCode(int a[]) {
+        return Arrays.hashCode(a);
+    }
+
+    public static int hashCode(short a[]) {
+        return Arrays.hashCode(a);
+    }
+
+    public static int hashCode(char a[]) {
+        return Arrays.hashCode(a);
+    }
+
+    public static int hashCode(byte a[]) {
+        return Arrays.hashCode(a);
+    }
+
+    public static int hashCode(boolean a[]) {
+        return Arrays.hashCode(a);
+    }
+
+    public static int hashCode(float a[]) {
+        return Arrays.hashCode(a);
+    }
+
+    public static int hashCode(double a[]) {
+        return Arrays.hashCode(a);
+    }
+
+    // public static long hashCode(Object a[]) {
+    public static int hashCode(Object... a) {
+        return Arrays.hashCode(a);
+    }
+
+    // ----------------------------------------------------------------------
+    // Continue to compose hash code
+    // ----------------------------------------------------------------------
 
     /** Continue to compose the hash code */
     public static int append(int hash, Object... values) {
@@ -107,44 +162,4 @@ public class IntegerHash {
         return result;
     }
 
-    // ----------------------------------------------------------------------
-    // Hash code of arrays
-    // ----------------------------------------------------------------------
-
-    public static int hashCode(long a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    public static int hashCode(int a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    public static int hashCode(short a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    public static int hashCode(char a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    public static int hashCode(byte a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    public static int hashCode(boolean a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    public static int hashCode(float a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    public static int hashCode(double a[]) {
-        return Arrays.hashCode(a);
-    }
-
-    // public static long hashCode(Object a[]) {
-    public static int hashCode(Object... a) {
-        return Arrays.hashCode(a);
-    }
 }

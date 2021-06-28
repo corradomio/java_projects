@@ -66,6 +66,31 @@ public class ArrayUtils {
         return a;
     }
 
+    public static long[] asLongArray(Object v) {
+        if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
+            return new long[0];
+        if (v instanceof Integer)
+            return new long[]{ (int)v };
+        if (v instanceof Long)
+            return new long[]{ (long)v };
+        if (v instanceof long[])
+            return (long[]) v;
+
+        Collection c = ((Collection) v);
+        int n = c.size();
+        long[] a = new long[n];
+        int i=0;
+        for (Object e : c) {
+            if (e instanceof Integer)
+                a[i++] = ((Integer)e);
+            else if (e instanceof Long)
+                a[i++] = ((Long)e);
+            else
+                a[i++] = Long.parseLong(e.toString());
+        }
+        return a;
+    }
+
     public static boolean[] asBooleanArray(Object v) {
         if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
             return new boolean[0];

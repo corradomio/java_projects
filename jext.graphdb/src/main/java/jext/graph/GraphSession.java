@@ -133,6 +133,10 @@ public interface GraphSession extends AutoCloseable {
 
     /**
      * Add/update the node properties
+     * A property can be:
+     *
+     *      name
+     *      name[index]
      *
      * @param nodeId nodeId
      * @param nodeProps properties to update
@@ -140,10 +144,10 @@ public interface GraphSession extends AutoCloseable {
     void setNodeProperties(String nodeId, Map<String,Object> nodeProps);
     void setNodeProperty(String nodeId, String name, Object value);
     void setNodeProperty(String nodeId, String name, int index, Object value);
-    void setNodesProperties(List<String> nodeIds, Map<String,Object> nodeProps);
+    void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
 
     void deleteNodeProperty(String nodeId, String name);
-    void deleteNodesProperties(List<String> nodeId, Collection<String> names);
+    void deleteNodesProperties(Collection<String> nodeId, Collection<String> names);
 
     // ----------------------------------------------------------------------
     // Special node queries
@@ -185,14 +189,14 @@ public interface GraphSession extends AutoCloseable {
         String nodeType, String edgeType, NodeDegree ndegree,
         Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
-    /**
-     *
-     * @param ids list of node ids
-     * @param ndegree minimum & maximum input/output degree
-     * @return
-     */
-    Query queryNodesWithDegree(List<String> ids,  String edgeType, NodeDegree ndegree,
-        Map<String, Object> edgeProps);
+    // /**
+    //  *
+    //  * @param ids list of node ids
+    //  * @param ndegree minimum & maximum input/output degree
+    //  * @return
+    //  */
+    // Query queryNodesWithDegree(List<String> ids,  String edgeType, NodeDegree ndegree,
+    //     Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge queries
@@ -356,6 +360,14 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     Query queryUsingFullText(String query,  Map<String,Object> queryParams);
+
+    // ----------------------------------------------------------------------
+    // Cache
+    // ----------------------------------------------------------------------
+
+    void clearCache();
+    void removeFromCache(String nodeId);
+    void removeFromCache(Collection<String> ids);
 
     // ----------------------------------------------------------------------
     // End

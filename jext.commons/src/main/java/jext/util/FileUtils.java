@@ -44,6 +44,21 @@ public class FileUtils {
         return MessageDigest.getInstance("MD5");
     }
 
+    public static long digestAsLong(File file) {
+        if (!file.exists() || !file.isFile())
+            return 0;
+
+        try {
+            MessageDigest md = algorithm();
+            update(md, file);
+            return toDigestAsLong(md);
+        }
+        catch (Exception e) {
+            logger.error(e, e);
+            return 0;
+        }
+    }
+
     public static String digest(File file) {
         if (!file.exists() || !file.isFile())
             return "0";
@@ -78,16 +93,28 @@ public class FileUtils {
     }
 
     private static void update(MessageDigest md, InputStream in) throws IOException {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = in.read(buffer)) > 0)
-                md.update(buffer, 0, length);
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = in.read(buffer)) > 0)
+            md.update(buffer, 0, length);
     }
 
     private static String toDigest(MessageDigest md) {
-            byte[] digest = md.digest();
-            return DatatypeConverter.printHexBinary(digest);
-        }
+        byte[] digest = md.digest();
+        return DatatypeConverter.printHexBinary(digest);
+    }
+
+    private static long toDigestAsLong(MessageDigest md) {
+        byte[] digest = md.digest();
+        return ((long) digest[0]) +
+            (((long)digest[1]) <<  8) +
+            (((long)digest[2]) << 16) +
+            (((long)digest[3]) << 24) +
+            (((long)digest[4]) << 32) +
+            (((long)digest[5]) << 40) +
+            (((long)digest[6]) << 48) +
+            (((long)digest[7]) << 56);
+    }
 
     // ----------------------------------------------------------------------
     // File properties

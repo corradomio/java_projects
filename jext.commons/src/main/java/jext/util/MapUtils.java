@@ -38,19 +38,6 @@ public class MapUtils {
 
     // ----------------------------------------------------------------------
 
-    public static int getInt(Map<String, Object> map, String... keys) {
-        Object value = get(map, keys);
-        if (value == null) return 0;
-        if (value instanceof Integer)
-            return (Integer)value;
-        if (value instanceof Long)
-            return ((Long)value).intValue();
-        if (value instanceof String)
-            return Integer.parseInt((String)value);
-        else
-            return Integer.parseInt(value.toString());
-    }
-
     public static <E> E get(Map<String, Object> map, String... keys) {
         if (keys == null || keys.length == 0)
             return (E)map;
@@ -104,51 +91,41 @@ public class MapUtils {
             return Integer.parseInt(value.toString());
     }
 
+    public static int getInt(Map<String, Object> map, String... keys) {
+        Object value = get(map, keys);
+        if (value == null) return 0;
+        if (value instanceof Integer)
+            return (Integer)value;
+        if (value instanceof Long)
+            return ((Long)value).intValue();
+        if (value instanceof String)
+            return Integer.parseInt((String)value);
+        else
+            return Integer.parseInt(value.toString());
+    }
+
+    public static long getLong(Map<String, Object> map, String... keys) {
+        Object value = get(map, keys);
+        if (value == null) return 0;
+        if (value instanceof Integer)
+            return (Integer)value;
+        if (value instanceof Long)
+            return ((Long)value);
+        if (value instanceof String)
+            return Long.parseLong((String)value);
+        else
+            return Long.parseLong(value.toString());
+    }
+
     public static int[] getIntArray(Map<String, Object> map, String... keys) {
         return ArrayUtils.asIntArray(get(map, keys));
-        // Object value = get(map, keys);
-        // if (value == null)
-        //     return new int[0];
-        // else if (value instanceof int[]) {
-        //     return (int[])value;
-        // }
-        // else if (value instanceof Collection) {
-        //     Collection c = (Collection)value;
-        //     int[] array = new int[c.size()];
-        //     int at = 0;
-        //     for(Object v : c) {
-        //         if (v instanceof Long)
-        //             array[at++] = ((Long)v).intValue();
-        //         else if (v instanceof Integer)
-        //             array[at++] = (Integer) v;
-        //         else
-        //             throw new ClassCastException();
-        //     }
-        //     return array;
-        // }
-        // else if (value instanceof Long)
-        //     return new int[]{((Long)value).intValue()};
-        // else if (value instanceof Integer)
-        //     return new int[]{(Integer) value};
-        // else
-        //     throw new ClassCastException();
+    }
+
+    public static long[] getLongArray(Map<String, Object> map, String... keys) {
+        return ArrayUtils.asLongArray(get(map, keys));
     }
 
     public static boolean[] getBooleanArray(Map<String, Object> map, String... keys) {
         return ArrayUtils.asBooleanArray(get(map, keys));
-        // Object value = get(map, keys);
-        // if (value == null)
-        //     return new boolean[0];
-        // else if (value instanceof Collection) {
-        //     Collection c = (Collection)value;
-        //     boolean[] array = new boolean[c.size()];
-        //     int at = 0;
-        //     for(Object v : c) {
-        //         array[at++] = (Boolean) v;
-        //     }
-        //     return array;
-        // }
-        // else
-        //     throw new ClassCastException();
     }
 }
