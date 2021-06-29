@@ -132,6 +132,7 @@ public class ProjectAnalyzer {
         // minfo.put("moduleHome", FileUtils.getAbsolutePath(m.getModuleHome()));
         minfo.put("path", m.getPath());
         minfo.put("properties", m.getProperties());
+        minfo.put("digest", m.getDigest());
 
         // module dependencies
         minfo.put("dependencies", m.getDependencies()
@@ -249,7 +250,7 @@ public class ProjectAnalyzer {
         minfo.add(source.getSourceInfo());
         String modulePath = source.getModule().getName().getFullName();
         String sourcePath = source.getName().getFullName();
-        String digest = source.getDigest();
+        long digest = source.getDigest();
         minfo.addDigest(modulePath, sourcePath, digest);
     }
 

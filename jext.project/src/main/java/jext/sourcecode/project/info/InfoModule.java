@@ -23,7 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class InfoModule implements Module {
+public class InfoModule implements Module, Comparable<Named> {
 
     private final InfoProject project;
     private final Map<String, Object> info;
@@ -79,6 +79,11 @@ public class InfoModule implements Module {
     }
 
     @Override
+    public long getDigest() {
+        return MapUtils.getLong(info, "digest");
+    }
+
+    @Override
     public File getModuleHome() {
         return new File(project.getProjectHome(), getPath());
     }
@@ -109,7 +114,7 @@ public class InfoModule implements Module {
         for (String fullname : sinfos.keySet()) {
             Map<String, Object> sinfo = MapUtils.get(sinfos, fullname);
             if (project.isAccepted(MapUtils.get(sinfo, "path")))
-            sources.add(new InfoSource(this, sinfo));
+                sources.add(new InfoSource(this, sinfo));
         }
 
         return sources;
@@ -226,8 +231,29 @@ public class InfoModule implements Module {
         return Collections.emptySet();
     }
 
+    // ----------------------------------------------------------------------
+    // Overrides
+    // ----------------------------------------------------------------------
+
     @Override
-    public int compareTo(Named o) {
-        return getName().compareTo(o.getName());
+    public boolean equals(Object obj) {
+        Module that = (Module) obj;
+        return this.getName().equals(that.getName());
     }
+
+    @Override
+    public int hashCode() {
+        return this.getName().hashCode();
+    }
+
+    @Override
+    public int compareTo(Named that) {
+        return this.getName().compareTo(that.getName());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("InfoModule[%s]", getName().getName());
+    }
+
 }

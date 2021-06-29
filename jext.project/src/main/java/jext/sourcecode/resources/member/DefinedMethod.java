@@ -1,6 +1,5 @@
 package jext.sourcecode.resources.member;
 
-import jext.lang.JavaUtils;
 import jext.sourcecode.project.Method;
 import jext.sourcecode.project.MethodName;
 import jext.sourcecode.project.Parameter;
@@ -8,7 +7,6 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.util.MethodNameObject;
 import jext.sourcecode.project.util.NamedObject;
 import jext.sourcecode.resources.type.ReferencedType;
-import jext.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,7 +123,6 @@ public class DefinedMethod extends NamedObject implements Method {
         return ownerType.getId();
     }
 
-
     @Override
     public String getSignature() {
         return getMethodName().getSignature();
@@ -134,6 +131,11 @@ public class DefinedMethod extends NamedObject implements Method {
     @Override
     public String getDeclaration() {
         return declaration;
+    }
+
+    @Override
+    public long getDigest() {
+        return 0;
     }
 
     // ----------------------------------------------------------------------

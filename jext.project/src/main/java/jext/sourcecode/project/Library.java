@@ -38,7 +38,7 @@ public interface Library extends IdNamed {
     File getFile();
 
     /** An hash code of the file */
-    String getDigest();
+    long getDigest();
 
     /** Dependency libraries (MAVEN) */
     // List<? extends Library> getDependencies();

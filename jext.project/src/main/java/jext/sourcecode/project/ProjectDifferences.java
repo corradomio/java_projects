@@ -82,20 +82,19 @@ public class ProjectDifferences {
     //
     // ----------------------------------------------------------------------
 
-    /**
-     * Select the modules added in the project
-     */
     @JsonIgnore
     public List<String> getAddedModules() {
         return getModules(Status.ADDED);
     }
 
-    /**
-     * Select the modules deleted from the project
-     */
     @JsonIgnore
     public List<String> getDeletedModules() {
         return getModules(Status.DELETED);
+    }
+
+    @JsonIgnore
+    public List<String> getChangedModules() {
+        return getModules(Status.CHANGED);
     }
 
     private List<String> getModules(Status status) {
@@ -213,7 +212,7 @@ public class ProjectDifferences {
 
             if (!SetUtils.simmdiff(src_module_sources, dst_module_sources).isEmpty())
                 addModuleStatus(moduleName, Status.CHANGED);
-            }
+        }
 
         // check DELETED modules
         for (String moduleName : src_modules.keySet())
@@ -242,9 +241,9 @@ public class ProjectDifferences {
                     continue;
                 }
 
-                String src_digest = MapUtils.get(src_sources, sourceName, "digest");
-                String dst_digest = MapUtils.get(dst_sources, sourceName, "digest");
-                if (!src_digest.equals(dst_digest)) {
+                long src_digest = MapUtils.getLong(src_sources, sourceName, "digest");
+                long dst_digest = MapUtils.getLong(dst_sources, sourceName, "digest");
+                if (src_digest != (dst_digest)) {
                     addFileStatus(moduleName, sourceName, Status.CHANGED);
                     addModuleStatus(moduleName, Status.CHANGED);
                 }

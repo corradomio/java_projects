@@ -82,8 +82,8 @@ public abstract class InfoLibrary implements Library {
     }
 
     @Override
-    public String getDigest() {
-        return MapUtils.get(info, "digest");
+    public long getDigest() {
+        return MapUtils.getLong(info, "digest");
     }
 
     @Override

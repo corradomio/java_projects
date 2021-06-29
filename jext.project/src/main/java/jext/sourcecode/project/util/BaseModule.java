@@ -24,6 +24,7 @@ import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
+import jext.util.LongHash;
 import jext.util.SetUtils;
 
 import java.io.File;
@@ -114,6 +115,15 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         return getSourceRoots().stream()
             .map(sourceRoot -> new File(moduleHome, sourceRoot))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public long getDigest() {
+        long[] digest = new long[1];
+        getSources().forEach(source -> {
+            digest[0] = LongHash.concat(digest[0], source.getDigest());
+        });
+        return digest[0];
     }
 
     // ----------------------------------------------------------------------

@@ -26,4 +26,6 @@ public interface Method extends IdNamed {
 
     String getSignature();
     String getDeclaration();
+
+    long getDigest();
 }

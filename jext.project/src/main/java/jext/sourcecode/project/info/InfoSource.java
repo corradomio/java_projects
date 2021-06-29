@@ -76,8 +76,8 @@ public class InfoSource implements Source {
     }
 
     @Override
-    public String getDigest() {
-        return MapUtils.get(info, "digest");
+    public long getDigest() {
+        return MapUtils.getLong(info, "digest");
     }
 
     @Override
@@ -114,8 +114,33 @@ public class InfoSource implements Source {
         return Collections.emptyList();
     }
 
+    // ----------------------------------------------------------------------
+    // Overrides
+    // ----------------------------------------------------------------------
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Source that = (Source) obj;
+        return getName().equals(that.getName());
+    }
+
     @Override
     public int compareTo(Named o) {
         return getName().compareTo(o.getName());
     }
+
+    @Override
+    public String toString() {
+        return String.format("InfoSource[%s]", getName().getName());
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

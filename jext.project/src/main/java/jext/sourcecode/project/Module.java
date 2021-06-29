@@ -91,4 +91,6 @@ public interface Module extends RefIdNamed {
     /** List of types used (in imports) in the implementations */
     Set<RefType> getUsedTypes();
 
+    /** Module digest as composition of source's digests */
+    long getDigest();
 }

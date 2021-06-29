@@ -100,14 +100,14 @@ public class MavenLibrary extends BaseLibrary {
     }
 
     @Override
-    public String getDigest() {
+    public long getDigest() {
         File digestFile;
         MavenPom pom = md.getPom(coords);
         if (pom != null && pom.isPomPackaging())
             digestFile = md.getPomFile(coords);
         else
             digestFile = md.getArtifact(coords);
-        return FileUtils.digest(digestFile);
+        return FileUtils.digestAsLong(digestFile);
     }
 
     @Override

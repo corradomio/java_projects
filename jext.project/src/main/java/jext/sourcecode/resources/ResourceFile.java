@@ -51,8 +51,8 @@ public class ResourceFile extends NamedObject implements Resource {
     }
 
     @Override
-    public String getDigest() {
-        return FileUtils.digest(file);
+    public long getDigest() {
+        return FileUtils.digestAsLong(file);
     }
 
     @Override

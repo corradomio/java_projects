@@ -18,7 +18,7 @@ public interface Resource extends IdNamed {
 
     String getModuleId();
 
-    String getDigest();
+    long getDigest();
 
     String getMimeType();
 
