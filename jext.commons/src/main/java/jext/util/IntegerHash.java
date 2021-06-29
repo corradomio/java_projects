@@ -17,6 +17,12 @@ public class IntegerHash {
         return Objects.hash(values);
     }
 
+    public static int concat(int hash1, int hash2) {
+        if (hash1 == 0) return hash2;
+        if (hash2 == 0) return hash1;
+        return hash1*31 + hash2;
+    }
+
     // ----------------------------------------------------------------------
     // Hash code of collections & maps
     // ----------------------------------------------------------------------
@@ -117,49 +123,49 @@ public class IntegerHash {
     // Continue to compose hash code
     // ----------------------------------------------------------------------
 
-    /** Continue to compose the hash code */
-    public static int append(int hash, Object... values) {
-        if (values == null)
-            return hash;
+    // /** Continue to compose the hash code */
+    // public static int append(int hash, Object... values) {
+    //     if (values == null)
+    //         return hash;
+    //
+    //     int result = hash;
+    //     for (Object element : values)
+    //         result = 31 * result + Objects.hashCode(element);
+    //
+    //     return result;
+    // }
 
-        int result = hash;
-        for (Object element : values)
-            result = 31 * result + Objects.hashCode(element);
+    // public static <E> int append(int hash, List<E> c) {
+    //     if (c == null)
+    //         return hash;
+    //
+    //     int result = hash;
+    //     for (E e : c)
+    //         result = 31*result + Objects.hashCode(e);
+    //     return result;
+    // }
 
-        return result;
-    }
+    // public static <E> int append(int hash, Collection<E> c) {
+    //     if (c == null)
+    //         return hash;
+    //
+    //     int result = hash;
+    //     Iterator<?> i = c.iterator();
+    //     while (i.hasNext()) {
+    //         result += Objects.hashCode(i.next());
+    //     }
+    //     return result;
+    // }
 
-    public static <E> int append(int hash, List<E> c) {
-        if (c == null)
-            return hash;
-
-        int result = hash;
-        for (E e : c)
-            result = 31*result + Objects.hashCode(e);
-        return result;
-    }
-
-    public static <E> int append(int hash, Collection<E> c) {
-        if (c == null)
-            return hash;
-
-        int result = hash;
-        Iterator<?> i = c.iterator();
-        while (i.hasNext()) {
-            result += Objects.hashCode(i.next());
-        }
-        return result;
-    }
-
-    public static <K,V> int append(int hash, Map<K,V> m) {
-        if (m == null)
-            return hash;
-
-        int result = 0;
-        for(Map.Entry<K,V> e : m.entrySet())
-            result += Objects.hashCode(e.getKey()) ^ Objects.hashCode(e.getValue());
-
-        return result;
-    }
+    // public static <K,V> int append(int hash, Map<K,V> m) {
+    //     if (m == null)
+    //         return hash;
+    //
+    //     int result = 0;
+    //     for(Map.Entry<K,V> e : m.entrySet())
+    //         result += Objects.hashCode(e.getKey()) ^ Objects.hashCode(e.getValue());
+    //
+    //     return result;
+    // }
 
 }
