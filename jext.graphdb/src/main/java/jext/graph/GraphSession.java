@@ -98,7 +98,6 @@ public interface GraphSession extends AutoCloseable {
      * Get the property values of the node
      */
     Map<String, Object> getNodeValues(String nodeId);
-    Map<String, Object> getNodeValues(String nodeId, boolean cached);
 
     /**
      * Delete the node
@@ -143,9 +142,10 @@ public interface GraphSession extends AutoCloseable {
      * @param nodeProps properties to update
      */
     void setNodeProperties(String nodeId, Map<String,Object> nodeProps);
+    void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
+
     void setNodeProperty(String nodeId, String name, Object value);
     void setNodeProperty(String nodeId, String name, int index, Object value);
-    void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
 
     void deleteNodeProperty(String nodeId, String name);
     void deleteNodesProperties(Collection<String> nodeId, Collection<String> names);

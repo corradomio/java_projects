@@ -21,8 +21,11 @@ public class LongHash {
         return hashCode(values);
     }
 
-    public static long concat(long hash1, long hash2) {
-        return hash1*31 + hash2;
+    public static long concat(long... hashes) {
+        long result = 0;
+        for(long hash : hashes)
+            result = result*31 + hash;
+        return result;
     }
 
     // ----------------------------------------------------------------------
@@ -222,54 +225,7 @@ public class LongHash {
     }
 
     // ----------------------------------------------------------------------
-    // Continue to compose hash code
+    // End
     // ----------------------------------------------------------------------
-
-    // /** Continue to compose the hash code */
-    // public static long append(long hash, Object... values) {
-    //     if (values == null)
-    //         return hash;
-    //
-    //     long result = hash;
-    //     for (Object element : values)
-    //         result = 31 * result + (element == null ? 0 : hashCode(element));
-    //
-    //     return result;
-    // }
-
-    // public static <E> long append(long hash, List<E> c) {
-    //     if (c == null)
-    //         return hash;
-    //
-    //     long result = hash;
-    //     for (E e : c)
-    //         result = 31*result + (e==null ? 0 : hashCode(e));
-    //     return result;
-    // }
-
-    // public static <E> long append(long hash, Collection<E> c) {
-    //     if (c == null)
-    //         return hash;
-    //
-    //     long result = hash;
-    //     Iterator<?> i = c.iterator();
-    //     while (i.hasNext()) {
-    //         Object obj = i.next();
-    //         if (obj != null)
-    //             result += hashCode(obj);
-    //     }
-    //     return result;
-    // }
-
-    // public static <K,V> long append(long hash, Map<K,V> m) {
-    //     if (m == null)
-    //         return hash;
-    //
-    //     long result = 0;
-    //     for(Map.Entry<K,V> e : m.entrySet())
-    //         result += hashCode(e.getKey()) ^ hashCode(e.getValue());
-    //
-    //     return result;
-    // }
 
 }

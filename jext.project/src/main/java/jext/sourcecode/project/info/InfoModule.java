@@ -156,8 +156,6 @@ public class InfoModule implements Module, Comparable<Named> {
             Library library = project.getLibrary(libraryName);
             if (library != null)
                 libraries.add(library);
-            else
-                Debug.nop();
         });
         return libraries;
     }
@@ -170,8 +168,6 @@ public class InfoModule implements Module, Comparable<Named> {
             Library library = project.getLibrary(libraryName);
             if (library != null)
                 libraries.add(library);
-            else
-                Debug.nop();
         });
         return libraries;
     }

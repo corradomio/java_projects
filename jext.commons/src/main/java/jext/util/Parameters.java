@@ -43,15 +43,18 @@ public class Parameters extends HashMap<String, Object> {
         return params;
     }
 
+    public static Parameters select(Map<String, ?> params, String... keys) {
+        Parameters nparams = new Parameters();
+        for (String key : keys)
+            nparams.put(key, params.get(key));
+        return nparams;
+    }
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public Parameters() { }
-
-    // public Parameters(Map m) {
-    //     putAll(m);
-    // }
 
     // ----------------------------------------------------------------------
     // Operations

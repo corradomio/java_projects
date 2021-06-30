@@ -1,16 +1,15 @@
 package jext.graph.neo4j;
 
-import jext.cache.Cache;
-import jext.cache.CacheManager;
+import jext.debug.Debug;
 import jext.graph.Direction;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
 import jext.graph.NodeDegree;
-import jext.graph.NodeId;
 import jext.graph.Query;
 import jext.logging.Logger;
 import jext.util.ArrayUtils;
+import jext.util.MapUtils;
 import jext.util.Parameters;
 import jext.util.StringUtils;
 import org.neo4j.driver.Driver;
@@ -87,7 +86,6 @@ public class Neo4JOnlineSession implements GraphSession {
     private final Neo4JOnlineDatabase graphdb;
     private final Driver driver;
     private Session session;
-    private Cache<String, Map<String, Object>> cache;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -113,15 +111,7 @@ public class Neo4JOnlineSession implements GraphSession {
         if (params == null)
             params = Collections.emptyMap();
         session = driver.session();
-        assignCache(params);
         return this;
-    }
-
-    private void assignCache(Map<String, Object> params) {
-        String cacheName = "system.neo4j.cache";
-        if (params.containsKey("cache.name"))
-            cacheName = "system.neo4j.cache." + params.get("cache.name").toString();
-        cache = CacheManager.getCache(cacheName);
     }
 
     @Override
@@ -157,22 +147,6 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     // ----------------------------------------------------------------------
-    // Clear from cache
-    // ----------------------------------------------------------------------
-
-    private void clearCache() {
-        this.cache.clear();
-    }
-
-    private void removeFromCache(Collection<String> nodeIds) {
-        nodeIds.forEach(this::removeFromCache);
-    }
-
-    private void removeFromCache(String nodeId) {
-        this.cache.remove(nodeId);
-    }
-
-    // ----------------------------------------------------------------------
     // Named Queries
     // ----------------------------------------------------------------------
 
@@ -180,6 +154,7 @@ public class Neo4JOnlineSession implements GraphSession {
     public Query queryUsing(String queryName,  Map<String,Object> params) {
         String query = graphdb.getQuery(queryName);
 
+        // replace ${name} with 'name' value in 'params'
         String s = StringUtils.format(query, params);
 
         return new Neo4JQuery(this, N, s, params);
@@ -189,7 +164,7 @@ public class Neo4JOnlineSession implements GraphSession {
     public void executeUsing(String queryName, Map<String,Object> params) {
         String query = graphdb.getQuery(queryName);
 
-        // replace ${name} with 'name' value
+        // replace ${name} with 'name' value in 'params'
         String s = StringUtils.format(query, params);
 
         try {
@@ -233,8 +208,6 @@ public class Neo4JOnlineSession implements GraphSession {
     public boolean existsNode(String nodeId) {
         if (nodeId == null)
             return false;
-        if (cache.containsKey(nodeId))
-            return true;
 
         Parameters params = Parameters.params(
             "id", asId(nodeId));
@@ -251,7 +224,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String pblock = pblock(NONE, nodeProps);
         String s = String.format("CREATE (n:%s %s) RETURN id(n)", nodeType, pblock);
         String nodeId = this.create(s, nodeProps);
-        setNodeArrayProperties(nodeId, arrayProps);
+        setNodeProperties(nodeId, arrayProps);
         return nodeId;
     }
 
@@ -263,21 +236,7 @@ public class Neo4JOnlineSession implements GraphSession {
             "id", asId(nodeId));
         String s = "MATCH (n) WHERE id(n) = $id DETACH DELETE n";
         this.delete(s, params, false);
-        cache.remove(nodeId);
         return true;
-    }
-
-    @Override
-    public Map<String, Object> getNodeValues(String nodeId, boolean cached) {
-        if (!cached)
-            return getNodeValues(nodeId);
-
-        return this.cache.get(nodeId, () -> {
-            Parameters params = Parameters.params(
-                "id", asId(nodeId));
-            String s = "MATCH (n) WHERE id(n) = $id RETURN n";
-            return this.retrieve(N, s, params);
-        });
     }
 
     @Override
@@ -363,6 +322,13 @@ public class Neo4JOnlineSession implements GraphSession {
     // Indexed properties: name[index]
     // ----------------------------------------------------------------------
 
+    private static boolean hasProperty(Map<String, Object> params, String text) {
+        for(String key : params.keySet())
+            if (key.contains(text))
+                return true;
+        return false;
+    }
+
     private static boolean isIndexedProperty(String name) {
         return name.contains("[");
     }
@@ -384,6 +350,11 @@ public class Neo4JOnlineSession implements GraphSession {
         return aprops;
     }
 
+    // name,index -> name[index]
+    private static String at(String name, int index) {
+        return String.format("%s[%d]", name, index);
+    }
+
     // name[index] -> name
     private static String nameOf(String indexed) {
         int pos = indexed.indexOf('[');
@@ -397,73 +368,31 @@ public class Neo4JOnlineSession implements GraphSession {
         return Integer.parseInt(index);
     }
 
+    // name        -> name
+    // name[index] -> name_index
+    private static String pnameOf(String p) {
+        if (!p.contains("["))
+            return p;
+        else
+            return p.replace("[", "_").replace("]", "");
+    }
+
     // ----------------------------------------------------------------------
 
     @Override
     public void setNodeProperties(String nodeId, Map<String, Object> nodeProps) {
-        Map<String, Object> arrayProps = null;
-
-        // check if there are 'name[index]'
-        if (hasIndexedProperties(nodeProps))
-            arrayProps = extractIndexedProperties(nodeProps);
-
-        setNodeSimpleProperties(nodeId, nodeProps);
-        setNodeArrayProperties(nodeId, arrayProps);
-        cache.remove(nodeId);
-    }
-
-    private void setNodeSimpleProperties(String nodeId, Map<String, Object> nodeProps) {
         if (nodeProps == null || nodeProps.isEmpty())
             return;
 
         String sblock = sblock(N, nodeProps);
+
         Parameters params = Parameters.params(
             "id", asId(nodeId))
             .add(N, nodeProps);
-        String s = String.format("MATCH (n) WHERE id(n) = $id %s", sblock);
+
+        String s = String.format("MATCH (n) WHERE id(n) = $id %s RETURN n", sblock);
+
         this.execute(s, params);
-        cache.remove(nodeId);
-    }
-
-    private void setNodeArrayProperties(String nodeId, Map<String, Object> arrayProps) {
-        if (arrayProps == null || arrayProps.isEmpty())
-            return;
-
-        for (String nameIndex : arrayProps.keySet())
-            setNodeProperty(nodeId, nameOf(nameIndex), indexOf(nameIndex), arrayProps.get(nameIndex));
-    }
-
-    @Override
-    public void setNodeProperty(String nodeId, String name, Object value) {
-        if (value == null) {
-            deleteNodeProperty(nodeId, name);
-        }
-        else if (isIndexedProperty(name)) {
-            setNodeProperty(nodeId, nameOf(name), indexOf(name), value);
-        }
-        else {
-            Parameters params = Parameters.params(
-                name, value
-            );
-            setNodeProperties(nodeId, params);
-        }
-    }
-
-    @Override
-    public void setNodeProperty(String nodeId, String name, int index, Object value) {
-        Parameters params = Parameters.params(
-            "id", NodeId.asId(nodeId),
-            "name", name,
-            "index", index,
-            "value", value);
-
-        String s = StringUtils.format(
-            "MATCH (n) " +
-                "WHERE id(n) = $id " +
-                "SET n.${name} = apoc.coll.setOrExtend(n.${name}, $index, $value) " +
-                "RETURN n", params);
-        this.execute(s, params);
-        cache.remove(nodeId);
     }
 
     @Override
@@ -471,26 +400,25 @@ public class Neo4JOnlineSession implements GraphSession {
         if (nodeProps == null || nodeProps.isEmpty() || nodeIds == null || nodeIds.isEmpty())
             return;
 
-        Map<String, Object> arrayProps = null;
-        if (hasIndexedProperties(nodeProps))
-            arrayProps = extractIndexedProperties(nodeProps);
-
-        setNodesSimpleProperties(nodeIds, nodeProps);
-        setNodesArrayProperties(nodeIds, arrayProps);
-    }
-
-    private void setNodesSimpleProperties(Collection<String> nodeIds, Map<String, Object> nodeProps) {
         String sblock = sblock(N, nodeProps);
+
         Parameters params = Parameters.params(
             "ids", asIds(nodeIds))
             .add(N, nodeProps);
-        String s = String.format("MATCH (n) WHERE id(n) IN $ids %s", sblock);
+
+        String s = String.format("MATCH (n) WHERE id(n) IN $ids %s RETURN n", sblock);
+
         this.execute(s, params);
     }
 
-    private void setNodesArrayProperties(Collection<String> nodeIds, Map<String, Object> arrayProps) {
-        for (String nodeId : nodeIds)
-            setNodeArrayProperties(nodeId, arrayProps);
+    @Override
+    public void setNodeProperty(String nodeId, String name, Object value) {
+        setNodeProperties(nodeId, MapUtils.asMap(name, value));
+    }
+
+    @Override
+    public void setNodeProperty(String nodeId, String name, int index, Object value) {
+        setNodeProperties(nodeId, MapUtils.asMap(at(name, index), value));
     }
 
     // ----------------------------------------------------------------------
@@ -500,7 +428,6 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public void deleteNodeProperty(String nodeId, String name) {
         deleteNodesProperties(Collections.singletonList(nodeId), Collections.singleton(name));
-        cache.remove(nodeId);
     }
 
     @Override
@@ -512,7 +439,6 @@ public class Neo4JOnlineSession implements GraphSession {
         this.execute(s, params);
     }
 
-
     // ----------------------------------------------------------------------
     // Delete ALL
     // ----------------------------------------------------------------------
@@ -520,7 +446,6 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public void deleteAll() {
         queryNodes(null, null).delete();
-        this.cache.clear();
     }
 
     // ----------------------------------------------------------------------
@@ -1382,11 +1307,26 @@ public class Neo4JOnlineSession implements GraphSession {
             return "";
 
         StringBuilder sb = new StringBuilder("SET ");
-        for(String param : params.keySet()) {
+        for(String param : new HashSet<>(params.keySet())) {
             if (sb.length() > 4)
                 sb.append(",");
+            if (isIndexedProperty(param)) {
+                String name = nameOf(param);
+                int index = indexOf(param);
+                String pname = pnameOf(param);
+                sb.append(String.format("%s.%s = apoc.coll.setOrExtend(%s.%s, %d, $%s%s)",
+                    alias, name,
+                    alias, name,
+                    index,
+                    alias, pname));
+
+                params.put(pname, params.get(param));
+                params.remove(param);
+            }
+            else
             sb.append(String.format("%s.%s = $%s%s", alias, param, alias, param));
         }
+
         return sb.toString();
     }
 
@@ -1450,15 +1390,6 @@ public class Neo4JOnlineSession implements GraphSession {
             case WHERE: return sb.insert(0, " WHERE ").toString();
             default: return sb.toString();
         }
-    }
-
-    // name        -> name
-    // name[index] -> nameindex
-    private static String pnameOf(String p) {
-        if (!p.contains("["))
-            return p;
-        else
-            return p.replace("[", "").replace("]", "");
     }
 
     /*
