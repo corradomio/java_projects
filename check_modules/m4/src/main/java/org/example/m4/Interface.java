@@ -1,2 +1,6 @@
-package org.example.m4;public interface Interface {
+package org.example.m4;
+
+public interface Interface {
+
+    void check();
 }

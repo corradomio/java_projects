@@ -34,17 +34,6 @@ import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.asIds;
 import static jext.graph.NodeId.toId;
 
-/*
-    Properties map:
-
-        name, value                     n.name = value
-        name, array[]                   n.name in array[]
-        name, Collection                n.name in Collection
-        name[index], value              n.name[index] = value
-        name[index], array[]            n.name[index] in array[]
-        name[index], collection         n.name[index] in collection
- */
-
 public class Neo4JOnlineSession implements GraphSession {
 
     // ----------------------------------------------------------------------
@@ -218,8 +207,8 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
         Map<String, Object> arrayProps = null;
-        if (hasIndexedProperties(nodeProps))
-            arrayProps = extractIndexedProperties(nodeProps);
+        // if (hasIndexedProperties(nodeProps))
+        //     arrayProps = extractIndexedProperties(nodeProps);
 
         String pblock = pblock(NONE, nodeProps);
         String s = String.format("CREATE (n:%s %s) RETURN id(n)", nodeType, pblock);
@@ -329,26 +318,26 @@ public class Neo4JOnlineSession implements GraphSession {
         return false;
     }
 
-    private static boolean isIndexedProperty(String name) {
-        return name.contains("[");
-    }
+    // private static boolean isIndexedProperty(String name) {
+    //     return name.contains("[");
+    // }
 
-    private static boolean hasIndexedProperties(Map<String, Object> props) {
-        for (String param : props.keySet())
-            if (isIndexedProperty(param))
-                return true;
-        return false;
-    }
+    // private static boolean hasIndexedProperties(Map<String, Object> props) {
+    //     for (String param : props.keySet())
+    //         if (isIndexedProperty(param))
+    //             return true;
+    //     return false;
+    // }
 
-    private static Map<String, Object> extractIndexedProperties(Map<String, Object> props) {
-        Map<String, Object> aprops = new HashMap<>();
-        for (String param : new HashSet<>(props.keySet()))
-            if (isIndexedProperty(param)) {
-                aprops.put(param, props.get(param));
-                props.remove(param);
-            }
-        return aprops;
-    }
+    // private static Map<String, Object> extractIndexedProperties(Map<String, Object> props) {
+    //     Map<String, Object> aprops = new HashMap<>();
+    //     for (String param : new HashSet<>(props.keySet()))
+    //         if (isIndexedProperty(param)) {
+    //             aprops.put(param, props.get(param));
+    //             props.remove(param);
+    //         }
+    //     return aprops;
+    // }
 
     // name,index -> name[index]
     private static String at(String name, int index) {
@@ -362,19 +351,51 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     // name[index] -> index
-    private static int indexOf(String indexed) {
-        int pos = indexed.indexOf('[');
-        String index = indexed.substring(pos+1, indexed.length()-1);
-        return Integer.parseInt(index);
+    private static int indexOf(String indexed, int at) {
+        if (at == 0) {
+            int pos = indexed.indexOf('[');
+            int end = indexed.indexOf(']');
+            String index = indexed.substring(pos + 1, end);
+            return Integer.parseInt(index);
+        }
+        if (at == 1) {
+            int pos = indexed.indexOf('[');
+            int end = indexed.indexOf(',', pos);
+            String index = indexed.substring(pos + 1, end);
+            return Integer.parseInt(index);
+        }
+        if (at == 2) {
+            int pos = indexed.indexOf(',');
+            int end = indexed.indexOf(']', pos);
+            String index = indexed.substring(pos + 1, end);
+            return Integer.parseInt(index);
+        }
+        else
+            throw new IllegalArgumentException();
     }
 
     // name        -> name
-    // name[index] -> name_index
+    // name[index] -> nameIndex
+    // name[!]     -> name_a
+    // name[+]     -> name_a
+    // name[index,!]    -> nameIndex_a
+    // name[index,+]    -> nameIndex_a
+    // name[idx1,idx2]  -> nameIdx1_Idx2
     private static String pnameOf(String p) {
         if (!p.contains("["))
             return p;
+        if (p.endsWith("[!]"))
+            return p.replace("[!]", "_a");
+        if (p.endsWith("[+]"))
+            return p.replace("[+]", "_a");
+        if (p.endsWith(",!]"))
+            return p.replace("[", "").replace(",!]", "a");
+        if (p.endsWith(",+]"))
+            return p.replace("[", "").replace(",+]", "a");
         else
-            return p.replace("[", "_").replace("]", "");
+            return p.replace("[", "")
+                .replace(",", "_")
+                .replace("]", "");
     }
 
     // ----------------------------------------------------------------------
@@ -420,6 +441,33 @@ public class Neo4JOnlineSession implements GraphSession {
     public void setNodeProperty(String nodeId, String name, int index, Object value) {
         setNodeProperties(nodeId, MapUtils.asMap(at(name, index), value));
     }
+
+    // @Override
+    // public void appendNodePropertyValue(String nodeId, String name, Object value, boolean distinct) {
+    //     if (nodeId == null)
+    //         return;
+    //
+    //     String s;
+    //
+    //     Parameters params = Parameters.params(
+    //         "id", asId(nodeId),
+    //         "value", value,
+    //         "name", name
+    //     );
+    //
+    //     if (distinct)
+    //         s = StringUtils.format("" +
+    //             "MATCH (n) WHERE id(n) = $id " +
+    //             "SET n.${name} = apoc.coll.appendDistinct(n.${name}, $value) " +
+    //             "RETURN n", params);
+    //     else
+    //         s = StringUtils.format("" +
+    //             "MATCH (n) WHERE id(n) = $id " +
+    //             "SET n.${name} = apoc.coll.append(n.${name}, $value) " +
+    //             "RETURN n", params);
+    //
+    //     this.execute(s, params);
+    // }
 
     // ----------------------------------------------------------------------
     // Delete properties
@@ -895,6 +943,32 @@ public class Neo4JOnlineSession implements GraphSession {
         return this.retrieve("e", s, params, true);
     }
 
+    // @Override
+    // public void appendEdgePropertyValue(String edgeId, String name, Object value, boolean distinct) {
+    //     if (edgeId == null)
+    //         return;
+    //
+    //     String s;
+    //     Parameters params = Parameters.params(
+    //         "id", asId(edgeId),
+    //         "value", value,
+    //         "name", name
+    //     );
+    //
+    //     if (distinct)
+    //         s = StringUtils.format("" +
+    //             "MATCH ()-[e]-() WHERE id(e) = $id " +
+    //             "SET e.${name} = apoc.coll.appendDistinct(e.${name}, $value) " +
+    //             "RETURN e", params);
+    //     else
+    //         s = StringUtils.format("" +
+    //             "MATCH ()-[e]-() WHERE id(e) = $id " +
+    //             "SET e.${name} = apoc.coll.append(e.${name}, $value) " +
+    //             "RETURN e", params);
+    //
+    //     this.execute(s, params);
+    // }
+
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
@@ -1254,11 +1328,8 @@ public class Neo4JOnlineSession implements GraphSession {
             // value is a collection
             if (value instanceof Collection)
                 continue;
-            // parameter is "revision"
-            if (REVISION.equals(param))
-                continue;
-            // param is 'param[index]'
-            if (isIndexedProperty(param))
+            // param is "revision" or 'name[...]'
+            if (param.equals(REVISION) || param.contains("["))
                 continue;
 
             if (sb.length() > 1)
@@ -1310,21 +1381,82 @@ public class Neo4JOnlineSession implements GraphSession {
         for(String param : new HashSet<>(params.keySet())) {
             if (sb.length() > 4)
                 sb.append(",");
-            if (isIndexedProperty(param)) {
+
+            // name[!] -> appendDistinct(n.name, $pname)
+            if (param.endsWith("[!]")) {
                 String name = nameOf(param);
-                int index = indexOf(param);
                 String pname = pnameOf(param);
-                sb.append(String.format("%s.%s = apoc.coll.setOrExtend(%s.%s, %d, $%s%s)",
-                    alias, name,
-                    alias, name,
-                    index,
-                    alias, pname));
+
+                sb.append(String.format("%1$s.%2$s = apoc.coll.appendDistinct(%1$s.%2$s, $%1$s%3$s)",
+                    alias, name, pname));
 
                 params.put(pname, params.get(param));
                 params.remove(param);
             }
-            else
-            sb.append(String.format("%s.%s = $%s%s", alias, param, alias, param));
+            // name[+] -> append(n.name, $pname)
+            else if (param.endsWith("[+]")) {
+                String name = nameOf(param);
+                String pname = pnameOf(param);
+
+                sb.append(String.format("%1$s.%2$s = apoc.coll.append(%1$s.%2$s, $%1$s%3$s)",
+                    alias, name, pname));
+
+                params.put(pname, params.get(param));
+                params.remove(param);
+            }
+            // name[index,!] -> appendDistinct2(n.name, index, $pname)
+            else if (param.endsWith(",!]")) {
+                String name = nameOf(param);
+                String pname = pnameOf(param);
+                int index = indexOf(param, 1);
+
+                sb.append(String.format("%1$s.%2$s = apoc.coll.appendDistinct2(%1$s.%2$s, %4$d, $%1$s%3$s)",
+                    alias, name, pname, index));
+
+                params.put(pname, params.get(param));
+                params.remove(param);
+            }
+            // name[index,+] -> append2(n.name, index, $pname)
+            else if (param.endsWith(",+]")) {
+                String name = nameOf(param);
+                String pname = pnameOf(param);
+                int index = indexOf(param, 1);
+
+                sb.append(String.format("%1$s.%2$s = apoc.coll.append2(%1$s.%2$s, %4$d, $%1$s%3$s)",
+                    alias, name, pname, index));
+
+                params.put(pname, params.get(param));
+                params.remove(param);
+            }
+            // name[idx1,idx2] -> setOrExtend2(n.name, idx1, idx2, $pname)
+            else if (param.contains("[") && param.contains(",")) {
+                String name = nameOf(param);
+                String pname = pnameOf(param);
+                int index1 = indexOf(param, 1);
+                int index2 = indexOf(param, 2);
+
+                sb.append(String.format("%1$s.%2$s = apoc.coll.setOrExtend2(%1$s.%2$s, %4$d, %5$d, $%1$s%3$s)",
+                    alias, name, pname, index1, index2));
+
+                params.put(pname, params.get(param));
+                params.remove(param);
+            }
+            // name[index] -> setOrExtend2(n.name, index, $pname)
+            else if (param.contains("[")) {
+                String name = nameOf(param);
+                String pname = pnameOf(param);
+                int index = indexOf(param, 0);
+
+                sb.append(String.format("%1$s.%2$s = apoc.coll.setOrExtend(%1$s.%2$s, %4$d, $%1$s%3$s)",
+                    alias, name, pname, index));
+
+                params.put(pname, params.get(param));
+                params.remove(param);
+            }
+            // name -> name = $pname
+            else {
+                sb.append(String.format("%1$s.%2$s = $%1$s%2$s", alias, param));
+            }
         }
 
         return sb.toString();
@@ -1353,11 +1485,11 @@ public class Neo4JOnlineSession implements GraphSession {
             Object value = params.get(param);
 
             String pname = pnameOf(param);
-            if (!pname.equals(param)) params.put(pname, value);
+            if (!pname.equals(param))
+                params.put(pname, value);
 
-            if (value != null && !(value instanceof Collection)
-                && !REVISION.equals(param) && !isIndexedProperty(param))
-                continue;
+            // if (value != null && !(value instanceof Collection) && !REVISION.equals(param))
+            //     continue;
 
             // append "... AND "
             if (sb.length() > 0) sb.append(" AND ");

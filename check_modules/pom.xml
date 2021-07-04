@@ -13,6 +13,7 @@
         <module>m2</module>
         <module>main</module>
         <module>m3</module>
+        <module>m4</module>
     </modules>
 
     <properties>

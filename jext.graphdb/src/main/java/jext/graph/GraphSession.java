@@ -5,6 +5,52 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/*
+    a 'property' is a string that can be:
+
+        'name'          a single value
+        'name[index]'   an element in an array
+
+    Supported assignments:
+
+        name: single value
+
+            name, value                     n.name <- value
+            name[index], value              n.name <- apoc.coll.setOrExtend(n.name, index, value)
+            name[+], value                  n.name <- apoc.coll.append(n.name, value)
+            name[!], value                  n.name <- apoc.coll.appendDistinct(n.name, value)
+
+    Supported predicates:
+
+        name: single value
+
+            name, value                     n.name == value
+            name, array[]                   n.name IN array[]
+            name, Collection                n.name IN Collection
+
+        name: array
+
+            name[index], value              n.name[index] == value
+            name[index], array[]            n.name[index] IN array[]
+            name[index], collection         n.name[index] IN collection
+            name[i1|i2|...], value          n.name[i1] == value OR n.name[i2] == value OR ...
+                                            n.name[i1] OR n.name[i2] OR ...  for boolean 'true'
+
+    Special predicates:
+
+        name: boolean array
+
+            name, array[]                   n.name[index1] OR n.name[index2] OR ...
+
+
+     Support for array of array of int
+
+        assignment:
+            name[indx1,indx2], value        n.name <- apoc.coll.setOrExtend2(n.name, indx1, indx2, value)
+            name[index,+], value            n.name <- apoc.coll.append2(n.name, indx1, value)
+            name[index,!], value            n.name <- apoc.coll.appendDistinct2(n.name, indx1, value)
+ */
+
 public interface GraphSession extends AutoCloseable {
 
     String ID = "$id";
@@ -146,6 +192,8 @@ public interface GraphSession extends AutoCloseable {
 
     void setNodeProperty(String nodeId, String name, Object value);
     void setNodeProperty(String nodeId, String name, int index, Object value);
+
+    // void appendNodePropertyValue(String nodeId, String name, Object value, boolean distinct);
 
     void deleteNodeProperty(String nodeId, String name);
     void deleteNodesProperties(Collection<String> nodeId, Collection<String> names);
@@ -333,6 +381,8 @@ public interface GraphSession extends AutoCloseable {
      * @param override is to override the value
      */
     void   setEdgeProperty(String edgeId, String name, Object value, boolean override);
+
+    // void appendEdgePropertyValue(String edgeId, String name, Object value, boolean distinct);
 
     /**
      * Retrieve the properties of the edge
