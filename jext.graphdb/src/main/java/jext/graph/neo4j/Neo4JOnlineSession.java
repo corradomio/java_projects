@@ -800,6 +800,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps) {
+
         //
         // SPL v2.4 COMPATIBILITY. See above
         //
@@ -854,7 +855,7 @@ public class Neo4JOnlineSession implements GraphSession {
                     Map<String, Object> edgeProps)
     {
         String eblock = eblock(E, edgeType, direction, recursive, null);
-        String wblock = wblock(E, edgeProps, WhereType.WHERE);
+        String wblock = wblock(E, edgeProps, WhereType.AND);
         String s;
 
         if (recursive) {
@@ -1503,11 +1504,11 @@ public class Neo4JOnlineSession implements GraphSession {
                 s = revisionCondition(alias, param, params);
             }
             else if (!(value instanceof Collection)) {
-                s = String.format("%s.%s = $%s", alias, param, pname);
+                s = String.format("%1$s.%2$s = $%1$s%3$s", alias, param, pname);
             }
             // convert [param, value: a collection] in "n.param IN $param"
             else {
-                s = String.format("%s.%s IN $%s", alias, param, pname);
+                s = String.format("%1$s.%2$s IN $%1$s%s", alias, param, pname);
             }
 
             sb.append(s);

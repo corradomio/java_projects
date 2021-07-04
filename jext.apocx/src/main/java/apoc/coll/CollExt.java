@@ -6,11 +6,28 @@ import org.neo4j.procedure.UserFunction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
 public class CollExt {
+
+    private static Object makeArray(Object value) {
+        if (!(value instanceof Collection))
+            return value;
+        Collection c = (Collection) value;
+        if (c.isEmpty())
+            return "";
+
+        StringBuilder sb = new StringBuilder();
+        for (Object e : c) {
+            if (sb.length() > 0)
+                sb.append(",");
+            sb.append(e.toString());
+        }
+        return sb.toString();
+    }
 
     @UserFunction
     @Description("apoc.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
@@ -23,6 +40,8 @@ public class CollExt {
         // return list;
         if (index < 0)
             return null;
+
+        value = makeArray(value);
 
         List<Object> list;
         if (coll == null)
@@ -89,6 +108,9 @@ public class CollExt {
     public List<Object> append(@Name("coll") List<Object> coll, @Name("value") Object value) {
         if (value == null)
             return coll;
+
+        value = makeArray(value);
+
         List<Object> list;
         if (coll == null)
             list = new ArrayList<>();
@@ -103,6 +125,9 @@ public class CollExt {
     public List<Object> appendDistinct(@Name("coll") List<Object> coll, @Name("value") Object value) {
         if (value == null)
             return coll;
+
+        value = makeArray(value);
+
         List<Object> list;
         if (coll == null)
             list = new ArrayList<>();
