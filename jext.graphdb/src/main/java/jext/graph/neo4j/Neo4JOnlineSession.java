@@ -207,8 +207,8 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
         Map<String, Object> arrayProps = null;
-        // if (hasIndexedProperties(nodeProps))
-        //     arrayProps = extractIndexedProperties(nodeProps);
+        if (hasIndexedProperties(nodeProps))
+            arrayProps = extractIndexedProperties(nodeProps);
 
         String pblock = pblock(NONE, nodeProps);
         String s = String.format("CREATE (n:%s %s) RETURN id(n)", nodeType, pblock);
@@ -311,33 +311,29 @@ public class Neo4JOnlineSession implements GraphSession {
     // Indexed properties: name[index]
     // ----------------------------------------------------------------------
 
-    private static boolean hasProperty(Map<String, Object> params, String text) {
-        for(String key : params.keySet())
-            if (key.contains(text))
-                return true;
-        return false;
-    }
-
-    // private static boolean isIndexedProperty(String name) {
-    //     return name.contains("[");
-    // }
-
-    // private static boolean hasIndexedProperties(Map<String, Object> props) {
-    //     for (String param : props.keySet())
-    //         if (isIndexedProperty(param))
+    // private static boolean hasProperty(Map<String, Object> params, String text) {
+    //     for(String key : params.keySet())
+    //         if (key.contains(text))
     //             return true;
     //     return false;
     // }
 
-    // private static Map<String, Object> extractIndexedProperties(Map<String, Object> props) {
-    //     Map<String, Object> aprops = new HashMap<>();
-    //     for (String param : new HashSet<>(props.keySet()))
-    //         if (isIndexedProperty(param)) {
-    //             aprops.put(param, props.get(param));
-    //             props.remove(param);
-    //         }
-    //     return aprops;
-    // }
+    private static boolean hasIndexedProperties(Map<String, Object> props) {
+        for (String param : props.keySet())
+            if (param.contains("["))
+                return true;
+        return false;
+    }
+
+    private static Map<String, Object> extractIndexedProperties(Map<String, Object> props) {
+        Map<String, Object> aprops = new HashMap<>();
+        for (String param : new HashSet<>(props.keySet()))
+            if (param.contains("[")) {
+                aprops.put(param, props.get(param));
+                props.remove(param);
+            }
+        return aprops;
+    }
 
     // name,index -> name[index]
     private static String at(String name, int index) {
@@ -804,8 +800,8 @@ public class Neo4JOnlineSession implements GraphSession {
         //
         // SPL v2.4 COMPATIBILITY. See above
         //
-        if (USES.equals(edgeType))
-            edgeProps = createEdgeProps24(edgeProps);
+        // if (USES.equals(edgeType))
+        //     edgeProps = createEdgeProps24(edgeProps);
 
         // END
 
@@ -879,9 +875,10 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String findEdge(String edgeType, String fromId, String toId,
-                           Map<String, Object> edgeProps, Map<String, Object> createProps)
+                           Map<String, Object> findProps,
+                           Map<String, Object> createProps)
     {
-        String edgeId = queryPath(edgeType, fromId, toId, Direction.Output, false, edgeProps).id();
+        String edgeId = queryPath(edgeType, fromId, toId, Direction.Output, false, findProps).id();
         if (edgeId == null)
             edgeId = createEdge(edgeType, fromId, toId, createProps);
 

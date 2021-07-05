@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 /*
      T1|T2|...  T1;T2;...
-     T1,T2,...
-     !T
+     T1&T2&...  T1,T2,...
+     ~T         !T
      (exp)
  */
 
@@ -23,7 +23,7 @@ public class TokensPredicate implements Predicate<List<String>> {
 
     private static class Lex {
 
-        private static final String SYNTAX = "!,;|()";
+        private static final String SYNTAX = "~!,;|&()";
 
         private final String text;
         private final int len;
@@ -108,15 +108,26 @@ public class TokensPredicate implements Predicate<List<String>> {
         public boolean test(List<String> tokens) {
             int count = 0;
             for(String token : tokens)
-                if (this.tokens.contains(token))
+                if (contains(token))
                     ++count;
             return count == this.tokens.size();
         }
 
+        private boolean contains(String other) {
+            for (String token : this.tokens)
+                if (token.equalsIgnoreCase(other))
+                    return true;
+            return false;
+        }
+
+        // it is:  "t1" or "t1,t2,..."
         static boolean isContains(String expr) {
             return !expr.contains("(") &&
+                !expr.contains("*") &&
+                !expr.contains("?") &&
                 !expr.contains(";") &&
                 !expr.contains("!") &&
+                !expr.contains("&") &&
                 !expr.contains("|");
         }
     }
@@ -143,7 +154,7 @@ public class TokensPredicate implements Predicate<List<String>> {
         }
 
         static boolean isAnd(String token) {
-            return ",".equals(token);
+            return ",&".contains(token);
         }
     }
 
@@ -222,7 +233,7 @@ public class TokensPredicate implements Predicate<List<String>> {
         @Override
         public boolean test(List<String> s) {
             for (String t : s)
-                if (this.text.equals(t))
+                if (this.text.equalsIgnoreCase(t))
                     return true;
             return false;
         }
@@ -235,7 +246,7 @@ public class TokensPredicate implements Predicate<List<String>> {
             regex = regex
                 .replace("?", ".")
                 .replace("*", ".*");
-            this.pattern = Pattern.compile(regex);
+            this.pattern = Pattern.compile("(?i)" + regex);
         }
 
         @Override
@@ -307,7 +318,6 @@ public class TokensPredicate implements Predicate<List<String>> {
                 lex.back();
                 break;
             }
-
         }
 
         if (and.isSingle())
