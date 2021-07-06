@@ -378,6 +378,8 @@ public class Neo4JOnlineSession implements GraphSession {
     // name[index,+]    -> nameIndex_a
     // name[idx1,idx2]  -> nameIdx1_Idx2
     private static String pnameOf(String p) {
+        if (p.startsWith("$"))
+            return p.replace("$", "_");
         if (!p.contains("["))
             return p;
         if (p.endsWith("[!]"))
@@ -617,7 +619,7 @@ public class Neo4JOnlineSession implements GraphSession {
             s = String.format("MATCH (from) WHERE id(from) = $id " +
                     "CALL algo.shortestPaths.stream(from, null,{nodeQuery:'Match(n:%s %s) return id(n) as id',relationshipQuery: 'Match (n1) %s (n2) RETURN id(n1) as source, id(n2) as target',graph:'cypher',params:%s}) " +
                     "YIELD nodeId as n,distance " +
-                    "Where algo.isFinite(distance) = true return distinct n", nodeType, pblock, eblock,tblock);
+                    "Where algo.isFinite(distance) = true return distinct n", nodeType, pblock, eblock, tblock);
         }
         else{
             return queryAdjacentNodes(fromId, edgeType, direction, false, nodeType, nodeProps, edgeProps);
@@ -1269,16 +1271,11 @@ public class Neo4JOnlineSession implements GraphSession {
 
         Relationship edge = r.get(alias).asRelationship();
 
-        // for(String key : edge.keys()) {
-        //     Object value = edge.get(key).asObject();
-        //     body.put(key, value);
-        // }
-
-        // put_ properties
+        // put properties
         body.putAll(edge.asMap());
 
-        // put_ $id
-        // put_ $type
+        // put $id
+        // put $type
 
         body.put(ID, toId(edge.id()));
         body.put(TYPE, edge.type());
@@ -1328,6 +1325,9 @@ public class Neo4JOnlineSession implements GraphSession {
                 continue;
             // param is "revision" or 'name[...]'
             if (param.equals(REVISION) || param.contains("["))
+                continue;
+            // param is '$name'
+            if (param.startsWith("$"))
                 continue;
 
             if (sb.length() > 1)
@@ -1486,26 +1486,44 @@ public class Neo4JOnlineSession implements GraphSession {
             if (!pname.equals(param))
                 params.put(pname, value);
 
-            // if (value != null && !(value instanceof Collection) && !REVISION.equals(param))
-            //     continue;
-
             // append "... AND "
             if (sb.length() > 0) sb.append(" AND ");
 
-            // convert [param, null] in "EXISTS(n.param)"
+            // [param, null] -> "EXISTS(n.param)"
             if (value == null) {
                 s = String.format("EXISTS(%s.%s)", alias, param);
             }
-            // convert ["revision", n] in "inRevision[$revision]"
+            // ["revision", n] -> "inRevision[$revision]"
             else if (REVISION.equals(param)) {
                 s = revisionCondition(alias, param, params);
             }
-            else if (!(value instanceof Collection)) {
-                s = String.format("%1$s.%2$s = $%1$s%3$s", alias, param, pname);
+            else if (param.startsWith("$")) {
+                // ["$label", l] -> labels(n)[0] = $_label
+                if ("$label".equals(param)) {
+                    s = String.format("labels(%1$s)[0] = %2$s", alias, pname);
+                }
+                // ["$degree", d] -> apoc.node.degree(n) = $_degree
+                else if ("$degree".equals(param)) {
+                    s = String.format("apoc.node.degree(%1$s) = %2$s", alias, pname);
+                }
+                // ["$outdegree", d] -> apoc.node.degree(n,'>') = $_outdegree
+                else if ("$outdegree".equals(param)) {
+                    s = String.format("apoc.node.degree(%1$s, '>') = %2$s", alias, pname);
+                }
+                // ["$indegree", d] -> apoc.node.degree(n,'<') = $_indegree
+                else if ("$indegree".equals(param)) {
+                    s = String.format("apoc.node.degree(%1$s, '<') = %2$s", alias, pname);
+                }
+                else {
+                    s = "1 = 1";
+                }
             }
-            // convert [param, value: a collection] in "n.param IN $param"
+            // [param, value: a collection] -> "n.param IN $param"
+            else if (value instanceof Collection) {
+                s = String.format("%1$s.%2$s IN $%1$s%3$s", alias, param, pname);
+            }
             else {
-                s = String.format("%1$s.%2$s IN $%1$s%s", alias, param, pname);
+                s = String.format("%1$s.%2$s = $%1$s%3$s", alias, param, pname);
             }
 
             sb.append(s);

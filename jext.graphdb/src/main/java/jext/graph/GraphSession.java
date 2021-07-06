@@ -10,6 +10,14 @@ import java.util.Map;
 
         'name'          a single value
         'name[index]'   an element in an array
+        '$name'         a special property
+
+    Special properties:
+
+        $degree
+        $indegree
+        $outdegree
+        $label
 
     Supported assignments:
 
@@ -35,20 +43,28 @@ import java.util.Map;
             name[index], collection         n.name[index] IN collection
             name[i1|i2|...], value          n.name[i1] == value OR n.name[i2] == value OR ...
                                             n.name[i1] OR n.name[i2] OR ...  for boolean 'true'
-
     Special predicates:
 
         name: boolean array
 
             name, array[]                   n.name[index1] OR n.name[index2] OR ...
 
+    Extended predicates:
+
+        name>,  value
+        name>=, value
+        name<,  value
+        name<=, value
+        name!=, value
+
+
 
      Support for array of array of int
 
         assignment:
-            name[indx1,indx2], value        n.name <- apoc.coll.setOrExtend2(n.name, indx1, indx2, value)
-            name[index,+], value            n.name <- apoc.coll.append2(n.name, indx1, value)
-            name[index,!], value            n.name <- apoc.coll.appendDistinct2(n.name, indx1, value)
+            name[index,i2], value           n.name <- apoc.coll.setOrExtend2(n.name, index, i2, value)
+            name[index,+], value            n.name <- apoc.coll.append2(n.name, index, value)
+            name[index,!], value            n.name <- apoc.coll.appendDistinct2(n.name, index, value)
  */
 
 public interface GraphSession extends AutoCloseable {
