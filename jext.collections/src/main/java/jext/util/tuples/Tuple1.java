@@ -30,4 +30,9 @@ public class Tuple1<T1> {
         Tuple1<T1> that = (Tuple1<T1>) obj;
         return get1().equals(that.get1());
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%s)", get1());
+    }
 }

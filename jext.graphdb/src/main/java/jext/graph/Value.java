@@ -1,5 +1,9 @@
 package jext.graph;
 
+import jext.util.MapUtils;
+
+import java.util.Map;
+
 public class Value<T> {
 
     public enum Op {
@@ -9,8 +13,49 @@ public class Value<T> {
         GEQ,    // >=
         LT,     // <
         LEQ,    // <=
+
         IN,     // IN
-        NIN     // NOT IN
+        NIN,    // NOT IN
+
+        STARTS_WITH,    // string
+        ENDS_WITH,      // string
+        CONTAINS,       // string, collection (c CONTAINS x)
+        NOT_CONTAINS,   // string, collection (NOT c CONTAINS x)
+
+        APPEND,
+        APPEND_DISTINCT,
+    };
+
+    public static <T> Value of(T value) {
+        return new Value<T>(value);
+    }
+
+    public static <T> Value of(String op, T value) {
+        return new Value<T>(op(op), value);
+    }
+
+    public static <T> Value of(Op op, T value) {
+        return new Value<T>(op, value);
+    }
+
+    private static Map<String, Op> opMap = MapUtils.asMap(
+        "", Op.EQ,
+        "=", Op.EQ,
+        "==", Op.EQ,
+        "!=", Op.NEQ,
+        "<>", Op.NEQ,
+        "<", Op.LT,
+        "<=", Op.LEQ,
+        ">=", Op.GEQ,
+        ">", Op.GT,
+        "in", Op.IN,
+        "IN", Op.IN,
+        "!in", Op.NIN,
+        "!IN", Op.NIN
+    );
+
+    private static Op op(String op) {
+        return opMap.get(op);
     }
 
     private T value;
@@ -26,25 +71,12 @@ public class Value<T> {
         this.op = op;
     }
 
-    public Value(String op, T v) {
-        value = v;
-        if ("=".equals(op) ||"==".equals(op))
-            this.op = Op.EQ;
-        else if ("!=".equals(op) || "<>".equals(op))
-            this.op = Op.NEQ;
-        else if (">".equals(op))
-            this.op = Op.GT;
-        else if (">=".equals(op))
-            this.op = Op.GEQ;
-        else if ("<".equals(op))
-            this.op = Op.LT;
-        else if ("<=".equals(op))
-            this.op = Op.LEQ;
-        else if ("in".equals(op))
-            this.op = Op.IN;
-        else if ("!in".equals(op))
-            this.op = Op.NIN;
-        else
-            this.op = Op.EQ;
+    public T value() {
+        return value;
     }
+
+    public Op op() {
+        return op;
+    }
+
 }

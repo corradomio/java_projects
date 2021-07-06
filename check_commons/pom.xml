@@ -16,12 +16,38 @@
 
     <modules>
         <module>../jext.commons</module>
+        <module>../jext.project</module>
+        <module>../jext.java</module>
+        <module>../jext.maven</module>
+        <module>../jext.cache</module>
+        <module>../jext.concurrent</module>
+        <module>../jext.collections</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.project</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.java</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.maven</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.cache</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

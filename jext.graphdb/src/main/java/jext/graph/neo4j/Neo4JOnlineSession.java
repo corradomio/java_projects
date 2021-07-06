@@ -97,8 +97,6 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     public Neo4JOnlineSession connect(Map<String, Object> params) {
-        if (params == null)
-            params = Collections.emptyMap();
         session = driver.session();
         return this;
     }
@@ -156,6 +154,7 @@ public class Neo4JOnlineSession implements GraphSession {
         // replace ${name} with 'name' value in 'params'
         String s = StringUtils.format(query, params);
 
+        logStmt(s, params);
         try {
             session.run(s, params);
         }
@@ -163,7 +162,42 @@ public class Neo4JOnlineSession implements GraphSession {
             logStmt(s, params, t);
             throw t;
         }
+
+        // NOTE: 'CALL apoc.cypher.runMany(...)' DOESN'T work!!!
+        //
+        // if (!query.contains(";"))
+        //     runSingle(s, params);
+        // else
+        //     runMultiple(s, params);
     }
+
+    // private void runSingle(String s, Map<String, Object> params) {
+    //     logStmt(s, params);
+    //     try {
+    //         session.run(s, params);
+    //     }
+    //     catch (Throwable t) {
+    //         logStmt(s, params, t);
+    //         throw t;
+    //     }
+    // }
+
+    // private void runMultiple(String stmts, Map<String, Object> params) {
+    //     String s = "cypher;" + stmts + ";";
+    //     Parameters nparams = Parameters.params(
+    //         "stmts", s,
+    //         "params", params
+    //     );
+    //
+    //     logStmt(s, params);
+    //     try {
+    //         session.run("CALL apoc.cypher.runMany($stmts,$params)", nparams);
+    //     }
+    //     catch (Throwable t) {
+    //         logStmt(s, params, t);
+    //         throw t;
+    //     }
+    // }
 
     // ----------------------------------------------------------------------
     // Query using fulltext
@@ -242,15 +276,18 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long countNodes(String nodeType, Map<String,Object> nodeProps) {
-        String pblock = pblock(NONE, nodeProps);
+        String pblock = pblock(N, nodeProps);
+        String wblock = wblock(N, nodeProps, WhereType.WHERE);
         String s;
 
-        if (nodeType == null)
-            s = String.format("MATCH (n %s) RETURN COUNT(n)", pblock);
-        else
-            s = String.format("MATCH (n:%s %s) RETURN COUNT(n)", nodeType, pblock);
+        Parameters nparams = Parameters.params().add(N, nodeProps);
 
-        return this.count(s, nodeProps);
+        if (nodeType == null)
+            s = String.format("MATCH (n %s) %s RETURN COUNT(n)", pblock, wblock);
+        else
+            s = String.format("MATCH (n:%s %s) %s RETURN COUNT(n)", nodeType, pblock, wblock);
+
+        return this.count(s, nparams);
     }
 
     @Override
@@ -281,19 +318,23 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void deleteNodes(String nodeType, Map<String, Object> nodeProps, long count) {
-        String pblock = pblock(NONE, nodeProps);
+        String pblock = pblock(N, nodeProps);
+        String wblock = wblock(N, nodeProps, WhereType.WHERE);
         String s;
 
         if (nodeType == null && count <= 0)
-            s = String.format("MATCH (n %s) DETACH DELETE n", pblock);
+            s = String.format("MATCH (n %s) %s DETACH DELETE n", pblock, wblock);
         else if (nodeType == null)
-            s = String.format("MATCH (n %s) WITH n LIMIT %d DETACH DELETE n", pblock, count);
+            s = String.format("MATCH (n %s) %s WITH n LIMIT %d DETACH DELETE n", pblock, wblock, count);
         else if (count <= 0)
-            s = String.format("MATCH (n:%s %s) DETACH DELETE n", nodeType, pblock);
+            s = String.format("MATCH (n:%s %s) %s DETACH DELETE n", nodeType, pblock, wblock);
         else
-            s = String.format("MATCH (n:%s %s) WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, count);
+            s = String.format("MATCH (n:%s %s) %s WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, wblock, count);
 
-        this.delete(s, nodeProps, false);
+        Parameters nparams = Parameters.params();
+        nparams.add(N, nodeProps);
+
+        this.delete(s, nparams, false);
     }
 
     // ----------------------------------------------------------------------
@@ -371,6 +412,7 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     // name        -> name
+    // $name       -> name
     // name[index] -> nameIndex
     // name[!]     -> name_a
     // name[+]     -> name_a
@@ -379,9 +421,11 @@ public class Neo4JOnlineSession implements GraphSession {
     // name[idx1,idx2]  -> nameIdx1_Idx2
     private static String pnameOf(String p) {
         if (p.startsWith("$"))
-            return p.replace("$", "_");
+            return p.replace("$", "");
+
         if (!p.contains("["))
             return p;
+
         if (p.endsWith("[!]"))
             return p.replace("[!]", "_a");
         if (p.endsWith("[+]"))
@@ -390,10 +434,12 @@ public class Neo4JOnlineSession implements GraphSession {
             return p.replace("[", "").replace(",!]", "a");
         if (p.endsWith(",+]"))
             return p.replace("[", "").replace(",+]", "a");
-        else
+        if (p.contains("["))
             return p.replace("[", "")
                 .replace(",", "_")
                 .replace("]", "");
+        else
+            return p;
     }
 
     // ----------------------------------------------------------------------
@@ -937,7 +983,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Map<String, Object> getEdgeProperties(String edgeId) {
-        String s = String.format("MATCH ()-[e]-() WHERE id(e) = $id RETURN e");
+        String s = String.format("MATCH ()-[e]-() WHERE id(e) = $id RETURN e LIMIT 1");
         Parameters params = Parameters.params(
             "id", asId(edgeId));
         return this.retrieve("e", s, params, true);
@@ -1500,19 +1546,19 @@ public class Neo4JOnlineSession implements GraphSession {
             else if (param.startsWith("$")) {
                 // ["$label", l] -> labels(n)[0] = $_label
                 if ("$label".equals(param)) {
-                    s = String.format("labels(%1$s)[0] = %2$s", alias, pname);
+                    s = String.format("labels(%1$s)[0] = $%1$s%2$s", alias, pname);
                 }
                 // ["$degree", d] -> apoc.node.degree(n) = $_degree
                 else if ("$degree".equals(param)) {
-                    s = String.format("apoc.node.degree(%1$s) = %2$s", alias, pname);
+                    s = String.format("apoc.node.degree(%1$s) = $%1$s%2$s", alias, pname);
                 }
                 // ["$outdegree", d] -> apoc.node.degree(n,'>') = $_outdegree
                 else if ("$outdegree".equals(param)) {
-                    s = String.format("apoc.node.degree(%1$s, '>') = %2$s", alias, pname);
+                    s = String.format("apoc.node.degree(%1$s, '>') = $%1$s%2$s", alias, pname);
                 }
                 // ["$indegree", d] -> apoc.node.degree(n,'<') = $_indegree
                 else if ("$indegree".equals(param)) {
-                    s = String.format("apoc.node.degree(%1$s, '<') = %2$s", alias, pname);
+                    s = String.format("apoc.node.degree(%1$s, '<') = $%1$s%2$s", alias, pname);
                 }
                 else {
                     s = "1 = 1";

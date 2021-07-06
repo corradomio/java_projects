@@ -31,4 +31,9 @@ public class Tuple2<T1, T2> extends Tuple1<T1> {
         Tuple2<T1, T2> that = (Tuple2<T1, T2>) obj;
         return super.equals(obj) && get2().equals(that.get2());
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%s, %s)", get1(), get2());
+    }
 }

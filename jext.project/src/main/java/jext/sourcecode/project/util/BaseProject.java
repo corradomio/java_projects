@@ -450,9 +450,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         return null;
     }
 
-    protected Module newModule(File moduleHome) {
-        throw new UnsupportedOperationException();
-    }
+    protected abstract Module newModule(File moduleHome);
 
     // ----------------------------------------------------------------------
     // Runtime library

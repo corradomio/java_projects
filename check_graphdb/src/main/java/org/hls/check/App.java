@@ -5,7 +5,10 @@ import jext.cache.CacheManager;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
+import jext.graph.Name;
+import jext.graph.Value;
 import jext.logging.Logger;
+import jext.util.MapUtils;
 import jext.util.Parameters;
 import jext.util.PropertiesUtils;
 
@@ -23,26 +26,21 @@ public class App {
 
         CollExt collx = new CollExt();
 
-        System.out.println(collx.setOrExtend2(Arrays.asList("1,2", "2,3"), 1, 1, 22));
-        System.out.println(collx.setOrExtend2(Arrays.asList("1,2", "2,3"), 4, 4, 44));
+        // System.out.println(collx.setOrExtend2(Arrays.asList("1,2", "2,3"), 1, 1, 22));
+        // System.out.println(collx.setOrExtend2(Arrays.asList("1,2", "2,3"), 4, 4, 44));
 
         GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
 
         String nodeId;
+        long count;
         List<Map<String, Object>> r;
         try(GraphSession s = gdb.connect()) {
-            nodeId = s.findNode("Test", Parameters.params("inRevision[0]", false));
-
-            s.setNodeProperty(nodeId, "calls[0,+]", 1);
-            s.setNodeProperty(nodeId, "calls[0,!]", 1);
-
-            // nodeId = s.findNode("Test", Parameters.empty());
-            // if (nodeId == null)
-            //     nodeId = s.createNode("Test",  Parameters.empty());
-            //
-            s.setNodeProperty(nodeId, "inRevision[!]", true);
-            System.out.println(nodeId);
+            count = s.countNodes("method", MapUtils.asMap(
+                Name.of("name"), "$classInitializer",
+                "$outdegree", Value.of(">", 0)
+            ));
         }
+        System.out.println(count);
 
         gdb.destroy();
     }
