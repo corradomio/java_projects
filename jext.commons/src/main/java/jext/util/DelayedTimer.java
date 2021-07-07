@@ -135,13 +135,13 @@ public class DelayedTimer extends Thread {
 
     private void submitJob(long timeout, Callback callback) {
         synchronized (DelayedTimer.class) {
-        jobs.add(new Job(timeout, callback));
-    }
+            jobs.add(new Job(timeout, callback));
+        }
     }
 
     private void deleteJob(Callback callback) {
         synchronized (DelayedTimer.class) {
-        jobs.remove(callback);
+            jobs.remove(callback);
+        }
     }
-}
 }

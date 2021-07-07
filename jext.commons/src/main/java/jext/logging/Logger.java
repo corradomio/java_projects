@@ -218,7 +218,7 @@ public class Logger {
             logger.warn(String.format("%s (%d) ...", message, count));
             warnts = now;
             warncnt = 0;
-    }
+        }
     }
 
     // counted warn/error

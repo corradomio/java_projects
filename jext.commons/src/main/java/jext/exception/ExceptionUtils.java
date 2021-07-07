@@ -21,9 +21,9 @@ public class ExceptionUtils {
         while (cause != null && cause != prev) {
             message = cause.getMessage();
             if (!messages.contains(message)) {
-            sb.append("\n  [").append(messages.size()).append("] ")
-                .append(message);
-            messages.add(message);
+                sb.append("\n  [").append(messages.size()).append("] ")
+                    .append(message);
+                messages.add(message);
             }
             prev = cause;
             cause = prev.getCause();

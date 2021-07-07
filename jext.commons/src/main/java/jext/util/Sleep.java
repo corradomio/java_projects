@@ -17,8 +17,8 @@ public class Sleep {
 
     public static void sleep(long millis) {
         if (millis > 0)
-            try {
-                Thread.sleep(millis);
+        try {
+            Thread.sleep(millis);
             } catch (InterruptedException e) { }
     }
 
