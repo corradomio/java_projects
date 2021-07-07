@@ -56,6 +56,10 @@ public class TimeUtils {
      * @return the time measure unit
      */
     public static String unitOf(long millis) {
+        if (millis > 24*60*60*1000)
+            return "d";
+        if (millis > 60*60)
+            return "h";
         if (millis % 1000 != 0)
             return "ms";
         millis /= 1000;
@@ -68,41 +72,53 @@ public class TimeUtils {
     }
 
     public static String format(long millis, String unit) {
+        long factor;
+
         if (millis == Long.MAX_VALUE)
             return "inf";
 
         if (unit == null || unit.length() == 0)
             unit = unitOf(millis);
 
+        if (unit.startsWith("i"))
+            return toInterval(millis);
+
+        factor = 1000;
         if (unit.equals("ms"))
             return String.format("%d ms", millis);
         if (unit.equals("s")) {
-            long frac = millis % 1000;
+            long frac = millis % factor;
             if (frac == 0)
-                return String.format("%d s", millis / 1000);
+                return String.format("%d s", millis / factor);
             else
-                return String.format("%.3f s", millis / 1000.);
+                return String.format("%.3f s", millis / ((float)factor));
         }
+
+        factor *= 60;
         if (unit.equals("min") || unit.equals("m")) {
-            long frac = millis % (60*1000);
+            long frac = millis % factor;
             if (frac == 0)
-                return String.format("%d min", millis / (60*1000));
+                return String.format("%d min", millis / factor);
             else
-                return String.format("%.3f min", millis / (60*1000.));
+                return String.format("%.3f min", millis / ((float)factor));
         }
+
+        factor *= 60;
         if (unit.equals("h") || unit.equals("hr")) {
-            long frac = millis % (60*60*1000);
+            long frac = millis % factor;
             if (frac == 0)
-                return String.format("%d h", millis / (60*60*1000));
+                return String.format("%d h", millis / factor);
             else
-                return String.format("%.3f h", millis / (60*60*1000.));
+                return String.format("%.3f h", millis / ((float)factor));
         }
+
+        factor *= 24;
         if (unit.equals("d")) {
-            long frac = millis % (24*60*60*1000);
+            long frac = millis % factor;
             if (frac == 0)
-                return String.format("%d d", millis / (24*60*60*1000));
+                return String.format("%d d", millis / factor);
             else
-                return String.format("%.6f d", millis / (24*60*60*1000.));
+                return String.format("%.3f d", millis / ((float)factor));
         }
         else
             return String.format("%.3f s", millis/1000.);
@@ -120,7 +136,7 @@ public class TimeUtils {
      * 2) if it is an integer value, it is expressed in milliseconds
      *
      * 'm'  is supported BUT IT IS AN ERROR: the correct unit measure for minutes is 'min'
-     * 'hr' is supported BUT IT IS AN ERROR: the corerct unit measure for hours is 'h'
+     * 'hr' is supported BUT IT IS AN ERROR: the correct unit measure for hours is 'h'
      *
      * @param interval time interval in one of several formats
      * @return time in milliseconds
@@ -188,28 +204,29 @@ public class TimeUtils {
     private static long parseInterval(String duration) {
         String[] parts = duration.split(":");
         float millis = 0;
+        int i = 0;
         switch(parts.length) {
             case 4:
                 // dd:hh:mm:ss[.ccc]
-                millis += Float.parseFloat(parts[0].trim())*24*60*60;
-                millis += Float.parseFloat(parts[1].trim())*60*60;
-                millis += Float.parseFloat(parts[2].trim())*60;
-                millis += Float.parseFloat(parts[3].trim());
-                break;
+                millis += Float.parseFloat(parts[i++].trim())*24*60*60;
+                // millis += Float.parseFloat(parts[i++].trim())*60*60;
+                // millis += Float.parseFloat(parts[i++].trim())*60;
+                // millis += Float.parseFloat(parts[i++].trim());
+                // break;
             case 3:
                 // hh:mm:ss[.ccc]
-                millis += Float.parseFloat(parts[0].trim())*60*60;
-                millis += Float.parseFloat(parts[1].trim())*60;
-                millis += Float.parseFloat(parts[2].trim());
-                break;
+                millis += Float.parseFloat(parts[i++].trim())*60*60;
+                // millis += Float.parseFloat(parts[i++].trim())*60;
+                // millis += Float.parseFloat(parts[i++].trim());
+                // break;
             case 2:
                 // mm:ss[.ccc]
-                millis += Float.parseFloat(parts[0].trim())*60;
-                millis += Float.parseFloat(parts[1].trim());
-                break;
+                millis += Float.parseFloat(parts[i++].trim())*60;
+                // millis += Float.parseFloat(parts[i++].trim());
+                // break;
             default:
                 // ss[.ccc]
-                millis += Float.parseFloat(parts[0]);
+                millis += Float.parseFloat(parts[i]);
                 break;
         }
         return (long)(millis*1000+0.5);
@@ -222,17 +239,24 @@ public class TimeUtils {
             return "0";
         if (millis == Long.MAX_VALUE)
             return "inf";
+
         long temp = (millis + 500)/1000;
         long seconds = temp % 60;
-        temp  = temp / 60;
+        temp = temp / 60;
         long minutes = temp % 60;
-        temp  = temp / 60;
-        long hours = temp;
+        temp = temp / 60;
+        long hours = temp % 24;
+        temp = temp / 24;
+        long days = temp;
 
-        if (hours != 0)
+        if (days != 0)
+            return String.format("%d:%02d:%02d:%02d", days, hours, minutes, seconds);
+        else if (hours != 0)
             return String.format("%d:%02d:%02d", hours, minutes, seconds);
-        else
+        else if (minutes != 0)
             return String.format("%d:%02d", minutes, seconds);
+        else
+            return String.format("%d", seconds);
     }
 
     private static String toIntervalMillis(long millis) {
@@ -248,9 +272,13 @@ public class TimeUtils {
         temp  = temp / 60;
         long minutes = temp % 60;
         temp  = temp / 60;
-        long hours = temp;
+        long hours = temp % 24;
+        temp = temp / 24;
+        long days = temp;
 
-        if (hours != 0)
+        if (days != 0)
+            return String.format("%d:%02d:%02d:%02d.%03d", days, hours, minutes, seconds, frac);
+        else if (hours != 0)
             return String.format("%d:%02d:%02d.%03d", hours, minutes, seconds, frac);
         else if (minutes != 0)
             return String.format("%d:%02d.%03d", minutes, seconds, frac);
