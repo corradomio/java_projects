@@ -19,7 +19,7 @@ public interface Method extends IdNamed {
     RefType getType();
     String  getTypeId();
 
-    List<? extends Parameter> getParameters();
+    List<Parameter> getParameters();
 
     RefType getOwnerType();
     String  getOwnerTypeId();

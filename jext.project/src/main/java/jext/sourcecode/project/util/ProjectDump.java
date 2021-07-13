@@ -42,9 +42,8 @@ public class ProjectDump {
     }
 
     private void yamlProject(Project project, PrintStream stream, long noFlags) {
-        stream.printf("name: %s\n", project.getName().getName());
+        stream.printf("name: %s (%s)\n", project.getName().getName(), project.getId());
         stream.printf("fullname: %s\n", project.getName().getFullName());
-        stream.printf("id: %s\n", project.getId());
         stream.printf("projectType: %s\n", project.getProjectType());
         stream.printf("home: '%s'\n", project.getProjectHome());
         stream.print("properties:\n");
@@ -54,18 +53,18 @@ public class ProjectDump {
         stream.print("modules:\n");
         project.getModules().forEach(m -> {
             if (m.getName().getFullName().isEmpty()) {
-                spaces(stream, 1).printf("'%s':\n", m.getName().getFullName());
+                spaces(stream, 1).printf("'%s' (%s):\n", m.getName().getFullName(), m.getId());
                 spaces(stream, 2).printf("name: '%s'\n", m.getName().getName());
                 spaces(stream, 2).printf("fullname: '%s'\n", m.getName().getFullName());
             }
             else {
-                spaces(stream, 1).printf("%s:\n", m.getName().getFullName());
+                spaces(stream, 1).printf("%s (%s):\n", m.getName().getFullName(), m.getId());
                 spaces(stream, 2).printf("name: %s\n", m.getName().getName());
                 spaces(stream, 2).printf("fullname: %s\n", m.getName().getFullName());
             }
-            spaces(stream, 2).printf("id: %s\n", m.getId());
-            spaces(stream, 2).printf("home: '%s'\n", m.getModuleHome());
+            spaces(stream, 2).printf("refId: %s\n", m.getRefId());
             spaces(stream, 2).printf("path: '%s'\n", m.getPath());
+            spaces(stream, 2).printf("home: '%s'\n", m.getModuleHome());
             spaces(stream, 2).print("properties:\n");
             m.getProperties().forEach((n, v) -> {
                 spaces(stream, 3).printf("%s: %s\n", n, v);
@@ -79,8 +78,7 @@ public class ProjectDump {
             if ((noFlags & NO_SOURCES) == 0) {
                 spaces(stream, 2).print("sources:\n");
                 m.getSources().forEach(s -> {
-                    spaces(stream, 3).printf("- %s\n", s.getName().getFullName());
-                    spaces(stream, 3).printf("- %s\n", s.getId());
+                    spaces(stream, 3).printf("- %s (%s)\n", s.getName().getFullName(), s.getId());
                 });
             }
             if ((noFlags & NO_DEPENDENCIES) == 0) {
@@ -123,10 +121,9 @@ public class ProjectDump {
         if ((noFlags & NO_LIBRARIES) == 0) {
             stream.print("libraries:\n");
             project.getLibraries().forEach(l -> {
-                spaces(stream, 1).printf("%s:\n", l.getName().getName());
+                spaces(stream, 1).printf("%s (%s):\n", l.getName().getName(), l.getId());
                 spaces(stream, 2).printf("name: %s\n", l.getName().getName());
                 spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
-                spaces(stream, 2).printf("id: %s\n", l.getId());
                 spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
                 spaces(stream, 2).print("files:\n");
                 l.getFiles().forEach(lf -> {
@@ -135,10 +132,9 @@ public class ProjectDump {
             });
             stream.print("runtimeLibraries:\n");
             ProjectUtils.getRuntimeLibraries(project).forEach(l -> {
-                spaces(stream, 1).printf("%s:\n", l.getName().getName());
+                spaces(stream, 1).printf("%s (%s):\n", l.getName().getName(), l.getId());
                 spaces(stream, 2).printf("name: %s\n", l.getName().getName());
                 spaces(stream, 2).printf("fullname: %s\n", l.getName().getFullName());
-                spaces(stream, 2).printf("id: %s\n", l.getId());
                 spaces(stream, 2).printf("libraryType: %s\n", l.getLibraryType());
                 spaces(stream, 2).print("files:\n");
                 l.getFiles().forEach(lf -> {

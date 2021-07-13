@@ -48,10 +48,10 @@ public class ProjectDifferences {
         CHANGED
     }
 
-    @JsonIgnore
-    public int srcRevision;
-    @JsonIgnore
-    public int dstRevision;
+    // @JsonIgnore
+    // public int srcRevision;
+    // @JsonIgnore
+    // public int dstRevision;
 
     public final Map<String, Status> diffModules = new HashMap<>();
     public final Map<String, Map<String, Status>> diffSources = new HashMap<>();
@@ -62,8 +62,8 @@ public class ProjectDifferences {
     // ----------------------------------------------------------------------
 
     public ProjectDifferences() {
-        srcRevision = -1;
-        dstRevision = -1;
+        // srcRevision = -1;
+        // dstRevision = -1;
     }
 
     // ----------------------------------------------------------------------

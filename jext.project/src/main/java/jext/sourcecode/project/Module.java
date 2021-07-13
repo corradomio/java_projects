@@ -86,7 +86,7 @@ public interface Module extends RefIdNamed {
     boolean isEmpty();
 
     /** List of types defined inside the module */
-    Set<? extends Type> getTypes();
+    Set<Type> getTypes();
 
     /** List of types used (in imports) in the implementations */
     Set<RefType> getUsedTypes();

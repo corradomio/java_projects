@@ -52,8 +52,9 @@ public class ProjectRevisions {
     }
 
     public File getProjectInfo(int rev) {
-        if (rev == -1)
+        if (rev == CURRENT_REVISION)
             return new File(splDirectory, prefix + PROJECT_INFO);
+
         String revProjectInfo = String.format(PROJECT_INFO_REV, rev);
         return new File(splDirectory, prefix + revProjectInfo);
     }
@@ -72,16 +73,16 @@ public class ProjectRevisions {
     // ----------------------------------------------------------------------
 
     public int getCurrentRevision() {
-        for (int rev = 0; rev != -1; ++rev) {
-            File projectInfo = getProjectInfo(rev);
-            if (!projectInfo.exists())
+        File projectInfoFile = new File(splDirectory, prefix + PROJECT_INFO);
+        if (!projectInfoFile.exists())
+            return NO_REVISION;
+
+        for (int rev=0; true; ++rev) {
+            String revProjectInfo = String.format(PROJECT_INFO_REV, rev);
+            projectInfoFile = new File(splDirectory, prefix + revProjectInfo);
+            if (!projectInfoFile.exists())
                 return rev;
         }
-        return -1;
-    }
-
-    public int getLastRevision() {
-        return getCurrentRevision() - 1;
     }
 
     // ----------------------------------------------------------------------
@@ -142,7 +143,7 @@ public class ProjectRevisions {
      * 'project-info-[revision].json', DELETE 'project-info-[revision].json'
      */
     public void deleteDuplicated() {
-        int rev = getLastRevision();
+        int rev = getCurrentRevision() - 1;
         if (rev < 0) return;
 
         ProjectDifferences pdiff = new ProjectDifferences();

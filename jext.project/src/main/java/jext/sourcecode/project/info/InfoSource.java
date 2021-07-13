@@ -102,7 +102,7 @@ public class InfoSource implements Source {
     }
 
     @Override
-    public List<? extends Type> getTypes() {
+    public List<Type> getTypes() {
         List<String> types = MapUtils.get(info, "types");
         return types.stream()
             .map(typeName -> new InfoType(this, typeName))
@@ -110,7 +110,7 @@ public class InfoSource implements Source {
     }
 
     @Override
-    public List<? extends RefType> getUsedTypes() {
+    public List<RefType> getUsedTypes() {
         return Collections.emptyList();
     }
 

@@ -4,9 +4,7 @@ import jext.java.TypeRole;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.ObjectName;
-import jext.sourcecode.project.Field;
 import jext.sourcecode.project.Library;
-import jext.sourcecode.project.Method;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -145,19 +143,19 @@ public class InfoType implements Type {
     }
 
     @Override
-    public List<? extends Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
+    public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
         return Collections.emptyList();
     }
 
-    @Override
-    public List<? extends Field> getFields() {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Field> getFields() {
+    //     return Collections.emptyList();
+    // }
 
-    @Override
-    public List<? extends Method> getMethods() {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Method> getMethods() {
+    //     return Collections.emptyList();
+    // }
 
     @Override
     public Source getSource() {

@@ -3,9 +3,7 @@ package jext.sourcecode.resources.type;
 import jext.java.TypeRole;
 import jext.name.Name;
 import jext.name.ObjectName;
-import jext.sourcecode.project.Field;
 import jext.sourcecode.project.Library;
-import jext.sourcecode.project.Method;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -127,15 +125,15 @@ public class ImplementedType extends NamedObject implements Type {
         return Collections.emptyList();
     }
 
-    @Override
-    public List<Field> getFields() {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Field> getFields() {
+    //     return Collections.emptyList();
+    // }
 
-    @Override
-    public List<Method> getMethods() {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Method> getMethods() {
+    //     return Collections.emptyList();
+    // }
 
     // --
 

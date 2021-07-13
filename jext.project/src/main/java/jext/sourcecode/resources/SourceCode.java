@@ -36,8 +36,6 @@ public abstract class SourceCode extends ResourceFile implements Source {
     //
     // ----------------------------------------------------------------------
 
-    // private Module module;
-    // private File file;
     private String language;
     private SourceInfo sinfo;
 

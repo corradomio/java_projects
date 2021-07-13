@@ -109,7 +109,7 @@ public class DefinedMethod extends NamedObject implements Method {
     }
 
     @Override
-    public List<? extends Parameter> getParameters() {
+    public List<Parameter> getParameters() {
         return parameters;
     }
 

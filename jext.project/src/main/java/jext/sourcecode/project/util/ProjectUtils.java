@@ -85,36 +85,36 @@ public class ProjectUtils {
     //     return sources;
     // }
 
-    public static List<Source> getSources(Project project) {
-        List<Source> sources = new ArrayList<>();
-        for (Module module : project.getModules())
-            sources.addAll(module.getSources());
+    // public static List<Source> getSources(Project project) {
+    //     List<Source> sources = new ArrayList<>();
+    //     for (Module module : project.getModules())
+    //         sources.addAll(module.getSources());
+    //
+    //     // sort the files in decreasing order of totalLines
+    //     // in this way, the most large files are analysed as soon
+    //     // as possible
+    //     sources.sort((s1, s2) -> {
+    //         int tl1 = (int)s1.getSourceInfo().totalLines;
+    //         int tl2 = (int)s2.getSourceInfo().totalLines;
+    //         return tl2-tl1;
+    //     });
+    //
+    //     return sources;
+    // }
 
-        // sort the files in decreasing order of totalLines
-        // in this way, the most large files are analysed as soon
-        // as possible
-        sources.sort((s1, s2) -> {
-            int tl1 = (int)s1.getSourceInfo().totalLines;
-            int tl2 = (int)s2.getSourceInfo().totalLines;
-            return tl2-tl1;
-        });
-
-        return sources;
-    }
-
-    public static Source getSource(Project project, String nameOrId) {
-        for (Module module : project.getModules()) {
-            Source source = module.getSource(nameOrId);
-            if (source != null)
-                return source;
-        }
-        return null;
-    }
+    // public static Source getSource(Project project, String nameOrId) {
+    //     for (Module module : project.getModules()) {
+    //         Source source = module.getSource(nameOrId);
+    //         if (source != null)
+    //             return source;
+    //     }
+    //     return null;
+    // }
 
     public static List<File> getSourceRoots(Project project) {
         File projectHome = project.getProjectHome();
         Set<File> roots = new HashSet<>();
-        getSources(project).forEach(source -> {
+        project.getSources().forEach(source -> {
             Optional<String> sr = source.getSourceRoot();
             sr.ifPresent(sourceRoot -> roots.add(new File(projectHome, sourceRoot)));
         });

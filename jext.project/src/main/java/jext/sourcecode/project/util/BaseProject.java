@@ -68,14 +68,15 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected Predicate<String> selector;
 
     protected List<Module> modules;
+    protected List<Source> sources;
     protected LibrarySet libraries;
 
     protected LibraryFinder lfinder;
     protected MavenDownloader downloader;
 
-    protected FilePatterns sources;
-    protected FilePatterns resources;
-    protected FilePatterns excludes;
+    protected FilePatterns fpSources;
+    protected FilePatterns fpResources;
+    protected FilePatterns fpExcludes;
 
     protected transient boolean aborted;
 
@@ -112,9 +113,9 @@ public abstract class BaseProject extends NamedObject implements Project {
         List<String> excludes = PropertiesUtils.getValues(this.getProperties(), MODULE_EXCLUDE);
 
         // file selectors
-        this.sources = new FilePatterns().addAll(sources);
-        this.resources = new FilePatterns().addAll(resources);
-        this.excludes = new FilePatterns().addAll(excludes);
+        this.fpSources = new FilePatterns().addAll(sources);
+        this.fpResources = new FilePatterns().addAll(resources);
+        this.fpExcludes = new FilePatterns().addAll(excludes);
 
         this.logger = Logger.getLogger("%s.%s",
             getClass().getSimpleName(),
@@ -146,6 +147,34 @@ public abstract class BaseProject extends NamedObject implements Project {
     @Override
     public File getProjectHome() {
         return projectHome;
+    }
+
+    // ----------------------------------------------------------------------
+    // Sources
+    // ----------------------------------------------------------------------
+
+    @Override
+    public List<Source> getSources() {
+        if (sources != null)
+            return sources;
+
+        sources = new ArrayList<>();
+        for (Module module : getModules())
+            sources.addAll(module.getSources());
+        return sources;
+    }
+
+    @Override
+    public Source getSource(String sourceId) {
+        for (Source source : getSources()) {
+            if (source.getId().equals(sourceId))
+                return source;
+            if (source.getName().getFullName().equals(sourceId))
+                return source;
+            if (source.getName().getName().equals(sourceId))
+                return source;
+        }
+        return null;
     }
 
     // ----------------------------------------------------------------------
@@ -181,7 +210,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                 public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                     File dir = path.toFile();
 
-                    if (excludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
+                    if (fpExcludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
                         return FileVisitResult.SKIP_SUBTREE;
 
                     File isModule = new File(dir, moduleFile);
@@ -236,7 +265,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                 public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                     File dir = path.toFile();
 
-                    if (excludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
+                    if (fpExcludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
                         return FileVisitResult.SKIP_SUBTREE;
 
                     return FileVisitResult.CONTINUE;
@@ -450,7 +479,9 @@ public abstract class BaseProject extends NamedObject implements Project {
         return null;
     }
 
-    protected abstract Module newModule(File moduleHome);
+    protected Module newModule(File moduleHome) {
+        throw new UnsupportedOperationException();
+    }
 
     // ----------------------------------------------------------------------
     // Runtime library
@@ -560,7 +591,7 @@ public abstract class BaseProject extends NamedObject implements Project {
                     if (dir.equals(baseDirectory))
                         return FileVisitResult.CONTINUE;
 
-                    if (excludes.accept(baseDirectory, dir))
+                    if (fpExcludes.accept(baseDirectory, dir))
                         return FileVisitResult.SKIP_SUBTREE;
 
                     if (isModuleDir(dir))
@@ -594,7 +625,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         File moduleHome = module.getModuleHome();
 
         List<Source> list = FileUtils.asList(dir.listFiles(resource ->
-            sources.accept(moduleHome, resource))
+            fpSources.accept(moduleHome, resource))
         ).stream()
             .map(file -> SourceCode.newSource(file, module))
             .filter(source -> selector.test(source.getPath()))
@@ -606,7 +637,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     public List<Resource> getResources(File dir, Module module) {
         File moduleHome = module.getModuleHome();
         return FileUtils.asList(dir.listFiles(resource ->
-                resources.accept(moduleHome, resource))
+                fpResources.accept(moduleHome, resource))
         ).stream()
             .map(file -> new ResourceFile(file, module))
             .filter(resource -> selector.test(resource.getPath()))

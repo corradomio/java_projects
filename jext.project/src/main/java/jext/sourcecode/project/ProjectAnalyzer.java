@@ -90,7 +90,7 @@ public class ProjectAnalyzer {
             "modules", modules.size(),
             "libraries", libraries.size(),
             "runtimeLibraries", rtLibraries.size(),
-            "sources", ProjectUtils.getSources(project).size(),
+            "sources", project.getSources().size(),
             "mavenRepositories", mavenRepos.size()
         ));
 
@@ -240,7 +240,7 @@ public class ProjectAnalyzer {
         // create the main map
         ModulesInfo minfo = new ModulesInfo();
         minfo.init();
-        ProjectUtils.getSources(project)
+        project.getSources()
             .parallelStream()
             .forEach(source -> analyzeSource(minfo, source));
         return minfo;

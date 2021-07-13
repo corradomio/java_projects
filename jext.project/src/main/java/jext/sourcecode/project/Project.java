@@ -78,6 +78,16 @@ public interface Project extends IdNamed {
     MavenDownloader getLibraryDownloader();
 
     // ----------------------------------------------------------------------
+    // Sources
+    // ----------------------------------------------------------------------
+
+    List<Source> getSources();
+
+    Source getSource(String sourceId);
+
+    // ----------------------------------------------------------------------
+    // Modules
+    // ----------------------------------------------------------------------
 
     /** List of all project's modules */
     List<Module> getModules();
@@ -90,12 +100,16 @@ public interface Project extends IdNamed {
     Module getModule(String nameOrId);
 
     // ----------------------------------------------------------------------
+    // Libraries
+    // ----------------------------------------------------------------------
 
     /** UNION of all module libraries with the HIGHEST version */
     Set<Library> getLibraries();
 
     Library getLibrary(String nameOrId);
 
+    // ----------------------------------------------------------------------
+    // Extras
     // ----------------------------------------------------------------------
 
     double getComplexity(double threshold);
@@ -109,7 +123,7 @@ public interface Project extends IdNamed {
     boolean isAborted();
 
     // ----------------------------------------------------------------------
-    // Abort
+    // End
     // ----------------------------------------------------------------------
 
 }

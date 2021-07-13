@@ -40,9 +40,6 @@ public interface Library extends IdNamed {
     /** An hash code of the file */
     long getDigest();
 
-    /** Dependency libraries (MAVEN) */
-    // List<? extends Library> getDependencies();
-
     /**
      * List of file composing this library.
      * MAVEN libraries with "pom" packaging and "runtime" libraries
@@ -56,7 +53,7 @@ public interface Library extends IdNamed {
      * List of types defined in the library
      * (not efficient)
      */
-    Set<? extends RefType> getTypes();
+    Set<RefType> getTypes();
 
     /**
      * Check if the type is defined in the  library

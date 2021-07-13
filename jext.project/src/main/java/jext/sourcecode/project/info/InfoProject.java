@@ -9,11 +9,11 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.Source;
 import jext.sourcecode.project.info.library.InfoInvalidLibrary;
 import jext.sourcecode.project.info.library.InfoLocalLibrary;
 import jext.sourcecode.project.info.library.InfoMavenLibrary;
 import jext.sourcecode.project.info.library.InfoRTLibrary;
-import jext.util.HashMap;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 
@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -53,6 +54,8 @@ public class InfoProject implements Project {
     private Map<String, Module> moduleMap;
     private Set<Library> libraries;
     private Map<String, Library> libraryMap;
+    private List<Source> sources;
+    private Map<String, Source> sourceMap;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -79,13 +82,17 @@ public class InfoProject implements Project {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Operations
     // ----------------------------------------------------------------------
 
     @Override
-    public Name getName() {
-        return name;
+    public void setResourceFilter(Predicate<String> selector) {
+        this.selector = selector;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public String getId() {
@@ -93,8 +100,8 @@ public class InfoProject implements Project {
     }
 
     @Override
-    public void setResourceFilter(Predicate<String> selector) {
-        this.selector = selector;
+    public Name getName() {
+        return name;
     }
 
     @Override
@@ -114,21 +121,35 @@ public class InfoProject implements Project {
         return projectHome;
     }
 
+    // ----------------------------------------------------------------------
+    // Sources
+
+    // ----------------------------------------------------------------------
     @Override
-    public Project setLibraryFinder(LibraryFinder lfinder) {
-        this.lfinder= lfinder;
-        return this;
+    public List<Source> getSources() {
+        if (sources != null)
+            return sources;
+
+        sources = new ArrayList<>();
+        for (Module module : getModules())
+            sources.addAll(module.getSources());
+
+        return sources;
     }
 
     @Override
-    public LibraryFinder getLibraryFinder() {
-        return lfinder;
+    public Source getSource(String sourceId) {
+        if (sourceMap == null) {
+            sourceMap = new HashMap<>();
+            for (Source source : getSources())
+                sourceMap.put(source.getId(), source);
+        }
+        return sourceMap.get(sourceId);
     }
 
-    @Override
-    public MavenDownloader getLibraryDownloader() {
-        return lfinder.getDownloader();
-    }
+    // ----------------------------------------------------------------------
+    // Modules
+    // ----------------------------------------------------------------------
 
     @Override
     public List<Module> getModules() {
@@ -169,6 +190,26 @@ public class InfoProject implements Project {
         // }
 
         return null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Libraries
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Project setLibraryFinder(LibraryFinder lfinder) {
+        this.lfinder= lfinder;
+        return this;
+    }
+
+    @Override
+    public LibraryFinder getLibraryFinder() {
+        return lfinder;
+    }
+
+    @Override
+    public MavenDownloader getLibraryDownloader() {
+        return lfinder.getDownloader();
     }
 
     @Override
@@ -232,6 +273,10 @@ public class InfoProject implements Project {
         return null;
     }
 
+    // ----------------------------------------------------------------------
+    // Extras
+    // ----------------------------------------------------------------------
+
     @Override
     public double getComplexity(double threshold) {
         return 0;
@@ -245,11 +290,6 @@ public class InfoProject implements Project {
     @Override
     public boolean isAborted() {
         return false;
-    }
-
-    @Override
-    public int compareTo(Named o) {
-        return name.compareTo(o.getName());
     }
 
     // ----------------------------------------------------------------------
@@ -270,4 +310,29 @@ public class InfoProject implements Project {
             info = Collections.emptyMap();
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Overrides
+    // ----------------------------------------------------------------------
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Project that = (Project) obj;
+        return name.equals(that.getName());
+    }
+
+    @Override
+    public int compareTo(Named o) {
+        return name.compareTo(o.getName());
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

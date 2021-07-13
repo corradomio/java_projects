@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import apoc.coll.CollExt;
+import apoc.rev.Revision;
 import jext.cache.CacheManager;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
@@ -25,6 +26,8 @@ public class App {
         Properties props = PropertiesUtils.load("config/neo4j.properties");
 
         CollExt collx = new CollExt();
+        Revision rev = new Revision();
+        rev.test(Arrays.asList(true,false,true), Arrays.asList(0L,1L));
 
         // System.out.println(collx.setOrExtend2(Arrays.asList("1,2", "2,3"), 1, 1, 22));
         // System.out.println(collx.setOrExtend2(Arrays.asList("1,2", "2,3"), 4, 4, 44));

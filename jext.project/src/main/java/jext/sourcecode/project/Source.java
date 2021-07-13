@@ -13,8 +13,8 @@ public interface Source extends Resource {
 
     String getLanguage();
 
-    List<? extends Type> getTypes();
+    List<Type> getTypes();
 
-    List<? extends RefType> getUsedTypes();
+    List<RefType> getUsedTypes();
 
 }

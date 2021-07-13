@@ -107,7 +107,7 @@ public abstract class InfoLibrary implements Library {
     }
 
     @Override
-    public Set<? extends RefType> getTypes() {
+    public Set<RefType> getTypes() {
         return Collections.emptySet();
     }
 
