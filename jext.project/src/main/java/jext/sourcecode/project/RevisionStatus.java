@@ -1,10 +1,9 @@
 package jext.sourcecode.project;
 
 public enum RevisionStatus {
+    MISSING,    // false/false
     ADDED,      // false/true
-    REMOVED,    // true/false
-                // missing in the specified revision OR in BTH revisions
+    DELETED,    // true/false
     SAME,       // true/true and digest1 == digest2
-                // exists  in the specified revision
     CHANGED     // true/true but digest1 != digest2
 }

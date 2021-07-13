@@ -2,11 +2,11 @@ package jext.sourcecode.resources;
 
 import jext.logging.Logger;
 import jext.name.Name;
+import jext.name.NamedObject;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.util.NamedObject;
 import jext.util.FileUtils;
 import jext.util.StringUtils;
 

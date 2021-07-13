@@ -9,7 +9,7 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.resources.BaseLibrary;
-import jext.sourcecode.resources.type.ReferencedType;
+import jext.sourcecode.project.util.ReferencedType;
 import jext.util.JarUtils;
 
 import java.io.File;

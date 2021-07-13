@@ -5,6 +5,7 @@ import jext.java.FastJavaParser;
 import jext.logging.Logger;
 import jext.maven.MavenDownloader;
 import jext.name.Name;
+import jext.name.NamedObject;
 import jext.name.PathName;
 import jext.nio.file.FilteredFileVisitor;
 import jext.sourcecode.project.Library;
@@ -424,29 +425,29 @@ public abstract class BaseProject extends NamedObject implements Project {
         while (updated[0]) {
             updated[0] = false;
 
-        // check for all parents
+            // check for all parents
             dmodules.forEach(module -> {
-            // skip the root module
-            Name mname = module.getName();
-            if (mname.isRoot()) return;
+                // skip the root module
+                Name mname = module.getName();
+                if (mname.isRoot()) return;
 
-            // check if the parent module is present
-            Name pname = mname.getParent();
-            if (mnames.contains(pname)) return;
+                // check if the parent module is present
+                Name pname = mname.getParent();
+                if (mnames.contains(pname)) return;
 
-            // the parent module is missing
-            // the moduleHome is the parent directory
-            File pmoduleHome = module.getModuleHome().getParentFile();
-            Module pmodule = newModule(pmoduleHome);
-            pmodule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
-            // register the name
-            mnames.add(pmodule.getName());
+                // the parent module is missing
+                // the moduleHome is the parent directory
+                File pmoduleHome = module.getModuleHome().getParentFile();
+                Module pmodule = newModule(pmoduleHome);
+                pmodule.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_HEURISTIC);
+                // register the name
+                mnames.add(pmodule.getName());
                 modules.add(pmodule);
 
                 updated[0] = true;
-            logger.warnf("Added missing parent module %s", pmodule.getName().getFullName());
-        });
-    }
+                logger.warnf("Added missing parent module %s", pmodule.getName().getFullName());
+            });
+        }
     }
 
     protected void sortModules() {

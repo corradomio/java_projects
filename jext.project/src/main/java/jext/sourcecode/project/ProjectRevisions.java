@@ -7,10 +7,7 @@ import jext.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 
-public class ProjectRevisions {
-
-    public static int NO_REVISION = -1;
-    public static int CURRENT_REVISION = -1;
+public class ProjectRevisions implements Revisions {
 
     private final String prefix;
     private final File splDirectory;

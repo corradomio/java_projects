@@ -1,10 +1,10 @@
 package jext.sourcecode.resources;
 
+import jext.name.NamedObject;
 import jext.name.ObjectName;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
-import jext.sourcecode.project.util.NamedObject;
 import jext.util.FileUtils;
 import jext.util.MimeTypes;
 import jext.util.PathUtils;

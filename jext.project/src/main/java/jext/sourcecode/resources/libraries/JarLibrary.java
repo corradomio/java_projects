@@ -8,7 +8,7 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.resources.BaseLibrary;
-import jext.sourcecode.resources.type.ReferencedType;
+import jext.sourcecode.project.util.ReferencedType;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 
