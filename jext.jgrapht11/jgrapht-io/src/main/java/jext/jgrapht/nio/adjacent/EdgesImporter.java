@@ -1,6 +1,5 @@
 package jext.jgrapht.nio.adjacent;
 
-import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphImporter;
 
@@ -27,7 +26,6 @@ import java.util.function.Function;
  */
 public class EdgesImporter<V, E> implements GraphImporter<V, E> {
 
-    private static Logger logger = Logger.getLogger(EdgesImporter.class);
     private Graph<V, E> g;
     private long vcount = 0;
     private long ecount = 0;
@@ -149,11 +147,9 @@ public class EdgesImporter<V, E> implements GraphImporter<V, E> {
                 }
 
                 ++ecount;
-                if ((vcount + ecount)%1000000 == 0)
-                    logger.debugft("Imported %d vertices, %d edges", vcount, ecount);
 
             } catch (IOException e) {
-                logger.error(e, e);
+                throw new RuntimeException(e);
             }
         }
     }

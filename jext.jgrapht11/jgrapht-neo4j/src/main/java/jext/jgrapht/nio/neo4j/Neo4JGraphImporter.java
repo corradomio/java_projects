@@ -1,6 +1,5 @@
 package jext.jgrapht.nio.neo4j;
 
-import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphImporter;
 import org.neo4j.driver.AuthTokens;
@@ -30,8 +29,6 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     private String cypher;
     private Map<String, Object> params;
     private String slabel = "source", tlabel = "target";
-
-    private static Logger logger = Logger.getLogger(Neo4JGraphImporter.class);
 
     // ----------------------------------------------------------------------
     //
@@ -110,10 +107,7 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     }
 
     private void query(Graph<V, E> graph) {
-
         Set<V> vertices = new HashSet<>();
-
-        logger.infof("%s\n%s", this.cypher, this.params);
 
         Result r = session.run(cypher, params);
         while (r.hasNext()) {
@@ -122,12 +116,12 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
             V targetVertex = (V)rec.get(tlabel);
 
             if (!vertices.contains(sourceVertex)) {
-                graph.addVertex(sourceVertex);
                 vertices.add(sourceVertex);
+                graph.addVertex(sourceVertex);
             }
             if (!vertices.contains(targetVertex)) {
-                graph.addVertex(targetVertex);
                 vertices.add(targetVertex);
+                graph.addVertex(targetVertex);
             }
 
             graph.addEdge(sourceVertex, targetVertex);

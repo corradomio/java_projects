@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static jext.math.Mathx.sq;
+import static jext.jgrapht.util.Mathx.sq;
 
 /**
  * Reference: Machine Learning in Complex Network

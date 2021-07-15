@@ -1,18 +1,18 @@
 package jext.jgrapht.metrics;
 
 import jext.jgrapht.util.LinAlg;
-import jext.util.SetUtils;
+import jext.jgrapht.util.SetUtils;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static jext.math.Mathx.div;
-import static jext.math.Mathx.log2;
-import static jext.math.Mathx.sq;
-import static jext.math.Mathx.sqrt;
-import static jext.math.Mathx.sum;
+import static jext.jgrapht.util.Mathx.div;
+import static jext.jgrapht.util.Mathx.log2;
+import static jext.jgrapht.util.Mathx.sq;
+import static jext.jgrapht.util.Mathx.sqrt;
+import static jext.jgrapht.util.Mathx.sum;
 
 public class ContingencyMatrixImpl<V> implements ContingencyMatrix {
 
