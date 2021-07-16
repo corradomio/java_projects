@@ -10,6 +10,7 @@ import jext.jgrapht.graph.TransformGraph;
 import jext.jgrapht.util.Distrib;
 import jext.jgrapht.util.WeightMode;
 import jext.jgrapht.util.distrib.NormalDistrib;
+import jext.logging.Logger;
 import org.hls.check.ClusteringStatistics;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;

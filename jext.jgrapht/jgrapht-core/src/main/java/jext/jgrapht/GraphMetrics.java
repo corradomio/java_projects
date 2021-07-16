@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static jext.jgrapht.util.Mathx.sq;
+import static jext.jgrapht.util.MathUtil.sq;
 
 /**
  * Reference: Machine Learning in Complex Network
@@ -70,15 +70,18 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     }
 
     /**
-     * Density: number of edges divided by the number of edges of a clique
+     * Density: number of edges divided by the number of edges in a clique
      */
     public double getDensity() {
         long nVertices = getOrder();
         double nEdges = getSize();
         double tEdges = sq(nVertices);
 
+        if (nVertices == 0)
+            return 0;
+
         // maximum number of edges:
-        // simple graph:  V(V-1)/2
+        // simple graph:  V*(V-1)/2
         // direct graph:  V*(V-1)
         // simple graph + loop: V*V/2
         // direct graph + loop: V*V

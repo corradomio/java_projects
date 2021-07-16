@@ -1,18 +1,18 @@
 package jext.jgrapht.metrics;
 
-import jext.jgrapht.util.LinAlg;
-import jext.jgrapht.util.SetUtils;
+import jext.jgrapht.util.MathUtil;
+import jext.jgrapht.util.SetUtil;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static jext.jgrapht.util.Mathx.div;
-import static jext.jgrapht.util.Mathx.log2;
-import static jext.jgrapht.util.Mathx.sq;
-import static jext.jgrapht.util.Mathx.sqrt;
-import static jext.jgrapht.util.Mathx.sum;
+import static jext.jgrapht.util.MathUtil.div;
+import static jext.jgrapht.util.MathUtil.log2;
+import static jext.jgrapht.util.MathUtil.sq;
+import static jext.jgrapht.util.MathUtil.sqrt;
+import static jext.jgrapht.util.MathUtil.sum;
 
 public class ContingencyMatrixImpl<V> implements ContingencyMatrix {
 
@@ -44,13 +44,13 @@ public class ContingencyMatrixImpl<V> implements ContingencyMatrix {
 
         this.kt = truth.getNumberClusters();
         this.kd = other.getNumberClusters();
-        this.m  = LinAlg.intMatrix(kt, kd);
-        this.ni = LinAlg.intVector(kt);
-        this.mj = LinAlg.intVector(kd);
+        this.m  = MathUtil.intMatrix(kt, kd);
+        this.ni = MathUtil.intVector(kt);
+        this.mj = MathUtil.intVector(kd);
 
         Set<V> v1 = verticesOf(truth);
         Set<V> v2 = verticesOf(other);
-        if (!SetUtils.union(v1, v2).equals(SetUtils.intersection(v1, v2)))
+        if (!SetUtil.union(v1, v2).equals(SetUtil.intersection(v1, v2)))
             throw new IllegalArgumentException("Invalid clustering");
 
         // contingency matrix

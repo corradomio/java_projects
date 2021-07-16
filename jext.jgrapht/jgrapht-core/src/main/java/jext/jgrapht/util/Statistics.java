@@ -1,6 +1,6 @@
 package jext.jgrapht.util;
 
-import static jext.jgrapht.util.Mathx.sq;
+import static jext.jgrapht.util.MathUtil.sq;
 
 public class Statistics {
 

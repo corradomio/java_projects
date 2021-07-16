@@ -3,7 +3,7 @@ package jext.jgrapht.util;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SetUtils {
+public class SetUtil {
 
     public static <T> boolean isSuperset(Set<T> s1, Set<T> s2) {
         return s1.containsAll(s2);

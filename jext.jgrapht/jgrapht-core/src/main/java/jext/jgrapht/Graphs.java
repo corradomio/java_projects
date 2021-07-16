@@ -4,6 +4,8 @@ import jext.jgrapht.util.VertexInfo;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
 import org.jgrapht.graph.AsSubgraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -32,9 +35,11 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * @param loop     if can have loops
      * @param multiple if can have multiple edges
      * @param weighted if is weighted
-     * @param <V>      vertex type
-     * @param <E>      edge type
-     * @return a new group
+     * @param edgeSupplier edge factory
+     * @param vertexSupplier vertex factory
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a new Graph object
      */
     public static <V, E> Graph<V, E> newGraph(
             boolean directed,
@@ -43,6 +48,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
             boolean weighted,
             Supplier<E> edgeSupplier,
             Supplier<V> vertexSupplier) {
+
         GraphTypeBuilder<V, E> gtb = directed
                 ? GraphTypeBuilder.directed()
                 : GraphTypeBuilder.undirected();
@@ -64,23 +70,20 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return newGraph(directed, false, false, weighted, null, null);
     }
 
-    public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted, Supplier<E> edgeSupplier) {
-        return newGraph(directed, false, false, weighted, edgeSupplier, null);
-    }
-
     public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted,
-        Supplier<E> edgeSupplier,
-        Supplier<V> vertexSupplier) {
-        return newGraph(directed, false, false, weighted, edgeSupplier, vertexSupplier);
+        Class<V> vertexClass, Class<E> edgeClass) {
+        return newGraph(directed, false, false, weighted,
+            edgeSupplier(edgeClass),
+            vertexSupplier(vertexClass));
     }
 
     /**
      * Created a new graph with the same properties of the specified graph
      *
-     * @param graph graph used as properties'  template
-     * @param <V> vertex type
-     * @param <E> edge type
-     * @return a new group
+     * @param graph graph used as properties' template
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a new Graph object
      */
     public static <V, E> Graph<V, E> newGraph(Graph<V, E> graph) {
         GraphType gtype = graph.getType();
@@ -90,13 +93,45 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 gtype.isAllowingMultipleEdges(),
                 gtype.isWeighted(),
                 graph.getEdgeSupplier(),
-                graph.getVertexSupplier());
+                graph.getVertexSupplier()
+        );
     }
 
     // ----------------------------------------------------------------------
-    // Vertex neighbors
+    // Vertices
     // ----------------------------------------------------------------------
 
+    /**
+     * Create a vertex supplier
+     *
+     * @param vertexClass
+     *      supported classes: int, Integer, long, Long, String, UUID
+     *      and a generic class with a valid default constructor
+     */
+    public static <V> Supplier<V> vertexSupplier(Class<V> vertexClass) {
+        if (vertexClass.equals(Integer.class) || vertexClass.equals(int.class))
+            return (Supplier<V>) SupplierUtil.createIntegerSupplier();
+        if (vertexClass.equals(Long.class) || vertexClass.equals(long.class))
+            return (Supplier<V>) SupplierUtil.createLongSupplier();
+        if (vertexClass.equals(String.class))
+            return (Supplier<V>) SupplierUtil.createStringSupplier();
+        if (vertexClass.equals(UUID.class))
+            return (Supplier<V>) SupplierUtil.createRandomUUIDStringSupplier();
+        else
+            return SupplierUtil.createSupplier(vertexClass);
+    }
+
+    // ----------------------------------------------------------------------
+
+    /**
+     * Predecessor vertices of the specified vertex
+     *
+     * @param g the graph
+     * @param vertex the selected vertex
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a set of vertices
+     */
     public static <V, E> Set<V> predecessorSetOf(Graph<V, E> g, V vertex) {
         return g.incomingEdgesOf(vertex)
                 .stream()
@@ -104,6 +139,15 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Successor vertices of the specified vertex
+     *
+     * @param g the graph
+     * @param vertex the selected vertex
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a set of vertices
+     */
     public static <V, E> Set<V> successorSetOf(Graph<V, E> g, V vertex) {
         return g.outgoingEdgesOf(vertex)
                 .stream()
@@ -111,46 +155,86 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 .collect(Collectors.toSet());
     }
 
-    public static <V, E> Set<V> neighborSetOf(Graph<V, E> g, V v, EdgeType edgeType) {
+    /**
+     * Neighbor vertices of the specified vertex
+     *
+     * @param g the graph
+     * @param vertex the selected vertex
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a set of vertices
+     */
+    public static <V, E> Set<V> neighborSetOf(Graph<V, E> g, V vertex, EdgeType edgeType) {
         switch (edgeType) {
             case IN_EDGE:
-                return predecessorSetOf(g, v);
+                return predecessorSetOf(g, vertex);
             case OUT_EDGE:
-                return successorSetOf(g, v);
+                return successorSetOf(g, vertex);
             default:
-                return neighborSetOf(g, v);
+                return neighborSetOf(g, vertex);
         }
     }
 
-    public static <V, E> Map<V, Double> weightedNeighborOf(Graph<V, E> g, V v, EdgeType edgeType) {
-        return neighborSetOf(g, v, edgeType)
-                .stream()
-                .map(t -> g.getEdge(v, t))
-                .collect(Collectors.toMap(e -> getOppositeVertex(g, e, v), g::getEdgeWeight));
-    }
+    // public static <V, E> Map<V, Double> weightedNeighborOf(Graph<V, E> g, V v, EdgeType edgeType) {
+    //     return neighborSetOf(g, v, edgeType)
+    //             .stream()
+    //             .map(t -> g.getEdge(v, t))
+    //             .collect(Collectors.toMap(e -> getOppositeVertex(g, e, v), g::getEdgeWeight));
+    // }
 
     // ----------------------------------------------------------------------
-    // Add edges
+    // Edges
     // ----------------------------------------------------------------------
 
     /**
-     * Add an edge and the vertices
+     * Creates an edge supplier
      *
-     * @param g            the graph
+     * @param edgeClass
+     *      supported classes: DefaultEdge, DefaultWeightedEdge
+     * @param <E> edges type
+     */
+    public static <E> Supplier<E> edgeSupplier(Class<E> edgeClass) {
+        if (edgeClass.equals(DefaultEdge.class))
+            return (Supplier<E>) SupplierUtil.createDefaultEdgeSupplier();
+        if (edgeClass.equals(DefaultWeightedEdge.class))
+            return (Supplier<E>) SupplierUtil.createDefaultWeightedEdgeSupplier();
+        else
+            return SupplierUtil.createSupplier(edgeClass);
+    }
+
+    // ----------------------------------------------------------------------
+
+    /**
+     * Add the edge and the vertices
+     *
+     * @param g the graph
      * @param sourceVertex source vertex of the edge
      * @param targetVertex target vertex of the edge
-     * @param <V>          the graph vertex type
-     * @param <E>          the graph edge type
-     * @return the created edge
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return the created edge or null
      */
     public static <V, E> E addEdge(Graph<V, E> g, V sourceVertex, V targetVertex) {
         return addEdgeWithVertices(g, sourceVertex, targetVertex);
     }
 
+    /**
+     * Add all edges between the source vertex and the collection of target vertices
+     *
+     * @param g the graph
+     * @param sourceVertex source vertex of the edge
+     * @param targetVertices target vertices of the edge
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return the set of added edges
+     */
     public static <V, E> Set<E> addEdges(Graph<V, E> g, V sourceVertex, Collection<V> targetVertices) {
         Set<E> edges = new HashSet<>();
-        for (V targetVertex : targetVertices)
-            edges.add(addEdge(g, sourceVertex, targetVertex));
+        for (V targetVertex : targetVertices) {
+            E edge = addEdge(g, sourceVertex, targetVertex);
+            if (edge != null)
+                edges.add(edge);
+        }
         return edges;
     }
 
@@ -161,10 +245,10 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     /**
      * Compute the closure of the vertex
      *
-     * @param g           the graph
+     * @param g the graph
      * @param startVertex start vertex used to compute the closure
-     * @param <V>         the graph vertex type
-     * @param <E>         the graph edge type
+     * @param <V> vertices type
+     * @param <E> edges type
      * @return the 'closed' closure (it contains startVertex)
      */
     public static <V, E> Set<V> closureOf(Graph<V, E> g, V startVertex) {
@@ -174,10 +258,10 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         toVisit.add(startVertex);
 
         while (!toVisit.isEmpty()) {
-            V v = toVisit.remove();
-            visited.add(v);
+            V vertex = toVisit.remove();
+            visited.add(vertex);
 
-            successorListOf(g, v).forEach(t -> {
+            successorListOf(g, vertex).forEach(t -> {
                 if (!visited.contains(t))
                     toVisit.add(t);
             });
@@ -186,21 +270,21 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return visited;
     }
 
-    public static <V, E> Set<V> closureOf(Map<V, VertexInfo<V>> vinfoMap, V startVertex) {
-        Set<V> visited = new HashSet<>();
-        Queue<V> toVisit = new LinkedList<>();
-
-        toVisit.add(startVertex);
-
-        while (!toVisit.isEmpty()) {
-            V v = toVisit.remove();
-            if (visited.contains(v))
-                continue;
-            visited.add(v);
-            toVisit.addAll(vinfoMap.get(v).neighbor);
-        }
-        return visited;
-    }
+    // public static <V, E> Set<V> closureOf(Map<V, VertexInfo<V>> vinfoMap, V startVertex) {
+    //     Set<V> visited = new HashSet<>();
+    //     Queue<V> toVisit = new LinkedList<>();
+    //
+    //     toVisit.add(startVertex);
+    //
+    //     while (!toVisit.isEmpty()) {
+    //         V v = toVisit.remove();
+    //         if (visited.contains(v))
+    //             continue;
+    //         visited.add(v);
+    //         toVisit.addAll(vinfoMap.get(v).neighbor);
+    //     }
+    //     return visited;
+    // }
 
     // ----------------------------------------------------------------------
     // Graph properties
@@ -210,8 +294,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * Check if the graph is 'null' (without edges)
      *
      * @param g   the graph
-     * @param <V> the graph vertex type
-     * @param <E> the graph edge type
+     * @param <V> vertices type
+     * @param <E> edges type
      * @return if the graph is null (without edges)
      */
     public static <V, E> boolean isNull(Graph<V, E> g) {
@@ -222,14 +306,13 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * Check if the graph is connected
      *
      * @param g   the graph
-     * @param <V> the graph vertex type
-     * @param <E> the graph edge type
+     * @param <V> vertices type
+     * @param <E> edges type
      * @return if the graph is connected
      */
     public static <V, E> boolean isConnected(Graph<V, E> g) {
         Set<V> vset = g.vertexSet();
-        if (vset.isEmpty())
-            return true;
+        if (vset.isEmpty()) return true;
         V startVertex = vset.iterator().next();
         Set<V> component = closureOf(g, startVertex);
         return vset.size() == component.size();
@@ -243,8 +326,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * Find the vertices of the graph components
      *
      * @param g   the graph
-     * @param <V> the graph vertex type
-     * @param <E> the graph edge type
+     * @param <V> vertices type
+     * @param <E> edges type
      * @return the list of components
      */
     public static <V, E> List<Set<V>> components(Graph<V, E> g) {
@@ -260,6 +343,14 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return components;
     }
 
+    /**
+     * Return the largest component of the graph
+     *
+     * @param g the graph
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return the largest component
+     */
     public static <V, E> Graph<V, E> getLargestComponent(Graph<V, E> g) {
         final Set<V>[] selected = new Set[]{Collections.emptySet()};
 
@@ -278,22 +369,22 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // Other
     // ----------------------------------------------------------------------
 
-    public static <V, E> int order(Graph<V, E> g) {
-        return g.vertexSet().size();
-    }
+    // public static <V, E> int order(Graph<V, E> g) {
+    //     return g.vertexSet().size();
+    // }
 
-    public static <V, E> int size(Graph<V, E> g) {
-        return g.edgeSet().size();
-    }
+    // public static <V, E> int size(Graph<V, E> g) {
+    //     return g.edgeSet().size();
+    // }
 
-    public static <V, E> double density(Graph<V, E> g) {
-        long nv = g.vertexSet().size();
-
-        if (g.getType().isDirected())
-            return (0.+g.edgeSet().size())/(nv*nv);
-        else
-            return (2.*g.edgeSet().size())/(nv*(nv-1.));
-    }
+    // public static <V, E> double density(Graph<V, E> g) {
+    //     long nv = g.vertexSet().size();
+    //
+    //     if (g.getType().isDirected())
+    //         return (0.+g.edgeSet().size())/(nv*nv);
+    //     else
+    //         return (2.*g.edgeSet().size())/(nv*(nv-1.));
+    // }
 
     // ----------------------------------------------------------------------
     // Dump graph

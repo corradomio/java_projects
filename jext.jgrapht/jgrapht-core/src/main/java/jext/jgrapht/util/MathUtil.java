@@ -1,6 +1,6 @@
 package jext.jgrapht.util;
 
-public class MathUtils {
+public class MathUtil {
 
     public static long   sq(long x) { return x*x; }
     public static double sq(double x) { return x*x; }

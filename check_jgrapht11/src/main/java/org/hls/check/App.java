@@ -1,7 +1,6 @@
 package org.hls.check;
 
 import jext.jgrapht.Edge;
-import jext.jgrapht.Edges;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
 import jext.jgrapht.util.GraphDump;
@@ -18,7 +17,7 @@ public class App {
 
     public static void main(String[] args) {
         Logger.configure();
-        Graph<Long, Edge> g = Graphs.newGraph(true, false, Edges.edgeSupplier(Edge.class));
+        Graph<Long, Edge> g = Graphs.newGraph(true, false, Long.class, Edge.class);
         // new ScaleFreeGraphGenerator<Long, Edge>(50000)
         //     .generateGraph(g);
 

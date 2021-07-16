@@ -1,6 +1,6 @@
 package jext.jgrapht.metrics;
 
-import jext.jgrapht.util.LinAlg;
+import jext.jgrapht.util.MathUtil;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static jext.jgrapht.util.Mathx.div;
-import static jext.jgrapht.util.Mathx.sq;
+import static jext.jgrapht.util.MathUtil.div;
+import static jext.jgrapht.util.MathUtil.sq;
 
 public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
 
@@ -90,13 +90,13 @@ public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
             this.clusterSizes[c] = clusters.get(c).size();
 
         // count inter/intra cluster edges
-        this.clusterCounts = LinAlg.intMatrix(k);
+        this.clusterCounts = MathUtil.intMatrix(k);
         // weights inter/intra cluster edge weights
-        this.clusterWeights = LinAlg.newMatrix(k);
+        this.clusterWeights = MathUtil.newMatrix(k);
 
-        this.vertexDegrees = LinAlg.intVector(this.graph.vertexSet().size());
+        this.vertexDegrees = MathUtil.intVector(this.graph.vertexSet().size());
         // vertex's weights (sum of incident edges' weights)
-        this.vertexWeights = LinAlg.newVector(this.graph.vertexSet().size());
+        this.vertexWeights = MathUtil.newVector(this.graph.vertexSet().size());
 
         // compute the weights
         this.graph.edgeSet().forEach(this::add);
@@ -284,7 +284,7 @@ public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
      * @return vector of products for each cluster
      */
     private double[] vprod() {
-        double[] vprod = LinAlg.newVector(k);
+        double[] vprod = MathUtil.newVector(k);
 
         graph.edgeSet().forEach(e -> {
             V source = graph.getEdgeSource(e);
@@ -422,7 +422,7 @@ public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
     }
 
     private double[][] distances() {
-        double[][] d = LinAlg.newMatrix(k);
+        double[][] d = MathUtil.newMatrix(k);
         for (int c=0; c<k; ++c)
             d[c][c] = div(clusterWeights[c][c], clusterSizes[c]*(clusterSizes[c]-1));
 
