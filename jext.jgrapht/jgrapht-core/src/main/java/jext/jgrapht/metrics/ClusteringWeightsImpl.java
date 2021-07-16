@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static jext.math.Mathx.div;
-import static jext.math.Mathx.sq;
+import static jext.jgrapht.util.Mathx.div;
+import static jext.jgrapht.util.Mathx.sq;
 
 public class ClusteringWeightsImpl<V, E> implements ClusteringWeights {
 

@@ -9,7 +9,6 @@ import java.util.TreeMap;
 
 public class GraphDump {
 
-
     public static <V, E> void printGraphInfo(Graph<V, E> graph) {
         System.out.printf("%s\n", graph.getClass().getName());
         System.out.printf("  nVertices: %d\n", graph.vertexSet().size());

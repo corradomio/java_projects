@@ -48,7 +48,6 @@ public class TransformGraph<V, E> {
         return new AsSubgraph<>(graph, null, edgeSet);
     }
 
-
     /**
      * Create a new graph with same vertices and edges but with the
      * edge weights computed as:
@@ -76,6 +75,9 @@ public class TransformGraph<V, E> {
         return flipped;
     }
 
+    /**
+     * Maximum weight in the weighted graph
+     */
     public double getMaxWeight() {
         return graph.edgeSet()
                 .parallelStream()

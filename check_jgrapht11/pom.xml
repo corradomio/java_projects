@@ -17,9 +17,9 @@
     <modules>
         <module>../jext.commons</module>
         <module>../jext.collections</module>
-        <module>../jext.jgrapht11/jgrapht-core</module>
-        <module>../jext.jgrapht11/jgrapht-io</module>
-        <module>../jext.jgrapht11/jgrapht-neo4j</module>
+        <module>../jext.jgrapht/jgrapht-core</module>
+        <module>../jext.jgrapht/jgrapht-io</module>
+        <module>../jext.jgrapht/jgrapht-neo4j</module>
     </modules>
 
     <dependencies>
@@ -30,17 +30,17 @@
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht11-core</artifactId>
+            <artifactId>jext.jgrapht-core</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht11-io</artifactId>
+            <artifactId>jext.jgrapht-io</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht11-neo4j</artifactId>
+            <artifactId>jext.jgrapht-neo4j</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

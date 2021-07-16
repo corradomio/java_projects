@@ -1,6 +1,5 @@
 package jext.jgrapht.nio.adjacent;
 
-import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphImporter;
 
@@ -27,14 +26,13 @@ import java.util.function.Function;
  */
 public class EdgesImporter<V, E> implements GraphImporter<V, E> {
 
-    private static Logger logger = Logger.getLogger(EdgesImporter.class);
     private Graph<V, E> g;
     private long vcount = 0;
     private long ecount = 0;
-    private String separators = "\\s+";
+    private String separator = "\\s+";
     private String comment = "#";
     private int skipLines = 0;
-    private Function<String, V> toVertex = (x) -> (V)x;
+    private Function<String, V> stoVertex = (x) -> (V)x;
 
     public EdgesImporter() { }
 
@@ -44,7 +42,7 @@ public class EdgesImporter<V, E> implements GraphImporter<V, E> {
      * @param sep separator
      */
     public EdgesImporter<V, E> withSeparator(String sep) {
-        this.separators = sep;
+        this.separator = sep;
         return this;
     }
 
@@ -74,7 +72,7 @@ public class EdgesImporter<V, E> implements GraphImporter<V, E> {
      * @param toVertex function String->V
      */
     public EdgesImporter<V, E> withToVertex(Function<String, V> toVertex) {
-        this.toVertex = toVertex;
+        this.stoVertex = toVertex;
         return this;
     }
 
@@ -131,7 +129,7 @@ public class EdgesImporter<V, E> implements GraphImporter<V, E> {
                 if (line.startsWith(comment))
                     continue;
 
-                String[] parts = line.split(separators);
+                String[] parts = line.split(separator);
                 assert parts.length >= 2;
 
                 V sourceVertex = addVertex(parts[0]);
@@ -149,17 +147,15 @@ public class EdgesImporter<V, E> implements GraphImporter<V, E> {
                 }
 
                 ++ecount;
-                if ((vcount + ecount)%1000000 == 0)
-                    logger.debugft("Imported %d vertices, %d edges", vcount, ecount);
 
             } catch (IOException e) {
-                logger.error(e, e);
+                throw new RuntimeException(e);
             }
         }
     }
 
     private V addVertex(String t) {
-        V v = toVertex.apply(t);
+        V v = stoVertex.apply(t);
         g.addVertex(v);
         ++vcount;
         return v;

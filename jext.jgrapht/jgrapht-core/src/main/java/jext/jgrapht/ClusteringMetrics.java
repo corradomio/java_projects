@@ -13,7 +13,6 @@ public class ClusteringMetrics<V, E> {
 
     private Graph<V, E> graph;
     private ClusteringAlgorithm.Clustering<V> clustering;
-    // private ClusteringWeights clusterWeight;
 
     // ----------------------------------------------------------------------
     //

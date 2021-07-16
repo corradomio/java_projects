@@ -1,11 +1,13 @@
 package org.hls.check;
 
+import jext.jgrapht.Edge;
+import jext.jgrapht.Edges;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
+import jext.jgrapht.util.GraphDump;
 import jext.logging.Logger;
 import jext.util.Parameters;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.GraphExporter;
 import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.dot.DOTExporter;
@@ -16,26 +18,26 @@ public class App {
 
     public static void main(String[] args) {
         Logger.configure();
-        Graph<String, DefaultEdge> g = Graphs.newGraph(true, false);
-        // new ScaleFreeGraphGenerator<Integer, DefaultEdge>(50000)
+        Graph<Long, Edge> g = Graphs.newGraph(true, false, Edges.edgeSupplier(Edge.class));
+        // new ScaleFreeGraphGenerator<Long, Edge>(50000)
         //     .generateGraph(g);
-        //
-        // GraphDump.printGraphInfo(g);
 
-        GraphImporter<String, DefaultEdge> imp = new Neo4JGraphImporter<String, DefaultEdge>()
-            .query(
-                "MATCH (s:type {refId:$refId}) -[:uses]-> (t:type) " +
-                    "RETURN s.fullname AS source, t.fullname AS target",
+        GraphDump.printGraphInfo(g);
+
+        GraphImporter<Long, Edge> imp = new Neo4JGraphImporter<Long, Edge>()
+            .vertices("MATCH (s:type {refId:$refId}) RETURN id(s) AS s")
+            .edges("MATCH (s:type {refId:$refId}) -[:uses]-> (t:type) RETURN id(s) AS s, id(t) AS t")
+            .parameters(
                 Parameters.params(
-                    //"refId", "a885add5"
                     "refId", "7246bd36"
                 ))
+            .labels("s", "t")
         ;
         imp.importGraph(g, new File("config/neo4j.properties"));
 
-        GraphExporter<String, DefaultEdge> exp =
+        GraphExporter<Long, Edge> exp =
             // new EdgesExporter<String, DefaultEdge>().withSeparator(",")
-            new DOTExporter<>();
+            new DOTExporter<>()
         ;
         exp.exportGraph(g, new File("graph.dot"));
 
