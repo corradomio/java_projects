@@ -13,6 +13,9 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <!--<jna.version>5.8.0</jna.version>-->
+        <!--<jna.version>4.5.2</jna.version>-->
+        <jna.version>5.8.0</jna.version>
     </properties>
 
     <dependencies>
@@ -26,7 +29,13 @@
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>5.8.0</version>
+            <version>${jna.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>${jna.version}</version>
         </dependency>
 
     </dependencies>

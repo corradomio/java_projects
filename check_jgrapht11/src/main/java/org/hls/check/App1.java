@@ -13,7 +13,7 @@ import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.File;
 
-public class App {
+public class App1 {
 
     public static void main(String[] args) {
         Logger.configure();

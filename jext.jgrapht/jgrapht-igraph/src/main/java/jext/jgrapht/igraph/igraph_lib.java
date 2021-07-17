@@ -3,8 +3,9 @@ package jext.jgrapht.igraph;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 
-public interface igraph extends Library {
-    igraph INSTANCE = Native.load("igraph-0.9.4", igraph.class);
+public interface igraph_lib extends Library {
+
+    igraph_lib INSTANCE = Native.loadLibrary("igraph-0.9.4", igraph_lib.class);
 
     enum directed_t {
         IGRAPH_UNDIRECTED,
@@ -207,7 +208,11 @@ public interface igraph extends Library {
 
     int igraph_version(String[] version_string, int[] major, int[] minor, int[] subminor);
 
-    int igraph_empty(igraph_t[] g, int n, int directed);
+    int igraph_empty(igraph_t g, int n, int directed);
 
-    void igraph_destroy(igraph_t[] g);
+    void igraph_destroy(igraph_t g);
+
+    int igraph_vcount(igraph_t g);
+
+    int igraph_ecount(igraph_t g);
 }

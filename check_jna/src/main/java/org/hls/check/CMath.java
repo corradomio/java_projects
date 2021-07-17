@@ -1,2 +1,7 @@
-package org.hls.check;public class CMath {
+package org.hls.check;
+
+import com.sun.jna.Library;
+
+public interface CMath extends Library {
+    double cosh(double value);
 }

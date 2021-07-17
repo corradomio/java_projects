@@ -3,7 +3,7 @@ package org.hls.check;
 import jext.math.jna.gsl.gsl_complex;
 import jext.math.jna.gsl.GSLibrary;
 
-public class App {
+public class App1 {
     public static void main(String[] args) {
         GSLibrary gsl = GSLibrary.INSTANCE;
 
