@@ -1,6 +1,5 @@
-package jext.jgrapht.nio.clustering;
+package jext.jgrapht.alg.clustering;
 
-import jext.jgrapht.alg.clustering.MapClustering;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.io.BufferedReader;
