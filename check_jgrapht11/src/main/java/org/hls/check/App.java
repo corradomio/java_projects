@@ -40,6 +40,6 @@ public class App {
         ;
         exp.exportGraph(g, new File("graph.dot"));
 
-        Graphs.describe(g);
+        GraphDump.describe(g);
     }
 }

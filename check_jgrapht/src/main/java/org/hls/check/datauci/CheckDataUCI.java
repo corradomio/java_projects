@@ -10,6 +10,7 @@ import jext.jgrapht.nio.adjacent.FileGraphImporter;
 import jext.jgrapht.nio.clustering.CSVClusteringImporter;
 import jext.jgrapht.util.WeightMode;
 import jext.logging.Logger;
+import jext.math.Mathx;
 import org.hls.check.ClusteringStatistics;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
@@ -105,10 +106,10 @@ public class CheckDataUCI {
                 break;
 
             System.out.printf("-- [%.2f] --------------------\n", threshold);
-            System.out.printf("--   vertices: %d\n", Graphs.order(t));
-            System.out.printf("--      edges: %d\n", Graphs.size(t));
+            System.out.printf("--   vertices: %d\n", t.vertexSet().size());
+            System.out.printf("--      edges: %d\n", t.edgeSet().size());
             System.out.printf("-- components: %s\n", Graphs.components(t).size());
-            System.out.printf("--    density: %.6f\n", Graphs.density(t));
+            System.out.printf("--    density: %.6f\n", t.edgeSet().size()/Mathx.sq(t.vertexSet().size()));
 
             System.out.print("-- cluster\n" );
             clustering = new ColoringClustering<Integer, DefaultWeightedEdge>(

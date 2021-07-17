@@ -90,15 +90,25 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
      */
     @Override
     public void importGraph(Graph<V, E> graph, Reader reader) {
+        if (reader != null)
         try {
             Properties properties = new Properties();
             properties.load(reader);
-
-            connect(properties);
-            query(graph);
+            properties.stringPropertyNames().forEach(key -> {
+                params.put(key, properties.get(key));
+            });
         }
         catch (IOException e) {
             throw new IllegalArgumentException(e);
+        }
+
+        importGraph(graph);
+    }
+
+    public void importGraph(Graph<V, E> graph) {
+        try {
+            connect();
+            query(graph);
         }
         finally {
             disconnect();
@@ -109,10 +119,10 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     // Implementation
     // ----------------------------------------------------------------------
 
-    private void connect(Properties properties) {
-        String uri = properties.getProperty(NEO4J_URI);
-        String username = properties.getProperty(NEO4J_USERNAME);
-        String password = properties.getProperty(NEO4J_PASSWORD);
+    private void connect() {
+        String uri = (String) params.get(NEO4J_URI);
+        String username = (String) params.get(NEO4J_USERNAME);
+        String password = (String) params.get(NEO4J_PASSWORD);
 
         driver = GraphDatabase.driver( uri, AuthTokens.basic( username, password ) );
         session = driver.session();

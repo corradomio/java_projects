@@ -9,6 +9,22 @@ import java.util.TreeMap;
 
 public class GraphDump {
 
+    // ----------------------------------------------------------------------
+    // Dump graph
+    // ----------------------------------------------------------------------
+
+    public static <V, E> void describe(Graph<V, E> g) {
+        System.out.printf("Graph: |V|=%d, |E|=%d\n", g.vertexSet().size(), g.edgeSet().size());
+        if (!g.vertexSet().isEmpty()) {
+            V v = g.vertexSet().iterator().next();
+            System.out.println(" v: " + v.getClass());
+        }
+        if (!g.edgeSet().isEmpty()) {
+            E e = g.edgeSet().iterator().next();
+            System.out.println(" e: " + e.getClass());
+        }
+    }
+
     public static <V, E> void printGraphInfo(Graph<V, E> graph) {
         System.out.printf("%s\n", graph.getClass().getName());
         System.out.printf("  nVertices: %d\n", graph.vertexSet().size());

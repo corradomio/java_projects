@@ -24,6 +24,34 @@ import java.util.stream.Collectors;
 
 public abstract class Graphs extends org.jgrapht.Graphs {
 
+    // public static <V, E> boolean addGraph(Graph<? super V, ? super E> destination, Graph<V, E> source)
+    // public static <V, E> void    addGraphReversed(Graph<? super V, ? super E> destination, Graph<V, E> source)
+    // public static <V, E> Graph<V, E> undirectedGraph(Graph<V, E> g)
+
+    // public static <V, E> E addEdge(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
+    // public static <V, E> E addEdgeWithVertices(Graph<V, E> g, V sourceVertex, V targetVertex)
+    // public static <V, E> boolean addEdgeWithVertices(Graph<V, E> targetGraph, Graph<V, E> sourceGraph, E edge)
+    // public static <V, E> E addEdgeWithVertices(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
+    // public static <V, E> boolean addAllEdges(Graph<? super V, ? super E> destination, Graph<V, E> source, Collection<? extends E> edges)
+    // public static <V, E> void addOutgoingEdges(Graph<V, E> graph, V source, Iterable<V> targets)
+    // public static <V, E> void addIncomingEdges(Graph<V, E> graph, V target, Iterable<V> sources)
+
+    // public static <V, E> V getOppositeVertex(Graph<V, E> g, E e, V v)
+    // public static <V, E> VertexToIntegerMapping<V> getVertexToIntegerMapping(Graph<V, E> graph)
+
+    // public static <V, E> boolean addAllVertices(Graph<? super V, ? super E> destination, Collection<? extends V> vertices)
+    // public static <V, E> List<V> neighborListOf(Graph<V, E> g, V vertex)
+    // public static <V, E> Set<V>  neighborSetOf(Graph<V, E> g, V vertex)
+    // public static <V, E> List<V> predecessorListOf(Graph<V, E> g, V vertex)
+    // public static <V, E> List<V> successorListOf(Graph<V, E> g, V vertex)
+    // public static <V, E> boolean testIncidence(Graph<V, E> g, E e, V v)
+
+    // public static <V, E> boolean removeVertexAndPreserveConnectivity(Graph<V, E> graph, V vertex)
+    // public static <V, E> boolean removeVerticesAndPreserveConnectivity(Graph<V, E> graph, Predicate<V> predicate)
+    // public static <V, E> boolean removeVertexAndPreserveConnectivity(Graph<V, E> graph, Iterable<V> vertices)
+    // public static <V, E> boolean vertexHasSuccessors(Graph<V, E> graph, V vertex)
+    // public static <V, E> boolean vertexHasPredecessors(Graph<V, E> graph, V vertex)
+
     // ----------------------------------------------------------------------
     // Graph constructors
     // ----------------------------------------------------------------------
@@ -270,21 +298,21 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return visited;
     }
 
-    // public static <V, E> Set<V> closureOf(Map<V, VertexInfo<V>> vinfoMap, V startVertex) {
-    //     Set<V> visited = new HashSet<>();
-    //     Queue<V> toVisit = new LinkedList<>();
-    //
-    //     toVisit.add(startVertex);
-    //
-    //     while (!toVisit.isEmpty()) {
-    //         V v = toVisit.remove();
-    //         if (visited.contains(v))
-    //             continue;
-    //         visited.add(v);
-    //         toVisit.addAll(vinfoMap.get(v).neighbor);
-    //     }
-    //     return visited;
-    // }
+    public static <V> Set<V> closureOf(Map<V, VertexInfo<V>> vinfoMap, V startVertex) {
+        Set<V> visited = new HashSet<>();
+        Queue<V> toVisit = new LinkedList<>();
+
+        toVisit.add(startVertex);
+
+        while (!toVisit.isEmpty()) {
+            V v = toVisit.remove();
+            if (visited.contains(v))
+                continue;
+            visited.add(v);
+            toVisit.addAll(vinfoMap.get(v).neighbor);
+        }
+        return visited;
+    }
 
     // ----------------------------------------------------------------------
     // Graph properties
@@ -363,43 +391,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
             return g;
 
         return new AsSubgraph<>(g, selected[0]);
-    }
-
-    // ----------------------------------------------------------------------
-    // Other
-    // ----------------------------------------------------------------------
-
-    // public static <V, E> int order(Graph<V, E> g) {
-    //     return g.vertexSet().size();
-    // }
-
-    // public static <V, E> int size(Graph<V, E> g) {
-    //     return g.edgeSet().size();
-    // }
-
-    // public static <V, E> double density(Graph<V, E> g) {
-    //     long nv = g.vertexSet().size();
-    //
-    //     if (g.getType().isDirected())
-    //         return (0.+g.edgeSet().size())/(nv*nv);
-    //     else
-    //         return (2.*g.edgeSet().size())/(nv*(nv-1.));
-    // }
-
-    // ----------------------------------------------------------------------
-    // Dump graph
-    // ----------------------------------------------------------------------
-
-    public static <V, E> void describe(Graph<V, E> g) {
-        System.out.printf("Graph: |V|=%d, |E|=%d\n", g.vertexSet().size(), g.edgeSet().size());
-        if (!g.vertexSet().isEmpty()) {
-            V v = g.vertexSet().iterator().next();
-            System.out.println(" v: " + v.getClass());
-        }
-        if (!g.edgeSet().isEmpty()) {
-            E e = g.edgeSet().iterator().next();
-            System.out.println(" e: " + e.getClass());
-        }
     }
 
     // ----------------------------------------------------------------------

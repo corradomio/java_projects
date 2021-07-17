@@ -258,7 +258,7 @@ public class ParallelMCMCBColoring<V, E> implements VertexColoringAlgorithm<V>
         boolean weighted = graph.getType().isWeighted();
         AtomicInteger index = new AtomicInteger(-1);
 
-        VertexInfo<V>[] viarr = new VertexInfo[Graphs.order(graph)];
+        VertexInfo<V>[] viarr = new VertexInfo[graph.vertexSet().size()];
         Map<V, Integer> vidx = new ConcurrentHashMap<>();
 
         // 1) create the data structure used to speedup the operations
@@ -291,7 +291,7 @@ public class ParallelMCMCBColoring<V, E> implements VertexColoringAlgorithm<V>
         // start removing the HALF of the available colors
         factorToRemove = reductionFactor;
         // min factor to use, equals to 1/nVertices
-        minFactor = 1.f/Graphs.order(graph);
+        minFactor = 1.f/graph.vertexSet().size();
         // REAL epsilon value to use
         eps = epsilon / maxDegree;
         // list of dominant colors. Update concurrently
