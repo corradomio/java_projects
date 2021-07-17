@@ -14,8 +14,8 @@ import java.util.Set;
  * Clustering data structured based on a map cluster->setOf[V]
  * used to compose a clustering
  *
- * @param <K>
- * @param <V>
+ * @param <K> clusters class
+ * @param <V> vertices class
  */
 public class MapClustering<K, V> implements ClusteringAlgorithm.Clustering<V> {
 

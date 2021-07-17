@@ -50,6 +50,11 @@
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
+            <artifactId>jext.jgrapht-clustering</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
             <artifactId>jext.jgrapht-color-clustering</artifactId>
             <version>1.0</version>
         </dependency>

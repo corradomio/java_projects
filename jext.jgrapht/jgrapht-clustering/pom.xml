@@ -9,11 +9,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>jgrapht-clustering</artifactId>
+    <artifactId>jext.jgrapht-clustering</artifactId>
 
     <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
+
     </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core -->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>${jgrapht.version}</version>
+        </dependency>
+
+    </dependencies>
 
 </project>

@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ *
+ * @param <V> vertices class
+ */
 public class GraphClustering<V> implements ClusteringAlgorithm.Clustering<V> {
 
     private List<Set<V>> clusters = new ArrayList<>();;
