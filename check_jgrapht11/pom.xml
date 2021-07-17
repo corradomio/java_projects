@@ -17,9 +17,11 @@
     <modules>
         <module>../jext.commons</module>
         <module>../jext.collections</module>
+        <module>../jext.jgrapht</module>
         <module>../jext.jgrapht/jgrapht-core</module>
         <module>../jext.jgrapht/jgrapht-io</module>
         <module>../jext.jgrapht/jgrapht-neo4j</module>
+        <module>../jext.jgrapht/jgrapht-igraph</module>
     </modules>
 
     <dependencies>
