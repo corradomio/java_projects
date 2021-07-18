@@ -36,7 +36,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     protected final Parameters parameters = new Parameters();
 
     // progress status
-    private final Progress progress = new Progress();
+    protected Progress progress = new Progress();
 
     // user has request the task abort
     protected boolean aborted;
@@ -47,7 +47,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // ----------------------------------------------------------------------
     // Task Manager
 
-    // set when the task is inserted in the tasksmanager queue
+    // set when the task is inserted in the task manager queue
     private TaskManager manager = NullTaskManager.getInstance();
 
     // not used, for now
@@ -83,7 +83,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
         }
     }
 
-    private Listeners listeners;
+    private final Listeners listeners;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -114,8 +114,8 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     @Override
     public String getType() { return taskType; }
 
-    @Override
-    public String getExtendedType() { return taskType; }
+    // @Override
+    // public String getExtendedType() { return taskType; }
 
     @Override
     public String getMessage() { return message; }
@@ -157,14 +157,17 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // Status
     // ----------------------------------------------------------------------
 
+    @Override
     public TaskStatus getStatus() {
         return status;
     }
 
+    @Override
     public long getTimestamp() {
         return timestamp;
     }
 
+    @Override
     public List<StatusChange> getStatusHistory() {
         return history;
     }
@@ -177,6 +180,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // DO NOT implement THIS method in the derived classes
     // Implements: 'process()'
     //
+    @Override
     public final void run() {
         try {
             manager.runningTask(this);
@@ -219,6 +223,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // ----------------------------------------------------------------------
 
     // Request for abort
+    @Override
     public final void abort() {
         aborted = true;
         onAbort();
@@ -249,6 +254,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // Listeners handling
     // ----------------------------------------------------------------------
 
+    @Override
     public void addListener(TaskStatusListener listener) {
         listeners.addListener(listener);
     }
@@ -284,6 +290,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // TaskStatusListener callbacks
     // ----------------------------------------------------------------------
 
+    @Override
     public void onStatusChanged(TaskStatus prevStatus, Task task) {
         assert this == task;
         switch(getStatus()) {
@@ -307,11 +314,13 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
         }
     }
 
+    @Override
     public void onDone(Task task) {
         assert this == task;
         onDone();
     }
 
+    @Override
     public void onProgressChanged(Task task) {
         assert this == task;
         onProgressChanged();
@@ -357,21 +366,12 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // ----------------------------------------------------------------------
 
     // Used by 'Task Manager' when the task is submitted into the queue
+    @Override
     public void waiting(TaskManager manager, Future<?> future) {
         this.future = future;
         this.manager = manager;
 
         setStatus(TaskStatus.WAITING, "Waiting");
-    }
-
-    // Used in the code to wait explicitly for the task termination
-    public void waitForCompletion(long timeout, TimeUnit timeUnit) {
-        try {
-            future.get(timeout, timeUnit);
-        }
-        catch (Exception e) {
-            logger.error(e, e);
-        }
     }
 
     // ----------------------------------------------------------------------
@@ -391,6 +391,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     //      done()
 
     protected void start(int totalWorks) {
+        messagef("Start %d works", totalWorks);
         progress.start(totalWorks);
         listeners.fireProgressChanged();
     }
@@ -402,8 +403,7 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     }
 
     protected void update(int stepsDone) {
-        progress.update("updated", stepsDone);
-        listeners.fireProgressChanged();
+        update("updated", stepsDone);
     }
 
     protected void update(String message, int stepsDone) {
@@ -413,11 +413,13 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     }
 
     protected void endWork() {
+        messagef("endWork");
         progress.endWork();
         listeners.fireProgressChanged();
     }
 
     protected void done() {
+        messagef("done");
         progress.done();
         listeners.fireProgressChanged();
     }

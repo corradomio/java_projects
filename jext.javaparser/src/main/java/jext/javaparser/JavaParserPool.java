@@ -91,15 +91,15 @@ public class JavaParserPool {
     // Listeners on parsed files
     // ----------------------------------------------------------------------
 
-    public interface ParsedFile {
-        void parsed(ParseResult<CompilationUnit> result, File file);
-    }
-
-    private final List<ParsedFile> listeners = new ArrayList<>();
-
-    public void addListener(ParsedFile l) {
-        listeners.add(l);
-    }
+    // public interface ParsedFile {
+    //     void parsed(ParseResult<CompilationUnit> result, File file);
+    // }
+    //
+    // private final List<ParsedFile> listeners = new ArrayList<>();
+    //
+    // public void addListener(ParsedFile l) {
+    //     listeners.add(l);
+    // }
 
     // ----------------------------------------------------------------------
     // Constructor

@@ -32,8 +32,8 @@ public class Progress implements Serializable {
     // ----------------------------------------------------------------------
 
     private boolean inWork;
-    private ProgressStatus works = new ProgressStatus();
-    private ProgressStatus steps = new ProgressStatus();
+    protected ProgressStatus works = new ProgressStatus();
+    protected ProgressStatus steps = new ProgressStatus();
 
     // ----------------------------------------------------------------------
     // Constructor

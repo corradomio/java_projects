@@ -16,9 +16,11 @@ public class ProjectRevisions implements Revisions {
     private ProjectDifferences pdiff;
 
     private static final String SOURCE_INFO = "source-info.json";
+    private static final String SOURCE_INFO_REV   = "source-info-%04d.json";
+    private static final String SOURCE_INFO_NAME  = "source-info";
     private static final String PROJECT_INFO = "project-info.json";
     private static final String PROJECT_INFO_REV = "project-info-%04d.json";
-    private static final String PROJECT_INF_NAME = "project-info";
+    private static final String PROJECT_INFO_NAME = "project-info";
     private static final String DIFFERENCES_NONE = "differences-none-%04d.json";
     private static final String DIFFERENCES_INFO = "differences-%04d-%04d.json";
     private static final String DIFFERENCES_INFO_NAME = "differences-";
@@ -54,6 +56,13 @@ public class ProjectRevisions implements Revisions {
 
         String revProjectInfo = String.format(PROJECT_INFO_REV, rev);
         return new File(splDirectory, prefix + revProjectInfo);
+    }
+
+    public File getSourceInfo(int rev) {
+        if (rev == CURRENT_REVISION)
+            return new File(splDirectory, prefix + SOURCE_INFO);
+        String revSourceInfo = String.format(SOURCE_INFO_REV, rev);
+        return new File(splDirectory, prefix + revSourceInfo);
     }
 
     public File getDifferenceInfo(int srcRev, int dstRev) {
@@ -122,10 +131,15 @@ public class ProjectRevisions implements Revisions {
     public void saveRevision() {
         int rev = getCurrentRevision();
 
+        // save project info
         File curProjectInfo = getProjectInfo();
         File revProjectInfo = getProjectInfo(rev);
-
         FileUtils.copy(curProjectInfo, revProjectInfo);
+
+        // save source info
+        File curSourceInfo = getSourceInfo();
+        File revSourceInfo  = getSourceInfo(rev);
+        FileUtils.copy(curSourceInfo, revSourceInfo);
     }
 
     public void saveDifferences() {
@@ -146,11 +160,15 @@ public class ProjectRevisions implements Revisions {
         ProjectDifferences pdiff = new ProjectDifferences();
 
         File revProjectInfo = getProjectInfo(rev);
+        File revSourceInfo  = getSourceInfo(rev);
+
         File curProjectInfo = getProjectInfo(CURRENT_REVISION);
         pdiff.compareProjects(curProjectInfo, revProjectInfo);
 
-        if (pdiff.isEmpty())
+        if (pdiff.isEmpty()) {
             FileUtils.delete(revProjectInfo);
+            FileUtils.delete(revSourceInfo);
+        }
     }
 
     /**
@@ -158,9 +176,10 @@ public class ProjectRevisions implements Revisions {
      * files
      */
     public void deleteAll() {
-        FileUtils.asList(splDirectory.listFiles((dir, name) -> name.contains(prefix + PROJECT_INF_NAME)))
-            .forEach(FileUtils::delete);
-        FileUtils.asList(splDirectory.listFiles((dir, name) -> name.contains(prefix + DIFFERENCES_INFO_NAME)))
+        FileUtils.asList(splDirectory.listFiles((dir, name) -> (
+                name.contains(prefix + PROJECT_INFO_NAME) ||
+                name.contains(prefix + SOURCE_INFO_NAME)  ||
+                name.contains(prefix + DIFFERENCES_INFO_NAME))))
             .forEach(FileUtils::delete);
         FileUtils.delete(getSourceInfo());
     }

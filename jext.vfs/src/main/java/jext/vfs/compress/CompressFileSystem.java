@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 public class CompressFileSystem extends AbstractFileSystem {
@@ -30,36 +29,13 @@ public class CompressFileSystem extends AbstractFileSystem {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private static Logger logger = Logger.getLogger(CompressFileSystem.class);
-
-    // private static Map<String, Class<? extends ArchiveInputStream>> archivers = new HashMap<>();
-    //
-    // static {
-    //     try (InputStream inp = VFileSystems.class.getResourceAsStream("/jext/compress/archivers.properties")) {
-    //         Properties props = new Properties();
-    //         props.load(inp);
-    //
-    //         for(String atype: props.stringPropertyNames()) {
-    //             try {
-    //                 Class aclass = Class.forName(props.getProperty(atype));
-    //
-    //                 archivers.put(atype, aclass);
-    //             }
-    //             catch (Exception e) {
-    //                 logger.error(e, e);
-    //             }
-    //         }
-    //     }
-    //     catch (Exception e) {
-    //         logger.error(e, e);
-    //     }
-    // }
+    private static final Logger logger = Logger.getLogger(CompressFileSystem.class);
 
     private static final String UPLOAD_HOME = "uploadHome";
 
     private File compressedFile = null;
 
-    private CEntries entries = new CEntries();
+    private final CEntries entries = new CEntries();
     private CompressedFile root;
     private String fileName;
 
@@ -92,17 +68,10 @@ public class CompressFileSystem extends AbstractFileSystem {
     @Override
     public VFileSystem connect() throws IOException {
 
-        try {
             initialize();
             scanEntries();
-
             return this;
-
         }
-        catch (Exception e) {
-            throw new IOException(e);
-        }
-    }
 
     @Override
     public void close() {
@@ -196,7 +165,7 @@ public class CompressFileSystem extends AbstractFileSystem {
         }
     }
 
-    private void scanEntries() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void scanEntries() throws IOException {
 
         try (ArchiveInputStream astream = openArchive()) {
             ArchiveEntry ae;
@@ -252,12 +221,11 @@ public class CompressFileSystem extends AbstractFileSystem {
         String name = entryName(ae);
         File file = new File(lroot, name);
         File folder = file.getParentFile();
-        int count;
         if (!folder.exists() && !folder.mkdirs())
             throw new IOException(String.format("Unable to create folder %s", folder.getAbsolutePath()));
 
         try(OutputStream o = new FileOutputStream(file)) {
-            count = IOUtils.copy(i, o);
+            IOUtils.copy(i, o);
         }
         fc.processFile(ae.getSize());
     }
@@ -269,8 +237,7 @@ public class CompressFileSystem extends AbstractFileSystem {
         return name;
     }
 
-    private ArchiveInputStream openArchive() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-
+    private ArchiveInputStream openArchive() throws IOException {
         return Archives.openArchive(compressedFile);
     }
 

@@ -175,7 +175,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Get the property values for the nodes
      */
-    List<Map<String, Object>> getNodesValues(List<String> nodeIds);
+    List<Map<String, Object>> getNodesValues(Collection<String> nodeIds);
 
     /**
      * Delete the nodes
@@ -233,7 +233,7 @@ public interface GraphSession extends AutoCloseable {
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
     Query queryAdjacentNodes(
-        List<String> fromIds, String edgeType, Direction direction, boolean recursive,
+        Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
     Query queryAdjacentNodesAlgorithm(
@@ -305,7 +305,7 @@ public interface GraphSession extends AutoCloseable {
                      Map<String, Object> edgeProps);
     Query queryEdges(String edgeType, Collection<String> ids,
                      Map<String, Object> edgeProps);
-    Query queryEdges(String edgeType, String foromId, Collection<String> toIds,
+    Query queryEdges(String edgeType, String fromId, Collection<String> toIds,
                      Map<String, Object> edgeProps);
 
     /**

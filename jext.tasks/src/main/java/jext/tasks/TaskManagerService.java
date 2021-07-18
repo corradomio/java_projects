@@ -183,7 +183,8 @@ public class TaskManagerService implements TaskManager, Runnable {
 
         synchronized (lock) {
             for (Task other : tasks.values())
-                if (other.getExtendedType().equals(task.getExtendedType()))
+                //if (other.getExtendedType().equals(task.getExtendedType()))
+                if (other.getType().equals(task.getType()))
                     return false;
             internalSubmit(task);
             return true;

@@ -1,9 +1,16 @@
 package jext.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ArrayUtils {
+
+    public static int[] EMPTY_INT_ARRAY = new int[0];
+    public static long[] EMPTY_LONG_ARRAY = new long[0];
+    public static double[] EMPTY_DOUBLE_ARRAY = new double[0];
+    public static boolean[] EMPTY_BOOLEAN_ARRAY = new boolean[0];
 
     // ----------------------------------------------------------------------
     // range
@@ -22,8 +29,37 @@ public class ArrayUtils {
     }
 
     // ----------------------------------------------------------------------
+    // asList
+    // ----------------------------------------------------------------------
+
+    public static List<Integer> asList(int[] a) {
+        List<Integer> l = new ArrayList<>();
+        for (int i : a)
+            l.add(i);
+        return l;
+    }
+
+    public static List<Long> asList(long[] a) {
+        List<Long> l = new ArrayList<>();
+        for (long i : a)
+            l.add(i);
+        return l;
+    }
+
+    public static List<Boolean> asList(boolean[] a) {
+        List<Boolean> l = new ArrayList<>();
+        for (boolean i : a)
+            l.add(i);
+        return l;
+    }
+
+    // ----------------------------------------------------------------------
     // asArray
     // ----------------------------------------------------------------------
+
+    public static boolean isEmpty(int... a) {
+        return a == null || a.length == 0;
+    }
 
     public static int[] asArray(int... a) {
         return a;
@@ -32,6 +68,7 @@ public class ArrayUtils {
     public static boolean[] asArray(boolean... a) {
         return a;
     }
+
 
     public static int indexOf(int[] a, int v) {
         int n = a.length;
@@ -43,7 +80,7 @@ public class ArrayUtils {
 
     public static int[] asIntArray(Object v) {
         if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
-            return new int[0];
+            return EMPTY_INT_ARRAY;
         if (v instanceof Integer)
             return new int[]{ (int)v };
         if (v instanceof Long)
@@ -68,7 +105,7 @@ public class ArrayUtils {
 
     public static long[] asLongArray(Object v) {
         if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
-            return new long[0];
+            return EMPTY_LONG_ARRAY;
         if (v instanceof Integer)
             return new long[]{ (int)v };
         if (v instanceof Long)
@@ -93,7 +130,7 @@ public class ArrayUtils {
 
     public static boolean[] asBooleanArray(Object v) {
         if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
-            return new boolean[0];
+            return EMPTY_BOOLEAN_ARRAY;
         if (v instanceof Boolean)
             return new boolean[]{ (boolean)v };
 

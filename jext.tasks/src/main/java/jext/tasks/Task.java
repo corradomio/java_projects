@@ -21,14 +21,29 @@ public interface Task extends Runnable {
      */
     String getType();
 
-    /**
-     * The task type extended with information about project & model
-     */
-    String getExtendedType();
+    // /**
+    //  * The task type extended with information about project & model
+    //  */
+    // String getExtendedType();
 
+    /**
+     * List of task parameters
+     */
+    Parameters getParameters();
+
+    /**
+     * The task is terminated
+     */
     boolean isTerminated();
 
+    /**
+     * The task has space/time requirements
+     */
     boolean hasRequirements();
+
+    /**
+     * Retrieve the task space/time requirements
+     */
     TaskRequirements getRequirements();
 
     // ----------------------------------------------------------------------
@@ -41,17 +56,17 @@ public interface Task extends Runnable {
     TaskStatus getStatus();
 
     /**
-     * List of status changed with timestamp
-     */
-    List<StatusChange> getStatusHistory();
-
-    /**
      * When the task has reached the current state
      */
     long getTimestamp();
 
+    /**
+     * List of status changed with timestamp
+     */
+    List<StatusChange> getStatusHistory();
+
     // ----------------------------------------------------------------------
-    // Support properties
+    // Progress status
     // ----------------------------------------------------------------------
 
     /**
@@ -63,12 +78,6 @@ public interface Task extends Runnable {
      * Retrieve the progress status
      */
     Progress getProgress();
-
-    /**
-     * Retrieve the list of parameters
-     * @return
-     */
-    Parameters getParameters();
 
     // ----------------------------------------------------------------------
     // Operations

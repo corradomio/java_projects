@@ -234,7 +234,11 @@ public class XPathUtils {
     public static String getValue(Element elt, String xpath, String defaultValue, Properties params) {
         Node node = selectNode(elt, xpath, false, params);
         if (node == null) return defaultValue;
-        String value = node.getTextContent().trim();
+        String value = node.getTextContent();
+        if (value == null)
+            value = "";
+        else
+            value = value.trim();
         return resolveValue(value, params);
     }
 

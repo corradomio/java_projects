@@ -98,7 +98,7 @@ public class Parameters extends HashMap<String, Object> {
 
     // ----------------------------------------------------------------------
 
-    public String[] getStringArray(String name) {
+    public String[] getStrings(String name) {
         if (!super.containsKey(name))
             return null;
         Object obj = super.get(name);

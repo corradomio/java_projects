@@ -7,6 +7,7 @@ import jext.graph.Limit;
 import jext.graph.Query;
 import jext.util.SetUtils;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class Neo4JAdjacentQuery implements Query {
     private String alias;
     private boolean distinct;
 
-    private List<String> fromIds;
+    private Collection<String> fromIds;
     private String edgeType;
     private Direction direction;
     private String nodeType;
@@ -35,7 +36,7 @@ public class Neo4JAdjacentQuery implements Query {
 
     public Neo4JAdjacentQuery(
         GraphSession session,
-        List<String> fromIds, String edgeType, Direction direction,
+        Collection<String> fromIds, String edgeType, Direction direction,
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps) {
         this.session = (Neo4JOnlineSession) session;
 

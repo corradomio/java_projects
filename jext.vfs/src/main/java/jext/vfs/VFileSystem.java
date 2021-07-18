@@ -8,11 +8,15 @@ import java.util.Properties;
 
 public interface VFileSystem {
 
+    /**
+     * URL used to connect to the virtual file system
+     */
     String getURL();
 
     /**
      * Connect to the filesystem.
      * Available for the filesystems where it is necessary to create a FTP connection
+     * Used to check if the filesystem is valid
      */
     VFileSystem connect() throws IOException;
 
