@@ -30,6 +30,9 @@
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
             <version>${jna.version}</version>
+
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/lib/jna.jar</systemPath>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
         <dependency>
