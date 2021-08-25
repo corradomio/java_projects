@@ -363,7 +363,8 @@ public class JavaParserPool {
     }
 
     private ParseResult<CompilationUnit> parsedFile(ParseResult<CompilationUnit> result, File srcFile) {
-        listeners.forEach(l -> l.parsed(result, srcFile));
+        // listeners.forEach(l -> l.parsed(result, srcFile));
+
         // if (!result.isSuccessful())
         //     logger.errorf("Unable to parse for problems %s\n  %s", JPUtils.getProblemMessages(result),
         //         FileUtils.getAbsolutePath(srcFile));

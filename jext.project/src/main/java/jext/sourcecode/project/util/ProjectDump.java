@@ -90,20 +90,25 @@ public class ProjectDump {
             if ((noFlags & NO_LIBRARIES) == 0) {
                 spaces(stream, 2).printf("runtimeLibrary: '%s'\n", m.getRuntimeLibrary().getName().getFullName());
 
-                spaces(stream, 2).print("libraries:\n");
-                m.getLibraries().forEach(l -> {
+                spaces(stream, 2).print("declaredLibraries:\n");
+                m.getDeclaredLibraries().forEach(l -> {
                     spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
                 });
 
-                Set<Library> definedLibraries = SetUtils.differenceOrdered(
-                    new HashSet<>(m.getDeclaredLibraries()),
-                    new HashSet<>(m.getLibraries())
-                );
-
-                spaces(stream, 2).print("definedLibraries:\n");
-                definedLibraries.forEach(l -> {
-                    spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
-                });
+                // spaces(stream, 2).print("libraries:\n");
+                // m.getLibraries().forEach(l -> {
+                //     spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
+                // });
+                //
+                // Set<Library> definedLibraries = SetUtils.differenceOrdered(
+                //     new HashSet<>(m.getDeclaredLibraries()),
+                //     new HashSet<>(m.getLibraries())
+                // );
+                //
+                // spaces(stream, 2).print("definedLibraries:\n");
+                // definedLibraries.forEach(l -> {
+                //     spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
+                // });
 
             }
             if ((noFlags & NO_TYPES) == 0) {

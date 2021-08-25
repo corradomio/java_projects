@@ -1,6 +1,8 @@
 package jext.maven;
 
 /*
+    https://books.sonatype.com/mvnref-book/reference/pom-relationships-sect-pom-syntax.html
+    https://www.mojohaus.org/versions-maven-plugin/version-rules.html
     https://docs.oracle.com/middleware/1212/core/MAVEN/maven_version.htm#MAVEN400
 
     Version schemes
@@ -9,7 +11,12 @@ package jext.maven;
         MinorVersion: 2.0
         IncrementalVersion: 1.2-SNAPSHOT
         BuildNumber: 1.4.2-12
+        PatchNumber: 1.4.2-12-1
         Qualifier: 1.2-beta-2
+
+        Extra: 5.3.5.RELEASE
+        Extra: 3.27.0-GA
+        Extra: 1.2.LABEL
 
     All versions with a qualifier are older than the same version without a qualifier (release version).
 
@@ -73,17 +80,19 @@ public class Version implements Comparable<Version> {
         // BuildNumber,            // 1.4.2-12
         // PatchNumber,            // 1.4.2-12-3
         // Qualifier               // 1.2-beta-2
+        // Patched                 //
     }
 
-    private static Pattern MajorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)");
-    private static Pattern MinorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)");
-    private static Pattern IncrementalVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-SNAPSHOT");
-    private static Pattern BuildNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)");
-    private static Pattern PatchNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-([0-9]+)");
-    private static Pattern QualifierPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-([a-zA-Z0-9-]+)");
+    private static final Pattern MajorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)");
+    private static final Pattern MinorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)");
+    private static final Pattern IncrementalVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-SNAPSHOT");
+    private static final Pattern BuildNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)");
+    private static final Pattern PatchNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-([0-9]+)");
+    private static final Pattern QualifierPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-([a-zA-Z0-9-]+)");
 
-    private String version;
+    private final String version;
     private Scheme scheme;
+
     private int major;
     private int minor;
     private int subver;
@@ -193,7 +202,7 @@ public class Version implements Comparable<Version> {
                 return +1;
         }
         if (this.scheme == Scheme.Generic || that.scheme == Scheme.Generic)
-            return version.compareTo(that.version);
+            return this.version.compareTo(that.version);
         else
             return this.version.compareTo(that.version);
     }

@@ -195,9 +195,18 @@ public class MavenDownloader implements MavenConst {
 
         // compose the local file
         File pomFile = getFile(coords, MavenType.POM);
-        if (!pomFile.exists())
-            downloadFile(coords, MavenType.POM);
+        // if (!pomFile.exists())
+        //     downloadFile(coords, MavenType.POM);
         return pomFile;
+    }
+
+    public File getMetadataFile(MavenCoords coords) {
+        coords = normalize(coords);
+
+        File metadataFile = getFile(coords, MavenType.METADATA);
+        // if (recheck(metadataFile))
+        //     downloadFile(coords, MavenType.METADATA);
+        return metadataFile;
     }
 
     /**
@@ -212,8 +221,8 @@ public class MavenDownloader implements MavenConst {
 
         // compose the local file
         File artifactFile = getFile(coords, MavenType.ARTIFACT);
-        if (!artifactFile.exists())
-            downloadFile(coords, MavenType.ARTIFACT);
+        // if (!artifactFile.exists())
+        //     downloadFile(coords, MavenType.ARTIFACT);
 
         // if the file is an '.aar' file, extract all '.jar's
         if (artifactFile.getName().endsWith(".aar"))
@@ -447,8 +456,8 @@ public class MavenDownloader implements MavenConst {
      */
     public String getLatestVersion(MavenCoords coords) {
         File metadataFile = getFile(coords, MavenType.METADATA);
-        if (recheck(metadataFile))
-            downloadFile(coords, MavenType.METADATA);
+        // if (recheck(metadataFile))
+        //     downloadFile(coords, MavenType.METADATA);
         if (metadataFile.exists())
             return findMetadataVersion(metadataFile);
 
@@ -513,8 +522,8 @@ public class MavenDownloader implements MavenConst {
         Versions versions = new Versions();
 
         File versionsFile = getFile(coords, MavenType.VERSIONS);
-        if (recheck(versionsFile))
-            downloadFile(coords, MavenType.VERSIONS);
+        // if (recheck(versionsFile))
+        //     downloadFile(coords, MavenType.VERSIONS);
         if (!versionsFile.exists())
             return versions;
 
@@ -969,16 +978,29 @@ public class MavenDownloader implements MavenConst {
      *      [artifact].pom
      *      [artifact].jar  if it exists
      *
-     * @param coordList list of coordinates to check
+     * @param coordsList list of coordinates to check
+     * @param artifacts if to download the artifacts
      */
-    public void checkArtifacts(List<MavenCoords> coordList, boolean artifacts) {
+    public void checkArtifacts(Collection<MavenCoords> coordsList, boolean artifacts) {
+        Parallel.forEach(coordsList, coords -> checkArtifact(coords, artifacts));
+    }
 
-        Parallel.forEach(coordList, coords -> {
-            getPomFile(coords);
-            if (artifacts)
-                getArtifact(coords);
-        });
+    public void checkArtifact(MavenCoords coords, boolean artifact) {
 
+        MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
+
+        File metadataFile = getMetadataFile(coords);
+        if (recheck(metadataFile))
+            me.add(downloadFile(coords, MavenType.METADATA));
+
+        File pomFile = getPomFile(coords);
+        if (!pomFile.exists())
+            me.add(downloadFile(coords, MavenType.POM));
+
+        // if (artifact)
+        File artifactFile = getArtifact(coords);
+        if (!artifactFile.exists())
+            me.add(downloadFile(coords, MavenType.ARTIFACT));
     }
 
 }

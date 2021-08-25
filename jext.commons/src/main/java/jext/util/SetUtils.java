@@ -1,6 +1,8 @@
 package jext.util;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -12,8 +14,17 @@ public class SetUtils {
     }
 
     public static <T> Set<T> asSet(T... args) {
-        return new HashSet<>(Arrays.asList(args));
+        return asSet(Arrays.asList(args));
     }
+
+    public static <T> Set<T> asSet(Collection<T> c) {
+        if (c instanceof Set)
+            return (Set<T>) c;
+        else
+            return new HashSet<>(c);
+    }
+
+    // ----------------------------------------------------------------------
 
     public static <T> boolean isSameset(Set<T> s1, Set<T> s2) {
         return s1.equals(s2);
@@ -55,9 +66,15 @@ public class SetUtils {
 
     // ----------------------------------------------------------------------
 
-    public static <T> Set<T> union(Set<T> s1, Set<T> s2) {
+    public static <T> Set<T> union(Set<T>... sets){
         Set<T> r = new HashSet<T>();
-        r.addAll(s1);
+        for (Set<T> s : sets)
+            r.addAll(s);
+        return r;
+    }
+
+    public static <T> Set<T> union(Set<T> s1, Set<T> s2) {
+        Set<T> r = new HashSet<T>(s1);
         r.addAll(s2);
         return r;
     }
@@ -84,8 +101,7 @@ public class SetUtils {
     // ----------------------------------------------------------------------
 
     public static <T> Set<T> unionOrdered(Set<T> s1, Set<T> s2) {
-        Set<T> r = new TreeSet<T>();
-        r.addAll(s1);
+        Set<T> r = new TreeSet<T>(s1);
         r.addAll(s2);
         return r;
     }

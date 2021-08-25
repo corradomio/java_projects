@@ -110,8 +110,8 @@ public class ProjectFactory {
         //     project.getProperties().setProperty(RUNTIME_LIBRARY, runtimeLibrary);
         // }
 
-        MavenDownloader downloader = new MavenDownloader();
-        LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(downloader);
+        MavenDownloader md = new MavenDownloader();
+        LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(md);
         project.setLibraryFinder(lfinder);
 
         return project;

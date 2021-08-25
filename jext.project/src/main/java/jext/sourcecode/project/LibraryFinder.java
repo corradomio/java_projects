@@ -12,8 +12,10 @@ public interface LibraryFinder {
 
     Library getLibrary(MavenCoords coords);
 
+    String getLatestVersion(MavenCoords coords);
+
     RuntimeLibrary getRuntimeLibrary(String libraryName);
 
-    MavenDownloader getDownloader();
+    MavenDownloader getLibraryDownloader();
 
 }

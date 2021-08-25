@@ -5,11 +5,9 @@ import jext.sourcecode.project.util.ProjectUtils;
 import jext.sourcecode.project.util.SourceInfo;
 import jext.util.FileUtils;
 import jext.util.MapUtils;
-import jext.util.SetUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,13 +80,16 @@ public class ProjectAnalyzer {
         pinfo.put("properties", project.getProperties());
 
         List<Module> modules = project.getModules();
-        Set<Library> libraries = project.getLibraries();
+        LibrarySet libraries = project.getLibraries();
+        Set<Library> usedLibraries = libraries.getUsedLibraries();
+        Set<Library> unusedLibraries = libraries.getUnusedLibraries();
         Set<Library> rtLibraries = ProjectUtils.getRuntimeLibraries(project);
         Set<String> mavenRepos = ProjectUtils.getMavenRepositories(project);
 
         pinfo.put("counts", MapUtils.asMap(
             "modules", modules.size(),
-            "libraries", libraries.size(),
+            "libraries", usedLibraries.size(),
+            "unusedLibraries", unusedLibraries.size(),
             "runtimeLibraries", rtLibraries.size(),
             "sources", project.getSources().size(),
             "mavenRepositories", mavenRepos.size()
@@ -99,7 +100,12 @@ public class ProjectAnalyzer {
             .map(this::analyzeModule)
             .collect(Collectors.toMap(minfo -> minfo.get("fullname"), minfo -> minfo)));
 
-        pinfo.put("libraries", libraries
+        pinfo.put("libraries", usedLibraries
+            .parallelStream()
+            .map(this::analyzeLibrary)
+            .collect(Collectors.toList()));
+
+        pinfo.put("unusedLibraries", unusedLibraries
             .parallelStream()
             .map(this::analyzeLibrary)
             .collect(Collectors.toList()));
@@ -118,11 +124,14 @@ public class ProjectAnalyzer {
         File moduleHome = m.getModuleHome();
         Map<String, Object> minfo = new LinkedHashMap<>();
 
+        Set<Library> declaredLibraries = m.getDeclaredLibraries();
+        // Set<Library> plibs = project.getLibraries(m);
+
         // compute the list of unique libraries in this module
-        Set<Library> definedLibraries = SetUtils.differenceOrdered(
-            new HashSet<>(m.getDeclaredLibraries()),
-            new HashSet<>(m.getLibraries())
-        );
+        // Set<Library> declaredLibraries = SetUtils.differenceOrdered(
+        //     new HashSet<>(dlibs),
+        //     new HashSet<>(plibs)
+        // );
 
         // general information
 
@@ -146,8 +155,8 @@ public class ProjectAnalyzer {
             "sources", m.getSources().size(),
             "sourceRoots", m.getSourceRoots().size(),
             "dependencies", m.getDependencies().size(),
-            "libraries", m.getLibraries().size(),
-            "definedLibraries", definedLibraries.size(),
+            // "libraries", m.getLibraries().size(),
+            "declaredLibraries", declaredLibraries.size(),
             "types", m.getTypes().size(),
             "usedTypes", m.getUsedTypes().size()
         ));
@@ -171,10 +180,10 @@ public class ProjectAnalyzer {
 
         // libraries
 
-        minfo.put("libraries", m.getLibraries()
-            .stream()
-            .map(library -> library.getName().getFullName())
-            .collect(Collectors.toList()));
+        // minfo.put("libraries", m.getLibraries()
+        //     .stream()
+        //     .map(library -> library.getName().getFullName())
+        //     .collect(Collectors.toList()));
         minfo.put("declaredLibraries", m.getDeclaredLibraries()
             .stream()
             .map(library -> library.getName().getFullName())

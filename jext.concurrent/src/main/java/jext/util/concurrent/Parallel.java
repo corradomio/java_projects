@@ -346,6 +346,12 @@ public class Parallel {
         }
     }
 
+    // ----------------------------------------------------------------------
+
+    public static int threads() {
+        return nthreads;
+    }
+
     public static synchronized void shutdown() {
         if (running != null)
             running.forEach(ExecutorService::shutdownNow);

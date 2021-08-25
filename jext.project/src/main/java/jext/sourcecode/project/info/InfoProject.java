@@ -6,6 +6,7 @@ import jext.name.Named;
 import jext.name.PathName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
+import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
@@ -14,6 +15,8 @@ import jext.sourcecode.project.info.library.InfoInvalidLibrary;
 import jext.sourcecode.project.info.library.InfoLocalLibrary;
 import jext.sourcecode.project.info.library.InfoMavenLibrary;
 import jext.sourcecode.project.info.library.InfoRTLibrary;
+import jext.sourcecode.project.info.library.LibrarySet;
+import jext.sourcecode.project.maven.MavenRepository;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 
@@ -21,13 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class InfoProject implements Project {
 
@@ -52,8 +55,9 @@ public class InfoProject implements Project {
     private Map<String, Object> info;
     private List<Module> modules;
     private Map<String, Module> moduleMap;
-    private Set<Library> libraries;
-    private Map<String, Library> libraryMap;
+    //private Set<Library> libraries;
+    private LibrarySet libraries;
+    // private Map<String, Library> libraryMap;
     private List<Source> sources;
     private Map<String, Source> sourceMap;
 
@@ -199,6 +203,7 @@ public class InfoProject implements Project {
     @Override
     public Project setLibraryFinder(LibraryFinder lfinder) {
         this.lfinder= lfinder;
+        this.lfinder.setProject(this);
         return this;
     }
 
@@ -209,22 +214,54 @@ public class InfoProject implements Project {
 
     @Override
     public MavenDownloader getLibraryDownloader() {
-        return lfinder.getDownloader();
+        MavenDownloader md = lfinder.getLibraryDownloader();
+        getLibraryRepositories().forEach(librepo -> {
+            md.addRepository(librepo.getUrl());
+        });
+        return md;
     }
 
+    // @Override
+    // public Set<Library> getLibraries(LibrariesSelector select) {
+    //     LibrarySet libraries = getLibraries();
+    //     switch (select) {
+    //         case USED: return libraries.usedLibraries();
+    //         case UNUSED: return libraries.unusedLibraries();
+    //         default:
+    //             return SetUtils.union(libraries.usedLibraries(), libraries.unusedLibraries());
+    //     }
+    // }
+
     @Override
-    public Set<Library> getLibraries() {
+    public LibrarySet getLibraries() {
         if (libraries != null)
             return libraries;
 
-        libraries = new HashSet<>();
+        libraries = new LibrarySet();
         List<Map<String, Object>> linfos = MapUtils.get(info, "libraries");
         for(Map<String, Object> linfo : linfos) {
             Library l = composeLibrary(linfo);
             libraries.add(l);
         }
+        List<Map<String, Object>> uinfos = MapUtils.get(info, "unusedLibraries");
+        for(Map<String, Object> uinfo : uinfos) {
+            Library l = composeLibrary(uinfo);
+            libraries.add(l);
+        }
+        List<Map<String, Object>> rtinfos = MapUtils.get(info, "runtimeLibraries");
+        for(Map<String, Object> rtinfo : rtinfos) {
+            Library l = composeLibrary(rtinfo);
+            libraries.add(l);
+        }
 
         return libraries;
+    }
+
+    @Override
+    public Set<Library> getLibraries(Module module) {
+        LibrarySet libraries = getLibraries();
+        return libraries.resolveAll(module.getDeclaredLibraries());
+        // return module.getLibraries();
     }
 
     private Library composeLibrary(Map<String, Object> linfo) {
@@ -241,26 +278,26 @@ public class InfoProject implements Project {
 
     @Override
     public Library getLibrary(String nameOrId) {
-        if (libraryMap == null) {
-            libraryMap = new java.util.TreeMap<>();
-            getLibraries().forEach(l -> {
-                libraryMap.put(l.getId(), l);
-                libraryMap.put(l.getName().getFullName(), l);
-                libraryMap.put(l.getName().getName(), l);
-            });
-        }
-
-        if (libraryMap.containsKey(nameOrId))
-            return libraryMap.get(nameOrId);
+        // if (libraryMap == null) {
+        //     libraryMap = new java.util.TreeMap<>();
+        //     getLibraries().forEach(l -> {
+        //         libraryMap.put(l.getId(), l);
+        //         libraryMap.put(l.getName().getFullName(), l);
+        //         libraryMap.put(l.getName().getName(), l);
+        //     });
+        // }
+        //
+        // if (libraryMap.containsKey(nameOrId))
+        //     return libraryMap.get(nameOrId);
 
         // check for Maven libraries
-        if (nameOrId.contains(":")) {
-            int pos = nameOrId.lastIndexOf(":");
-            nameOrId = nameOrId.substring(0, pos);
-        }
+        // if (nameOrId.contains(":")) {
+        //     int pos = nameOrId.lastIndexOf(":");
+        //     nameOrId = nameOrId.substring(0, pos);
+        // }
 
-        if (libraryMap.containsKey(nameOrId))
-            return libraryMap.get(nameOrId);
+        // if (libraryMap.containsKey(nameOrId))
+        //     return libraryMap.get(nameOrId);
 
         // Set<Library> libraries = getLibraries();
         // for (Library library : libraries) {
@@ -269,6 +306,31 @@ public class InfoProject implements Project {
         //     if (library.getId().equals(nameOrId))
         //         return library;
         // }
+
+        LibrarySet libraries = getLibraries();
+        return libraries.get(nameOrId);
+    }
+
+    @Override
+    public Library getLibrary(Library library) {
+        LibrarySet projectLibraries = (LibrarySet) getLibraries();
+        return projectLibraries.resolve(library);
+    }
+
+    @Override
+    public Set<LibraryRepository> getLibraryRepositories() {
+        List<String> urls = MapUtils.get(info, "mavenRepositories");
+        return urls.stream()
+            .map(MavenRepository::new)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    public LibraryRepository getLibraryRepository(String librepoId) {
+        for (LibraryRepository librepo : getLibraryRepositories()) {
+            if (librepo.getId().equals(librepoId))
+                return librepo;
+        }
 
         return null;
     }

@@ -208,6 +208,16 @@ public class ProjectUtils {
 
     // ----------------------------------------------------------------------
 
+    public static Set<Library> getAllLibraries(Project project) {
+        Set<Library> allLibraries = new HashSet<>();
+        project.getModules().forEach(module -> {
+            allLibraries.addAll(module.getDeclaredLibraries());
+        });
+        return allLibraries;
+    }
+
+    // ----------------------------------------------------------------------
+
     public static Set<Library> getRuntimeLibraries(Project project) {
         Set<Library> rtLibraries = new HashSet<>();
         project.getModules().forEach(module -> {

@@ -15,14 +15,14 @@ public class ProjectRevisions implements Revisions {
     private int dstRevision;
     private ProjectDifferences pdiff;
 
-    private static final String SOURCE_INFO = "source-info.json";
+    private static final String SOURCE_INFO       = "source-info.json";
     private static final String SOURCE_INFO_REV   = "source-info-%04d.json";
     private static final String SOURCE_INFO_NAME  = "source-info";
-    private static final String PROJECT_INFO = "project-info.json";
-    private static final String PROJECT_INFO_REV = "project-info-%04d.json";
+    private static final String PROJECT_INFO      = "project-info.json";
+    private static final String PROJECT_INFO_REV  = "project-info-%04d.json";
     private static final String PROJECT_INFO_NAME = "project-info";
-    private static final String DIFFERENCES_NONE = "differences-none-%04d.json";
-    private static final String DIFFERENCES_INFO = "differences-%04d-%04d.json";
+    private static final String DIFFERENCES_NONE  = "differences-none-%04d.json";
+    private static final String DIFFERENCES_INFO  = "differences-%04d-%04d.json";
     private static final String DIFFERENCES_INFO_NAME = "differences-";
 
 

@@ -56,10 +56,10 @@ public abstract class InfoLibrary implements Library {
         return MapUtils.get(info, "version");
     }
 
-    @Override
-    public String getLatest() {
-        return null;
-    }
+    // @Override
+    // public String getLatestVersion() {
+    //     return null;
+    // }
 
     @Override
     public Project getProject() {
@@ -88,7 +88,20 @@ public abstract class InfoLibrary implements Library {
 
     @Override
     public String getPath() {
-        return MapUtils.get(info, "path");
+        switch (libraryType) {
+            case RUNTIME:
+                return FileUtils.getAbsolutePath(getFile());
+            case LOCAL:
+                return FileUtils.relativePath(project.getProjectHome(), getFile());
+            case MAVEN:
+                List<File> files = getFiles();
+                if (files.size() == 1)
+                    return FileUtils.getAbsolutePath(files.get(0));
+                else
+                    return FileUtils.getAbsolutePath(getFile());
+            default:
+                return "";
+        }
     }
 
     @Override

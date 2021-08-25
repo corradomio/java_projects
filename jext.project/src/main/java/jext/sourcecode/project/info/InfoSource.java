@@ -88,6 +88,14 @@ public class InfoSource implements Source {
     @Override
     public SourceInfo getSourceInfo() {
         SourceInfo sinfo = new SourceInfo();
+
+        sinfo.version = MapUtils.get(info, "sourceInfo", "version");
+        sinfo.count = MapUtils.getLong(info, "sourceInfo", "count");
+        sinfo.bytes = MapUtils.getLong(info, "sourceInfo", "bytes");
+        sinfo.totalLines = MapUtils.getLong(info, "sourceInfo", "totalLines");
+        sinfo.blankLines = MapUtils.getLong(info, "sourceInfo", "blankLines");
+        sinfo.codeLines = MapUtils.getLong(info, "sourceInfo", "codeLines");
+
         return sinfo;
     }
 

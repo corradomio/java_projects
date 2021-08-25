@@ -32,12 +32,17 @@ public class NullLibraryFinder implements LibraryFinder {
     }
 
     @Override
+    public String getLatestVersion(MavenCoords coords) {
+        return coords.getVersion().toString();
+    }
+
+    @Override
     public RuntimeLibrary getRuntimeLibrary(String libraryName) {
         return null;
     }
 
     @Override
-    public MavenDownloader getDownloader() {
+    public MavenDownloader getLibraryDownloader() {
         return null;
     }
 }

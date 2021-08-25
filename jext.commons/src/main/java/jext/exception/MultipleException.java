@@ -11,6 +11,10 @@ public class MultipleException extends RuntimeException {
         super(message);
     }
 
+    public void add(MultipleException other) {
+        causes.addAll(other.getCauses());
+    }
+
     public void addCause(Throwable cause) {
         causes.add(cause);
     }

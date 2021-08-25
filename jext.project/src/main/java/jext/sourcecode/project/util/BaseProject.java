@@ -9,12 +9,14 @@ import jext.name.NamedObject;
 import jext.name.PathName;
 import jext.nio.file.FilteredFileVisitor;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryRepository;
+import jext.sourcecode.project.LibrarySet;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
-import jext.sourcecode.project.maven.LibrarySet;
+import jext.sourcecode.project.maven.MavenRepository;
 import jext.sourcecode.resources.ResourceFile;
 import jext.sourcecode.resources.SourceCode;
 import jext.util.Bag;
@@ -70,10 +72,10 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     protected List<Module> modules;
     protected List<Source> sources;
-    protected LibrarySet libraries;
+    protected jext.sourcecode.project.maven.LibrarySet libraries;
 
     protected LibraryFinder lfinder;
-    protected MavenDownloader downloader;
+    protected MavenDownloader md;
 
     protected FilePatterns fpSources;
     protected FilePatterns fpResources;
@@ -504,16 +506,21 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     @Override
     public MavenDownloader getLibraryDownloader() {
-        if (downloader != null)
-            return downloader;
+        if (md != null)
+            return md;
 
         // create a local copy of the downloader
-        downloader = lfinder.getDownloader().newDownloader();
+        md = lfinder.getLibraryDownloader();
 
         // add the project defined maven repositories
-        downloader.addRepositories(getMavenRepositories());
+        // md.addRepositories(getMavenRepositories());
+        // return md;
 
-        return downloader;
+        getLibraryRepositories().forEach(librepo -> {
+            md.addRepository(librepo.getUrl());
+        });
+
+        return md;
     }
 
     // public Library getRuntimeLibrary() {
@@ -532,7 +539,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     @Override
-    public Set<Library> getLibraries() {
+    public LibrarySet getLibraries() {
         if (libraries != null)
             return libraries;
 
@@ -541,14 +548,14 @@ public abstract class BaseProject extends NamedObject implements Project {
         // 2) maven libraries buf for them it keep ONLY the latest version
         // 3) runtime libraries
 
-        LibrarySet libraries = new LibrarySet();
+        jext.sourcecode.project.maven.LibrarySet libraries = new jext.sourcecode.project.maven.LibrarySet();
 
         // Note: the runtime libraries are added because otherwise javaassist
         // is not able to resolve the symbols
 
         getModules().forEach(module -> {
             libraries.addAll(module.getDeclaredLibraries());
-            libraries.add(module.getRuntimeLibrary());
+            // libraries.add(module.getRuntimeLibrary());
         });
 
         logger.debugf("check %d libraries", libraries.size());
@@ -557,6 +564,12 @@ public abstract class BaseProject extends NamedObject implements Project {
         this.libraries = libraries;
 
         return libraries;
+    }
+
+    @Override
+    public Set<Library> getLibraries(Module module) {
+        jext.sourcecode.project.maven.LibrarySet projectLibraries = (jext.sourcecode.project.maven.LibrarySet) getLibraries();
+        return projectLibraries.resolveAll(module.getDeclaredLibraries());
     }
 
     @Override
@@ -571,6 +584,30 @@ public abstract class BaseProject extends NamedObject implements Project {
             if (library.getPath().equals(nameOrId))
                 return library;
         }
+        return null;
+    }
+
+    @Override
+    public Library getLibrary(Library library) {
+        jext.sourcecode.project.maven.LibrarySet projectLibraries = (jext.sourcecode.project.maven.LibrarySet) getLibraries();
+        return projectLibraries.resolve(library);
+    }
+
+    @Override
+    public Set<LibraryRepository> getLibraryRepositories() {
+        return getMavenRepositories()
+            .stream()
+            .map(MavenRepository::new)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    public LibraryRepository getLibraryRepository(String librepoId) {
+        for (LibraryRepository librepo : getLibraryRepositories()) {
+            if (librepo.getId().equals(librepoId))
+                return librepo;
+        }
+
         return null;
     }
 
@@ -649,7 +686,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // Library repositories
     // ----------------------------------------------------------------------
 
-    public Set<String> getMavenRepositories() {
+    private Set<String> getMavenRepositories() {
         Set<String> mavenRepos = new HashSet<>();
 
         for(Module module : getModules()) {

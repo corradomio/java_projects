@@ -5,6 +5,7 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
+import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.maven.MavenLibrary;
@@ -40,16 +41,12 @@ public class JavaLibraryFinder implements LibraryFinder {
     // as a single library name
     //.
 
-    private static final String DESCRIPTOR     = ".descriptor";
-    private static final String DESCRIPTOR_GZ  = ".descriptor.gz";
-    private static final String DESCRIPTOR_ZIP = ".descriptor.zip";
-
     private Logger logger;
 
     private Project project;
 
     // Maven downloader
-    private MavenDownloader downloader;
+    private MavenDownloader md;
 
     // name -> directory
     private Map<String, File> namedLibraries = new HashMap<>();
@@ -77,9 +74,8 @@ public class JavaLibraryFinder implements LibraryFinder {
         return this;
     }
 
-
-    public JavaLibraryFinder setDownloader(MavenDownloader downloader) {
-        this.downloader = downloader;
+    public JavaLibraryFinder setDownloader(MavenDownloader md) {
+        this.md = md;
         return this;
     }
 
@@ -145,8 +141,8 @@ public class JavaLibraryFinder implements LibraryFinder {
     }
 
     @Override
-    public MavenDownloader getDownloader() {
-        return downloader;
+    public MavenDownloader getLibraryDownloader() {
+        return md.newDownloader();
     }
 
     // ----------------------------------------------------------------------
@@ -193,16 +189,24 @@ public class JavaLibraryFinder implements LibraryFinder {
     public Library getLibrary(MavenCoords coords) {
 
         synchronized (mavenLibraries) {
-            coords = downloader.getVersioned(coords);
+            coords = md.getVersioned(coords);
 
             if (mavenLibraries.containsKey(coords))
                 return mavenLibraries.get(coords);
 
-            Library library = new MavenLibrary(coords, downloader, project);
+            Library library = new MavenLibrary(coords, md, project);
             mavenLibraries.put(coords, library);
             return library;
         }
+    }
 
+    @Override
+    public String getLatestVersion(MavenCoords coords) {
+        // if (!library.getLibraryType().equals(LibraryType.MAVEN))
+        //     return library.getVersion();
+        //
+        // MavenCoords coords = MavenCoords.of(library.getName().getFullName());
+        return md.getLatestVersion(coords);
     }
 
     // ----------------------------------------------------------------------
@@ -211,7 +215,7 @@ public class JavaLibraryFinder implements LibraryFinder {
 
     private void addRepositories(String listUrls) {
         List<String> repositories = StringUtils.split(listUrls,",");
-        downloader.addRepositories(repositories);
+        md.addRepositories(repositories);
     }
 
 }

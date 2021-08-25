@@ -14,6 +14,14 @@ package jext.maven;
 
 public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 
+    public static MavenCoords of(String name, String version) {
+        return new MavenCoords(name, version);
+    }
+
+    public static MavenCoords of(String coords) {
+        return new MavenCoords(coords);
+    }
+
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
@@ -86,6 +94,12 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     }
 
     public MavenCoords(String gid, String aid, String v) {
+        if (gid.contains(":") && v == null) {
+            int pos = gid.indexOf(":");
+            v = aid;
+            aid = gid.substring(pos+1);
+            gid = gid.substring(0, pos);
+        }
         this.groupId = gid;
         this.artifactId = aid;
         if (v == null || PACKAGING_TYPES.contains(v))

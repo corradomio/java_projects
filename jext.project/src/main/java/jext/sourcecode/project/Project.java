@@ -103,10 +103,26 @@ public interface Project extends IdNamed {
     // Libraries
     // ----------------------------------------------------------------------
 
-    /** UNION of all module libraries with the HIGHEST version */
-    Set<Library> getLibraries();
+    enum LibrariesSelector {
+        USED,
+        UNUSED,
+        ALL,
+    }
 
+    /** UNION of all module libraries with the HIGHEST version */
+    /*Set<Library>*/LibrarySet getLibraries();
+
+    /** List of module libraries RESOLVED with HIGHEST version */
+    Set<Library> getLibraries(Module module);
+
+    /** Library by name or id */
     Library getLibrary(String nameOrId);
+
+    /** Library with HIGHEST version */
+    Library getLibrary(Library library);
+
+    Set<LibraryRepository> getLibraryRepositories();
+    LibraryRepository getLibraryRepository(String librepoId);
 
     // ----------------------------------------------------------------------
     // Extras

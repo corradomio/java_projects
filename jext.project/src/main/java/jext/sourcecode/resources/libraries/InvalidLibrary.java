@@ -73,9 +73,9 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
         return "";
     }
 
-    @Override
-    public String getLatest() {
-        return "";
-    }
+    // @Override
+    // public String getLatestVersion() {
+    //     return "";
+    // }
 
 }

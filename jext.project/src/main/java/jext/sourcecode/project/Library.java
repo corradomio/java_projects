@@ -31,14 +31,14 @@ public interface Library extends IdNamed {
     /** Library tpe */
     LibraryType getLibraryType();
 
-    /** File path where the library is defined */
+    /** File path where the library is saved */
     String getPath();
-
-    /** Local library file. For MAVEN libraries, it is the ".pom" file */
-    File getFile();
 
     /** An hash code of the file */
     long getDigest();
+
+    /** Local library file. For MAVEN libraries, it is the ".pom" file */
+    File getFile();
 
     /**
      * List of file composing this library.
@@ -66,8 +66,7 @@ public interface Library extends IdNamed {
     // -----------------------------------------------------------
     // Versions
 
+    /** Library version defined in module configuration */
     String getVersion();
-
-    String getLatest();
 
 }

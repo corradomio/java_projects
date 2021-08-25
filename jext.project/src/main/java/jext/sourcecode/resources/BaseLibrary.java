@@ -107,8 +107,8 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     @Override
     public String getVersion() { return StringUtils.empty(); }
 
-    @Override
-    public String getLatest() { return StringUtils.empty(); }
+    // @Override
+    // public String getLatestVersion() { return StringUtils.empty(); }
 
     // ----------------------------------------------------------------------
     // End

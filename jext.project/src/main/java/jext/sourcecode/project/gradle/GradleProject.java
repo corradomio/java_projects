@@ -253,7 +253,6 @@ public class GradleProject extends BaseProject {
     }
 
     private void retrieveAllDependencies() {
-
         ErrorsCollector err = new ErrorsCollector(logger);
         AllDepsCollector collector = new AllDepsCollector();
         LoggerCollector logcoll = new LoggerCollector(logger, collector);
@@ -286,10 +285,10 @@ public class GradleProject extends BaseProject {
         return depsCollector != null;
     }
 
-    List<Library> getMavenLibraries(GradleModule module) {
+    Set<Library> getMavenLibraries(GradleModule module) {
         String moduleName = module.getName().getFullName();
         if (!depsCollector.isGradleProject(moduleName))
-            return Collections.emptyList();
+            return Collections.emptySet();
 
         MavenDownloader md = getLibraryDownloader();
 
@@ -305,7 +304,7 @@ public class GradleProject extends BaseProject {
                 .forEach(libraries::add);
         }
 
-        return libraries.asList();
+        return libraries;
     }
 
     Set<String> getMavenRepositories(GradleModule module) {

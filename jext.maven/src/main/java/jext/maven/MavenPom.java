@@ -68,7 +68,7 @@ public class MavenPom implements MavenConst {
     private static final String REPOSITORIES = "repositories/repository";
     private static final String DOWNLOAD_URL = "distributionManagement/downloadUrl";
 
-    private MavenDownloader downloader;
+    private MavenDownloader md;
 
     private Logger logger = Logger.getLogger(MavenDownloader.class);
     private File pomFile;
@@ -92,8 +92,8 @@ public class MavenPom implements MavenConst {
         this(pomFile, null);
     }
 
-    public MavenPom(File pomFile, MavenDownloader downloader) {
-        this.downloader = downloader;
+    public MavenPom(File pomFile, MavenDownloader md) {
+        this.md = md;
 
         if (pomFile.isDirectory())
             pomFile = new File(pomFile, POM);
@@ -349,12 +349,12 @@ public class MavenPom implements MavenConst {
             if (parentPom.exists() && parentPom.isDirectory())
                 parentPom = new File(parentPom, POM);
             if (parentPom.exists())
-                return new MavenPom(parentPom, downloader);
+                return new MavenPom(parentPom, md);
         }
 
         // 3) check for a 'remote pom'
-        if (downloader != null)
-            return downloader.getPom(parentCoords);
+        if (md != null)
+            return md.getPom(parentCoords);
 
         logger.errorf("Unable to retrieve parent pom in %s", pomFile);
         return null;
@@ -548,8 +548,8 @@ public class MavenPom implements MavenConst {
                     logger.warnc(category,"Pattern version in %s:%s:%s - %s", gid, aid, v, pomFile);
 
                 MavenCoords dcoords = new MavenCoords(gid, aid, v);
-                if (downloader != null && !dcoords.hasVersion())
-                    dcoords = downloader.getVersioned(dcoords);
+                if (md != null && !dcoords.hasVersion())
+                    dcoords = md.getVersioned(dcoords);
 
                 depList.add( new MavenDependency(dcoords, scope));
             });

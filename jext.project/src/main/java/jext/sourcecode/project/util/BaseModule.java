@@ -291,11 +291,11 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         return runtimeLibrary;
     }
 
-    @Override
-    public Set<Library> getLibraries() {
-        LibrarySet projectLibraries = (LibrarySet) project.getLibraries();
-        return projectLibraries.resolveAll(getDeclaredLibraries());
-    }
+    // @Override
+    // public Set<Library> getLibraries() {
+    //     LibrarySet projectLibraries = (LibrarySet) project.getLibraries();
+    //     return projectLibraries.resolveAll(getDeclaredLibraries());
+    // }
 
     @Override
     public Set<Library> getDeclaredLibraries() {

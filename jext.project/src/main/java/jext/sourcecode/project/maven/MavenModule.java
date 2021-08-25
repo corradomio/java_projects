@@ -75,7 +75,9 @@ public class MavenModule extends BaseModule {
 
     @Override
     public Set<String> getMavenRepositories() {
-        return pom.getRepositories();
+        Set<String> repos = pom.getRepositories();
+        repos.add("https://repo.maven.apache.org/maven2");
+        return repos;
     }
 
     @Override

@@ -11,8 +11,8 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.resources.BaseLibrary;
 import jext.sourcecode.project.util.ReferencedType;
+import jext.sourcecode.resources.BaseLibrary;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 
@@ -62,9 +62,9 @@ public class MavenLibrary extends BaseLibrary {
         return this.md;
     }
 
-    public String getMavenName() {
-        return coords.getName();
-    }
+    // public String getMavenName() {
+    //     return coords.getName();
+    // }
 
     public Version getMavenVersion() {
         return coords.getVersion();
@@ -184,13 +184,13 @@ public class MavenLibrary extends BaseLibrary {
     //     return latest.getVersion().toString();
     // }
 
-    @Override
-    public String getLatest() {
-        MavenDownloader md = this.getProject().getLibraryDownloader();
-        MavenCoords coords = new MavenCoords(this.getName().getFullName());
-        MavenCoords latest = md.getLatest(coords);
-        return latest.getName();
-    }
+    // @Override
+    // public String getLatestVersion() {
+    //     MavenDownloader md = this.getProject().getLibraryDownloader();
+    //     MavenCoords coords = new MavenCoords(this.getName().getFullName());
+    //     MavenCoords latest = md.getLatest(coords);
+    //     return latest.getName();
+    // }
 
     // ----------------------------------------------------------------------
     // Implementation

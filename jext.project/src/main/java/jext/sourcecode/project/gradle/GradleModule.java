@@ -109,10 +109,13 @@ public class GradleModule extends BaseModule {
 
     @Override
     public Set<String> getMavenRepositories() {
+        Set<String> repos;
         if (getGradleProject().isDependenciesResolved())
-            return getGradleProject().getMavenRepositories(this);
+            repos = getGradleProject().getMavenRepositories(this);
         else
-            return buildGradle.getRepositories();
+            repos = buildGradle.getRepositories();
+        repos.add("https://repo.maven.apache.org/maven2");
+        return repos;
     }
 
     @Override

@@ -6,6 +6,7 @@ import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.maven.MavenName;
 import jext.util.MapUtils;
 
+import java.util.List;
 import java.util.Map;
 
 public class InfoMavenLibrary extends InfoLibrary {
@@ -18,6 +19,16 @@ public class InfoMavenLibrary extends InfoLibrary {
     public InfoMavenLibrary(InfoProject project, Map<String, Object> info) {
         super(project, LibraryType.MAVEN, info);
         this.name = new MavenName((String)MapUtils.get(info,"fullname"));
+    }
+
+    public String getPath() {
+        String pomFile = MapUtils.get(info, "file");
+        List<String> jarFiles = MapUtils.get(info, "files");
+
+        if (jarFiles.size() == 1)
+            return jarFiles.get(0);
+        else
+            return pomFile;
     }
 
 }
