@@ -277,25 +277,79 @@ public class Version implements Comparable<Version> {
     //
     // ----------------------------------------------------------------------
 
+    public int compareTo(Version that) {
+        if (this.scheme == Scheme.StringVersion || that.scheme == Scheme.StringVersion)
+            return this.version.compareTo(that.version);
+
+        int cmp;
+
+        cmp = this.major - that.major; if (cmp != 0) return cmp;
+        cmp = this.minor - that.minor; if (cmp != 0) return cmp;
+        cmp = this.subver- that.subver;if (cmp != 0) return cmp;
+        cmp = this.build - that.build; if (cmp != 0) return cmp;
+        cmp = this.patch - that.patch; if (cmp != 0) return cmp;
+    }
+    
+    public String get() {
+        return version;
+    }
+
+    /**
+     * Return the index where there is the first difference
+     * -1 -> equals
+     *  0 -> major
+     *  1 -> minor
+     *  2 -> subver
+     *  3 -> patch
+     *  4 -> build
+     *  5 -> qualifier
+     *
+     * @return
+     */
+    public int differOn(Version that) {
+        if (scheme == Scheme.StringVersion)
+            return 0;
+
+        if (this.major != that.major)
+            return 0;
+        if (this.minor != that.minor)
+            return 1;
+        if (this.subver != that.subver)
+            return 2;
+        if (this.patch != that.patch)
+            return 3;
+        if (this.build != that.build)
+            return 4;
+        if (this.qualifier != that.qualifier)
+            return 5;
+
+        return -1;
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     @Override
     public int compareTo(Version that) {
         if (this.scheme == Scheme.StringVersion || that.scheme == Scheme.StringVersion)
             return this.version.compareTo(that.version);
 
-            int cmp;
+        int cmp;
 
-            cmp = this.major - that.major; if (cmp != 0) return cmp;
-            cmp = this.minor - that.minor; if (cmp != 0) return cmp;
-            cmp = this.subver- that.subver;if (cmp != 0) return cmp;
-            cmp = this.build - that.build; if (cmp != 0) return cmp;
-            cmp = this.patch - that.patch; if (cmp != 0) return cmp;
+        cmp = this.major - that.major; if (cmp != 0) return cmp;
+        cmp = this.minor - that.minor; if (cmp != 0) return cmp;
+        cmp = this.subver- that.subver;if (cmp != 0) return cmp;
+        cmp = this.build - that.build; if (cmp != 0) return cmp;
+        cmp = this.patch - that.patch; if (cmp != 0) return cmp;
 
         // qualifier "" is BETTER that "label"
         if (this.qualifier.isEmpty() && !that.qualifier.isEmpty())
             cmp = +1;
         else if (!this.qualifier.isEmpty() && that.qualifier.isEmpty())
             cmp = -1;
-            else
+        else
+
             cmp = this.qualifier.compareTo(that.qualifier);
 
         return cmp;

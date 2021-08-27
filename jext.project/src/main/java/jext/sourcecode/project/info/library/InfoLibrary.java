@@ -116,7 +116,8 @@ public abstract class InfoLibrary implements Library {
 
     @Override
     public boolean isValid() {
-        return true;
+        return getFile().exists()
+            && getFiles().stream().allMatch(File::exists);
     }
 
     @Override
