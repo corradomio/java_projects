@@ -49,7 +49,7 @@ public class Bits {
         if (nbits > 0)
             return a << nbits;
         else
-        return a >> (-nbits);
+            return a >> (-nbits);
     }
 
     /**
@@ -95,7 +95,7 @@ public class Bits {
         if (nbits > 0)
             return a << nbits;
         else
-        return a >>> (-nbits);
+            return a >>> (-nbits);
     }
 
     public static long signed_shift(long a, int nbits) {

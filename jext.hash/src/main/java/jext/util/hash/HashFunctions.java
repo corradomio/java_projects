@@ -11,13 +11,9 @@ Algorithm name: "SHA-512"
  */
 
 import jext.util.hash.digest.DigestFunction;
-import jext.util.hash.fnv.FNV1;
 import jext.util.hash.fnv.FNVHashFunction;
-import jext.util.hash.fnv.FNVx;
 
-import static jext.util.hash.fnv.FNVConstants.*;
-
-public class Hashes {
+public class HashFunctions {
 
     public static HashFunction md2() {
         return new DigestFunction("MD2");

@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 public interface Hasher {
+
     Hasher putByte(byte b);
 
     Hasher putBytes(byte[] bytes);

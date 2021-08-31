@@ -16,22 +16,10 @@
 
     <modules>
         <module>../jext.commons</module>
-        <module>../jext.hashing</module>
         <module>../jext.hash</module>
-        <module>../jext.bits</module>
     </modules>
 
     <dependencies>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.bits</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.hashing</artifactId>
-            <version>1.0</version>
-        </dependency>
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.hash</artifactId>
