@@ -1,4 +1,3 @@
-package org.hls;
 //==============================================================
 //
 // SAMPLE SOURCE CODE - SUBJECT TO THE TERMS OF SAMPLE CODE LICENSE AGREEMENT,
@@ -11,6 +10,8 @@ package org.hls;
 // PURPOSE, NON-INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS.
 //
 // =============================================================
+package org.hls;
+
 /*******************************************************************************
  *   This example computes real matrix C=alpha*A*B+beta*C using Intel(R) MKL
  *   function dgemm, where A, B, and C are matrices and alpha and beta are
@@ -27,13 +28,12 @@ import org.bytedeco.javacpp.indexer.*;
 import static org.bytedeco.mkl.global.mkl_rt.*;
 
 public class DGEMMExample {
-
     public static void main(String[] args) throws Exception {
         System.out.println("\n This example computes real matrix C=alpha*A*B+beta*C using \n"
             + " Intel(R) MKL function dgemm, where A, B, and  C are matrices and \n"
             + " alpha and beta are double precision scalars\n");
 
-        int m = 20000, p = 200, n = 1000;
+        int m = 2000, p = 200, n = 1000;
         System.out.printf(" Initializing data for matrix multiplication C=A*B for matrix \n"
             + " A(%dx%d) and matrix B(%dx%d)\n\n", m, p, p, n);
         double alpha = 1.0, beta = 0.0;

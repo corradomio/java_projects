@@ -11,50 +11,32 @@ package org.hls.check;
         class sun.misc.Launcher$AppClassLoader      <== system classLoader
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.maven.cli.CliRequest;
+import org.apache.maven.cli.MavenCli;
 
-class C<T> implements Iterable<T> {
-
-    private List<T> l = new ArrayList<>();
-
-    public C(List<T> ll) {
-        l.addAll(ll);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return l.iterator();
-    }
-
-    public Iterable<T> iterateOn() {
-        return this;
-    }
-}
+import java.io.File;
+import java.util.Collections;
 
 public class Main {
 
     public static void main(String[] args) {
-        C<String> c = new C<>(Arrays.asList("1","2","3"));
+        MavenCli maven = new MavenCli();
 
-        for (String s : c.iterateOn()) {
-            System.out.println(s);
-        }
+        System.setProperty("maven.multiModuleProjectDirectory", "true");
 
-
+        maven.doMain(
+            new String[]{"dependency:list-repositories"},
+            "D:\\SPLGroup\\SPLDevelopment3.0\\splserver3.0\\splserver",
+            System.out, System.err);
     }
 
-    public static void main1(String[] args) {
-        ClassLoader cl = Main.class.getClassLoader();
-        int i=0;
-        while (cl != null) {
-            i++;
-            System.out.printf("%d) %s\n", i, cl.getClass().toString());
-            cl = cl.getParent();
-        }
-        System.out.printf("s) %s\n", ClassLoader.getSystemClassLoader().getClass().toString());
-
-    }
+    // public static void main1(String[] args) throws MavenInvocationException {
+    //     System.setProperty("maven.home", "D:\\Java\\Maven-3.8.2");
+    //     InvocationRequest request = new DefaultInvocationRequest();
+    //     request.setPomFile( new File( "D:\\SPLGroup\\SPLDevelopment3.0\\splserver3.0\\splserver\\pom.xml" ) );
+    //     request.setGoals( Collections.singletonList( "install" ) );
+    //
+    //     Invoker invoker = new DefaultInvoker();
+    //     invoker.execute( request );
+    // }
 }

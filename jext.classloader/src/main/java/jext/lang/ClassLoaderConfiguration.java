@@ -1,7 +1,6 @@
 package jext.lang;
 
 import java.io.File;
-import java.io.InvalidObjectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;

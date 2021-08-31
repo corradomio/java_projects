@@ -13,4 +13,27 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>JCenter Bintray</id>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!--
+            https://github.com/Litarvan/OpenLauncherLib
+          -->
+        <!-- https://mvnrepository.com/artifact/fr.litarvan/openlauncherlib -->
+        <dependency>
+            <groupId>fr.litarvan</groupId>
+            <artifactId>openlauncherlib</artifactId>
+            <version>3.1.4-FLOWARGVERSION</version>
+            <!--<version>3.0.5</version>-->
+            <systemPath>${project.basedir}/lib/openlauncherlib-3.1.4-FLOWARGVERSION.jar</systemPath>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>
