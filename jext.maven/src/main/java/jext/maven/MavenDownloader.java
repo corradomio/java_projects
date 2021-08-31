@@ -35,6 +35,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -484,13 +485,18 @@ public class MavenDownloader implements MavenConst {
         try {
             Element metadata = XPathUtils.parse(metadataFile).getDocumentElement();
 
-            String[] latestVersion = new String[]{ NO_VERSION };
+            List<Version> versions = new ArrayList<>();
 
             XPathUtils.getValues(metadata, "versioning/versions/version").forEach(version -> {
-                latestVersion[0] = version;
+                versions.add(Version.of(version));
             });
 
-            return latestVersion[0];
+            versions.sort(Comparator.reverseOrder());
+
+            if (versions.isEmpty())
+                return NO_VERSION;
+            else
+                return versions.get(0).get();
         }
         catch (ParserConfigurationException | IOException | SAXException e) {
             logger.errorf("%s: %s", metadataFile, e);

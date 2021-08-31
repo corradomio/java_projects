@@ -14,9 +14,11 @@ package jext.maven;
         PatchNumber: 1.4.2-12-1
         Qualifier: 1.2-beta-2
 
-        Extra: 5.3.5.RELEASE
-        Extra: 3.27.0-GA
-        Extra: 1.2.LABEL
+        Extras:
+        MajorDotQualifier:   5.3.5.RELEASE
+        MajorQualifier:      3.27.0-GA
+        DotQualifier:        1.2.LABEL
+
 
     All versions with a qualifier are older than the same version without a qualifier (release version).
 
@@ -70,43 +72,48 @@ public class Version implements Comparable<Version> {
     //
     // ----------------------------------------------------------------------
 
+    private static final String EMPTY = "";
+
     private enum Scheme {
-        Generic,
+        StringVersion,
         NumericVersion,
         QualifiedVersion
-        // MajorVersion,           // 1.2.1
-        // MinorVersion,           // 1.2
-        // IncrementalVersion,     // 1.2-SNAPSHOT
-        // BuildNumber,            // 1.4.2-12
-        // PatchNumber,            // 1.4.2-12-3
-        // Qualifier               // 1.2-beta-2
-        // Patched                 //
+
+        // MajorVersion,           // 1.2.1             NumericVersion
+        // MinorVersion,           // 1.2               NumericVersion
+        // BuildNumber,            // 1.4.2-12          NumericVersion
+        // PatchNumber,            // 1.4.2-12-3        NumericVersion
+        // IncrementalVersion,     // 1.2-SNAPSHOT      QualifiedVersion
+        // Qualifier               // 1.2-beta-2        QualifiedVersion
+        // MajorDotQualifier,      // 5.3.5.RELEASE     QualifiedVersion
+        // MajorQualifier:         // 3.27.0-GA         QualifiedVersion
+        // DotQualifier:           // 1.2.LABEL         QualifiedVersion
     }
 
     private static final Pattern MajorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)");
     private static final Pattern MinorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)");
-    private static final Pattern IncrementalVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-SNAPSHOT");
+    // private static final Pattern IncrementalVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-SNAPSHOT");
     private static final Pattern BuildNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)");
     private static final Pattern PatchNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-([0-9]+)");
-    private static final Pattern QualifierPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-([a-zA-Z0-9-]+)");
+    private static final Pattern MajorQualifierPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)[-.]([a-zA-Z0-9-.]+)");
+    private static final Pattern QualifierPattern = Pattern.compile("([0-9]+)\\.([0-9]+)[-.]([a-zA-Z0-9-.]+)");
 
     private final String version;
-    private Scheme scheme;
+    private Scheme scheme = Scheme.StringVersion;
 
-    private int major;
-    private int minor;
-    private int subver;
-    private int patch;
-    private int build;
-    private String qualifier;
+    private int major = 0;
+    private int minor = 0;
+    private int subver = 0;
+    private int patch = 0;
+    private int build = 0;
+    private String qualifier = EMPTY;
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
     private Version() {
-        this.version = "";
-        this.scheme = Scheme.Generic;
+        this.version = EMPTY;
     }
 
     public Version(String version) {
@@ -155,6 +162,16 @@ public class Version implements Comparable<Version> {
             return;
         }
 
+        matcher = MajorQualifierPattern.matcher(version);
+        if (matcher.matches()) {
+            this.scheme = Scheme.QualifiedVersion;
+            major = Integer.parseInt(matcher.group(1));
+            minor = Integer.parseInt(matcher.group(2));
+            subver = Integer.parseInt(matcher.group(3));
+            qualifier = matcher.group(4);
+            return;
+        }
+
         matcher = QualifierPattern.matcher(version);
         if (matcher.matches()) {
             this.scheme = Scheme.QualifiedVersion;
@@ -164,8 +181,96 @@ public class Version implements Comparable<Version> {
         }
         else
         {
-            this.scheme = Scheme.Generic;
+            this.scheme = Scheme.StringVersion;
         }
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public String get() {
+        return version;
+    }
+
+    /**
+     * Return the index where there is the first difference
+     * -1 -> equals
+     *  0 -> major
+     *  1 -> minor
+     *  2 -> subver
+     *  3 -> patch
+     *  4 -> build
+     *  5 -> qualifier
+     *
+     * @return
+     */
+    public int differOn(Version that) {
+        if (scheme == Scheme.StringVersion)
+            return 0;
+
+        if (this.major != that.major)
+            return 0;
+        if (this.minor != that.minor)
+            return 1;
+        if (this.subver != that.subver)
+            return 2;
+        if (this.patch != that.patch)
+            return 3;
+        if (this.build != that.build)
+            return 4;
+        if (this.qualifier != that.qualifier)
+            return 5;
+
+        return -1;
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    /**
+     * Try to retrieve the library version from the file name.
+     * Following the Maven version specifications, the library must have a name like:
+     *
+     *      [name]-[version].jar
+     *      [name]-[version].pom
+     *
+     * However, [name] com be composed by differen 'subnames', for example:
+     *
+     *
+     *      commons-collection-3.2.2.jar
+     *
+     * @param filename filename (with extension)
+     * @return the library version or the empty version
+     */
+    public static Version versionOf(String filename) {
+        // the filename is composed by <name>-...-<version>.jar
+        Matcher matcher;
+
+        // strip the extension (.jar, .zip, ...)
+        int sep = filename.lastIndexOf('.');
+        String version = filename.substring(0,sep);
+
+        sep = version.indexOf('-');
+        while (sep != -1) {
+            version = version.substring(sep=1);
+
+            if (MajorVersionPattern.matcher(version).matches())
+                return Version.of(version);
+            if (MinorVersionPattern.matcher(version).matches())
+                return Version.of(version);
+            if (BuildNumberPattern.matcher(version).matches())
+                return Version.of(version);
+            if (PatchNumberPattern.matcher(version).matches())
+                return Version.of(version);
+            if (MajorQualifierPattern.matcher(version).matches())
+                return Version.of(version);
+            if (QualifierPattern.matcher(version).matches())
+                return Version.of(version);
+        }
+
+        return Version.NO_VERSION;
     }
 
     // ----------------------------------------------------------------------
@@ -174,41 +279,43 @@ public class Version implements Comparable<Version> {
 
     @Override
     public int compareTo(Version that) {
-        if (version.equals(that.version))
-            return 0;
+        if (this.scheme == Scheme.StringVersion || that.scheme == Scheme.StringVersion)
+            return this.version.compareTo(that.version);
 
-        if (this.scheme == Scheme.NumericVersion && that.scheme == Scheme.NumericVersion) {
             int cmp;
+
             cmp = this.major - that.major; if (cmp != 0) return cmp;
             cmp = this.minor - that.minor; if (cmp != 0) return cmp;
             cmp = this.subver- that.subver;if (cmp != 0) return cmp;
             cmp = this.build - that.build; if (cmp != 0) return cmp;
             cmp = this.patch - that.patch; if (cmp != 0) return cmp;
-            return 0;
-        }
-        if (this.scheme == Scheme.QualifiedVersion && that.scheme == Scheme.QualifiedVersion) {
-            int cmp;
-            cmp = this.major - that.major; if (cmp != 0) return cmp;
-            cmp = this.minor - that.minor; if (cmp != 0) return cmp;
-            return this.qualifier.compareTo(that.qualifier);
-        }
-        if (this.scheme == Scheme.QualifiedVersion || that.scheme == Scheme.QualifiedVersion) {
-            int cmp;
-            cmp = this.major - that.major; if (cmp != 0) return cmp;
-            cmp = this.minor - that.minor; if (cmp != 0) return cmp;
-            if (this.scheme == Scheme.QualifiedVersion)
-                return -1;
+
+        // qualifier "" is BETTER that "label"
+        if (this.qualifier.isEmpty() && !that.qualifier.isEmpty())
+            cmp = +1;
+        else if (!this.qualifier.isEmpty() && that.qualifier.isEmpty())
+            cmp = -1;
             else
-                return +1;
-        }
-        if (this.scheme == Scheme.Generic || that.scheme == Scheme.Generic)
-            return this.version.compareTo(that.version);
-        else
-            return this.version.compareTo(that.version);
+            cmp = this.qualifier.compareTo(that.qualifier);
+
+        return cmp;
     }
 
     @Override
     public String toString() {
         return String.format("%s::%s", version, scheme);
     }
+
+    public static void dump(Version v) {
+        System.out.printf("version: %s\n", v.version);
+        System.out.printf("   scheme: %s\n", v.scheme);
+        System.out.printf("    major: %d\n", v.major);
+        System.out.printf("    minor: %d\n", v.minor);
+        System.out.printf("   subver: %d\n", v.subver);
+        System.out.printf("    build: %d\n", v.build);
+        System.out.printf("    patch: %d\n", v.patch);
+        System.out.printf("  qualify: %s\n", v.qualifier);
+        System.out.println("-----------------");
+    }
+
 }

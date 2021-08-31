@@ -36,7 +36,7 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     //
     // ----------------------------------------------------------------------
 
-    public MavenCoords(String coords) {
+    private MavenCoords(String coords) {
         if (coords.contains(":"))
             parseCoords(coords);
         else
