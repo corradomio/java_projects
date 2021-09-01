@@ -404,7 +404,7 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
     // Query using named queries
     // ----------------------------------------------------------------------
-    // The names query can contains two special parameters:
+    // The names query can contains some special text variables:
     //
     //  ${and:name}     ${and:alias:name}
     //  ${where:name}   ${where:alias:name}
@@ -417,7 +417,7 @@ public interface GraphSession extends AutoCloseable {
     //      MATCH (... ${body:name}) ...
     //
     // In this case, "queryParam" must contain the parameter 'name' with value
-    // a map containing pairs [name, value] AND the special parameter '$alias'
+    // a map containing pairs [name, value]
     //
 
     Query queryUsing(String queryName, Map<String,Object> queryParams);
