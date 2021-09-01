@@ -148,7 +148,10 @@ public class Neo4JOnlineSession implements GraphSession {
 
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
-            query = awblock(query, nparams);
+            while (query.contains(AND_BLOCK))
+                query = ulock(query, nparams, WhereType.AND);
+            while (query.contains(WHERE_BLOCK))
+                query = ulock(query, nparams, WhereType.WHERE);
             params = nparams;
         }
 
@@ -166,10 +169,15 @@ public class Neo4JOnlineSession implements GraphSession {
 
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
-            query = awblock(query, nparams);
+            while (query.contains(AND_BLOCK))
+                query = ulock(query, nparams, WhereType.AND);
+            while (query.contains(WHERE_BLOCK))
+                query = ulock(query, nparams, WhereType.WHERE);
+            params = nparams;
         }
 
-        String s = query;
+        String s = StringUtils.format(query, params);
+
         logStmt(s, params);
         try {
             session.run(s, params);
@@ -1712,15 +1720,7 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String END_BLOCK = "}";
     private static final String ALIAS = "$alias";
 
-    private static String awblock(String stmt, Parameters params) {
-        while (stmt.contains(AND_BLOCK))
-            stmt = andblock(stmt, params);
-        while (stmt.contains(WHERE_BLOCK))
-            stmt = whereblock(stmt, params);
-        return stmt;
-    }
-
-    private static String andblock(String stmt, Parameters params) {
+    private static String ulock(String stmt, Parameters params, WhereType utype) {
         int bgn = stmt.indexOf(AND_BLOCK);
         int end = stmt.indexOf(END_BLOCK, bgn);
         String name = stmt.substring(bgn+AND_BLOCK.length(), end);
@@ -1731,26 +1731,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String alias = (String) aparams.getOrDefault(ALIAS, "");
         aparams.remove(ALIAS);
 
-        String wblock = wblock(alias, aparams, WhereType.AND);
-
-        stmt = stmt.substring(0, bgn) + wblock + stmt.substring(end+END_BLOCK.length());
-        params.add(alias, aparams);
-
-        return stmt;
-    }
-
-    private static String whereblock(String stmt, Parameters params) {
-        int bgn = stmt.indexOf(WHERE_BLOCK);
-        int end = stmt.indexOf(END_BLOCK, bgn);
-        String name = stmt.substring(bgn+WHERE_BLOCK.length(), end);
-
-        Map<String, Object> aparams = (Map<String, Object>) params.getOrDefault(name, Collections.emptyMap());
-
-        params.remove(name);
-        String alias = (String) aparams.getOrDefault(ALIAS, "");
-        aparams.remove(ALIAS);
-
-        String wblock = wblock(alias, aparams, WhereType.WHERE);
+        String wblock = wblock(alias, aparams, utype);
 
         stmt = stmt.substring(0, bgn) + wblock + stmt.substring(end+END_BLOCK.length());
         params.add(alias, aparams);
