@@ -4,8 +4,8 @@ import jext.logging.Logger;
 import jext.net.URL;
 
 import java.io.InputStream;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class GraphDatabases {

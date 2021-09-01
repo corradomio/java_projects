@@ -12,11 +12,11 @@ public class InfoInvalidLibrary extends InfoLibrary {
 
     public InfoInvalidLibrary(InfoModule module, Map<String, Object> info) {
         super(module, LibraryType.INVALID, info);
-        this.name = new PathName(MapUtils.get(info,"fullname"));
+        setName(new PathName(MapUtils.get(info,"fullname")));
     }
 
     public InfoInvalidLibrary(InfoProject project, Map<String, Object> info) {
         super(project, LibraryType.INVALID, info);
-        this.name = new PathName(MapUtils.get(info,"fullname"));
+        setName(new PathName(MapUtils.get(info,"fullname")));
     }
 }

@@ -9,9 +9,9 @@ import jext.name.NamedObject;
 import jext.name.PathName;
 import jext.nio.file.FilteredFileVisitor;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.LibrarySet;
-import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
@@ -72,7 +72,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     protected List<Module> modules;
     protected List<Source> sources;
-    protected jext.sourcecode.project.maven.LibrarySet libraries;
+    protected jext.sourcecode.project.util.LibrarySet libraries;
 
     protected LibraryFinder lfinder;
     protected MavenDownloader md;
@@ -548,7 +548,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         // 2) maven libraries buf for them it keep ONLY the latest version
         // 3) runtime libraries
 
-        jext.sourcecode.project.maven.LibrarySet libraries = new jext.sourcecode.project.maven.LibrarySet();
+        jext.sourcecode.project.util.LibrarySet libraries = new jext.sourcecode.project.util.LibrarySet();
 
         // Note: the runtime libraries are added because otherwise javaassist
         // is not able to resolve the symbols
@@ -568,7 +568,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     @Override
     public Set<Library> getLibraries(Module module) {
-        jext.sourcecode.project.maven.LibrarySet projectLibraries = (jext.sourcecode.project.maven.LibrarySet) getLibraries();
+        jext.sourcecode.project.util.LibrarySet projectLibraries = (jext.sourcecode.project.util.LibrarySet) getLibraries();
         return projectLibraries.resolveAll(module.getDeclaredLibraries());
     }
 
@@ -589,7 +589,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     @Override
     public Library getLibrary(Library library) {
-        jext.sourcecode.project.maven.LibrarySet projectLibraries = (jext.sourcecode.project.maven.LibrarySet) getLibraries();
+        jext.sourcecode.project.util.LibrarySet projectLibraries = (jext.sourcecode.project.util.LibrarySet) getLibraries();
         return projectLibraries.resolve(library);
     }
 

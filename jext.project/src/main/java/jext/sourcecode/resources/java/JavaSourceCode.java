@@ -6,9 +6,9 @@ import jext.name.Name;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
-import jext.sourcecode.resources.SourceCode;
 import jext.sourcecode.project.util.ImplementedType;
 import jext.sourcecode.project.util.ReferencedType;
+import jext.sourcecode.resources.SourceCode;
 import jext.util.FileUtils;
 
 import java.io.File;

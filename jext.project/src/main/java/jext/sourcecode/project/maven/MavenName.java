@@ -8,7 +8,7 @@ public class MavenName implements Name {
     private MavenCoords coords;
 
     public MavenName(String coords) {
-        this(new MavenCoords(coords));
+        this(MavenCoords.of(coords));
     }
 
     public MavenName(MavenCoords coords) {

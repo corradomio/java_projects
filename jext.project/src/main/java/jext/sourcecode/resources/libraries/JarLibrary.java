@@ -2,13 +2,15 @@ package jext.sourcecode.resources.libraries;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.name.VersionName;
 import jext.name.Name;
 import jext.name.ObjectName;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.resources.BaseLibrary;
+import jext.sourcecode.project.util.LibraryVersion;
 import jext.sourcecode.project.util.ReferencedType;
+import jext.sourcecode.resources.BaseLibrary;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 
@@ -21,6 +23,8 @@ import java.util.Set;
 
 public class JarLibrary extends BaseLibrary {
 
+    private String version;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -28,18 +32,30 @@ public class JarLibrary extends BaseLibrary {
     public JarLibrary(File jarFile, Module module) {
         super(ObjectName.empty(), module.getProject());
 
-        String rpath = FileUtils.relativePathNoExt(module.getModuleHome(), jarFile);
         String name = FileUtils.getNameWithoutExt(jarFile);
-        setName(name);
+        this.version = LibraryVersion.versionOf(name);
+        if (!this.version.isEmpty()) {
+            int sep = name.lastIndexOf(this.version);
+            name = name.substring(0, sep-1);
+        }
+
+        //setName(name);
+        //this.name = new VersionName(name, this.version);
+        setName(new VersionName(name, this.version));
 
         this.libraryFile = jarFile;
         this.module = module;
-        this.libraryType = LibraryType.LOCAL; //LibraryType.LOCAL_JAR;
+        this.libraryType = LibraryType.LOCAL;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public String getVersion() {
+        return version;
+    }
 
     @Override
     public boolean isValid() {

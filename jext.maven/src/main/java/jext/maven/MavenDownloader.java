@@ -82,7 +82,9 @@ public class MavenDownloader implements MavenConst {
     // <a href="2.0.0/" title="2.0.0/">2.0.0/</a> 2015-01-13 13:40         -
     // to extract the version AND the yyy-mm-dd
     private static final Pattern HREF_VERSION =
-        Pattern.compile("<a href=\"([^\"]+)/\" title=\"[^\"]+\">.*</a>\\s+([0-9\\-]+).*");
+            // Pattern.compile("<a href=\"([^\"]+)/\" title=\"[^\"]+\">.*</a>\\s+([0-9\\-]+).*")
+            Pattern.compile("<a href=['\"]([^'\"]+)/['\"] title=['\"][^'\"]+['\"]>.*</a>.*")
+            ;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -114,15 +116,13 @@ public class MavenDownloader implements MavenConst {
     // Configuration
     // ----------------------------------------------------------------------
 
-    public Logger getLogger() {
-        return logger;
-    }
-
     /** Directory where to download the artifacts */
     public MavenDownloader setDownloadDirectory(File downloadDir) {
         this.downloadDir = downloadDir;
         return this;
     }
+
+    // --
 
     /** Repository where to search the artifacts */
     public MavenDownloader addRepository(String repoUrl) {
@@ -143,6 +143,8 @@ public class MavenDownloader implements MavenConst {
         return this;
     }
 
+    // --
+
     /** Directory where to search missing libraries */
     public MavenDownloader addLocalDirectory(File localDir) {
         this.localDirs.add(localDir);
@@ -154,6 +156,8 @@ public class MavenDownloader implements MavenConst {
         localDirs.forEach(this::addLocalDirectory);
         return this;
     }
+
+    // --
 
     /**  Timeout to wait before a connection starts */
     public MavenDownloader setDownloadTimeout(long millis) {
@@ -176,6 +180,8 @@ public class MavenDownloader implements MavenConst {
         this.parallelDownloads = parallelDownloads;
         return this;
     }
+
+    // --
 
     /** Create download directory if it doesn't exist. */
     public MavenDownloader initialize() {
@@ -201,14 +207,14 @@ public class MavenDownloader implements MavenConst {
         return pomFile;
     }
 
-    public File getMetadataFile(MavenCoords coords) {
-        coords = normalize(coords);
-
-        File metadataFile = getFile(coords, MavenType.METADATA);
-        // if (recheck(metadataFile))
-        //     downloadFile(coords, MavenType.METADATA);
-        return metadataFile;
-    }
+    // public File getMetadataFile(MavenCoords coords) {
+    //     coords = normalize(coords);
+    //
+    //     File metadataFile = getFile(coords, MavenType.METADATA);
+    //     // if (recheck(metadataFile))
+    //     //     downloadFile(coords, MavenType.METADATA);
+    //     return metadataFile;
+    // }
 
     /**
      * Retrieve the '.jar' file from the coordinates
@@ -456,11 +462,13 @@ public class MavenDownloader implements MavenConst {
      * Latest version or "" if it is not possible to retrieve a value
      */
     public String getLatestVersion(MavenCoords coords) {
-        File metadataFile = getFile(coords, MavenType.METADATA);
-        // if (recheck(metadataFile))
-        //     downloadFile(coords, MavenType.METADATA);
-        if (metadataFile.exists())
-            return findMetadataVersion(metadataFile);
+        File versionsFile = getFile(coords, MavenType.VERSIONS);
+        if (versionsFile.exists())
+            return findVersionsVersion(versionsFile);
+
+        // File metadataFile = getFile(coords, MavenType.METADATA);
+        // if (metadataFile.exists())
+        //     return findMetadataVersion(metadataFile);
 
         return NO_VERSION;
     }
@@ -485,18 +493,13 @@ public class MavenDownloader implements MavenConst {
         try {
             Element metadata = XPathUtils.parse(metadataFile).getDocumentElement();
 
-            List<Version> versions = new ArrayList<>();
+            Versions versions = new Versions();
 
             XPathUtils.getValues(metadata, "versioning/versions/version").forEach(version -> {
-                versions.add(Version.of(version));
+                versions.add(version);
             });
 
-            versions.sort(Comparator.reverseOrder());
-
-            if (versions.isEmpty())
-                return NO_VERSION;
-            else
-                return versions.get(0).get();
+            return versions.getLatestVersion();
         }
         catch (ParserConfigurationException | IOException | SAXException e) {
             logger.errorf("%s: %s", metadataFile, e);
@@ -504,11 +507,7 @@ public class MavenDownloader implements MavenConst {
         }
     }
 
-    /**
-     * List of available versions and publishing date
-     * @param coords maven coordinates
-     */
-    public Versions getVersions(MavenCoords coords) {
+    private String findVersionsVersion(File versionsFile) {
         /*
             <html>
                 ...
@@ -525,34 +524,84 @@ public class MavenDownloader implements MavenConst {
                 ...
             </html>
          */
+
+        if (!versionsFile.exists())
+            return Version.NO_VERSION.get();
+
         Versions versions = new Versions();
 
-        File versionsFile = getFile(coords, MavenType.VERSIONS);
-        // if (recheck(versionsFile))
-        //     downloadFile(coords, MavenType.VERSIONS);
-        if (!versionsFile.exists())
-            return versions;
-
         FileUtils.toStrings(versionsFile)
-            .forEach(href -> {
-                String version = null;
-                String year = null;
-                Matcher m = HREF_VERSION.matcher(href);
+                .forEach(href -> {
+                    String version = null;
+                    Matcher m = HREF_VERSION.matcher(href);
 
-                // check for
-                //  <a href="0.1/" title="0.1/">0.1/</a>    2005-09-20 05:46         -
-                if (m.matches()) {
-                    version = m.group(1);
-                    year = m.group(2);
-                }
+                    // check for
+                    //  <a href="0.1/" title="0.1/">0.1/</a>    2005-09-20 05:46         -
+                    if (m.matches()) {
+                        version = m.group(1);
 
-                // skip if year is "-"
-                if (MavenCoords.isValid(version) && MavenCoords.isValid(year))
-                    versions.add(version, year);
-            });
+                        if (MavenCoords.isValid(version))
+                            versions.add(version);
+                    }
+                });
 
-        return versions;
+        return versions.getLatestVersion();
     }
+
+    // /**
+    //  * List of available versions and publishing date
+    //  * @param coords maven coordinates
+    //  */
+    // private Versions getVersions(MavenCoords coords) {
+    //     /*
+    //         <html>
+    //             ...
+    //
+    //         <a href="../">../</a>
+    //         <a href="0.1/" title="0.1/">0.1/</a>   2005-09-20 05:46         -
+    //         <a href="1.0/" title="1.0/">1.0/</a>   2005-09-20 05:46         -
+    //         <a href="1.1/" title="1.1/">1.1/</a>   2005-10-11 00:02         -
+    //         <a href="1.2/" title="1.2/">1.2/</a>   2006-03-20 01:31         -
+    //             ...
+    //         <a href="20030203.000550/" title="20030203.000550/">20030203.000550/</a>            -         -
+    //         <a href="maven-metadata.xml" title="maven-metadata.xml">maven-metadata.xml</a>      2020-09-09 14:28       847
+    //
+    //             ...
+    //         </html>
+    //      */
+    //     Versions versions = new Versions();
+    //
+    //     File versionsFile = getFile(coords, MavenType.VERSIONS);
+    //     // if (recheck(versionsFile))
+    //     //     downloadFile(coords, MavenType.VERSIONS);
+    //     if (!versionsFile.exists())
+    //         return versions;
+    //
+    //     FileUtils.toStrings(versionsFile)
+    //         .forEach(href -> {
+    //             String version = null;
+    //             String year = null;
+    //             Matcher m = HREF_VERSION.matcher(href);
+    //
+    //             // check for
+    //             //  <a href="0.1/" title="0.1/">0.1/</a>    2005-09-20 05:46         -
+    //             if (m.matches()) {
+    //                 version = m.group(1);
+    //                 year = m.group(2);
+    //             }
+    //
+    //             // skip if year is "-"
+    //             if (MavenCoords.isValid(version) && MavenCoords.isValid(year))
+    //                 versions.add(version, year);
+    //         });
+    //
+    //     return versions;
+    // }
+
+    // private Versions readVersions(File versionsFile) {
+    //     if (!versionsFile.exists())
+    //         return Versions.noVersions;
+    // }
 
     // ----------------------------------------------------------------------
     // Implementation
@@ -597,12 +646,12 @@ public class MavenDownloader implements MavenConst {
                     groupId,
                     artifactId);
                 break;
-            case METADATA:
-                // <groupId>/<artifactId>/maven-metadata.xml
-                relativePath = String.format("%s/%s/maven-metadata.xml",
-                    groupId,
-                    artifactId);
-                break;
+            // case METADATA:
+            //     // <groupId>/<artifactId>/maven-metadata.xml
+            //     relativePath = String.format("%s/%s/maven-metadata.xml",
+            //         groupId,
+            //         artifactId);
+            //     break;
             case POM:
                 // <groupId>/<artifactId>/<version>/<artifactId>-<version>.pom
                 relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.pom",
@@ -649,12 +698,12 @@ public class MavenDownloader implements MavenConst {
                     repoUrl,
                     groupId,
                     artifactId);
-            case METADATA:
-                // <repository>/<groupId>/<artifactId>/maven-metadata.xml
-                return String.format("%1$s/%2$s/%3$s/maven-metadata.xml",
-                    repoUrl,
-                    groupId,
-                    artifactId);
+            // case METADATA:
+            //     // <repository>/<groupId>/<artifactId>/maven-metadata.xml
+            //     return String.format("%1$s/%2$s/%3$s/maven-metadata.xml",
+            //         repoUrl,
+            //         groupId,
+            //         artifactId);
             case POM:
                 // <repository>/<groupId>/<artifactId>/<version>/<artifactId>-<version>.pom
                 return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.pom",
@@ -893,15 +942,15 @@ public class MavenDownloader implements MavenConst {
             }
         }
 
-        if (type == MavenType.METADATA) {
-            try {
-                Element root = XPathUtils.parse(file).getDocumentElement();
-                return "metadata".equals(root.getTagName());
-            }
-            catch (ParserConfigurationException | IOException | SAXException t) {
-                return false;
-            }
-        }
+        // if (type == MavenType.METADATA) {
+        //     try {
+        //         Element root = XPathUtils.parse(file).getDocumentElement();
+        //         return "metadata".equals(root.getTagName());
+        //     }
+        //     catch (ParserConfigurationException | IOException | SAXException t) {
+        //         return false;
+        //     }
+        // }
 
         if (type == MavenType.VERSIONS) {
             // file with less that 2 lines
@@ -995,15 +1044,22 @@ public class MavenDownloader implements MavenConst {
 
         MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
 
-        File metadataFile = getMetadataFile(coords);
-        if (recheck(metadataFile))
-            me.add(downloadFile(coords, MavenType.METADATA));
+        // 'maven-metadata.xml'
+        // File metadataFile = getFile(coords, MavenType.METADATA);
+        // if (recheck(metadataFile))
+        //     me.add(downloadFile(coords, MavenType.METADATA));
 
+        // version file
+        File versionsFile = getFile(coords, MavenType.VERSIONS);
+        if (recheck(versionsFile))
+            me.add(downloadFile(coords, MavenType.VERSIONS));
+
+        // pom file
         File pomFile = getPomFile(coords);
         if (!pomFile.exists())
             me.add(downloadFile(coords, MavenType.POM));
 
-        // if (artifact)
+        // artifact
         File artifactFile = getArtifact(coords);
         if (!artifactFile.exists())
             me.add(downloadFile(coords, MavenType.ARTIFACT));

@@ -201,7 +201,7 @@ public class GradleModule extends BaseModule {
         MavenDownloader md = project.getLibraryDownloader();
 
         List<MavenCoords> coords = dlibs.stream()
-            .map(MavenCoords::new)
+            .map(MavenCoords::of)
             .collect(Collectors.toList());
         md.checkArtifacts(coords, false);
 

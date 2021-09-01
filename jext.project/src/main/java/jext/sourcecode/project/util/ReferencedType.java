@@ -65,7 +65,7 @@ public class ReferencedType extends NamedObject implements RefType {
         if (fullname.contains("<") || fullname.contains("[") || fullname.contains("\\") || fullname.contains("?"))
             Logger.getLogger(ReferencedType.class).errorf("Invalid: %s", fullname);
         if (JavaUtils.isPrimitive(fullname)) {
-            setName(JavaUtils.boxed(fullname));
+            setName(new ObjectName(JavaUtils.boxed(fullname)));
         }
     }
 

@@ -12,8 +12,9 @@ public interface GraphIterator<T> extends Iterator<T> {
     Set<T> toSet();
 
     default void forEach(Consumer<? super T> consumer) {
-        while(hasNext())
+        while(hasNext()) {
             consumer.accept(next());
+        }
     }
 
 }

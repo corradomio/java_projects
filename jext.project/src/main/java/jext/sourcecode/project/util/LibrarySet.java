@@ -1,4 +1,4 @@
-package jext.sourcecode.project.maven;
+package jext.sourcecode.project.util;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
@@ -6,12 +6,12 @@ import jext.maven.MavenDownloader;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
+import jext.sourcecode.project.maven.MavenLibrary;
 import jext.util.HashSet;
 import jext.util.SetUtils;
 import jext.util.concurrent.Parallel;
 
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -50,10 +50,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
 
     @Override
     public Iterator<Library> iterator() {
-        List<Library> libraries = new ArrayList<>();
-        libraries.addAll(localLibraries);
-        libraries.addAll(highestLibraries.values());
-        return libraries.iterator();
+        return getUsedLibraries().iterator();
     }
 
     @Override

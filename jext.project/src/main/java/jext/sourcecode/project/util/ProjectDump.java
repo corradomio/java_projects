@@ -1,8 +1,6 @@
 package jext.sourcecode.project.util;
 
-import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Project;
-import jext.util.SetUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -10,8 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ProjectDump {
 

@@ -87,28 +87,12 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return FileUtils.digestAsLong(libraryFile);
     }
 
-    // @Override
-    // public List<Library> getDependencies() {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public boolean isLocal() {
-    //     LibraryType ltype = getLibraryType();
-    //     return !(ltype == LibraryType.MAVEN
-    //         || ltype == LibraryType.RUNTIME
-    //     );
-    // }
-
     // ----------------------------------------------------------------------
     // Version
     // ----------------------------------------------------------------------
 
     @Override
     public String getVersion() { return StringUtils.empty(); }
-
-    // @Override
-    // public String getLatestVersion() { return StringUtils.empty(); }
 
     // ----------------------------------------------------------------------
     // End

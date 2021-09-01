@@ -4,8 +4,13 @@ import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
 import jext.graph.Limit;
 import jext.graph.Query;
+import jext.util.MapUtils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
     WARNING the alias used for nodes and edges are 'n' and 'e'
@@ -124,6 +129,53 @@ public class Neo4JQuery implements Query {
     public GraphIterator<Map<String, Object>> result() {
         String s = setLimit(stmt);
         return session.resultIter(alias, s, params, edge);
+    }
+
+    @Override
+    public GraphIterator<Map<String, Object>> result(String alias) {
+        String s = setLimit(stmt);
+
+        GraphIterator<Map<String, Object>> git = session.resultIter(alias, s, params, edge);
+
+        return new GraphIterator<Map<String, Object>>() {
+
+            @Override
+            public boolean hasNext() {
+                return git.hasNext();
+            }
+
+            @Override
+            public Map<String, Object> next() {
+                Map<String, Object> tmp = git.next();
+                Map<String, Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, "n"));
+
+                for (String key : tmp.keySet()) {
+                    if (key.equals(alias))
+                        continue;
+
+                    Object value = tmp.get(key);
+                    nv.put(key, value);
+                }
+
+                return nv;
+            }
+
+            @Override
+            public List<Map<String, Object>> toList() {
+                List<Map<String, Object>> l = new ArrayList<>();
+                while(hasNext())
+                    l.add(next());
+                return l;
+            }
+
+            @Override
+            public Set<Map<String, Object>> toSet() {
+                Set<Map<String, Object>> s = new HashSet<>();
+                while(hasNext())
+                    s.add(next());
+                return s;
+            }
+        };
     }
 
     private String setLimit(String s) {

@@ -254,15 +254,6 @@ public interface GraphSession extends AutoCloseable {
         String nodeType, String edgeType, NodeDegree ndegree,
         Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
-    // /**
-    //  *
-    //  * @param ids list of node ids
-    //  * @param ndegree minimum & maximum input/output degree
-    //  * @return
-    //  */
-    // Query queryNodesWithDegree(List<String> ids,  String edgeType, NodeDegree ndegree,
-    //     Map<String, Object> edgeProps);
-
     // ----------------------------------------------------------------------
     // Edge queries
     // ----------------------------------------------------------------------
@@ -427,6 +418,13 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     Query queryUsingFullText(String query,  Map<String,Object> queryParams);
+
+    // ----------------------------------------------------------------------
+    // Low level
+    // ----------------------------------------------------------------------
+
+    Query query(String stmt, Map<String,Object> queryParams);
+    void execute(String stmt, Map<String,Object> queryParams);
 
     // ----------------------------------------------------------------------
     // End

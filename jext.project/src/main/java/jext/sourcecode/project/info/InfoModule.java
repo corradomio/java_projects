@@ -1,6 +1,5 @@
 package jext.sourcecode.project.info;
 
-import jext.debug.Debug;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.PathName;

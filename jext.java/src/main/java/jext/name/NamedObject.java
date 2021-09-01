@@ -14,9 +14,14 @@ public class NamedObject implements IdNamed {
     // Setters
     // ----------------------------------------------------------------------
 
-    public void setName(String name) {
-        name = name.replace(' ', '-');
-        this.name = new PathName(name);
+    // public void setName(String name) {
+    //     name = name.replace(' ', '-');
+    //     this.name = new PathName(name);
+    //     setIdFromName();
+    // }
+
+    public void setName(Name name) {
+        this.name = name;
         setIdFromName();
     }
 

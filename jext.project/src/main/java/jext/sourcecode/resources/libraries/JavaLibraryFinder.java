@@ -5,7 +5,6 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
-import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.maven.MavenLibrary;

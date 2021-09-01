@@ -146,6 +146,7 @@ public class ProjectAnalyzer {
         // module dependencies
         minfo.put("dependencies", m.getDependencies()
             .stream()
+            .filter(ProjectAnalyzer::notNull)
             .map(dmodule -> dmodule.getName().getFullName())
             .collect(Collectors.toList()));
 
@@ -200,6 +201,13 @@ public class ProjectAnalyzer {
         //     .collect(Collectors.toList()));
 
         return minfo;
+    }
+
+    private static boolean notNull(Module m) {
+        if (m == null)
+            return false;
+        else
+            return true;
     }
 
     private Map<String, Object> analyzeLibrary(Library l) {

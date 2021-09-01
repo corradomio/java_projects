@@ -39,6 +39,15 @@ public class ProjectUtils {
             .collect(Collectors.toList());
     }
 
+    public static List<Source> getSources(Project project) {
+        List<Source> sources = new ArrayList<>();
+        project.getModules().forEach(module -> {
+            sources.addAll(module.getSources());
+        });
+
+        return sources;
+    }
+
     public static List<Source> getSources(Project project, List<ModuleSource> moduleSources) {
         List<Source> sources = new ArrayList<>();
 

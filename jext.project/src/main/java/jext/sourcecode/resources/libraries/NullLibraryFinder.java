@@ -33,7 +33,7 @@ public class NullLibraryFinder implements LibraryFinder {
 
     @Override
     public String getLatestVersion(MavenCoords coords) {
-        return coords.getVersion().toString();
+        return coords.getVersion().get();
     }
 
     @Override

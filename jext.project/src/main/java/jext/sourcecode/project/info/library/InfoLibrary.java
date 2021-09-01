@@ -2,6 +2,8 @@ package jext.sourcecode.project.info.library;
 
 import jext.name.Name;
 import jext.name.Named;
+import jext.name.NamedObject;
+import jext.name.ObjectName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
@@ -18,11 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class InfoLibrary implements Library {
+public abstract class InfoLibrary extends NamedObject implements Library {
 
     protected InfoProject project;
     protected InfoModule module;
-    protected Name name;
     protected Map<String, Object> info;
     protected LibraryType libraryType;
 
@@ -36,6 +37,8 @@ public abstract class InfoLibrary implements Library {
     }
 
     public InfoLibrary(InfoProject project, LibraryType libraryType, Map<String, Object> info) {
+        super(ObjectName.empty());
+
         this.project = project;
         this.info = info;
         this.libraryType = libraryType;
@@ -47,19 +50,9 @@ public abstract class InfoLibrary implements Library {
     }
 
     @Override
-    public Name getName() {
-        return name;
-    }
-
-    @Override
     public String getVersion() {
         return MapUtils.get(info, "version");
     }
-
-    // @Override
-    // public String getLatestVersion() {
-    //     return null;
-    // }
 
     @Override
     public Project getProject() {

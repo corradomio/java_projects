@@ -48,11 +48,6 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
         return 0;
     }
 
-    // @Override
-    // public List<Library> getDependencies() {
-    //     return Collections.emptyList();
-    // }
-
     @Override
     public List<File> getFiles() {
         return Collections.emptyList();
@@ -72,10 +67,5 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
     public String getVersion() {
         return "";
     }
-
-    // @Override
-    // public String getLatestVersion() {
-    //     return "";
-    // }
 
 }

@@ -2,6 +2,7 @@ package jext.sourcecode.resources;
 
 import jext.name.NamedObject;
 import jext.name.ObjectName;
+import jext.name.PathName;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
@@ -34,7 +35,7 @@ public class ResourceFile extends NamedObject implements Resource {
 
         // name: relative path respect the module home directory
         String rpath = FileUtils.relativePathNoExt(module.getModuleHome(), getFile());
-        setName(rpath);
+        setName(new PathName(rpath));
 
         // id: based on relative path respect the project home directory
         rpath = FileUtils.relativePathNoExt(getProject().getProjectHome(), getFile());

@@ -10,7 +10,7 @@ import jext.util.concurrent.Parallel;
 
 import java.io.File;
 
-public class MainMaven {
+public class App {
 
     public static void main(String[] args) {
         main5(args);
@@ -50,7 +50,7 @@ public class MainMaven {
             ;
 
         // MavenCoords mc = new MavenCoords("org.bytedeco", "opencv");
-        MavenCoords mc = new MavenCoords("joda-time:joda-time:2.2");
+        MavenCoords mc = MavenCoords.of("joda-time:joda-time:2.2");
         mc = md.getVersioned(mc);
         System.out.println(mc);
 
@@ -110,9 +110,6 @@ public class MainMaven {
         MavenCoords mc = new MavenCoords("org.bouncycastle", "bctsp-jdk14");
         // mc = new MavenCoords("log4j","log4j");
         System.out.println(md.getLatestVersion(mc));
-        Versions v = md.getVersions(mc);
-        v.dump();
-        System.out.println(v.getLatestVersion());
 
         // parentPom.dump();
 

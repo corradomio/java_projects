@@ -127,8 +127,8 @@ public class InfoProject implements Project {
 
     // ----------------------------------------------------------------------
     // Sources
-
     // ----------------------------------------------------------------------
+
     @Override
     public List<Source> getSources() {
         if (sources != null)

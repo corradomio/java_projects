@@ -61,11 +61,9 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String REFIDS = "refIds";
 
     // special parameters:   [revision, n]
-    private static final String IN_REVISION = "inRevision";
-    private static final String LABEL = "$label";
-    private static final String DEGREE = "$degree";
-    private static final String INDEGREE = "$indegree";
-    private static final String OUTDEGREE = "$outdegree";
+    // is converted in       n.inRevision[$revision]
+    // 'inRevision' is a boolean vector
+    private static final String REVISION = "revision";
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -137,6 +135,13 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
     // Named Queries
     // ----------------------------------------------------------------------
+
+    @Override
+    public Query query(String query, Map<String,Object> params) {
+        String s = StringUtils.format(query, params);
+
+        return new Neo4JQuery(this, N, s, params);
+    }
 
     @Override
     public Query queryUsing(String queryName,  Map<String,Object> params) {
@@ -1199,14 +1204,13 @@ public class Neo4JOnlineSession implements GraphSession {
     private static String asString(Object value) {
         if (value == null) return "null";
         if (value instanceof String) return String.format("'%s'", value);
-        if (value instanceof int[]) return ArrayUtils.asList((int[])value).toString();
-        if (value instanceof boolean[]) return ArrayUtils.asList((boolean[])value).toString();
         return value.toString();
     }
 
     // ----------------------------------------------------------------------
 
-    void execute(String s, Map<String, Object> params) {
+    @Override
+    public void execute(String s, Map<String, Object> params) {
         logStmt(s, params);
 
         try {
@@ -1270,12 +1274,16 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     private static Map<String, Object> toNodeMap(String alias, Record r) {
-        Map<String, Object> body = new HashMap<>();
-
         if (r == null)
-            return body;
+            return Collections.emptyMap();
 
         Node node = r.get(alias).asNode();
+        return toNodeMap(node);
+
+    }
+
+    public static  Map<String, Object> toNodeMap(Node node) {
+        Map<String, Object> body = new HashMap<>();
 
         body.put(ID, toId(node.id()));
 
@@ -1367,10 +1375,16 @@ public class Neo4JOnlineSession implements GraphSession {
             Object value = params.get(param);
 
             // value is null
-            if (value == null || value instanceof Collection)
+            if (value == null)
                 continue;
-            // param is "inRevision" or 'name[...]'  or '$name'
-            if (param.equals(IN_REVISION) || param.contains("[") || param.startsWith("$"))
+            // value is a collection
+            if (value instanceof Collection)
+                continue;
+            // param is "revision" or 'name[...]'
+            if (param.equals(REVISION) || param.contains("["))
+                continue;
+            // param is '$name'
+            if (param.startsWith("$"))
                 continue;
 
             if (sb.length() > 1)
@@ -1529,30 +1543,32 @@ public class Neo4JOnlineSession implements GraphSession {
             if (!pname.equals(param))
                 params.put(pname, value);
 
+            // append "... AND "
+            if (sb.length() > 0) sb.append(" AND ");
+
             // [param, null] -> "EXISTS(n.param)"
             if (value == null) {
                 s = String.format("EXISTS(%s.%s)", alias, param);
             }
-            // ["inRevision", revs] -> "apoc.rev.test(n.inRevision, revs)"
-            else if (IN_REVISION.equals(param)) {
-                //s = revisionCondition(alias, param, params);
-                s = String.format("apoc.rev.test(%1$s.inRevision, $%1$s%2$s)", alias, pname);
+            // ["revision", n] -> "inRevision[$revision]"
+            else if (REVISION.equals(param)) {
+                s = revisionCondition(alias, param, params);
             }
             else if (param.startsWith("$")) {
                 // ["$label", l] -> labels(n)[0] = $_label
-                if (LABEL.equals(param)) {
+                if ("$label".equals(param)) {
                     s = String.format("labels(%1$s)[0] = $%1$s%2$s", alias, pname);
                 }
                 // ["$degree", d] -> apoc.node.degree(n) = $_degree
-                else if (DEGREE.equals(param)) {
+                else if ("$degree".equals(param)) {
                     s = String.format("apoc.node.degree(%1$s) = $%1$s%2$s", alias, pname);
                 }
                 // ["$outdegree", d] -> apoc.node.degree(n,'>') = $_outdegree
-                else if (OUTDEGREE.equals(param)) {
+                else if ("$outdegree".equals(param)) {
                     s = String.format("apoc.node.degree(%1$s, '>') = $%1$s%2$s", alias, pname);
                 }
                 // ["$indegree", d] -> apoc.node.degree(n,'<') = $_indegree
-                else if (INDEGREE.equals(param)) {
+                else if ("$indegree".equals(param)) {
                     s = String.format("apoc.node.degree(%1$s, '<') = $%1$s%2$s", alias, pname);
                 }
                 else {
@@ -1564,13 +1580,8 @@ public class Neo4JOnlineSession implements GraphSession {
                 s = String.format("%1$s.%2$s IN $%1$s%3$s", alias, param, pname);
             }
             else {
-                // already processed in 'wblock(...)'
-                continue;
+                s = String.format("%1$s.%2$s = $%1$s%3$s", alias, param, pname);
             }
-
-            // append "... AND "
-            if (sb.length() > 0 && s.length() > 0)
-                sb.append(" AND ");
 
             sb.append(s);
         }
@@ -1584,6 +1595,43 @@ public class Neo4JOnlineSession implements GraphSession {
             case WHERE: return sb.insert(0, " WHERE ").toString();
             default: return sb.toString();
         }
+    }
+
+    /*
+        [revision, 0 | [0,1,...]] ->
+            n.inRevision[0]
+            n.inRevision[0] OR n.inRevision[1] ...
+     */
+    private static String revisionCondition(String alias, String param, Map<String, Object> params) {
+        Object value = params.get(param);
+
+        // check if value is a simple integer
+        if (value instanceof Integer) {
+            int rev = (int) value;
+            return String.format("%s.inRevision[%d]", alias, rev);
+        }
+
+        // convert a collection in a 'int[]'
+        if (value instanceof Collection)
+            value = ArrayUtils.asIntArray(value);
+
+        int[] revs = (int[]) value;
+
+        if (revs.length == 0)
+            return "false";
+        if (revs.length == 1)
+            return String.format("%s.inRevision[%d]", alias, revs[0]);
+
+        // revs.length > 1
+        StringBuilder sb =  new StringBuilder("(");
+        sb.append(String.format("%s.inRevision[%d]", alias, revs[0]));
+        for (int i=1; i<revs.length; ++i) {
+            sb.append(" OR ")
+              .append(String.format("%s.inRevision[%d]", alias, revs[i]));
+        }
+        sb.append(")");
+
+        return sb.toString();
     }
 
     /**

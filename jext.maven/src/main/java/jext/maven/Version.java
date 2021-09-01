@@ -229,112 +229,12 @@ public class Version implements Comparable<Version> {
     //
     // ----------------------------------------------------------------------
 
-    /**
-     * Try to retrieve the library version from the file name.
-     * Following the Maven version specifications, the library must have a name like:
-     *
-     *      [name]-[version].jar
-     *      [name]-[version].pom
-     *
-     * However, [name] com be composed by differen 'subnames', for example:
-     *
-     *
-     *      commons-collection-3.2.2.jar
-     *
-     * @param filename filename (with extension)
-     * @return the library version or the empty version
-     */
-    public static Version versionOf(String filename) {
-        // the filename is composed by <name>-...-<version>.jar
-        Matcher matcher;
-
-        // strip the extension (.jar, .zip, ...)
-        int sep = filename.lastIndexOf('.');
-        String version = filename.substring(0,sep);
-
-        sep = version.indexOf('-');
-        while (sep != -1) {
-            version = version.substring(sep=1);
-
-            if (MajorVersionPattern.matcher(version).matches())
-                return Version.of(version);
-            if (MinorVersionPattern.matcher(version).matches())
-                return Version.of(version);
-            if (BuildNumberPattern.matcher(version).matches())
-                return Version.of(version);
-            if (PatchNumberPattern.matcher(version).matches())
-                return Version.of(version);
-            if (MajorQualifierPattern.matcher(version).matches())
-                return Version.of(version);
-            if (QualifierPattern.matcher(version).matches())
-                return Version.of(version);
-        }
-
-        return Version.NO_VERSION;
-    }
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
     public int compareTo(Version that) {
+        // one of the schemes is StringVersion, compare in lexicographic order
         if (this.scheme == Scheme.StringVersion || that.scheme == Scheme.StringVersion)
             return this.version.compareTo(that.version);
 
-        int cmp;
-
-        cmp = this.major - that.major; if (cmp != 0) return cmp;
-        cmp = this.minor - that.minor; if (cmp != 0) return cmp;
-        cmp = this.subver- that.subver;if (cmp != 0) return cmp;
-        cmp = this.build - that.build; if (cmp != 0) return cmp;
-        cmp = this.patch - that.patch; if (cmp != 0) return cmp;
-    }
-    
-    public String get() {
-        return version;
-    }
-
-    /**
-     * Return the index where there is the first difference
-     * -1 -> equals
-     *  0 -> major
-     *  1 -> minor
-     *  2 -> subver
-     *  3 -> patch
-     *  4 -> build
-     *  5 -> qualifier
-     *
-     * @return
-     */
-    public int differOn(Version that) {
-        if (scheme == Scheme.StringVersion)
-            return 0;
-
-        if (this.major != that.major)
-            return 0;
-        if (this.minor != that.minor)
-            return 1;
-        if (this.subver != that.subver)
-            return 2;
-        if (this.patch != that.patch)
-            return 3;
-        if (this.build != that.build)
-            return 4;
-        if (this.qualifier != that.qualifier)
-            return 5;
-
-        return -1;
-    }
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
-    @Override
-    public int compareTo(Version that) {
-        if (this.scheme == Scheme.StringVersion || that.scheme == Scheme.StringVersion)
-            return this.version.compareTo(that.version);
-
+        // compare by major/minor/subver/build/patch/qualifier (in lexicographic order)
         int cmp;
 
         cmp = this.major - that.major; if (cmp != 0) return cmp;
@@ -349,7 +249,6 @@ public class Version implements Comparable<Version> {
         else if (!this.qualifier.isEmpty() && that.qualifier.isEmpty())
             cmp = -1;
         else
-
             cmp = this.qualifier.compareTo(that.qualifier);
 
         return cmp;

@@ -1,7 +1,8 @@
 package jext.maven;
 
 public enum MavenType {
-    METADATA,       // maven-metadata.xml
+    // METADATA,       // maven-metadata.xml
+
     POM,            // <...>.pom
     ARTIFACT,       // <...>.jar | <...>.aar | <...>.<packaging>
 

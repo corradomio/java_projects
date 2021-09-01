@@ -7,6 +7,7 @@ import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
+import jext.name.PathName;
 import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
@@ -19,12 +20,10 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.ant.util.IvyFile;
 import jext.sourcecode.project.eclipse.util.ClasspathFile;
-import jext.sourcecode.project.maven.LibrarySet;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
-import jext.util.LongHash;
 import jext.util.SetUtils;
 
 import java.io.File;
@@ -70,7 +69,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         this.properties = new Properties();
 
         this.path = FileUtils.relativePath(project.getProjectHome(), moduleHome);
-        setName(this.path);
+        setName(new PathName(this.path));
         setRefIdFromName();
 
         this.logger = Logger.getLogger("%s.%s.%s",
@@ -79,12 +78,12 @@ public abstract class BaseModule extends ReferencedObject implements Module {
             getName().getName());
     }
 
-    @Override
-    public void setName(String name) {
-        if (name.isEmpty())
-            name = ROOT_MODULE_NAME;
-        super.setName(name);
-    }
+    // @Override
+    // public void setName(String name) {
+    //     if (name.isEmpty())
+    //         name = ROOT_MODULE_NAME;
+    //     super.setName(name);
+    // }
 
     // ----------------------------------------------------------------------
     // Properties
@@ -335,7 +334,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
         List<MavenCoords> coordList = classpathFile.getMavenLibraries()
             .stream()
-            .map(MavenCoords::new)
+            .map(MavenCoords::of)
             .collect(Collectors.toList());
 
         MavenDownloader md = project.getLibraryDownloader();

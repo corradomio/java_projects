@@ -8,7 +8,7 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.gradle.collectors.AllDepsCollector;
 import jext.sourcecode.project.gradle.collectors.ErrorsCollector;
 import jext.sourcecode.project.gradle.collectors.LoggerCollector;
-import jext.sourcecode.project.maven.LibrarySet;
+import jext.sourcecode.project.util.LibrarySet;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseProject;
 import jext.util.FileUtils;
@@ -299,7 +299,7 @@ public class GradleProject extends BaseProject {
 
             moduleLibraries
                 .stream()
-                .map(MavenCoords::new)
+                .map(MavenCoords::of)
                 .map(coords -> new MavenLibrary(coords, md, this))
                 .forEach(libraries::add);
         }

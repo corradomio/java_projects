@@ -63,5 +63,6 @@ public interface Query {
      * Return the result of the query
      */
     GraphIterator<Map<String, Object>> result();
+    GraphIterator<Map<String, Object>> result(String alias);
 
 }

@@ -13,12 +13,14 @@ public class InfoMavenLibrary extends InfoLibrary {
 
     public InfoMavenLibrary(InfoModule module, Map<String, Object> info) {
         super(module, LibraryType.MAVEN, info);
-        this.name = new MavenName((String)MapUtils.get(info,"fullname"));
+        String coords = MapUtils.get(info,"fullname");
+        setName(new MavenName(coords));
     }
 
     public InfoMavenLibrary(InfoProject project, Map<String, Object> info) {
         super(project, LibraryType.MAVEN, info);
-        this.name = new MavenName((String)MapUtils.get(info,"fullname"));
+        String coords = MapUtils.get(info,"fullname");
+        setName(new MavenName(coords));
     }
 
     public String getPath() {

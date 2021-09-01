@@ -324,7 +324,7 @@ public class BuildGradleFile extends GradleFile {
     private void addSpecialLibraries(Set<MavenCoords> libraries) {
         for (String line : content) {
             if(line.contains("gradlePlugin"))
-                libraries.add(new MavenCoords("org.gradle:gradle-core-api"));
+                libraries.add(MavenCoords.of("org.gradle:gradle-core-api"));
         }
     }
 

@@ -176,22 +176,6 @@ public class MavenLibrary extends BaseLibrary {
         return coords.version;
     }
 
-    // @Override
-    // public String getLatestVersion() {
-    //     MavenDownloader md = this.getProject().getLibraryDownloader();
-    //     MavenCoords coords = new MavenCoords(this.getName().getFullName());
-    //     MavenCoords latest = md.getLatest(coords);
-    //     return latest.getVersion().toString();
-    // }
-
-    // @Override
-    // public String getLatestVersion() {
-    //     MavenDownloader md = this.getProject().getLibraryDownloader();
-    //     MavenCoords coords = new MavenCoords(this.getName().getFullName());
-    //     MavenCoords latest = md.getLatest(coords);
-    //     return latest.getName();
-    // }
-
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------

@@ -8,8 +8,9 @@ import jext.nio.file.FilteredFileVisitor;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.resources.BaseLibrary;
 import jext.sourcecode.project.util.ReferencedType;
+import jext.sourcecode.resources.BaseLibrary;
+import jext.util.FileUtils;
 import jext.util.JarUtils;
 
 import java.io.File;
@@ -111,6 +112,10 @@ public class DirectoryLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     private void checkFilesNoSync() {
+        if (!libraryFile.isDirectory()) {
+            logger.errorf("Invalid library directory '%s'", FileUtils.getAbsolutePath(libraryFile));
+        }
+
         if (libraryFiles != null)
             return;
 
