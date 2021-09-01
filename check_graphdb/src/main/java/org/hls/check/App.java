@@ -21,13 +21,12 @@ public class App {
 
         GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
 
-        gdb.registerQueries(MapUtils.asMap("test", "MATCH (n:project) ${where:other}"));
+        gdb.registerQueries(MapUtils.asMap("test", "MATCH (n:project) ${where:n:other}"));
 
         Map<String, Object> p = MapUtils.asMap(
-            // "other", MapUtils.asMap(
-            //     "$alias", "n",
-            //     "refId", "4c00c2ca"
-            // )
+            "other", MapUtils.asMap(
+                "refId", "4c00c2ca"
+            )
         );
 
         try(GraphSession s = gdb.connect()) {

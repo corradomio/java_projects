@@ -1714,22 +1714,31 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     // ----------------------------------------------------------------------
+    // ${and:[alias]:[name]}
+    // ${where:[alias]:[name]}
 
     private static final String AND_BLOCK = "${and:";
     private static final String WHERE_BLOCK = "${where:";
     private static final String END_BLOCK = "}";
-    private static final String ALIAS = "$alias";
 
     private static String ulock(String stmt, Parameters params, WhereType utype) {
-        int bgn = stmt.indexOf(AND_BLOCK);
+        String prefix = utype == WhereType.AND ? AND_BLOCK : WHERE_BLOCK;
+        int bgn = stmt.indexOf(prefix) ;
         int end = stmt.indexOf(END_BLOCK, bgn);
-        String name = stmt.substring(bgn+AND_BLOCK.length(), end);
+        String name = stmt.substring(bgn+prefix.length(), end);
+        String alias;
+
+        // name | alias:name
+        int sep = name.indexOf(':');
+        if (sep == -1)
+            alias = N;
+        else {
+            alias = name.substring(0, sep);
+            name = name.substring(sep+1);
+        }
 
         Map<String, Object> aparams = (Map<String, Object>) params.getOrDefault(name, Collections.emptyMap());
-
         params.remove(name);
-        String alias = (String) aparams.getOrDefault(ALIAS, "");
-        aparams.remove(ALIAS);
 
         String wblock = wblock(alias, aparams, utype);
 

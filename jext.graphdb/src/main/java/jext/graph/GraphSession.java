@@ -406,9 +406,9 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
     // The names query can contains two special parameters:
     //
-    //  ${and:name}
-    //  ${where:name}
-    //  ${body:name}        (not supported for now)
+    //  ${and:name}     ${and:alias:name}
+    //  ${where:name}   ${where:alias:name}
+    //  ${body:name}    ${body:alias:name}  (not supported for now)
     //
     // In this way, a named query can be extended in the following way:
     //
