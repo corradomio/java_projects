@@ -14,14 +14,14 @@ import java.util.Map;
 
     Special properties:
 
-        $degree
-        $indegree
-        $outdegree
-        $label
+        $degree         node degree (indegree+outdegree)
+        $indegree       input degree
+        $outdegree      output degree
+        $label          single node label (in CYPHER: 'labels(n)[0]')
 
     Supported assignments:
 
-        name: single value
+        name: 'single value'
 
             name, value                     n.name <- value
             name[index], value              n.name <- apoc.coll.setOrExtend(n.name, index, value)
@@ -30,26 +30,26 @@ import java.util.Map;
 
     Supported predicates:
 
-        name: single value
+        name: 'single value'
 
             name, value                     n.name == value
             name, array[]                   n.name IN array[]
-            name, Collection                n.name IN Collection
+            name, collection                n.name IN collection
 
-        name: array
+        name: 'array'
 
             name[index], value              n.name[index] == value
             name[index], array[]            n.name[index] IN array[]
             name[index], collection         n.name[index] IN collection
             name[i1|i2|...], value          n.name[i1] == value OR n.name[i2] == value OR ...
-                                            n.name[i1] OR n.name[i2] OR ...  for boolean 'true'
+                                            n.name[i1] OR n.name[i2] OR ...  for boolean value 'true'
     Special predicates:
 
-        name: boolean array
+        name: 'boolean array'
 
             name, array[]                   n.name[index1] OR n.name[index2] OR ...
 
-    Extended predicates:
+    Extended predicates: the predicate ">", "<", ">=", "<=", "!=" is added at the end of the name
 
         name>,  value
         name>=, value
@@ -57,9 +57,7 @@ import java.util.Map;
         name<=, value
         name!=, value
 
-
-
-     Support for array of array of int
+     Support for array of array of int:
 
         assignment:
             name[index,i2], value           n.name <- apoc.coll.setOrExtend2(n.name, index, i2, value)
@@ -95,7 +93,7 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     //
-    // Unsupported for now
+    // Unsupported (for now)
     //
     void beginTransaction();
     void commit();
@@ -208,8 +206,6 @@ public interface GraphSession extends AutoCloseable {
 
     void setNodeProperty(String nodeId, String name, Object value);
     void setNodeProperty(String nodeId, String name, int index, Object value);
-
-    // void appendNodePropertyValue(String nodeId, String name, Object value, boolean distinct);
 
     void deleteNodeProperty(String nodeId, String name);
     void deleteNodesProperties(Collection<String> nodeId, Collection<String> names);
@@ -408,6 +404,21 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
     // Query using named queries
     // ----------------------------------------------------------------------
+    // The names query can contains two special parameters:
+    //
+    //  ${and:name}
+    //  ${where:name}
+    //  ${body:name}        (not supported for now)
+    //
+    // In this way, a named query can be extended in the following way:
+    //
+    //      MATCH (...) ${where:name} ...
+    //      MATCH (...) WHERE ... ${and:name} ...
+    //      MATCH (... ${body:name}) ...
+    //
+    // In this case, "queryParam" must contain the parameter 'name' with value
+    // a map containing pairs [name, value] AND the special parameter '$alias'
+    //
 
     Query queryUsing(String queryName, Map<String,Object> queryParams);
 
@@ -417,13 +428,25 @@ public interface GraphSession extends AutoCloseable {
     // Query using named queries
     // ----------------------------------------------------------------------
 
+    /**
+     * It is possible to specify the node types passing the parameters
+     *
+     *  - 'labels'  list of node labels (the condition will be: 'labels(n) = $labels')
+     *  - 'refIds'  list of node ids
+     *
+     * @param query fulltext query as specified in Lucene
+     * @param queryParams query parameters
+     */
     Query queryUsingFullText(String query,  Map<String,Object> queryParams);
 
     // ----------------------------------------------------------------------
     // Low level
     // ----------------------------------------------------------------------
 
-    Query query(String stmt, Map<String,Object> queryParams);
+    /**
+     * Execute the CYPHER statement specified
+     */
+    Query  query(String stmt, Map<String,Object> queryParams);
     void execute(String stmt, Map<String,Object> queryParams);
 
     // ----------------------------------------------------------------------

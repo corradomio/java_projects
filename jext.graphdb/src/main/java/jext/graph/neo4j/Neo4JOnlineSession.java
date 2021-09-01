@@ -135,17 +135,22 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
     // Named Queries
     // ----------------------------------------------------------------------
-
-    @Override
-    public Query query(String query, Map<String,Object> params) {
-        String s = StringUtils.format(query, params);
-
-        return new Neo4JQuery(this, N, s, params);
-    }
+    // Special fields:
+    //
+    //      ${and:name}
+    //      ${where:name}
+    //
 
     @Override
     public Query queryUsing(String queryName,  Map<String,Object> params) {
+
         String query = graphdb.getQuery(queryName);
+
+        if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
+            Parameters nparams = Parameters.params(params);
+            query = awblock(query, nparams);
+            params = nparams;
+        }
 
         // replace ${name} with 'name' value in 'params'
         String s = StringUtils.format(query, params);
@@ -153,13 +158,18 @@ public class Neo4JOnlineSession implements GraphSession {
         return new Neo4JQuery(this, N, s, params);
     }
 
+
     @Override
     public void executeUsing(String queryName, Map<String,Object> params) {
+
         String query = graphdb.getQuery(queryName);
 
-        // replace ${name} with 'name' value in 'params'
-        String s = StringUtils.format(query, params);
+        if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
+            Parameters nparams = Parameters.params(params);
+            query = awblock(query, nparams);
+        }
 
+        String s = query;
         logStmt(s, params);
         try {
             session.run(s, params);
@@ -170,40 +180,7 @@ public class Neo4JOnlineSession implements GraphSession {
         }
 
         // NOTE: 'CALL apoc.cypher.runMany(...)' DOESN'T work!!!
-        //
-        // if (!query.contains(";"))
-        //     runSingle(s, params);
-        // else
-        //     runMultiple(s, params);
     }
-
-    // private void runSingle(String s, Map<String, Object> params) {
-    //     logStmt(s, params);
-    //     try {
-    //         session.run(s, params);
-    //     }
-    //     catch (Throwable t) {
-    //         logStmt(s, params, t);
-    //         throw t;
-    //     }
-    // }
-
-    // private void runMultiple(String stmts, Map<String, Object> params) {
-    //     String s = "cypher;" + stmts + ";";
-    //     Parameters nparams = Parameters.params(
-    //         "stmts", s,
-    //         "params", params
-    //     );
-    //
-    //     logStmt(s, params);
-    //     try {
-    //         session.run("CALL apoc.cypher.runMany($stmts,$params)", nparams);
-    //     }
-    //     catch (Throwable t) {
-    //         logStmt(s, params, t);
-    //         throw t;
-    //     }
-    // }
 
     // ----------------------------------------------------------------------
     // Query using fulltext
@@ -492,33 +469,6 @@ public class Neo4JOnlineSession implements GraphSession {
         setNodeProperties(nodeId, MapUtils.asMap(at(name, index), value));
     }
 
-    // @Override
-    // public void appendNodePropertyValue(String nodeId, String name, Object value, boolean distinct) {
-    //     if (nodeId == null)
-    //         return;
-    //
-    //     String s;
-    //
-    //     Parameters params = Parameters.params(
-    //         "id", asId(nodeId),
-    //         "value", value,
-    //         "name", name
-    //     );
-    //
-    //     if (distinct)
-    //         s = StringUtils.format("" +
-    //             "MATCH (n) WHERE id(n) = $id " +
-    //             "SET n.${name} = apoc.coll.appendDistinct(n.${name}, $value) " +
-    //             "RETURN n", params);
-    //     else
-    //         s = StringUtils.format("" +
-    //             "MATCH (n) WHERE id(n) = $id " +
-    //             "SET n.${name} = apoc.coll.append(n.${name}, $value) " +
-    //             "RETURN n", params);
-    //
-    //     this.execute(s, params);
-    // }
-
     // ----------------------------------------------------------------------
     // Delete properties
     // ----------------------------------------------------------------------
@@ -703,21 +653,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
         return new Neo4JQuery(this, N, s, allProps);
     }
-
-    // @Override
-    // public Query queryNodesWithDegree(
-    //     List<String> ids, String edgeType, NodeDegree ndegree,
-    //     Map<String, Object> edgeProps) {
-    //     String dblock = dblock(N, edgeType, ndegree, edgeProps);
-    //
-    //     Parameters params = Parameters.params(
-    //         "ids", asIds(ids)
-    //     );
-    //
-    //     String s = String.format("MATCH (n) %s AND id(n) IN $ids", dblock);
-    //
-    //     return new Neo4JQuery(this, N, s, params);
-    // }
 
     // ----------------------------------------------------------------------
     // All Edges
@@ -995,32 +930,6 @@ public class Neo4JOnlineSession implements GraphSession {
         return this.retrieve("e", s, params, true);
     }
 
-    // @Override
-    // public void appendEdgePropertyValue(String edgeId, String name, Object value, boolean distinct) {
-    //     if (edgeId == null)
-    //         return;
-    //
-    //     String s;
-    //     Parameters params = Parameters.params(
-    //         "id", asId(edgeId),
-    //         "value", value,
-    //         "name", name
-    //     );
-    //
-    //     if (distinct)
-    //         s = StringUtils.format("" +
-    //             "MATCH ()-[e]-() WHERE id(e) = $id " +
-    //             "SET e.${name} = apoc.coll.appendDistinct(e.${name}, $value) " +
-    //             "RETURN e", params);
-    //     else
-    //         s = StringUtils.format("" +
-    //             "MATCH ()-[e]-() WHERE id(e) = $id " +
-    //             "SET e.${name} = apoc.coll.append(e.${name}, $value) " +
-    //             "RETURN e", params);
-    //
-    //     this.execute(s, params);
-    // }
-
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
@@ -1208,12 +1117,29 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     // ----------------------------------------------------------------------
+    // Low level
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Query query(String s, Map<String,Object> params) {
+        logStmt(s, params);
+        try {
+            s = StringUtils.format(s, params);
+
+            return new Neo4JQuery(this, N, s, params);
+        }
+        catch (Throwable t) {
+            logStmt(s, params, t);
+            throw t;
+        }
+    }
 
     @Override
     public void execute(String s, Map<String, Object> params) {
         logStmt(s, params);
 
         try {
+            s = StringUtils.format(s, params);
             Result result = session.run(s, params);
         }
         catch (Throwable t) {
@@ -1221,6 +1147,10 @@ public class Neo4JOnlineSession implements GraphSession {
             throw t;
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
 
     private long delete(String s, Map<String, Object> params, boolean edge) {
         logStmt(s, params);
@@ -1773,6 +1703,59 @@ public class Neo4JOnlineSession implements GraphSession {
             sb.append(",").append(alias).append(".").append(it.next());
         }
         return sb.toString();
+    }
+
+    // ----------------------------------------------------------------------
+
+    private static final String AND_BLOCK = "${and:";
+    private static final String WHERE_BLOCK = "${where:";
+    private static final String END_BLOCK = "}";
+    private static final String ALIAS = "$alias";
+
+    private static String awblock(String stmt, Parameters params) {
+        while (stmt.contains(AND_BLOCK))
+            stmt = andblock(stmt, params);
+        while (stmt.contains(WHERE_BLOCK))
+            stmt = whereblock(stmt, params);
+        return stmt;
+    }
+
+    private static String andblock(String stmt, Parameters params) {
+        int bgn = stmt.indexOf(AND_BLOCK);
+        int end = stmt.indexOf(END_BLOCK, bgn);
+        String name = stmt.substring(bgn+AND_BLOCK.length(), end);
+
+        Map<String, Object> aparams = (Map<String, Object>) params.getOrDefault(name, Collections.emptyMap());
+
+        params.remove(name);
+        String alias = (String) aparams.getOrDefault(ALIAS, "");
+        aparams.remove(ALIAS);
+
+        String wblock = wblock(alias, aparams, WhereType.AND);
+
+        stmt = stmt.substring(0, bgn) + wblock + stmt.substring(end+END_BLOCK.length());
+        params.add(alias, aparams);
+
+        return stmt;
+    }
+
+    private static String whereblock(String stmt, Parameters params) {
+        int bgn = stmt.indexOf(WHERE_BLOCK);
+        int end = stmt.indexOf(END_BLOCK, bgn);
+        String name = stmt.substring(bgn+WHERE_BLOCK.length(), end);
+
+        Map<String, Object> aparams = (Map<String, Object>) params.getOrDefault(name, Collections.emptyMap());
+
+        params.remove(name);
+        String alias = (String) aparams.getOrDefault(ALIAS, "");
+        aparams.remove(ALIAS);
+
+        String wblock = wblock(alias, aparams, WhereType.WHERE);
+
+        stmt = stmt.substring(0, bgn) + wblock + stmt.substring(end+END_BLOCK.length());
+        params.add(alias, aparams);
+
+        return stmt;
     }
 
 }

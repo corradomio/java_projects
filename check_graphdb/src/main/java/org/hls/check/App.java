@@ -5,9 +5,11 @@ import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.logging.Logger;
+import jext.util.MapUtils;
 import jext.util.Parameters;
 import jext.util.PropertiesUtils;
 
+import java.util.Map;
 import java.util.Properties;
 
 public class App {
@@ -19,11 +21,20 @@ public class App {
 
         GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
 
+        gdb.registerQueries(MapUtils.asMap("test", "MATCH (n:project) ${where:other}"));
+
+        Map<String, Object> p = MapUtils.asMap(
+            // "other", MapUtils.asMap(
+            //     "$alias", "n",
+            //     "refId", "4c00c2ca"
+            // )
+        );
+
         try(GraphSession s = gdb.connect()) {
-            s.query("MATCH (n: project) RETURN n, id(n) as id", Parameters.empty())
-                    .result().toList().forEach(nv -> {
-                        System.out.println(nv);
-                    });
+            s.queryUsing("test", p)
+                .allValues().toList().forEach(nv -> {
+                    System.out.println(nv);
+                });
         }
 
         gdb.destroy();
