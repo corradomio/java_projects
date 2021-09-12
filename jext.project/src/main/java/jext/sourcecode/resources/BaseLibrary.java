@@ -83,8 +83,8 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     }
 
     @Override
-    public long getDigest() {
-        return FileUtils.digestAsLong(libraryFile);
+    public String getDigest() {
+        return FileUtils.digest(libraryFile);
     }
 
     // ----------------------------------------------------------------------

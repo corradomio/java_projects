@@ -10,7 +10,11 @@
 
 package org.eclipse.jgit.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.errors.CommandFailedException;
+import org.eclipse.jgit.lib.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -20,11 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jgit.api.errors.JGitInternalException;
-import org.eclipse.jgit.errors.CommandFailedException;
-import org.eclipse.jgit.lib.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * FS implementation for Cygwin on Windows

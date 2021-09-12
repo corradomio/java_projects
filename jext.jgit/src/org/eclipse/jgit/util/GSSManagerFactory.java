@@ -10,11 +10,11 @@
 
 package org.eclipse.jgit.util;
 
+import org.ietf.jgss.GSSManager;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-
-import org.ietf.jgss.GSSManager;
 
 /**
  * Factory to detect which GSSManager implementation should be used.

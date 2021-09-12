@@ -10,9 +10,6 @@
 
 package org.eclipse.jgit.revwalk;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.eclipse.jgit.diff.DiffConfig;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
@@ -25,6 +22,9 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Filter applying a {@link org.eclipse.jgit.treewalk.filter.TreeFilter} against

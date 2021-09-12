@@ -10,7 +10,16 @@
 
 package org.eclipse.jgit.internal.storage.file;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.errors.LockFailedException;
+import org.eclipse.jgit.internal.storage.io.BlockSource;
+import org.eclipse.jgit.internal.storage.reftable.MergedReftable;
+import org.eclipse.jgit.internal.storage.reftable.ReftableCompactor;
+import org.eclipse.jgit.internal.storage.reftable.ReftableConfig;
+import org.eclipse.jgit.internal.storage.reftable.ReftableReader;
+import org.eclipse.jgit.internal.storage.reftable.ReftableWriter;
+import org.eclipse.jgit.lib.Config;
+import org.eclipse.jgit.util.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,16 +39,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.errors.LockFailedException;
-import org.eclipse.jgit.internal.storage.io.BlockSource;
-import org.eclipse.jgit.internal.storage.reftable.MergedReftable;
-import org.eclipse.jgit.internal.storage.reftable.ReftableCompactor;
-import org.eclipse.jgit.internal.storage.reftable.ReftableConfig;
-import org.eclipse.jgit.internal.storage.reftable.ReftableReader;
-import org.eclipse.jgit.internal.storage.reftable.ReftableWriter;
-import org.eclipse.jgit.lib.Config;
-import org.eclipse.jgit.util.FileUtils;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A mutable stack of reftables on local filesystem storage. Not thread-safe.

@@ -11,7 +11,14 @@
 
 package org.eclipse.jgit.internal.transport.ssh;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.annotations.NonNull;
+import org.eclipse.jgit.errors.InvalidPatternException;
+import org.eclipse.jgit.fnmatch.FileNameMatcher;
+import org.eclipse.jgit.transport.SshConfigStore;
+import org.eclipse.jgit.transport.SshConstants;
+import org.eclipse.jgit.util.FS;
+import org.eclipse.jgit.util.StringUtils;
+import org.eclipse.jgit.util.SystemReader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,14 +36,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.jgit.annotations.NonNull;
-import org.eclipse.jgit.errors.InvalidPatternException;
-import org.eclipse.jgit.fnmatch.FileNameMatcher;
-import org.eclipse.jgit.transport.SshConfigStore;
-import org.eclipse.jgit.transport.SshConstants;
-import org.eclipse.jgit.util.FS;
-import org.eclipse.jgit.util.StringUtils;
-import org.eclipse.jgit.util.SystemReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Fairly complete configuration parser for the openssh ~/.ssh/config file.

@@ -10,10 +10,10 @@
 
 package org.eclipse.jgit.internal.storage.reftable;
 
-import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.MAX_BLOCK_SIZE;
-
 import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Repository;
+
+import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.MAX_BLOCK_SIZE;
 
 /**
  * Configuration used by a reftable writer when constructing the stream.

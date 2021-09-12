@@ -267,7 +267,7 @@ public class ProjectAnalyzer {
         minfo.add(source.getSourceInfo());
         String modulePath = source.getModule().getName().getFullName();
         String sourcePath = source.getName().getFullName();
-        long digest = source.getDigest();
+        String digest = source.getDigest();
         minfo.addDigest(modulePath, sourcePath, digest);
     }
 

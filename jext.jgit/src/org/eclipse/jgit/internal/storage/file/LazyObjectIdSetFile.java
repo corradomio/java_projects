@@ -10,7 +10,10 @@
 
 package org.eclipse.jgit.internal.storage.file;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.MutableObjectId;
+import org.eclipse.jgit.lib.ObjectIdOwnerMap;
+import org.eclipse.jgit.lib.ObjectIdSet;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,10 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.eclipse.jgit.lib.AnyObjectId;
-import org.eclipse.jgit.lib.MutableObjectId;
-import org.eclipse.jgit.lib.ObjectIdOwnerMap;
-import org.eclipse.jgit.lib.ObjectIdSet;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Lazily loads a set of ObjectIds, one per line.

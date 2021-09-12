@@ -9,8 +9,11 @@
  */
 package org.eclipse.jgit.util;
 
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.errors.ConfigInvalidException;
+import org.eclipse.jgit.lib.ConfigConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
@@ -20,12 +23,8 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.errors.ConfigInvalidException;
-import org.eclipse.jgit.lib.ConfigConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 
 /**
  * Enables monitoring JGit via JMX

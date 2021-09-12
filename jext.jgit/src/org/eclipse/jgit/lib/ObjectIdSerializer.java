@@ -12,15 +12,15 @@
 
 package org.eclipse.jgit.lib;
 
-import static org.eclipse.jgit.lib.Constants.OBJECT_ID_LENGTH;
+import org.eclipse.jgit.annotations.NonNull;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.util.IO;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.jgit.annotations.NonNull;
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.util.IO;
+import static org.eclipse.jgit.lib.Constants.OBJECT_ID_LENGTH;
 
 /**
  * Helper to serialize {@link ObjectId} instances. {@link ObjectId} is already

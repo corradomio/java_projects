@@ -10,13 +10,6 @@
 
 package org.eclipse.jgit.internal.storage.pack;
 
-import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
-import static org.eclipse.jgit.lib.Constants.OBJ_TREE;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.AnyObjectId;
@@ -29,6 +22,13 @@ import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
+import static org.eclipse.jgit.lib.Constants.OBJ_TREE;
 
 class BaseSearch {
 	private static final int M_BLOB = FileMode.REGULAR_FILE.getBits();

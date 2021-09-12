@@ -13,15 +13,15 @@
 
 package org.eclipse.jgit.transport;
 
-import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Set;
-
 import org.eclipse.jgit.errors.TransportException;
 import org.eclipse.jgit.internal.storage.file.PackLock;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.lib.Ref;
+
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Lists known refs from the remote and copies objects of selected refs.

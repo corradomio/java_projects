@@ -9,14 +9,6 @@
  */
 package org.eclipse.jgit.api;
 
-import static org.eclipse.jgit.lib.Constants.R_STASH;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.StandardCopyOption;
-import java.text.MessageFormat;
-import java.util.List;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
@@ -33,6 +25,14 @@ import org.eclipse.jgit.lib.ReflogEntry;
 import org.eclipse.jgit.lib.ReflogReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.StandardCopyOption;
+import java.text.MessageFormat;
+import java.util.List;
+
+import static org.eclipse.jgit.lib.Constants.R_STASH;
 
 /**
  * Command class to delete a stashed commit reference

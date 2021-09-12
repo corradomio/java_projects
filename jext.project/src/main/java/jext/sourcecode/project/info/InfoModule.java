@@ -10,6 +10,8 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.resources.ResourceFile;
+import jext.util.FileUtils;
 import jext.util.MapUtils;
 
 import java.io.File;
@@ -78,8 +80,8 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
-    public long getDigest() {
-        return MapUtils.getLong(info, "digest");
+    public String getDigest() {
+        return MapUtils.getString(info, "digest");
     }
 
     @Override
@@ -183,6 +185,10 @@ public class InfoModule implements Module, Comparable<Named> {
         return null;
     }
 
+    // ----------------------------------------------------------------------
+    // Resources
+    // ----------------------------------------------------------------------
+
     @Override
     public List<Resource> getResources() {
         return Collections.emptyList();
@@ -190,22 +196,21 @@ public class InfoModule implements Module, Comparable<Named> {
 
     @Override
     public Resource getResource(String nameOrId) {
+        File directory = FileUtils.addParentPath(getModuleHome(), nameOrId);
+
+        List<File> resources = FileUtils.listFiles(directory);
+        for (File resourceFile : resources) {
+            Resource resource = new ResourceFile(resourceFile, this);
+            if (resource.getName().getFullName().equals(nameOrId))
+                return resource;
+            if (resource.getId().equals(nameOrId))
+                return resource;
+            if (resource.getName().getName().equals(nameOrId))
+                return resource;
+        }
+
         return null;
     }
-
-    // ----------------------------------------------------------------------
-    // Resources
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // public List<Resource> getResources() {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public Resource getResource(String nameOrId) {
-    //     return null;
-    // }
 
     // ----------------------------------------------------------------------
     // Types

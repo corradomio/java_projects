@@ -1,7 +1,7 @@
 package jext.io.file;
 
 import jext.util.FileUtils;
-import jext.util.Wildcard;
+import jext.util.function.Wildcard;
 
 import java.io.File;
 

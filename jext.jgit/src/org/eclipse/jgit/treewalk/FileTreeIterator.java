@@ -13,7 +13,13 @@
 
 package org.eclipse.jgit.treewalk;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.dircache.DirCacheIterator;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.FileMode;
+import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.util.FS;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -22,13 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 
-import org.eclipse.jgit.dircache.DirCacheIterator;
-import org.eclipse.jgit.errors.IncorrectObjectTypeException;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.FileMode;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.util.FS;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Working directory iterator for standard Java IO.

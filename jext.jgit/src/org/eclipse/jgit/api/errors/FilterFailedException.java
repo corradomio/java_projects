@@ -38,9 +38,9 @@
 
 package org.eclipse.jgit.api.errors;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jgit.internal.JGitText;
+
+import java.text.MessageFormat;
 
 /**
  * Exception thrown when the execution of a filter command failed

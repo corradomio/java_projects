@@ -10,7 +10,14 @@
 
 package org.eclipse.jgit.internal.transport.connectivity;
 
-import static java.util.stream.Collectors.toList;
+import org.eclipse.jgit.errors.MissingObjectException;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ProgressMonitor;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevObject;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.transport.ConnectivityChecker;
+import org.eclipse.jgit.transport.ReceiveCommand;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -22,14 +29,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.eclipse.jgit.errors.MissingObjectException;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ProgressMonitor;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevObject;
-import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.transport.ConnectivityChecker;
-import org.eclipse.jgit.transport.ReceiveCommand;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of connectivity checker which tries to do check with smaller

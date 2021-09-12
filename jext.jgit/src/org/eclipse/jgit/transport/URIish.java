@@ -15,7 +15,11 @@
 
 package org.eclipse.jgit.transport;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.util.RawParseUtils;
+import org.eclipse.jgit.util.References;
+import org.eclipse.jgit.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,11 +30,7 @@ import java.util.BitSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.util.RawParseUtils;
-import org.eclipse.jgit.util.References;
-import org.eclipse.jgit.util.StringUtils;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * This URI like construct used for referencing Git archives over the net, as

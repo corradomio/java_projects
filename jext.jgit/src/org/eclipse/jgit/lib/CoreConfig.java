@@ -15,9 +15,9 @@
 
 package org.eclipse.jgit.lib;
 
-import static java.util.zip.Deflater.DEFAULT_COMPRESSION;
-
 import org.eclipse.jgit.lib.Config.SectionParser;
+
+import static java.util.zip.Deflater.DEFAULT_COMPRESSION;
 
 /**
  * This class keeps git repository core parameters.

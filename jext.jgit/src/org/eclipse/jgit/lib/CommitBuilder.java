@@ -12,7 +12,7 @@
 
 package org.eclipse.jgit.lib;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.util.References;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.eclipse.jgit.util.References;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Mutable builder to construct a commit recording the state of a project.

@@ -10,19 +10,7 @@
 
 package org.eclipse.jgit.internal.storage.pack;
 
-import static org.eclipse.jgit.internal.storage.file.PackBitmapIndex.FLAG_REUSE;
-import static org.eclipse.jgit.revwalk.RevFlag.SEEN;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import com.googlecode.javaewah.EWAHCompressedBitmap;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.internal.JGitText;
@@ -48,7 +36,18 @@ import org.eclipse.jgit.storage.pack.PackConfig;
 import org.eclipse.jgit.util.BlockList;
 import org.eclipse.jgit.util.SystemReader;
 
-import com.googlecode.javaewah.EWAHCompressedBitmap;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static org.eclipse.jgit.internal.storage.file.PackBitmapIndex.FLAG_REUSE;
+import static org.eclipse.jgit.revwalk.RevFlag.SEEN;
 
 /**
  * Helper class for the {@link PackWriter} to select commits for which to build

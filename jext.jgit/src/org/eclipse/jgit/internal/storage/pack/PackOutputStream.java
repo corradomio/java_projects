@@ -11,18 +11,18 @@
 
 package org.eclipse.jgit.internal.storage.pack;
 
-import static org.eclipse.jgit.lib.Constants.OBJ_OFS_DELTA;
-import static org.eclipse.jgit.lib.Constants.OBJ_REF_DELTA;
-import static org.eclipse.jgit.lib.Constants.PACK_SIGNATURE;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ProgressMonitor;
+import org.eclipse.jgit.util.NB;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ProgressMonitor;
-import org.eclipse.jgit.util.NB;
+import static org.eclipse.jgit.lib.Constants.OBJ_OFS_DELTA;
+import static org.eclipse.jgit.lib.Constants.OBJ_REF_DELTA;
+import static org.eclipse.jgit.lib.Constants.PACK_SIGNATURE;
 
 /**
  * Custom output stream to support

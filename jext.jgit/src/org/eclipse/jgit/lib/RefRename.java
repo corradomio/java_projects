@@ -13,9 +13,9 @@
 
 package org.eclipse.jgit.lib;
 
-import java.io.IOException;
-
 import org.eclipse.jgit.lib.RefUpdate.Result;
+
+import java.io.IOException;
 
 /**
  * A RefUpdate combination for renaming a reference.

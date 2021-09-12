@@ -12,7 +12,11 @@
 
 package org.eclipse.jgit.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.util.FS.Attributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,11 +49,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.util.FS.Attributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * File Utilities

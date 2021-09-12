@@ -11,9 +11,6 @@
 
 package org.eclipse.jgit.lib;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -21,6 +18,9 @@ import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.PushCertificate;
 import org.eclipse.jgit.util.References;
+
+import java.io.IOException;
+import java.text.MessageFormat;
 
 /**
  * Creates, updates or deletes any reference.

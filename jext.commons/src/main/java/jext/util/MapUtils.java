@@ -116,6 +116,12 @@ public class MapUtils {
             return Long.parseLong(value.toString());
     }
 
+    public static String getString(Map<String, Object> map, String... keys) {
+        Object value = get(map, keys);
+        if (value == null) return null;
+        else return value.toString();
+    }
+
     public static int[] getIntArray(Map<String, Object> map, String... keys) {
         return ArrayUtils.asIntArray(get(map, keys));
     }
@@ -126,5 +132,9 @@ public class MapUtils {
 
     public static boolean[] getBooleanArray(Map<String, Object> map, String... keys) {
         return ArrayUtils.asBooleanArray(get(map, keys));
+    }
+
+    public static String[] getStringArray(Map<String, Object> map, String... keys) {
+        return ArrayUtils.asStringArray(get(map, keys));
     }
 }

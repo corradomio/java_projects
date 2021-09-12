@@ -7,6 +7,10 @@ public class MavenName implements Name {
 
     private MavenCoords coords;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public MavenName(String coords) {
         this(MavenCoords.of(coords));
     }
@@ -14,6 +18,10 @@ public class MavenName implements Name {
     public MavenName(MavenCoords coords) {
         this.coords = coords;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isRoot() {
@@ -40,6 +48,10 @@ public class MavenName implements Name {
         return null;
     }
 
+    public String getVersion() {
+        return coords.version;
+    }
+
     // ----------------------------------------------------------------------
     // Override
     // ----------------------------------------------------------------------
@@ -62,6 +74,6 @@ public class MavenName implements Name {
 
     @Override
     public String toString() {
-        return coords.toString();
+        return getFullName();
     }
 }

@@ -13,14 +13,14 @@
 
 package org.eclipse.jgit.lib;
 
+import org.eclipse.jgit.internal.storage.file.RefDirectory;
+import org.eclipse.jgit.util.RefList;
+import org.eclipse.jgit.util.RefMap;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Map;
-
-import org.eclipse.jgit.internal.storage.file.RefDirectory;
-import org.eclipse.jgit.util.RefList;
-import org.eclipse.jgit.util.RefMap;
 
 /**
  * Writes out refs to the {@link org.eclipse.jgit.lib.Constants#INFO_REFS} and

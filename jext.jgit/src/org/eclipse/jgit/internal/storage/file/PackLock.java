@@ -10,12 +10,12 @@
 
 package org.eclipse.jgit.internal.storage.file;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.util.FS;
 import org.eclipse.jgit.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Keeps track of a {@link org.eclipse.jgit.internal.storage.file.Pack}'s

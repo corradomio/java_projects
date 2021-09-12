@@ -9,11 +9,10 @@
  */
 package org.eclipse.jgit.storage.file;
 
-import java.util.Map;
+import org.eclipse.jgit.internal.storage.file.WindowCache;
 
 import javax.management.MXBean;
-
-import org.eclipse.jgit.internal.storage.file.WindowCache;
+import java.util.Map;
 
 /**
  * Cache statistics for {@link WindowCache}.

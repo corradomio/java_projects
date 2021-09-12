@@ -10,10 +10,10 @@
 
 package org.eclipse.jgit.util;
 
+import org.eclipse.jgit.internal.JGitText;
+
 import java.text.MessageFormat;
 import java.util.Collection;
-
-import org.eclipse.jgit.internal.JGitText;
 
 /**
  * Miscellaneous string comparison utility methods.

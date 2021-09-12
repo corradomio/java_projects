@@ -10,6 +10,13 @@
 
 package org.eclipse.jgit.transport;
 
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.errors.PackProtocolException;
+import org.eclipse.jgit.internal.JGitText;
+
+import java.math.BigInteger;
+import java.text.MessageFormat;
+
 import static java.math.BigInteger.ZERO;
 import static java.util.Objects.requireNonNull;
 import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
@@ -17,13 +24,6 @@ import static org.eclipse.jgit.lib.Constants.OBJ_COMMIT;
 import static org.eclipse.jgit.lib.Constants.OBJ_TAG;
 import static org.eclipse.jgit.lib.Constants.OBJ_TREE;
 import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_FILTER;
-
-import java.math.BigInteger;
-import java.text.MessageFormat;
-
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.errors.PackProtocolException;
-import org.eclipse.jgit.internal.JGitText;
 
 /**
  * Represents either a filter specified in a protocol "filter" line, or a

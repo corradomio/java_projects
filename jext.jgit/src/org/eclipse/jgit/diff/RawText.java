@@ -11,18 +11,18 @@
 
 package org.eclipse.jgit.diff;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.eclipse.jgit.errors.BinaryBlobException;
 import org.eclipse.jgit.errors.LargeObjectException;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.util.IO;
 import org.eclipse.jgit.util.IntList;
 import org.eclipse.jgit.util.RawParseUtils;
+
+import java.io.EOFException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * A Sequence supporting UNIX formatted text in byte[] format.

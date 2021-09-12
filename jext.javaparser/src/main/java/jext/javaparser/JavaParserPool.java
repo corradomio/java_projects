@@ -11,9 +11,7 @@ import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
-import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

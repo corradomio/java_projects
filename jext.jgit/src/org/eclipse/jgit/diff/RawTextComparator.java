@@ -11,11 +11,11 @@
 
 package org.eclipse.jgit.diff;
 
+import org.eclipse.jgit.util.IntList;
+
 import static org.eclipse.jgit.util.RawCharUtil.isWhitespace;
 import static org.eclipse.jgit.util.RawCharUtil.trimLeadingWhitespace;
 import static org.eclipse.jgit.util.RawCharUtil.trimTrailingWhitespace;
-
-import org.eclipse.jgit.util.IntList;
 
 /**
  * Equivalence function for {@link org.eclipse.jgit.diff.RawText}.

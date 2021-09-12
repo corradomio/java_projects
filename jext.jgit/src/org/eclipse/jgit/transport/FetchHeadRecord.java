@@ -12,14 +12,14 @@
 
 package org.eclipse.jgit.transport;
 
-import static org.eclipse.jgit.lib.Constants.R_HEADS;
-import static org.eclipse.jgit.lib.Constants.R_REMOTES;
-import static org.eclipse.jgit.lib.Constants.R_TAGS;
+import org.eclipse.jgit.lib.ObjectId;
 
 import java.io.IOException;
 import java.io.Writer;
 
-import org.eclipse.jgit.lib.ObjectId;
+import static org.eclipse.jgit.lib.Constants.R_HEADS;
+import static org.eclipse.jgit.lib.Constants.R_REMOTES;
+import static org.eclipse.jgit.lib.Constants.R_TAGS;
 
 class FetchHeadRecord {
 	ObjectId newValue;

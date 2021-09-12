@@ -11,16 +11,6 @@
 
 package org.eclipse.jgit.dircache;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.eclipse.jgit.lib.FileMode.TREE;
-import static org.eclipse.jgit.lib.TreeFormatter.entrySize;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Comparator;
-
 import org.eclipse.jgit.errors.UnmergedPathException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -28,6 +18,16 @@ import org.eclipse.jgit.lib.ObjectInserter;
 import org.eclipse.jgit.lib.TreeFormatter;
 import org.eclipse.jgit.util.MutableInteger;
 import org.eclipse.jgit.util.RawParseUtils;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jgit.lib.FileMode.TREE;
+import static org.eclipse.jgit.lib.TreeFormatter.entrySize;
 
 /**
  * Single tree record from the 'TREE' {@link org.eclipse.jgit.dircache.DirCache}

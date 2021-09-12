@@ -9,12 +9,11 @@
  */
 package org.eclipse.jgit.internal.transport.http;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 
 /**
  * An {@link SSLSocketFactory} that delegates to another factory and allows

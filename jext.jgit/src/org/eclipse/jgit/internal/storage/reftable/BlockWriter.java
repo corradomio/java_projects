@@ -10,6 +10,19 @@
 
 package org.eclipse.jgit.internal.storage.reftable;
 
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.util.IntList;
+import org.eclipse.jgit.util.LongList;
+import org.eclipse.jgit.util.NB;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.FILE_HEADER_LEN;
 import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.INDEX_BLOCK_TYPE;
@@ -28,19 +41,6 @@ import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.rever
 import static org.eclipse.jgit.internal.storage.reftable.ReftableOutputStream.computeVarintSize;
 import static org.eclipse.jgit.lib.Constants.OBJECT_ID_LENGTH;
 import static org.eclipse.jgit.lib.Ref.Storage.NEW;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.util.IntList;
-import org.eclipse.jgit.util.LongList;
-import org.eclipse.jgit.util.NB;
 
 /** Formats and writes blocks for {@link ReftableWriter}. */
 class BlockWriter {

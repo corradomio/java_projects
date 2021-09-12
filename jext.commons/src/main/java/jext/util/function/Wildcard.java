@@ -1,5 +1,6 @@
-package jext.util;
+package jext.util.function;
 
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 //  ?       [^/]
@@ -16,7 +17,7 @@ import java.util.regex.Pattern;
 //      .java  ->  *.java
 //
 //
-public class Wildcard {
+public class Wildcard implements Predicate<String> {
 
     private static final String RESERVED = "\\^$.|?*+()[]{}";
 
@@ -38,8 +39,13 @@ public class Wildcard {
     // Accept
     // ----------------------------------------------------------------------
 
-    public boolean accept(String text) {
+    @Override
+    public boolean test(String text) {
         return compiled.matcher(text).matches();
+    }
+
+    public boolean accept(String text) {
+        return test(text);
     }
 
     // ----------------------------------------------------------------------
@@ -136,5 +142,14 @@ public class Wildcard {
             !pattern.contains("*") &&
             !pattern.contains("?") &&
             !pattern.contains("/");
+    }
+
+    // ----------------------------------------------------------------------
+    // Override
+    // ----------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return pattern;
     }
 }

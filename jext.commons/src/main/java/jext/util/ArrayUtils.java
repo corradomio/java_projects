@@ -11,6 +11,7 @@ public class ArrayUtils {
     public static long[] EMPTY_LONG_ARRAY = new long[0];
     public static double[] EMPTY_DOUBLE_ARRAY = new double[0];
     public static boolean[] EMPTY_BOOLEAN_ARRAY = new boolean[0];
+    public static String[] EMPTY_STRING_ARRAY = new String[0];
 
     // ----------------------------------------------------------------------
     // range
@@ -143,6 +144,25 @@ public class ArrayUtils {
                 a[i++] = ((boolean)e);
             else
                 a[i++] = Boolean.parseBoolean(e.toString());
+        }
+        return a;
+    }
+
+    public static String[] asStringArray(Object v) {
+        if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
+            return EMPTY_STRING_ARRAY;
+        if (v instanceof String)
+            return new String[]{ (String)v };
+
+        Collection c = ((Collection) v);
+        int n = c.size();
+        String[] a = new String[n];
+        int i=0;
+        for (Object e : c) {
+            if (e instanceof String)
+                a[i++] = ((String)e);
+            else
+                a[i++] = e.toString();
         }
         return a;
     }

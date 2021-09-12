@@ -9,13 +9,13 @@
  */
 package org.eclipse.jgit.api;
 
-import java.net.URISyntaxException;
-import java.util.List;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.RemoteConfig;
+
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Used to obtain the list of remotes.

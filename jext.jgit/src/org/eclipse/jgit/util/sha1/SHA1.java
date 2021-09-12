@@ -10,14 +10,6 @@
 
 package org.eclipse.jgit.util.sha1;
 
-import static java.lang.Integer.lowestOneBit;
-import static java.lang.Integer.numberOfTrailingZeros;
-import static java.lang.Integer.rotateLeft;
-import static java.lang.Integer.rotateRight;
-
-import java.text.MessageFormat;
-import java.util.Arrays;
-
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.lib.MutableObjectId;
 import org.eclipse.jgit.lib.ObjectId;
@@ -25,6 +17,14 @@ import org.eclipse.jgit.util.NB;
 import org.eclipse.jgit.util.SystemReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+
+import static java.lang.Integer.lowestOneBit;
+import static java.lang.Integer.numberOfTrailingZeros;
+import static java.lang.Integer.rotateLeft;
+import static java.lang.Integer.rotateRight;
 
 /**
  * Pure Java implementation of SHA-1 from FIPS 180-1 / RFC 3174.

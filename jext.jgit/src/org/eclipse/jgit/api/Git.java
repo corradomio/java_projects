@@ -10,17 +10,17 @@
  */
 package org.eclipse.jgit.api;
 
-import static java.util.Objects.requireNonNull;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryBuilder;
 import org.eclipse.jgit.lib.RepositoryCache;
 import org.eclipse.jgit.lib.internal.WorkQueue;
 import org.eclipse.jgit.nls.NLS;
 import org.eclipse.jgit.util.FS;
+
+import java.io.File;
+import java.io.IOException;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Offers a "GitPorcelain"-like API to interact with a git repository.

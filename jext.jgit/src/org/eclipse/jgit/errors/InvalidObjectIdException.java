@@ -12,11 +12,11 @@
 
 package org.eclipse.jgit.errors;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
+import org.eclipse.jgit.internal.JGitText;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jgit.internal.JGitText;
+import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
  * Thrown when an invalid object id is passed in as an argument.

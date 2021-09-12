@@ -11,17 +11,17 @@
 
 package org.eclipse.jgit.dircache;
 
-import static org.eclipse.jgit.lib.FileMode.TYPE_MASK;
-import static org.eclipse.jgit.lib.FileMode.TYPE_TREE;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.AnyObjectId;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import static org.eclipse.jgit.lib.FileMode.TYPE_MASK;
+import static org.eclipse.jgit.lib.FileMode.TYPE_TREE;
 
 /**
  * Updates a {@link org.eclipse.jgit.dircache.DirCache} by adding individual

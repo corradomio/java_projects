@@ -10,9 +10,9 @@
 
 package org.eclipse.jgit.transport;
 
-import java.util.Arrays;
-
 import org.eclipse.jgit.errors.UnsupportedCredentialItem;
+
+import java.util.Arrays;
 
 /**
  * Simple {@link org.eclipse.jgit.transport.CredentialsProvider} that always

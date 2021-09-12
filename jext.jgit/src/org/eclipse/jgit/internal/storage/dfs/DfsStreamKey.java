@@ -10,12 +10,12 @@
 
 package org.eclipse.jgit.internal.storage.dfs;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.internal.storage.pack.PackExt;
 
 import java.util.Arrays;
 
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.internal.storage.pack.PackExt;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Key used by {@link org.eclipse.jgit.internal.storage.dfs.DfsBlockCache} to disambiguate streams.

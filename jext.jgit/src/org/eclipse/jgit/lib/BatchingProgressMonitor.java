@@ -10,10 +10,10 @@
 
 package org.eclipse.jgit.lib;
 
+import org.eclipse.jgit.lib.internal.WorkQueue;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.eclipse.jgit.lib.internal.WorkQueue;
 
 /**
  * ProgressMonitor that batches update events.

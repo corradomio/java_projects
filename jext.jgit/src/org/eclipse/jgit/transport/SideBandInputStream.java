@@ -11,8 +11,12 @@
 
 package org.eclipse.jgit.transport;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.eclipse.jgit.transport.SideBandOutputStream.HDR_SIZE;
+import org.eclipse.jgit.errors.PackProtocolException;
+import org.eclipse.jgit.errors.TransportException;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.ProgressMonitor;
+import org.eclipse.jgit.util.IO;
+import org.eclipse.jgit.util.RawParseUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,12 +26,8 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jgit.errors.PackProtocolException;
-import org.eclipse.jgit.errors.TransportException;
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.ProgressMonitor;
-import org.eclipse.jgit.util.IO;
-import org.eclipse.jgit.util.RawParseUtils;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jgit.transport.SideBandOutputStream.HDR_SIZE;
 
 /**
  * Unmultiplexes the data portion of a side-band channel.

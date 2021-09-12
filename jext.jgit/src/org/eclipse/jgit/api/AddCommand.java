@@ -10,17 +10,6 @@
  */
 package org.eclipse.jgit.api;
 
-import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
-import static org.eclipse.jgit.lib.FileMode.GITLINK;
-import static org.eclipse.jgit.lib.FileMode.TYPE_GITLINK;
-import static org.eclipse.jgit.lib.FileMode.TYPE_TREE;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.LinkedList;
-
 import org.eclipse.jgit.api.errors.FilterFailedException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
@@ -40,6 +29,17 @@ import org.eclipse.jgit.treewalk.NameConflictTreeWalk;
 import org.eclipse.jgit.treewalk.TreeWalk.OperationType;
 import org.eclipse.jgit.treewalk.WorkingTreeIterator;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
+import static org.eclipse.jgit.lib.FileMode.GITLINK;
+import static org.eclipse.jgit.lib.FileMode.TYPE_GITLINK;
+import static org.eclipse.jgit.lib.FileMode.TYPE_TREE;
 
 /**
  * A class used to execute a {@code Add} command. It has setters for all

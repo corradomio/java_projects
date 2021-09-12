@@ -10,14 +10,14 @@
 
 package org.eclipse.jgit.patch;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.eclipse.jgit.lib.Constants.encodeASCII;
-import static org.eclipse.jgit.util.RawParseUtils.decode;
-import static org.eclipse.jgit.util.RawParseUtils.decodeNoFallback;
-import static org.eclipse.jgit.util.RawParseUtils.extractBinaryString;
-import static org.eclipse.jgit.util.RawParseUtils.match;
-import static org.eclipse.jgit.util.RawParseUtils.nextLF;
-import static org.eclipse.jgit.util.RawParseUtils.parseBase10;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.EditList;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.AbbreviatedObjectId;
+import org.eclipse.jgit.lib.FileMode;
+import org.eclipse.jgit.util.QuotedString;
+import org.eclipse.jgit.util.RawParseUtils;
+import org.eclipse.jgit.util.TemporaryBuffer;
 
 import java.io.IOException;
 import java.nio.charset.CharacterCodingException;
@@ -27,14 +27,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.EditList;
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.AbbreviatedObjectId;
-import org.eclipse.jgit.lib.FileMode;
-import org.eclipse.jgit.util.QuotedString;
-import org.eclipse.jgit.util.RawParseUtils;
-import org.eclipse.jgit.util.TemporaryBuffer;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jgit.lib.Constants.encodeASCII;
+import static org.eclipse.jgit.util.RawParseUtils.decode;
+import static org.eclipse.jgit.util.RawParseUtils.decodeNoFallback;
+import static org.eclipse.jgit.util.RawParseUtils.extractBinaryString;
+import static org.eclipse.jgit.util.RawParseUtils.match;
+import static org.eclipse.jgit.util.RawParseUtils.nextLF;
+import static org.eclipse.jgit.util.RawParseUtils.parseBase10;
 
 /**
  * Patch header describing an action for a single file path.

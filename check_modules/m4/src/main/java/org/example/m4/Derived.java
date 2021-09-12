@@ -10,4 +10,8 @@ public class Derived extends Base implements Interface {
     public void check() {
 
     }
+
+    public void check2() {
+
+    }
 }

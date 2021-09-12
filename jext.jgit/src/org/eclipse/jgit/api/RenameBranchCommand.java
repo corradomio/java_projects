@@ -10,10 +10,6 @@
  */
 package org.eclipse.jgit.api;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Arrays;
-
 import org.eclipse.jgit.api.errors.DetachedHeadException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
@@ -30,6 +26,10 @@ import org.eclipse.jgit.lib.RefRename;
 import org.eclipse.jgit.lib.RefUpdate.Result;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Arrays;
 
 /**
  * Used to rename branches.

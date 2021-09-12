@@ -81,9 +81,13 @@ public class MavenDownloader implements MavenConst {
 
     // <a href="2.0.0/" title="2.0.0/">2.0.0/</a> 2015-01-13 13:40         -
     // to extract the version AND the yyy-mm-dd
-    private static final Pattern HREF_VERSION =
+    private static final Pattern HREF_VERSION_TITLE =
             // Pattern.compile("<a href=\"([^\"]+)/\" title=\"[^\"]+\">.*</a>\\s+([0-9\\-]+).*")
             Pattern.compile("<a href=['\"]([^'\"]+)/['\"] title=['\"][^'\"]+['\"]>.*</a>.*")
+            ;
+    private static final Pattern HREF_VERSION_LINE =
+            // Pattern.compile("<a href=\"([^\"]+)/\" title=\"[^\"]+\">.*</a>\\s+([0-9\\-]+).*")
+            Pattern.compile(".*<a href=['\"][^'\"]+/['\"]>(.*)</a>.*")
             ;
 
     // ----------------------------------------------------------------------
@@ -207,14 +211,14 @@ public class MavenDownloader implements MavenConst {
         return pomFile;
     }
 
-    // public File getMetadataFile(MavenCoords coords) {
-    //     coords = normalize(coords);
-    //
-    //     File metadataFile = getFile(coords, MavenType.METADATA);
-    //     // if (recheck(metadataFile))
-    //     //     downloadFile(coords, MavenType.METADATA);
-    //     return metadataFile;
-    // }
+    public File getMetadataFile(MavenCoords coords) {
+        coords = normalize(coords);
+
+        File metadataFile = getFile(coords, MavenType.METADATA);
+        // if (recheck(metadataFile))
+        //     downloadFile(coords, MavenType.METADATA);
+        return metadataFile;
+    }
 
     /**
      * Retrieve the '.jar' file from the coordinates
@@ -247,7 +251,8 @@ public class MavenDownloader implements MavenConst {
         if (coords.hasVersion())
             return coords;
         String version = getLatestVersion(coords);
-        return coords.merge(version);
+        coords = coords.merge(version);
+        return coords;
     }
 
     /** Relocate the coordinates */
@@ -463,17 +468,26 @@ public class MavenDownloader implements MavenConst {
      */
     public String getLatestVersion(MavenCoords coords) {
         File versionsFile = getFile(coords, MavenType.VERSIONS);
-        if (versionsFile.exists())
-            return findVersionsVersion(versionsFile);
+        Version latestVersions = findVersionsVersion(versionsFile);
+        // if (versionsFile.exists())
+        //     return findVersionsVersion(versionsFile);
 
-        // File metadataFile = getFile(coords, MavenType.METADATA);
+        File metadataFile = getFile(coords, MavenType.METADATA);
+        Version latestMetadata = findMetadataVersion(metadataFile);
         // if (metadataFile.exists())
         //     return findMetadataVersion(metadataFile);
 
-        return NO_VERSION;
+        int cmp = latestMetadata.compareTo(latestVersions);
+        if (cmp < 0 )
+            return latestMetadata.get();
+        else
+            return latestVersions.get();
     }
 
-    private String findMetadataVersion(File metadataFile) {
+    private Version findMetadataVersion(File metadataFile) {
+        if (!metadataFile.exists())
+            return Version.NO_VERSION;
+
         /*
             <metadata>
                 ...
@@ -493,21 +507,37 @@ public class MavenDownloader implements MavenConst {
         try {
             Element metadata = XPathUtils.parse(metadataFile).getDocumentElement();
 
-            Versions versions = new Versions();
+            // check if "versioning/latest" is available
+            String latestVersion = XPathUtils.getValue(metadata, "versioning/latest", NO_VERSION);
+            if (!latestVersion.isEmpty())
+                return Version.of(latestVersion);
 
+            // check if "versioning/release" is available
+            String releaseVersion = XPathUtils.getValue(metadata, "versioning/release", NO_VERSION);
+            if (!releaseVersion.isEmpty())
+                return Version.of(releaseVersion);
+
+            // scan 'versioning/versions/version'
+            // note: they can be NOT in ascendin ordered
+            Versions versions = new Versions();
             XPathUtils.getValues(metadata, "versioning/versions/version").forEach(version -> {
-                versions.add(version);
+                // skip versions that are not ""valid"" versions
+                if (Version.isValid(version))
+                    versions.add(version);
             });
 
             return versions.getLatestVersion();
         }
         catch (ParserConfigurationException | IOException | SAXException e) {
             logger.errorf("%s: %s", metadataFile, e);
-            return NO_VERSION;
+            return Version.NO_VERSION;
         }
     }
 
-    private String findVersionsVersion(File versionsFile) {
+    private Version findVersionsVersion(File versionsFile) {
+        if (!versionsFile.exists())
+            return Version.NO_VERSION;
+
         /*
             <html>
                 ...
@@ -525,27 +555,44 @@ public class MavenDownloader implements MavenConst {
             </html>
          */
 
-        if (!versionsFile.exists())
-            return Version.NO_VERSION.get();
-
         Versions versions = new Versions();
 
         FileUtils.toStrings(versionsFile)
                 .forEach(href -> {
-                    String version = null;
-                    Matcher m = HREF_VERSION.matcher(href);
+                    String version;
+                    Matcher m;
 
-                    // check for
-                    //  <a href="0.1/" title="0.1/">0.1/</a>    2005-09-20 05:46         -
+                    // check for  <a href="0.1/" title="0.1/">0.1/</a> ...
+                    m = HREF_VERSION_TITLE.matcher(href);
                     if (m.matches()) {
-                        version = m.group(1);
-
-                        if (MavenCoords.isValid(version))
+                        version = stripSlash(m.group(1));
+                        if (Version.isValid(version)) {
                             versions.add(version);
+                            return;
+                        }
                     }
+
+                    // check for  ... <a href="0.1/">0.1/</a> ...
+                    m = HREF_VERSION_LINE.matcher(href);
+                    if (m.matches()) {
+                        version = stripSlash(m.group(1));
+                        if (Version.isValid(version)) {
+                            versions.add(version);
+                            return;
+                        }
+                    }
+
                 });
 
         return versions.getLatestVersion();
+    }
+
+    private static String stripSlash(String v) {
+        while (v.startsWith("/"))
+            v = v.substring(1);
+        while (v.endsWith("/"))
+            v = v.substring(0, v.length()-1);
+        return v;
     }
 
     // /**
@@ -646,12 +693,12 @@ public class MavenDownloader implements MavenConst {
                     groupId,
                     artifactId);
                 break;
-            // case METADATA:
-            //     // <groupId>/<artifactId>/maven-metadata.xml
-            //     relativePath = String.format("%s/%s/maven-metadata.xml",
-            //         groupId,
-            //         artifactId);
-            //     break;
+            case METADATA:
+                // <groupId>/<artifactId>/maven-metadata.xml
+                relativePath = String.format("%s/%s/maven-metadata.xml",
+                    groupId,
+                    artifactId);
+                break;
             case POM:
                 // <groupId>/<artifactId>/<version>/<artifactId>-<version>.pom
                 relativePath = String.format("%1$s/%2$s/%3$s/%2$s-%3$s.pom",
@@ -698,12 +745,12 @@ public class MavenDownloader implements MavenConst {
                     repoUrl,
                     groupId,
                     artifactId);
-            // case METADATA:
-            //     // <repository>/<groupId>/<artifactId>/maven-metadata.xml
-            //     return String.format("%1$s/%2$s/%3$s/maven-metadata.xml",
-            //         repoUrl,
-            //         groupId,
-            //         artifactId);
+            case METADATA:
+                // <repository>/<groupId>/<artifactId>/maven-metadata.xml
+                return String.format("%1$s/%2$s/%3$s/maven-metadata.xml",
+                    repoUrl,
+                    groupId,
+                    artifactId);
             case POM:
                 // <repository>/<groupId>/<artifactId>/<version>/<artifactId>-<version>.pom
                 return String.format("%1$s/%2$s/%3$s/%4$s/%3$s-%4$s.pom",
@@ -942,15 +989,15 @@ public class MavenDownloader implements MavenConst {
             }
         }
 
-        // if (type == MavenType.METADATA) {
-        //     try {
-        //         Element root = XPathUtils.parse(file).getDocumentElement();
-        //         return "metadata".equals(root.getTagName());
-        //     }
-        //     catch (ParserConfigurationException | IOException | SAXException t) {
-        //         return false;
-        //     }
-        // }
+        if (type == MavenType.METADATA) {
+            try {
+                Element root = XPathUtils.parse(file).getDocumentElement();
+                return "metadata".equals(root.getTagName());
+            }
+            catch (ParserConfigurationException | IOException | SAXException t) {
+                return false;
+            }
+        }
 
         if (type == MavenType.VERSIONS) {
             // file with less that 2 lines
@@ -1044,10 +1091,16 @@ public class MavenDownloader implements MavenConst {
 
         MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
 
+        // .invalid'
+        deleteInvalidFile(coords, MavenType.METADATA);
+        deleteInvalidFile(coords, MavenType.VERSIONS);
+        deleteInvalidFile(coords, MavenType.POM);
+        deleteInvalidFile(coords, MavenType.ARTIFACT);
+
         // 'maven-metadata.xml'
-        // File metadataFile = getFile(coords, MavenType.METADATA);
-        // if (recheck(metadataFile))
-        //     me.add(downloadFile(coords, MavenType.METADATA));
+        File metadataFile = getFile(coords, MavenType.METADATA);
+        if (recheck(metadataFile))
+            me.add(downloadFile(coords, MavenType.METADATA));
 
         // version file
         File versionsFile = getFile(coords, MavenType.VERSIONS);
@@ -1063,6 +1116,11 @@ public class MavenDownloader implements MavenConst {
         File artifactFile = getArtifact(coords);
         if (!artifactFile.exists())
             me.add(downloadFile(coords, MavenType.ARTIFACT));
+    }
+
+    private void deleteInvalidFile(MavenCoords coords, MavenType type) {
+        File invalidFile = getInvalidFlagFile(coords, type);
+        invalidFile.delete();
     }
 
 }

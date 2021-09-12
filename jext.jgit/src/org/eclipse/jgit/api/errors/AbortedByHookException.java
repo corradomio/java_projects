@@ -9,9 +9,9 @@
  */
 package org.eclipse.jgit.api.errors;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jgit.internal.JGitText;
+
+import java.text.MessageFormat;
 
 /**
  * Exception thrown when a hook returns a process result with a value different

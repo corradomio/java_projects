@@ -2,7 +2,7 @@ package jext.io.filters;
 
 import jext.util.FileUtils;
 import jext.util.PathUtils;
-import jext.util.Wildcard;
+import jext.util.function.Wildcard;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -63,6 +63,14 @@ public class WildcardFileFilter implements FileFilter {
 
     public WildcardFileFilter(List<String> patterns) {
         addAll(patterns);
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public boolean isEmpty() {
+        return matchers.isEmpty();
     }
 
     // ----------------------------------------------------------------------

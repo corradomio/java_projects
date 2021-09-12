@@ -10,10 +10,9 @@
 
 package org.eclipse.jgit.transport;
 
-import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * <b>DO NOT USE</b> Factory to create any cipher.

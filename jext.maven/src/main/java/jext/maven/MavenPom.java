@@ -316,7 +316,7 @@ public class MavenPom implements MavenConst {
         String v = XPathUtils.getValue(parent, VERSION);
 
         if (!isValid(gid) || !isValid(aid) || !isValid(v)) {
-            logger.errorf("Invalid parent coords in %s", pomFile);
+            logger.debugf("Invalid parent coords in %s", pomFile);
             return null;
         }
 
@@ -343,7 +343,9 @@ public class MavenPom implements MavenConst {
         // 2) retrieve the 'relativePath'
         //    sometime there is '<relativePath/>
         String relativePath = XPathUtils.getValue(project, "parent/relativePath", PARENT_POM);
-        if (isValid(relativePath)) {
+        if (relativePath.isEmpty())
+            relativePath = PARENT_POM;
+        {
             // 3) check if there is a 'local pom'
             File parentPom = new File(pomFile.getParentFile(), relativePath);
             if (parentPom.exists() && parentPom.isDirectory())

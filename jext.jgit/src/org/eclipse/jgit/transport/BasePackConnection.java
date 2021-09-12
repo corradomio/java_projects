@@ -13,29 +13,6 @@
 
 package org.eclipse.jgit.transport;
 
-import static org.eclipse.jgit.transport.GitProtocolConstants.COMMAND_LS_REFS;
-import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_AGENT;
-import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_PEELED;
-import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_SYMREF_TARGET;
-import static org.eclipse.jgit.transport.GitProtocolConstants.VERSION_1;
-import static org.eclipse.jgit.transport.GitProtocolConstants.VERSION_2;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import org.eclipse.jgit.annotations.NonNull;
 import org.eclipse.jgit.errors.InvalidObjectIdException;
 import org.eclipse.jgit.errors.NoRemoteRepositoryException;
@@ -53,6 +30,29 @@ import org.eclipse.jgit.util.StringUtils;
 import org.eclipse.jgit.util.io.InterruptTimer;
 import org.eclipse.jgit.util.io.TimeoutInputStream;
 import org.eclipse.jgit.util.io.TimeoutOutputStream;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import static org.eclipse.jgit.transport.GitProtocolConstants.COMMAND_LS_REFS;
+import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_AGENT;
+import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_PEELED;
+import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_SYMREF_TARGET;
+import static org.eclipse.jgit.transport.GitProtocolConstants.VERSION_1;
+import static org.eclipse.jgit.transport.GitProtocolConstants.VERSION_2;
 
 /**
  * Base helper class for pack-based operations implementations. Provides partial

@@ -5,9 +5,7 @@ import com.github.javaparser.symbolsolver.javassistmodel.JavassistFactory;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import jext.javaparser.util.ClassPoolRegistry;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 
 public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {

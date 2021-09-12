@@ -9,6 +9,13 @@
  */
 package org.eclipse.jgit.internal.submodule;
 
+import org.eclipse.jgit.errors.ConfigInvalidException;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.Config;
+import org.eclipse.jgit.lib.ObjectChecker;
+
+import java.text.MessageFormat;
+
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_PATH;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_URL;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_SUBMODULE_SECTION;
@@ -16,13 +23,6 @@ import static org.eclipse.jgit.lib.ObjectChecker.ErrorType.GITMODULES_NAME;
 import static org.eclipse.jgit.lib.ObjectChecker.ErrorType.GITMODULES_PARSE;
 import static org.eclipse.jgit.lib.ObjectChecker.ErrorType.GITMODULES_PATH;
 import static org.eclipse.jgit.lib.ObjectChecker.ErrorType.GITMODULES_URL;
-
-import java.text.MessageFormat;
-
-import org.eclipse.jgit.errors.ConfigInvalidException;
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.Config;
-import org.eclipse.jgit.lib.ObjectChecker;
 
 /**
  * Validations for the git submodule fields (name, path, uri).

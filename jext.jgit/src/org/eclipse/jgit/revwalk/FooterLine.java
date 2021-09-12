@@ -10,9 +10,9 @@
 
 package org.eclipse.jgit.revwalk;
 
-import java.nio.charset.Charset;
-
 import org.eclipse.jgit.util.RawParseUtils;
+
+import java.nio.charset.Charset;
 
 /**
  * Single line at the end of a message, such as a "Signed-off-by: someone".

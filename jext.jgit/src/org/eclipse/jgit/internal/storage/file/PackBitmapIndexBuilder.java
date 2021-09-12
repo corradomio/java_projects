@@ -10,12 +10,7 @@
 
 package org.eclipse.jgit.internal.storage.file;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.googlecode.javaewah.EWAHCompressedBitmap;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.internal.storage.pack.BitmapCommit;
 import org.eclipse.jgit.internal.storage.pack.ObjectToPack;
@@ -26,7 +21,11 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectIdOwnerMap;
 import org.eclipse.jgit.util.BlockList;
 
-import com.googlecode.javaewah.EWAHCompressedBitmap;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Helper for constructing

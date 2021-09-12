@@ -132,8 +132,8 @@ public class DefinedMethod extends NamedObject implements Method {
     }
 
     @Override
-    public long getDigest() {
-        return 0;
+    public String getDigest() {
+        return "";
     }
 
     // ----------------------------------------------------------------------

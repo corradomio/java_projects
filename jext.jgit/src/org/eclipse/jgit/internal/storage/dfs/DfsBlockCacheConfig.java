@@ -10,18 +10,18 @@
 
 package org.eclipse.jgit.internal.storage.dfs;
 
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.Config;
+
+import java.text.MessageFormat;
+import java.util.function.Consumer;
+
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_CORE_SECTION;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_DFS_SECTION;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_BLOCK_LIMIT;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_BLOCK_SIZE;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_CONCURRENCY_LEVEL;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_STREAM_RATIO;
-
-import java.text.MessageFormat;
-import java.util.function.Consumer;
-
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.Config;
 
 /**
  * Configuration parameters for

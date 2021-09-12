@@ -1,11 +1,9 @@
 package jext.vfs.local;
 
 import jext.net.URL;
-import jext.util.FileUtils;
 import jext.vfs.AbstractFileSystem;
 import jext.vfs.VFile;
 import jext.vfs.VFileSystem;
-import jext.vfs.VFileSystemException;
 import org.apache.commons.vfs2.FileNotFolderException;
 
 import java.io.File;

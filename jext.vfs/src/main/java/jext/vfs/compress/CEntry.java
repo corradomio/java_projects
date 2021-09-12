@@ -1,8 +1,8 @@
 package jext.vfs.compress;
 
-import java.util.HashMap;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CEntry {

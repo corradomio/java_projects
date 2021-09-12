@@ -10,11 +10,12 @@
 
 package org.eclipse.jgit.transport;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.eclipse.jgit.lib.Constants.OBJECT_ID_STRING_LENGTH;
-import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_SYMREF;
-import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_PEELED;
-import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_SYMREF_TARGET;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.RefComparator;
+import org.eclipse.jgit.lib.Repository;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -29,12 +30,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jgit.lib.AnyObjectId;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.RefComparator;
-import org.eclipse.jgit.lib.Repository;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jgit.lib.Constants.OBJECT_ID_STRING_LENGTH;
+import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_SYMREF;
+import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_PEELED;
+import static org.eclipse.jgit.transport.GitProtocolConstants.REF_ATTR_SYMREF_TARGET;
 
 /**
  * Support for the start of {@link org.eclipse.jgit.transport.UploadPack} and

@@ -13,7 +13,17 @@
 
 package org.eclipse.jgit.dircache;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.dircache.DirCache.DirCacheVersion;
+import org.eclipse.jgit.errors.CorruptObjectException;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.FileMode;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.util.IO;
+import org.eclipse.jgit.util.MutableInteger;
+import org.eclipse.jgit.util.NB;
+import org.eclipse.jgit.util.SystemReader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -26,17 +36,7 @@ import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.Arrays;
 
-import org.eclipse.jgit.dircache.DirCache.DirCacheVersion;
-import org.eclipse.jgit.errors.CorruptObjectException;
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.AnyObjectId;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.FileMode;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.util.IO;
-import org.eclipse.jgit.util.MutableInteger;
-import org.eclipse.jgit.util.NB;
-import org.eclipse.jgit.util.SystemReader;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A single file (or stage of a file) in a

@@ -9,17 +9,16 @@
  */
 package org.eclipse.jgit.transport;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.PushCertificate.NonceStatus;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.transport.PushCertificate.NonceStatus;
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * The nonce generator which was first introduced to git-core.

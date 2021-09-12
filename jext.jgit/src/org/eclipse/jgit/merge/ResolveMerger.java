@@ -13,30 +13,6 @@
  */
 package org.eclipse.jgit.merge;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.Instant.EPOCH;
-import static org.eclipse.jgit.diff.DiffAlgorithm.SupportedAlgorithm.HISTOGRAM;
-import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_DIFF_SECTION;
-import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_ALGORITHM;
-import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.jgit.attributes.Attributes;
 import org.eclipse.jgit.diff.DiffAlgorithm;
 import org.eclipse.jgit.diff.DiffAlgorithm.SupportedAlgorithm;
@@ -80,6 +56,30 @@ import org.eclipse.jgit.util.LfsFactory;
 import org.eclipse.jgit.util.LfsFactory.LfsInputStream;
 import org.eclipse.jgit.util.TemporaryBuffer;
 import org.eclipse.jgit.util.io.EolStreamTypeUtil;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.Instant.EPOCH;
+import static org.eclipse.jgit.diff.DiffAlgorithm.SupportedAlgorithm.HISTOGRAM;
+import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_DIFF_SECTION;
+import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_ALGORITHM;
+import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
 
 /**
  * A three-way merger performing a content-merge if necessary

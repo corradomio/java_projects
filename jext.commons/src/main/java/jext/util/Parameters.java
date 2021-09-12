@@ -105,8 +105,12 @@ public class Parameters extends HashMap<String, Object> {
         if (obj instanceof String[])
             return (String[])obj;
         String value = obj.toString();
-        if (value.contains(","))
-            return value.split(",");
+        if (value.contains(",")) {
+            String[] a = value.split(",");
+            for (int i=0; i<a.length; ++i)
+                a[i] = a[i].trim();
+            return a;
+        }
         else
             return new String[]{ value };
     }

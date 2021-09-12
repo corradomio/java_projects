@@ -10,34 +10,6 @@
 
 package org.eclipse.jgit.transport;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.eclipse.jgit.lib.Constants.HEAD;
-import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_ATOMIC;
-import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_DELETE_REFS;
-import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_OFS_DELTA;
-import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_PUSH_OPTIONS;
-import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_QUIET;
-import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_REPORT_STATUS;
-import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_SIDE_BAND_64K;
-import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_AGENT;
-import static org.eclipse.jgit.transport.SideBandOutputStream.CH_DATA;
-import static org.eclipse.jgit.transport.SideBandOutputStream.CH_ERROR;
-import static org.eclipse.jgit.transport.SideBandOutputStream.CH_PROGRESS;
-import static org.eclipse.jgit.transport.SideBandOutputStream.MAX_BUF;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.jgit.annotations.Nullable;
 import org.eclipse.jgit.errors.InvalidObjectIdException;
 import org.eclipse.jgit.errors.LargeObjectException;
@@ -77,6 +49,34 @@ import org.eclipse.jgit.util.io.InterruptTimer;
 import org.eclipse.jgit.util.io.LimitedInputStream;
 import org.eclipse.jgit.util.io.TimeoutInputStream;
 import org.eclipse.jgit.util.io.TimeoutOutputStream;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jgit.lib.Constants.HEAD;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_ATOMIC;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_DELETE_REFS;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_OFS_DELTA;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_PUSH_OPTIONS;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_QUIET;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_REPORT_STATUS;
+import static org.eclipse.jgit.transport.GitProtocolConstants.CAPABILITY_SIDE_BAND_64K;
+import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_AGENT;
+import static org.eclipse.jgit.transport.SideBandOutputStream.CH_DATA;
+import static org.eclipse.jgit.transport.SideBandOutputStream.CH_ERROR;
+import static org.eclipse.jgit.transport.SideBandOutputStream.CH_PROGRESS;
+import static org.eclipse.jgit.transport.SideBandOutputStream.MAX_BUF;
 
 /**
  * Implements the server side of a push connection, receiving objects.

@@ -9,17 +9,17 @@
  */
 package org.eclipse.jgit.attributes;
 
-import static org.eclipse.jgit.ignore.IMatcher.NO_MATCH;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.jgit.attributes.Attribute.State;
 import org.eclipse.jgit.errors.InvalidPatternException;
 import org.eclipse.jgit.ignore.FastIgnoreRule;
 import org.eclipse.jgit.ignore.IMatcher;
 import org.eclipse.jgit.ignore.internal.PathMatcher;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.eclipse.jgit.ignore.IMatcher.NO_MATCH;
 
 /**
  * A single attributes rule corresponding to one line in a .gitattributes file.

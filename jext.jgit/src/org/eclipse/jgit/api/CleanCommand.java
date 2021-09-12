@@ -10,14 +10,6 @@
  */
 package org.eclipse.jgit.api;
 
-import static org.eclipse.jgit.lib.Constants.DOT_GIT;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
@@ -25,6 +17,14 @@ import org.eclipse.jgit.events.WorkingTreeModifiedEvent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.util.FS;
 import org.eclipse.jgit.util.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.eclipse.jgit.lib.Constants.DOT_GIT;
 
 /**
  * Remove untracked files from the working tree

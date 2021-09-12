@@ -12,6 +12,9 @@
 
 package org.eclipse.jgit.util;
 
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.util.io.SilentFileInputStream;
+
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,9 +26,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.util.io.SilentFileInputStream;
 
 /**
  * Input/Output utilities

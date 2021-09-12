@@ -1,8 +1,6 @@
 package jext.configuration;
 
-import javax.xml.transform.TransformerException;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -112,7 +110,7 @@ public class InnerConfiguration implements HierarchicalConfiguration {
 
     @Override
     public void setProperty(String key, Object value) {
-        root.setProperty(pkeyOf(key), value);
+            root.setProperty(pkeyOf(key), value);
     }
 
     // ----------------------------------------------------------------------

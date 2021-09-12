@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 
 public abstract class AbstractTask implements Task, TaskStatusListener {
@@ -407,8 +406,12 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     }
 
     protected void update(String message, int stepsDone) {
-        messagef(message);
         progress.update(message, stepsDone);
+
+        ProgressStatus steps = progress.steps;
+        message = String.format("%s (%d/%d)", message, steps.getCurrent(), steps.getTotal());
+
+        messagef(message);
         listeners.fireProgressChanged();
     }
 

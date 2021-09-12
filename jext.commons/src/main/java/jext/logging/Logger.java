@@ -253,7 +253,7 @@ public class Logger {
         }
     }
 
-    private int incrCategory(Level level, String category) {
+    private synchronized int incrCategory(Level level, String category) {
         if (lcounts == null)
             lcounts = new HashMap<>();
         if (!lcounts.containsKey(level))

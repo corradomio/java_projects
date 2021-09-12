@@ -13,9 +13,8 @@
  */
 package org.eclipse.jgit.transport.http;
 
-import java.security.cert.X509Certificate;
-
 import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
 
 /**
  * A {@link X509TrustManager} that doesn't verify anything. Can be used for

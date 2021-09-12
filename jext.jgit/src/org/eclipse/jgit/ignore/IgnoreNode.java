@@ -9,7 +9,11 @@
  */
 package org.eclipse.jgit.ignore;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.errors.InvalidPatternException;
+import org.eclipse.jgit.internal.JGitText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,11 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.errors.InvalidPatternException;
-import org.eclipse.jgit.internal.JGitText;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Represents a bundle of ignore rules inherited from a base directory.

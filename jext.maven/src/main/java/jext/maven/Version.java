@@ -189,6 +189,10 @@ public class Version implements Comparable<Version> {
     //
     // ----------------------------------------------------------------------
 
+    public boolean isEmpty() {
+        return version.isEmpty();
+    }
+
     public String get() {
         return version;
     }
@@ -229,10 +233,38 @@ public class Version implements Comparable<Version> {
     //
     // ----------------------------------------------------------------------
 
+    public static boolean isValid(String version) {
+        Matcher m;
+
+        m = MajorVersionPattern.matcher(version);
+        if (m.matches()) return true;
+        m = MinorVersionPattern.matcher(version);
+        if (m.matches()) return true;
+        m = BuildNumberPattern.matcher(version);
+        if (m.matches()) return true;
+        m = PatchNumberPattern.matcher(version);
+        if (m.matches()) return true;
+        m = MajorQualifierPattern.matcher(version);
+        if (m.matches()) return true;
+        m = QualifierPattern.matcher(version);
+        if (m.matches()) return true;
+        return false;
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    @Override
     public int compareTo(Version that) {
         // one of the schemes is StringVersion, compare in lexicographic order
         if (this.scheme == Scheme.StringVersion || that.scheme == Scheme.StringVersion)
             return this.version.compareTo(that.version);
+
+        // check for empty versions
+        if (this.isEmpty() && that.isEmpty()) return 0;
+        if (this.isEmpty()) return +1;
+        if (that.isEmpty()) return -1;
 
         // compare by major/minor/subver/build/patch/qualifier (in lexicographic order)
         int cmp;

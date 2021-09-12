@@ -9,15 +9,15 @@
  */
 package org.eclipse.jgit.api;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.RemoteConfig;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Used to remove an existing remote.

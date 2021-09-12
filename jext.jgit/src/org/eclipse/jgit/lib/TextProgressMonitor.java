@@ -11,12 +11,12 @@
 
 package org.eclipse.jgit.lib;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A simple progress reporter printing on a stream.

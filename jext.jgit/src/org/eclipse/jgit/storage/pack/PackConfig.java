@@ -11,6 +11,13 @@
 
 package org.eclipse.jgit.storage.pack;
 
+import org.eclipse.jgit.internal.storage.file.PackIndexWriter;
+import org.eclipse.jgit.lib.Config;
+import org.eclipse.jgit.lib.Repository;
+
+import java.util.concurrent.Executor;
+import java.util.zip.Deflater;
+
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_CORE_SECTION;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_BIGFILE_THRESHOLD;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_BITMAP_CONTIGUOUS_COMMIT_COUNT;
@@ -35,13 +42,6 @@ import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_WAIT_PREVENT_RACYP
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_WINDOW;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_WINDOW_MEMORY;
 import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_PACK_SECTION;
-
-import java.util.concurrent.Executor;
-import java.util.zip.Deflater;
-
-import org.eclipse.jgit.internal.storage.file.PackIndexWriter;
-import org.eclipse.jgit.lib.Config;
-import org.eclipse.jgit.lib.Repository;
 
 /**
  * Configuration used by a pack writer when constructing the stream.

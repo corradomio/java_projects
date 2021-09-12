@@ -10,9 +10,14 @@
 
 package org.eclipse.jgit.transport;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.eclipse.jgit.util.HttpSupport.HDR_AUTHORIZATION;
-import static org.eclipse.jgit.util.HttpSupport.HDR_WWW_AUTHENTICATE;
+import org.eclipse.jgit.transport.http.HttpConnection;
+import org.eclipse.jgit.util.Base64;
+import org.eclipse.jgit.util.GSSManagerFactory;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSException;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.GSSName;
+import org.ietf.jgss.Oid;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,14 +33,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.jgit.transport.http.HttpConnection;
-import org.eclipse.jgit.util.Base64;
-import org.eclipse.jgit.util.GSSManagerFactory;
-import org.ietf.jgss.GSSContext;
-import org.ietf.jgss.GSSException;
-import org.ietf.jgss.GSSManager;
-import org.ietf.jgss.GSSName;
-import org.ietf.jgss.Oid;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.eclipse.jgit.util.HttpSupport.HDR_AUTHORIZATION;
+import static org.eclipse.jgit.util.HttpSupport.HDR_WWW_AUTHENTICATE;
 
 /**
  * Support class to populate user authentication data on a connection.

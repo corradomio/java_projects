@@ -10,18 +10,17 @@
 
 package org.eclipse.jgit.internal.storage.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.MessageFormat;
-
+import com.googlecode.javaewah.EWAHCompressedBitmap;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.util.io.SilentFileInputStream;
 
-import com.googlecode.javaewah.EWAHCompressedBitmap;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
 
 /**
  * Logical representation of the bitmap data stored in the pack index.

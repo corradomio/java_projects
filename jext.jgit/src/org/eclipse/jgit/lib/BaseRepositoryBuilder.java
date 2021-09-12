@@ -10,24 +10,6 @@
 
 package org.eclipse.jgit.lib;
 
-import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_CORE_SECTION;
-import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_BARE;
-import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_WORKTREE;
-import static org.eclipse.jgit.lib.Constants.DOT_GIT;
-import static org.eclipse.jgit.lib.Constants.GIT_ALTERNATE_OBJECT_DIRECTORIES_KEY;
-import static org.eclipse.jgit.lib.Constants.GIT_CEILING_DIRECTORIES_KEY;
-import static org.eclipse.jgit.lib.Constants.GIT_DIR_KEY;
-import static org.eclipse.jgit.lib.Constants.GIT_INDEX_FILE_KEY;
-import static org.eclipse.jgit.lib.Constants.GIT_OBJECT_DIRECTORY_KEY;
-import static org.eclipse.jgit.lib.Constants.GIT_WORK_TREE_KEY;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.jgit.annotations.NonNull;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.errors.ConfigInvalidException;
@@ -42,6 +24,24 @@ import org.eclipse.jgit.util.IO;
 import org.eclipse.jgit.util.RawParseUtils;
 import org.eclipse.jgit.util.StringUtils;
 import org.eclipse.jgit.util.SystemReader;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_CORE_SECTION;
+import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_BARE;
+import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_WORKTREE;
+import static org.eclipse.jgit.lib.Constants.DOT_GIT;
+import static org.eclipse.jgit.lib.Constants.GIT_ALTERNATE_OBJECT_DIRECTORIES_KEY;
+import static org.eclipse.jgit.lib.Constants.GIT_CEILING_DIRECTORIES_KEY;
+import static org.eclipse.jgit.lib.Constants.GIT_DIR_KEY;
+import static org.eclipse.jgit.lib.Constants.GIT_INDEX_FILE_KEY;
+import static org.eclipse.jgit.lib.Constants.GIT_OBJECT_DIRECTORY_KEY;
+import static org.eclipse.jgit.lib.Constants.GIT_WORK_TREE_KEY;
 
 /**
  * Base builder to customize repository construction.

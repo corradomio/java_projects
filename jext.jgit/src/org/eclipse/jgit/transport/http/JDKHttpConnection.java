@@ -9,6 +9,16 @@
  */
 package org.eclipse.jgit.transport.http;
 
+import org.eclipse.jgit.annotations.NonNull;
+import org.eclipse.jgit.internal.transport.http.DelegatingSSLSocketFactory;
+import org.eclipse.jgit.util.HttpSupport;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,17 +33,6 @@ import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-
-import org.eclipse.jgit.annotations.NonNull;
-import org.eclipse.jgit.internal.transport.http.DelegatingSSLSocketFactory;
-import org.eclipse.jgit.util.HttpSupport;
 /**
  * A {@link org.eclipse.jgit.transport.http.HttpConnection} which simply
  * delegates every call to a {@link java.net.HttpURLConnection}. This is the

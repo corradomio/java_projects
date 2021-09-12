@@ -42,10 +42,9 @@
 
 package org.eclipse.jgit.storage.pack;
 
-import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
-import static org.eclipse.jgit.lib.Constants.OBJ_COMMIT;
-import static org.eclipse.jgit.lib.Constants.OBJ_TAG;
-import static org.eclipse.jgit.lib.Constants.OBJ_TREE;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.internal.storage.pack.CachedPack;
+import org.eclipse.jgit.lib.ObjectId;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -53,9 +52,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.internal.storage.pack.CachedPack;
-import org.eclipse.jgit.lib.ObjectId;
+import static org.eclipse.jgit.lib.Constants.OBJ_BLOB;
+import static org.eclipse.jgit.lib.Constants.OBJ_COMMIT;
+import static org.eclipse.jgit.lib.Constants.OBJ_TAG;
+import static org.eclipse.jgit.lib.Constants.OBJ_TREE;
 
 /**
  * Statistics about {@link org.eclipse.jgit.internal.storage.pack.PackWriter}

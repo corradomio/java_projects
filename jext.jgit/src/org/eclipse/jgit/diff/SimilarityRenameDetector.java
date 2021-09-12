@@ -10,15 +10,6 @@
 
 package org.eclipse.jgit.diff;
 
-import static org.eclipse.jgit.diff.DiffEntry.Side.NEW;
-import static org.eclipse.jgit.diff.DiffEntry.Side.OLD;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.List;
-
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.diff.SimilarityIndex.TableFullException;
 import org.eclipse.jgit.errors.CancelledException;
@@ -26,6 +17,15 @@ import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.lib.FileMode;
 import org.eclipse.jgit.lib.NullProgressMonitor;
 import org.eclipse.jgit.lib.ProgressMonitor;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
+
+import static org.eclipse.jgit.diff.DiffEntry.Side.NEW;
+import static org.eclipse.jgit.diff.DiffEntry.Side.OLD;
 
 class SimilarityRenameDetector {
 	/**

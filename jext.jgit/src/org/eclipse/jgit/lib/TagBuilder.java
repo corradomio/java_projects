@@ -12,7 +12,10 @@
 
 package org.eclipse.jgit.lib;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.revwalk.RevObject;
+import org.eclipse.jgit.util.References;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,10 +23,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-import org.eclipse.jgit.api.errors.JGitInternalException;
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.revwalk.RevObject;
-import org.eclipse.jgit.util.References;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Mutable builder to construct an annotated tag recording a project state.

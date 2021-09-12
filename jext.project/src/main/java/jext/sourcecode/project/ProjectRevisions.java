@@ -42,15 +42,15 @@ public class ProjectRevisions implements Revisions {
     // Files
     // ----------------------------------------------------------------------
 
-    public File getProjectInfo() {
-        return getProjectInfo(CURRENT_REVISION);
+    public File getProjectInfoFile() {
+        return getProjectInfoFile(CURRENT_REVISION);
     }
 
-    public File getSourceInfo() {
+    public File getSourceInfoFile() {
         return new File(splDirectory, prefix + SOURCE_INFO);
     }
 
-    public File getProjectInfo(int rev) {
+    public File getProjectInfoFile(int rev) {
         if (rev == CURRENT_REVISION)
             return new File(splDirectory, prefix + PROJECT_INFO);
 
@@ -58,7 +58,7 @@ public class ProjectRevisions implements Revisions {
         return new File(splDirectory, prefix + revProjectInfo);
     }
 
-    public File getSourceInfo(int rev) {
+    public File getSourceInfoFile(int rev) {
         if (rev == CURRENT_REVISION)
             return new File(splDirectory, prefix + SOURCE_INFO);
         String revSourceInfo = String.format(SOURCE_INFO_REV, rev);
@@ -109,8 +109,8 @@ public class ProjectRevisions implements Revisions {
      * @return list of differences
      */
     public ProjectDifferences compareWithRevision(int rev) {
-        File srcProjectInfo = getProjectInfo(rev);
-        File dstProjectInfo = getProjectInfo();
+        File srcProjectInfo = getProjectInfoFile(rev);
+        File dstProjectInfo = getProjectInfoFile();
 
         this.srcRevision = rev;
         this.dstRevision = getCurrentRevision();
@@ -132,13 +132,13 @@ public class ProjectRevisions implements Revisions {
         int rev = getCurrentRevision();
 
         // save project info
-        File curProjectInfo = getProjectInfo();
-        File revProjectInfo = getProjectInfo(rev);
+        File curProjectInfo = getProjectInfoFile();
+        File revProjectInfo = getProjectInfoFile(rev);
         FileUtils.copy(curProjectInfo, revProjectInfo);
 
         // save source info
-        File curSourceInfo = getSourceInfo();
-        File revSourceInfo  = getSourceInfo(rev);
+        File curSourceInfo = getSourceInfoFile();
+        File revSourceInfo  = getSourceInfoFile(rev);
         FileUtils.copy(curSourceInfo, revSourceInfo);
     }
 
@@ -159,10 +159,10 @@ public class ProjectRevisions implements Revisions {
 
         ProjectDifferences pdiff = new ProjectDifferences();
 
-        File revProjectInfo = getProjectInfo(rev);
-        File revSourceInfo  = getSourceInfo(rev);
+        File revProjectInfo = getProjectInfoFile(rev);
+        File revSourceInfo  = getSourceInfoFile(rev);
 
-        File curProjectInfo = getProjectInfo(CURRENT_REVISION);
+        File curProjectInfo = getProjectInfoFile(CURRENT_REVISION);
         pdiff.compareProjects(curProjectInfo, revProjectInfo);
 
         if (pdiff.isEmpty()) {
@@ -181,7 +181,7 @@ public class ProjectRevisions implements Revisions {
                 name.contains(prefix + SOURCE_INFO_NAME)  ||
                 name.contains(prefix + DIFFERENCES_INFO_NAME))))
             .forEach(FileUtils::delete);
-        FileUtils.delete(getSourceInfo());
+        FileUtils.delete(getSourceInfoFile());
     }
 
     private ProjectDifferences getDifferences(int rev) {
@@ -190,8 +190,8 @@ public class ProjectRevisions implements Revisions {
         if (rev == getCurrentRevision())
             return pdiff;
 
-        File revProjectInfo = getProjectInfo(rev);
-        File curProjectInfo = getProjectInfo(CURRENT_REVISION);
+        File revProjectInfo = getProjectInfoFile(rev);
+        File curProjectInfo = getProjectInfoFile(CURRENT_REVISION);
         pdiff.compareProjects(curProjectInfo, revProjectInfo);
 
         return pdiff;

@@ -11,12 +11,12 @@
 
 package org.eclipse.jgit.diff;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jgit.errors.DiffInterruptedException;
 import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.util.IntList;
 import org.eclipse.jgit.util.LongList;
+
+import java.text.MessageFormat;
 
 /**
  * Diff algorithm, based on "An O(ND) Difference Algorithm and its Variations",

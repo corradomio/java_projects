@@ -9,16 +9,16 @@
  */
 package org.eclipse.jgit.transport;
 
-import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_FILTER;
+import org.eclipse.jgit.errors.PackProtocolException;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.internal.transport.parser.FirstWant;
+import org.eclipse.jgit.lib.ObjectId;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import org.eclipse.jgit.errors.PackProtocolException;
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.internal.transport.parser.FirstWant;
-import org.eclipse.jgit.lib.ObjectId;
+import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_FILTER;
 
 /**
  * Parser for git protocol versions 0 and 1.

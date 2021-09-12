@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 
 public class StringUtils {
@@ -71,6 +70,13 @@ public class StringUtils {
     // ----------------------------------------------------------------------
     // List<String <-> String[]
     // ----------------------------------------------------------------------
+
+    public static String toString(Object obj) {
+        if (obj == null)
+            return null;
+        else
+            return obj.toString();
+    }
 
     public static String[] toArray(Collection<String> l) {
         if (l == null || l.isEmpty())

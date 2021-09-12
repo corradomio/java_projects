@@ -9,11 +9,6 @@
  */
 package org.eclipse.jgit.api;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.jgit.api.errors.ConcurrentRefUpdateException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
@@ -41,6 +36,11 @@ import org.eclipse.jgit.merge.ResolveMerger;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.FileTreeIterator;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A class used to execute a {@code cherry-pick} command. It has setters for all

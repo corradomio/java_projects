@@ -10,6 +10,23 @@
 
 package org.eclipse.jgit.internal.storage.reftable;
 
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.internal.storage.io.BlockSource;
+import org.eclipse.jgit.internal.storage.reftable.BlockWriter.LogEntry;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.ReflogEntry;
+import org.eclipse.jgit.util.LongList;
+import org.eclipse.jgit.util.LongMap;
+import org.eclipse.jgit.util.NB;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.zip.CRC32;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.eclipse.jgit.internal.storage.reftable.BlockReader.decodeBlockLen;
 import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.FILE_BLOCK_TYPE;
@@ -21,23 +38,6 @@ import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.REF_B
 import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.VERSION_1;
 import static org.eclipse.jgit.internal.storage.reftable.ReftableConstants.isFileHeaderMagic;
 import static org.eclipse.jgit.lib.Constants.OBJECT_ID_LENGTH;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.zip.CRC32;
-
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.internal.storage.io.BlockSource;
-import org.eclipse.jgit.internal.storage.reftable.BlockWriter.LogEntry;
-import org.eclipse.jgit.lib.AnyObjectId;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.ReflogEntry;
-import org.eclipse.jgit.util.LongList;
-import org.eclipse.jgit.util.LongMap;
-import org.eclipse.jgit.util.NB;
 
 /**
  * Reads a reftable formatted file.

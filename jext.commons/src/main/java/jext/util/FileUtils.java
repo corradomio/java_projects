@@ -100,8 +100,9 @@ public class FileUtils {
     }
 
     private static String toDigest(MessageDigest md) {
-        byte[] digest = md.digest();
-        return DatatypeConverter.printHexBinary(digest);
+        // byte[] digest = md.digest();
+        // return DatatypeConverter.printHexBinary(digest);
+        return Long.toString(toDigestAsLong(md));
     }
 
     private static long toDigestAsLong(MessageDigest md) {
@@ -308,6 +309,15 @@ public class FileUtils {
             return rpath;
         else
             return rpath.substring(0, pos);
+    }
+
+    public static File addParentPath(File directory, String relativePath) {
+        int sep = relativePath.lastIndexOf("/");
+        if (sep == -1)
+            return directory;
+
+        relativePath = relativePath.substring(0, sep);
+        return new File(directory, relativePath);
     }
 
     // ----------------------------------------------------------------------

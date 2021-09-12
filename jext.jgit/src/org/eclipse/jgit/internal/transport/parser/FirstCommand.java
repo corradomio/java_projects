@@ -9,14 +9,14 @@
  */
 package org.eclipse.jgit.internal.transport.parser;
 
+import org.eclipse.jgit.annotations.NonNull;
+
+import java.util.Set;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
-
-import java.util.Set;
-
-import org.eclipse.jgit.annotations.NonNull;
 
 /**
  * In a push, the client sends a list of commands. The first command

@@ -9,15 +9,15 @@
  */
 package org.eclipse.jgit.internal.transport.parser;
 
-import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_AGENT;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.errors.PackProtocolException;
+import org.eclipse.jgit.internal.JGitText;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.errors.PackProtocolException;
-import org.eclipse.jgit.internal.JGitText;
+import static org.eclipse.jgit.transport.GitProtocolConstants.OPTION_AGENT;
 
 /**
  * In the pack negotiation phase (protocol v0/v1), the client sends a list of

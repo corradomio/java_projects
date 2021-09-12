@@ -11,8 +11,14 @@
 
 package org.eclipse.jgit.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.transport.http.HttpConnection;
+import org.eclipse.jgit.transport.http.NoCheckX509TrustManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
@@ -30,14 +36,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.transport.http.HttpConnection;
-import org.eclipse.jgit.transport.http.NoCheckX509TrustManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Extra utilities to support usage of HTTP.

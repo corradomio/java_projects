@@ -10,13 +10,13 @@
 
 package org.eclipse.jgit.treewalk.filter;
 
-import java.io.IOException;
-
 import org.eclipse.jgit.dircache.DirCacheIterator;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.WorkingTreeIterator;
+
+import java.io.IOException;
 
 /**
  * Selects interesting tree entries during walking.

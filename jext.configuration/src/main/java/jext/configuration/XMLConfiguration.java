@@ -1,7 +1,6 @@
 package jext.configuration;
 
 import jext.logging.Logger;
-import jext.util.FileUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -9,7 +9,9 @@
  */
 package org.eclipse.jgit.transport;
 
-import static java.util.Objects.requireNonNull;
+import org.eclipse.jgit.annotations.NonNull;
+import org.eclipse.jgit.annotations.Nullable;
+import org.eclipse.jgit.lib.ObjectId;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,9 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jgit.annotations.NonNull;
-import org.eclipse.jgit.annotations.Nullable;
-import org.eclipse.jgit.lib.ObjectId;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Fetch request from git protocol v2.

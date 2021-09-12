@@ -256,7 +256,7 @@ public class TimeUtils {
         else if (minutes != 0)
             return String.format("%d:%02d", minutes, seconds);
         else
-            return String.format("%d", seconds);
+            return String.format("%ds", seconds);
     }
 
     private static String toIntervalMillis(long millis) {

@@ -10,7 +10,7 @@
 
 package org.eclipse.jgit.util.io;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.util.RawParseUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import org.eclipse.jgit.util.RawParseUtils;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Combines messages from an OutputStream (hopefully in UTF-8) and a Writer.

@@ -10,9 +10,6 @@
 
 package org.eclipse.jgit.blame;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.eclipse.jgit.blame.ReverseWalk.ReverseCommit;
 import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.diff.EditList;
@@ -30,6 +27,9 @@ import org.eclipse.jgit.revwalk.RevFlag;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.util.LfsFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * A source that may have supplied some (or all) of the result file.

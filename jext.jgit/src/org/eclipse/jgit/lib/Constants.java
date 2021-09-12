@@ -12,7 +12,9 @@
 
 package org.eclipse.jgit.lib;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.errors.CorruptObjectException;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.util.MutableInteger;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -20,9 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 
-import org.eclipse.jgit.errors.CorruptObjectException;
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.util.MutableInteger;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Misc. constants and helpers used throughout JGit.

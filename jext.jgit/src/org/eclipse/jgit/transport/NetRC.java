@@ -42,7 +42,7 @@
 
 package org.eclipse.jgit.transport;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.util.FS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,7 +58,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jgit.util.FS;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * NetRC file parser.

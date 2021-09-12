@@ -11,7 +11,14 @@
 
 package org.eclipse.jgit.internal.storage.file;
 
-import static org.eclipse.jgit.lib.Constants.LOCK_SUFFIX;
+import org.eclipse.jgit.internal.JGitText;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.util.FS;
+import org.eclipse.jgit.util.FS.LockToken;
+import org.eclipse.jgit.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,14 +37,7 @@ import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.jgit.internal.JGitText;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.util.FS;
-import org.eclipse.jgit.util.FS.LockToken;
-import org.eclipse.jgit.util.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.eclipse.jgit.lib.Constants.LOCK_SUFFIX;
 
 /**
  * Git style file locking and replacement.

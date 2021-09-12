@@ -10,11 +10,11 @@
 
 package org.eclipse.jgit.transport;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.eclipse.jgit.lib.BatchingProgressMonitor;
 import org.eclipse.jgit.lib.Constants;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /** Write progress messages out to the sideband channel. */
 class SideBandProgressMonitor extends BatchingProgressMonitor {

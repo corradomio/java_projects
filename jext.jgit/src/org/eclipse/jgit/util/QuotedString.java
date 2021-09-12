@@ -10,11 +10,11 @@
 
 package org.eclipse.jgit.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.lib.Constants;
 
 import java.util.Arrays;
 
-import org.eclipse.jgit.lib.Constants;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Utility functions related to quoted string handling.

@@ -6,12 +6,12 @@
 
 package org.eclipse.jgit.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.eclipse.jgit.internal.JGitText;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
 
-import org.eclipse.jgit.internal.JGitText;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Encodes and decodes to and from Base64 notation.
