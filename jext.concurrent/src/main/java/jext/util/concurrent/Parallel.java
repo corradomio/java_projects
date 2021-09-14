@@ -334,9 +334,12 @@ public class Parallel {
     }
 
     public static void setup() {
+        setup(Runtime.getRuntime().availableProcessors() - 1);
+    }
+
+    public static void setup(int nth) {
         if (nthreads == 0) {
-            nthreads = Runtime.getRuntime().availableProcessors() - 1;
-            // nthreads = 2*Runtime.getRuntime().availableProcessors();
+            nthreads = nth;
             if (nthreads < 3) nthreads = 3;
         }
 
