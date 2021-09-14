@@ -61,7 +61,7 @@ public class Version implements Comparable<Version> {
     //
     // ----------------------------------------------------------------------
 
-    public static Version NO_VERSION = new Version();
+    public static final Version NO_VERSION = new Version();
     public static Version empty() { return NO_VERSION; }
 
     public static Version of(String version) {
@@ -212,7 +212,6 @@ public class Version implements Comparable<Version> {
     public int differOn(Version that) {
         if (scheme == Scheme.StringVersion)
             return 0;
-
         if (this.major != that.major)
             return 0;
         if (this.minor != that.minor)
@@ -223,7 +222,7 @@ public class Version implements Comparable<Version> {
             return 3;
         if (this.build != that.build)
             return 4;
-        if (this.qualifier != that.qualifier)
+        if (!this.qualifier.equals(that.qualifier))
             return 5;
 
         return -1;

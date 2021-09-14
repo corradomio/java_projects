@@ -6,7 +6,7 @@ public interface MavenConst {
     String GROUP_ID = "groupId";
     String ARTIFACT_ID = "artifactId";
     String VERSION = "version";
-        String NO_VERSION = "";
+        String NONE = "";
         String NO_ID = "unk";
 
     String PACKAGING = "packaging";

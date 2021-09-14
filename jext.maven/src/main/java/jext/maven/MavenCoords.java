@@ -26,9 +26,9 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     //
     // ----------------------------------------------------------------------
 
-    public String groupId;
-    public String artifactId;
-    public String version;
+    public  String groupId;
+    public  String artifactId;
+    public  String version;
     private String name;
     private String toString;
 
@@ -53,13 +53,13 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         if (parts.length == 2) {
             groupId = parts[0];
             artifactId = parts[1];
-            version = NO_VERSION;
+            version = NONE;
         }
         else if (parts.length == 3) {
             groupId = parts[0];
             artifactId = parts[1];
             if (PACKAGING_TYPES.contains(parts[2]))
-                version = NO_VERSION;
+                version = NONE;
             else
                 version = parts[2];
         }
@@ -100,10 +100,16 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
             aid = gid.substring(pos+1);
             gid = gid.substring(0, pos);
         }
+        else if (v == null) {
+            gid = NONE;
+            aid = gid;
+            v = aid;
+        }
+
         this.groupId = gid;
         this.artifactId = aid;
         if (v == null || PACKAGING_TYPES.contains(v))
-            this.version = NO_VERSION;
+            this.version = NONE;
         else
             this.version = v;
         init();

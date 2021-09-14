@@ -35,7 +35,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -508,12 +507,12 @@ public class MavenDownloader implements MavenConst {
             Element metadata = XPathUtils.parse(metadataFile).getDocumentElement();
 
             // check if "versioning/latest" is available
-            String latestVersion = XPathUtils.getValue(metadata, "versioning/latest", NO_VERSION);
+            String latestVersion = XPathUtils.getValue(metadata, "versioning/latest", NONE);
             if (!latestVersion.isEmpty())
                 return Version.of(latestVersion);
 
             // check if "versioning/release" is available
-            String releaseVersion = XPathUtils.getValue(metadata, "versioning/release", NO_VERSION);
+            String releaseVersion = XPathUtils.getValue(metadata, "versioning/release", NONE);
             if (!releaseVersion.isEmpty())
                 return Version.of(releaseVersion);
 

@@ -264,7 +264,7 @@ public class MavenPom implements MavenConst {
     public MavenCoords getCoords() {
         String gid = NO_ID;
         String aid = NO_ID;
-        String v = NO_VERSION;
+        String v = NONE;
 
         // defaults using parent
         Element parent = (Element) XPathUtils.selectNode(project, PARENT);
@@ -532,7 +532,7 @@ public class MavenPom implements MavenConst {
 
                 String gid = XPathUtils.getValue(dep, GROUP_ID, coords.groupId, props);
                 String aid = XPathUtils.getValue(dep, ARTIFACT_ID, coords.artifactId, props);
-                String v = XPathUtils.getValue(dep, VERSION, NO_VERSION, props);
+                String v = XPathUtils.getValue(dep, VERSION, NONE, props);
 
                 String category = String.format("%s:%s", gid, aid);
 
