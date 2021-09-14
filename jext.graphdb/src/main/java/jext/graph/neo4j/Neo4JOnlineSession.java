@@ -52,6 +52,7 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String NONE = "";
     private static final int MAX_DELETE_NODES = 16*1024;
     private static final int MAX_DELETE_EDGES = 128*1024;
+    private static final String NO_ID = "-1";
 
     // ----------------------------------------------------------------------
     // Special handled parameters
@@ -793,19 +794,15 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps) {
-
-        //
-        // SPL v2.4 COMPATIBILITY. See above
-        //
-        // if (USES.equals(edgeType))
-        //     edgeProps = createEdgeProps24(edgeProps);
-
-        // END
+        if (fromId == null || toId == null)
+            return null;
+        if (NO_ID.equals(fromId) || NO_ID.equals(toId))
+            return null;
 
         String pblock = pblock(E, edgeProps);
         String s = String.format("MATCH (from),(to) " +
             "WHERE id(from) = $fid AND id(to) = $tid " +
-            "CREATE (from) -[e:%s %s]-> (to) " +
+            "CREATE (from) -[e:%s]-> (to) " +
             "RETURN id(e)", edgeType, pblock);
 
         Parameters params = Parameters.params(
@@ -813,30 +810,27 @@ public class Neo4JOnlineSession implements GraphSession {
             "tid", asId(toId))
             .add(E, edgeProps);
 
-        return this.create(s, params);
+        String edgeId = this.create(s, params);
+        setEdgeProperties(edgeId, edgeProps);
+        return edgeId;
     }
 
     @Override
     public void createEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps) {
+        createEdges(edgeType, fromId, toIds);
+        setEdgesProperties(edgeType, fromId, toIds, edgeProps);
+    }
 
-        //
-        // SPL v2.4 COMPATIBILITY. See above
-        //
-        if (USES.equals(edgeType))
-            edgeProps = createEdgeProps24(edgeProps);
-
-        // END
-
-        String pblock = pblock(E, edgeProps);
+    private void createEdges(String edgeType, String fromId, Collection<String> toIds) {
         String s = String.format("MATCH (from),(to) " +
-            "WHERE id(from) = $from AND id(to) IN $to " +
-            "CREATE (from) -[e:%s %s]-> (to) " +
-            "RETURN id(e)", edgeType, pblock);
+                "WHERE id(from) = $from AND id(to) IN $to " +
+                "CREATE (from) -[e:%s]-> (to) " +
+                "RETURN id(e)", edgeType);
 
         Parameters params = Parameters.params(
-            "from", asId(fromId),
-            "to", asIds(toIds)
-        ).add(E, edgeProps);
+                "from", asId(fromId),
+                "to", asIds(toIds)
+        );
 
         this.execute(s, params);
     }
@@ -875,10 +869,20 @@ public class Neo4JOnlineSession implements GraphSession {
                            Map<String, Object> findProps,
                            Map<String, Object> createProps)
     {
+        return findEdge(edgeType, fromId, toId, findProps, createProps, Collections.emptyMap());
+    }
+
+    @Override
+    public String findEdge(String edgeType, String fromId, String toId,
+                           Map<String, Object> findProps,
+                           Map<String, Object> createProps,
+                           Map<String, Object> updateProps)
+    {
         String edgeId = queryPath(edgeType, fromId, toId, Direction.Output, false, findProps).id();
         if (edgeId == null)
             edgeId = createEdge(edgeType, fromId, toId, createProps);
-
+        else
+            setEdgeProperties(edgeId, updateProps);
         return edgeId;
     }
 
@@ -907,7 +911,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void setEdgeProperties(String edgeId, Map<String, Object> updateProps) {
-        if (updateProps == null || updateProps.size() == 0)
+        if (updateProps == null || updateProps.isEmpty())
             return;
 
         String sblock = sblock(E, updateProps);
@@ -936,6 +940,24 @@ public class Neo4JOnlineSession implements GraphSession {
         Parameters params = Parameters.params(
             "id", asId(edgeId));
         return this.retrieve("e", s, params, true);
+    }
+
+    @Override
+    public void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps) {
+
+        String sblock = sblock(E, edgeProps);
+
+        String s = String.format("MATCH (from) -[e:${}]->(to) " +
+                "WHERE id(from) = $from AND id(to) IN $to " +
+                "%s " +
+                "RETURN id(from)", edgeType, sblock);
+
+        Parameters params = Parameters.params(
+                "from", asId(fromId),
+                "to", asIds(toIds)
+        ).add(E, edgeProps);
+
+        this.execute(s, params);
     }
 
     // ----------------------------------------------------------------------

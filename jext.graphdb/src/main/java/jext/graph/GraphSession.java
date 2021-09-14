@@ -331,10 +331,10 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Create multiple edges (1:n)
      *
-     * @param edgeType
-     * @param fromId
-     * @param toIds
-     * @param edgeProps
+     * @param edgeType edge type
+     * @param fromId source node
+     * @param toIds destination nodes
+     * @param edgeProps edge properties
      */
     void createEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
 
@@ -344,11 +344,19 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeType  edge type
      * @param fromId source node
      * @param toId destination node
-     * @param edgeProps properties of the edge used in the search
+     * @param findProps properties of the edge used in the search
      * @param createProps properties of the edge used if the edge is created
+     * @param updateProps properties of the edge used if the edge is created
      * @return edgeId or null
      */
-    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps, Map<String,Object> createProps);
+    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
+                              Map<String,Object> findProps,
+                              Map<String,Object> createProps,
+                              Map<String,Object> updateProps);
+    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
+                              Map<String,Object> findProps,
+                              Map<String,Object> createProps);
+
 
     /**
      * Delete the edges with the specified properties
@@ -385,14 +393,23 @@ public interface GraphSession extends AutoCloseable {
      */
     void   setEdgeProperty(String edgeId, String name, Object value, boolean override);
 
-    // void appendEdgePropertyValue(String edgeId, String name, Object value, boolean distinct);
-
     /**
      * Retrieve the properties of the edge
      *
      * @param edgeId edgeId
      */
     Map<String, Object> getEdgeProperties(String edgeId);
+
+    /**
+     * Set the edge properties to the edges connecting fromId with toIds
+     *
+     * @param edgeType edge type
+     * @param fromId source node
+     * @param toIds destination nodes
+     * @param edgeProps edge properties
+     */
+    void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
+
 
     // ----------------------------------------------------------------------
     // Properties
