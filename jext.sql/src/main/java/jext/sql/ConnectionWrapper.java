@@ -25,18 +25,34 @@ public class ConnectionWrapper implements Connection {
         return new ConnectionWrapper(c, info);
     }
 
+    // ----------------------------------------------------------------------
+    // Fields
+    // ----------------------------------------------------------------------
+
     private Properties info;
     private Connection c;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     private ConnectionWrapper(Connection c, Properties info) {
         this.info = info;
         this.c = c;
     }
 
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
     Connection get() {
         return c;
     }
     Properties getinfo() { return info; }
+
+    // ----------------------------------------------------------------------
+    // Statements
+    // ----------------------------------------------------------------------
 
     @Override
     public Statement createStatement() throws SQLException {
@@ -99,16 +115,8 @@ public class ConnectionWrapper implements Connection {
     }
 
     // ----------------------------------------------------------------------
-
-    @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        c.setAutoCommit(autoCommit);
-    }
-
-    @Override
-    public boolean getAutoCommit() throws SQLException {
-        return c.getAutoCommit();
-    }
+    // Connection
+    // ----------------------------------------------------------------------
 
     @Override
     public void commit() throws SQLException {
@@ -121,6 +129,11 @@ public class ConnectionWrapper implements Connection {
     }
 
     @Override
+    public void rollback(Savepoint savepoint) throws SQLException {
+        c.rollback(savepoint);
+    }
+
+    @Override
     public void close() throws SQLException {
         c.close();
     }
@@ -128,6 +141,25 @@ public class ConnectionWrapper implements Connection {
     @Override
     public boolean isClosed() throws SQLException {
         return c.isClosed();
+    }
+
+    @Override
+    public void abort(Executor executor) throws SQLException {
+        c.abort(executor);
+    }
+
+    // ----------------------------------------------------------------------
+    // Getter/Setter
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        c.setAutoCommit(autoCommit);
+    }
+
+    @Override
+    public boolean getAutoCommit() throws SQLException {
+        return c.getAutoCommit();
     }
 
     @Override
@@ -201,26 +233,6 @@ public class ConnectionWrapper implements Connection {
     }
 
     @Override
-    public Savepoint setSavepoint() throws SQLException {
-        return c.setSavepoint();
-    }
-
-    @Override
-    public Savepoint setSavepoint(String name) throws SQLException {
-        return c.setSavepoint(name);
-    }
-
-    @Override
-    public void rollback(Savepoint savepoint) throws SQLException {
-        c.rollback(savepoint);
-    }
-
-    @Override
-    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        c.releaseSavepoint(savepoint);
-    }
-
-    @Override
     public Clob createClob() throws SQLException {
         return c.createClob();
     }
@@ -286,11 +298,6 @@ public class ConnectionWrapper implements Connection {
     }
 
     @Override
-    public void abort(Executor executor) throws SQLException {
-        c.abort(executor);
-    }
-
-    @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
         c.setNetworkTimeout(executor, milliseconds);
     }
@@ -300,15 +307,28 @@ public class ConnectionWrapper implements Connection {
         return c.getNetworkTimeout();
     }
 
-    // @Override
-    // public void beginRequest() throws SQLException {
-    //     c.beginRequest();
-    // }
-    //
-    // @Override
-    // public void endRequest() throws SQLException {
-    //     c.endRequest();
-    // }
+    // ----------------------------------------------------------------------
+    // Savepoint
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Savepoint setSavepoint() throws SQLException {
+        return c.setSavepoint();
+    }
+
+    @Override
+    public Savepoint setSavepoint(String name) throws SQLException {
+        return c.setSavepoint(name);
+    }
+
+    @Override
+    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+        c.releaseSavepoint(savepoint);
+    }
+
+    // ----------------------------------------------------------------------
+    // Wrap
+    // ----------------------------------------------------------------------
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -319,4 +339,5 @@ public class ConnectionWrapper implements Connection {
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return c.isWrapperFor(iface);
     }
+
 }

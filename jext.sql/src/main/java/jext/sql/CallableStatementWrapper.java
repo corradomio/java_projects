@@ -10,7 +10,6 @@ import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.NClob;
-import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLException;
@@ -26,14 +25,34 @@ public class CallableStatementWrapper extends PreparedStatementWrapper implement
         return new CallableStatementWrapper(c, cs, sql);
     }
 
+    // ----------------------------------------------------------------------
+    // Fields
+    // ----------------------------------------------------------------------
+
     private CallableStatement cs;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     CallableStatementWrapper(ConnectionWrapper c, CallableStatement cs, String sql) {
         super(c, cs, sql);
         this.cs = cs;
     }
 
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
     CallableStatement get() { return cs; }
+
+    // ----------------------------------------------------------------------
+    // Execute
+    // ----------------------------------------------------------------------
+
+    // ----------------------------------------------------------------------
+    // Register In/Out Parameters
+    // ----------------------------------------------------------------------
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType) throws SQLException {
@@ -44,6 +63,30 @@ public class CallableStatementWrapper extends PreparedStatementWrapper implement
     public void registerOutParameter(int parameterIndex, int sqlType, int scale) throws SQLException {
         cs.registerOutParameter(parameterIndex, sqlType, scale);
     }
+
+    @Override
+    public void registerOutParameter(int parameterIndex, int sqlType, String typeName) throws SQLException {
+        cs.registerOutParameter(parameterIndex, sqlType, typeName);
+    }
+
+    @Override
+    public void registerOutParameter(String parameterName, int sqlType) throws SQLException {
+        cs.registerOutParameter(parameterName, sqlType);
+    }
+
+    @Override
+    public void registerOutParameter(String parameterName, int sqlType, int scale) throws SQLException {
+        cs.registerOutParameter(parameterName, sqlType, scale);
+    }
+
+    @Override
+    public void registerOutParameter(String parameterName, int sqlType, String typeName) throws SQLException {
+        cs.registerOutParameter(parameterName, sqlType, typeName);
+    }
+
+    // ----------------------------------------------------------------------
+    // Getter/Setter
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean wasNull() throws SQLException {
@@ -163,26 +206,6 @@ public class CallableStatementWrapper extends PreparedStatementWrapper implement
     @Override
     public Timestamp getTimestamp(int parameterIndex, Calendar cal) throws SQLException {
         return cs.getTimestamp(parameterIndex, cal);
-    }
-
-    @Override
-    public void registerOutParameter(int parameterIndex, int sqlType, String typeName) throws SQLException {
-        cs.registerOutParameter(parameterIndex, sqlType, typeName);
-    }
-
-    @Override
-    public void registerOutParameter(String parameterName, int sqlType) throws SQLException {
-        cs.registerOutParameter(parameterName, sqlType);
-    }
-
-    @Override
-    public void registerOutParameter(String parameterName, int sqlType, int scale) throws SQLException {
-        cs.registerOutParameter(parameterName, sqlType, scale);
-    }
-
-    @Override
-    public void registerOutParameter(String parameterName, int sqlType, String typeName) throws SQLException {
-        cs.registerOutParameter(parameterName, sqlType, typeName);
     }
 
     @Override

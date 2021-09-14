@@ -29,15 +29,31 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
         return new PreparedStatementWrapper(c, s, sql);
     }
 
+    // ----------------------------------------------------------------------
+    // Fields
+    // ----------------------------------------------------------------------
+
     private PreparedStatement ps;
     private Map<Object, Object> params = new HashMap<>();
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     PreparedStatementWrapper(ConnectionWrapper c, PreparedStatement ps, String sql) {
         super(c, ps, sql);
         this.ps = ps;
     }
 
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
     PreparedStatement get() { return ps; }
+
+    // ----------------------------------------------------------------------
+    // Execute
+    // ----------------------------------------------------------------------
 
     @Override
     public ResultSet executeQuery() throws SQLException {
@@ -48,6 +64,15 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     public int executeUpdate() throws SQLException {
         return ps.executeUpdate();
     }
+
+    @Override
+    public boolean execute() throws SQLException {
+        return ps.execute();
+    }
+
+    // ----------------------------------------------------------------------
+    // Setter/Getter
+    // ----------------------------------------------------------------------
 
     @Override
     public void setNull(int parameterIndex, int sqlType) throws SQLException {
@@ -167,11 +192,6 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     public void setObject(int parameterIndex, Object x) throws SQLException {
         params.put(parameterIndex, x);
         ps.setObject(parameterIndex, x);
-    }
-
-    @Override
-    public boolean execute() throws SQLException {
-        return ps.execute();
     }
 
     @Override
