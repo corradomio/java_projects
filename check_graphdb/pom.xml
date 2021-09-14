@@ -21,6 +21,13 @@
         <module>../jext.apocx</module>
     </modules>
 
+    <repositories>
+        <repository>
+            <id>ontotext-public</id>
+            <url>http://maven.ontotext.com/repository/owlim-releases</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
@@ -32,6 +39,14 @@
             <artifactId>jext.apocx</artifactId>
             <version>1.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.ontotext.graphdb/graphdb-free-runtime -->
+        <dependency>
+            <groupId>com.ontotext.graphdb</groupId>
+            <artifactId>graphdb-free-runtime</artifactId>
+            <version>9.9.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -12,7 +12,7 @@ import jext.util.PropertiesUtils;
 import java.util.Map;
 import java.util.Properties;
 
-public class App {
+public class CheckNeo4J {
 
     public static void main(String[] args) {
         Logger.configure();
