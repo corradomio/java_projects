@@ -308,6 +308,21 @@ public class StringUtils {
     }
 
     /**
+     * Split the string on '\n', trime each line and re-compose the string
+     */
+    public static String trimnl(String s) {
+        StringBuilder sb = new StringBuilder();
+        Arrays.stream(s.split("\n"))
+                .map(String::trim)
+                .forEach(part -> {
+                    if (sb.length() > 0)
+                        sb.append("\n");
+                    sb.append(part);
+                });
+        return sb.toString().trim();
+    }
+
+    /**
      * String digest
      */
     public static String digest(String s) {

@@ -137,4 +137,16 @@ public class MapUtils {
     public static String[] getStringArray(Map<String, Object> map, String... keys) {
         return ArrayUtils.asStringArray(get(map, keys));
     }
+
+    // ----------------------------------------------------------------------
+
+    public static Map<String, Object> exclude(Map<String, Object> map, String prefix) {
+        Map<String, Object> dup = new HashMap<>();
+        map.forEach((k, v) -> {
+            if (!k.startsWith(prefix))
+                dup.put(k, v);
+        });
+
+        return (map.size() == dup.size()) ? map : dup;
+    }
 }

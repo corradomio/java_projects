@@ -3,7 +3,6 @@ package jext.util;
 import jext.io.filters.FalseFileFilter;
 import jext.logging.Logger;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -51,7 +50,7 @@ public class FileUtils {
         try {
             MessageDigest md = algorithm();
             update(md, file);
-            return toDigestAsLong(md);
+            return toLong(md);
         }
         catch (Exception e) {
             logger.error(e, e);
@@ -59,19 +58,22 @@ public class FileUtils {
         }
     }
 
-    public static String digest(File file) {
-        if (!file.exists() || !file.isFile())
-            return "0";
+    private static final String NO_DIGEST = "0";
 
-        try {
-            MessageDigest md = algorithm();
-            update(md, file);
-            return toDigest(md);
-        }
-        catch (Exception e) {
-            logger.error(e, e);
-            return "0";
-        }
+    public static String digest(File file) {
+        return LongUtils.toString(digestAsLong(file));
+        // if (!file.exists() || !file.isFile())
+        //     return NO_DIGEST;
+        //
+        // try {
+        //     MessageDigest md = algorithm();
+        //     update(md, file);
+        //     return toDigest(md);
+        // }
+        // catch (Exception e) {
+        //     logger.error(e, e);
+        //     return NO_DIGEST;
+        // }
     }
 
     // public static String digest(InputStream in) {
@@ -99,13 +101,13 @@ public class FileUtils {
             md.update(buffer, 0, length);
     }
 
-    private static String toDigest(MessageDigest md) {
-        // byte[] digest = md.digest();
-        // return DatatypeConverter.printHexBinary(digest);
-        return Long.toString(toDigestAsLong(md));
-    }
+    // private static String toDigest(MessageDigest md) {
+    //     // byte[] digest = md.digest();
+    //     // return DatatypeConverter.printHexBinary(digest);
+    //     return Long.toHexString(toLong(md));
+    // }
 
-    private static long toDigestAsLong(MessageDigest md) {
+    private static long toLong(MessageDigest md) {
         byte[] digest = md.digest();
         return ((long) digest[0]) +
             (((long)digest[1]) <<  8) +
