@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ArrayUtils {
 
@@ -165,6 +166,10 @@ public class ArrayUtils {
                 a[i++] = e.toString();
         }
         return a;
+    }
+
+    public static List<Long> asLongList(Collection<String> s) {
+        return s.stream().map(Long::valueOf).collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------

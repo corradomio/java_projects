@@ -40,6 +40,10 @@ import java.util.stream.Stream;
 
 public class Parallel {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private static int nthreads = 0;
     private static List<ExecutorService> running;
     private static Queue<WaitingExecutorService> waiting;
@@ -77,45 +81,19 @@ public class Parallel {
     private static ThreadFactory threadFactory = new DefaultThreadFactory();
 
     // ----------------------------------------------------------------------
-
-    // private static class Counters {
-    //     AtomicInteger todo;
-    //     AtomicInteger running;
-    //
-    //     Counters() {
-    //         todo = new AtomicInteger();
-    //         running = new AtomicInteger();
-    //     }
-    //
-    //     void todo() {
-    //         this.todo.incrementAndGet();
-    //     }
-    //
-    //     void running() {
-    //         todo.decrementAndGet();
-    //         running.incrementAndGet();
-    //     }
-    //
-    //     void done() {
-    //         running.decrementAndGet();
-    //     }
-    // }
+    // Task implementation
+    // ----------------------------------------------------------------------
 
     private static class TaskBase {
-        // Counters counters;
-        // TaskBase (Counters counters) {
-        //     this.counters = counters;
-        //     this.counters.todo();
-        // }
 
         TaskBase() { }
 
         protected void running() {
-            // this.counters.running();;
+
         }
 
         protected void done() {
-            // this.counters.done();
+
         }
 
     }
@@ -190,6 +168,8 @@ public class Parallel {
     }
 
     // ----------------------------------------------------------------------
+    // forEach
+    // ----------------------------------------------------------------------
 
     public static void forEach(int first, int last, IntConsumer body) {
 
@@ -232,6 +212,8 @@ public class Parallel {
     }
 
     // ----------------------------------------------------------------------
+    // invokeAll
+    // ----------------------------------------------------------------------
 
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
 
@@ -262,6 +244,47 @@ public class Parallel {
 
         return results;
     }
+
+    // ----------------------------------------------------------------------
+    // Setup/shutdown
+    // ----------------------------------------------------------------------
+
+    public static void setup() {
+        setup(Runtime.getRuntime().availableProcessors() - 1);
+    }
+
+    public static void setup(int nth) {
+        if (nthreads == 0) {
+            nthreads = nth;
+            if (nthreads < 3) nthreads = 3;
+        }
+
+        if (running == null) {
+            running = new LinkedList<>();
+            waiting = new LinkedList<>();
+        }
+    }
+
+    public static synchronized void shutdown() {
+        if (running != null)
+            running.forEach(ExecutorService::shutdownNow);
+        if (waiting != null)
+            waiting.forEach(WaitingExecutorService::shutdownNow);
+        running = null;
+        waiting = null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public static int threads() {
+        return nthreads;
+    }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
 
     private static <T> List<T> collectExceptions(List<Future<T>> futures, ParallelException pe) {
         List<T> results = new ArrayList<>();
@@ -331,37 +354,6 @@ public class Parallel {
         waiting.add(new WaitingExecutorService(executor));
 
         waiting.removeIf(wes -> wes.waitingTime() > TIMEOUT);
-    }
-
-    public static void setup() {
-        setup(Runtime.getRuntime().availableProcessors() - 1);
-    }
-
-    public static void setup(int nth) {
-        if (nthreads == 0) {
-            nthreads = nth;
-            if (nthreads < 3) nthreads = 3;
-        }
-
-        if (running == null) {
-            running = new LinkedList<>();
-            waiting = new LinkedList<>();
-        }
-    }
-
-    // ----------------------------------------------------------------------
-
-    public static int threads() {
-        return nthreads;
-    }
-
-    public static synchronized void shutdown() {
-        if (running != null)
-            running.forEach(ExecutorService::shutdownNow);
-        if (waiting != null)
-            waiting.forEach(WaitingExecutorService::shutdownNow);
-        running = null;
-        waiting = null;
     }
 
     private static void sleep(long millis) {

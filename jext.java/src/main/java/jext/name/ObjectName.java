@@ -15,10 +15,10 @@ public class ObjectName implements Name {
     // Static methods
     // ----------------------------------------------------------------------
 
-    public static ObjectName _empty = new ObjectName("");
+    public static ObjectName NO_NAME = new ObjectName("");
 
     public static ObjectName empty() {
-        return _empty;
+        return NO_NAME;
     }
 
     // ----------------------------------------------------------------------

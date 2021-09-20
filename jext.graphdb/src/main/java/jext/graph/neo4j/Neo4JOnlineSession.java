@@ -49,6 +49,8 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String NAMESPACE = "namespace";
     private static final String N = "n";
     private static final String E = "e";
+    private static final String FROM = "from";
+    private static final String TO = "to";
     private static final String NONE = "";
     private static final int MAX_DELETE_NODES = 16*1024;
     private static final int MAX_DELETE_EDGES = 128*1024;
@@ -233,8 +235,8 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
         Map<String, Object> arrayProps = null;
-        if (hasIndexedProperties(nodeProps))
-            arrayProps = extractIndexedProperties(nodeProps);
+        if (hasArrayProperties(nodeProps))
+            arrayProps = extractArrayProperties(nodeProps);
 
         String pblock = pblock(NONE, nodeProps);
         String s = String.format("CREATE (n:%s %s) RETURN id(n)", nodeType, pblock);
@@ -344,27 +346,40 @@ public class Neo4JOnlineSession implements GraphSession {
     // Indexed properties: name[index]
     // ----------------------------------------------------------------------
 
-    // private static boolean hasProperty(Map<String, Object> params, String text) {
-    //     for(String key : params.keySet())
-    //         if (key.contains(text))
-    //             return true;
-    //     return false;
-    // }
-
-    private static boolean hasIndexedProperties(Map<String, Object> props) {
-        for (String param : props.keySet())
+    private static boolean hasArrayProperties(Map<String, Object> props) {
+        for (String param : props.keySet()) {
             if (param.contains("["))
                 return true;
+            Object value = props.get(param);
+            if (value == null)
+                continue;
+            if (value.getClass().isArray())
+                return true;
+            if (value instanceof Collection)
+                return true;
+        }
         return false;
     }
 
-    private static Map<String, Object> extractIndexedProperties(Map<String, Object> props) {
+    private static Map<String, Object> extractArrayProperties(Map<String, Object> props) {
         Map<String, Object> aprops = new HashMap<>();
-        for (String param : new HashSet<>(props.keySet()))
+        for (String param : new HashSet<>(props.keySet())) {
             if (param.contains("[")) {
                 aprops.put(param, props.get(param));
                 props.remove(param);
             }
+            Object value = props.get(param);
+            if (value == null)
+                continue;
+            if (value instanceof Collection) {
+                aprops.put(param, value);
+                props.remove(param);
+            }
+            if (value.getClass().isArray()) {
+                aprops.put(param, value);
+                props.remove(param);
+            }
+        }
         return aprops;
     }
 
@@ -674,43 +689,53 @@ public class Neo4JOnlineSession implements GraphSession {
         String toType,   Map<String, Object> toProps,
         Map<String, Object> edgeProps) {
 
-        String fblock = pblock(NONE, fromProps);
-        String eblock = eblock(E, edgeType, Direction.Output, false, edgeProps);
-        String tblock = pblock(NONE, toProps);
+        String fblock = pblock(NONE, Collections.emptyMap());
+        String eblock = eblock(E, edgeType, Direction.Output, false, Collections.emptyMap());
+        String tblock = pblock(NONE, Collections.emptyMap());
+
+        String wfblock = wblock(FROM, fromProps, WhereType.WHERE);
+        String wtblock = wblock(TO,   toProps,   wfblock.isEmpty() ? WhereType.WHERE : WhereType.AND);
+        String weblock = wblock(E,            edgeProps, wtblock.isEmpty() ? WhereType.WHERE : WhereType.AND);
+
+        String wblock = String.format("%s%s%s", wfblock, wtblock, weblock);
 
         Parameters allProps = new Parameters();
-        allProps.putAll(fromProps);
-        allProps.putAll(edgeProps);
-        allProps.putAll(toProps);
+        allProps.add(FROM,fromProps);
+        allProps.add(TO,  toProps);
+        allProps.add(E,   edgeProps);
 
         String s;
         if (fromType == null && toType == null)
-            s = String.format("MATCH (from %s) %s (to %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+            s = String.format("MATCH (from %s) %s (to %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
                 fblock,
                 eblock,
-                tblock
+                tblock,
+                wblock
             );
         else if (fromType == null)
-            s = String.format("MATCH (from %s) %s (to:%s %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+            s = String.format("MATCH (from %s) %s (to:%s %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
                 fblock,
                 eblock,
                 toType,
-                tblock
+                tblock,
+                wblock
             );
         else if (toType == null)
-            s = String.format("MATCH (from:%s %s) %s (to %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+            s = String.format("MATCH (from:%s %s) %s (to %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
                 fromType,
                 fblock,
                 eblock,
-                tblock
+                tblock,
+                wblock
             );
         else
-            s = String.format("MATCH (from:%s %s) %s (to:%s %s) RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+            s = String.format("MATCH (from:%s %s) %s (to:%s %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
                 fromType,
                 fblock,
                 eblock,
                 toType,
-                tblock
+                tblock,
+                wblock
             );
 
         if(edgeType != null && edgeType.equals("uses"))
@@ -739,8 +764,8 @@ public class Neo4JOnlineSession implements GraphSession {
         );
 
         Parameters allProps = new Parameters();
-        allProps.put("from", asIds(fromIds));
-        allProps.put("to", asIds(toIds));
+        allProps.put(FROM, asIds(fromIds));
+        allProps.put(TO, asIds(toIds));
 
         return new Neo4JQuery(this, N, s, allProps);
     }
@@ -828,8 +853,8 @@ public class Neo4JOnlineSession implements GraphSession {
                 "RETURN id(e)", edgeType);
 
         Parameters params = Parameters.params(
-                "from", asId(fromId),
-                "to", asIds(toIds)
+                FROM, asId(fromId),
+                TO, asIds(toIds)
         );
 
         this.execute(s, params);
@@ -947,14 +972,14 @@ public class Neo4JOnlineSession implements GraphSession {
 
         String sblock = sblock(E, edgeProps);
 
-        String s = String.format("MATCH (from) -[e:${}]->(to) " +
+        String s = String.format("MATCH (from) -[e:%s]->(to) " +
                 "WHERE id(from) = $from AND id(to) IN $to " +
                 "%s " +
                 "RETURN id(from)", edgeType, sblock);
 
         Parameters params = Parameters.params(
-                "from", asId(fromId),
-                "to", asIds(toIds)
+                FROM, asId(fromId),
+                TO, asIds(toIds)
         ).add(E, edgeProps);
 
         this.execute(s, params);
@@ -1340,6 +1365,9 @@ public class Neo4JOnlineSession implements GraphSession {
             // value is a collection
             if (value instanceof Collection)
                 continue;
+            // value is an array
+            if (value.getClass().isArray())
+                continue;
             // param is "revision" or 'name[...]'
             if (param.equals(REVISION) || param.contains("["))
                 continue;
@@ -1510,30 +1538,12 @@ public class Neo4JOnlineSession implements GraphSession {
             if (value == null) {
                 s = String.format("EXISTS(%s.%s)", alias, param);
             }
-            // ["revision", n] -> "inRevision[$revision]"
+
             else if (REVISION.equals(param)) {
-                s = revisionCondition(alias, param, params);
+                s = revisionCondition(alias, param, value);
             }
             else if (param.startsWith("$")) {
-                // ["$label", l] -> labels(n)[0] = $_label
-                if ("$label".equals(param)) {
-                    s = String.format("labels(%1$s)[0] = $%1$s%2$s", alias, pname);
-                }
-                // ["$degree", d] -> apoc.node.degree(n) = $_degree
-                else if ("$degree".equals(param)) {
-                    s = String.format("apoc.node.degree(%1$s) = $%1$s%2$s", alias, pname);
-                }
-                // ["$outdegree", d] -> apoc.node.degree(n,'>') = $_outdegree
-                else if ("$outdegree".equals(param)) {
-                    s = String.format("apoc.node.degree(%1$s, '>') = $%1$s%2$s", alias, pname);
-                }
-                // ["$indegree", d] -> apoc.node.degree(n,'<') = $_indegree
-                else if ("$indegree".equals(param)) {
-                    s = String.format("apoc.node.degree(%1$s, '<') = $%1$s%2$s", alias, pname);
-                }
-                else {
-                    s = "1 = 1";
-                }
+                s = specialCondition(alias, param, value);
             }
             // [param, value: a collection] -> "n.param IN $param"
             else if (value instanceof Collection) {
@@ -1557,33 +1567,75 @@ public class Neo4JOnlineSession implements GraphSession {
         }
     }
 
+    private static String specialCondition(String alias, String param, Object value) {
+        String s;
+        String pname = pnameOf(param);
+
+        // ["$label", l] -> labels(n)[0] = $_label
+        if ("$label".equals(param)) {
+            s = String.format("labels(%1$s)[0] = $%1$s%2$s", alias, pname);
+        }
+
+        // ["$degree", d] -> apoc.node.degree(n) = $_degree
+        else if ("$degree".equals(param)) {
+            s = String.format("apoc.node.degree(%1$s) = $%1$s%2$s", alias, pname);
+        }
+
+        // ["$outdegree", d] -> apoc.node.degree(n,'>') = $_outdegree
+        else if ("$outdegree".equals(param)) {
+            s = String.format("apoc.node.degree(%1$s, '>') = $%1$s%2$s", alias, pname);
+        }
+
+        // ["$indegree", d] -> apoc.node.degree(n,'<') = $_indegree
+        else if ("$indegree".equals(param)) {
+            s = String.format("apoc.node.degree(%1$s, '<') = $%1$s%2$s", alias, pname);
+        }
+        else {
+            logger.errorf("Unknown special field '%s'", param);
+            s = "true";
+        }
+
+        return s;
+    }
+
     /*
         [revision, 0 | [0,1,...]] ->
             n.inRevision[0]
             n.inRevision[0] OR n.inRevision[1] ...
      */
-    private static String revisionCondition(String alias, String param, Map<String, Object> params) {
-        Object value = params.get(param);
+    private static String revisionCondition(String alias, String param, Object value) {
+        // revs == null -> true
+        if (value == null) {
+            logger.errorf("Revision condition with null value");
+            return "true";
+        }
 
-        // check if value is a simple integer
+        // rev:integer -> inRevision[rev]
         if (value instanceof Integer) {
             int rev = (int) value;
             return String.format("%s.inRevision[%d]", alias, rev);
         }
 
-        // convert a collection in a 'int[]'
+        // convert collection in int[]
+        int[] revs ;
         if (value instanceof Collection)
-            value = ArrayUtils.asIntArray(value);
+            revs = ArrayUtils.asIntArray(value);
+        else
+            revs = (int[]) value;
+        // end
 
-        int[] revs = (int[]) value;
+        // revs == []
+        if (revs.length == 0) {
+            logger.errorf("Revision condition with empty array []");
+            return "true";
+        }
 
-        if (revs.length == 0)
-            return "false";
+        // revs == [1]
         if (revs.length == 1)
             return String.format("%s.inRevision[%d]", alias, revs[0]);
 
-        // revs.length > 1
-        StringBuilder sb =  new StringBuilder("(");
+        // revs = [1,2,...]
+        StringBuilder sb = new StringBuilder("(");
         sb.append(String.format("%s.inRevision[%d]", alias, revs[0]));
         for (int i=1; i<revs.length; ++i) {
             sb.append(" OR ")

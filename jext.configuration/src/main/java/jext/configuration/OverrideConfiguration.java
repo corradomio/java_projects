@@ -113,6 +113,10 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
         return this.configurationFile;
     }
 
+    public File getConfigurationDirectory() {
+        return this.configurationFile.getParentFile();
+    }
+
     /**
      * Retrieve a sub configuration
      */

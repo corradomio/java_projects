@@ -1,5 +1,7 @@
 package jext.util.concurrent;
 
+import jext.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -9,6 +11,12 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Serial {
+
+    private static final Logger logger = Logger.getLogger(Serial.class);
+
+    // ----------------------------------------------------------------------
+    // forEach
+    // ----------------------------------------------------------------------
 
     public static void forEach(int first, int last, IntConsumer body) {
         for(int i=first; i<last; ++i)
@@ -27,6 +35,10 @@ public class Serial {
         s.forEach(body);
     }
 
+    // ----------------------------------------------------------------------
+    // invokeAll
+    // ----------------------------------------------------------------------
+
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
         ParallelException pe = new ParallelException();
         List<T> results = new ArrayList<>();
@@ -44,7 +56,25 @@ public class Serial {
         return results;
     }
 
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public static int threads() {
+        return 1;
+    }
+
+    // ----------------------------------------------------------------------
+    // Setup/shutdown
+    // ----------------------------------------------------------------------
+
     public static void setup() { }
+    public static void setup(int nth) { }
 
     public static void shutdown() { }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }
