@@ -2,11 +2,7 @@ package jext.jgrapht;
 
 import org.jgrapht.graph.DefaultEdge;
 
-public class Edge<V> extends DefaultEdge {
-
-    public Edge() {
-        super();
-    }
+public class UndirectedEdge<V> extends DefaultEdge {
 
     public V getSource() {
         return (V) super.getSource();

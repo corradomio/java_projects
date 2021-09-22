@@ -56,6 +56,16 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // Graph constructors
     // ----------------------------------------------------------------------
 
+    public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass) {
+        boolean weighed  = edgeClass.isAssignableFrom(DefaultWeightedEdge.class);
+        boolean directed = edgeClass.isAssignableFrom(DirectedEdge.class);
+
+        Supplier<E> edgeSupplier = edgeSupplier(edgeClass);
+        Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
+
+        return newGraph(directed, false,false, weighed, edgeSupplier, vertexSupplier);
+    }
+
     /**
      * Create a new graph based on properties
      *
@@ -94,34 +104,34 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 .buildGraph();
     }
 
-    public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted) {
-        return newGraph(directed, false, false, weighted, null, null);
-    }
-
-    public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted,
-        Class<V> vertexClass, Class<E> edgeClass) {
-        return newGraph(directed, false, false, weighted,
-            edgeSupplier(edgeClass),
-            vertexSupplier(vertexClass));
-    }
+    // public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted) {
+    //     return newGraph(directed, false, false, weighted, null, null);
+    // }
+    //
+    // public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted,
+    //     Class<V> vertexClass, Class<E> edgeClass) {
+    //     return newGraph(directed, false, false, weighted,
+    //         edgeSupplier(edgeClass),
+    //         vertexSupplier(vertexClass));
+    // }
 
     /**
      * Created a new graph with the same properties of the specified graph
      *
-     * @param graph graph used as properties' template
+     * @param template graph used as properties' template
      * @param <V> vertices type
      * @param <E> edges type
      * @return a new Graph object
      */
-    public static <V, E> Graph<V, E> newGraph(Graph<V, E> graph) {
-        GraphType gtype = graph.getType();
+    public static <V, E> Graph<V, E> newGraph(Graph<V, E> template) {
+        GraphType gtype = template.getType();
         return newGraph(
                 gtype.isDirected(),
                 gtype.isAllowingSelfLoops(),
                 gtype.isAllowingMultipleEdges(),
                 gtype.isWeighted(),
-                graph.getEdgeSupplier(),
-                graph.getVertexSupplier()
+                template.getEdgeSupplier(),
+                template.getVertexSupplier()
         );
     }
 

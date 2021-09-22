@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>color-clustering</module>
+        <!--<module>color-clustering</module>-->
         <module>jgrapht-core</module>
         <module>jgrapht-io</module>
         <module>jgrapht-neo4j</module>

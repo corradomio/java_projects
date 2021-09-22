@@ -1,7 +1,7 @@
 package jext.jgrapht.metrics;
 
 import jext.jgrapht.util.MathUtil;
-import jext.jgrapht.util.SetUtil;
+import jext.jgrapht.util.Utils;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 
 import java.util.HashSet;
@@ -50,7 +50,7 @@ public class ContingencyMatrixImpl<V> implements ContingencyMatrix {
 
         Set<V> v1 = verticesOf(truth);
         Set<V> v2 = verticesOf(other);
-        if (!SetUtil.union(v1, v2).equals(SetUtil.intersection(v1, v2)))
+        if (!Utils.union(v1, v2).equals(Utils.intersection(v1, v2)))
             throw new IllegalArgumentException("Invalid clustering");
 
         // contingency matrix

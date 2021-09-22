@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class RandomGraphGenerator<V, E> implements GraphGenerator<V, E, V> {
 
-    private final int nVertices;
-    private final int nEdges;
+    private int nVertices;
+    private int nEdges;
     private final Random random;
 
     /**
@@ -32,6 +32,17 @@ public class RandomGraphGenerator<V, E> implements GraphGenerator<V, E, V> {
         nVertices = n;
         nEdges = m;
         random = r;
+    }
+
+    public RandomGraphGenerator() {
+        this(0,0);
+    }
+
+    public void generateGraph(Graph<V, E> graph, int n, int m) {
+        nVertices = n;
+        nEdges = m;
+
+        generateGraph(graph, null);
     }
 
     @Override
