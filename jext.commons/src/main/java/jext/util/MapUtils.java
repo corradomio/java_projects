@@ -48,19 +48,19 @@ public class MapUtils {
         return (E)cmap.get(keys[l]);
     }
 
-    public static <E> E getOrDefault(Map<String, Object> map, E defaultValue, String... keys) {
-        if (keys == null || keys.length == 0)
-            return (E)map;
-
-        int l = keys.length - 1;
-        Map<String, Object> cmap = map;
-        for (int i=0; i<l; ++i) {
-            cmap = (Map<String, Object>) cmap.get(keys[i]);
-            if (cmap == null)
-                return defaultValue;
-        }
-        return (E)cmap.getOrDefault(keys[l], defaultValue);
-    }
+    // public static <E> E getOrDefault(Map<String, Object> map, E defaultValue, String... keys) {
+    //     if (keys == null || keys.length == 0)
+    //         return (E)map;
+    //
+    //     int l = keys.length - 1;
+    //     Map<String, Object> cmap = map;
+    //     for (int i=0; i<l; ++i) {
+    //         cmap = (Map<String, Object>) cmap.get(keys[i]);
+    //         if (cmap == null)
+    //             return defaultValue;
+    //     }
+    //     return (E)cmap.getOrDefault(keys[l], defaultValue);
+    // }
 
     public static int getOrDefault(Map<String, Object> map, String key, int defval) {
         if (!map.containsKey(key))
@@ -88,6 +88,37 @@ public class MapUtils {
             return Long.parseLong((String) value);
         else
             return Integer.parseInt(value.toString());
+    }
+
+    public static boolean getOrDefault(Map<String, Object> map, String key, boolean defval) {
+        if (!map.containsKey(key))
+            return defval;
+        Object value = map.get(key);
+        if (value instanceof Boolean)
+            return (Boolean) value;
+        if (value instanceof String)
+            return Boolean.parseBoolean((String) value);
+        else
+            return Boolean.parseBoolean(value.toString());
+    }
+
+    public static double getOrDefault(Map<String, Object> map, String key, double defval) {
+        if (!map.containsKey(key))
+            return defval;
+        Object value = map.get(key);
+        if (value instanceof Number)
+            return ((Number) value).doubleValue();
+        if (value instanceof String)
+            return Double.parseDouble((String) value);
+        else
+            return Double.parseDouble(value.toString());
+    }
+
+    public static String getOrDefault(Map<String, Object> map, String key, String defval) {
+        if (!map.containsKey(key))
+            return defval;
+        else
+            return map.get(key).toString();
     }
 
     public static int getInt(Map<String, Object> map, String... keys) {

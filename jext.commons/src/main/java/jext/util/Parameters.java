@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-
 public class Parameters extends HashMap<String, Object> {
 
     private static Parameters NO_PARAMS = new Parameters() {

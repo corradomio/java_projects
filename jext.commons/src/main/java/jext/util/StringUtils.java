@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 public class StringUtils {
 
     private static final Logger logger = Logger.getLogger(StringUtils.class) ;

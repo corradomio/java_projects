@@ -27,24 +27,10 @@ public class SetUtils {
 
     public static <T> boolean isSameset(Set<T> s1, Set<T> s2) {
         return s1.equals(s2);
-        // if (s1.size() != s2.size())
-        //     return false;
-        //
-        // for(T e : s1)
-        //     if (!s2.contains(e))
-        //         return false;
-        // return true;
     }
 
     public static <T> boolean isSubset(Set<T> s1, Set<T> s2) {
         return isSuperset(s2, s1);
-        // if (s1.size() > s2.size())
-        //     return false;
-        //
-        // for(T e : s1)
-        //     if (!s2.contains(e))
-        //         return false;
-        // return true;
     }
 
     public static <T> boolean isSuperset(Set<T> s1, Set<T> s2) {
