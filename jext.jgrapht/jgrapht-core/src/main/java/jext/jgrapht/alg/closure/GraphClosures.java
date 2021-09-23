@@ -127,13 +127,19 @@ public class GraphClosures<V, E> {
     // Properties
     // ----------------------------------------------------------------------
 
+    public Graph<V, E> getGraph() {
+        return graph;
+    }
+
+    public Graph<V, E> getClosureGraph() {
+        return closureGraph;
+    }
+
     public Map<V, Closure<V>> getClosures() {
-        compute();
         return closures;
     }
 
     public Closure<V> getClosure(V vertex) {
-        compute();
         return closures.get(vertex);
     }
 
@@ -159,7 +165,7 @@ public class GraphClosures<V, E> {
      * @return
      */
     public Closure<V> getSingletons() {
-        compute();
+        computeClosures();
         collectSingletons();
 
         if (singleton == null)
@@ -168,18 +174,22 @@ public class GraphClosures<V, E> {
             return singleton;
     }
 
-    public Graph<V, E> getClosureGraph() {
-        return closureGraph;
-    }
-
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
+    // computeClosures
+    // collectSingletons
+    // removeDuplicates
+    //
+    // createClosureGraph
+    // computeClosureDependencies
+    // transitiveReduction
+    // mergeChains
 
     /**
      * Compute the closures (in parallel)
      */
-    public void compute() {
+    public void computeClosures() {
         // check if already computed
         if (!closures.isEmpty())
             return;
@@ -326,8 +336,7 @@ public class GraphClosures<V, E> {
     // Closure containment graph
     // ----------------------------------------------------------------------
 
-    public void createGraphOnClosures() {
-        // create a graph
+    public void createClosureGraph() {
         closureGraph = (Graph<V, E>) Graphs.newGraph(
             true,
             false,
@@ -336,10 +345,6 @@ public class GraphClosures<V, E> {
             graph.getVertexSupplier(),
             graph.getEdgeSupplier());
 
-        populateVertices();
-    }
-
-    private void populateVertices() {
         // populate with the edges
         closures.keySet().forEach(vertex -> {
             closureGraph.addVertex(vertex);
@@ -357,11 +362,11 @@ public class GraphClosures<V, E> {
      *
      * if closure.members is a superset than  smallerClosure.members
      */
-    public void computeDependencies() {
-        Serial.forEach(2, maxSize, this::computeDependencies);
+    public void computeClosureDependencies() {
+        Serial.forEach(2, maxSize, this::computeClosureDependencies);
     }
 
-    private void computeDependencies(int size) {
+    private void computeClosureDependencies(int size) {
         List<Closure<V>> closures = getClosures(size);
         List<Closure<V>> smallerClosures = getSmallerClosures(size);
 

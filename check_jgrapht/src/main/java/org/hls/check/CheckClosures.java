@@ -31,7 +31,7 @@ public class CheckClosures {
 
         GraphClosures<String, DirectedEdge> gc = new GraphClosures<>(g);
 
-        gc.compute();
+        gc.computeClosures();
         gc.collectSingletons();
         gc.removeDuplicates();
 
