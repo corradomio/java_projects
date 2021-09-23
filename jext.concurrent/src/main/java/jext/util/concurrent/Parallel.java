@@ -172,41 +172,30 @@ public class Parallel {
     // ----------------------------------------------------------------------
 
     public static void forEach(int first, int last, IntConsumer body) {
-
-        // new Parallelize().forEach(first, last, body);
-
-        // Counters counters = new Counters();
         List<Callable<Boolean>> tasks = new ArrayList<>();
-        for(int t=first; t<last; ++t) tasks.add(new IntTask(t, body/*, counters*/));
+
+        if (first <= last)
+            for (int t = first; t < last; ++t) tasks.add(new IntTask(t, body));
+        else
+            for (int t = last; t > first; --t) tasks.add(new IntTask(t, body));
+
         invokeAll(tasks);
     }
 
     public static <T> void forEach(Iterable<T> it, Consumer<T> body) {
-
-        // new Parallelize().forEach(it, body);
-
-        // Counters counters = new Counters();
         List<Callable<Boolean>> tasks = new ArrayList<>();
-        for(T t : it) tasks.add(new Task<>(t, body/*, counters*/));
+        for(T t : it) tasks.add(new Task<>(t, body));
         invokeAll(tasks);
     }
 
     public static <T> void forEach(Stream<T> s, Consumer<T> body) {
-
-        // new Parallelize().forEach(s, body);
-
-        // Counters counters = new Counters();
-        List<Callable<Boolean>> tasks = s.map(t -> new Task<>(t, body/*, counters*/))
+        List<Callable<Boolean>> tasks = s.map(t -> new Task<>(t, body))
             .collect(Collectors.toList());
         invokeAll(tasks);
     }
 
     public static void forEach(IntStream s, IntConsumer body) {
-
-        // new Parallelize().forEach(s, body);
-
-        // Counters counters = new Counters();
-        List<Callable<Boolean>> tasks = s.mapToObj(t -> new IntTask(t, body/*, counters*/))
+        List<Callable<Boolean>> tasks = s.mapToObj(t -> new IntTask(t, body))
             .collect(Collectors.toList());
         invokeAll(tasks);
     }
@@ -216,9 +205,6 @@ public class Parallel {
     // ----------------------------------------------------------------------
 
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
-
-        // return new Parallelize().invokeAll(tasks);
-
         ExecutorService executor = null;
         List<Future<T>> futures = Collections.emptyList();
         try {

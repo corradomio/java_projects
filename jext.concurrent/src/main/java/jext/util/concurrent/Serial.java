@@ -19,8 +19,12 @@ public class Serial {
     // ----------------------------------------------------------------------
 
     public static void forEach(int first, int last, IntConsumer body) {
-        for(int i=first; i<last; ++i)
-            body.accept(i);
+        if (first <= last)
+            for(int i=first; i<last; ++i)
+                body.accept(i);
+        else
+            for(int i=last; i>first; --i)
+                body.accept(i);
     }
 
     public static <T> void forEach(Iterable<T> it, Consumer<T> body) {

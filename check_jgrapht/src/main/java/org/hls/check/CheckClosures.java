@@ -8,41 +8,69 @@ import jext.jgrapht.util.Utils;
 import jext.logging.Logger;
 import jext.util.concurrent.Parallel;
 import org.jgrapht.Graph;
-import org.jgrapht.nio.GraphExporter;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
+import org.jgrapht.nio.dot.DOTImporter;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class CheckClosures {
+
+    static DOTExporter<Integer, DirectedEdge<Integer>> newExporter() {
+        DOTExporter<Integer, DirectedEdge<Integer>> exporter = new DOTExporter<>();
+        exporter.setVertexAttributeProvider((v) -> {
+            Map<String, Attribute> map = new LinkedHashMap<>();
+            map.put("label", DefaultAttribute.createAttribute(v.toString()));
+            return map;
+        });
+        return exporter;
+    }
+
+    static DOTImporter<Integer, DirectedEdge<Integer>> newImporter() {
+        DOTImporter<Integer, DirectedEdge<Integer>> importer = new DOTImporter<>();
+        // importer.addVertexAttributeConsumer((v) -> {
+        //     Map<String, Attribute> map = new LinkedHashMap<>();
+        //     map.put("label", DefaultAttribute.createAttribute(v.toString()));
+        //     return map;
+        // });
+        return importer;
+    }
 
     public static void main(String[] args) {
 
         Logger.configure();
 
-        Set<Integer> s1 = Utils.asSet(1,2,3);
-        Set<Integer> s2 = Utils.asSet(1,2);
+        // --
 
-        System.out.println(Utils.isSuperset(s1,s2));
-        System.out.println(Utils.isSubset(s1,s2));
-        System.out.println(Utils.isSameSet(s1,s2));
+        Graph<Integer, DirectedEdge<Integer>> g = (Graph)Graphs.newGraph(Integer.class, DirectedEdge.class);
 
-        Graph<String, DirectedEdge> g = Graphs.newGraph(String.class, DirectedEdge.class);
+        // --
 
         //RandomGraphGenerator<String, DirectedEdge> gg = new RandomGraphGenerator();
-        RandomCavemanGraphGenerator gg = new RandomCavemanGraphGenerator(
+        RandomCavemanGraphGenerator<Integer, DirectedEdge<Integer>> gg = new RandomCavemanGraphGenerator<>(
             100,
             100,
-            5,
+            3,
             0.1,
             0.9,
             false);
         gg.generateGraph(g);
 
-        GraphExporter<String, DirectedEdge> ge = new DOTExporter<>();
-        ge.exportGraph(g, new File("graph.dot"));
+        // newImporter().importGraph(g, new File("graph.dot"));
 
-        GraphClosures<String, DirectedEdge> gc = new GraphClosures<>(g);
+        // g = (Graph)Graphs.newGraph(Integer.class, DirectedEdge.class);
+        // Graphs.addPath(g, 1,2,3,4,5,6);
+        // Graphs.addPath(g, 1,3,6);
+
+        newExporter().exportGraph(g, new File("graph.dot"));
+
+        // -----------------------------------------------------------------------
+
+        GraphClosures<Integer, DirectedEdge<Integer>> gc = new GraphClosures<>(g);
 
         gc.computeClosures();
         gc.collectSingletons();
@@ -50,19 +78,66 @@ public class CheckClosures {
 
         gc.createClosureGraph();
         gc.computeClosureDependencies();
+
+        newExporter().exportGraph(gc.getClosureGraph(), new File("notransitive.dot"));
+
+        // --
+
         gc.transitiveReduction();
 
-        new DOTExporter<String, DirectedEdge>()
-            .exportGraph(gc.getClosureGraph(), new File("closure.dot"));
+        newExporter().exportGraph(gc.getClosureGraph(), new File("closures.dot"));
+
+        // --
+
+        gc.pruneLeaves();
+
+        newExporter().exportGraph(gc.getClosureGraph(), new File("leavesPruned.dot"));
+
+        // --
 
         gc.mergeChains();
 
-        new DOTExporter<String, DirectedEdge>()
-            .exportGraph(gc.getClosureGraph(), new File("nochains.dot"));
+        newExporter().exportGraph(gc.getClosureGraph(), new File("chainsMerged.dot"));
 
-        System.out.println(gc.getSingletons().size());
+        // ---------------------------------------------------------
+        //
+        // -----------------------------------------------------------------------
 
-        System.out.println(g.getClass());
+        g = gc.getClosureGraph();
+
+        gc = new GraphClosures<>(g);
+
+        gc.computeClosures();
+        gc.collectSingletons();
+        gc.removeDuplicates();
+
+        gc.createClosureGraph();
+        gc.computeClosureDependencies();
+
+        newExporter().exportGraph(gc.getClosureGraph(), new File("notransitive1.dot"));
+
+        // --
+
+        gc.transitiveReduction();
+
+        newExporter().exportGraph(gc.getClosureGraph(), new File("closures1.dot"));
+
+        // --
+
+        gc.pruneLeaves();
+
+        newExporter().exportGraph(gc.getClosureGraph(), new File("leavesPruned1.dot"));
+
+        // --
+
+        gc.mergeChains();
+
+        newExporter().exportGraph(gc.getClosureGraph(), new File("chainsMerged1.dot"));
+
+        // ---------------------------------------------------------
+
+
+
         System.out.println("done");
 
         Parallel.shutdown();

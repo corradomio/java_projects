@@ -1,6 +1,8 @@
 data
 weighted
 *.dot
+*.gml
+*.graphml
 *.json
 *.csv
 saved

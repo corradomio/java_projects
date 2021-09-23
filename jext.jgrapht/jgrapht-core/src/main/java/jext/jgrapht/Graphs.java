@@ -148,7 +148,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      */
     public static <V> Supplier<V> vertexSupplier(Class<V> vertexClass) {
         if (vertexClass.equals(Integer.class) || vertexClass.equals(int.class))
-            return (Supplier<V>) SupplierUtil.createIntegerSupplier();
+            return (Supplier<V>) SupplierUtil.createIntegerSupplier(1);
         if (vertexClass.equals(Long.class) || vertexClass.equals(long.class))
             return (Supplier<V>) SupplierUtil.createLongSupplier();
         if (vertexClass.equals(String.class))
@@ -401,6 +401,42 @@ public abstract class Graphs extends org.jgrapht.Graphs {
             return g;
 
         return new AsSubgraph<>(g, selected[0]);
+    }
+
+    // ----------------------------------------------------------------------
+    // Graph properties
+    // ----------------------------------------------------------------------
+
+    public static <V, E> Graph<V, E> union(Graph<V, E> g1, Graph<V, E> g2) {
+        Graph<V, E> gu = newGraph(g1);
+
+        g1.vertexSet().forEach(gu::addVertex);
+        g2.vertexSet().forEach(gu::addVertex);
+
+        g1.edgeSet().forEach(e -> addEdge(gu, g1, e));
+        g2.edgeSet().forEach(e -> addEdge(gu, g2, e));
+
+        return gu;
+    }
+
+    private static <V, E> void addEdge(Graph<V, E> a, Graph<V, E> g, E e) {
+        V sourceVertex = g.getEdgeSource(e);
+        V targetVertex = g.getEdgeTarget(e);
+        a.addEdge(sourceVertex, targetVertex);
+    }
+
+    // ----------------------------------------------------------------------
+    // Graph properties
+    // ----------------------------------------------------------------------
+
+    public static <V,E> Graph<V,E> addPath(Graph<V,E> g, V... vertices) {
+        if (vertices == null || vertices.length < 2)
+            return g;
+
+        for(int i=0; i<vertices.length-1; ++i)
+            addEdge(g, vertices[i], vertices[i+1]);
+
+        return g;
     }
 
     // ----------------------------------------------------------------------
