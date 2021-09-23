@@ -12,9 +12,9 @@ public class Utils {
         return array;
     }
 
-    // public static <T> boolean isSuperset(Set<T> s1, Set<T> s2) {
-    //     return s1.containsAll(s2);
-    // }
+    public static <T> boolean isSuperset(Set<T> s1, Set<T> s2) {
+        return s1.containsAll(s2);
+    }
 
     public static <T> boolean isSameSet(Set<T> s1, Set<T> s2) {
         return s1.containsAll(s2) && s2.containsAll(s1);
