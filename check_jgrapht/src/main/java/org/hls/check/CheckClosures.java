@@ -51,10 +51,14 @@ public class CheckClosures {
         gc.createClosureGraph();
         gc.computeClosureDependencies();
         gc.transitiveReduction();
+
+        new DOTExporter<String, DirectedEdge>()
+            .exportGraph(gc.getClosureGraph(), new File("closure.dot"));
+
         gc.mergeChains();
 
-        ge = new DOTExporter<>();
-        ge.exportGraph(gc.getClosureGraph(), new File("closure.dot"));
+        new DOTExporter<String, DirectedEdge>()
+            .exportGraph(gc.getClosureGraph(), new File("nochains.dot"));
 
         System.out.println(gc.getSingletons().size());
 
