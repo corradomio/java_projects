@@ -8,6 +8,7 @@ import jext.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 
 public class JSONUtils {
 
@@ -25,6 +26,12 @@ public class JSONUtils {
         ObjectMapper mapper = newObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.writeValue(jsonFile, item);
+    }
+
+    public static <T> void save(Writer writer, T item) throws IOException {
+        ObjectMapper mapper = newObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.writeValue(writer, item);
     }
 
     public static <T> T parse(File jsonFile, Class<T> objectType) throws IOException {

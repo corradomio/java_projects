@@ -3,48 +3,52 @@ package jext.jgrapht.alg.closure;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.util.Utils;
 import jext.logging.Logger;
+import jext.util.Assert;
 import jext.util.Pair;
 import jext.util.concurrent.ConcurrentArrayList;
-import jext.util.concurrent.ConcurrentHashSet;
 import jext.util.concurrent.ConcurrentTreeSet;
 import jext.util.concurrent.Parallel;
 import jext.util.concurrent.Serial;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.TransitiveReduction;
+import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 public class GraphClosures<V, E> {
 
     private static Logger logger = Logger.getLogger(GraphClosures.class);
 
+    // ----------------------------------------------------------------------
+    // Closure
+    // ----------------------------------------------------------------------
+
     public static class Closure<V> {
         public final int inDegree;
         public final int outDegree;
-        public final V vertex;
+        public V vertex;
         public final Set<V> members;
 
-        Closure() {
+        Closure(Set<V> members) {
             this.inDegree = 0;
             this.outDegree = 0;
             this.vertex = null;
-            this.members = Collections.emptySet();
+            this.members = members;
         }
 
         Closure(V vertex, Set<V> members, int inDegree, int outDegree) {
             this.inDegree = inDegree;
             this.outDegree = outDegree;
             this.vertex = vertex;
-            this.members = new ConcurrentSkipListSet<>(members);
+            this.members = members; //new ConcurrentSkipListSet<>(members);
         }
 
         /**
@@ -58,12 +62,17 @@ public class GraphClosures<V, E> {
         /**
          * Check if two closures are the same
          * @param that other closure
-         * @return if ther are the same
+         * @return if they are the same closure
          */
         public boolean isSameSet(Closure<V> that) {
             return Utils.isSameSet(this.members, that.members);
         }
 
+        /**
+         * Check if this closure is a superset than the other one
+         * @param that other closure
+         * @return if this closure is superset that the other
+         */
         public boolean isSuperset(Closure<V> that) {
             return Utils.isSuperset(this.members, that.members);
         }
@@ -114,17 +123,30 @@ public class GraphClosures<V, E> {
     //
     // ----------------------------------------------------------------------
 
+    // current graph
     private final Graph<V, E> graph;
+    // vertex -> closure map
     private final Map<V, Closure<V>> closures = new ConcurrentHashMap<>();
+    // size -> {closures with the same size}
     private final Map<Integer, List<V>> bySize = new ConcurrentHashMap<>();
     private final Map<Integer, List<V>> bySmaller = new ConcurrentHashMap<>();
 
+    private final Set<V> singletonVertices = new HashSet<>();
+    private final Set<V> duplicatedVertices = new HashSet<>();
+
+    // 'virtual closure' collecting all nodes  with in/out degree == 0
+    // the 'reference node' is the 'lowest' node
     private Closure<V> singleton;
+    // maximum closure size
     private int maxSize;
+    // if the graph is already reduces
     private boolean graphReduced;
-    private boolean chainMerged;
+    // if the chains are already collapsed
+    private boolean chainsCollapsed;
+    // if the leaves are already pruned
     private boolean leavesPruned;
 
+    // graph created by 'closure subset relation'
     private Graph<V, E> closureGraph;
 
     // ----------------------------------------------------------------------
@@ -139,25 +161,52 @@ public class GraphClosures<V, E> {
     // Properties
     // ----------------------------------------------------------------------
 
+    /**
+     * The graph to analyze
+     * @return the graph
+     */
     public Graph<V, E> getGraph() {
         return graph;
     }
 
+    /**
+     * The graph created by 'closure subset relation'.
+     * The graph is created with 'createClosureGraph()' PLUS 'computeClosureDependencies()'
+     * It is possible to apply other 'reduction' algorithms
+     *
+     * @return the graph created
+     */
     public Graph<V, E> getClosureGraph() {
         return closureGraph;
     }
 
+    /**
+     * The map with the closure for each graph.
+     * After 'collectSingletons()' it doesn't contain the singleton nodes
+     * After 'removeDuplicates()'  it doesn't contain two nodes with the same closure
+     * @return closure's map
+     */
     public Map<V, Closure<V>> getClosures() {
         return closures;
     }
 
+    /**
+     * Retrieve the closure for the specified vertex
+     * @param vertex graph's vertex
+     * @return the vertex's closure
+     */
     public Closure<V> getClosure(V vertex) {
         return closures.get(vertex);
     }
 
+    /**
+     * Closures by size
+     * @param size size of the closure
+     * @return closures' list
+     */
     public List<Closure<V>> getClosures(int size) {
         return bySize.get(size)
-            .stream().map(vertex -> closures.get(vertex))
+            .stream().map(closures::get)
             .collect(Collectors.toList());
     }
 
@@ -167,6 +216,9 @@ public class GraphClosures<V, E> {
             smallerClosures.addAll(getClosures(ssize));
         });
         return smallerClosures;
+        // return bySmaller.get(size)
+        //     .stream().map(closures::get)
+        //     .collect(Collectors.toList());
     }
 
     /**
@@ -177,17 +229,12 @@ public class GraphClosures<V, E> {
      * @return
      */
     public Closure<V> getSingletons() {
-        computeClosures();
-        collectSingletons();
-
-        if (singleton == null)
-            return new Closure<>();
-        else
-            return singleton;
+        Assert.check(singleton != null, "singletons not initialized");
+        return singleton;
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Operations
     // ----------------------------------------------------------------------
     // computeClosures
     // collectSingletons
@@ -196,7 +243,11 @@ public class GraphClosures<V, E> {
     // createClosureGraph
     // computeClosureDependencies
     // transitiveReduction
-    // mergeChains
+    // collapseChains
+
+    // ----------------------------------------------------------------------
+    // computeClosures
+    // ----------------------------------------------------------------------
 
     /**
      * Compute the closures (in parallel)
@@ -211,7 +262,7 @@ public class GraphClosures<V, E> {
         Parallel.forEach(graph.vertexSet(), vertex -> {
             logger.debugft("... computeClosures[%s]", vertex.toString());
 
-            int inDegree = graph.inDegreeOf(vertex);
+            int inDegree  = graph.inDegreeOf(vertex);
             int outDegree = graph.outDegreeOf(vertex);
             Set<V> closure = Graphs.closureOf(graph, vertex);
             add(new Closure<>(vertex, closure, inDegree, outDegree));
@@ -219,11 +270,12 @@ public class GraphClosures<V, E> {
 
         // fill all sizes [0..maxSize]
         // used to skip useless tests
-        fill();
+        fillBySize();
+        fillSmaller();
     }
 
     /**
-     * Add a closure in 'closures' and 'verticesBySize';
+     * Add a closure in 'closures' and 'bySize';
      * @param closure
      */
     private void add(Closure<V> closure) {
@@ -238,18 +290,28 @@ public class GraphClosures<V, E> {
     }
 
     /**
-     * Fill 'verticesBySize' with missing closure sizes.
+     * Fill 'bySize' with missing closure sizes, and 'bySmaller'
+     * with the list of edges with closure sizes smaller than the
+     * current size
      * Used to simplify the code
      */
-    private void fill() {
+    private void fillBySize() {
         Serial.forEach(0, maxSize+1, size -> {
             if (!bySize.containsKey(size))
                 bySize.put(size, Collections.emptyList());
         });
     }
 
+    private void fillSmaller() {
+        List<V> smallers = new ArrayList<>();
+        Serial.forEach(0, maxSize+1, size -> {
+            bySmaller.put(size, smallers);
+            smallers.addAll(bySize.get(size));
+        });
+    }
+
     // ----------------------------------------------------------------------
-    //
+    // collectSingletons
     // ----------------------------------------------------------------------
 
     /**
@@ -267,33 +329,32 @@ public class GraphClosures<V, E> {
         // check if already computed
         if (singleton != null)
             return;
+        else
+            singleton = new Closure<>(singletonVertices);
 
         logger.info("collectSingletons");
 
         // check if there are singletons vertices with |closure| == 1
         if (bySize.get(1).isEmpty()) {
-            singleton = new Closure<>();
             return;
         }
 
         // collect all singletons
-        TreeSet<V> singletons = new TreeSet<>();
         bySize.get(1).forEach(vertex -> {
             Closure<V> closure = closures.get(vertex);
+            // a 'singleton' must have in/out degree == 0
             if (closure.inDegree == 0 && closure.outDegree == 0)
-                singletons.add(vertex);
+                singletonVertices.add(vertex);
         });
 
         // there are vertices with |closure| == 1 but they are NOT
         // singletons because the in degree != 0
-        if (singletons.isEmpty()) {
-            singleton = new Closure<>();
+        if (singletonVertices.isEmpty()) {
             return;
         }
 
         // select as singleton reference the first ordered vertex
-        V singletonVertex = singletons.first();
-        singleton = new Closure<>(singletonVertex, singletons, 0, 0);
+        singleton.vertex = singletonVertices.iterator().next();
 
         // remove the singletons from 'closuresBySize' and 'closures'
         singleton.members.forEach(this::remove);
@@ -315,7 +376,6 @@ public class GraphClosures<V, E> {
      */
     public void removeDuplicates() {
         logger.info("removeDuplicates");
-        Set<V> removed = new ConcurrentHashSet<>();
 
         Parallel.forEach(2, maxSize+1, size -> {
             V[] vertices = Utils.toArray(bySize.get(size));
@@ -330,36 +390,39 @@ public class GraphClosures<V, E> {
 
                     logger.debugft("... comparing %s,%s", vi.toString(), vj.toString());
 
+                    // already marked to be remove
+                    if (duplicatedVertices.contains(ci.vertex))
+                        continue;
                     // they are not the same set
                     if (!ci.isSameSet(cj))
                         continue;
-                    // already marked to be remove
-                    if (removed.contains(ci.vertex))
-                        return;
 
                     if (ci.isRemovable(cj))
-                        removed.add(ci.vertex);
+                        duplicatedVertices.add(ci.vertex);
                     else
-                        removed.add(cj.vertex);
+                        duplicatedVertices.add(cj.vertex);
                 }
             }
         });
 
-        // remove all vertices from 'closures' and 'verticesBySize'
-        removed.forEach(this::remove);
-        logger.warnf("... duplicates %s", removed);
+        // remove all vertices from 'closures' and 'bySize'
+        duplicatedVertices.forEach(this::remove);
+        fillSmaller();
+
+        logger.warnf("... duplicates %s", duplicatedVertices);
     }
 
     /**
-     * Remove vertex from 'closures' and 'verticesBySize'
+     * Remove vertex from 'closures' and 'bySize'
      * @param vertex
      */
     private void remove(V vertex) {
         // remove from 'closures'
-        Closure<V> closure = closures.remove(vertex);
+        // Closure<V> closure = closures.remove(vertex);
+        Closure<V> closure = closures.get(vertex);
         int size = closure.size();
 
-        // remove from 'verticesBySize'
+        // remove from 'bySize'
         bySize.get(size).remove(vertex);
     }
 
@@ -382,6 +445,12 @@ public class GraphClosures<V, E> {
 
         // populate with the edges
         closures.keySet().forEach(vertex -> {
+            // skip vertices removed because 'singleton'
+            if (singletonVertices.contains(vertex))
+                return;
+            // skip vertices removed because 'duplicated'
+            if (duplicatedVertices.contains(vertex))
+                return;
             closureGraph.addVertex(vertex);
         });
     }
@@ -440,102 +509,6 @@ public class GraphClosures<V, E> {
     }
 
     // ----------------------------------------------------------------------
-    // mergeChains
-    // ----------------------------------------------------------------------
-
-    /**
-     * Merge
-     *      (a)->(b)->(c)->(d)
-     *
-     * in
-     *
-     *      (a)----------->(d)
-     *
-     * Note:
-     *  because the relations are based on containment, the closure of
-     *  a is a superset than b,c,d. This means that it is not necessary
-     *  to 'merge' the closures!
-     */
-    public void mergeChains() {
-        if (chainMerged)
-            return;
-        else
-            chainMerged = true;
-
-        logger.info("mergeChains");
-
-        boolean merged = true;
-        while (merged)
-            merged = mergeChainsStep();
-    }
-
-    private boolean mergeChainsStep() {
-        logger.info("... mergeChainsStep");
-
-        // 1) search all vertices with input/output degree = 1
-
-        Set<V> inChain = new ConcurrentTreeSet<>();
-
-        Parallel.forEach(closureGraph.vertexSet(), vertex -> {
-            int inDegree  = closureGraph.inDegreeOf(vertex);
-            int outDegree = closureGraph.outDegreeOf(vertex);
-            if (inDegree == 1 && outDegree == 1)
-                inChain.add(vertex);
-        });
-
-        if (inChain.isEmpty())
-            return false;
-
-        logger.infof("... inChain %s", inChain);
-
-        // 2) search the chain head (backward)
-        //    and the chain tail (forward)
-        Set<Pair<V, V>> chains = new ConcurrentTreeSet<>();
-
-        Parallel.forEach(inChain, vertex -> {
-            V head = vertex;
-            V tail = vertex;
-
-            while(closureGraph.inDegreeOf(head) == 1)
-                head = backward(head);
-            while(closureGraph.outDegreeOf(tail) == 1)
-                tail = forward(tail);
-
-            chains.add(new Pair<>(head, tail));
-        });
-
-        logger.infof("... chains %s", chains);
-
-        // remove vertices
-        inChain.forEach(closureGraph::removeVertex);
-
-        // add edges
-        chains.forEach(edge -> {
-            V sourceVertex = edge.getKey();
-            V targetVertex = edge.getValue();
-
-            if (inChain.contains(sourceVertex) || inChain.contains(targetVertex))
-                return;
-
-            closureGraph.addEdge(sourceVertex, targetVertex);
-        });
-
-        return true;
-    }
-
-    private V backward(V vertex) {
-        Set<E> edges = closureGraph.incomingEdgesOf(vertex);
-        E e = edges.iterator().next();
-        return closureGraph.getEdgeSource(e);
-    }
-
-    private V forward(V vertex) {
-        Set<E> edges = closureGraph.outgoingEdgesOf(vertex);
-        E e = edges.iterator().next();
-        return closureGraph.getEdgeTarget(e);
-    }
-
-    // ----------------------------------------------------------------------
     // pruneLeaves
     // ----------------------------------------------------------------------
 
@@ -553,17 +526,194 @@ public class GraphClosures<V, E> {
             List<V> removed = new ConcurrentArrayList<>();
 
             Parallel.forEach(closureGraph.vertexSet(), vertex -> {
-                int inDegree = closureGraph.inDegreeOf(vertex);
-                int outDegree = closureGraph.outDegreeOf(vertex);
-
-                if (inDegree == 1 && outDegree == 0)
+                if (isLeaf(vertex))
                     removed.add(vertex);
             });
 
             terminated = removed.isEmpty();
 
             removed.forEach(closureGraph::removeVertex);
+
+            logger.infof("... pruned %s", removed);
         }
+    }
+
+    private boolean isLeaf(V vertex) {
+        return closureGraph.inDegreeOf(vertex) == 1
+            && closureGraph.outDegreeOf(vertex) == 0;
+    }
+
+    // ----------------------------------------------------------------------
+    // collapseChains
+    // ----------------------------------------------------------------------
+
+    /**
+     * Collapse
+     *
+     *      (a)->(b)->(c)->(d)
+     *
+     * in
+     *
+     *      (a)----------->(d)
+     *
+     * Note:
+     *  because the relations are based on containment, the closure of
+     *  a is a superset than b,c,d. This means that it is not necessary
+     *  to 'merge' the closures!
+     */
+    public void collapseChains() {
+        if (chainsCollapsed)
+            return;
+        else
+            chainsCollapsed = true;
+
+        logger.info("collapseChains");
+
+        boolean collapsed = true;
+        while (collapsed)
+            collapsed = collapseStep();
+    }
+
+    private boolean collapseStep() {
+        // logger.info("... collapseStep");
+
+        // 1) search all vertices with input/output degree = 1
+
+        Set<V> inChain = new ConcurrentTreeSet<>();
+
+        Parallel.forEach(closureGraph.vertexSet(), vertex -> {
+            if (isInChain(vertex))
+                inChain.add(vertex);
+        });
+
+        if (inChain.isEmpty())
+            return false;
+
+        // logger.infof("... inChain %s", inChain);
+
+        // 2) search the chain head (backward)
+        //    and the chain tail (forward)
+        Set<Pair<V, V>> chains = new ConcurrentTreeSet<>();
+
+        Parallel.forEach(inChain, vertex -> {
+            V head = vertex;
+            V tail = vertex;
+
+            Set<V> chain = new HashSet<>();
+            add(vertex, chain);
+
+            while(isInChain(head))
+                head = add(backward(head), chain);
+            while(isInChain(tail))
+                tail = add(forward(tail), chain);
+
+            logger.infof("... chain %s", chain);
+
+            chains.add(new Pair<>(head, tail));
+        });
+
+        // logger.infof("... chains %s", chains);
+
+        // remove vertices
+        inChain.forEach(closureGraph::removeVertex);
+
+        // add edges
+        chains.forEach(edge -> {
+            V sourceVertex = edge.getKey();
+            V targetVertex = edge.getValue();
+
+            if (inChain.contains(sourceVertex) || inChain.contains(targetVertex)) {
+                logger.warnf("... %s or %s is a inChain vertex", sourceVertex, targetVertex);
+                return;
+            }
+
+            closureGraph.addEdge(sourceVertex, targetVertex);
+        });
+
+        return true;
+    }
+
+    private boolean isInChain(V vertex) {
+        return closureGraph.inDegreeOf(vertex) == 1
+            && closureGraph.outDegreeOf(vertex) == 1;
+    }
+
+    private V backward(V vertex) {
+        Set<E> edges = closureGraph.incomingEdgesOf(vertex);
+        E e = edges.iterator().next();
+        return closureGraph.getEdgeSource(e);
+    }
+
+    private V forward(V vertex) {
+        Set<E> edges = closureGraph.outgoingEdgesOf(vertex);
+        E e = edges.iterator().next();
+        return closureGraph.getEdgeTarget(e);
+    }
+
+    private V add(V vertex, Set<V> chain) {
+        chain.add(vertex);
+        return vertex;
+    }
+
+    // ----------------------------------------------------------------------
+    // Check for cycles
+    // ----------------------------------------------------------------------
+
+    public boolean isDAG() {
+
+        CycleDetector<V, E> cycleDetector = new CycleDetector<>(closureGraph);
+
+        if (cycleDetector.detectCycles()) {
+            logger.warn("NOT DAG");
+            return false;
+        }
+        else {
+            logger.warn("DAG");
+            return true;
+        }
+
+    }
+
+    // ----------------------------------------------------------------------
+    // Listeners
+    // ----------------------------------------------------------------------
+
+    public static class Event<V, E> {
+        public Graph<V, E> graph;
+        public String name;
+        public String message;
+        public int count;
+
+        Event(Graph<V, E> g, String n, String m, int c) {
+            graph = g;
+            name = n;
+            message = m;
+            count = c;
+        }
+    }
+
+    public interface Listener<V, E> {
+        void stepStarted(Event<V, E> event);
+        void step(Event<V, E> event);
+        void stepDone(Event<V, E> event);
+    }
+
+    private final List<Listener<V, E>> listeners = new ArrayList<>();
+
+    public void addListener(Listener<V, E> l) {
+        listeners.add(l);
+    }
+
+    private void fireStart(Event<V, E> ev) {
+        listeners.forEach(l -> l.stepStarted(ev));
+    }
+
+    private void fireStep(Event<V, E> ev) {
+        listeners.forEach(l -> l.step(ev));
+    }
+
+    private void fireDone(Event<V, E> ev) {
+        listeners.forEach(l -> l.stepDone(ev));
     }
 
     // ----------------------------------------------------------------------
