@@ -80,9 +80,9 @@ public class ResourceFile extends NamedObject implements Resource {
         return module;
     }
 
-    @Override
-    public String getModuleId() {
-        return module.getId();
-    }
+    // @Override
+    // public String getModuleId() {
+    //     return module.getId();
+    // }
 
 }

@@ -25,6 +25,7 @@ import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
 import jext.util.LongHash;
+import jext.util.LongUtils;
 import jext.util.SetUtils;
 
 import java.io.File;
@@ -121,9 +122,9 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     public String getDigest() {
         long[] digest = new long[1];
         getSources().forEach(source -> {
-            digest[0] = LongHash.concat(digest[0], Long.parseLong(source.getDigest()));
+            digest[0] = LongHash.concat(digest[0], LongUtils.parseLong(source.getDigest()));
         });
-        return Long.toString(digest[0]);
+        return Long.toHexString(digest[0]);
     }
 
     // ----------------------------------------------------------------------
@@ -291,12 +292,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         return runtimeLibrary;
     }
 
-    // @Override
-    // public Set<Library> getLibraries() {
-    //     LibrarySet projectLibraries = (LibrarySet) project.getLibraries();
-    //     return projectLibraries.resolveAll(getDeclaredLibraries());
-    // }
-
     @Override
     public Set<Library> getDeclaredLibraries() {
         if (libraries != null)
@@ -363,7 +358,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
         MavenDownloader md = project.getLibraryDownloader();
         // md.checkArtifacts(coordList);
-        // coordList.sort(Comparator.naturalOrder());
 
         coordList.stream()
             .map(lcoords -> new MavenLibrary(lcoords, md, project))

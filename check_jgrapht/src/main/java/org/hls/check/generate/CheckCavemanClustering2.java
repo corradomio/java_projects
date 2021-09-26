@@ -6,7 +6,7 @@
 // import jext.jgrapht.alg.clustering.ColoringClustering;
 // import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 // import jext.jgrapht.generate.RandomCavemanGraphGenerator;
-// import jext.jgrapht.graph.TransformGraph;
+// import jext.jgrapht.alg.transform.TransformGraph;
 // import jext.jgrapht.util.Distrib;
 // import jext.jgrapht.util.WeightMode;
 // import jext.jgrapht.util.distrib.NormalDistrib;

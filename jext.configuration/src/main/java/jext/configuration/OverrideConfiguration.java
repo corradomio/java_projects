@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-
 public class OverrideConfiguration implements HierarchicalConfiguration {
 
     private static final Logger logger = Logger.getLogger(OverrideConfiguration.class);

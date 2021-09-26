@@ -18,13 +18,12 @@ public class ProjectRevisions implements Revisions {
     private static final String SOURCE_INFO       = "source-info.json";
     private static final String SOURCE_INFO_REV   = "source-info-%04d.json";
     private static final String SOURCE_INFO_NAME  = "source-info";
-    private static final String PROJECT_INFO      = "project-info.json";
-    private static final String PROJECT_INFO_REV  = "project-info-%04d.json";
-    private static final String PROJECT_INFO_NAME = "project-info";
-    private static final String DIFFERENCES_NONE  = "differences-none-%04d.json";
-    private static final String DIFFERENCES_INFO  = "differences-%04d-%04d.json";
-    private static final String DIFFERENCES_INFO_NAME = "differences-";
-
+    private static final String PROJECT_INFO      = "source-project.json";
+    private static final String PROJECT_INFO_REV  = "source-project-%04d.json";
+    private static final String PROJECT_INFO_NAME = "source-project";
+    private static final String DIFFERENCES_NONE  = "source-diff-none-%04d.json";
+    private static final String DIFFERENCES_INFO  = "source-diff-%04d-%04d.json";
+    private static final String DIFFERENCES_INFO_NAME = "source-diff-";
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -144,7 +143,7 @@ public class ProjectRevisions implements Revisions {
 
     public void saveDifferences() {
         try {
-            File differenceInfo =getDifferenceInfo(srcRevision, dstRevision);
+            File differenceInfo = getDifferenceInfo(srcRevision, dstRevision);
             JSONUtils.save(differenceInfo, pdiff);
         } catch (IOException e) { }
     }
@@ -196,5 +195,9 @@ public class ProjectRevisions implements Revisions {
 
         return pdiff;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

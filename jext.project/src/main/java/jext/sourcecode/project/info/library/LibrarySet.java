@@ -1,6 +1,8 @@
 package jext.sourcecode.project.info.library;
 
 import jext.logging.Logger;
+import jext.maven.MavenCoords;
+import jext.maven.MavenDownloader;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
@@ -10,6 +12,7 @@ import java.util.AbstractSet;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -169,24 +172,26 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
         return null;
     }
 
-    // public void checkArtifacts() {
-    //     List<MavenCoords> artifacts = mavenLibraries
-    //         .values()
-    //         .stream()
-    //         .map(MavenLibrary::getCoords)
-    //         .collect(Collectors.toList());
-    //
-    //     Parallel.forEach(mavenLibraries.values(), mavenLibrary -> {
-    //         try {
-    //             MavenCoords coords = mavenLibrary.getCoords();
-    //             MavenDownloader md = mavenLibrary.getMavenDownloader();
-    //             md.getPom(coords);
-    //             md.getArtifact(coords);
-    //         }
-    //         catch (RuntimeException e) {
-    //             logger.errorf("Unable to check %s: %s", mavenLibrary.getName(), e.getMessage());
-    //         }
-    //     });
-    // }
+    @Override
+    public void checkArtifacts(MavenDownloader md, boolean parallel) {
+        List<MavenCoords> artifacts = mavenLibraries
+            .values()
+            .stream()
+            .filter(library -> library.getLibraryType() == LibraryType.MAVEN)
+            // Library is a 'LibraryNode' NOT a 'MavenLibrary'
+            .map(library -> MavenCoords.of(library.getName().getName(), library.getVersion()))
+            .collect(Collectors.toList());
+
+        if (parallel) {
+            (new Thread(){
+                public void run() {
+                    md.checkArtifacts(artifacts, false, parallel);
+                }
+            }).start();
+        }
+        else {
+            md.checkArtifacts(artifacts, true, parallel);
+        }
+    }
 
 }

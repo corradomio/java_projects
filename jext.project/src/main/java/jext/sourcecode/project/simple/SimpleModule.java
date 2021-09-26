@@ -5,7 +5,6 @@ import jext.sourcecode.project.util.BaseModule;
 
 import java.io.File;
 
-
 public class SimpleModule extends BaseModule {
 
     // ----------------------------------------------------------------------

@@ -13,10 +13,9 @@ public interface Resource extends IdNamed {
     File   getFile();
 
     Module getModule();
+    // String getModuleId();
 
     Project getProject();
-
-    String getModuleId();
 
     String getDigest();
 

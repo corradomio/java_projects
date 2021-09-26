@@ -558,8 +558,10 @@ public abstract class BaseProject extends NamedObject implements Project {
             // libraries.add(module.getRuntimeLibrary());
         });
 
+        MavenDownloader md = getLibraryDownloader();
+
         logger.debugf("check %d libraries", libraries.size());
-        libraries.checkArtifacts();
+        libraries.checkArtifacts(md, true);
 
         this.libraries = libraries;
 

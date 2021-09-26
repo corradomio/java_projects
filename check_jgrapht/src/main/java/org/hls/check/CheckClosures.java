@@ -2,7 +2,7 @@ package org.hls.check;
 
 import jext.jgrapht.DirectedEdge;
 import jext.jgrapht.Graphs;
-import jext.jgrapht.alg.closure.GraphClosures;
+import jext.jgrapht.alg.closure.ClosuresGraph;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.nio.adjacent.JSONGraphExporter;
 import jext.logging.Logger;
@@ -13,7 +13,6 @@ import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.GraphExporter;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.nio.dot.DOTImporter;
-import org.jgrapht.nio.json.JSONExporter;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -80,80 +79,80 @@ public class CheckClosures {
 
         // newImporter().importGraph(g, new File("graph.dot"));
 
-        // g = (Graph)Graphs.newGraph(Integer.class, DirectedEdge.class);
-        // Graphs.addPath(g, 1,2,3,4,5,6);
-        // Graphs.addPath(g, 1,3,6);
+        g = (Graph)Graphs.newGraph(Integer.class, DirectedEdge.class);
+        Graphs.addVertices(g, 1,2,3,4,5,6,7);
+        Graphs.addEdges(g, 1,2, 1,3, 4,5, 4,6);
 
         newExporter().exportGraph(g, new File("graph.dot"));
         newExporter("json").exportGraph(g, new File("graph.json"));
 
         // -----------------------------------------------------------------------
 
-        GraphClosures<Integer, DirectedEdge<Integer>> gc = new GraphClosures<>(g);
+        ClosuresGraph<Integer, DirectedEdge<Integer>> cg = new ClosuresGraph<>(g);
 
-        gc.computeClosures();
-        gc.collectSingletons();
-        gc.removeDuplicates();
+        cg.computeClosures();
+        cg.collectSingletons();
+        cg.removeDuplicates();
 
-        gc.createClosureGraph();
-        gc.computeClosureDependencies();
+        cg.createClosureGraph();
+        cg.computeClosureDependencies();
 
-        newExporter().exportGraph(gc.getClosureGraph(), new File("notransitive.dot"));
-
-        // --
-
-        gc.transitiveReduction();
-
-        newExporter().exportGraph(gc.getClosureGraph(), new File("closures.dot"));
+        newExporter().exportGraph(cg.getClosureGraph(), new File("notransitive.dot"));
 
         // --
 
-        gc.pruneLeaves();
+        cg.transitiveReduction();
 
-        newExporter().exportGraph(gc.getClosureGraph(), new File("leavesPruned.dot"));
+        newExporter().exportGraph(cg.getClosureGraph(), new File("closures.dot"));
 
         // --
 
-        gc.collapseChains();
-        gc.isDAG();
+        cg.pruneLeaves();
 
-        newExporter().exportGraph(gc.getClosureGraph(), new File("chainsCollapsed.dot"));
+        newExporter().exportGraph(cg.getClosureGraph(), new File("leavesPruned.dot"));
+
+        // --
+
+        cg.collapseChains();
+        cg.isDAG();
+
+        newExporter().exportGraph(cg.getClosureGraph(), new File("chainsCollapsed.dot"));
 
         // ---------------------------------------------------------
         //
         // -----------------------------------------------------------------------
 
-        g = gc.getClosureGraph();
+        g = cg.getClosureGraph();
 
-        gc = new GraphClosures<>(g);
+        cg = new ClosuresGraph<>(g);
 
-        gc.computeClosures();
-        gc.collectSingletons();
-        gc.removeDuplicates();
+        cg.computeClosures();
+        cg.collectSingletons();
+        cg.removeDuplicates();
 
-        gc.createClosureGraph();
-        gc.computeClosureDependencies();
+        cg.createClosureGraph();
+        cg.computeClosureDependencies();
 
-        newExporter().exportGraph(gc.getClosureGraph(), new File("notransitive1.dot"));
-
-        // --
-
-        gc.transitiveReduction();
-
-        newExporter().exportGraph(gc.getClosureGraph(), new File("closures1.dot"));
+        newExporter().exportGraph(cg.getClosureGraph(), new File("notransitive1.dot"));
 
         // --
 
-        gc.pruneLeaves();
+        cg.transitiveReduction();
 
-        newExporter().exportGraph(gc.getClosureGraph(), new File("leavesPruned1.dot"));
+        newExporter().exportGraph(cg.getClosureGraph(), new File("closures1.dot"));
 
         // --
 
-        gc.collapseChains();
-        gc.isDAG();
+        cg.pruneLeaves();
 
-        newExporter().exportGraph(gc.getClosureGraph(), new File("chainsCollapsed1.dot"));
+        newExporter().exportGraph(cg.getClosureGraph(), new File("leavesPruned1.dot"));
+
+        // --
+
+        cg.collapseChains();
+        cg.isDAG();
+
+        newExporter().exportGraph(cg.getClosureGraph(), new File("chainsCollapsed1.dot"));
 
         // ---------------------------------------------------------
 

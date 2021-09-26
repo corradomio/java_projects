@@ -133,13 +133,13 @@ public class ReferencedType extends NamedObject implements RefType {
         return library;
     }
 
-    @Override
-    public String getLibraryId() {
-        if (library != null)
-            return library.getId();
-        else
-            return null;
-    }
+    // @Override
+    // public String getLibraryId() {
+    //     if (library != null)
+    //         return library.getId();
+    //     else
+    //         return null;
+    // }
 
     @Override
     public Project getProject() {

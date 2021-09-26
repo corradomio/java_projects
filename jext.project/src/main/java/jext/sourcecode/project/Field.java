@@ -5,9 +5,9 @@ import jext.name.IdNamed;
 public interface Field extends IdNamed {
 
     RefType getType();
-    String getTypeId();
+    // String getTypeId();
 
     RefType getOwnerType();
-    String getOwnerTypeId();
+    // String getOwnerTypeId();
 
 }

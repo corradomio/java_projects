@@ -235,9 +235,9 @@ public class ProjectDifferences {
                     continue;
                 }
 
-                long src_digest = MapUtils.getLong(src_sources, sourceName, "digest");
-                long dst_digest = MapUtils.getLong(dst_sources, sourceName, "digest");
-                if (src_digest != (dst_digest)) {
+                String src_digest = MapUtils.getString(src_sources, sourceName, "digest");
+                String dst_digest = MapUtils.getString(dst_sources, sourceName, "digest");
+                if (!src_digest.equals(dst_digest)) {
                     addFileStatus(moduleName, sourceName, RevisionStatus.CHANGED);
                     addModuleStatus(moduleName, RevisionStatus.CHANGED);
                 }

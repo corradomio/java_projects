@@ -3,7 +3,6 @@ package jext.util;
 import java.util.HashMap;
 import java.util.Iterator;
 
-
 public class HashBag<E> extends HashMap<E, Integer> implements Bag<E> {
 
     @Override

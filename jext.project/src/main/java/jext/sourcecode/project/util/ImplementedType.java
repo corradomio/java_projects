@@ -152,10 +152,10 @@ public class ImplementedType extends NamedObject implements Type {
         return null;
     }
 
-    @Override
-    public String getLibraryId() {
-        return null;
-    }
+    // @Override
+    // public String getLibraryId() {
+    //     return null;
+    // }
 
     // -- Source
 
@@ -164,10 +164,10 @@ public class ImplementedType extends NamedObject implements Type {
         return source;
     }
 
-    @Override
-    public String getSourceId() {
-        return source.getId();
-    }
+    // @Override
+    // public String getSourceId() {
+    //     return source.getId();
+    // }
 
     // -- Module
 
@@ -176,15 +176,15 @@ public class ImplementedType extends NamedObject implements Type {
         return source.getModule();
     }
 
-    @Override
-    public String getModuleId() {
-        return source.getModule().getId();
-    }
+    // @Override
+    // public String getModuleId() {
+    //     return source.getModule().getId();
+    // }
 
-    @Override
-    public String getModuleRefId() {
-        return source.getModule().getRefId();
-    }
+    // @Override
+    // public String getModuleRefId() {
+    //     return source.getModule().getRefId();
+    // }
 
     // ----------------------------------------------------------------------
     // Implementation

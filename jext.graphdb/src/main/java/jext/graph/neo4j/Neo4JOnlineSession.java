@@ -994,7 +994,10 @@ public class Neo4JOnlineSession implements GraphSession {
                          String edgeType, Map<String,Object> edgeProps)
     {
         String nblock = pblock(N, nodeProps);
-        String eblock = pblock(E, edgeProps);
+        String eblock = pblock(E, Collections.emptyMap());
+
+        logger.warnf(">>>>> UPDATE isDag!!! NO support of edge properties in shortestPath");
+
         String s = String.format("MATCH p=shortestPath( (n:%s %s) -[:%s* %s]-> (n) )",
             nodeType, nblock,
             edgeType, eblock);

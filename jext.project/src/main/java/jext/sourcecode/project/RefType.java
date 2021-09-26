@@ -11,9 +11,11 @@ import java.util.List;
  */
 public interface RefType extends IdNamed {
 
+    String getId();
+    Name getName();
+
     Project getProject();
     Library getLibrary();
-    String  getLibraryId();
 
     Name getNamespace();
 

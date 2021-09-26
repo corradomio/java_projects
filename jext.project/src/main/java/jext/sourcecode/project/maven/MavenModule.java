@@ -86,7 +86,6 @@ public class MavenModule extends BaseModule {
         MavenDownloader md = project.getLibraryDownloader();
 
         List<MavenCoords> coordList = getDirectCoordsDependencies();
-        // md.checkArtifacts(coordList);
 
         Set<MavenCoords> setCoords = new HashSet<>(coordList);
 

@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 public class JarLibrary extends BaseLibrary {
 
     private String version;
@@ -67,10 +66,10 @@ public class JarLibrary extends BaseLibrary {
         return Collections.singletonList(libraryFile);
     }
 
-    @Override
-    public String getModuleId() {
-        return module.getId();
-    }
+    // @Override
+    // public String getModuleId() {
+    //     return module.getId();
+    // }
 
     @Override
     public Module getModule() {

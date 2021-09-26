@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 public class Neo4JResultSet<T> implements GraphIterator<T> {
 
     private Result result;

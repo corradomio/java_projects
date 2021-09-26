@@ -9,7 +9,6 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.util.HashSet;
 import jext.util.SetUtils;
-import jext.util.concurrent.Parallel;
 
 import java.util.AbstractSet;
 import java.util.Collections;
@@ -186,24 +185,26 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
             .collect(Collectors.toSet());
     }
 
-    public void checkArtifacts() {
+    @Override
+    public void checkArtifacts(MavenDownloader md, boolean parallel) {
         List<MavenCoords> artifacts = highestLibraries
             .values()
             .stream()
             .map(MavenLibrary::getCoords)
             .collect(Collectors.toList());
 
-        Parallel.forEach(highestLibraries.values(), mavenLibrary -> {
-            try {
-                MavenCoords coords = mavenLibrary.getCoords();
-                MavenDownloader md = mavenLibrary.getMavenDownloader();
-                md.getPom(coords);
-                md.getArtifact(coords);
+        // md.checkArtifacts(artifacts, true, parallel);
+
+        if (parallel) {
+            (new Thread(){
+                public void run() {
+                    md.checkArtifacts(artifacts, false, parallel);
             }
-            catch (RuntimeException e) {
-                logger.errorf("Unable to check %s: %s", mavenLibrary.getName(), e.getMessage());
+            }).start();
+        }
+        else {
+            md.checkArtifacts(artifacts, true, parallel);
             }
-        });
     }
 
 }

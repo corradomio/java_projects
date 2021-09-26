@@ -57,10 +57,10 @@ public class InfoType implements Type {
         return null;
     }
 
-    @Override
-    public String getLibraryId() {
-        return null;
-    }
+    // @Override
+    // public String getLibraryId() {
+    //     return null;
+    // }
 
     @Override
     public TypeRole getRole() {
@@ -112,20 +112,20 @@ public class InfoType implements Type {
         return false;
     }
 
-    @Override
-    public String getSourceId() {
-        return source.getId();
-    }
+    // @Override
+    // public String getSourceId() {
+    //     return source.getId();
+    // }
 
-    @Override
-    public String getModuleId() {
-        return source.getModuleId();
-    }
+    // @Override
+    // public String getModuleId() {
+    //     return source.getModuleId();
+    // }
 
-    @Override
-    public String getModuleRefId() {
-        return source.getModule().getRefId();
-    }
+    // @Override
+    // public String getModuleRefId() {
+    //     return source.getModule().getRefId();
+    // }
 
     @Override
     public Name getNamespace() {

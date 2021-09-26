@@ -70,10 +70,10 @@ public class InfoSource implements Source {
         return module.getProject();
     }
 
-    @Override
-    public String getModuleId() {
-        return module.getId();
-    }
+    // @Override
+    // public String getModuleId() {
+    //     return module.getId();
+    // }
 
     @Override
     public String getDigest() {

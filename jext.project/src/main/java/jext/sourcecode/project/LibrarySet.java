@@ -1,5 +1,7 @@
 package jext.sourcecode.project;
 
+import jext.maven.MavenDownloader;
+
 import java.util.Set;
 
 public interface LibrarySet extends Set<Library> {
@@ -13,4 +15,6 @@ public interface LibrarySet extends Set<Library> {
 
     Library resolve(Library library);
     Set<Library> resolveAll(Set<Library> libraries);
+
+    void checkArtifacts(MavenDownloader md, boolean parallel);
 }

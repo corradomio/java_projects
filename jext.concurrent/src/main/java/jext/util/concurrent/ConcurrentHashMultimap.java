@@ -8,6 +8,11 @@ import java.util.Set;
 public class ConcurrentHashMultimap<K, V> extends HashMultimap<K, V> {
 
     @Override
+    public synchronized boolean containsKey(K key) {
+        return super.containsKey(key);
+    }
+
+    @Override
     public synchronized void put(K key, V value) {
         super.put(key, value);
     }

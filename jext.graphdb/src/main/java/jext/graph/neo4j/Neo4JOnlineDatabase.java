@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-
 public class Neo4JOnlineDatabase implements GraphDatabase {
 
     // ----------------------------------------------------------------------

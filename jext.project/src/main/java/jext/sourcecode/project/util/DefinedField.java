@@ -5,7 +5,6 @@ import jext.name.ObjectName;
 import jext.sourcecode.project.Field;
 import jext.sourcecode.project.RefType;
 
-
 public class DefinedField extends NamedObject implements Field {
 
     private RefType fieldType;
@@ -25,18 +24,18 @@ public class DefinedField extends NamedObject implements Field {
         return fieldType;
     }
 
-    @Override
-    public String getTypeId() {
-        return fieldType.getId();
-    }
+    // @Override
+    // public String getTypeId() {
+    //     return fieldType.getId();
+    // }
 
     @Override
     public RefType getOwnerType() {
         return ownerType;
     }
 
-    @Override
-    public String getOwnerTypeId() {
-        return ownerType.getId();
-    }
+    // @Override
+    // public String getOwnerTypeId() {
+    //     return ownerType.getId();
+    // }
 }

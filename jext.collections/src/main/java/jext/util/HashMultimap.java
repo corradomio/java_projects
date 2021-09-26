@@ -14,6 +14,12 @@ public class HashMultimap<K, V> implements Multimap<K, V> {
     }
 
     @Override
+    public void put(K key) {
+        if (!map.containsKey(key))
+            map.put(key, new HashSet<>());
+    }
+
+    @Override
     public Set<V> get(K key) {
         return map.get(key);
     }
@@ -23,6 +29,10 @@ public class HashMultimap<K, V> implements Multimap<K, V> {
         return map.getOrDefault(key, defval);
     }
 
+    @Override
+    public boolean containsKey(K key) {
+        return map.containsKey(key);
+    }
 
     @Override
     public Set<K> keySet() {

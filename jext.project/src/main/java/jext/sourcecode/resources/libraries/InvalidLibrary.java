@@ -45,7 +45,7 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
 
     @Override
     public String getDigest() {
-        return "";
+        return "0";
     }
 
     @Override

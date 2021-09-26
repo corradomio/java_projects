@@ -276,6 +276,20 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return edges;
     }
 
+    public static <V, E> void addEdges(Graph<V, E> g,V ... edges) {
+        for (int i=0; i<edges.length; ) {
+            V sourceVertex = edges[i++];
+            V targetVertex = edges[i++];
+            addEdgeWithVertices(g, sourceVertex, targetVertex);
+        }
+    }
+
+    public static <V, E> void addVertices(Graph<V, E> g, V ... vertices) {
+        for (V v : vertices) {
+            g.addVertex(v);
+        }
+    }
+
     // ----------------------------------------------------------------------
     // Closure
     // ----------------------------------------------------------------------

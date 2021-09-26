@@ -64,10 +64,10 @@ public abstract class InfoLibrary extends NamedObject implements Library {
         return module;
     }
 
-    @Override
-    public String getModuleId() {
-        return module != null ? module.getId() : null;
-    }
+    // @Override
+    // public String getModuleId() {
+    //     return module != null ? module.getId() : null;
+    // }
 
     @Override
     public LibraryType getLibraryType() {

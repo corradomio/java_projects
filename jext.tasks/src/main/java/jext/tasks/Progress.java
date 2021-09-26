@@ -24,7 +24,6 @@ import java.io.Serializable;
  *      done()                  -- complete all steps and all works
  */
 
-
 public class Progress implements Serializable {
 
     // ----------------------------------------------------------------------

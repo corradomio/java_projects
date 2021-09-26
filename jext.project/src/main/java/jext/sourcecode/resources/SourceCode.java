@@ -54,26 +54,6 @@ public abstract class SourceCode extends ResourceFile implements Source {
     //
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public String getPath() {
-    //     return PathUtils.normalize(file.getAbsolutePath());
-    // }
-
-    // @Override
-    // public File getFile() {
-    //     return file;
-    // }
-
-    // @Override
-    // public Module getModule() {
-    //     return module;
-    // }
-
-    // @Override
-    // public String getDigest() {
-    //     return FileUtils.digest(file);
-    // }
-
     @Override
     public String getLanguage() {
         return language;

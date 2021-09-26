@@ -101,10 +101,10 @@ public class DefinedMethod extends NamedObject implements Method {
         return returnType;
     }
 
-    @Override
-    public String getTypeId() {
-        return returnType.getId();
-    }
+    // @Override
+    // public String getTypeId() {
+    //     return returnType.getId();
+    // }
 
     @Override
     public List<Parameter> getParameters() {
@@ -116,10 +116,10 @@ public class DefinedMethod extends NamedObject implements Method {
         return ownerType;
     }
 
-    @Override
-    public String getOwnerTypeId() {
-        return ownerType.getId();
-    }
+    // @Override
+    // public String getOwnerTypeId() {
+    //     return ownerType.getId();
+    // }
 
     @Override
     public String getSignature() {
@@ -133,7 +133,7 @@ public class DefinedMethod extends NamedObject implements Method {
 
     @Override
     public String getDigest() {
-        return "";
+        return "0";
     }
 
     // ----------------------------------------------------------------------

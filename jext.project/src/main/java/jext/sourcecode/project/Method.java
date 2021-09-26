@@ -1,11 +1,15 @@
 package jext.sourcecode.project;
 
 import jext.name.IdNamed;
+import jext.name.Name;
 
 import java.util.List;
 import java.util.Set;
 
 public interface Method extends IdNamed {
+
+    String getId();
+    Name getName();
 
     String CLASS_INITIALIZER  = "$classInitializer";
     String STATIC_INITIALIZER = "$staticInitializer";
@@ -17,12 +21,10 @@ public interface Method extends IdNamed {
     Set<String> getStructure();
 
     RefType getType();
-    String  getTypeId();
 
     List<Parameter> getParameters();
 
     RefType getOwnerType();
-    String  getOwnerTypeId();
 
     String getSignature();
     String getDeclaration();

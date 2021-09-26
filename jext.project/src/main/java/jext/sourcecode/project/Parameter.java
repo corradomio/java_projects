@@ -1,15 +1,16 @@
 package jext.sourcecode.project;
 
 import jext.name.IdNamed;
+import jext.name.Name;
 
 public interface Parameter extends IdNamed {
 
+    String getId();
+    Name getName();
+
     RefType getType();
-    String getTypeId();
 
     Method getOwnerMethod();
-    String getOwnerMethodId();
 
     RefType getOwnerType();
-    String getOwnerTypeId();
 }

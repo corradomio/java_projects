@@ -9,6 +9,9 @@ import java.util.Set;
 
 public interface Library extends IdNamed {
 
+    String getId();
+    Name getName();
+
     /**
      * Check if the library is valid, that is the list of files
      * returned by 'getFiles()' are present locally
@@ -26,7 +29,6 @@ public interface Library extends IdNamed {
      * these libraries are shared between multiple modules
      */
     Module getModule();
-    String getModuleId();
 
     /** Library tpe */
     LibraryType getLibraryType();

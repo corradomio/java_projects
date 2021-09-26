@@ -12,9 +12,9 @@ import java.util.Set;
 public interface Type extends RefType {
 
     /** Related object ids */
-    String getSourceId();
-    String getModuleId();
-    String getModuleRefId();
+    // String getSourceId();
+    // String getModuleId();
+    // String getModuleRefId();
 
     Name getNamespace();
 

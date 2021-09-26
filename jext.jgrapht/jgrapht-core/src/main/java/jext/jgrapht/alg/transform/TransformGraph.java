@@ -1,4 +1,4 @@
-package jext.jgrapht.graph;
+package jext.jgrapht.alg.transform;
 
 import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;

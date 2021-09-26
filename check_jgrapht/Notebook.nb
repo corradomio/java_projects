@@ -1,0 +1,113 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3915,        103]
+NotebookOptionsPosition[      3002,         83]
+NotebookOutlinePosition[      3403,         99]
+CellTagsIndexPosition[      3360,         96]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<D:\\\\Projects.github\\\\java_projects\\\\check_jgrapht\\\\graph.dot\>\
+\"", " ", "]"}]], "Input",
+ CellChangeTimes->{{3.841364323059837*^9, 3.841364327971208*^9}, {
+  3.841371025395767*^9, 3.8413710257205753`*^9}, {3.8413710926380215`*^9, 
+  3.84137109294384*^9}, {3.841371147757118*^9, 3.8413711500140657`*^9}, {
+  3.8413715044326353`*^9, 3.841371504877236*^9}},
+ CellLabel->
+  "In[194]:=",ExpressionUUID->"01d9d028-83d6-4a8c-adb2-24e0e3d0cf90"],
+
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<D:\\\\Projects.github\\\\java_projects\\\\check_jgrapht\\\\closures.\
+dot\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.8413700212654715`*^9, 3.8413700289320097`*^9}, 
+   3.8413711549332724`*^9, 3.841371509422*^9, {3.8413751460994463`*^9, 
+   3.8413751479758425`*^9}},
+ CellLabel->
+  "In[195]:=",ExpressionUUID->"fae5da34-81e3-400e-9ed9-124ed73a4845"],
+
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<D:\\\\Projects.github\\\\java_projects\\\\check_jgrapht\\\\\
+leavesPruned.dot\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.8413700609740295`*^9, 3.8413700620953636`*^9}, 
+   3.841371155965082*^9, 3.841371510175871*^9, {3.841380314845091*^9, 
+   3.8413803178219166`*^9}},
+ CellLabel->
+  "In[196]:=",ExpressionUUID->"def0a84d-6542-45af-af91-9caef5dba078"],
+
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<D:\\\\Projects.github\\\\java_projects\\\\check_jgrapht\\\\\
+chainsMerged.dot\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.841380378321926*^9, 3.841380380622017*^9}},
+ CellLabel->
+  "In[197]:=",ExpressionUUID->"e9ee7da1-6835-4896-8bee-68fc52d4aa1e"],
+
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<D:\\\\Projects.github\\\\java_projects\\\\check_jgrapht\\\\closures1.\
+dot\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.8413910329729195`*^9, 3.84139105657253*^9}},
+ CellLabel->
+  "In[199]:=",ExpressionUUID->"33d06c4d-c45c-47df-9137-1ab881c05344"],
+
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<D:\\\\Projects.github\\\\java_projects\\\\check_jgrapht\\\\\
+leavesPruned1.dot\>\"", "]"}]], "Input",
+ CellChangeTimes->{3.8413910907797594`*^9},
+ CellLabel->
+  "In[200]:=",ExpressionUUID->"0cdfb367-04eb-4ef9-b6d1-780b7ab5cb2f"],
+
+Cell[BoxData[
+ RowBox[{"Import", "[", 
+  "\"\<D:\\\\Projects.github\\\\java_projects\\\\check_jgrapht\\\\\
+chainsMerged1.dot\>\"", "]"}]], "Input",
+ CellChangeTimes->{3.841391094648433*^9},
+ CellLabel->
+  "In[201]:=",ExpressionUUID->"90a2a726-77ef-4866-81be-634481ff1013"]
+},
+WindowSize->{1191, 606},
+WindowMargins->{{Automatic, 270}, {Automatic, 182}},
+FrontEndVersion->"12.3 for Microsoft Windows (64-bit) (June 19, 2021)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"c1c67b99-7d66-4fa5-9c14-bde27a1a7432"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 493, 9, 29, "Input",ExpressionUUID->"01d9d028-83d6-4a8c-adb2-24e0e3d0cf90"],
+Cell[1054, 31, 396, 8, 29, InheritFromParent,ExpressionUUID->"fae5da34-81e3-400e-9ed9-124ed73a4845"],
+Cell[1453, 41, 399, 8, 29, "Input",ExpressionUUID->"def0a84d-6542-45af-af91-9caef5dba078"],
+Cell[1855, 51, 295, 6, 29, "Input",ExpressionUUID->"e9ee7da1-6835-4896-8bee-68fc52d4aa1e"],
+Cell[2153, 59, 293, 6, 29, "Input",ExpressionUUID->"33d06c4d-c45c-47df-9137-1ab881c05344"],
+Cell[2449, 67, 274, 6, 29, "Input",ExpressionUUID->"0cdfb367-04eb-4ef9-b6d1-780b7ab5cb2f"],
+Cell[2726, 75, 272, 6, 29, "Input",ExpressionUUID->"90a2a726-77ef-4866-81be-634481ff1013"]
+}
+]
+*)
+
+(* End of internal cache information *)
+

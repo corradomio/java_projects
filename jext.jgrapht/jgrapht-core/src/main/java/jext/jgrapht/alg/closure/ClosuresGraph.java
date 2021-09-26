@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class GraphClosures<V, E> {
+public class ClosuresGraph<V, E> {
 
-    private static Logger logger = Logger.getLogger(GraphClosures.class);
+    private static Logger logger = Logger.getLogger(ClosuresGraph.class);
 
     // ----------------------------------------------------------------------
     // Closure
@@ -153,7 +153,7 @@ public class GraphClosures<V, E> {
     //
     // ----------------------------------------------------------------------
 
-    public GraphClosures(Graph<V, E> graph) {
+    public ClosuresGraph(Graph<V, E> graph) {
         this.graph = new AsSynchronizedGraph<>(graph);
     }
 
