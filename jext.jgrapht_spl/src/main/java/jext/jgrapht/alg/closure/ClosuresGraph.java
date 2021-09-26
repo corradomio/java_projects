@@ -50,7 +50,7 @@ public class ClosuresGraph<V, E> {
     // the 'reference node' is the 'lowest' node
     private Closure<V> singleton;
     // maximum closure size
-    private int maxSize;
+    private transient int maxSize = -1;
     // if the graph is already reduces
     private boolean graphReduced;
     // if the chains are already collapsed
@@ -214,18 +214,14 @@ public class ClosuresGraph<V, E> {
         closures.put(closure.vertex(), closure);
         int size = closure.size();
 
-        if (!bySize.containsKey(size))
-            bySize.put(size, new ArrayList<>());
+        if (size > maxSize) {
+            for (int sz = 0; sz <= size; ++sz)
+                if (!bySize.containsKey(sz))
+                    bySize.put(sz, new ArrayList<>());
+            maxSize = size;
+        }
 
         bySize.get(size).add(closure.vertex());
-        if (size <= maxSize)
-            return;
-
-        int olSize = maxSize;
-        maxSize = size;
-        for (int i=olSize; i <= maxSize; i++)
-            if (!bySize.containsKey(i))
-                bySize.put(size, new ArrayList<>());
     }
 
     // ----------------------------------------------------------------------
@@ -269,12 +265,12 @@ public class ClosuresGraph<V, E> {
             return this;
         }
 
-        // remove the singletons from 'closuresBySize' and 'closures'
-        singletonVertices.forEach(this::remove);
-
         // create the closure for the 'singleton' object
         // select as singleton reference the first ordered vertex
         singleton = new Closure<>(singletonVertices);
+
+        // remove the singletons from 'closuresBySize' and 'closures'
+        singletonVertices.forEach(this::remove);
 
         // insert the singleton in the closures by size
         // NO??? WHY NO???
@@ -340,8 +336,8 @@ public class ClosuresGraph<V, E> {
      */
     private void remove(V vertex) {
         // remove from 'closures'
-        // Closure<V> closure = closures.remove(vertex);
-        Closure<V> closure = closures.get(vertex);
+        Closure<V> closure = closures.remove(vertex);
+        // Closure<V> closure = closures.get(vertex);
         int size = closure.size();
 
         // remove from 'bySize'
@@ -368,8 +364,8 @@ public class ClosuresGraph<V, E> {
         // populate with the edges
         closures.keySet().forEach(vertex -> {
             // skip vertices removed because 'singleton'
-            if (singletonVertices.contains(vertex))
-                return;
+            // if (singletonVertices.contains(vertex))
+            //     return;
             // skip vertices removed because 'duplicated'
             if (duplicatedVertices.contains(vertex))
                 return;

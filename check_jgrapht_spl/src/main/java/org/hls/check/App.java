@@ -68,8 +68,8 @@ public class App {
         // newImporter().importGraph(g, new File("graph.dot"));
 
         g = (Graph)Graphs.newGraph(Integer.class, DirectedEdge.class);
-        Graphs.addVertices(g, 1,2,3,4,5,6,7);
-        Graphs.addEdges(g, 1,2, 1,3, 4,5, 4,6);
+        Graphs.addVertices(g, 1,2,3,4,5,6,7,8,9, 10,11, 12);
+        Graphs.addEdges(g, 1,2, 2,10, 10,11, 12,10, 1,3, 4,5, 4,6);
 
         newExporter().exportGraph(g, new File("graph.dot"));
         // newExporter("json").exportGraph(g, new File("graph.json"));
