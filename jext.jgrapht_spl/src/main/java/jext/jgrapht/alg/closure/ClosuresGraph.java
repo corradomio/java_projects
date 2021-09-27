@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -48,17 +47,9 @@ public class ClosuresGraph<V, E> {
 
     // 'virtual closure' collecting all nodes  with in/out degree == 0
     // the 'reference node' is the 'lowest' node
-    private Closure<V> singleton;
+    private Closure<V> singletonClosure;
     // maximum closure size
     private transient int maxSize = -1;
-    // if the graph is already reduces
-    private boolean graphReduced;
-    // if the chains are already collapsed
-    private boolean chainsCollapsed;
-    // if the leaves are already pruned
-    private boolean leavesPruned;
-    // if the roots are already pruned
-    private boolean rootsPruned;
 
     // graph created by 'closure subset relation'
     private Graph<V, E> closureGraph;
@@ -107,7 +98,9 @@ public class ClosuresGraph<V, E> {
      * @return closure's map
      */
     public Map<V, Closure<V>> getClosures() {
-        return closures;
+        // Note: closures can be modifies!!!!
+        // It is better to return a copy!
+        return new HashMap<>(closures);
     }
 
     /**
@@ -160,12 +153,20 @@ public class ClosuresGraph<V, E> {
      * Get the singletons as closure.
      * If there are no singletons, return an 'empty' closure without 'reference'
      * vertex (closure.vertex is null)
-     *
-     * @return
      */
-    public Closure<V> getSingletons() {
-        Assert.check(singleton != null, "singletons not initialized");
-        return singleton;
+    public Closure<V> getSingletonClosure() {
+        Assert.check(singletonClosure != null, "singletons not initialized");
+        return singletonClosure;
+    }
+
+    /**
+     * Retrieve the 'root' vertices.
+     * A 'root' vertex is a vertex with inDegree = 0
+     */
+    public Set<V> getRoots() {
+        return closureGraph.vertexSet().stream()
+            .filter(vertex -> closureGraph.inDegreeOf(vertex) == 0)
+            .collect(Collectors.toSet());
     }
 
     // ----------------------------------------------------------------------
@@ -241,7 +242,7 @@ public class ClosuresGraph<V, E> {
      */
     public ClosuresGraph<V,E>  collectSingletons() {
         // check if already computed
-        if (singleton != null)
+        if (singletonClosure != null)
             return this;
 
         logger.info("collectSingletons");
@@ -267,7 +268,7 @@ public class ClosuresGraph<V, E> {
 
         // create the closure for the 'singleton' object
         // select as singleton reference the first ordered vertex
-        singleton = new Closure<>(singletonVertices);
+        singletonClosure = new Closure<>(singletonVertices);
 
         // remove the singletons from 'closuresBySize' and 'closures'
         singletonVertices.forEach(this::remove);
@@ -275,9 +276,9 @@ public class ClosuresGraph<V, E> {
         // insert the singleton in the closures by size
         // NO??? WHY NO???
         //
-        add(singleton);
+        add(singletonClosure);
 
-        logger.warnf("... singletons [%s]->%s", singleton.vertex(), singleton.members());
+        logger.warnf("... singletons [%s]->%s", singletonClosure.vertex(), singletonClosure.members());
 
         return this;
     }
@@ -428,12 +429,8 @@ public class ClosuresGraph<V, E> {
      *
      */
     public ClosuresGraph<V,E>  transitiveReduction() {
-        if (graphReduced)
-            return this;
-        else
-            graphReduced = true;
-
         logger.info("transitiveReduction");
+
         TransitiveReduction.INSTANCE.reduce(closureGraph);
 
         return this;
@@ -456,11 +453,6 @@ public class ClosuresGraph<V, E> {
      * @param predicate predicate on the vertex
      */
     public ClosuresGraph<V,E>  pruneLeaves(Predicate<V> predicate) {
-        if (leavesPruned)
-            return this;
-        else
-            leavesPruned = true;
-
         logger.info("pruneLeaves");
 
         boolean terminated = false;
@@ -477,7 +469,7 @@ public class ClosuresGraph<V, E> {
 
             removed.forEach(closureGraph::removeVertex);
 
-            logger.infof("... pruned %s", removed);
+            logger.warnf("... pruned leaves %s", removed);
         }
 
         return this;
@@ -491,6 +483,7 @@ public class ClosuresGraph<V, E> {
     // ----------------------------------------------------------------------
     // pruneRoots
     // ----------------------------------------------------------------------
+
     public ClosuresGraph<V,E>  pruneRoots() {
         return pruneRoots((v) -> true);
     }
@@ -505,11 +498,6 @@ public class ClosuresGraph<V, E> {
      * @param predicate predicate on the vertex
      */
     public ClosuresGraph<V,E>  pruneRoots(Predicate<V> predicate) {
-        if (rootsPruned)
-            return this;
-        else
-            rootsPruned = true;
-
         logger.info("pruneRoots");
 
         boolean terminated = false;
@@ -526,7 +514,7 @@ public class ClosuresGraph<V, E> {
 
             removed.forEach(closureGraph::removeVertex);
 
-            logger.infof("... pruned %s", removed);
+            logger.warnf("... pruned roots %s", removed);
         }
 
         return this;
@@ -556,11 +544,6 @@ public class ClosuresGraph<V, E> {
      *  to 'merge' the closures!
      */
     public ClosuresGraph<V,E>  collapseChains() {
-        if (chainsCollapsed)
-            return this;
-        else
-            chainsCollapsed = true;
-
         logger.info("collapseChains");
 
         boolean collapsed = true;
@@ -571,8 +554,6 @@ public class ClosuresGraph<V, E> {
     }
 
     private boolean collapseStep() {
-        // logger.info("... collapseStep");
-
         // 1) search all vertices with input/output degree = 1
 
         Set<V> inChain = new ConcurrentTreeSet<>();
@@ -603,7 +584,7 @@ public class ClosuresGraph<V, E> {
             while(isInChain(tail))
                 tail = add(forward(tail), chain);
 
-            logger.infof("... chain %s", chain);
+            logger.debugft("... chain %s", chain);
 
             chains.add(new Pair<>(head, tail));
         });
@@ -625,6 +606,9 @@ public class ClosuresGraph<V, E> {
 
             closureGraph.addEdge(sourceVertex, targetVertex);
         });
+
+        logger.warnf("... removed inChain %s", inChain);
+        logger.warnf("... added edges %s", chains);
 
         return true;
     }
