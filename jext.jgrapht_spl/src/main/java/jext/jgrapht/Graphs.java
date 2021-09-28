@@ -64,6 +64,13 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return newGraph(directed, false,false, weighed, edgeSupplier, vertexSupplier);
     }
 
+    public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass, boolean directed) {
+        Supplier<E> edgeSupplier = edgeSupplier(edgeClass);
+        Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
+
+        return newGraph(directed, false,false, false, edgeSupplier, vertexSupplier);
+    }
+
     /**
      * Create a new graph based on properties
      *

@@ -1,5 +1,8 @@
 package jext.jgrapht.util;
 
+import org.jgrapht.Graph;
+import org.jgrapht.GraphType;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -56,5 +59,26 @@ public class Utils {
     //     r.removeAll(s2);
     //     return r;
     // }
+
+    // ----------------------------------------------------------------------
+
+    public static <V, E> void describe(Graph<V, E> g) {
+        System.out.printf("Graph: |V|=%d, |E|=%d\n", g.vertexSet().size(), g.edgeSet().size());
+        if (!g.vertexSet().isEmpty()) {
+            V v = g.vertexSet().iterator().next();
+            System.out.println("  v: " + v.getClass());
+        }
+        if (!g.edgeSet().isEmpty()) {
+            E e = g.edgeSet().iterator().next();
+            System.out.println("  e: " + e.getClass());
+        }
+
+        GraphType gt = g.getType();
+        if(gt.isDirected())              System.out.println("  directed");
+        if(gt.isWeighted())              System.out.println("  weighted");
+        if(gt.isAllowingSelfLoops())     System.out.println("  loop");
+        if(gt.isAllowingMultipleEdges()) System.out.println("  multiple");
+        if(gt.isAllowingCycles())        System.out.println("  cycles");
+    }
 
 }

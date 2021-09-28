@@ -95,7 +95,7 @@ public class App {
 
         // --
 
-        cg.pruneLeaves();
+        cg.removeLeaves();
 
         newExporter().exportGraph(cg.getClosureGraph(), new File("leavesPruned.dot"));
 
@@ -131,7 +131,7 @@ public class App {
 
         // --
 
-        cg.pruneLeaves();
+        cg.removeLeaves();
 
         newExporter().exportGraph(cg.getClosureGraph(), new File("leavesPruned1.dot"));
 
