@@ -38,8 +38,9 @@ public class CheckCavemanOut {
         GraphGenerator<Integer, DefaultWeightedEdge, List<Set<Integer>>> gg
                 = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
                 N, E, C, .001, .99,true)
-                .communityWeights(new NormalDistrib(0.25, .10).minValue(0.01))
-                .betweenWeights(new NormalDistrib(1., .10).minValue(0.05));
+                // .communityWeights(new NormalDistrib(0.25, .10).minValue(0.01))
+                // .betweenWeights(new NormalDistrib(1., .10).minValue(0.05))
+            ;
 
         gg.generateGraph(g);
 

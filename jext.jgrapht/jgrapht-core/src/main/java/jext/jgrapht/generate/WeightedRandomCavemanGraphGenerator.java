@@ -1,5 +1,7 @@
 package jext.jgrapht.generate;
 
+import jext.jgrapht.util.Distrib;
+import jext.jgrapht.util.distrib.ConstantDistrib;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
 import org.jgrapht.generate.GraphGenerator;
@@ -12,10 +14,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, List<Set<V>>> {
+public class WeightedRandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, List<Set<V>>> {
 
     // generated graph
     private Graph<V, E> graph;
+
     // n of vertices
     private final int order;
     // n of edges
@@ -26,6 +29,15 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     private final double q;
     // probability of an edge between communities
     private final double p;
+    // size distribution for community sizes
+    private Distrib communitySizes;
+    // weight distribution for community edges
+    private Distrib communityWeights;
+    // weight distribution for edges between communities
+    private Distrib betweenWeights;
+    // if to select the community to update or to select
+    // a random one
+    private boolean updateRandomly;
 
     // random generator used with the edges
     private Random rnd = new Random();
@@ -38,8 +50,8 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     private int[] cstart;
     // generated communities
     private List<Set<V>> communities;
-    // directed graph
-    private boolean directed;
+    // if weighted
+    private final boolean weighted;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -53,21 +65,24 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
      * @param nCommunities n of communities
      * @param betweenProb probability of an edge to be connected between communities
      * @param insideProb probability of an edge to be connected into the community
-     * @param directed if to create a directed graph
      */
-    public RandomCavemanGraphGenerator(
-        int order,              // n vertices
-        int size,               // n edges
-        int nCommunities,       // n communities
-        double betweenProb,
-        double insideProb,
-        boolean directed) {
+    public WeightedRandomCavemanGraphGenerator(
+            int order,              // n vertices
+            int size,               // n edges
+            int nCommunities,       // n communities
+            double betweenProb,
+            double insideProb,
+            boolean weighted) {
         this.order = order;         // n vertices
         this.size = size;           // n edges
         this.n = nCommunities;      // n communities
         this.p = betweenProb;       // between communities
         this.q = insideProb;        // inside community
-        this.directed = directed;
+
+        this.communitySizes = new ConstantDistrib((0.+order)/nCommunities);
+        this.betweenWeights = new ConstantDistrib(1);
+        this.communityWeights = new ConstantDistrib(1);
+        this.weighted = weighted;
     }
 
     /**
@@ -75,8 +90,51 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
      * @param seed seed
      * @return itself
      */
-    public RandomCavemanGraphGenerator<V, E> seed(long seed) {
+    public WeightedRandomCavemanGraphGenerator<V, E> seed(long seed) {
         this.rnd = new Random(seed);
+        return this;
+    }
+
+    /**
+     * Size distribution to use with communities
+     * @param distrib distribution
+     * @return itself
+     */
+    public WeightedRandomCavemanGraphGenerator<V, E> communitySizes(Distrib distrib) {
+        communitySizes = distrib;
+        return this;
+    }
+
+    /**
+     * When the communities are create using a random generator, it is possible
+     * to crate not enough or too vertices.
+     * If there are not enough vertices, the smallest communities are expanded
+     * If there are too vertices, the largest communities are reduced.
+     * This parameter specify that the community to update is selected randomly
+     * @return itself
+     */
+    public WeightedRandomCavemanGraphGenerator<V, E> updateRandomly(boolean useRandom) {
+        updateRandomly = useRandom;
+        return this;
+    }
+
+    /**
+     * Weight distribution to use with edges inside communities
+     * @param distrib distribution
+     * @return itself
+     */
+    public WeightedRandomCavemanGraphGenerator<V, E> communityWeights(Distrib distrib) {
+        communityWeights = distrib;
+        return this;
+    }
+
+    /**
+     * Weight distribution to use with edges between communities
+     * @param distrib distribution
+     * @return itself
+     */
+    public WeightedRandomCavemanGraphGenerator<V, E> betweenWeights(Distrib distrib) {
+        betweenWeights = distrib;
         return this;
     }
 
@@ -130,20 +188,66 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     // ----------------------------------------------------------------------
 
     private void initAlgorithm() {
-
+        communitySizes.random(rnd);
+        communityWeights.random(rnd);
+        betweenWeights.random(rnd);
     }
 
     private void computeCommunitySizes() {
         csizes = new int[n];
 
-        int rest = order;
-        int csize = order/n;
-
-        for(int c=0; c<n-1; ++c){
-            csizes[c] = csize;
-            rest -= csize;
+        int total = 0;
+        for(int c=0; c<n; ++c){
+            int csz = (int)communitySizes.nextValue();
+            csizes[c] = csz;
+            total += csz;
         }
-        csizes[n-1] = rest;
+
+        // not enough vertices
+        while (total < order) {
+            int c = findSmallest();
+            csizes[c] += 1;
+            total += 1;
+        }
+
+        // too vertices
+        while(total > order) {
+            int c = findLargest();
+            if (csizes[c] > 3) {
+                csizes[c] -= 1;
+                total -= 1;
+            }
+        }
+    }
+
+    private int findSmallest() {
+        if (updateRandomly)
+            return rnd.nextInt(n);
+
+        int selected = 0;
+        int csz = csizes[0];
+        for(int c=0;c<n; ++c) {
+            if (csizes[c] < csz) {
+                selected = c;
+                csz = csizes[c];
+            }
+        }
+        return selected;
+    }
+
+    private int findLargest() {
+        if (updateRandomly)
+            return rnd.nextInt(n);
+
+        int selected = 0;
+        int csz = csizes[0];
+        for(int c=0;c<n; ++c) {
+            if (csizes[c] > csz) {
+                selected = c;
+                csz = csizes[c];
+            }
+        }
+        return selected;
     }
 
     private void computeCommunityStarts() {
@@ -167,6 +271,7 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
             int ci = communityOf(vi);
             int cj = communityOf(vj);
             double r = rnd.nextDouble();
+            double weight = -1;
 
             // no loop
             if (vi == vj) continue;
@@ -175,16 +280,22 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
                 // different communities
                 if (r >= p)
                     continue;;
+                if (betweenWeights != null)
+                    weight = betweenWeights.nextValue();
             }
             else {
                 // same community
                 if (r >= q)
                     continue;
+                if (communityWeights != null)
+                    weight = communityWeights.nextValue();
             }
             V source = vertices[vi];
             V target = vertices[vj];
 
-            graph.addEdge(source, target);
+            E e = graph.addEdge(source, target);
+            if (weighted && e != null && weight != -1) // edge not present AND valid weight
+                graph.setEdgeWeight(e, weight);
         }
     }
 

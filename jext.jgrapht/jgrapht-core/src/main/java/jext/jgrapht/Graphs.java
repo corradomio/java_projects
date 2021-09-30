@@ -66,6 +66,13 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return newGraph(directed, false,false, weighed, edgeSupplier, vertexSupplier);
     }
 
+    public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass, boolean directed) {
+        Supplier<E> edgeSupplier = edgeSupplier(edgeClass);
+        Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
+
+        return newGraph(directed, false,false, false, edgeSupplier, vertexSupplier);
+    }
+
     /**
      * Create a new graph based on properties
      *
@@ -370,9 +377,29 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return vset.size() == component.size();
     }
 
+    public static <V, E> boolean isIsolated(Graph<V, E> g, V v) {
+        // return !(vertexHasPredecessors(g, v) || vertexHasSuccessors(g, v));
+        return g.degreeOf(v) == 0;
+    }
+
     // ----------------------------------------------------------------------
     // Graph components
     // ----------------------------------------------------------------------
+
+    /**
+     * Search the isolated vertices.
+     * A vertex is isolated if it has no predecessors nor successors
+     *
+     * @param g graph
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return set of isolated vertices
+     */
+    public static <V, E> Set<V> isolatedVertices(Graph<V, E> g) {
+        return g.vertexSet().parallelStream()
+            .filter( v -> isIsolated(g, v))
+            .collect(Collectors.toSet());
+    }
 
     /**
      * Find the vertices of the graph components
@@ -450,6 +477,12 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         for(int i=0; i<vertices.length-1; ++i)
             addEdge(g, vertices[i], vertices[i+1]);
 
+        return g;
+    }
+
+    public static <V, E> Graph<V, E> removeVertices(Graph<V, E> g, Collection<V> vertices) {
+        for(V v : vertices)
+            g.removeVertex(v);
         return g;
     }
 

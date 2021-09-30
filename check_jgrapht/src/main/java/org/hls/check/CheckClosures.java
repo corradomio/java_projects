@@ -107,7 +107,7 @@ public class CheckClosures {
 
         // --
 
-        cg.pruneLeaves();
+        cg.removeLeaves();
 
         newExporter().exportGraph(cg.getClosureGraph(), new File("leavesPruned.dot"));
 
@@ -143,7 +143,7 @@ public class CheckClosures {
 
         // --
 
-        cg.pruneLeaves();
+        cg.removeLeaves();
 
         newExporter().exportGraph(cg.getClosureGraph(), new File("leavesPruned1.dot"));
 
