@@ -13,7 +13,6 @@ import jext.util.concurrent.Serial;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.TransitiveReduction;
 import org.jgrapht.alg.cycle.CycleDetector;
-import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +20,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -55,27 +55,27 @@ public class ClosuresGraph<V, E> {
 
     // ----------------------------------------------------------------------
 
-    private final Set<V> singletonVertices;
-    private final Set<V> duplicatedVertices;
-    private final List<V> leavesRemoved;
-    private final Set<V> inChainRemoved;
-    private final Set<V> rootsRemoved;
+    // private final Set<V> singletonVertices;
+    // private final Set<V> duplicatedVertices;
+    // private final List<V> leavesRemoved;
+    // private final Set<V> inChainRemoved;
+    // private final Set<V> rootsRemoved;
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
     public ClosuresGraph(Graph<V, E> graph) {
-        this.graph = new AsSynchronizedGraph<>(graph);
+        this.graph = graph; //new AsSynchronizedGraph<>(graph);
 
         closures = new HashMap<>();
         bySize = new HashMap<>();
 
-        singletonVertices = new HashSet<>();
-        duplicatedVertices = new HashSet<>();
-        leavesRemoved = new ArrayList<>();
-        inChainRemoved = new HashSet<>();
-        rootsRemoved = new HashSet<>();
+        // singletonVertices = new HashSet<>();
+        // duplicatedVertices = new HashSet<>();
+        // leavesRemoved = new ArrayList<>();
+        // inChainRemoved = new HashSet<>();
+        // rootsRemoved = new HashSet<>();
     }
 
     // ----------------------------------------------------------------------
@@ -174,21 +174,21 @@ public class ClosuresGraph<V, E> {
         return singletonClosure.members();
     }
 
-    public Set<V> getDuplicateRemoved() {
-        return duplicatedVertices;
-    }
+    // public Set<V> getDuplicateRemoved() {
+    //     return duplicatedVertices;
+    // }
 
-    public List<V> getLeavesRemove() {
-        return leavesRemoved;
-    }
+    // public List<V> getLeavesRemove() {
+    //     return leavesRemoved;
+    // }
 
-    public Set<V> getInChainRemoved() {
-        return inChainRemoved;
-    }
+    // public Set<V> getInChainRemoved() {
+    //     return inChainRemoved;
+    // }
 
-    public Set<V> getRootsRemoved() {
-        return rootsRemoved;
-    }
+    // public Set<V> getRootsRemoved() {
+    //     return rootsRemoved;
+    // }
 
     /**
      * Retrieve the 'root' vertices.
@@ -220,13 +220,6 @@ public class ClosuresGraph<V, E> {
      * Compute the closures (in parallel)
      */
     public ClosuresGraph<V,E> computeClosures() {
-        // return computeClosures(false);
-    // }
-    // public ClosuresGraph<V,E> computeClosures(boolean slow) {
-        // check if already computed
-        if (!closures.isEmpty())
-            return this;
-
         logger.info("computeClosures");
 
         Parallel.forEach(graph.vertexSet(), vertex -> {
@@ -235,12 +228,12 @@ public class ClosuresGraph<V, E> {
             int inDegree  = graph.inDegreeOf(vertex);
             int outDegree = graph.outDegreeOf(vertex);
 
-            Set<V> closure;
+            Set<V> closure = computeClosure(vertex);
 
             // if (slow)
             //     closure = Graphs.closureOf(graph, vertex);
             // else
-                closure = computeClosure(vertex);
+            //     closure = computeClosure(vertex);
 
             add(new Closure<>(vertex, closure, inDegree, outDegree));
         });
@@ -310,16 +303,18 @@ public class ClosuresGraph<V, E> {
      *
      *  (b) has ONLY ITSELF in the closure
      */
-    public ClosuresGraph<V,E>  collectSingletons() {
+    public Set<V>  collectSingletons() {
         // check if already computed
         if (singletonClosure != null)
-            return this;
+            return singletonClosure.members();
 
         logger.info("collectSingletons");
 
+        Set<V> singletonVertices = new HashSet<>();
+
         // check if there are singletons vertices with |closure| == 1
         if (bySize.get(1).isEmpty()) {
-            return this;
+            return singletonVertices;
         }
 
         // collect all singletons
@@ -333,7 +328,7 @@ public class ClosuresGraph<V, E> {
         // there are vertices with |closure| == 1 but they are NOT
         // singletons because the in degree != 0
         if (singletonVertices.isEmpty()) {
-            return this;
+            return singletonVertices;
         }
 
         // create the closure for the 'singleton' object
@@ -350,7 +345,7 @@ public class ClosuresGraph<V, E> {
 
         logger.warnf("... singletons [%s]->%s", singletonClosure.vertex(), singletonClosure.members());
 
-        return this;
+        return singletonVertices;
     }
 
     // ----------------------------------------------------------------------
@@ -362,8 +357,10 @@ public class ClosuresGraph<V, E> {
      * following two o more different vertices. For example all vertices in
      * a cicle can generate the same closure (in parallel)
      */
-    public ClosuresGraph<V,E>  removeDuplicates() {
+    public Set<V>  removeDuplicates() {
         logger.info("removeDuplicates");
+
+        Set<V> duplicatedVertices = new ConcurrentHashSet<>();
 
         Parallel.forEach(2, maxSize+1, size -> {
             V[] vertices = Utils.toArray(bySize.get(size));
@@ -398,7 +395,7 @@ public class ClosuresGraph<V, E> {
 
         logger.warnf("... duplicates %s", duplicatedVertices);
 
-        return this;
+        return duplicatedVertices;
     }
 
     /**
@@ -430,16 +427,11 @@ public class ClosuresGraph<V, E> {
             graph.getVertexSupplier(),
             graph.getEdgeSupplier());
 
-        closureGraph = new AsSynchronizedGraph<>(cgraph);
+        closureGraph = cgraph; //new AsSynchronizedGraph<>(cgraph);
 
         // populate with the edges
+        // closures contains ONLY the vertices/closures valid
         closures.keySet().forEach(vertex -> {
-            // skip vertices removed because 'singleton'
-            // if (singletonVertices.contains(vertex))
-            //     return;
-            // skip vertices removed because 'duplicated'
-            if (duplicatedVertices.contains(vertex))
-                return;
             closureGraph.addVertex(vertex);
         });
 
@@ -510,7 +502,7 @@ public class ClosuresGraph<V, E> {
     // pruneLeaves
     // ----------------------------------------------------------------------
 
-    public ClosuresGraph<V,E> removeLeaves() {
+    public List<V> removeLeaves() {
         return removeLeaves((v)-> true);
     }
 
@@ -522,10 +514,11 @@ public class ClosuresGraph<V, E> {
      *
      * @param predicate predicate on the vertex
      */
-    public ClosuresGraph<V,E> removeLeaves(Predicate<V> predicate) {
-        logger.info("pruneLeaves");
+    public List<V> removeLeaves(Predicate<V> predicate) {
+        logger.info("removeLeaves");
 
         boolean terminated = false;
+        List<V> leavesRemoved = new ArrayList<>();
 
         while (!terminated) {
             List<V> removed = new ConcurrentArrayList<>();
@@ -539,10 +532,10 @@ public class ClosuresGraph<V, E> {
             removed.forEach(closureGraph::removeVertex);
             leavesRemoved.addAll(removed);
 
-            logger.warnf("... removed leaves %s", leavesRemoved);
+            logger.warnf("... removed leaves %s", removed);
         }
 
-        return this;
+        return leavesRemoved;
     }
 
     private boolean isLeaf(V vertex) {
@@ -554,7 +547,7 @@ public class ClosuresGraph<V, E> {
     // pruneRoots
     // ----------------------------------------------------------------------
 
-    public ClosuresGraph<V,E> removeRoots() {
+    public Set<V> removeRoots() {
         return removeRoots((v) -> true);
     }
 
@@ -567,10 +560,11 @@ public class ClosuresGraph<V, E> {
      *
      * @param predicate predicate on the vertex
      */
-    public ClosuresGraph<V,E> removeRoots(Predicate<V> predicate) {
+    public Set<V> removeRoots(Predicate<V> predicate) {
         logger.info("pruneRoots");
 
         boolean terminated = false;
+        Set<V> rootsRemoved = new HashSet<>();
 
         while (!terminated) {
             Set<V> removed = new ConcurrentHashSet<>();
@@ -587,7 +581,7 @@ public class ClosuresGraph<V, E> {
             logger.warnf("... removed roots %s", rootsRemoved);
         }
 
-        return this;
+        return rootsRemoved;
     }
 
     private boolean isRoot(V vertex) {
@@ -613,17 +607,19 @@ public class ClosuresGraph<V, E> {
      *  a is a superset than b,c,d. This means that it is not necessary
      *  to 'merge' the closures!
      */
-    public ClosuresGraph<V,E>  collapseChains() {
+    public Set<V>  collapseChains() {
         logger.info("collapseChains");
+
+        Set<V> inChainRemoved = new HashSet<>();
 
         boolean collapsed = true;
         while (collapsed)
-            collapsed = collapseStep();
+            collapsed = collapseStep(inChainRemoved);
 
-        return this;
+        return inChainRemoved;
     }
 
-    private boolean collapseStep() {
+    private boolean collapseStep(Set<V> inChainRemoved) {
         // 1) search all vertices with input/output degree = 1
 
         Set<V> inChain = new ConcurrentTreeSet<>();
@@ -633,8 +629,10 @@ public class ClosuresGraph<V, E> {
                 inChain.add(vertex);
         });
 
-        if (inChain.isEmpty())
+        if (inChain.isEmpty()) {
+            logger.warnf("... removed inChain %s", inChain);
             return false;
+        }
 
         // logger.infof("... inChain %s", inChain);
 
@@ -729,45 +727,95 @@ public class ClosuresGraph<V, E> {
     }
 
     // ----------------------------------------------------------------------
-    // Listeners
+    // Difference
     // ----------------------------------------------------------------------
 
-    public static class Event<V, E> {
-        public Graph<V, E> graph;
-        public String name;
-        public String message;
-        public int count;
+    static class Edge<V> {
+        public V source;
+        public V target;
 
-        Event(Graph<V, E> g, String n, String m, int c) {
-            graph = g;
-            name = n;
-            message = m;
-            count = c;
+        public Edge(V s, V t) {
+            source = s;
+            target = t;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            Edge<V> that = (Edge<V>) obj;
+            return this.source.equals(that.source)
+                && this.target.equals(that.target);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.source, this.target);
+        }
+
     }
 
-    public interface Listener<V, E> {
-        void stepStarted(Event<V, E> event);
-        void step(Event<V, E> event);
-        void stepDone(Event<V, E> event);
+    /**
+     * Differences between THIS and THAT
+     */
+    public CGDifferences<V> difference(ClosuresGraph<V, E> that) {
+        CGDifferences<V> diff = new CGDifferences<>();
+
+        diffVertices(diff, that);
+        diffClosures(diff, that);
+        diffEdges(diff, that);
+
+        return diff;
     }
 
-    private final List<Listener<V, E>> listeners = new ArrayList<>();
+    private void diffVertices(CGDifferences<V> diff, ClosuresGraph<V, E> that) {
+        // vertices added/removed
+        Set<V> added   = Utils.difference(this.graph.vertexSet(), that.graph.vertexSet());
+        Set<V> removed = Utils.difference(that.graph.vertexSet(), this.graph.vertexSet());
 
-    public void addListener(Listener<V, E> l) {
-        listeners.add(l);
+        diff.vertices().added(added);
+        diff.vertices().removed(removed);
     }
 
-    private void fireStart(Event<V, E> ev) {
-        listeners.forEach(l -> l.stepStarted(ev));
+    private void diffClosures(CGDifferences<V> diff, ClosuresGraph<V, E> that) {
+        Set<V> common = Utils.intersection(this.graph.vertexSet(), that.graph.vertexSet());
+        common.forEach(vertex -> {
+            Closure<V> thisClosure = this.getClosure(vertex);
+            Closure<V> thatClosure = that.getClosure(vertex);
+
+            if (thisClosure.isSameSet(thatClosure))
+                return;
+
+            Set<V> membersAdded   = thisClosure.difference(thatClosure);
+            Set<V> membersRemoved = thatClosure.difference(thisClosure);
+
+            if (!membersAdded.isEmpty())
+                diff.vertices().changed(vertex).added(membersAdded);
+            if (!membersRemoved.isEmpty())
+                diff.vertices().changed(vertex).added(membersRemoved);
+        });
     }
 
-    private void fireStep(Event<V, E> ev) {
-        listeners.forEach(l -> l.step(ev));
-    }
+    private void diffEdges(CGDifferences<V> diff, ClosuresGraph<V, E> that) {
+        Set<Edge<V>> thisEdges = this.graph.edgeSet().stream()
+            .map(e -> {
+                V sourceVertex = this.graph.getEdgeSource(e);
+                V targetVertex = this.graph.getEdgeTarget(e);
+                return new Edge<V>(sourceVertex, targetVertex);
+            })
+            .collect(Collectors.toSet());
 
-    private void fireDone(Event<V, E> ev) {
-        listeners.forEach(l -> l.stepDone(ev));
+        Set<Edge<V>> thatEdges = that.graph.edgeSet().stream()
+            .map(e -> {
+                V sourceVertex = that.graph.getEdgeSource(e);
+                V targetVertex = that.graph.getEdgeTarget(e);
+                return new Edge<V>(sourceVertex, targetVertex);
+            })
+            .collect(Collectors.toSet());
+
+        Set<Edge<V>> added   = Utils.difference(thisEdges, thatEdges);
+        Set<Edge<V>> removed = Utils.difference(thatEdges, thisEdges);
+
+        diff.edges().added(added);
+        diff.edges().removed(removed);
     }
 
     // ----------------------------------------------------------------------
