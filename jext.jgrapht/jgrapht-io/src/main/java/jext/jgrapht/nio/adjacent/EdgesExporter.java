@@ -1,6 +1,7 @@
 package jext.jgrapht.nio.adjacent;
 
 import org.jgrapht.Graph;
+import org.jgrapht.nio.BaseExporter;
 import org.jgrapht.nio.GraphExporter;
 
 import java.io.IOException;

@@ -9,6 +9,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -138,6 +139,17 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 template.getEdgeSupplier(),
                 template.getVertexSupplier()
         );
+    }
+
+    public static <V, E> Graph<V, E> clone(Graph<V, E> g) {
+        Graph<V, E> c = newGraph(g);
+        g.vertexSet().forEach(c::addVertex);
+        g.edgeSet().forEach(e -> {
+            V s = g.getEdgeSource(e);
+            V t = g.getEdgeTarget(e);
+            c.addEdge(s, t);
+        });
+        return c;
     }
 
     // ----------------------------------------------------------------------
@@ -285,7 +297,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         for (int i=0; i<edges.length; ) {
             V sourceVertex = edges[i++];
             V targetVertex = edges[i++];
-            addEdgeWithVertices(g, sourceVertex, targetVertex);
+            E edge = addEdgeWithVertices(g, sourceVertex, targetVertex);
         }
     }
 
@@ -462,10 +474,35 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return g;
     }
 
+    public static <V, E> Graph<V, E> removeVertices(Graph<V, E> g, V ... vertices) {
+        return removeVertices(g, Arrays.asList(vertices));
+    }
+
     public static <V, E> Graph<V, E> removeVertices(Graph<V, E> g, Collection<V> vertices) {
         for(V v : vertices)
             g.removeVertex(v);
         return g;
+    }
+
+    // ----------------------------------------------------------------------
+
+    public static <V, E> void describe(Graph<V, E> g) {
+        System.out.printf("Graph: |V|=%d, |E|=%d\n", g.vertexSet().size(), g.edgeSet().size());
+        if (!g.vertexSet().isEmpty()) {
+            V v = g.vertexSet().iterator().next();
+            System.out.println("  v: " + v.getClass());
+        }
+        if (!g.edgeSet().isEmpty()) {
+            E e = g.edgeSet().iterator().next();
+            System.out.println("  e: " + e.getClass());
+        }
+
+        GraphType gt = g.getType();
+        if(gt.isDirected())              System.out.println("  directed");
+        if(gt.isWeighted())              System.out.println("  weighted");
+        if(gt.isAllowingSelfLoops())     System.out.println("  loop");
+        if(gt.isAllowingMultipleEdges()) System.out.println("  multiple");
+        if(gt.isAllowingCycles())        System.out.println("  cycles");
     }
 
     // ----------------------------------------------------------------------

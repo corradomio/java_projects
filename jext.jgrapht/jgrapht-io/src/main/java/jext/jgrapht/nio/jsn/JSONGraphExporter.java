@@ -1,4 +1,4 @@
-package jext.jgrapht.nio.adjacent;
+package jext.jgrapht.nio.jsn;
 
 import jext.util.JSONUtils;
 import jext.util.MapUtils;

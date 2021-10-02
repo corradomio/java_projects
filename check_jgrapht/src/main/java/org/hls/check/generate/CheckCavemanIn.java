@@ -1,7 +1,7 @@
 package org.hls.check.generate;
 
 import jext.jgrapht.GraphMetrics;
-import jext.jgrapht.nio.adjacent.FileGraphImporter;
+import jext.jgrapht.nio.file.FileGraphImporter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;

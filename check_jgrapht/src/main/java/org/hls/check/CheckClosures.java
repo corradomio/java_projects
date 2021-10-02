@@ -4,7 +4,7 @@ import jext.jgrapht.DirectedEdge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.closure.ClosuresGraph;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
-import jext.jgrapht.nio.adjacent.JSONGraphExporter;
+import jext.jgrapht.nio.jsn.JSONGraphExporter;
 import jext.logging.Logger;
 import jext.util.concurrent.Parallel;
 import org.jgrapht.Graph;
@@ -20,16 +20,16 @@ import java.util.Map;
 
 public class CheckClosures {
 
-    static GraphExporter<Integer, DirectedEdge<Integer>> newExporter() {
+    static GraphExporter<Integer, DirectedEdge> newExporter() {
         return newExporter("dot");
     }
 
-    static GraphExporter<Integer, DirectedEdge<Integer>> newExporter(String type) {
-        GraphExporter<Integer, DirectedEdge<Integer>> exporter = null;
+    static GraphExporter<Integer, DirectedEdge> newExporter(String type) {
+        GraphExporter<Integer, DirectedEdge> exporter = null;
 
         if ("dot".equals(type)) {
             exporter = new DOTExporter<>();
-            ((DOTExporter<Integer, DirectedEdge<Integer>>)exporter).setVertexAttributeProvider((v) -> {
+            ((DOTExporter<Integer, DirectedEdge>)exporter).setVertexAttributeProvider((v) -> {
                 Map<String, Attribute> map = new LinkedHashMap<>();
                 map.put("label", DefaultAttribute.createAttribute(v.toString()));
                 return map;
@@ -37,7 +37,7 @@ public class CheckClosures {
         }
         if ("json".equals(type)) {
             exporter = new JSONGraphExporter<>();
-            ((JSONGraphExporter<Integer, DirectedEdge<Integer>>)exporter).setVertexAttributeProvider((v) -> {
+            ((JSONGraphExporter<Integer, DirectedEdge>)exporter).setVertexAttributeProvider((v) -> {
                 Map<String, Attribute> map = new LinkedHashMap<>();
                 map.put("label", DefaultAttribute.createAttribute(v.toString()));
                 return map;
@@ -47,8 +47,8 @@ public class CheckClosures {
     }
 
 
-    static DOTImporter<Integer, DirectedEdge<Integer>> newImporter() {
-        DOTImporter<Integer, DirectedEdge<Integer>> importer = new DOTImporter<>();
+    static DOTImporter<Integer, DirectedEdge> newImporter() {
+        DOTImporter<Integer, DirectedEdge> importer = new DOTImporter<>();
         // importer.addVertexAttributeConsumer((v) -> {
         //     Map<String, Attribute> map = new LinkedHashMap<>();
         //     map.put("label", DefaultAttribute.createAttribute(v.toString()));
@@ -63,23 +63,22 @@ public class CheckClosures {
 
         // --
 
-        Graph<Integer, DirectedEdge<Integer>> g = (Graph)Graphs.newGraph(Integer.class, DirectedEdge.class);
+        Graph<Integer, DirectedEdge> g = Graphs.newGraph(Integer.class, DirectedEdge.class);
 
         // --
 
         //RandomGraphGenerator<String, DirectedEdge> gg = new RandomGraphGenerator();
-        RandomCavemanGraphGenerator<Integer, DirectedEdge<Integer>> gg = new RandomCavemanGraphGenerator<>(
+        RandomCavemanGraphGenerator<Integer, DirectedEdge> gg = new RandomCavemanGraphGenerator<>(
             300,
             300,
             10,
             0.1,
-            0.9,
-            false);
+            0.9);
         gg.generateGraph(g);
 
         // newImporter().importGraph(g, new File("graph.dot"));
 
-        g = (Graph)Graphs.newGraph(Integer.class, DirectedEdge.class);
+        g = Graphs.newGraph(Integer.class, DirectedEdge.class);
         Graphs.addVertices(g, 1,2,3,4,5,6,7);
         Graphs.addEdges(g, 1,2, 1,3, 4,5, 4,6);
 
@@ -88,7 +87,7 @@ public class CheckClosures {
 
         // -----------------------------------------------------------------------
 
-        ClosuresGraph<Integer, DirectedEdge<Integer>> cg = new ClosuresGraph<>(g);
+        ClosuresGraph<Integer, DirectedEdge> cg = new ClosuresGraph<>(g);
 
         cg.computeClosures();
         cg.collectSingletons();

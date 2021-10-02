@@ -1,4 +1,4 @@
-package jext.jgrapht.nio.adjacent;
+package jext.jgrapht.nio.mtx;
 
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphImporter;

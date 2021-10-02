@@ -15,6 +15,7 @@ import org.jgrapht.alg.TransitiveReduction;
 import org.jgrapht.alg.cycle.CycleDetector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -216,6 +217,18 @@ public class ClosuresGraph<V, E> {
     // computeClosures
     // ----------------------------------------------------------------------
 
+    public ClosuresGraph<V,E> compose() {
+        computeClosures();
+        // collectSingletons();
+        // removeDuplicates();
+        createClosureGraph();
+        computeClosureDependencies();
+        transitiveReduction();
+        // removeLeaves();
+        // removeRoots();
+        return this;
+    }
+
     /**
      * Compute the closures (in parallel)
      */
@@ -343,7 +356,10 @@ public class ClosuresGraph<V, E> {
         //
         add(singletonClosure);
 
-        logger.warnf("... singletons [%s]->%s", singletonClosure.vertex(), singletonClosure.members());
+        logger.warnf("... singletons (%d) [%s]-> %s",
+            singletonClosure.members().size(),
+            singletonClosure.vertex(),
+            trimList(singletonClosure.members()));
 
         return singletonVertices;
     }
@@ -393,7 +409,7 @@ public class ClosuresGraph<V, E> {
         // remove all vertices from 'closures' and 'bySize'
         duplicatedVertices.forEach(this::remove);
 
-        logger.warnf("... duplicates %s", duplicatedVertices);
+        logger.warnf("... duplicates (%d) %s", duplicatedVertices.size(), trimList(duplicatedVertices));
 
         return duplicatedVertices;
     }
@@ -532,7 +548,7 @@ public class ClosuresGraph<V, E> {
             removed.forEach(closureGraph::removeVertex);
             leavesRemoved.addAll(removed);
 
-            logger.warnf("... removed leaves %s", removed);
+            logger.warnf("... removed leaves (%d) %s", removed.size(), trimList(removed));
         }
 
         return leavesRemoved;
@@ -578,7 +594,7 @@ public class ClosuresGraph<V, E> {
             removed.forEach(closureGraph::removeVertex);
             rootsRemoved.addAll(removed);
 
-            logger.warnf("... removed roots %s", rootsRemoved);
+            logger.warnf("... removed roots (%d) %s", rootsRemoved.size(), trimList(rootsRemoved));
         }
 
         return rootsRemoved;
@@ -630,7 +646,8 @@ public class ClosuresGraph<V, E> {
         });
 
         if (inChain.isEmpty()) {
-            logger.warnf("... removed inChain %s", inChain);
+            // just to print "... removed inChain []"
+            logger.warnf("... removed inChain (0) []");
             return false;
         }
 
@@ -676,8 +693,8 @@ public class ClosuresGraph<V, E> {
             closureGraph.addEdge(sourceVertex, targetVertex);
         });
 
-        logger.warnf("... removed inChain %s", inChain);
-        logger.warnf("... added edges %s", chains);
+        logger.warnf("... removed inChain (%d) %s", inChain.size(),  trimList(inChain));
+        logger.warnf("... added     edges (%d) %s", chains.size(),   trimList(chains));
 
         return true;
     }
@@ -702,6 +719,21 @@ public class ClosuresGraph<V, E> {
     private V add(V vertex, Set<V> chain) {
         chain.add(vertex);
         return vertex;
+    }
+
+    private static <E> Collection<E> trimList(Collection<E> coll) {
+        int maxSize = 16;
+
+        if (coll.size() <= maxSize)
+            return coll;
+
+        List<E> list = new ArrayList<>();
+        for (E e : coll) {
+            list.add(e);
+            if (list.size() == maxSize)
+                break;
+        }
+        return list;
     }
 
     // ----------------------------------------------------------------------
@@ -733,10 +765,12 @@ public class ClosuresGraph<V, E> {
     static class Edge<V> {
         public V source;
         public V target;
+        public boolean directed;
 
-        public Edge(V s, V t) {
+        public Edge(V s, V t, boolean d) {
             source = s;
             target = t;
+            directed = d;
         }
 
         @Override
@@ -751,6 +785,13 @@ public class ClosuresGraph<V, E> {
             return Objects.hash(this.source, this.target);
         }
 
+        @Override
+        public String toString() {
+            if (directed)
+                return String.format("%s->%s", source, target);
+            else
+                return String.format("{%s, %s}", source, target);
+        }
     }
 
     /**
@@ -799,7 +840,7 @@ public class ClosuresGraph<V, E> {
             .map(e -> {
                 V sourceVertex = this.graph.getEdgeSource(e);
                 V targetVertex = this.graph.getEdgeTarget(e);
-                return new Edge<V>(sourceVertex, targetVertex);
+                return new Edge<V>(sourceVertex, targetVertex, true);
             })
             .collect(Collectors.toSet());
 
@@ -807,7 +848,7 @@ public class ClosuresGraph<V, E> {
             .map(e -> {
                 V sourceVertex = that.graph.getEdgeSource(e);
                 V targetVertex = that.graph.getEdgeTarget(e);
-                return new Edge<V>(sourceVertex, targetVertex);
+                return new Edge<V>(sourceVertex, targetVertex, true);
             })
             .collect(Collectors.toSet());
 

@@ -2,8 +2,7 @@ package org.hls.check.generate;
 
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
-import jext.jgrapht.nio.adjacent.FileGraphExporter;
-import jext.jgrapht.util.distrib.NormalDistrib;
+import jext.jgrapht.nio.file.FileGraphExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.GraphGenerator;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -37,7 +36,7 @@ public class CheckCavemanOut {
         // q: in community
         GraphGenerator<Integer, DefaultWeightedEdge, List<Set<Integer>>> gg
                 = new RandomCavemanGraphGenerator<Integer, DefaultWeightedEdge>(
-                N, E, C, .001, .99,true)
+                N, E, C, .001, .99)
                 // .communityWeights(new NormalDistrib(0.25, .10).minValue(0.01))
                 // .betweenWeights(new NormalDistrib(1., .10).minValue(0.05))
             ;

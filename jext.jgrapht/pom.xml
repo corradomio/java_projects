@@ -15,7 +15,6 @@
         <module>jgrapht-io</module>
         <module>jgrapht-neo4j</module>
         <module>jgrapht-clustering</module>
-        <module>jgrapht-igraph</module>
     </modules>
 
     <properties>

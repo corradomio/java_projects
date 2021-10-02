@@ -1,8 +1,7 @@
 package org.hls.check;
 
-import jext.jgrapht.DirectedEdge;
 import jext.jgrapht.Graphs;
-import jext.jgrapht.nio.adjacent.MTXImporter;
+import jext.jgrapht.nio.mtx.MTXImporter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.nio.dot.DOTExporter;

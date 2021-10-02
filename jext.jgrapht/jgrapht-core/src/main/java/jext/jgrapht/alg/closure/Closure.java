@@ -14,7 +14,6 @@ public class Closure<V> {
     private final int outDegree;
     private V vertex;
     private final Set<V> members;
-    private boolean singleton;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -25,18 +24,16 @@ public class Closure<V> {
         this.outDegree = 0;
         this.vertex = null;
         this.members = members;
-        this.singleton = true;
 
         if (!members.isEmpty())
             this.vertex = members.iterator().next();
     }
 
-    Closure(V vertex, Set<V> members, int inDegree, int outDegree) {
+    public Closure(V vertex, Set<V> members, int inDegree, int outDegree) {
         this.inDegree = inDegree;
         this.outDegree = outDegree;
         this.vertex = vertex;
-        this.members = members; //new ConcurrentSkipListSet<>(members);
-        this.singleton = false;
+        this.members = members;
     }
 
     // ----------------------------------------------------------------------
@@ -47,10 +44,6 @@ public class Closure<V> {
         return vertex;
     }
 
-    public Set<V> members() {
-        return members;
-    }
-
     public int inDegree() {
         return inDegree;
     }
@@ -59,13 +52,28 @@ public class Closure<V> {
         return outDegree;
     }
 
+    public Set<V> members() {
+        return members;
+    }
+
+    public Set<V> difference(Closure<V> that) {
+        return Utils.difference(members, that.members);
+    }
+
+    public int size() {
+        return members.size();
+    }
+
+    /**
+     * A singleton is a vertex with 0 degree
+     */
     public boolean isSingleton() {
-        return singleton;
+        return inDegree == 0 && outDegree == 0;
     }
 
     /**
      * Check if the closure is empty.
-     * Used ONLY when thereare no singletons available
+     * Used ONLY when there are NO singletons available
      */
     public boolean isEmpty() {
         return members.isEmpty();
@@ -128,7 +136,4 @@ public class Closure<V> {
             return false;
     }
 
-    public int size() {
-        return members.size();
-    }
 }

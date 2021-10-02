@@ -6,7 +6,7 @@
 // import jext.jgrapht.alg.color.WeightedMCMCBColoring;
 // import jext.jgrapht.alg.transform.TransformGraph;
 // import jext.jgrapht.nio.adjacent.EdgesImporter;
-// import jext.jgrapht.nio.adjacent.FileGraphImporter;
+// import jext.jgrapht.nio.file.FileGraphImporter;
 // import jext.jgrapht.nio.clustering.CSVClusteringImporter;
 // import jext.jgrapht.util.WeightMode;
 // import jext.logging.Logger;

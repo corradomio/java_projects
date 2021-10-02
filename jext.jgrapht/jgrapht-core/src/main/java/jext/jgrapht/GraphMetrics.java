@@ -8,8 +8,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static jext.jgrapht.util.MathUtil.sq;
-
 /**
  * Reference: Machine Learning in Complex Network
  */
@@ -93,6 +91,9 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
         return nEdges / tEdges;
     }
+
+    private static double sq(double x){ return x*x; }
+    private static long   sq(long x){ return x*x; }
 
     // ----------------------------------------------------------------------
     // Assortativity

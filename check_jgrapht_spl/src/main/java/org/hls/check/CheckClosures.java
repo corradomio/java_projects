@@ -34,7 +34,7 @@ public class CheckClosures {
         Graph<Integer, DefaultEdge> g = Graphs.newGraph(Integer.class, DefaultEdge.class, true);
 
         rcgg.generateGraph(g, null);
-        Utils.describe(g);
+        Graphs.describe(g);
 
         ClosuresGraph<Integer, DefaultEdge> cg = new ClosuresGraph<>(g);
         Map<Integer, Closure<Integer>> slowClosures;
@@ -43,14 +43,14 @@ public class CheckClosures {
         {
             System.out.println("start (slow) ...");
             long start = System.currentTimeMillis();
-            cg.computeClosures(true);
+            cg.computeClosures();
             System.out.printf("done in %ds \n", (System.currentTimeMillis()-start)/1000);
             slowClosures = cg.getClosures();
         }
         {
             System.out.println("start (fast) ...");
             long start = System.currentTimeMillis();
-            cg.computeClosures(false);
+            cg.computeClosures();
             System.out.printf("done in %ds \n", (System.currentTimeMillis()-start)/1000);
             fastClosures = cg.getClosures();
         }

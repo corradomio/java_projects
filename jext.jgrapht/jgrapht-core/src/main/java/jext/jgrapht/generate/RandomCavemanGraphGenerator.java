@@ -38,8 +38,6 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
     private int[] cstart;
     // generated communities
     private List<Set<V>> communities;
-    // directed graph
-    private boolean directed;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -53,21 +51,18 @@ public class RandomCavemanGraphGenerator<V, E> implements GraphGenerator<V, E, L
      * @param nCommunities n of communities
      * @param betweenProb probability of an edge to be connected between communities
      * @param insideProb probability of an edge to be connected into the community
-     * @param directed if to create a directed graph
      */
     public RandomCavemanGraphGenerator(
         int order,              // n vertices
         int size,               // n edges
         int nCommunities,       // n communities
         double betweenProb,
-        double insideProb,
-        boolean directed) {
+        double insideProb) {
         this.order = order;         // n vertices
         this.size = size;           // n edges
         this.n = nCommunities;      // n communities
         this.p = betweenProb;       // between communities
         this.q = insideProb;        // inside community
-        this.directed = directed;
     }
 
     /**

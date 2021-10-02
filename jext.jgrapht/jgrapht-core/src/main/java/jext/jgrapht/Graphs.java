@@ -28,13 +28,13 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // public static <V, E> void    addGraphReversed(Graph<? super V, ? super E> destination, Graph<V, E> source)
     // public static <V, E> Graph<V, E> undirectedGraph(Graph<V, E> g)
 
-    // public static <V, E> E addEdge(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
-    // public static <V, E> E addEdgeWithVertices(Graph<V, E> g, V sourceVertex, V targetVertex)
+    // public static <V, E> E       addEdge(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
+    // public static <V, E> E       addEdgeWithVertices(Graph<V, E> g, V sourceVertex, V targetVertex)
     // public static <V, E> boolean addEdgeWithVertices(Graph<V, E> targetGraph, Graph<V, E> sourceGraph, E edge)
-    // public static <V, E> E addEdgeWithVertices(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
+    // public static <V, E> E       addEdgeWithVertices(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
     // public static <V, E> boolean addAllEdges(Graph<? super V, ? super E> destination, Graph<V, E> source, Collection<? extends E> edges)
-    // public static <V, E> void addOutgoingEdges(Graph<V, E> graph, V source, Iterable<V> targets)
-    // public static <V, E> void addIncomingEdges(Graph<V, E> graph, V target, Iterable<V> sources)
+    // public static <V, E> void    addOutgoingEdges(Graph<V, E> graph, V source, Iterable<V> targets)
+    // public static <V, E> void    addIncomingEdges(Graph<V, E> graph, V target, Iterable<V> sources)
 
     // public static <V, E> V getOppositeVertex(Graph<V, E> g, E e, V v)
     // public static <V, E> VertexToIntegerMapping<V> getVertexToIntegerMapping(Graph<V, E> graph)
@@ -57,21 +57,18 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // ----------------------------------------------------------------------
 
     public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass) {
-        boolean weighed  = edgeClass.isAssignableFrom(DefaultWeightedEdge.class);
         boolean directed = edgeClass.isAssignableFrom(DirectedEdge.class);
 
-        Supplier<E> edgeSupplier = edgeSupplier(edgeClass);
-        Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
-
-        return newGraph(directed, false,false, weighed, edgeSupplier, vertexSupplier);
+        return newGraph(vertexClass, edgeClass, directed);
     }
 
     public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass, boolean directed) {
-        Supplier<E> edgeSupplier = edgeSupplier(edgeClass);
+        Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
         Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
 
         return newGraph(directed, false,false, false, edgeSupplier, vertexSupplier);
     }
+
 
     /**
      * Create a new graph based on properties
@@ -111,16 +108,12 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 .buildGraph();
     }
 
-    // public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted) {
-    //     return newGraph(directed, false, false, weighted, null, null);
-    // }
-    //
-    // public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted,
-    //     Class<V> vertexClass, Class<E> edgeClass) {
-    //     return newGraph(directed, false, false, weighted,
-    //         edgeSupplier(edgeClass),
-    //         vertexSupplier(vertexClass));
-    // }
+    public static <V, E> Graph<V, E> newGraph(
+        boolean directed,
+        Supplier<V> vertexSupplier,
+        Supplier<E> edgeSupplier) {
+        return newGraph(directed, false, false, false, edgeSupplier, vertexSupplier);
+    }
 
     /**
      * Created a new graph with the same properties of the specified graph
@@ -147,7 +140,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // ----------------------------------------------------------------------
 
     /**
-     * Create a vertex supplier
+     * Create a vertex supplier.
+     * Simplify the usage of {@link org.jgrapht.util.SupplierUtil}
      *
      * @param vertexClass
      *      supported classes: int, Integer, long, Long, String, UUID
@@ -169,7 +163,22 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // ----------------------------------------------------------------------
 
     /**
+     * Add the list of vertices
+     * @param g the graph
+     * @param vertices list of vertices
+     * @param <V> vertices type
+     * @param <E> edges type
+     */
+    public static <V, E> void addVertices(Graph<V, E> g, V ... vertices) {
+        for (V v : vertices) {
+            g.addVertex(v);
+        }
+    }
+
+    /**
      * Predecessor vertices of the specified vertex
+     *
+     * @see {@link org.jgrapht.Graphs::predecessorListOf}
      *
      * @param g the graph
      * @param vertex the selected vertex
@@ -187,6 +196,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     /**
      * Successor vertices of the specified vertex
      *
+     * @see {@link org.jgrapht.Graphs::successorListOf}
+     *
      * @param g the graph
      * @param vertex the selected vertex
      * @param <V> vertices type
@@ -201,7 +212,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     }
 
     /**
-     * Neighbor vertices of the specified vertex
+     * Neighbor vertices of the specified vertex, parametrized by edge type
      *
      * @param g the graph
      * @param vertex the selected vertex
@@ -219,13 +230,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 return neighborSetOf(g, vertex);
         }
     }
-
-    // public static <V, E> Map<V, Double> weightedNeighborOf(Graph<V, E> g, V v, EdgeType edgeType) {
-    //     return neighborSetOf(g, v, edgeType)
-    //             .stream()
-    //             .map(t -> g.getEdge(v, t))
-    //             .collect(Collectors.toMap(e -> getOppositeVertex(g, e, v), g::getEdgeWeight));
-    // }
 
     // ----------------------------------------------------------------------
     // Edges
@@ -250,7 +254,24 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // ----------------------------------------------------------------------
 
     /**
-     * Add the edge and the vertices
+     * Add all edges specified as a list of vertex pairs
+     *
+     * @param g the graph
+     * @param edges a listof vertex pairs
+     * @param <V> vertices type
+     * @param <E> edges type
+     */
+    public static <V, E> void addEdges(Graph<V, E> g,V ... edges) {
+        for (int i=0; i<edges.length; ) {
+            V sourceVertex = edges[i++];
+            V targetVertex = edges[i++];
+            addEdge(g, sourceVertex, targetVertex);
+        }
+    }
+
+    /**
+     * Add the edge and the vertices. Simplified version than
+     * {@link org.jgrapht.Graphs::addEdgeWithVertices}
      *
      * @param g the graph
      * @param sourceVertex source vertex of the edge
@@ -281,20 +302,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 edges.add(edge);
         }
         return edges;
-    }
-
-    public static <V, E> void addEdges(Graph<V, E> g,V ... edges) {
-        for (int i=0; i<edges.length; ) {
-            V sourceVertex = edges[i++];
-            V targetVertex = edges[i++];
-            addEdgeWithVertices(g, sourceVertex, targetVertex);
-        }
-    }
-
-    public static <V, E> void addVertices(Graph<V, E> g, V ... vertices) {
-        for (V v : vertices) {
-            g.addVertex(v);
-        }
     }
 
     // ----------------------------------------------------------------------
@@ -329,21 +336,21 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return visited;
     }
 
-    public static <V> Set<V> closureOf(Map<V, VertexInfo<V>> vinfoMap, V startVertex) {
-        Set<V> visited = new HashSet<>();
-        Queue<V> toVisit = new LinkedList<>();
-
-        toVisit.add(startVertex);
-
-        while (!toVisit.isEmpty()) {
-            V v = toVisit.remove();
-            if (visited.contains(v))
-                continue;
-            visited.add(v);
-            toVisit.addAll(vinfoMap.get(v).neighbor);
-        }
-        return visited;
-    }
+    // public static <V> Set<V> closureOf(Map<V, VertexInfo<V>> vinfoMap, V startVertex) {
+    //     Set<V> visited = new HashSet<>();
+    //     Queue<V> toVisit = new LinkedList<>();
+    //
+    //     toVisit.add(startVertex);
+    //
+    //     while (!toVisit.isEmpty()) {
+    //         V v = toVisit.remove();
+    //         if (visited.contains(v))
+    //             continue;
+    //         visited.add(v);
+    //         toVisit.addAll(vinfoMap.get(v).neighbor);
+    //     }
+    //     return visited;
+    // }
 
     // ----------------------------------------------------------------------
     // Graph properties
@@ -378,7 +385,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     }
 
     public static <V, E> boolean isIsolated(Graph<V, E> g, V v) {
-        // return !(vertexHasPredecessors(g, v) || vertexHasSuccessors(g, v));
         return g.degreeOf(v) == 0;
     }
 
