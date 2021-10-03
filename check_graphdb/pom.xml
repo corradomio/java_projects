@@ -39,6 +39,11 @@
             <artifactId>jext.apocx</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.concurrent</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.ontotext.graphdb/graphdb-free-runtime -->
         <dependency>
