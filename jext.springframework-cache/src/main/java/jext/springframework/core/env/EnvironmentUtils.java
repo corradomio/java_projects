@@ -1,21 +1,14 @@
 package jext.springframework.core.env;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.PropertiesUtil;
-import org.springframework.boot.env.OriginTrackedMapPropertySource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.env.PropertySource;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
 /*
@@ -41,7 +34,7 @@ OriginTrackedMapPropertySource {name='applicationConfig: [file:./application.pro
  */
 public class EnvironmentUtils {
 
-    private static Logger logger = LogManager.getLogger(EnvironmentUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(EnvironmentUtils.class);
 
     public static Properties getProperties(ApplicationContext ctx) {
         return getProperties(ctx.getEnvironment());
