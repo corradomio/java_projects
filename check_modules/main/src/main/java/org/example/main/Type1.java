@@ -1,6 +1,9 @@
 package org.example.main;
 
-public class Type1 {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Type1 extends ArrayList<String> {
 
     // private Type2 t2;
     private Type3 t3;
