@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--
+        Configurable entries
+        This section is used to configure labels, descriptions and the key
+        to access the configuration file
+        Supported variables:
+
+            ${name}         name defined in the section <properties>...</>
+            ${sys:name}     property in System.getProperties()
+            ${env:name}     environment variable in System.getenv();
+      -->
+    <properties>
+        <property name="name" value="short value">long value</property>
+    </properties>
+
+    <override path="config/splconfig.xml">
+        <entry>
+            <property name="category" value="system"/>
+            <property name="label" value="Uploads directory"/>
+            <property name="description">Where the uploads directory is located inside the SPL server</property>
+            <property name="key" value="system.uploads[@path]"/>
+        </entry>
+
+        <entry>
+            <property name="category" value="system"/>
+            <property name="label" value="Workspace"/>
+            <property name="description">Workspace home directory</property>
+            <property name="key" value="splreposManager.workspace[@path]"/>
+        </entry>
+
+        <entry>
+            <property name="category" value="dependency"/>
+            <property name="label" value="Size limit"/>
+            <property name="description">Source file size (n.of lines) limit (0 -> no limit)</property>
+            <property name="key" value="models.dependency.property[@name='size.limit'].[@value]"/>
+        </entry>
+
+        <entry>
+            <property name="category" value="dependency"/>
+            <property name="label" value="Time limit"/>
+            <property name="description">Maximum time to analyze a file</property>
+            <property name="key" value="models.dependency.property[@name='time.limit'].[@value]"/>
+        </entry>
+
+        <entry>
+            <property name="category" value="dependency"/>
+            <property name="label" value="Method limit"/>
+            <property name="description">Maximum time to analyze a method</property>
+            <property name="key" value="models.dependency.property[@name='method.limit'].[@value]"/>
+        </entry>
+    </override>
+
+    <!--
+        Configuration for the SPLReposManager
+      -->
+    <splreposManager>
+        <!--<workspace path="/Users/ahmed/Desktop/SPL/Repos"/>-->
+        <!--<workspace path="${sys:user.home}/Desktop/SPL/Repos" />-->
+        <!--<workspace path="D:/SPLGroup/spl-workspaces/AhmedWorkspace"/>-->
+        <!--<workspace path="D:/SPLGroup/spl-workspaces/BTProjects2"/>-->
+        <!--<workspace path="D:/SPLGroup/spl-workspaces/spl-workspace"/>-->
+        <!--<workspace path="D:/SPLGroup/spl-workspaces/dev-workspace/workspace"/>-->
+        <workspace path="D:\SPLGroup\spl-workspaces"/>
+    </splreposManager>
+
+    <confidentialManager>
+        <!--
+            Password used for encrypt/decrypt confidential information
+          -->
+        <password value="system.password"/>
+
+    </confidentialManager>
+
+    <!--
+        System configuration:
+
+        Note: if a path starts with '/' or '<disk>:/' is considered a ABSOLUTE path, otherwise a RELATIVE path.
+              The HOME path is the directory where the web application is installed
+      -->
+    <system>
+
+        <!--
+            Map specific web sites to 'VFileSystem protocols' used to access them
+
+            (PARTIALLY implemented!)
+          -->
+        <vfilesystems>
+            <vfilesystem url="http://github.com" protocol="http+git"/>
+            <vfilesystem url="https://github.com" protocol="https+git"/>
+        </vfilesystems>
+
+        <!-- uploads path="${sys:user.home}/.spl/uploads"/ -->
+        <uploads path="D:/SPLGroup/uploads"/>
+        <!--<uploads path="${sys:user.home}/.spl/uploads"/>-->
+
+        <!--
+            Thread pool used to execute in background some simple operations.
+            Note: this pool IS NOT used to execute the MAIN 'TASKs' like 'dependency analysis',
+                  'component analysis', ...
+            but only simple/fast tasks as, for example, to delete something.
+          -->
+        <threadpool threads="1"/>
+
+        <!--
+            Thread pool used to execute in background the MAIN 'TASKs', very long operations:
+
+                - download from remote repository
+                - dependency analysis
+                - component analysis
+                - feature analysis
+                - ...
+          -->
+        <taskpool threads="8"/>
+
+        <!--
+            Configuration file for Log4j and timeout (in milliseconds) used for the timed/debugf logging
+          -->
+        <logging timeout="3000" path="WEB-INF/log4j.xml"/>
+
+        <!--
+            WebSocket
+                KeepAlive timout (in milliseconds)
+                Progress timeout (in milliseconds)
+         -->
+        <messages>
+            <keepalive timeout="20000" />
+            <progress  timeout="10000"/>
+        </messages>
+
+    </system>
+
+    <!--
+        Configuration for the ExternalLibraryManager
+
+        It is possible to configure, for each language, a list of directories
+        containing the downloaded libraries
+
+        download/@timeout: (millis) timeout between two consecutive downloads
+        check/@timeout:   (seconds) timeout between two consecutive download of files
+            that changes in the time: version, metadata, etc
+
+        <repository> list of default repositories to check
+        <downloads>  root directory where to download the files
+      -->
+    <extlibsManager>
+        <maven>
+            <download timeout="500ms" path="${sys:user.home}/.spl/.extlib" parallel="5" />
+            <check    timeout="24h"/>
+
+            <!-- extra local directories where to search local libraries -->
+            <local path="${sys:user.home}/.spl/.libs"/>
+            <local path=".libs"/>
+
+            <!-- repository url="http://central.maven.org/maven2/"/ -->
+            <repository url="https://repo1.maven.org/maven2"/>
+            <repository url="https://repo.maven.apache.org/maven2"/>
+            <repository url="https://mvnrepository.com/artifact/" />
+            <repository url="https://repo.spring.io/plugins-release/" />
+            <repository url="https://plugins.gradle.org/m2/" />
+            <repository url="https://repo.gradle.org/gradle/libs-releases-local/" />
+        </maven>
+
+        <!-- Deprecated: use maven/download/@path
+          -->
+        <downloads path="${sys:user.home}/.spl/.extlib"/>
+
+        <language name="java">
+            <!--
+                An 'aggregate library' is a library composed of multiple library descriptors.
+                It is possible to specify that a folder is an 'aggregate library' using
+                the property 'name'
+
+                With 'name' is possible to assign to the folder the name of the 'aggregate library'
+                It is possible to assign multiple names, separating the names by ',' (comma)
+                WITHOUT spaces!
+              -->
+
+            <!-- Java -->
+            <!-- path value="WEB-INF/extlibs/java/jdk/jdk7"   name="jdk7,jdk1.7" / -->
+            <!-- path value="WEB-INF/extlibs/java/jdk/jdk10"  name="jdk9,jdk10" / -->
+            <path value="D:/SPLGroup/SPLDevelopment3.0/extlibs/java/jdk/jdk8"   name="jdk7,jdk1.7,jdk8,jdk1.8" />
+            <path value="D:/SPLGroup/SPLDevelopment3.0/extlibs/java/jdk/jdk14"  name="jdk9,jdk10,jdk11,jdk12,jdk13,jdk14" />
+
+            <!-- Android -->
+            <!--
+                https://www.javatpoint.com/android-versions
+                Code name       Version         Api
+                no_name         1.0             1
+                no_name         1.1             2
+                Cupcake         1.5             3
+                Donut           1.6             4
+                Eclair          2.0 - 2.1       5 - 7
+                Froyo           2.2 - 2.2.3     8
+                Gingerbread     2.3 - 2.3.7     9 - 10
+                Honeycomb       3.0 - 3.2.6     11 - 13
+                Ice Cream       4.0 - 4.0.4     14 - 15
+                Jelly Bean      4.1 - 4.3.1     16 - 18
+                KitKat          4.4 - 4.4.4     19 - 20
+                Lollipop        5.0 - 5.1.1     21 - 22
+                Marshmallow     6.0 - 6.0.1     23
+                Nougat          7.0             24
+                Nougat          7.1.0 - 7.1.2   25
+                Oreo            8.0 - 8.1       26 - 27
+                Pie             9.0             28
+                Android 10      10.0            29
+                Android 11      11.0            30
+              -->
+            <path value="config/extlibs/java/android/api30"
+                  name="marshmallow,lollipop,adk5,adk4,adk3oreo,nougart,adk8,adk6,r,q,pie,adk10,adk9"
+            />
+
+        </language>
+    </extlibsManager>
+
+    <!--
+        Default configurations for models analysis
+      -->
+    <models>
+        <source>
+
+        </source>
+
+        <dependency>
+            <!-- keep some old reports -->
+            <property name="keepReports" value="3"/>
+
+            <!--
+                max number of lines to analyze a source file.
+                files with more lines will be skipped
+
+                0 -> no limits
+              -->
+            <property name="size.limit" value="0"/>
+            <!--
+                max time to analyze a single file ('time.limit')
+                or a single method ('method.limit')
+
+                Formats:
+                    [[dd:]hh:]mm:ss
+                    {value}ms
+                    {value}s
+                    {value}m
+                    {value}h
+
+               'dd','hh','mm','ss' must be integers
+               {value} can be an integer or a real value
+
+               0 -> no limits
+               however it can be a good idea to assign some reasonable value
+            -->
+            <property name="time.limit" value="5m" />
+            <property name="method.limit" value="10s" />
+
+            <!--
+                Approximated memory allocated for each line of code.
+                This value is used to guess the memory used during the analysis
+                and to decide if the analysis can start or it is necessary
+                to wait that some running analysis terminate.
+              -->
+            <property name="line.allocatedMemory" value="10KB" />
+
+            <!-- list of file extensions considered as 'resources' -->
+            <property name="module.resources.$" value=".xml,.properties,.json,.gradle,.project,.classpath" />
+            <!-- list of file extensions considered as 'source files' -->
+            <property name="module.sources.$" value=".java" />
+            <!-- list of file/directory names to exclude -->
+            <property name="module.exclude.$" value=".*" />
+        </dependency>
+
+        <component>
+            <!--
+                Default list of type 'names' used to 'remove' some types from the
+                'component analysis'
+                It is a list of templates based on '*', '?' and '**' (for paths).
+                There are two filter types:
+
+                1) name filter: if it contains only '*' and '?'
+                2) path filter: if it contains '/', '\' or '**'
+
+                ALL names are 'CASE SENSITIVE'
+              -->
+            <property name="filterTypes">
+                *Exception*, *Test*, *test*
+            </property>
+            <property name="componentSamples" value="100000"/>
+            <property name="componentTimeout" value="10m"/>
+        </component>
+
+        <feature>
+
+        </feature>
+
+        <cluster>
+            <dPKeywords>
+                <value>Factory</value>
+                <value>Pool</value>
+                <value>Builder</value>
+                <value>Adapter</value>
+                <value>Bridge</value>
+                <value>Composite</value>
+                <value>Decorator</value>
+                <value>Facade</value>
+                <value>Proxy</value>
+                <value>Iterator</value>
+                <value>Interpreter</value>
+                <value>Command</value>
+                <value>Observer</value>
+                <value>State</value>
+                <value>Visitor</value>
+                <value>Template</value>
+                <value>Bean</value>
+                <value>Query</value>
+                <value>EntryKey</value>
+                <value>Thread</value>
+                <value>DAO</value>
+                <value>Impl</value>
+                <value>Data</value>
+                <value>View</value>
+                <value>Model</value>
+                <value>Handler</value>
+            </dPKeywords>
+            <commonKeywords>
+                <value>All</value>
+                <value>An</value>
+                <value>And</value>
+                <value>As</value>
+                <value>By</value>
+                <value>A</value>
+                <value>For</value>
+                <value>From</value>
+                <value>I</value>
+                <value>In</value>
+                <value>Is</value>
+                <value>No</value>
+                <value>Of</value>
+                <value>On</value>
+                <value>Or</value>
+                <value>Out</value>
+                <value>To</value>
+                <value>Up</value>
+                <value>With</value>
+                <value>Get</value>
+            </commonKeywords>
+        </cluster>
+
+        <runtime>
+
+        </runtime>
+    </models>
+
+    <!--
+      -->
+    <runtime>
+
+    </runtime>
+
+    <!--
+        Cache configurations.
+        Each cache has a "qualified name".
+        If not specified, its configuration is inherited from the "parent names".
+        The default for the "root" cache (the cache with name "") is
+
+            - infinite capacity
+            - no expiry
+
+        However it is a good idea to define reasonable default values.
+        Available configuration elements:
+
+            - capacity          int
+            - expireAfterWrite  interval
+            - expireAfterAccess interval
+            - weakValues        boolean
+            - softValues        boolean
+
+        'interval' can be specified in several way:
+
+            '<int>'         in milliseconds
+            '<int> ms'      in milliseconds
+            '<int> s'       in seconds
+
+            'mm:ss' | 'hh:mm:ss' | 'dd:hh:mm:ss'   where
+                'ss': seconds
+                'mm': minutes
+                'hh': hours
+                'dd': days
+
+        Current used caches:
+
+            'dependency.<projectId>.library.types'
+            'dependency.<projectId>.module.types'
+            'dependency.<projectId>.module.allTypes'
+            'dependency.<projectId>.module.usedTypes'
+
+            'maven.normalizedCoords'
+            'maven.pom'
+
+            'web.lists'
+            'web.hrefMapper'
+
+      -->
+    <cacheManager>
+        <cache name="">
+            <capacity value="1024"/>
+            <expireAfterWrite value="1:00"/>
+        </cache>
+
+        <cache name="global">
+            <capacity value="1024"/>
+            <expireAfterWrite value="5:00"/>
+        </cache>
+
+        <cache name="web">
+            <capacity value="128"/>
+            <expireAfterWrite value="5:00"/>
+        </cache>
+
+        <cache name="web.hrefMapper">
+            <capacity value="4096"/>
+            <expireAfterWrite value="1:00:00"/>
+        </cache>
+
+        <cache name="maven">
+            <expireAfterWrite value="60:00"/>
+        </cache>
+
+        <cache name="system.dbcleanup">
+            <expireAfterWrite value="1:00"/>
+        </cache>
+
+        <cache name="dependency.*">
+            <!-- if an entry is not accessed after 3 minutes, can be delete -->
+            <expireAfterAccess value="5:00"/>
+            <softValues value="true"/>
+        </cache>
+
+        <!--
+            Used to reduce the number of accesses to the DB to retrieve the same
+            information, as, for example, the content of 'splproject' | 'project'
+            'module' nodes
+          -->
+        <cache name="system.neo4j.cache">
+            <capacity value="4096"/>
+            <expireAfterAccess value="15:00"/>
+            <softValues value="true"/>
+        </cache>
+
+    </cacheManager>
+
+</configuration>
