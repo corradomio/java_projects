@@ -33,7 +33,6 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_EDGE;
 import static jext.javaparser.Providers.provider;
 
-
 public class JavaParserRootsTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------

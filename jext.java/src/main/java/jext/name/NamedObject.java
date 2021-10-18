@@ -2,38 +2,28 @@ package jext.name;
 
 public class NamedObject implements IdNamed {
 
-    private Name name;
-    private String id;
+    protected Name name;
+    protected String id;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     protected NamedObject(Name name) {
         this.name = name;
-        setIdFromName();
     }
 
     // ----------------------------------------------------------------------
     // Setters
     // ----------------------------------------------------------------------
 
-    // public void setName(String name) {
-    //     name = name.replace(' ', '-');
-    //     this.name = new PathName(name);
-    //     setIdFromName();
-    // }
-
-    public void setName(Name name) {
+    public void setNameWithId(Name name) {
         this.name = name;
-        setIdFromName();
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.id = Integer.toHexString(this.name.hashCode());
     }
 
     public void setIdFromName() {
-        if (name != null)
-            this.id = Integer.toString(name.getFullName().hashCode(), 16);
-        else
-            this.id = "0";
+        this.id = Integer.toHexString(this.name.hashCode());
     }
 
     // ----------------------------------------------------------------------
@@ -62,7 +52,7 @@ public class NamedObject implements IdNamed {
     @Override
     public boolean equals(Object obj) {
         Named that = (Named)obj;
-        return name.equals(that.getName());
+        return this.getName().equals(that.getName());
     }
 
     @Override

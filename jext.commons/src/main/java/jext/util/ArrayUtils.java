@@ -55,6 +55,33 @@ public class ArrayUtils {
         return l;
     }
 
+
+    // ----------------------------------------------------------------------
+    // equals
+    // ----------------------------------------------------------------------
+    // check if two arrays are equal
+
+    public static boolean equals(int[] a, int[] b) {
+        if (a.length != b.length)
+            return false;
+
+        for (int i=0; i<a.length; ++i)
+            if (a[i] != b[i])
+                return false;
+        return true;
+    }
+
+    public static boolean equals(long[] a, long[] b) {
+        if (a.length != b.length)
+            return false;
+
+        for (int i=0; i<a.length; ++i)
+            if (a[i] != b[i])
+                return false;
+        return true;
+    }
+
+
     // ----------------------------------------------------------------------
     // asArray
     // ----------------------------------------------------------------------
@@ -171,24 +198,6 @@ public class ArrayUtils {
     public static List<Long> asLongList(Collection<String> s) {
         return s.stream().map(Long::valueOf).collect(Collectors.toList());
     }
-
-    // ----------------------------------------------------------------------
-    // append
-    // ----------------------------------------------------------------------
-
-    // public static boolean[] append(boolean[] a, boolean v) {
-    //     if (a == null || a.length == 0)
-    //         return set(null, 0, v);
-    //     else
-    //         return set(a, a.length, v);
-    // }
-
-    // public static int[] append(int[] a, int v) {
-    //     if (a == null || a.length == 0)
-    //         return set(null, 0, v);
-    //     else
-    //         return set(a, a.length, v);
-    // }
 
     // ----------------------------------------------------------------------
     // set

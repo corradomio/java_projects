@@ -12,9 +12,11 @@ import java.util.List;
 public interface RefType extends IdNamed {
 
     String getId();
+
     Name getName();
 
     Project getProject();
+
     Library getLibrary();
 
     Name getNamespace();
@@ -34,6 +36,7 @@ public interface RefType extends IdNamed {
     boolean isType();
 
     boolean isCollection();
+
     List<RefType> getElements();
 
     /**

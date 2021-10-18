@@ -105,7 +105,6 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 
-
 public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
 
     // ----------------------------------------------------------------------

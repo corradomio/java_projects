@@ -19,7 +19,7 @@ public class ReferencedObject extends NamedObject implements RefIdNamed {
     }
 
     public void setRefIdFromName() {
-        this.refId = Integer.toString(getName().getFullName().hashCode(), 16);
+        this.refId = Integer.toHexString(getName().getFullName().hashCode());
     }
 
     public void setRefIdFromId() {

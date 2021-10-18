@@ -55,6 +55,13 @@ public interface Project extends IdNamed {
 
     // ----------------------------------------------------------------------
 
+    /**
+     * Set a filter to skip the source files not necessary for the analysis.
+     * Generally, it is used to skip the "test" files.
+     *
+     *
+     * @param selector an object that return true if the source file must be filtered
+     */
     void setResourceFilter(Predicate<String> selector);
 
     // ----------------------------------------------------------------------
@@ -70,34 +77,24 @@ public interface Project extends IdNamed {
 
     // ----------------------------------------------------------------------
 
-    /** Set the library finder */
-    Project setLibraryFinder(LibraryFinder lfinder);
-
-    LibraryFinder getLibraryFinder();
+    LibraryFinder   getLibraryFinder();
 
     MavenDownloader getLibraryDownloader();
 
-    // ----------------------------------------------------------------------
-    // Sources
-    // ----------------------------------------------------------------------
-
-    List<Source> getSources();
-
-    Source getSource(String sourceId);
+    /** Set the library finder */
+    Project setLibraryFinder(LibraryFinder lfinder);
 
     // ----------------------------------------------------------------------
-    // Modules
+    // Module/Source
     // ----------------------------------------------------------------------
-
-    /** List of all project's modules */
     List<Module> getModules();
-
+    Module getModule(String nameOrId);
     default Module getModule() {
         return getModule(ROOT_MODULE_NAME);
     }
 
-    /** Retrieve a module by id/full name */
-    Module getModule(String nameOrId);
+    List<Source> getSources();
+    Source getSource(String sourceId);
 
     // ----------------------------------------------------------------------
     // Libraries

@@ -183,11 +183,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
             .collect(Collectors.toList());
 
         if (parallel) {
-            (new Thread(){
-                public void run() {
-                    md.checkArtifacts(artifacts, false, parallel);
-                }
-            }).start();
+            (new Thread(() -> md.checkArtifacts(artifacts, false, parallel))).start();
         }
         else {
             md.checkArtifacts(artifacts, true, parallel);

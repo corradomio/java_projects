@@ -7,7 +7,6 @@ import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class CompositeTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------

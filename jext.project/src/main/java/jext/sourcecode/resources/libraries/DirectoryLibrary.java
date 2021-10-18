@@ -136,6 +136,10 @@ public class DirectoryLibrary extends BaseLibrary {
                     libraryFiles.add(file.toFile());
                 }
             });
+
+            if (libraryFiles.isEmpty())
+                logger.errorf("Unable to find library files for %s based on %s", getName().getName(),
+                    FileUtils.getAbsolutePath(libraryFile));
         }
         catch (IOException e) {
             logger.error(e, e);

@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class IndexDescriptor {
     // single/multi label:
-    //      'Unnamed index'
+    //      'Unnamed index' or 'index_<counter>'
     // fulltext:
-    //      name assigned in the statement
+    //      name assigned in the create statement
     public String name;
 
     // single/multi label:
@@ -73,19 +73,6 @@ public class IndexDescriptor {
         this.labels.addAll(Arrays.asList((String[])rec.get("tokenNames")));
         // properties: String[]
         this.properties.addAll(Arrays.asList((String[])rec.get("properties")));
-
-        if ("Unnamed index".equals(name))
-            name = nameOf(description);
-    }
-
-    private static String nameOf(String description) {
-        // INDEX ON :type(refId,...) -> ":type(refId)"
-        // remove ALL spaces
-        int pos = description.indexOf(':');
-        String name = description.substring(pos);
-        while(name.contains(" "))
-            name = name.replace(" ", "");
-        return name;
     }
 
     @Override

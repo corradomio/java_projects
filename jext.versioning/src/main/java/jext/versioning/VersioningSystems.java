@@ -32,6 +32,10 @@ public abstract class VersioningSystems {
         if (StringUtils.isEmptyOrNull(surl))
             surl = "novs:///" + FileUtils.getAbsolutePath(localDirectory);
 
+        // convert 'http:///.../.../project.git' in 'git+http:///...'
+        if (surl.endsWith(".git") && !surl.startsWith("git+"))
+            surl = "git+"+ surl;
+
         URL url = new URL(surl);
         String protocol = url.getProtocol();
         if (!factories.containsKey(protocol))

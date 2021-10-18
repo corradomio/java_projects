@@ -309,9 +309,14 @@ public class XPathUtils {
         List<String> values = new ArrayList<>();
         List<Node> nodes = selectNodes(elt, xpath);
         for(Node node : nodes) {
-            String value = node.getTextContent().trim();
+            String value = node.getTextContent();
+            if (value == null)
+                value = "";
+            else
+                value = value.trim();
             value = resolveValue(value, params);
-            values.add(value);
+            if (!value.isEmpty())
+                values.add(value);
         }
         return values;
     }

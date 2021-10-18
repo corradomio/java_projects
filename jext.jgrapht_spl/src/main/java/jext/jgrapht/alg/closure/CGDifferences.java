@@ -8,7 +8,11 @@ import java.util.Set;
 
 public class CGDifferences<V> {
 
-    static class Diff<V> {
+    // ----------------------------------------------------------------------
+    // Local data structure
+    // ----------------------------------------------------------------------
+
+    public static class Diff<V> {
         private final Set<V> added = new HashSet<>();
         private final Set<V> removed = new HashSet<>();
         private final Set<V> changed = new HashSet<>();
@@ -28,6 +32,10 @@ public class CGDifferences<V> {
             return changes.get(id);
         }
 
+        public boolean isEmpty() {
+            return added.isEmpty() && removed.isEmpty() && changed.isEmpty();
+        }
+
         public Set<V> added() {
             return added;
         }
@@ -43,10 +51,29 @@ public class CGDifferences<V> {
         public Map<V, Diff<V>> changes() {
             return changes;
         }
+        public Diff<V> changes(V v) {
+            return changes.get(v);
+        }
     }
+
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
 
     private final Diff<V> vertices = new Diff<>();
     private final Diff<ClosuresGraph.Edge<V>> edges = new Diff<>();
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public boolean isEmpty() {
+        return vertices.isEmpty() && edges.isEmpty();
+    }
 
     public Diff<V> vertices() {
         return vertices;
@@ -55,6 +82,10 @@ public class CGDifferences<V> {
     public Diff<ClosuresGraph.Edge<V>> edges() {
         return edges;
     }
+
+    // ----------------------------------------------------------------------
+    // Utility
+    // ----------------------------------------------------------------------
 
     public void dump() {
         System.out.printf("Vertices\n");

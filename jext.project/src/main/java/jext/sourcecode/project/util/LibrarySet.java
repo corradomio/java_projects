@@ -193,18 +193,12 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
             .map(MavenLibrary::getCoords)
             .collect(Collectors.toList());
 
-        // md.checkArtifacts(artifacts, true, parallel);
-
         if (parallel) {
-            (new Thread(){
-                public void run() {
-                    md.checkArtifacts(artifacts, false, parallel);
-            }
-            }).start();
+            (new Thread(() -> md.checkArtifacts(artifacts, false, parallel))).start();
         }
         else {
             md.checkArtifacts(artifacts, true, parallel);
-            }
+        }
     }
 
 }

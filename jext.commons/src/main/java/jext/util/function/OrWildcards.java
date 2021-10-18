@@ -1,6 +1,9 @@
 package jext.util.function;
 
+import jext.debug.Debug;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -27,8 +30,9 @@ public class OrWildcards implements Predicate<String> {
     @Override
     public boolean test(String text) {
         for (Wildcard wc : wildcards)
-            if (wc.test(text))
+            if (wc.test(text)) {
                 return true;
+            }
         return false;
     }
 
@@ -36,11 +40,17 @@ public class OrWildcards implements Predicate<String> {
     // Operations
     // ----------------------------------------------------------------------
 
-    public void add(String pattern) {
-        add(new Wildcard(pattern));
+    public OrWildcards add(String pattern) {
+        return add(new Wildcard(pattern));
     }
 
-    public void add(Wildcard wc) {
+    public OrWildcards addAll(Collection<String> patterns) {
+        patterns.forEach(this::add);
+        return this;
+    }
+
+    public OrWildcards add(Wildcard wc) {
         wildcards.add(wc);
+        return this;
     }
 }

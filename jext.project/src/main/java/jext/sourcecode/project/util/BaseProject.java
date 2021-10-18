@@ -124,7 +124,8 @@ public abstract class BaseProject extends NamedObject implements Project {
             getClass().getSimpleName(),
             getName().getName());
 
-        this.setId(StringUtils.digest(getName().getFullName()));
+        // this.setId(StringUtils.digest(getName().getFullName()));
+        setIdFromName();
         this.selector = (p) -> true;
     }
 

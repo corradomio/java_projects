@@ -35,11 +35,11 @@ public class ResourceFile extends NamedObject implements Resource {
 
         // name: relative path respect the module home directory
         String rpath = FileUtils.relativePathNoExt(module.getModuleHome(), getFile());
-        setName(new PathName(rpath));
+        this.name = new PathName(rpath);
 
         // id: based on relative path respect the project home directory
         rpath = FileUtils.relativePathNoExt(getProject().getProjectHome(), getFile());
-        setId(String.valueOf(rpath.hashCode()));
+        this.id = String.valueOf(rpath.hashCode());
     }
 
     // ----------------------------------------------------------------------

@@ -98,7 +98,6 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 
-
 public class BaseVisitorAdapter<R, A> extends VisitorAdapter<R, A> {
 
     // ----------------------------------------------------------------------

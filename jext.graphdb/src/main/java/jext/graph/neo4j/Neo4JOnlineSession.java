@@ -1,5 +1,6 @@
 package jext.graph.neo4j;
 
+import jext.debug.Debug;
 import jext.graph.Direction;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphIterator;
@@ -232,10 +233,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
-        // Map<String, Object> arrayProps = null;
-        // if (hasArrayProperties(nodeProps))
-        //     arrayProps = extractArrayProperties(nodeProps);
-
         String pblock = pblock(NONE, nodeProps);
         String s = String.format("CREATE (n:%s %s) RETURN id(n)", nodeType, pblock);
         String nodeId = this.create(s, nodeProps);
@@ -603,9 +600,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String toType,   Map<String, Object> toProps,
         Map<String, Object> edgeProps) {
 
-        String fblock = pblock(NONE, Collections.emptyMap());
+        String fblock = pblock("from", fromProps);
         String eblock = eblock(E, edgeType, Direction.Output, false, Collections.emptyMap());
-        String tblock = pblock(NONE, Collections.emptyMap());
+        String tblock = pblock("to", toProps);
 
         String wfblock = wblock(FROM, fromProps, WhereType.WHERE);
         String wtblock = wblock(TO,   toProps,   wfblock.isEmpty() ? WhereType.WHERE : WhereType.AND);
@@ -617,40 +614,24 @@ public class Neo4JOnlineSession implements GraphSession {
         allProps.add(FROM,fromProps);
         allProps.add(TO,  toProps);
         allProps.add(E,   edgeProps);
+        // allProps.add(     fromProps);
+        // allProps.add(     toProps);
 
-        String s;
-        if (fromType == null && toType == null)
-            s = String.format("MATCH (from %s) %s (to %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
-                fblock,
-                eblock,
-                tblock,
-                wblock
-            );
-        else if (fromType == null)
-            s = String.format("MATCH (from %s) %s (to:%s %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
-                fblock,
-                eblock,
-                toType,
-                tblock,
-                wblock
-            );
-        else if (toType == null)
-            s = String.format("MATCH (from:%s %s) %s (to %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
-                fromType,
-                fblock,
-                eblock,
-                tblock,
-                wblock
-            );
-        else
-            s = String.format("MATCH (from:%s %s) %s (to:%s %s) %s RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
-                fromType,
-                fblock,
-                eblock,
-                toType,
-                tblock,
-                wblock
-            );
+        String ftype = fromType == null ? NONE : ":" + fromType;
+        String ttype = toType   == null ? NONE : ":" + toType;
+
+        String s = String.format("" +
+                "MATCH (from%s %s) %s (to%s %s) %s " +
+                "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+            ftype,
+            fblock,
+
+            eblock,
+
+            ttype,
+            tblock,
+            wblock
+        );
 
         if(edgeType != null && edgeType.equals("uses"))
             s = s +", e.uses as uses";
@@ -712,24 +693,39 @@ public class Neo4JOnlineSession implements GraphSession {
     // the edge specialization, instead of 'type'.
     // To ensure the compatibility, the 'uses' edges will be created with BOTH properties ('uses' AND 'type')
     //
-    private static String USES      = "uses";   // edge label/main type
-    private static String EDGE_TYPE = "type";   // edge subtype  ('uses/type')
+    // private static String USES      = "uses";   // edge label/main type
+    // private static String EDGE_TYPE = "type";   // edge subtype  ('uses/type')
 
-    private static Map<String, Object> createEdgeProps24(Map<String, Object> edgeProps) {
-        if (edgeProps.containsKey(USES) && edgeProps.containsKey(EDGE_TYPE))
-            return edgeProps;
-        if (!edgeProps.containsKey(USES) && !edgeProps.containsKey(EDGE_TYPE))
-            return edgeProps;
-
-        Parameters newProps = Parameters.params(edgeProps);
-        if (newProps.containsKey(USES))
-            newProps.put(EDGE_TYPE, edgeProps.get(USES));
-        else
-            newProps.put(USES, edgeProps.get(EDGE_TYPE));
-        return newProps;
-    }
+    // private static Map<String, Object> createEdgeProps24(Map<String, Object> edgeProps) {
+    //     if (edgeProps.containsKey(USES) && edgeProps.containsKey(EDGE_TYPE))
+    //         return edgeProps;
+    //     if (!edgeProps.containsKey(USES) && !edgeProps.containsKey(EDGE_TYPE))
+    //         return edgeProps;
+    //
+    //     Parameters newProps = Parameters.params(edgeProps);
+    //     if (newProps.containsKey(USES))
+    //         newProps.put(EDGE_TYPE, edgeProps.get(USES));
+    //     else
+    //         newProps.put(USES, edgeProps.get(EDGE_TYPE));
+    //     return newProps;
+    // }
 
     // END
+
+    @Override
+    public String findEdge(String edgeType, String fromId, String toId) {
+        if (fromId == null || toId == null)
+            return null;
+        if (NO_ID.equals(fromId) || NO_ID.equals(toId))
+            return null;
+
+        String s = String.format("MATCH (from) -[e:%s]-> (to) WHERE id(from) = $fid AND id(to)=$tid", edgeType);
+        Parameters params = Parameters.params(
+                "fid", asId(fromId),
+                "tid", asId(toId));
+
+        return this.query(s, params).id(E);
+    }
 
     @Override
     public String createEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps) {
@@ -737,6 +733,12 @@ public class Neo4JOnlineSession implements GraphSession {
             return null;
         if (NO_ID.equals(fromId) || NO_ID.equals(toId))
             return null;
+
+        String edgeId = findEdge(edgeType, fromId, toId);
+        if (edgeId != null) {
+            setEdgeProperties(edgeId, edgeProps);
+            return edgeId;
+        }
 
         String pblock = pblock(E, edgeProps);
         String s = String.format("MATCH (from),(to) " +
@@ -749,7 +751,7 @@ public class Neo4JOnlineSession implements GraphSession {
             "tid", asId(toId))
             .add(E, edgeProps);
 
-        String edgeId = this.create(s, params);
+        edgeId = this.create(s, params);
         setEdgeProperties(edgeId, edgeProps);
         return edgeId;
     }
@@ -803,27 +805,27 @@ public class Neo4JOnlineSession implements GraphSession {
         return new Neo4JQuery(this, E, s, params).edge();
     }
 
-    @Override
-    public String findEdge(String edgeType, String fromId, String toId,
-                           Map<String, Object> findProps,
-                           Map<String, Object> createProps)
-    {
-        return findEdge(edgeType, fromId, toId, findProps, createProps, Collections.emptyMap());
-    }
+    // @Override
+    // public String findEdge(String edgeType, String fromId, String toId,
+    //                        Map<String, Object> findProps,
+    //                        Map<String, Object> createProps)
+    // {
+    //     return findEdge(edgeType, fromId, toId, findProps, createProps, Collections.emptyMap());
+    // }
 
-    @Override
-    public String findEdge(String edgeType, String fromId, String toId,
-                           Map<String, Object> findProps,
-                           Map<String, Object> createProps,
-                           Map<String, Object> updateProps)
-    {
-        String edgeId = queryPath(edgeType, fromId, toId, Direction.Output, false, findProps).id();
-        if (edgeId == null)
-            edgeId = createEdge(edgeType, fromId, toId, createProps);
-        else
-            setEdgeProperties(edgeId, updateProps);
-        return edgeId;
-    }
+    // @Override
+    // private String findEdge(String edgeType, String fromId, String toId,
+    //                        Map<String, Object> findProps,
+    //                        Map<String, Object> createProps,
+    //                        Map<String, Object> updateProps)
+    // {
+    //     String edgeId = queryPath(edgeType, fromId, toId, Direction.Output, false, findProps).id();
+    //     if (edgeId == null)
+    //         edgeId = createEdge(edgeType, fromId, toId, createProps);
+    //     else
+    //         setEdgeProperties(edgeId, updateProps);
+    //     return edgeId;
+    // }
 
 
     @Override
@@ -1187,7 +1189,7 @@ public class Neo4JOnlineSession implements GraphSession {
     public static  Map<String, Object> toNodeMap(Node node) {
         Map<String, Object> body = new HashMap<>();
 
-        body.put(ID, toId(node.id()));
+        body.put(GRAPH_ID, toId(node.id()));
 
         List<String> labels = new ArrayList<>();
         node.labels().forEach(label -> labels.add(label));
@@ -1196,10 +1198,10 @@ public class Neo4JOnlineSession implements GraphSession {
         // put_ $labels
         // put_ $type     == labels[0]
 
-        body.put(LABELS, labels);
+        body.put(GRAPH_LABELS, labels);
 
         if (labels.size() > 0)
-            body.put(TYPE, labels.get(0));
+            body.put(GRAPH_TYPE, labels.get(0));
 
         // put_ properties
         body.putAll(node.asMap());
@@ -1236,8 +1238,8 @@ public class Neo4JOnlineSession implements GraphSession {
         // put $id
         // put $type
 
-        body.put(ID, toId(edge.id()));
-        body.put(TYPE, edge.type());
+        body.put(GRAPH_ID, toId(edge.id()));
+        body.put(GRAPH_TYPE, edge.type());
 
         return body;
     }
@@ -1352,7 +1354,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
             // strip 'name[...]' -> 'name'
             String pname = Param.pnameOf(param);
-            params.put(pname, value);
+                params.put(pname, value);
 
             // append "... AND "
             if (sb.length() > 0) sb.append(" AND ");
@@ -1421,11 +1423,11 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     private static String revisionCondition(String alias, String param, Object value) {
-        /*
-            [revision, 0 | [0,1,...]] ->
-                n.inRevision[0]
+    /*
+        [revision, 0 | [0,1,...]] ->
+            n.inRevision[0]
                (n.inRevision[0] OR n.inRevision[1] ... )
-         */
+     */
         // revs == null -> true
         if (value == null) {
             logger.errorf("Revision condition with null value");

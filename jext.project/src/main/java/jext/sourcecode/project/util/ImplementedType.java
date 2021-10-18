@@ -88,20 +88,20 @@ public class ImplementedType extends NamedObject implements Type {
         return this;
     }
 
-    @Override
-    public Set<String> getModifiers() {
-        return Collections.emptySet();
-    }
+    // @Override
+    // public Set<String> getModifiers() {
+    //     return Collections.emptySet();
+    // }
 
-    @Override
-    public String getVisibility() {
-        return PUBLIC;
-    }
+    // @Override
+    // public String getVisibility() {
+    //     return PUBLIC;
+    // }
 
-    @Override
-    public Set<String> getStructure() {
-        return Collections.emptySet();
-    }
+    // @Override
+    // public Set<String> getStructure() {
+    //     return Collections.emptySet();
+    // }
 
     // -- type role
 
@@ -110,20 +110,20 @@ public class ImplementedType extends NamedObject implements Type {
         return role;
     }
 
-    @Override
-    public boolean isValid() {
-        return true;
-    }
+    // @Override
+    // public boolean isValid() {
+    //     return true;
+    // }
 
-    @Override
-    public boolean isInner() {
-        return !namespace.equals(getName().getParent());
-    }
+    // @Override
+    // public boolean isInner() {
+    //     return !namespace.equals(getName().getParent());
+    // }
 
-    @Override
-    public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
+    //     return Collections.emptyList();
+    // }
 
     // @Override
     // public List<Field> getFields() {

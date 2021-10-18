@@ -105,7 +105,6 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ListVoidVisitorAdapter<A> implements VoidVisitor<A> {
 
     // ----------------------------------------------------------------------

@@ -14,23 +14,27 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
-
 public class PagedModelUtils {
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public static PagedModel.PageMetadata max(PagedModel.PageMetadata md1, PagedModel.PageMetadata md2) {
+        if (md1.getTotalElements() > md2.getTotalElements())
+            return md1;
+        else
+            return md2;
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     public static <D> PagedModel<D> withSelfRel(PagedModel<D> paged, Class<?> controllerClass, Object... parameters) {
         paged.add(
             linkTo(controllerClass, parameters).withSelfRel()
         );
-        return paged;
-    }
-
-    public static <T, D extends RepresentationModel<?>> PagedModel<D>
-    toPagedModel(Page<T> page, RepresentationModelAssembler<T, D> assembler) {
-        List<D> list = toList(page, assembler);
-        PagedModel.PageMetadata metadata = metadataOf(page);
-
-        PagedModel<D> paged = PagedModel.of(list, metadata);
-
         return paged;
     }
 
@@ -45,11 +49,6 @@ public class PagedModelUtils {
         PagedModel.PageMetadata metadata = metadataOf(content, pageable);
         return PagedModel.of(wrapped, metadata);
     }
-
-    // public static <T, D extends RepresentationModel<?>> Page<D> toPage(List<T> content, Pageable pageable, RepresentationModelAssembler<T, D> assembler) {
-    //     List<D> wrapped = selectWrapped(content, pageable, assembler);
-    //     return new PageImpl<D>(wrapped, pageable, content.size());
-    // }
 
     public static <T> Page<T> toPage(List<T> content, Pageable pageable) {
         List<T> selected = selectContent(content, pageable);
@@ -85,13 +84,6 @@ public class PagedModelUtils {
             .collect(Collectors.toList());
     }
 
-    private static <T, D extends RepresentationModel<?>> List<D> toList(Page<T> page, RepresentationModelAssembler<T, D> assembler) {
-        List<D> list = new ArrayList<>();
-        for(T entity : page)
-            list.add(assembler.toModel(entity));
-        return list;
-    }
-
     private static <T> PagedModel.PageMetadata metadataOf(List<T> content, Pageable pageable) {
         long size = pageable.getPageSize();
         long number = pageable.getPageNumber();
@@ -101,14 +93,21 @@ public class PagedModelUtils {
         return metadata;
     }
 
-    private static <T> PagedModel.PageMetadata metadataOf(Page<T> page) {
-        long size = page.getSize();
-        long number = page.getNumber();
-        long totalElements =  page.getTotalElements();
-        long totalPages = page.getTotalPages();
-        PagedModel.PageMetadata metadata = new PagedModel.PageMetadata(size, number, totalElements, totalPages);
-        return metadata;
-    }
+    // private static <T, D extends RepresentationModel<?>> List<D> toList(Page<T> page, RepresentationModelAssembler<T, D> assembler) {
+    //     List<D> list = new ArrayList<>();
+    //     for(T entity : page)
+    //         list.add(assembler.toModel(entity));
+    //     return list;
+    // }
+
+    // private static <T> PagedModel.PageMetadata metadataOf(Page<T> page) {
+    //     long size = page.getSize();
+    //     long number = page.getNumber();
+    //     long totalElements =  page.getTotalElements();
+    //     long totalPages = page.getTotalPages();
+    //     PagedModel.PageMetadata metadata = new PagedModel.PageMetadata(size, number, totalElements, totalPages);
+    //     return metadata;
+    // }
 
     // ----------------------------------------------------------------------
     //

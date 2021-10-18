@@ -94,34 +94,10 @@ public class MavenModule extends BaseModule {
             setCoords.addAll(ddcoords);
         });
 
-        // md.checkArtifacts(new ArrayList<>(setCoords));
-
         setCoords.stream()
             .map(coords -> new MavenLibrary(coords, md, project))
             .forEach(collectedLibraries::add);
     }
-
-    // @Override
-    // protected List<Library> getMavenLibraries() {
-    //
-    //     MavenDownloader md = project.getLibraryDownloader();
-    //
-    //     List<MavenCoords> coordList = getDirectCoordsDependencies();
-    //     // md.checkArtifacts(coordList);
-    //
-    //     Set<MavenCoords> setCoords = new HashSet<>(coordList);
-    //
-    //     coordList.forEach(dcoords -> {
-    //         List<MavenCoords> ddcoords = md.getDependencies(dcoords, maxDepth);
-    //         setCoords.addAll(ddcoords);
-    //     });
-    //
-    //     // md.checkArtifacts(new ArrayList<>(setCoords));
-    //
-    //     return setCoords.stream()
-    //         .map(coords -> new MavenLibrary(coords, md, project))
-    //         .collect(Collectors.toList());
-    // }
 
     private List<MavenCoords> getDirectCoordsDependencies() {
 

@@ -51,6 +51,7 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
     public void checkout() throws VersioningSystemException {
         File gitDir = new File(localDirectory, GIT);
         Authentication auth = getAuthentication();
+        Git result = null;
 
         try {
             CloneCommand clone = Git.cloneRepository();
@@ -76,9 +77,13 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
                 clone.setNoCheckout(nocheckout);
             }
 
-            Git result = clone.call();
+            result = clone.call();
         } catch (GitAPIException e) {
             throw new VersioningSystemException(e);
+        }
+        finally {
+            if (result != null)
+                result.close();
         }
 
     }
@@ -100,6 +105,9 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
             PullResult result = update.call();
         } catch (IOException | GitAPIException e) {
             throw new VersioningSystemException(e);
+        }
+        finally {
+
         }
     }
 

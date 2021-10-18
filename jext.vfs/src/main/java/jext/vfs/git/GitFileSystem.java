@@ -56,7 +56,6 @@ class GitProgressMonitor implements ProgressMonitor {
     }
 }
 
-
 public class GitFileSystem extends AbstractFileSystem {
 
     // ----------------------------------------------------------------------

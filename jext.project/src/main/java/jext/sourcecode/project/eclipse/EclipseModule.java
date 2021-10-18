@@ -48,50 +48,6 @@ public class EclipseModule extends BaseModule {
             .forEach(collectedLibraries::add);
     }
 
-    // @Override
-    // protected void collectEclipseLibraries(Set<Library> collectedLibraries) {
-    //     List<MavenCoords> coordList = classpathFile.getMavenLibraries()
-    //         .stream()
-    //         .map(MavenCoords::new)
-    //         .collect(Collectors.toList());
-    //
-    //     MavenDownloader md = project.getLibraryDownloader();
-    //     // md.checkArtifacts(coordList);
-    //
-    //     coordList
-    //         .stream()
-    //         .map(coords -> new MavenLibrary(coords, md, project))
-    //         .forEach(collectedLibraries::add);
-    // }
-
-    // @Override
-    // protected List<Library> getLocalLibraries() {
-    //     List<Library> localLibraries = super.getLocalLibraries();
-    //     classpathFile.getLocalLibraries()
-    //         .stream()
-    //         .filter(jarFile -> jarFile.exists())
-    //         .map(jarFile -> ArchiveUtils.newLibrary(jarFile, this))
-    //         .forEach(localLibraries::add);
-    //     return localLibraries;
-    // }
-
-    // @Override
-    // protected List<Library> getMavenLibraries() {
-    //
-    //     List<MavenCoords> coordList = classpathFile.getMavenLibraries()
-    //         .stream()
-    //         .map(MavenCoords::new)
-    //         .collect(Collectors.toList());
-    //
-    //     MavenDownloader md = project.getLibraryDownloader();
-    //     // md.checkArtifacts(coordList);
-    //
-    //     return coordList
-    //         .stream()
-    //         .map(coords -> new MavenLibrary(coords, md, project))
-    //         .collect(Collectors.toList());
-    // }
-
     // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------

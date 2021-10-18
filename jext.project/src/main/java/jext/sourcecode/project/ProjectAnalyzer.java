@@ -25,10 +25,10 @@ public class ProjectAnalyzer {
         pinfo.save(jsonFile);
     }
 
-    public static void analyzeSources(Project project, File jsonFile) throws IOException {
-        SourceInfo sinfo = analyzeSources(project);
-        sinfo.save(jsonFile);
-    }
+    // public static void analyzeSources(Project project, File jsonFile) throws IOException {
+    //     SourceInfo sinfo = analyzeSources(project);
+    //     sinfo.save(jsonFile);
+    // }
 
     // -----------------------------------------------------------------------
 
@@ -44,11 +44,11 @@ public class ProjectAnalyzer {
         return pinfo;
     }
 
-    public static SourceInfo analyzeSources(Project project) {
-        ProjectAnalyzer analyzer = new ProjectAnalyzer(project);
-        SourceInfo sinfo = analyzer.analyzeSources();
-        return sinfo;
-    }
+    // public static SourceInfo analyzeSources(Project project) {
+    //     ProjectAnalyzer analyzer = new ProjectAnalyzer(project);
+    //     SourceInfo sinfo = analyzer.analyzeSources();
+    //     return sinfo;
+    // }
 
     // ----------------------------------------------------------------------
     // Private Fields

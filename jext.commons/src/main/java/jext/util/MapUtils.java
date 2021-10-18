@@ -9,18 +9,18 @@ import java.util.TreeMap;
 public class MapUtils {
 
     public static <K, V> Map<K, V> asMap(Object ... args) {
-        return fillMap(new HashMap<>(), args);
+        return putAll(new HashMap<>(), args);
     }
 
     public static <K, V> Map<K, V> asTreeMap(Object ... args) {
-        return fillMap(new TreeMap<>(), args);
+        return putAll(new TreeMap<>(), args);
     }
 
     public static <K, V> Map<K, V> asLinkedMap(Object ... args) {
-        return fillMap(new LinkedHashMap<>(), args);
+        return putAll(new LinkedHashMap<>(), args);
     }
 
-    private static <K, V> Map<K, V> fillMap(Map<K, V> map, Object[] args) {
+    public static <K, V> Map<K, V> putAll(Map<K, V> map, Object ... args) {
         if (args == null || args.length == 0)
             return Collections.emptyMap();
 
@@ -38,6 +38,8 @@ public class MapUtils {
     // ----------------------------------------------------------------------
 
     public static <E> E get(Map<String, Object> map, String... keys) {
+        if (map == null)
+            return null;
         if (keys == null || keys.length == 0)
             return (E)map;
 
@@ -47,6 +49,24 @@ public class MapUtils {
             cmap = (Map<String, Object>) cmap.get(keys[i]);
         return (E)cmap.get(keys[l]);
     }
+
+    public static Object put(Map<String, Object> map, Object ... keysValue) {
+        if (keysValue == null || keysValue.length == 0)
+            return map;
+
+        Object[] keys = keysValue;
+        int v = keysValue.length - 1;
+        int l = v - 1;
+        Map<String, Object> cmap = map;
+        for (int i=0; i<l; ++i) {
+            if (!cmap.containsKey((String)keys[i]))
+                cmap.put((String)keys[i], new HashMap<>());
+            cmap = (Map<String, Object>) cmap.get(keys[i]);
+        }
+        return cmap.put((String)keys[l], keysValue[v]);
+    }
+
+    // ----------------------------------------------------------------------
 
     // public static <E> E getOrDefault(Map<String, Object> map, E defaultValue, String... keys) {
     //     if (keys == null || keys.length == 0)
@@ -124,12 +144,10 @@ public class MapUtils {
     public static int getInt(Map<String, Object> map, String... keys) {
         Object value = get(map, keys);
         if (value == null) return 0;
-        if (value instanceof Integer)
-            return (Integer)value;
-        if (value instanceof Long)
-            return ((Long)value).intValue();
-        if (value instanceof String)
-            return Integer.parseInt((String)value);
+        if (value instanceof Number)
+            return ((Number)value).intValue();
+        // if (value instanceof String)
+        //     return Integer.parseInt((String)value);
         else
             return Integer.parseInt(value.toString());
     }
@@ -137,12 +155,21 @@ public class MapUtils {
     public static long getLong(Map<String, Object> map, String... keys) {
         Object value = get(map, keys);
         if (value == null) return 0;
-        if (value instanceof Integer)
-            return (Integer)value;
-        if (value instanceof Long)
-            return ((Long)value);
-        if (value instanceof String)
-            return Long.parseLong((String)value);
+        if (value instanceof Number)
+            return ((Number)value).longValue();
+        // if (value instanceof String)
+        //     return Long.parseLong((String)value);
+        else
+            return Long.parseLong(value.toString());
+    }
+
+    public static double getDouble(Map<String, Object> map, String... keys) {
+        Object value = get(map, keys);
+        if (value == null) return 0;
+        if (value instanceof Number)
+            return ((Number)value).doubleValue();
+        // if (value instanceof String)
+        //     return Long.parseLong((String)value);
         else
             return Long.parseLong(value.toString());
     }
@@ -171,13 +198,20 @@ public class MapUtils {
 
     // ----------------------------------------------------------------------
 
-    public static Map<String, Object> exclude(Map<String, Object> map, String prefix) {
+    public static Map<String, Object> excluding(Map<String, Object> map, String ... keys) {
         Map<String, Object> dup = new HashMap<>();
         map.forEach((k, v) -> {
-            if (!k.startsWith(prefix))
+            if (!isExcluded(keys, k))
                 dup.put(k, v);
         });
 
         return (map.size() == dup.size()) ? map : dup;
+    }
+
+    private static boolean isExcluded(String[] keys, String k) {
+        for(String t : keys)
+            if (t.equals(k))
+                return true;
+        return false;
     }
 }

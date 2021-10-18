@@ -38,9 +38,7 @@ public class JarLibrary extends BaseLibrary {
             name = name.substring(0, sep-1);
         }
 
-        //setName(name);
-        //this.name = new VersionName(name, this.version);
-        setName(new VersionName(name, this.version));
+        setNameWithId(new VersionName(name, this.version));
 
         this.libraryFile = jarFile;
         this.module = module;

@@ -8,8 +8,6 @@ import jext.xml.XPathUtils;
 import org.neo4j.ogm.model.Result;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 
 import java.io.File;
@@ -19,44 +17,42 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-@Service
 public class Neo4JIndices {
 
     private Logger logger = Logger.getLogger(Neo4JIndices.class);
 
-    @Autowired
     private SessionFactory sessionFactory;
-
     private String dbversion;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
     /*
-            <indices>
-                <drop name=":splproject(refId)" version="3.">
-                    DROP INDEX ON :splproject(refId)
-                </drop>
-                <drop name=":project(refId)" version="3.">
-                    DROP INDEX ON :project(refId)
-                </drop>
-                <index name="spl_fulltext_name_index">
-                    CALL db.index.fulltext.createNodeIndex("${name}",
-                        ["project","module","type","comment","method","library","component","feature"],
-                        ["name"],
-                        {analyzer: "standard", eventually_consistent: "true"}
-                    )
-                </index>
-            </indices>
+        <indices>
+            <drop name=":splproject(refId)" version="3.">
+                DROP INDEX ON :splproject(refId)
+            </drop>
+            <drop name=":project(refId)" version="3.">
+                DROP INDEX ON :project(refId)
+            </drop>
+            <index name="spl_fulltext_name_index">
+                CALL db.index.fulltext.createNodeIndex("${name}",
+                    ["project","module","type","comment","method","library","component","feature"],
+                    ["name"],
+                    {analyzer: "standard", eventually_consistent: "true"}
+                )
+            </index>
+        </indices>
      */
 
     public Neo4JIndices() {
 
     }
 
-    public void composeIndices(File indicesFile) {
+    public void composeIndices(SessionFactory sessionFactory, File configurationFile) {
+        this.sessionFactory = sessionFactory;
         try {
-            Element elt = XPathUtils.parse(indicesFile).getDocumentElement();
+            Element elt = XPathUtils.parse(configurationFile).getDocumentElement();
 
             this.dbversion = getVersion();
             IndexCollection indexes = getIndexes();
@@ -65,16 +61,15 @@ public class Neo4JIndices {
             createIndices(elt, indexes);
         }
         catch (Throwable t) {
-            logger.errorf("Unable to parse %s: %s", indicesFile, t);
+            logger.errorf("Unable to parse %s: %s", configurationFile, t);
         }
-
     }
 
     private void dropIndices(Element elt, IndexCollection indices) {
         Properties props = new Properties();
 
         // drop indices
-        XPathUtils.selectNodes(elt, "/configuration/system/graphdb/indices/drop")
+        XPathUtils.selectElements(elt, "/configuration/system/graphdb/indices/drop")
             .forEach(din -> {
                 String name = din.getAttribute("name");
                 String version = din.getAttribute("version");
@@ -89,19 +84,28 @@ public class Neo4JIndices {
 
                 dropIndex(name, stmt, indices);
             });
-
     }
 
     private void dropIndex(String name, String stmt, IndexCollection indices) {
         if (!indices.containsIndex(name)) return;
         if (stmt.isEmpty()) return;
+
+        logger.warnf("Drop index %s: %s", name, stmt);
+
+        try {
+            Session session = sessionFactory.openSession();
+            session.query(stmt, Collections.emptyMap());
+        }
+        catch (Throwable t) {
+            logger.errorf("Unable to execute '%s': %s", stmt, t);
+        }
     }
 
     private void createIndices(Element elt, IndexCollection indices) {
         Properties props = new Properties();
 
         // create indices
-        XPathUtils.selectNodes(elt, "/configuration/system/graphdb/indices/index")
+        XPathUtils.selectElements(elt, "/configuration/system/graphdb/indices/index")
             .forEach(din -> {
                 String name = din.getAttribute("name");
                 String version = din.getAttribute("version");
@@ -116,13 +120,21 @@ public class Neo4JIndices {
 
                 createIndex(name, stmt, indices);
             });
-
     }
 
     private void createIndex(String name, String stmt, IndexCollection indices) {
         if (indices.containsIndex(name)) return;
         if (stmt.isEmpty()) return;
 
+        logger.warnf("Create index %s: %s", name, stmt);
+
+        try {
+            Session session = sessionFactory.openSession();
+            session.query(stmt, Collections.emptyMap());
+        }
+        catch (Throwable t) {
+            logger.errorf("Unable to execute '%s': %s", stmt, t);
+        }
     }
 
     // ----------------------------------------------------------------------

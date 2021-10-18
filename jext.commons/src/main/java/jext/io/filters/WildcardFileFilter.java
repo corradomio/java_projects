@@ -7,9 +7,11 @@ import jext.util.function.Wildcard;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class WildcardFileFilter implements FileFilter {
+public class WildcardFileFilter implements FileFilter, Predicate<String> {
 
     private static class WildcardMatcher {
 
@@ -47,7 +49,7 @@ public class WildcardFileFilter implements FileFilter {
 
     }
 
-    private List<WildcardMatcher> matchers = new ArrayList<>();
+    private final List<WildcardMatcher> matchers = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -77,7 +79,7 @@ public class WildcardFileFilter implements FileFilter {
     // Patterns
     // ----------------------------------------------------------------------
 
-    public WildcardFileFilter addAll(List<String> patterns) {
+    public WildcardFileFilter addAll(Collection<String> patterns) {
         patterns.forEach(this::add);
         return this;
     }
@@ -99,13 +101,11 @@ public class WildcardFileFilter implements FileFilter {
     public boolean accept(File file) {
         String path = FileUtils.getAbsolutePath(file);
         String name = file.getName();
-        for (WildcardMatcher m : matchers)
-            if (m.accept(path, name))
-                return true;
-        return false;
+        return this.test(name) || this.test(path);
     }
 
-    public boolean accept(String path) {
+    @Override
+    public boolean test(String path) {
         String name = PathUtils.getName(path);
         for (WildcardMatcher m : matchers)
             if (m.accept(path, name))

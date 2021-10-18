@@ -19,27 +19,27 @@ public interface Type extends RefType {
     Name getNamespace();
 
     /** All Java modifiers */
-    Set<String> getModifiers();
+    // Set<String> getModifiers();
     /** Java modifier related to visibility (private, protected, public, package) */
-    String getVisibility();
+    // String getVisibility();
     /** Java modifiers related to structure (static, final, abstract, ...) */
-    Set<String> getStructure();
+    // Set<String> getStructure();
 
-    /**
-     * Check if the type is a 'valid' type for analysis:
-     * it has a specified role (role != UNKNOWN)
-     */
-    boolean isValid();
-    boolean isInner();
+    // /**
+    //  * Check if the type is a 'valid' type for analysis:
+    //  * it has a specified role (role != UNKNOWN)
+    //  */
+    // boolean isValid();
+    // boolean isInner();
 
-    /**
-     * List of
-     * - all used types
-     * - extended superclasses
-     * - implemented interfaces
-     * - used types in implementation
-     */
-    List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes);
+    // /**
+    //  * List of
+    //  * - all used types
+    //  * - extended superclasses
+    //  * - implemented interfaces
+    //  * - used types in implementation
+    //  */
+    // List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes);
 
     // /**
     //  * List of fields defined in the type's implementation
@@ -56,6 +56,7 @@ public interface Type extends RefType {
     // ----------------------------------------------------------------------
 
     Source getSource();
+
     Module getModule();
 
 }

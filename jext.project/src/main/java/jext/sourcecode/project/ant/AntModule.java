@@ -34,29 +34,6 @@ public class AntModule extends BaseModule {
     }
 
     // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // protected void collectIvyLibraries(Set<Library> collectedLibraries) {
-    //     if (ivyFiles.isEmpty())
-    //         return;
-    //
-    //     List<MavenCoords> coordList = new ArrayList<>();
-    //     ivyFiles.forEach(ivyFile -> {
-    //         coordList.addAll(ivyFile.getDependencyCoords());
-    //     });
-    //
-    //     MavenDownloader md = project.getLibraryDownloader();
-    //     // md.checkArtifacts(coordList);
-    //     // coordList.sort(Comparator.naturalOrder());
-    //
-    //     coordList.stream()
-    //         .map(lcoords -> new MavenLibrary(lcoords, md, project))
-    //         .forEach(collectedLibraries::add);
-    // }
-
-    // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------
 

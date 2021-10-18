@@ -5,6 +5,12 @@ import java.util.Objects;
 
 public class Param {
 
+    // compatibility
+    public static String at(String name, int index) {
+        return of(name, index, Op.EQ);
+    }
+
+
     public static String of(String name) {
         return of(name, -1, Op.EQ);
     }
@@ -36,6 +42,21 @@ public class Param {
         else
             return String.format("%s[%d] %s", name, index, op);
     }
+
+    // ----------------------------------------------------------------------
+
+    public static String appendDistinct(String name) {
+        return name + "[!]";
+    }
+
+    public static String append(String name) {
+        return name + "[+]";
+    }
+
+    public static String appendDistinct(String name, int index) {
+        return String.format("%s[%d,!]", name, index);
+    }
+
 
     private static boolean isEq(Op op) {
         return op == Op.EQ;

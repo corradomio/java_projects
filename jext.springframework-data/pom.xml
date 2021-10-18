@@ -11,10 +11,10 @@
     <properties>
         <maven.compiler.target>8</maven.compiler.target>
         <maven.compiler.source>8</maven.compiler.source>
-<!--        <spring.boot.version>2.4.0</spring.boot.version>-->
         <spring.boot.version>2.3.7.RELEASE</spring.boot.version>
-        <cypherdsl.version>2020.1.1</cypherdsl.version>
-        <neo4j.driver.version>4.1.1.0</neo4j.driver.version>
+        <cypherdsl.version>2020.1.6</cypherdsl.version>
+        <neo4j.java.driver.version>4.2.7.0</neo4j.java.driver.version>
+        <neo4j.ogm.driver.version>3.2.26</neo4j.ogm.driver.version>
     </properties>
 
     <dependencies>
@@ -30,23 +30,35 @@
             <artifactId>neo4j-cypher-dsl</artifactId>
             <version>${cypherdsl.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-ogm-core -->
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-ogm-core</artifactId>
-            <version>3.2.16</version>
-        </dependency>
 
         <dependency>
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-java-driver-spring-boot-starter</artifactId>
-            <version>${neo4j.driver.version}</version>
+            <version>${neo4j.java.driver.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-ogm-bolt-driver -->
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-ogm-bolt-driver</artifactId>
+            <version>${neo4j.ogm.driver.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-ogm-core -->
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-ogm-core</artifactId>
+            <version>${neo4j.ogm.driver.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-neo4j</artifactId>
             <version>${spring.boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 <!--        <dependency>-->
@@ -72,13 +84,13 @@
 
     </dependencies>
 
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

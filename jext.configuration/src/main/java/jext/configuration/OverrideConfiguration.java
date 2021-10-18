@@ -112,6 +112,16 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
         return this.configurationFile;
     }
 
+    /** 'namedqueries.xml' configuration file */
+    public File getNamedQueriesConfigurationFile() {
+        File configurationDirectory = configurationFile.getParentFile();
+        File namedQueriesConfigurationFile = new File(configurationDirectory, "namedqueries.xml");
+        if (namedQueriesConfigurationFile.exists())
+            return namedQueriesConfigurationFile;
+        else
+            return configurationFile;
+    }
+
     public File getConfigurationDirectory() {
         return this.configurationFile.getParentFile();
     }

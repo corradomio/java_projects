@@ -618,8 +618,15 @@ public class FileUtils {
         }
     }
 
-    public static void mkdirs(File directory) {
-        directory.mkdirs();
+    public static File mkdirs(File directory, String ... subdir) {
+        File sdir = directory;
+        for (String name : subdir)
+            sdir = new File(sdir, name);
+
+        if (!sdir.exists())
+            sdir.mkdirs();
+
+        return sdir;
     }
 
 

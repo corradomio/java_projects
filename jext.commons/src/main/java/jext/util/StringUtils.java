@@ -27,12 +27,12 @@ public class StringUtils {
     public static String empty() {
         return EMPTY_STRING;
     }
-    public static String[] emptyArray() { return EMPTY_ARRAY; }
+    // public static String[] emptyArray() { return EMPTY_ARRAY; }
 
     public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
     }
-    public static boolean isNotEmpty(String s) { return s != null && s.length() > 0; }
+    // public static boolean isNotEmpty(String s) { return s != null && s.length() > 0; }
 
     // ----------------------------------------------------------------------
     // Compose
@@ -138,6 +138,7 @@ public class StringUtils {
      * As String.split() but return a List[String] instead than a String[]
      */
     public static List<String> split(String s, String sep) {
+        if (s == null) return Collections.emptyList();
         return asList(s.split(sep));
     }
 
@@ -326,6 +327,10 @@ public class StringUtils {
      */
     public static String digest(String s) {
         return Integer.toHexString(s.hashCode());
+    }
+
+    public static String capitalize(String s) {
+        return s.substring(0,1).toUpperCase() + s.substring(1);
     }
 
     // ----------------------------------------------------------------------

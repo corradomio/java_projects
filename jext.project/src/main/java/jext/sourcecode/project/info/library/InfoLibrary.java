@@ -4,6 +4,8 @@ import jext.name.Name;
 import jext.name.Named;
 import jext.name.NamedObject;
 import jext.name.ObjectName;
+import jext.name.PathName;
+import jext.name.VersionName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
@@ -11,6 +13,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
+import jext.sourcecode.project.maven.MavenName;
 import jext.util.FileUtils;
 import jext.util.MapUtils;
 
@@ -42,12 +45,33 @@ public abstract class InfoLibrary extends NamedObject implements Library {
         this.project = project;
         this.info = info;
         this.libraryType = libraryType;
+        this.id =  MapUtils.get(info, "id");
+
+        String fullname = MapUtils.get(info, "fullname");
+        String version  = MapUtils.get(info, "version");
+
+        switch(libraryType) {
+            case MAVEN:
+                this.name = new MavenName(fullname);
+                break;
+            case LOCAL:
+                this.name = new VersionName(fullname, version);
+                break;
+            case RUNTIME:
+            case INVALID:
+            default:
+                this.name = new PathName(fullname);
+                break;
+        }
+
+        if (this.id == null)
+            setNameWithId(this.name);
     }
 
-    @Override
-    public String getId() {
-        return MapUtils.get(info, "id");
-    }
+    // @Override
+    // public String getId() {
+    //     return MapUtils.get(info, "id");
+    // }
 
     @Override
     public String getVersion() {

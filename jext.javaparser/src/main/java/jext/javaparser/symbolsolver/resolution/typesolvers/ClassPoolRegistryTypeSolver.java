@@ -7,7 +7,6 @@ import jext.javaparser.util.ClassPoolRegistry;
 
 import java.io.IOException;
 
-
 public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
 
     // ----------------------------------------------------------------------

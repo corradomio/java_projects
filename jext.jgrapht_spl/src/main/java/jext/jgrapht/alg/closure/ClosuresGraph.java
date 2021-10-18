@@ -16,6 +16,7 @@ import org.jgrapht.alg.cycle.CycleDetector;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -55,14 +57,6 @@ public class ClosuresGraph<V, E> {
     private Graph<V, E> closureGraph;
 
     // ----------------------------------------------------------------------
-
-    // private final Set<V> singletonVertices;
-    // private final Set<V> duplicatedVertices;
-    // private final List<V> leavesRemoved;
-    // private final Set<V> inChainRemoved;
-    // private final Set<V> rootsRemoved;
-
-    // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
@@ -71,12 +65,6 @@ public class ClosuresGraph<V, E> {
 
         closures = new HashMap<>();
         bySize = new HashMap<>();
-
-        // singletonVertices = new HashSet<>();
-        // duplicatedVertices = new HashSet<>();
-        // leavesRemoved = new ArrayList<>();
-        // inChainRemoved = new HashSet<>();
-        // rootsRemoved = new HashSet<>();
     }
 
     // ----------------------------------------------------------------------
@@ -161,44 +149,14 @@ public class ClosuresGraph<V, E> {
     }
 
     /**
-     * Get the singletons as closure.
-     * If there are no singletons, return an 'empty' closure without 'reference'
-     * vertex (closure.vertex is null)
-     */
-    public Closure<V> getSingletonClosure() {
-        Assert.check(singletonClosure != null, "singletons not initialized");
-        return singletonClosure;
-    }
-
-    public Set<V> getSingletons() {
-        Assert.check(singletonClosure != null, "singletons not initialized");
-        return singletonClosure.members();
-    }
-
-    // public Set<V> getDuplicateRemoved() {
-    //     return duplicatedVertices;
-    // }
-
-    // public List<V> getLeavesRemove() {
-    //     return leavesRemoved;
-    // }
-
-    // public Set<V> getInChainRemoved() {
-    //     return inChainRemoved;
-    // }
-
-    // public Set<V> getRootsRemoved() {
-    //     return rootsRemoved;
-    // }
-
-    /**
      * Retrieve the 'root' vertices.
      * A 'root' vertex is a vertex with inDegree = 0
      */
     public Set<V> getRoots() {
-        return closureGraph.vertexSet().stream()
+        Set<V> roots = closureGraph.vertexSet().stream()
             .filter(vertex -> closureGraph.inDegreeOf(vertex) == 0)
             .collect(Collectors.toSet());
+        return roots;
     }
 
     // ----------------------------------------------------------------------
@@ -323,7 +281,12 @@ public class ClosuresGraph<V, E> {
 
         logger.info("collectSingletons");
 
-        Set<V> singletonVertices = new HashSet<>();
+        // Used a 'TreeSet' because in this way we are able to retrieve
+        // ALWAYS the same vertex id (if it is present)
+        Set<V> singletonVertices = new TreeSet<>();
+
+        if (bySize.isEmpty())
+            return Collections.emptySet();
 
         // check if there are singletons vertices with |closure| == 1
         if (bySize.get(1).isEmpty()) {
@@ -432,7 +395,7 @@ public class ClosuresGraph<V, E> {
     // Closure containment graph
     // ----------------------------------------------------------------------
 
-    public ClosuresGraph<V,E>  createClosureGraph() {
+    public int createClosureGraph() {
         logger.info("createClosureGraph");
 
         Graph<V, E> cgraph = (Graph<V, E>) Graphs.newGraph(
@@ -451,7 +414,7 @@ public class ClosuresGraph<V, E> {
             closureGraph.addVertex(vertex);
         });
 
-        return this;
+        return closureGraph.vertexSet().size();
     }
 
     // ----------------------------------------------------------------------
@@ -465,12 +428,12 @@ public class ClosuresGraph<V, E> {
      *
      * if closure.members is a superset than  smallerClosure.members
      */
-    public ClosuresGraph<V,E>  computeClosureDependencies() {
+    public int computeClosureDependencies() {
         logger.info("computeClosureDependencies");
 
         List<Pair<V, V>> edges = new ConcurrentArrayList<>();
 
-        Serial.forEach(2, maxSize+1, size -> {
+        Serial/*Parallel*/.forEach(2, maxSize+1, size -> {
             logger.infoft("... computeClosureDependencies[%d]", size);
 
             List<Closure<V>> closures = getClosures(size);
@@ -492,7 +455,7 @@ public class ClosuresGraph<V, E> {
 
         edges.forEach(e -> closureGraph.addEdge(e.getKey(), e.getValue()));
 
-        return this;
+        return closureGraph.edgeSet().size();
     }
 
     // ----------------------------------------------------------------------
@@ -506,12 +469,12 @@ public class ClosuresGraph<V, E> {
      *      (a)------>(c)       <== remove this edge
      *
      */
-    public ClosuresGraph<V,E>  transitiveReduction() {
+    public int transitiveReduction() {
         logger.info("transitiveReduction");
 
         TransitiveReduction.INSTANCE.reduce(closureGraph);
 
-        return this;
+        return closureGraph.edgeSet().size();
     }
 
     // ----------------------------------------------------------------------
@@ -762,7 +725,7 @@ public class ClosuresGraph<V, E> {
     // Difference
     // ----------------------------------------------------------------------
 
-    static class Edge<V> {
+    public static class Edge<V> {
         public V source;
         public V target;
         public boolean directed;
@@ -801,23 +764,47 @@ public class ClosuresGraph<V, E> {
         CGDifferences<V> diff = new CGDifferences<>();
 
         diffVertices(diff, that);
-        diffClosures(diff, that);
         diffEdges(diff, that);
+        diffClosures(diff, that);
 
         return diff;
     }
 
     private void diffVertices(CGDifferences<V> diff, ClosuresGraph<V, E> that) {
         // vertices added/removed
-        Set<V> added   = Utils.difference(this.graph.vertexSet(), that.graph.vertexSet());
-        Set<V> removed = Utils.difference(that.graph.vertexSet(), this.graph.vertexSet());
+        Set<V> added   = Utils.difference(this.closureGraph.vertexSet(), that.closureGraph.vertexSet());
+        Set<V> removed = Utils.difference(that.closureGraph.vertexSet(), this.closureGraph.vertexSet());
 
         diff.vertices().added(added);
         diff.vertices().removed(removed);
     }
 
+    private void diffEdges(CGDifferences<V> diff, ClosuresGraph<V, E> that) {
+        Set<Edge<V>> thisEdges = this.closureGraph.edgeSet().stream()
+            .map(e -> {
+                V sourceVertex = this.closureGraph.getEdgeSource(e);
+                V targetVertex = this.closureGraph.getEdgeTarget(e);
+                return new Edge<V>(sourceVertex, targetVertex, true);
+            })
+            .collect(Collectors.toSet());
+
+        Set<Edge<V>> thatEdges = that.closureGraph.edgeSet().stream()
+            .map(e -> {
+                V sourceVertex = that.closureGraph.getEdgeSource(e);
+                V targetVertex = that.closureGraph.getEdgeTarget(e);
+                return new Edge<V>(sourceVertex, targetVertex, true);
+            })
+            .collect(Collectors.toSet());
+
+        Set<Edge<V>> added   = Utils.difference(thisEdges, thatEdges);
+        Set<Edge<V>> removed = Utils.difference(thatEdges, thisEdges);
+
+        diff.edges().added(added);
+        diff.edges().removed(removed);
+    }
+
     private void diffClosures(CGDifferences<V> diff, ClosuresGraph<V, E> that) {
-        Set<V> common = Utils.intersection(this.graph.vertexSet(), that.graph.vertexSet());
+        Set<V> common = Utils.intersection(this.closureGraph.vertexSet(), that.closureGraph.vertexSet());
         common.forEach(vertex -> {
             Closure<V> thisClosure = this.getClosure(vertex);
             Closure<V> thatClosure = that.getClosure(vertex);
@@ -831,32 +818,8 @@ public class ClosuresGraph<V, E> {
             if (!membersAdded.isEmpty())
                 diff.vertices().changed(vertex).added(membersAdded);
             if (!membersRemoved.isEmpty())
-                diff.vertices().changed(vertex).added(membersRemoved);
+                diff.vertices().changed(vertex).removed(membersRemoved);
         });
-    }
-
-    private void diffEdges(CGDifferences<V> diff, ClosuresGraph<V, E> that) {
-        Set<Edge<V>> thisEdges = this.graph.edgeSet().stream()
-            .map(e -> {
-                V sourceVertex = this.graph.getEdgeSource(e);
-                V targetVertex = this.graph.getEdgeTarget(e);
-                return new Edge<V>(sourceVertex, targetVertex, true);
-            })
-            .collect(Collectors.toSet());
-
-        Set<Edge<V>> thatEdges = that.graph.edgeSet().stream()
-            .map(e -> {
-                V sourceVertex = that.graph.getEdgeSource(e);
-                V targetVertex = that.graph.getEdgeTarget(e);
-                return new Edge<V>(sourceVertex, targetVertex, true);
-            })
-            .collect(Collectors.toSet());
-
-        Set<Edge<V>> added   = Utils.difference(thisEdges, thatEdges);
-        Set<Edge<V>> removed = Utils.difference(thatEdges, thisEdges);
-
-        diff.edges().added(added);
-        diff.edges().removed(removed);
     }
 
     // ----------------------------------------------------------------------

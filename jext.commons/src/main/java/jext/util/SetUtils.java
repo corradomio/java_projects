@@ -25,7 +25,7 @@ public class SetUtils {
 
     // ----------------------------------------------------------------------
 
-    public static <T> boolean isSameset(Set<T> s1, Set<T> s2) {
+    public static <T> boolean isSameSet(Set<T> s1, Set<T> s2) {
         return s1.equals(s2);
     }
 

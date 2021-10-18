@@ -67,9 +67,9 @@ import java.util.Map;
 
 public interface GraphSession extends AutoCloseable {
 
-    String ID = "$id";
-    String LABELS = "$labels";
-    String TYPE = "$type";
+    String GRAPH_ID = "$id";
+    String GRAPH_LABELS = "$labels";
+    String GRAPH_TYPE = "$type";
 
     // ----------------------------------------------------------------------
     // Database Session
@@ -180,10 +180,6 @@ public interface GraphSession extends AutoCloseable {
      */
     void deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
     void deleteNodes(String nodeType, Map<String,Object> nodeProps);
-
-    // default void deleteNodes(String nodeType, Map<String,Object> nodeProps) {
-    //     deleteNodes(nodeType, nodeProps, 0);
-    // }
 
     // ----------------------------------------------------------------------
 
@@ -307,6 +303,8 @@ public interface GraphSession extends AutoCloseable {
     // Edge
     // ----------------------------------------------------------------------
 
+    String /*edgeId*/ findEdge(String edgeType, String fromId, String toId);
+
     /**
      * Create a new edge.
      * It is possible to specify if the edge is directed or undirected, using the
@@ -331,24 +329,24 @@ public interface GraphSession extends AutoCloseable {
      */
     void createEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
 
-    /**
-     * Find an edge and if it is not present, create it, otherwise onUpdate it with the createProps
-     *
-     * @param edgeType edge type
-     * @param fromId source node
-     * @param toId destination node
-     * @param findProps properties of the edge used in the search
-     * @param createProps properties of the edge used if the edge is created
-     * @param updateProps properties of the edge used if the edge is created
-     * @return edgeId or null
-     */
-    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
-                              Map<String,Object> findProps,
-                              Map<String,Object> createProps,
-                              Map<String,Object> updateProps);
-    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
-                              Map<String,Object> findProps,
-                              Map<String,Object> createProps);
+    // /**
+    //  * Find an edge and if it is not present, create it, otherwise onUpdate it with the createProps
+    //  *
+    //  * @param edgeType edge type
+    //  * @param fromId source node
+    //  * @param toId destination node
+    //  * @param findProps properties of the edge used in the search
+    //  * @param createProps properties of the edge used if the edge is created
+    //  * @param updateProps properties of the edge used if the edge is created
+    //  * @return edgeId or null
+    //  */
+    // String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
+    //                           Map<String,Object> findProps,
+    //                           Map<String,Object> createProps,
+    //                           Map<String,Object> updateProps);
+    // String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
+    //                           Map<String,Object> findProps,
+    //                           Map<String,Object> createProps);
 
     /**
      * Delete the edges with the specified properties

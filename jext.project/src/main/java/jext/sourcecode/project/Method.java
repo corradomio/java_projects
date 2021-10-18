@@ -4,7 +4,6 @@ import jext.name.IdNamed;
 import jext.name.Name;
 
 import java.util.List;
-import java.util.Set;
 
 public interface Method extends IdNamed {
 
@@ -16,9 +15,9 @@ public interface Method extends IdNamed {
 
     MethodName getMethodName();
 
-    Set<String> getModifiers();
-    String getVisibility();
-    Set<String> getStructure();
+    // Set<String> getModifiers();
+    // String getVisibility();
+    // Set<String> getStructure();
 
     RefType getType();
 

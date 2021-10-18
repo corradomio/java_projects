@@ -203,7 +203,7 @@ public class GradleModule extends BaseModule {
         List<MavenCoords> coords = dlibs.stream()
             .map(MavenCoords::of)
             .collect(Collectors.toList());
-        md.checkArtifacts(coords, false);
+        md.checkArtifacts(coords, false, true);
 
         dmodules = dmods
             .stream()

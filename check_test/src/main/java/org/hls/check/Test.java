@@ -20,5 +20,8 @@ public class Test {
 
         l = LongUtils.parseLong(s, 64);
         System.out.println(l);
+
+        l = LongUtils.parseLong(s, 64);
+        System.out.println(l);
     }
 }

@@ -87,20 +87,20 @@ public class InfoType implements Type {
         return this;
     }
 
-    @Override
-    public Set<String> getModifiers() {
-        return Collections.emptySet();
-    }
+    // @Override
+    // public Set<String> getModifiers() {
+    //     return Collections.emptySet();
+    // }
 
-    @Override
-    public String getVisibility() {
-        return PUBLIC;
-    }
+    // @Override
+    // public String getVisibility() {
+    //     return PUBLIC;
+    // }
 
-    @Override
-    public Set<String> getStructure() {
-        return Collections.emptySet();
-    }
+    // @Override
+    // public Set<String> getStructure() {
+    //     return Collections.emptySet();
+    // }
 
     @Override
     public int getTypeParametersCount() {
@@ -132,20 +132,20 @@ public class InfoType implements Type {
         return name.getParent();
     }
 
-    @Override
-    public boolean isValid() {
-        return true;
-    }
+    // @Override
+    // public boolean isValid() {
+    //     return true;
+    // }
 
-    @Override
-    public boolean isInner() {
-        return false;
-    }
+    // @Override
+    // public boolean isInner() {
+    //     return false;
+    // }
 
-    @Override
-    public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
-        return Collections.emptyList();
-    }
+    // @Override
+    // public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
+    //     return Collections.emptyList();
+    // }
 
     // @Override
     // public List<Field> getFields() {

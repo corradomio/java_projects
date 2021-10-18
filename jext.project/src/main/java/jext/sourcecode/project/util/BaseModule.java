@@ -71,7 +71,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         this.properties = new Properties();
 
         this.path = FileUtils.relativePath(project.getProjectHome(), moduleHome);
-        setName(new PathName(this.path));
+        setNameWithId(new PathName(this.path));
         setRefIdFromName();
 
         this.logger = Logger.getLogger("%s.%s.%s",
@@ -334,7 +334,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
             .collect(Collectors.toList());
 
         MavenDownloader md = project.getLibraryDownloader();
-        // md.checkArtifacts(coordList);
 
         coordList
             .stream()
@@ -357,7 +356,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         });
 
         MavenDownloader md = project.getLibraryDownloader();
-        // md.checkArtifacts(coordList);
 
         coordList.stream()
             .map(lcoords -> new MavenLibrary(lcoords, md, project))

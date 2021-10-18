@@ -8,6 +8,7 @@ import jext.util.FileUtils;
 import jext.util.JarUtils;
 import jext.util.StringUtils;
 import jext.util.concurrent.Parallel;
+import jext.util.concurrent.Serial;
 import jext.xml.XPathUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -1082,11 +1083,14 @@ public class MavenDownloader implements MavenConst {
      * @param coordsList list of coordinates to check
      * @param artifacts if to download the artifacts
      */
-    public void checkArtifacts(Collection<MavenCoords> coordsList, boolean artifacts) {
-        Parallel.forEach(coordsList, coords -> checkArtifact(coords, artifacts));
+    public void checkArtifacts(Collection<MavenCoords> coordsList, boolean artifacts, boolean parallel) {
+        if (parallel)
+            Parallel.forEach(coordsList, coords -> checkArtifact(coords, artifacts));
+        else
+            Serial.forEach(coordsList, coords -> checkArtifact(coords, artifacts));
     }
 
-    public void checkArtifact(MavenCoords coords, boolean artifact) {
+    private void checkArtifact(MavenCoords coords, boolean artifact) {
 
         MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
 

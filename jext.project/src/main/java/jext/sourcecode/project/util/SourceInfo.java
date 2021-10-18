@@ -22,15 +22,15 @@ public class SourceInfo {
         version = VERSION_NUMBER;
     }
 
-    public Map<String, Object> getCounts() {
-        return MapUtils.asMap(
-            "count", count,
-            "bytes", bytes,
-            "totalLines", totalLines,
-            "blankLines", blankLines,
-            "codeLines", codeLines
-        );
-    }
+    // public Map<String, Object> getCounts() {
+    //     return MapUtils.asMap(
+    //         "count", count,
+    //         "bytes", bytes,
+    //         "totalLines", totalLines,
+    //         "blankLines", blankLines,
+    //         "codeLines", codeLines
+    //     );
+    // }
 
     // executed in parallel!
     public synchronized void add(SourceInfo info) {

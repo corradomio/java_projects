@@ -15,7 +15,7 @@ public class InfoLocalLibrary extends InfoLibrary {
         String fullname = MapUtils.get(info,"fullname");
         String version = MapUtils.get(info,"version");
         // this.name = new PathName(MapUtils.get(info,"fullname"));
-        setName(new VersionName(fullname, version));
+        setNameWithId(new VersionName(fullname, version));
     }
 
     public InfoLocalLibrary(InfoProject project, Map<String, Object> info) {
@@ -23,7 +23,7 @@ public class InfoLocalLibrary extends InfoLibrary {
         String fullname = MapUtils.get(info,"fullname");
         String version = MapUtils.get(info,"version");
         // this.name = new PathName(MapUtils.get(info,"fullname"));
-        setName(new VersionName(fullname, version));
+        setNameWithId(new VersionName(fullname, version));
     }
 
 }

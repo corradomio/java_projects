@@ -19,6 +19,6 @@ public interface Revisions {
     int NO_REVISION = -1;
     int ALL_REVISIONS = -2;
 
-    int getCurrentRevision();
+    // int getCurrentRevision();
 
 }

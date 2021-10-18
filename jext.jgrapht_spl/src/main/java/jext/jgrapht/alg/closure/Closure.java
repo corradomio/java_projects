@@ -14,6 +14,7 @@ public class Closure<V> {
     private final int outDegree;
     private V vertex;
     private final Set<V> members;
+    private boolean singletons;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -24,6 +25,7 @@ public class Closure<V> {
         this.outDegree = 0;
         this.vertex = null;
         this.members = members;
+        this.singletons = true;
 
         if (!members.isEmpty())
             this.vertex = members.iterator().next();
@@ -67,8 +69,8 @@ public class Closure<V> {
     /**
      * A singleton is a vertex with 0 degree
      */
-    public boolean isSingleton() {
-        return inDegree == 0 && outDegree == 0;
+    public boolean isSingletons() {
+        return singletons;
     }
 
     /**

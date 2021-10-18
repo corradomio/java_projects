@@ -20,7 +20,6 @@ import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-
 public class ClassPoolRegistry {
 
     // ----------------------------------------------------------------------
