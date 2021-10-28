@@ -49,6 +49,8 @@ import java.util.stream.Collectors;
 
 public class MavenDownloader implements MavenConst {
 
+    private static final String DOT_INVALID = ".invalid";
+
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
@@ -211,14 +213,14 @@ public class MavenDownloader implements MavenConst {
         return pomFile;
     }
 
-    public File getMetadataFile(MavenCoords coords) {
-        coords = normalize(coords);
-
-        File metadataFile = getFile(coords, MavenType.METADATA);
-        // if (recheck(metadataFile))
-        //     downloadFile(coords, MavenType.METADATA);
-        return metadataFile;
-    }
+    // public File getMetadataFile(MavenCoords coords) {
+    //     coords = normalize(coords);
+    //
+    //     File metadataFile = getFile(coords, MavenType.METADATA);
+    //     // if (recheck(metadataFile))
+    //     //     downloadFile(coords, MavenType.METADATA);
+    //     return metadataFile;
+    // }
 
     /**
      * Retrieve the '.jar' file from the coordinates
@@ -651,16 +653,6 @@ public class MavenDownloader implements MavenConst {
     // }
 
     // ----------------------------------------------------------------------
-    // Implementation
-    // ----------------------------------------------------------------------
-
-    // check the the file is expired
-    private boolean recheck(File file) {
-        long checkTimeoutMillis = this.checkTimeout*1000;
-        return !file.exists() || (System.currentTimeMillis() - file.lastModified()) > checkTimeoutMillis;
-    }
-
-    // ----------------------------------------------------------------------
     // MavenCoords -> File & Url
     // ----------------------------------------------------------------------
 
@@ -729,7 +721,7 @@ public class MavenDownloader implements MavenConst {
     // Invalid file flag:  '<file>.invalid'
     private File getInvalidFlagFile(MavenCoords coords, MavenType type) {
         File file = getFile(coords, type);
-        return new File(file.getParentFile(), file.getName() + ".invalid");
+        return new File(file.getParentFile(), file.getName() + DOT_INVALID);
     }
 
     // Relative artifact's url from the coordinates
@@ -962,7 +954,7 @@ public class MavenDownloader implements MavenConst {
     //
 
     // used to check that the file downloaded is of the correct type.
-    // Sometimes it is downloaded a file HTML without error cpdes
+    // Sometimes it is downloaded a file HTML without error codes
     private static boolean isValidFileType(File file, MavenType type) {
         if (file == null)
             return false;
@@ -975,10 +967,11 @@ public class MavenDownloader implements MavenConst {
         if (file.length() == 0)
             return false;
 
-        // not a jar
+        // not a JAR (ZIP compressed) file
         if (type == MavenType.ARTIFACT && !"PK".equals(getBytes(file, 2)))
             return false;
 
+        // not a XML POM file
         if (type == MavenType.POM) {
             try {
                 Element root = XPathUtils.parse(file).getDocumentElement();
@@ -989,6 +982,7 @@ public class MavenDownloader implements MavenConst {
             }
         }
 
+        // not a XML METADATA file
         if (type == MavenType.METADATA) {
             try {
                 Element root = XPathUtils.parse(file).getDocumentElement();
@@ -999,6 +993,7 @@ public class MavenDownloader implements MavenConst {
             }
         }
 
+        // not a HTML VERSIONS file
         if (type == MavenType.VERSIONS) {
             // file with less that 2 lines
             List<String> lines = readLines(file, 2);
@@ -1095,10 +1090,10 @@ public class MavenDownloader implements MavenConst {
         MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
 
         // .invalid'
-        deleteInvalidFile(coords, MavenType.METADATA);
-        deleteInvalidFile(coords, MavenType.VERSIONS);
-        deleteInvalidFile(coords, MavenType.POM);
-        deleteInvalidFile(coords, MavenType.ARTIFACT);
+        // deleteInvalidFile(coords, MavenType.METADATA);
+        // deleteInvalidFile(coords, MavenType.VERSIONS);
+        // deleteInvalidFile(coords, MavenType.POM);
+        // deleteInvalidFile(coords, MavenType.ARTIFACT);
 
         // 'maven-metadata.xml'
         File metadataFile = getFile(coords, MavenType.METADATA);
@@ -1112,18 +1107,48 @@ public class MavenDownloader implements MavenConst {
 
         // pom file
         File pomFile = getPomFile(coords);
-        if (!pomFile.exists())
+        if (!isInvalid(pomFile) && !pomFile.exists())
             me.add(downloadFile(coords, MavenType.POM));
 
         // artifact
         File artifactFile = getArtifact(coords);
-        if (!artifactFile.exists())
+        if (!isInvalid(pomFile) && !artifactFile.exists())
             me.add(downloadFile(coords, MavenType.ARTIFACT));
     }
 
-    private void deleteInvalidFile(MavenCoords coords, MavenType type) {
-        File invalidFile = getInvalidFlagFile(coords, type);
-        invalidFile.delete();
+    private boolean isInvalid(File file) {
+        File invalidFile = new File(file.getParent(), file.getName() + DOT_INVALID);
+        if (!invalidFile.exists())
+            return false;
+
+        long checkTimeoutMillis = this.checkTimeout*1000;
+        long delta = System.currentTimeMillis() - invalidFile.lastModified();
+        if (delta < checkTimeoutMillis)
+            return true;
+
+        delete(invalidFile);
+        return false;
     }
+
+    // check if the file is expired
+    private boolean recheck(File file) {
+        if (isInvalid(file))
+            return false;
+
+        if (!file.exists())
+            return true;
+
+        long checkTimeoutMillis = this.checkTimeout*1000;
+        long delta = System.currentTimeMillis() - file.lastModified();
+        if (delta < checkTimeoutMillis)
+            return false;
+        else
+            return true;
+    }
+
+    // private void deleteInvalidFile(MavenCoords coords, MavenType type) {
+    //     File invalidFile = getInvalidFlagFile(coords, type);
+    //     invalidFile.delete();
+    // }
 
 }

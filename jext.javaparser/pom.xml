@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-core</artifactId>
-            <version>3.22.1</version>
+            <version>3.23.1</version>
             <!--<version>3.22.2-SNAPSHOT</version>-->
             <!--<scope>system</scope>-->
             <!--<systemPath>${project.basedir}/libs/javaparser-core-3.22.2-SNAPSHOT.jar</systemPath>-->
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
-            <version>3.22.1</version>
+            <version>3.23.1</version>
             <!--<version>3.22.2-SNAPSHOT</version>-->
             <!--<scope>system</scope>-->
             <!--<systemPath>${project.basedir}/libs/javaparser-symbol-solver-core-3.22.2-SNAPSHOT.jar</systemPath>-->

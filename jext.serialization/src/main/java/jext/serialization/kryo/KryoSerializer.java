@@ -13,6 +13,7 @@ public class KryoSerializer {
 
     public static <T> void serialize(File serialized, T object) throws IOException {
         Kryo kryo = new Kryo();
+        kryo.setReferences(true);
         try(Output output = new Output(new FileOutputStream(serialized))) {
             kryo.writeClassAndObject(output, object);
         }
@@ -20,6 +21,7 @@ public class KryoSerializer {
 
     public static <T> T deserialize(File serialized, Class<T> clazz) throws IOException {
         Kryo kryo = new Kryo();
+        kryo.setReferences(true);
         try(Input input = new Input(new FileInputStream(serialized))) {
             return (T) kryo.readClassAndObject(input);
         }
