@@ -66,6 +66,17 @@ public class Param {
     //
     // ----------------------------------------------------------------------
 
+    // public static boolean isSpecial(String name, Object value) {
+    //     if (name.startsWith("$") || name.contains("[") || name.equals("revision"))
+    //         return true;
+    //     if (name.contains("<") || name.contains(">") || name.contains("With") || name.contains("append"))
+    //         return true;
+    //     if (value == null)
+    //         return true;
+    //     else
+    //         return false;
+    // }
+
     public static boolean isSpecialOrArray(String name, Object value) {
         if (name.startsWith("$") || name.contains("[") || name.equals("revision"))
             return true;
@@ -98,8 +109,8 @@ public class Param {
             return true;
         if (value == null)
             return false;
-        if (value instanceof Collection || value.getClass().isArray())
-            return true;
+        // if (value instanceof Collection || value.getClass().isArray())
+        //     return true;
         else
             return false;
     }

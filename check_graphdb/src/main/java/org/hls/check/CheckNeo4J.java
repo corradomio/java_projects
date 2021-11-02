@@ -21,7 +21,7 @@ public class CheckNeo4J {
 
         GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
 
-        gdb.registerQueries(MapUtils.asMap("test", "MATCH (n:project) ${where:n:other}"));
+        gdb.registerQueries(MapUtils.asMap("test", "MATCH (n:splproject) ${where:n:other}"));
 
         Map<String, Object> p = MapUtils.asMap(
             "other", MapUtils.asMap(

@@ -17,8 +17,10 @@
     <modules>
         <module>../jext.graphdb</module>
         <module>../jext.commons</module>
+        <module>../jext.collections</module>
         <module>../jext.cache</module>
         <module>../jext.apocx</module>
+        <module>../jext.concurrent</module>
     </modules>
 
     <repositories>
@@ -42,6 +44,11 @@
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.concurrent</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.collections</artifactId>
             <version>1.0</version>
         </dependency>
 

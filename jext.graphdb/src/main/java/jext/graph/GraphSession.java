@@ -21,31 +21,30 @@ import java.util.Map;
 
     Supported assignments:
 
-        name: 'single value'
-
             name, value                     n.name <- value
-            name[index], value              n.name <- apoc.coll.setOrExtend(n.name, index, value)
+            name[index], value              n.name <- apoc.coll.arraySet(n.name, index, value)
             name[+], value                  n.name <- apoc.coll.append(n.name, value)
             name[!], value                  n.name <- apoc.coll.appendDistinct(n.name, value)
 
     Supported predicates:
 
-        name: 'single value'
+        name: 'singleValue'
 
             name, value                     n.name == value
             name, array[]                   n.name IN array[]
             name, collection                n.name IN collection
 
-        name: 'array'
+        name: 'valueArray'
 
             name[index], value              n.name[index] == value
             name[index], array[]            n.name[index] IN array[]
             name[index], collection         n.name[index] IN collection
             name[i1|i2|...], value          n.name[i1] == value OR n.name[i2] == value OR ...
                                             n.name[i1] OR n.name[i2] OR ...  for boolean value 'true'
+
     Special predicates:
 
-        name: 'boolean array'
+        name: 'booleanArray'
 
             name, array[]                   n.name[index1] OR n.name[index2] OR ...
 
@@ -60,7 +59,7 @@ import java.util.Map;
      Support for array of array of int:
 
         assignment:
-            name[index,i2], value           n.name <- apoc.coll.setOrExtend2(n.name, index, i2, value)
+            name[index,i2], value           n.name <- apoc.coll.array2Set(n.name, index, i2, value)
             name[index,+], value            n.name <- apoc.coll.append2(n.name, index, value)
             name[index,!], value            n.name <- apoc.coll.appendDistinct2(n.name, index, value)
  */
@@ -127,7 +126,8 @@ public interface GraphSession extends AutoCloseable {
     Query queryNodes(@Nullable String nodeType, @Nullable Map<String, Object> nodeProps);
 
     /**
-     * Find the node with the specified properties
+     * Find the node with the specified properties.
+     * Equivalent to 'queryNodes(...).id()'
      *
      * @param nodeType node type or null
      * @param nodeProps node properties
@@ -143,6 +143,11 @@ public interface GraphSession extends AutoCloseable {
      * Create a new node
      */
     String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps);
+
+    /**
+     * Create or update a node
+     */
+    String/*nodeId*/ updateNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
 
     /**
      * Check if the node there exists
@@ -178,8 +183,8 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Delete the nodes with the specified properties
      */
-    void deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
-    void deleteNodes(String nodeType, Map<String,Object> nodeProps);
+    long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
+    long deleteNodes(String nodeType, Map<String,Object> nodeProps);
 
     // ----------------------------------------------------------------------
 
@@ -197,6 +202,7 @@ public interface GraphSession extends AutoCloseable {
     void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
 
     void setNodeProperty(String nodeId, String name, Object value);
+    void setNodeProperty(String nodeId, String name, int index, Object value);
 
     void deleteNodeProperty(String nodeId, String name);
     void deleteNodesProperties(Collection<String> nodeId, Collection<String> names);
@@ -226,18 +232,18 @@ public interface GraphSession extends AutoCloseable {
     //     String fromId, String edgeType, Direction direction, boolean recursive,
     //     String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
-    /**
-     * Select the nodes with the specified degree
-     *
-     * @param nodeType node type
-     * @param edgeType edge type
-     * @param ndegree min/max input/output degrees
-     * @param nodeProps properties of the node
-     * @param edgeProps properties of the edge
-     */
-    Query queryNodesWithDegree(
-        String nodeType, String edgeType, NodeDegree ndegree,
-        Map<String, Object> nodeProps, Map<String, Object> edgeProps);
+    // /**
+    //  * Select the nodes with the specified degree
+    //  *
+    //  * @param nodeType node type
+    //  * @param edgeType edge type
+    //  * @param ndegree min/max input/output degrees
+    //  * @param nodeProps properties of the node
+    //  * @param edgeProps properties of the edge
+    //  */
+    // Query queryNodesWithDegree(
+    //     String nodeType, String edgeType, NodeDegree ndegree,
+    //     Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge queries
@@ -303,7 +309,7 @@ public interface GraphSession extends AutoCloseable {
     // Edge
     // ----------------------------------------------------------------------
 
-    String /*edgeId*/ findEdge(String edgeType, String fromId, String toId);
+    String /*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
 
     /**
      * Create a new edge.
@@ -318,35 +324,21 @@ public interface GraphSession extends AutoCloseable {
      * @return edgeId
      */
     String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
-
-    /**
-     * Create multiple edges (1:n)
-     *
-     * @param edgeType edge type
-     * @param fromId source node
-     * @param toIds destination nodes
-     * @param edgeProps edge properties
-     */
     void createEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
 
-    // /**
-    //  * Find an edge and if it is not present, create it, otherwise onUpdate it with the createProps
-    //  *
-    //  * @param edgeType edge type
-    //  * @param fromId source node
-    //  * @param toId destination node
-    //  * @param findProps properties of the edge used in the search
-    //  * @param createProps properties of the edge used if the edge is created
-    //  * @param updateProps properties of the edge used if the edge is created
-    //  * @return edgeId or null
-    //  */
-    // String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
-    //                           Map<String,Object> findProps,
-    //                           Map<String,Object> createProps,
-    //                           Map<String,Object> updateProps);
-    // String/*edgeId*/ findEdge(String edgeType, String fromId, String toId,
-    //                           Map<String,Object> findProps,
-    //                           Map<String,Object> createProps);
+    /**
+     * Create or update an edge.
+     * If the edge doesn't exist, it is created otherwise it is updated.
+     *
+     * Note: this method IS VERY SLOW. It processes 1000 edges/second.
+     *       It must be used carefully
+     *
+     * @param edgeType edge type
+     * @param fromId source node id
+     * @param toIds destination node id list. Can be null
+     * @param edgeProps edge properties
+     */
+    void updateEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
 
     /**
      * Delete the edges with the specified properties
@@ -363,7 +355,15 @@ public interface GraphSession extends AutoCloseable {
                      String toNodeType, Map<String, Object> toProps,
                      Map<String,Object> edgeProps);
 
+    void deleteEdges(String edgeType, String fromId, List<String> tiIds, Map<String,Object> edgeProps);
+
     // ----------------------------------------------------------------------
+
+    /**
+     * Insert/update edge properties based on the source/target nodes and the edge type.
+     */
+    void setEdgeProperties(String edgeType, String fromId, String toId, Map<String,Object> edgeProps, Map<String,Object> updateProps);
+    void setEdgeProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps, Map<String,Object> updateProps);
 
     /**
      * Insert/update the edge properties with 'updateProps'
@@ -379,9 +379,9 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeId edgeId
      * @param name name of the property
      * @param value values of the property
-     * @param override is to override the value
      */
-    void   setEdgeProperty(String edgeId, String name, Object value, boolean override);
+    void   setEdgeProperty(String edgeId, String name, Object value);
+    void   setEdgeProperty(String edgeId, String name, int index, Object value);
 
     /**
      * Retrieve the properties of the edge
@@ -395,11 +395,10 @@ public interface GraphSession extends AutoCloseable {
      *
      * @param edgeType edge type
      * @param fromId source node
-     * @param toIds destination nodes
+     * @param toIds destination nodes (can be null)
      * @param edgeProps edge properties
      */
     void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
-
 
     // ----------------------------------------------------------------------
     // Properties

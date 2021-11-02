@@ -15,6 +15,8 @@ public class NodeId {
     }
 
     public static Set<Long> asIds(Collection<String> ids) {
+        if (ids == null)
+            return null;
         return ids
             .stream()
             .map(Long::valueOf)
