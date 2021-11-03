@@ -19,7 +19,7 @@ public class CreateNodes {
         GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
 
         try(GraphSession s = gdb.connect()) {
-            s.updateNode("U", Parameters.empty(), Parameters.params(
+            s.createNode("U", Parameters.empty(), Parameters.params(
                 "revision", 3
             ));
         }

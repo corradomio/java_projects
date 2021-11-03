@@ -147,7 +147,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Create or update a node
      */
-    String/*nodeId*/ updateNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
+    String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
 
     /**
      * Check if the node there exists
@@ -232,19 +232,6 @@ public interface GraphSession extends AutoCloseable {
     //     String fromId, String edgeType, Direction direction, boolean recursive,
     //     String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
-    // /**
-    //  * Select the nodes with the specified degree
-    //  *
-    //  * @param nodeType node type
-    //  * @param edgeType edge type
-    //  * @param ndegree min/max input/output degrees
-    //  * @param nodeProps properties of the node
-    //  * @param edgeProps properties of the edge
-    //  */
-    // Query queryNodesWithDegree(
-    //     String nodeType, String edgeType, NodeDegree ndegree,
-    //     Map<String, Object> nodeProps, Map<String, Object> edgeProps);
-
     // ----------------------------------------------------------------------
     // Edge queries
     // ----------------------------------------------------------------------
@@ -285,10 +272,10 @@ public interface GraphSession extends AutoCloseable {
      */
     Query queryEdges(String edgeType, Collection<String> fromIds, Collection<String> toIds,
                      Map<String, Object> edgeProps);
-    Query queryEdges(String edgeType, Collection<String> ids,
-                     Map<String, Object> edgeProps);
     Query queryEdges(String edgeType, String fromId, Collection<String> toIds,
                      Map<String, Object> edgeProps);
+    // Query queryEdges(String edgeType, Collection<String> ids,
+    //                  Map<String, Object> edgeProps);
 
     /**
      * Select the edges between the specified nodes
@@ -301,44 +288,74 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      * @return
      */
-    Query  queryPath(String edgeType,
-                     String fromId, String toId, Direction direction, boolean recursive,
-                     Map<String, Object> edgeProps);
+    Query queryPath(String edgeType,
+                    String fromId, String toId, Direction direction, boolean recursive,
+                    Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge
     // ----------------------------------------------------------------------
 
-    String /*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
+    /**
+     * Find the edge between the specified nodes with the specified type and
+     * properties.
+     *
+     * @param edgeType edge type
+     * @param fromId source node id
+     * @param toId target node id
+     * @param edgeProps edge properties
+     * @return edgeId or null
+     */
+    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
 
     /**
      * Create a new edge.
-     * It is possible to specify if the edge is directed or undirected, using the
-     * 'edge property'
-     * - "edgeType" "directed" (default), "undirected"
      *
      * @param edgeType edge type
      * @param fromId source node id
-     * @param toId destination node id
-     * @param edgeProps properties of the edge
+     * @param toId target node id
+     * @param edgeProps edge properties
      * @return edgeId
      */
     String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
-    void createEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
 
     /**
      * Create or update an edge.
-     * If the edge doesn't exist, it is created otherwise it is updated.
-     *
-     * Note: this method IS VERY SLOW. It processes 1000 edges/second.
-     *       It must be used carefully
      *
      * @param edgeType edge type
      * @param fromId source node id
-     * @param toIds destination node id list. Can be null
-     * @param edgeProps edge properties
+     * @param toId targe node id
+     * @param findProps edge properties used to find it
+     * @param updateProps edge properties to update
+     * @return edgeId
      */
-    void updateEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
+    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId,  Map<String,Object> findProps, Map<String,Object> updateProps);
+
+    /**
+     * Create multiple edges.
+     *
+     * @param edgeType edge type
+     * @param fromId source node id
+     * @param toIds destination node id list
+     * @param edgeProps properties of the edge
+     */
+    void createEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
+
+    /**
+     * Create or update multiple edges.
+     * The algorithm is:
+     *  1) 'findProps' are used to identify the list of nodes already reached
+     *  2) it is identified the set of nodes in 'toId' without an edge
+     *  3) it is create the edges between 'fromId' and the missing edges
+     *  4) the edges are updated with 'updateProps'
+     *
+     * @param edgeType edge type
+     * @param fromId source node id
+     * @param toIds destination node id list
+     * @param findProps edge properties used to find the edges
+     * @param updateProps edge properties to update
+     */
+    void createEdges(String edgeType, String fromId, Collection<String> toIds,  Map<String,Object> findProps, Map<String,Object> updateProps);
 
     /**
      * Delete the edges with the specified properties
@@ -355,7 +372,15 @@ public interface GraphSession extends AutoCloseable {
                      String toNodeType, Map<String, Object> toProps,
                      Map<String,Object> edgeProps);
 
-    void deleteEdges(String edgeType, String fromId, List<String> tiIds, Map<String,Object> edgeProps);
+    /**
+     * Delete the edges from the specified nodes
+     *
+     * @param edgeType edge type (can be null)
+     * @param fromId source node id
+     * @param toIds target node ids (can be null)
+     * @param edgeProps edge properties
+     */
+    void deleteEdges(String edgeType, String fromId, List<String> toIds, Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
 

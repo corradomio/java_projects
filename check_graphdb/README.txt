@@ -1,3 +1,14 @@
+CREATE (n:S) RETURN n
+
+UNWIND range(1,5000) AS nid
+CREATE (n:T {id:nid})
+RETURN n
+
+
+
+
+
+
 https://hostingdata.co.uk/nosql-database/
 https://www.predictiveanalyticstoday.com/top-free-graph-databases/
 

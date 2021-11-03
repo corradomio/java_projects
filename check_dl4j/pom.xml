@@ -11,8 +11,8 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <dl4j.version>1.0.0-beta7</dl4j.version>
-        <!--<dl4j.version>1.0.0-M1.1</dl4j.version>-->
+        <!-- dl4j.version>1.0.0-beta7</dl4j.version -->
+        <dl4j.version>1.0.0-M1.1</dl4j.version>
     </properties>
 
     <dependencies>
@@ -36,16 +36,36 @@
             <artifactId>deeplearning4j-nlp</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-parallel-wrapper -->
+
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-ui -->
         <dependency>
             <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-parallel-wrapper</artifactId>
-            <version>${dl4j.version}</version>
+            <artifactId>deeplearning4j-ui</artifactId>
+            <version>1.0.0-M1.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-ui-components -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-ui-components</artifactId>
+            <version>1.0.0-M1.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-ui-model -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-ui-model</artifactId>
+            <version>1.0.0-M1.1</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-nn -->
         <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-nn</artifactId>
+            <version>${dl4j.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-parallel-wrapper -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-parallel-wrapper</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-modelimport -->
@@ -72,25 +92,42 @@
             <artifactId>deeplearning4j-vertx</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-cuda-10.2 -->
-        <dependency>
+        <!--dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-cuda-10.2</artifactId>
             <version>${dl4j.version}</version>
-        </dependency>
+        </dependency-->
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-cuda-11.0 -->
+        <!--dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-cuda-11.0</artifactId>
+            <version>1.0.0-M1.1</version>
+        </dependency-->
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-cuda-11.2 -->
+        <!--dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-cuda-11.2</artifactId>
+            <version>1.0.0-M1.1</version>
+        </dependency-->
+
+
+
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-json-server -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-json-server</artifactId>
             <version>${dl4j.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-remote -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-remote</artifactId>
             <version>${dl4j.version}</version>
             <type>pom</type>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-utility-iterators -->
         <dependency>
             <groupId>org.deeplearning4j</groupId>
@@ -98,11 +135,11 @@
             <version>${dl4j.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-tsne -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-tsne</artifactId>
             <version>${dl4j.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-datavec-iterators -->
         <dependency>
             <groupId>org.deeplearning4j</groupId>
@@ -110,18 +147,30 @@
             <version>${dl4j.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-manifold -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-manifold</artifactId>
             <version>${dl4j.version}</version>
             <type>pom</type>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-data -->
         <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-data</artifactId>
             <version>${dl4j.version}</version>
             <type>pom</type>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/dl4j-spark -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>dl4j-spark_2.11</artifactId>
+            <version>1.0.0-M1.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/dl4j-spark-nlp -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>dl4j-spark-nlp_2.11</artifactId>
+            <version>1.0.0-M1.1</version>
         </dependency>
 
 
