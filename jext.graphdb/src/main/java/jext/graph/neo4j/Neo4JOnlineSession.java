@@ -583,20 +583,43 @@ public class Neo4JOnlineSession implements GraphSession {
     public Query queryEdges(String edgeType, Collection<String> fromIds, Collection<String> toIds,
                             Map<String, Object> edgeProps) {
 
-        String s;
         String eblock = eblock(E, edgeType, Direction.Output, false, edgeProps);
+        String s;
+        Parameters params;
 
-        s = String.format(
+        if (fromIds == toIds) {
+            s = String.format(
+                "MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $from " +
+                    "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+                eblock
+            );
+
+            params = Parameters.params()
+                .add(FROM, asIds(fromIds));
+        }
+        else {
+            s = String.format(
             "MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $to " +
                 "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
             eblock
         );
 
-        Parameters allProps = new Parameters();
-        allProps.put(FROM, asIds(fromIds));
-        allProps.put(TO, asIds(toIds));
+            params = Parameters.params()
+                .add(FROM, asIds(fromIds))
+                .add(TO, asIds(toIds));
+        }
 
-        return new Neo4JQuery(this, N, s, allProps);
+        // String s = String.format(
+        //     "MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $to " +
+        //     "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+        //     eblock
+        // );
+        //
+        // Parameters allProps = new Parameters();
+        // allProps.put(FROM, asIds(fromIds));
+        // allProps.put(TO, asIds(toIds));
+
+        return new Neo4JQuery(this, N, s, params);
     }
 
     // @Override
