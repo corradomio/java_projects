@@ -75,7 +75,7 @@ public class PathUtils {
      * @return the relative path
      */
     public static String relativePath(String basePath, String currentPath) {
-        if (basePath == null || !currentPath.startsWith(basePath))
+        if (basePath == null || basePath.isEmpty() || !currentPath.startsWith(basePath))
             return currentPath;
 
         if (basePath.equals(currentPath))

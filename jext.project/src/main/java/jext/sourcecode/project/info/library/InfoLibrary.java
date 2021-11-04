@@ -68,11 +68,6 @@ public abstract class InfoLibrary extends NamedObject implements Library {
             setNameWithId(this.name);
     }
 
-    // @Override
-    // public String getId() {
-    //     return MapUtils.get(info, "id");
-    // }
-
     @Override
     public String getVersion() {
         return MapUtils.get(info, "version");
@@ -87,11 +82,6 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     public Module getModule() {
         return module;
     }
-
-    // @Override
-    // public String getModuleId() {
-    //     return module != null ? module.getId() : null;
-    // }
 
     @Override
     public LibraryType getLibraryType() {

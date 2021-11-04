@@ -61,10 +61,6 @@ public class MavenLibrary extends BaseLibrary {
         return this.md;
     }
 
-    // public String getMavenName() {
-    //     return coords.getName();
-    // }
-
     public Version getMavenVersion() {
         return coords.getVersion();
     }

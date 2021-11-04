@@ -8,6 +8,7 @@ import jext.util.MapUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,16 +123,9 @@ public class ProjectAnalyzer {
 
     private Map<String, Object> analyzeModule(Module m) {
         File moduleHome = m.getModuleHome();
-        Map<String, Object> minfo = new LinkedHashMap<>();
+        Map<String, Object> minfo = new HashMap<>();
 
         Set<Library> declaredLibraries = m.getDeclaredLibraries();
-        // Set<Library> plibs = project.getLibraries(m);
-
-        // compute the list of unique libraries in this module
-        // Set<Library> declaredLibraries = SetUtils.differenceOrdered(
-        //     new HashSet<>(dlibs),
-        //     new HashSet<>(plibs)
-        // );
 
         // general information
 
@@ -211,7 +205,7 @@ public class ProjectAnalyzer {
     }
 
     private Map<String, Object> analyzeLibrary(Library l) {
-        Map<String, Object> linfo = MapUtils.asLinkedMap(
+        Map<String, Object> linfo = MapUtils.asTreeMap(
             "name", l.getName().getName(),
             "fullname", l.getName().getFullName(),
             "id", l.getId(),

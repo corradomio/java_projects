@@ -1,8 +1,6 @@
 package jext.util;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -13,14 +11,17 @@ import java.util.Map;
 
 public class LongHash {
 
-    public static long digest(Object value) {
-        return hashCode(value);
-    }
-
+    /**
+     * Create a hash code based on the list of objects
+     */
     public static long hash(Object... values) {
+        // values is Object[]
         return hashCode(values);
     }
 
+    /**
+     * Concatenate multiple hash codes
+     */
     public static long concat(long... hashes) {
         long result = 0;
         for(long hash : hashes)
@@ -28,31 +29,62 @@ public class LongHash {
         return result;
     }
 
+    public static long concat(long hashCode, String hexString) {
+        return concat(hashCode, fromString(hexString));
+    }
+
     // ----------------------------------------------------------------------
-    // Hash code of collections & maps
+    // Hash code for collections & maps
     // ----------------------------------------------------------------------
 
-    public static <E> long hashCode(List<E> c) {
+    /**
+     * Hash code for Collection/List/Set and any other collection implementing
+     * Iterable interface
+     */
+    public static <E> long hashCode(Iterable<E> iter) {
+        if (iter == null)
+            return 0;
+
         long result = 1;
-        for (E e : c)
+        for (E e : iter)
             result = 31*result + (e==null ? 0 : hashCode(e));
         return result;
     }
 
-    public static <E> long hashCode(Collection<E> c) {
-        if (c == null)
-            return 0;
+    // public static <E> long hashCode(List<E> c) {
+    //     if (c == null)
+    //         return 0;
+    //
+    //     long result = 1;
+    //     for (E e : c)
+    //         result = 31*result + (e==null ? 0 : hashCode(e));
+    //     return result;
+    // }
 
-        long result = 0;
-        Iterator<E> i = c.iterator();
-        while (i.hasNext()) {
-            E obj = i.next();
-            if (obj != null)
-                result += hashCode(obj);
-        }
-        return result;
-    }
+    // public static <E> long hashCode(Set<E> c) {
+    //     if (c == null)
+    //         return 0;
+    //
+    //     long result = 1;
+    //     for (E e : c)
+    //         result = 31*result + (e==null ? 0 : hashCode(e));
+    //     return result;
+    // }
 
+    // public static <E> long hashCode(Collection<E> c) {
+    //     if (c == null)
+    //         return 0;
+    //
+    //     long result = 1;
+    //     for (E e : c)
+    //         result = 31*result + (e==null ? 0 : hashCode(e));
+    //     return result;
+    // }
+
+    /**
+     * Hash code for map and dictionaries.
+     * Note: the hashCode of a emptyMap is 0
+     */
     public static <K,V> long hashCode(Map<K, V> m) {
         if (m == null)
             return 0;
@@ -83,14 +115,19 @@ public class LongHash {
     public static long hashCode(Object o) {
         if (o == null)
             return 0;
+
         if (o instanceof String)
             return hashCode((String) o);
         if (o instanceof HashCode64)
             return ((HashCode64) o).hashCode64();
-        if (o instanceof List)
-            return hashCode((List<?>) o);
-        if (o instanceof Collection)
+
+        if (o instanceof Iterable)
             return hashCode((Collection<?>) o);
+        // if (o instanceof List)
+        //     return hashCode((List<?>) o);
+        // if (o instanceof Collection)
+        //     return hashCode((Collection<?>) o);
+
         if (o instanceof long[])
             return hashCode((long[]) o);
         if (o instanceof int[])
@@ -107,12 +144,17 @@ public class LongHash {
             return hashCode((float[]) o);
         if (o instanceof double[])
             return hashCode((double[]) o);
+
         if (o instanceof Object[])
             return hashCode((Object[]) o);
+
         if (o instanceof Long)
             return (Long) o;
+        if (o instanceof Float)
+            return Float.floatToIntBits((Float) o);
         if (o instanceof Double)
             return Double.doubleToLongBits((Double) o);
+
         else
             return o.hashCode();
     }
@@ -127,8 +169,7 @@ public class LongHash {
 
         long result = 1;
         for (long element : a) {
-            long elementHash = element ^ (element >>> 32);
-            result = 31 * result + elementHash;
+            result = 31 * result + element;
         }
 
         return result;
@@ -206,14 +247,12 @@ public class LongHash {
 
         long result = 1;
         for (double element : a) {
-            long bits = Double.doubleToLongBits(element);
-            result = 31 * result + (int)(bits ^ (bits >>> 32));
+            result = 31 * result + Double.doubleToLongBits(element);
         }
         return result;
     }
 
-    // public static long hashCode(Object a[]) {
-    public static long hashCode(Object... a) {
+    public static long hashCode(Object a[]) {
         if (a == null)
             return 0;
 
@@ -222,6 +261,18 @@ public class LongHash {
             result = 31 * result + (element == null ? 0 : hashCode(element));
 
         return result;
+    }
+
+    // ----------------------------------------------------------------------
+    // Conversion
+    // ----------------------------------------------------------------------
+
+    public static String toString(long hashCode) {
+        return Long.toUnsignedString(hashCode, Character.MAX_RADIX);
+    }
+
+    public static long fromString(String hashCode) {
+        return Long.parseUnsignedLong(hashCode, Character.MAX_RADIX);
     }
 
     // ----------------------------------------------------------------------

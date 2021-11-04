@@ -38,7 +38,7 @@ public interface Module extends RefIdNamed {
     Set<String> getSourceRoots();
 
     /** Retrieve a source by id/fullname/name */
-    Source getSource(String idOrName);
+    Source getSource(String nameOrId);
 
     // -- libraries
 

@@ -274,8 +274,6 @@ public interface GraphSession extends AutoCloseable {
                      Map<String, Object> edgeProps);
     Query queryEdges(String edgeType, String fromId, Collection<String> toIds,
                      Map<String, Object> edgeProps);
-    // Query queryEdges(String edgeType, Collection<String> ids,
-    //                  Map<String, Object> edgeProps);
 
     /**
      * Select the edges between the specified nodes

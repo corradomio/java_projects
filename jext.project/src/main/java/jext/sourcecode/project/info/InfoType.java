@@ -10,14 +10,10 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
-import jext.sourcecode.project.TypeUse;
-import jext.sourcecode.project.UseDirection;
+import jext.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-
-import static jext.lang.JavaUtils.PUBLIC;
 
 public class InfoType implements Type {
 
@@ -57,11 +53,6 @@ public class InfoType implements Type {
         return null;
     }
 
-    // @Override
-    // public String getLibraryId() {
-    //     return null;
-    // }
-
     @Override
     public TypeRole getRole() {
         return TypeRole.UNKNOWN;
@@ -87,21 +78,6 @@ public class InfoType implements Type {
         return this;
     }
 
-    // @Override
-    // public Set<String> getModifiers() {
-    //     return Collections.emptySet();
-    // }
-
-    // @Override
-    // public String getVisibility() {
-    //     return PUBLIC;
-    // }
-
-    // @Override
-    // public Set<String> getStructure() {
-    //     return Collections.emptySet();
-    // }
-
     @Override
     public int getTypeParametersCount() {
         return 0;
@@ -112,50 +88,20 @@ public class InfoType implements Type {
         return false;
     }
 
-    // @Override
-    // public String getSourceId() {
-    //     return source.getId();
-    // }
-
-    // @Override
-    // public String getModuleId() {
-    //     return source.getModuleId();
-    // }
-
-    // @Override
-    // public String getModuleRefId() {
-    //     return source.getModule().getRefId();
-    // }
-
     @Override
     public Name getNamespace() {
         return name.getParent();
     }
 
-    // @Override
-    // public boolean isValid() {
-    //     return true;
-    // }
+    @Override
+    public String getDigest() {
+        return getSource().getDigest();
+    }
 
-    // @Override
-    // public boolean isInner() {
-    //     return false;
-    // }
-
-    // @Override
-    // public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public List<Field> getFields() {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public List<Method> getMethods() {
-    //     return Collections.emptyList();
-    // }
+    @Override
+    public String[] getModifiers() {
+        return StringUtils.emptyArray();
+    }
 
     @Override
     public Source getSource() {

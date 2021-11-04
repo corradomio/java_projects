@@ -167,6 +167,27 @@ public class Parallel {
         }
     }
 
+    private static class RunnableTask extends TaskBase implements Callable<Boolean> {
+
+        private Runnable runnable;
+
+        RunnableTask(Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        @Override
+        public Boolean call() {
+            try {
+                running();
+                runnable.run();
+            }
+            finally {
+                done();
+            }
+            return true;
+        }
+    }
+
     // ----------------------------------------------------------------------
     // forEach
     // ----------------------------------------------------------------------
@@ -203,6 +224,15 @@ public class Parallel {
     // ----------------------------------------------------------------------
     // invokeAll
     // ----------------------------------------------------------------------
+
+    public static void invokeAll(Runnable ... tasks) {
+        List<Callable<Boolean>> callables = new ArrayList<>();
+
+        for (Runnable runnable : tasks)
+            callables.add(new RunnableTask(runnable));
+
+        invokeAll(callables);
+    }
 
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
         ExecutorService executor = null;

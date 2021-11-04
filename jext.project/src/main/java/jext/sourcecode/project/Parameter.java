@@ -13,4 +13,6 @@ public interface Parameter extends IdNamed {
     Method getOwnerMethod();
 
     RefType getOwnerType();
+
+    int getRank();
 }

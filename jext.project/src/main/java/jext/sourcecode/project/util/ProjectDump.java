@@ -91,21 +91,6 @@ public class ProjectDump {
                     spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
                 });
 
-                // spaces(stream, 2).print("libraries:\n");
-                // m.getLibraries().forEach(l -> {
-                //     spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
-                // });
-                //
-                // Set<Library> definedLibraries = SetUtils.differenceOrdered(
-                //     new HashSet<>(m.getDeclaredLibraries()),
-                //     new HashSet<>(m.getLibraries())
-                // );
-                //
-                // spaces(stream, 2).print("definedLibraries:\n");
-                // definedLibraries.forEach(l -> {
-                //     spaces(stream, 3).printf("- %s\n", l.getName().getFullName());
-                // });
-
             }
             if ((noFlags & NO_TYPES) == 0) {
                 spaces(stream, 2).print("definedTypes:\n");

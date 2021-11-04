@@ -221,17 +221,6 @@ public class InfoProject implements Project {
         return md;
     }
 
-    // @Override
-    // public Set<Library> getLibraries(LibrariesSelector select) {
-    //     LibrarySet libraries = getLibraries();
-    //     switch (select) {
-    //         case USED: return libraries.usedLibraries();
-    //         case UNUSED: return libraries.unusedLibraries();
-    //         default:
-    //             return SetUtils.union(libraries.usedLibraries(), libraries.unusedLibraries());
-    //     }
-    // }
-
     @Override
     public LibrarySet getLibraries() {
         if (libraries != null)

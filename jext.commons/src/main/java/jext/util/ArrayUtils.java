@@ -3,6 +3,7 @@ package jext.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,8 @@ public class ArrayUtils {
     // ----------------------------------------------------------------------
 
     public static List<Integer> asList(int[] a) {
+        if (a == null)
+            return Collections.emptyList();
         List<Integer> l = new ArrayList<>();
         for (int i : a)
             l.add(i);
@@ -42,6 +45,8 @@ public class ArrayUtils {
     }
 
     public static List<Long> asList(long[] a) {
+        if (a == null)
+            return Collections.emptyList();
         List<Long> l = new ArrayList<>();
         for (long i : a)
             l.add(i);
@@ -49,8 +54,19 @@ public class ArrayUtils {
     }
 
     public static List<Boolean> asList(boolean[] a) {
+        if (a == null)
+            return Collections.emptyList();
         List<Boolean> l = new ArrayList<>();
         for (boolean i : a)
+            l.add(i);
+        return l;
+    }
+
+    public static List<Double> asList(double[] a) {
+        if (a == null)
+            return Collections.emptyList();
+        List<Double> l = new ArrayList<>();
+        for (double i : a)
             l.add(i);
         return l;
     }
@@ -132,6 +148,27 @@ public class ArrayUtils {
         return a;
     }
 
+    public static double[] asDoubleArray(Object v) {
+        if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
+            return EMPTY_DOUBLE_ARRAY;
+        if (v instanceof Number)
+            return new double[]{ ((Number)v).doubleValue() };
+        if (v instanceof double[])
+            return (double[]) v;
+
+        Collection c = ((Collection) v);
+        int n = c.size();
+        double[] a = new double[n];
+        int i=0;
+        for (Object e : c) {
+            if (e instanceof Number)
+                a[i++] = ((Number)e).doubleValue();
+            else
+                a[i++] = Double.parseDouble(e.toString());
+        }
+        return a;
+    }
+
     public static long[] asLongArray(Object v) {
         if (v == null || v instanceof Collection && ((Collection)v).isEmpty())
             return EMPTY_LONG_ARRAY;
@@ -174,6 +211,20 @@ public class ArrayUtils {
                 a[i++] = Boolean.parseBoolean(e.toString());
         }
         return a;
+    }
+
+    public static boolean[] asArray(int index, boolean value) {
+        boolean[] array = new boolean[index+1];
+        array[index] = value;
+        return array;
+    }
+
+    public static String[] asArray(int index, String value, String defaultValue) {
+        String[] array = new String[index+1];
+        for(int i=0; i<index; ++i)
+            array[i] = defaultValue;
+        array[index] = value;
+        return array;
     }
 
     public static String[] asStringArray(Object v) {

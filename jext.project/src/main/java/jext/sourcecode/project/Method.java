@@ -4,29 +4,34 @@ import jext.name.IdNamed;
 import jext.name.Name;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Method extends IdNamed {
-
-    String getId();
-    Name getName();
 
     String CLASS_INITIALIZER  = "$classInitializer";
     String STATIC_INITIALIZER = "$staticInitializer";
 
+    String getId();
+    Name getName();
+
     MethodName getMethodName();
 
+    String[] getModifiers();
+
     // Set<String> getModifiers();
-    // String getVisibility();
+    // String      getVisibility();
     // Set<String> getStructure();
 
-    RefType getType();
+    boolean isStatic();
 
     List<Parameter> getParameters();
 
-    RefType getOwnerType();
-
     String getSignature();
     String getDeclaration();
-
     String getDigest();
+
+    RefType getOwnerType();
+
+    ReturnType getReturnType();
+
 }

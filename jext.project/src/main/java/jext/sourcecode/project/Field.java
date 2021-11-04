@@ -6,6 +6,8 @@ public interface Field extends IdNamed {
 
     RefType getType();
 
+    int getRank();
+
     RefType getOwnerType();
 
 }

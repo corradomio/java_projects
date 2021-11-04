@@ -174,6 +174,16 @@ public class MapUtils {
             return Long.parseLong(value.toString());
     }
 
+    public static double getDoubleOrDefault(Map<String, Object> map, String key,
+                                            int index, double defaultValue){
+        double[] dArray = getDoubleArray(map, key);
+
+        if(dArray == null || dArray.length<=index)
+            return defaultValue;
+
+        return dArray[index];
+    }
+
     public static String getString(Map<String, Object> map, String... keys) {
         Object value = get(map, keys);
         if (value == null) return null;
@@ -196,6 +206,9 @@ public class MapUtils {
         return ArrayUtils.asStringArray(get(map, keys));
     }
 
+    public static double[] getDoubleArray(Map<String, Object> map, String... keys) {
+        return ArrayUtils.asDoubleArray(get(map, keys));
+    }
     // ----------------------------------------------------------------------
 
     public static Map<String, Object> excluding(Map<String, Object> map, String ... keys) {

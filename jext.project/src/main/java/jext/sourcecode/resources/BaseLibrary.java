@@ -65,12 +65,6 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return this.libraryFile;
     }
 
-    // @Override
-    // @Nullable
-    // public String getModuleId() {
-    //     return module != null ? module.getId() : null;
-    // }
-
     @Override
     @Nullable
     public Module getModule() {

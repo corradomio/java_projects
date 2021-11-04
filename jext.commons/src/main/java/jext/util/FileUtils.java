@@ -61,7 +61,7 @@ public class FileUtils {
     private static final String NO_DIGEST = "0";
 
     public static String digest(File file) {
-        return LongUtils.toString(digestAsLong(file));
+        return LongHash.toString(digestAsLong(file));
         // if (!file.exists() || !file.isFile())
         //     return NO_DIGEST;
         //
@@ -100,12 +100,6 @@ public class FileUtils {
         while ((length = in.read(buffer)) > 0)
             md.update(buffer, 0, length);
     }
-
-    // private static String toDigest(MessageDigest md) {
-    //     // byte[] digest = md.digest();
-    //     // return DatatypeConverter.printHexBinary(digest);
-    //     return Long.toHexString(toLong(md));
-    // }
 
     private static long toLong(MessageDigest md) {
         byte[] digest = md.digest();
@@ -629,6 +623,45 @@ public class FileUtils {
         return sdir;
     }
 
+    // compare two directories.
+    // If a file/directori is not in sourceDir, it is deleted in destinationDir
+    public static void deleteIfNotInSource(File sourceDir, File destinationDir, FileFilter exclude) {
+        if (exclude.accept(destinationDir))
+            return;
+        if (!destinationDir.exists())
+            return;
+        if (!sourceDir.exists()) {
+            deleteAll(destinationDir);
+            return;
+        }
+
+        // check the files
+        {
+            List<File> files = FileUtils.asList(destinationDir.listFiles(File::isFile));
+            files.forEach(dstFile -> {
+                String name = dstFile.getName();
+                File srcFile = new File(sourceDir, name);
+                if (exclude.accept(srcFile))
+                    return;
+                if (!srcFile.exists())
+                    FileUtils.delete(dstFile);
+            });
+        }
+        // check the subdirectories
+        {
+            List<File> dirs = FileUtils.asList(destinationDir.listFiles(File::isDirectory));
+            dirs.forEach(dstDir -> {
+                String name = dstDir.getName();
+                File srcDir = new File(sourceDir, name);
+                if (exclude.accept(dstDir))
+                    return;
+                if (!srcDir.exists())
+                    deleteAll(dstDir);
+                else
+                    deleteIfNotInSource(srcDir, dstDir, exclude);
+            });
+        }
+    }
 
     // ----------------------------------------------------------------------
     // Align files & directories

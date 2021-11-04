@@ -25,7 +25,6 @@ import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
 import jext.util.LongHash;
-import jext.util.LongUtils;
 import jext.util.SetUtils;
 
 import java.io.File;
@@ -38,8 +37,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import static jext.sourcecode.project.Project.ROOT_MODULE_NAME;
 
 public abstract class BaseModule extends ReferencedObject implements Module {
 
@@ -122,9 +119,9 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     public String getDigest() {
         long[] digest = new long[1];
         getSources().forEach(source -> {
-            digest[0] = LongHash.concat(digest[0], LongUtils.parseLong(source.getDigest()));
+            digest[0] = LongHash.concat(digest[0], source.getDigest());
         });
-        return Long.toHexString(digest[0]);
+        return LongHash.toString(digest[0]);
     }
 
     // ----------------------------------------------------------------------
@@ -196,7 +193,6 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         Set<Type> definedTypes = getTypes();
 
         // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
-        //Set<RefType> usedTypes = SetUtils.differenceOrdered(getUsedTypes(), definedTypes);
         Set<RefType> usedTypes = getUsedTypes();
 
         project.getModules().forEach(dmodule -> {
@@ -241,17 +237,17 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     }
 
     @Override
-    public Source getSource(String name) {
+    public Source getSource(String nameOrId) {
         // for (SourceRoot sourceRoot : getSourceRoots())
         // for (Source source : sourceRoot.getSources()) {
         for (Source source : getSources()) {
-            if (source.getId().equals(name))
+            if (source.getId().equals(nameOrId))
                 return source;
-            if (source.getName().getFullName().equals(name))
+            if (source.getName().getFullName().equals(nameOrId))
                 return source;
-            if (source.getName().getName().equals(name))
+            if (source.getName().getName().equals(nameOrId))
                 return source;
-            if (source.getPath().equals(name))
+            if (source.getPath().equals(nameOrId))
                 return source;
         }
         return null;

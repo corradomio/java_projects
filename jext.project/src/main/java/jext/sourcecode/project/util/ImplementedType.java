@@ -10,14 +10,9 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
-import jext.sourcecode.project.TypeUse;
-import jext.sourcecode.project.UseDirection;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-
-import static jext.lang.JavaUtils.PUBLIC;
 
 public class ImplementedType extends NamedObject implements Type {
 
@@ -30,8 +25,9 @@ public class ImplementedType extends NamedObject implements Type {
     private Name namespace;
     private Source source;
     private TypeRole role;
-    public boolean innerType;
-    public int nParams;
+    private int nParams;
+    private String digest;
+    private String[] modifiers;
 
     // ----------------------------------------------------------------------
     // Constructors
@@ -46,10 +42,23 @@ public class ImplementedType extends NamedObject implements Type {
         this.namespace = namespace;
         this.source = source;
         this.role = role;
+        this.digest = "0";
     }
 
     public ImplementedType(String namespace, String name, TypeRole role, Source source) {
         this(new ObjectName(namespace), new ObjectName(name), role, source);
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public void setModifiers(String[] modifiers) {
+        this.modifiers = modifiers;
     }
 
     // ----------------------------------------------------------------------
@@ -88,52 +97,12 @@ public class ImplementedType extends NamedObject implements Type {
         return this;
     }
 
-    // @Override
-    // public Set<String> getModifiers() {
-    //     return Collections.emptySet();
-    // }
-
-    // @Override
-    // public String getVisibility() {
-    //     return PUBLIC;
-    // }
-
-    // @Override
-    // public Set<String> getStructure() {
-    //     return Collections.emptySet();
-    // }
-
     // -- type role
 
     @Override
     public TypeRole getRole() {
         return role;
     }
-
-    // @Override
-    // public boolean isValid() {
-    //     return true;
-    // }
-
-    // @Override
-    // public boolean isInner() {
-    //     return !namespace.equals(getName().getParent());
-    // }
-
-    // @Override
-    // public List<Type> getUseTypes(TypeUse useType, UseDirection direction, boolean recursive, boolean refTypes) {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public List<Field> getFields() {
-    //     return Collections.emptyList();
-    // }
-
-    // @Override
-    // public List<Method> getMethods() {
-    //     return Collections.emptyList();
-    // }
 
     // --
 
@@ -152,11 +121,6 @@ public class ImplementedType extends NamedObject implements Type {
         return null;
     }
 
-    // @Override
-    // public String getLibraryId() {
-    //     return null;
-    // }
-
     // -- Source
 
     @Override
@@ -164,10 +128,15 @@ public class ImplementedType extends NamedObject implements Type {
         return source;
     }
 
-    // @Override
-    // public String getSourceId() {
-    //     return source.getId();
-    // }
+    @Override
+    public String getDigest() {
+        return digest;
+    }
+
+    @Override
+    public String[] getModifiers() {
+        return modifiers;
+    }
 
     // -- Module
 
@@ -175,16 +144,6 @@ public class ImplementedType extends NamedObject implements Type {
     public Module getModule() {
         return source.getModule();
     }
-
-    // @Override
-    // public String getModuleId() {
-    //     return source.getModule().getId();
-    // }
-
-    // @Override
-    // public String getModuleRefId() {
-    //     return source.getModule().getRefId();
-    // }
 
     // ----------------------------------------------------------------------
     // Implementation

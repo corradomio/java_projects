@@ -27,7 +27,7 @@ public class StringUtils {
     public static String empty() {
         return EMPTY_STRING;
     }
-    // public static String[] emptyArray() { return EMPTY_ARRAY; }
+    public static String[] emptyArray() { return EMPTY_ARRAY; }
 
     public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
