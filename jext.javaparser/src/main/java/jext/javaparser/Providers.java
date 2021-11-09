@@ -10,8 +10,11 @@ import static com.github.javaparser.utils.Utils.assertNotNull;
 
 public class Providers {
 
-    public static synchronized Provider provider(Path path) throws IOException {
-        return com.github.javaparser.Providers.provider(assertNotNull(path), StandardCharsets.UTF_8);
+    public static Provider provider(Path path) throws IOException {
+        // synchronized (Providers.class)
+        {
+            return com.github.javaparser.Providers.provider(assertNotNull(path), StandardCharsets.UTF_8);
+        }
     }
 
 }

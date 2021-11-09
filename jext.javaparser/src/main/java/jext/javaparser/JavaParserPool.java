@@ -12,9 +12,9 @@ import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.logging.Logger;
+import jext.util.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -24,15 +24,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutionException;
 
-import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_EDGE;
-import static jext.javaparser.Providers.provider;
 
 /*
     This class is Copy & Paste plus some updates of the class:
@@ -71,13 +68,6 @@ public class JavaParserPool {
     private Set<Path> pathRoots;
     private Set<File> sourceRoots;
     private Set<String> namespaces;
-    // private UniqueSymbols uniqueSymbols;
-
-    // parser configuration used for the parser
-    private ParserConfiguration parserConfiguration;
-
-    // maximum cache size
-    // private long cacheSizeLimit = -1;
 
     // caches
     private Cache<Path, ParseResult<CompilationUnit>> parsedFiles;
@@ -86,47 +76,21 @@ public class JavaParserPool {
     private static final int CACHE_SIZE_UNSET = -1;
 
     // ----------------------------------------------------------------------
-    // Listeners on parsed files
-    // ----------------------------------------------------------------------
-
-    // public interface ParsedFile {
-    //     void parsed(ParseResult<CompilationUnit> result, File file);
-    // }
-    //
-    // private final List<ParsedFile> listeners = new ArrayList<>();
-    //
-    // public void addListener(ParsedFile l) {
-    //     listeners.add(l);
-    // }
-
-    // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public JavaParserPool() {
-        this(DEFAULT, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
+        this(DEFAULT /*, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET */);
     }
 
-    public JavaParserPool(String name) {
-        this(name, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET);
-    }
-
-    /**
-     * @param parserConfiguration is the configuration the solver should use when inspecting source code files.
-     * @param cacheSizeLimit is an optional size limit to the internal caches used by this solver.
-     *        Be advised that setting the size too low might lead to noticeable performance degradation.
-     *        However, using a size limit is advised when solving symbols in large code sources. In such cases, internal
-     *        caches might consume large amounts of heap space.
-     */
-    public JavaParserPool(String name, ParserConfiguration parserConfiguration, long cacheSizeLimit) {
+    public JavaParserPool(String name /*, ParserConfiguration parserConfiguration, long cacheSizeLimit*/) {
         this.name = name;
         this.cachePrefix = name;
         this.pathRoots = new HashSet<>();
         this.sourceRoots = new HashSet<>();
-        this.parserConfiguration = parserConfiguration;
         this.namespaces = new ConcurrentSkipListSet<>();
-        // this.cacheSizeLimit = cacheSizeLimit;
 
+        // this.parserConfiguration = parserConfiguration;
         // this.parsedFiles = buildCache("parsedFiles", cacheSizeLimit);
         // this.parsedDirectories = buildCache("parsedDirectories", cacheSizeLimit);
         // this.foundTypes = buildCache("foundTypes", cacheSizeLimit);
@@ -148,11 +112,11 @@ public class JavaParserPool {
         return this;
     }
 
-    public JavaParserPool withParserConfiguration(ParserConfiguration parserConfiguration) {
-        Objects.requireNonNull(parserConfiguration, "parserConfiguration can be not null");
-        this.parserConfiguration = parserConfiguration;
-        return this;
-    }
+    // public JavaParserPool withParserConfiguration(ParserConfiguration parserConfiguration) {
+    //     Objects.requireNonNull(parserConfiguration, "parserConfiguration can be not null");
+    //     // this.parserConfiguration = parserConfiguration;
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
     // Source roots
@@ -224,16 +188,7 @@ public class JavaParserPool {
         // return cacheBuilder.build();
 
         return CacheManager.getCache(String.format("%s.%s", this.cachePrefix, name));
-
-        // return (Cache<TKey, TValue>) ((ManagedCache)cache).getInnerCache();
     }
-
-    // public JavaParserPool resetCache() {
-    //     parsedFiles = BuildCache(cacheSizeLimit);
-    //     parsedDirectories = BuildCache(cacheSizeLimit);
-    //     foundTypes = BuildCache(cacheSizeLimit);
-    //     return this;
-    // }
 
     // ----------------------------------------------------------------------
     // Parsing
@@ -246,38 +201,10 @@ public class JavaParserPool {
 
     // ----------------------------------------------------------------------
 
-    // WARNING:
-    //  IT IS NOT POSSIBLE to compile source files in parallel ALSO creating
-    //  different instances of "JavaParser", one for each source file.
-    //
     private /*synchronized*/ ParseResult<CompilationUnit> parse(Path srcFile) {
-        if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
-            return parsedFile(new ParseResult<>(
-                null,
-                new ArrayList<Problem>() {{
-                    add(new Problem("FileNotFoundException", TokenRange.INVALID,
-                        new FileNotFoundException(srcFile.toString())));
-                }},
-                new CommentsCollection()),
-                srcFile);
-        }
-
         try {
             // try to use the cache if possible
-            return parsedFiles.getChecked(srcFile, () -> {
-                // logger.debugft("... parse %s", srcFile);
-                // ParseResult<CompilationUnit> result =
-                //     new JavaParser(parserConfiguration)
-                //         .parse(COMPILATION_UNIT, provider(srcFile));
-                // result.ifSuccessful(cu -> {
-                //     cu.setStorage(srcFile);
-                //     cu.getPackageDeclaration().ifPresent(pdecl -> {
-                //         addSourceRoot(srcFile, pdecl.getNameAsString());
-                //     });
-                // });
-                // return result;
-                return parseSource(srcFile);
-            });
+            return parsedFiles.getChecked(srcFile, () -> parseSource(srcFile));
         }
         catch (ExecutionException e) {
             logger.errorf("Unable to parse %s: %s", srcFile, e);
@@ -298,6 +225,20 @@ public class JavaParserPool {
      *
      * This seems to be a ""transient error"".
      * To mitigate it, we retry to parse the file some other time
+     *
+     * 2021/11/07: this "Lexial error" seems to be a more depth problem.
+     * Indeed, sometime the compilation DOESN'T fail BUT the AST generated is
+     * not valid. We have observed this behaviour in a very simple project
+     * ('check_modules') used for testing component analysis. This project is
+     * composed by 20 types BUT, the dependency analysis analyzes 20 source files
+     * BUT it creates ONLY 17/18 or 19 classes.
+     *
+     * 2021/11/09: RESOLVED!
+     * The problem with "Lexical error" was related to the ParserConfiguration
+     * object that contains objects used to PRE/POST-process the current stream.
+     * It is necessary to have a DIFFERENT ParserConfiguration for EACH JavaParser
+     * object.
+     *
      */
     private ParseResult<CompilationUnit> parseSource(Path srcFile) throws IOException {
         logger.debugft("... parse %s", srcFile.toAbsolutePath());
@@ -306,21 +247,21 @@ public class JavaParserPool {
         for(int count = 0; count < 3; ++count) {
             Thread.yield();
 
-            result = new JavaParser(parserConfiguration)
-                    .parse(COMPILATION_UNIT, provider(srcFile));
+            String content = FileUtils.toString(srcFile.toFile());
+            result = new JavaParser(parserConfiguration()).parse(content);
 
-            if (result.isSuccessful()) {
-                result.ifSuccessful(cu -> {
-                    // if (uniqueSymbols != null)
-                    //     uniqueSymbols.analyze(cu);
-                    cu.setStorage(srcFile);
-                });
+            result.ifSuccessful(cu -> cu.setStorage(srcFile));
+            if (result.isSuccessful())
                 break;
-            }
+
             ++count;
         }
 
         return parsedFile(result, srcFile);
+    }
+
+    public ParserConfiguration parserConfiguration() {
+        return new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE);
     }
 
     /**

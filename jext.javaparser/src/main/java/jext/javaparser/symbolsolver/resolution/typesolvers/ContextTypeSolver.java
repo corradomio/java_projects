@@ -34,11 +34,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    // private static Logger logsolver = Logger.getLogger(ContextTypeSolver.class);
-
     private static final String DEFAULT = "default";
 
-    // private File filename;
     private CompilationUnit cu;
     private final Map<String, String> namedImports = new HashMap<>();
     private final List<String> starImports = new ArrayList<>();
@@ -151,7 +148,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     private Optional<ResolvedType> resolveUsingNamedImports(String name) {
         if (namedImports.containsKey(name)) {
             String resolved = namedImports.get(name);
-            // resolvedSymbols.resolved(resolved);
             return Optional.of(new ReferencedTypeUse(resolved));
         }
         return Optional.empty();
@@ -173,17 +169,24 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     private Optional<ResolvedType> resolveUsingLocalClasses(String name, Node n) {
         try {
             for (ClassOrInterfaceDeclaration c : cu.findAll(ClassOrInterfaceDeclaration.class))
-                if (name.equals(c.getNameAsString()))
-                    try {
+                if (c.isInterface() && name.equals(c.getNameAsString()))
                         return Optional.of(
-                            ReferenceTypeImpl.undeterminedParameters(new JavaParserClassDeclaration(c, this), this)
+                        ReferenceTypeImpl.undeterminedParameters(new JavaParserInterfaceDeclaration(c, this), this)
                         );
-                    }
-                    catch (IllegalArgumentException e) {
+                else if (!c.isInterface() && name.equals(c.getNameAsString()))
                         return Optional.of(
-                            ReferenceTypeImpl.undeterminedParameters(new JavaParserInterfaceDeclaration(c, this), this)
+                        ReferenceTypeImpl.undeterminedParameters(new JavaParserClassDeclaration(c, this), this)
                         );
-                    }
+                    // try {
+                    //     return Optional.of(
+                    //         ReferenceTypeImpl.undeterminedParameters(new JavaParserClassDeclaration(c, this), this)
+                    //     );
+                    // }
+                    // catch (IllegalArgumentException e) {
+                    //     return Optional.of(
+                    //         ReferenceTypeImpl.undeterminedParameters(new JavaParserInterfaceDeclaration(c, this), this)
+                    //     );
+                    // }
             for (EnumDeclaration e : cu.findAll(EnumDeclaration.class))
                 if (name.equals(e.getNameAsString()))
                     return Optional.of(
@@ -222,11 +225,15 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         // 1) try to solve using the standard methods
         solved = tryToSolveUsingSolvers(name);
-        if (solved.isSolved()) return solved;
+        if (solved.isSolved()) {
+            return solved;
+        }
 
         // 2) try to solve using context
         solved = tryToSolveUsingContext(name, this.cu);
-        if (solved.isSolved()) return solved;
+        if (solved.isSolved()) {
+            return solved;
+        }
 
         // 3) it is not possible to solve the symbol using the context HERE
         //    because we must use NOT only the imports but also the definitions of
@@ -253,8 +260,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
     }
-
-    // ----------------------------------------------------------------------
 
     // Resolution using the current context
     private SymbolReference<ResolvedReferenceTypeDeclaration>
@@ -307,15 +312,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // resolve method declaration
+    // End
     // ----------------------------------------------------------------------
-
-    // public String getTypeAsString(String name) {
-    //     if (namedImports.containsKey(name))
-    //         return namedImports.get(name);
-    //     if (!starImports.isEmpty())
-    //         return String.format("%s.%s", starImports.toString(), name);
-    //     return name;
-    // }
 
 }
