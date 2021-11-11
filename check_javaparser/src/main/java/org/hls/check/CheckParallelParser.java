@@ -10,6 +10,7 @@ import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.concurrent.Parallel;
 import org.hls.java.analysis.MemberDeclarations;
+import org.hls.java.analysis.MethodCalls;
 import org.hls.java.analysis.TypeDeclarations;
 
 import java.io.File;
@@ -30,8 +31,9 @@ public class CheckParallelParser {
         try {
             log.infof("Scan directory");
             List<File> sources = FileUtils.listFiles(new File(
-                "D:\\Projects.github\\other_projects\\elasticsearch"
+                // "D:\\Projects.github\\other_projects\\elasticsearch"
                 // "D:\\Projects.github\\other_projects\\deeplearning4j"
+                "D:\\Projects.github\\other_projects\\hibernate-orm"
             ), FileFilters.IS_JAVA);
 
             size = sources.size();
@@ -56,12 +58,14 @@ public class CheckParallelParser {
             if (presult.isSuccessful()) {
                 CompilationUnit cu = presult.getResult().get();
 
-                TypeDeclarations td = new TypeDeclarations();
-                MemberDeclarations md = new MemberDeclarations();
+                // TypeDeclarations td = new TypeDeclarations();
+                // MemberDeclarations md = new MemberDeclarations();
+                MethodCalls mc = new MethodCalls();
                 ContextTypeSolver ts = new ContextTypeSolver();
 
                 // td.analyze(cu, ts);
-                md.analyze(cu, ts);
+                // md.analyze(cu, ts);
+                mc.analyze(cu, ts);
             }
             else {
                 log.errorf("Unable to parse %s: %s", file.getAbsolutePath(), presult.getProblems().get(0).getMessage());

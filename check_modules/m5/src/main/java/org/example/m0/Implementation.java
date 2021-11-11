@@ -4,7 +4,7 @@ public class Implementation implements Interface {
 
     @Override
     public void m() {
-        Interface j = new Implementation();
-        j.m();
+        Interface i = new Implementation();
+        i.m();
     }
 }

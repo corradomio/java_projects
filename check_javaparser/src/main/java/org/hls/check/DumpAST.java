@@ -14,8 +14,9 @@ public class DumpAST {
         CacheManager.configure();
 
         File source = new File(
-        // "D:\\SPLGroup\\BTProjects\\DEUM\\src\\optimtools\\problems\\trap\\Trap.java"
-            "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\cocome-maven-project\\cloud-logic-service\\cloud-logic-core-impl\\src\\main\\java\\org\\cocome\\tradingsystem\\inventory\\data\\enterprise\\Product.java"
+            // "D:\\SPLGroup\\BTProjects\\DEUM\\src\\optimtools\\problems\\trap\\Trap.java"
+            // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\cocome-maven-project\\cloud-logic-service\\cloud-logic-core-impl\\src\\main\\java\\org\\cocome\\tradingsystem\\inventory\\data\\enterprise\\Product.java"
+            "D:\\Projects.github\\other_projects\\hibernate-orm\\hibernate-core\\src\\main\\java\\org\\hibernate\\bytecode\\internal\\bytebuddy\\ByteBuddyState.java"
         );
 
         JavaParserPool jpp = JavaParserPool.getPool();

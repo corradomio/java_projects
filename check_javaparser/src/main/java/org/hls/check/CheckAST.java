@@ -5,7 +5,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.LogVoidVisitorAdapter;
-import jext.javaparser.util.ClassPoolRegistry;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.javaparser.util.ContextSolvedSymbols;
 import jext.javaparser.util.UnsolvedSymbols;
 import jext.logging.Logger;

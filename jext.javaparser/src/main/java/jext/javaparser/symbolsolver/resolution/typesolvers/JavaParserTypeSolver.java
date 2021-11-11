@@ -27,12 +27,10 @@ import static com.github.javaparser.ParseStart.COMPILATION_UNIT;
 import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_EDGE;
 import static com.github.javaparser.Providers.provider;
 
-public class JavaParserTypeSolver implements TypeSolver {
+public class JavaParserTypeSolver extends BaseTypeSolver {
 
-    private List<Path> srcDirs;
+    private final List<Path> srcDirs;
     private final JavaParser javaParser;
-
-    private TypeSolver parent;
 
     private final Cache<Path, Optional<CompilationUnit>> parsedFiles;
     private final Cache<Path, List<CompilationUnit>> parsedDirectories;
@@ -67,6 +65,8 @@ public class JavaParserTypeSolver implements TypeSolver {
      *        However, using a size limit is advised when solving symbols in large code sources. In such cases, internal caches might consume large amounts of heap space.
      */
     public JavaParserTypeSolver(ParserConfiguration parserConfiguration, long cacheSizeLimit) {
+        super(JavaParserTypeSolver.class.getName());
+
         javaParser = new JavaParser(parserConfiguration);
         parsedFiles = BuildCache(cacheSizeLimit);
         parsedDirectories = BuildCache(cacheSizeLimit);
@@ -94,6 +94,17 @@ public class JavaParserTypeSolver implements TypeSolver {
             "srcDirs=" + srcDirs.size() +
             ", parent=" + parent +
             '}';
+    }
+
+    @Override
+    public boolean isNamespace(String name) {
+        String rdir = name.replace('.', '/');
+        for (Path srcdir : srcDirs) {
+            File subdir = new File(srcdir.toFile(), rdir);
+            if (subdir.isDirectory())
+                return true;
+        }
+        return false;
     }
 
     @Override

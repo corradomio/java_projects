@@ -1,4 +1,4 @@
-package jext.javaparser.util;
+package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import javassist.ClassPool;
 import javassist.CtClass;

@@ -5,12 +5,11 @@ import com.github.javaparser.ast.CompilationUnit;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.ResolveVoidVisitorAdapter;
-import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextSolvedSymbolsTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
-import jext.javaparser.util.ClassPoolRegistry;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.javaparser.util.ContextSolvedSymbols;
 import jext.javaparser.util.UnsolvedSymbols;
 import jext.logging.Logger;
@@ -18,7 +17,6 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
-import org.hls.java.analysis.TypeDeclarations;
 
 import java.io.File;
 

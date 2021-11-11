@@ -13,7 +13,7 @@ import jext.javaparser.analysis.SolveSymbolsVisitor;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
-import jext.javaparser.util.ClassPoolRegistry;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.concurrent.Parallel;
@@ -46,8 +46,6 @@ public class CheckMini {
                     ssv.analyze(cu, ts);
                 });
             });
-
-
     }
 
     static void test2() {
