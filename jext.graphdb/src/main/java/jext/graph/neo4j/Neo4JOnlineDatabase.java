@@ -102,13 +102,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     @Override
     public GraphSession connect() {
-        return connect(Collections.emptyMap());
-    }
-
-    @Override
-    public GraphSession connect(Map<String, Object> params) {
         Neo4JOnlineSession session = new Neo4JOnlineSession(this);
-        return session.connect(params);
+        return session.connect();
     }
 
     @Override

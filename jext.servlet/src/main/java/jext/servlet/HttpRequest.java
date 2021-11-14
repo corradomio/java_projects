@@ -7,7 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 public class HttpRequest {
 
     public static HttpRequest of(HttpServletRequest request) {
-        HttpRequest hreq = new HttpRequest(request.getRequestURI(), request.getQueryString());
+        // Note:
+        //  HttpServletRequest::getRequestURI()            -> "/a/b/c"
+        //  HttpServletRequest::getRequestURL().toString() -> "http://server:port/a/b/c"
+        HttpRequest hreq = new HttpRequest(request.getRequestURL().toString(), request.getQueryString());
         return hreq;
     }
 
@@ -68,6 +71,10 @@ public class HttpRequest {
         return queryString.getInt(key, defaultValue);
     }
 
+    public double getDouble(String key, double defaultValue) {
+        return queryString.getDouble(key, defaultValue);
+    }
+
     public int[] getIntArray(String key) {
         return queryString.getIntArray(key);
     }
@@ -82,6 +89,10 @@ public class HttpRequest {
 
     public boolean getBoolean(String key, boolean defaultValue) {
         return queryString.getBoolean(key, defaultValue);
+    }
+
+    public String[] getStringArray(String key) {
+        return queryString.getStringArray(key);
     }
 
 

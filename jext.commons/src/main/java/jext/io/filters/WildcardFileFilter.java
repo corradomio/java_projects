@@ -13,6 +13,18 @@ import java.util.function.Predicate;
 
 public class WildcardFileFilter implements FileFilter, Predicate<String> {
 
+    private static class PrefixMatcher {
+        private String prefix;
+
+        private PrefixMatcher(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public boolean accept(String path) {
+            return path.startsWith(prefix);
+        }
+    }
+
     private static class WildcardMatcher {
 
         private final boolean recursive;
@@ -49,6 +61,7 @@ public class WildcardFileFilter implements FileFilter, Predicate<String> {
 
     }
 
+    private final List<PrefixMatcher> prefixes = new ArrayList<>();
     private final List<WildcardMatcher> matchers = new ArrayList<>();
 
     // ----------------------------------------------------------------------
@@ -88,8 +101,8 @@ public class WildcardFileFilter implements FileFilter, Predicate<String> {
         //
         boolean recursive = pattern.contains("/") || pattern.contains("**");
 
-        WildcardMatcher m = new WildcardMatcher(pattern, recursive);
-        matchers.add(m);
+        matchers.add(new WildcardMatcher(pattern, recursive));
+        prefixes.add(new PrefixMatcher(pattern));
         return this;
     }
 
@@ -106,10 +119,18 @@ public class WildcardFileFilter implements FileFilter, Predicate<String> {
 
     @Override
     public boolean test(String path) {
+        // check for prefixes
+        for (PrefixMatcher p : prefixes)
+            if (p.accept(path))
+                return true;
+
+        // check for matchers
         String name = PathUtils.getName(path);
         for (WildcardMatcher m : matchers)
             if (m.accept(path, name))
                 return true;
+
+        // not matched
         return false;
     }
 

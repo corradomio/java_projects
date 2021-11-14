@@ -100,6 +100,35 @@ public class LongHash {
     // Hash code of objects
     // ----------------------------------------------------------------------
 
+    /**
+     * Specialized hashCode function to use with source code.
+     * MacOS, Windows and Linux use different 'endOfLine' character sequences
+     * This has as side effect that the same source file has a different digest.
+     * This, in generale, is not a problem. The problem begins when the same
+     * source file is modified by different platforms. In this case, the file
+     * seems to be modified everywhere.
+     *
+     * Solution: it is applied a 'text normalization' removing multiple spaces
+     * and considering '\t', '\f', '\n', and '\r' as ' ' (space
+     *
+     * @param value
+     * @return
+     */
+    public static long hashCodeByLine(String value) {
+        if (value == null)
+            return 0;
+
+        long h = 0;
+        int length = value.length();
+        for (int i = 0; i < length; i++) {
+            char ch = value.charAt(i);
+            if (ch == '\f' || ch == '\n' || ch == '\r')
+                continue;
+            h = 31 * h + ch;
+        }
+        return h;
+    }
+
     public static long hashCode(String value) {
         if (value == null)
             return 0;
@@ -272,7 +301,10 @@ public class LongHash {
     }
 
     public static long fromString(String hashCode) {
-        return Long.parseUnsignedLong(hashCode, Character.MAX_RADIX);
+        if (hashCode.isEmpty())
+            return 0;
+        else
+            return Long.parseUnsignedLong(hashCode, Character.MAX_RADIX);
     }
 
     // ----------------------------------------------------------------------

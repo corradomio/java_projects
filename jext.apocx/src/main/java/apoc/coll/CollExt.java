@@ -13,25 +13,25 @@ import java.util.function.Function;
 
 public class CollExt {
 
-    private static Object makeArray(Object value) {
-        if (!(value instanceof Collection))
-            return value;
-        Collection c = (Collection) value;
-        if (c.isEmpty())
-            return "";
+    @UserFunction
+    @Description("apoc.coll.arrayGet(coll, index) | get coll[index] value, supporting indices < 0")
+    public Object arrayGet(@Name("coll") List<Object> coll, @Name("index") long index) {
+        if (coll == null)
+            return null;
 
-        StringBuilder sb = new StringBuilder();
-        for (Object e : c) {
-            if (sb.length() > 0)
-                sb.append(",");
-            sb.append(e.toString());
-        }
-        return sb.toString();
+        long n = coll.size();
+        if (index < 0)
+            index = n+index;
+
+        if (index >= 0 && index < n)
+            return coll.get((int)index);
+        else
+            return null;
     }
 
     @UserFunction
-    @Description("apoc.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
-    public List<Object> setOrExtend(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
+    @Description("apoc.coll.arraySet(coll, index, value) | set coll[index] to value, extend coll if necessary")
+    public List<Object> arraySet(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
         // if (coll == null) return null;
         // if (index < 0 || value == null || index >= coll.size()) return coll;
         //
@@ -82,6 +82,29 @@ public class CollExt {
 
         list.set( (int) index, value);
         return list;
+    }
+
+    @Deprecated
+    @UserFunction
+    @Description("apoc.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
+    public List<Object> setOrExtend(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
+        return arraySet(coll, index, value);
+    }
+
+    private static Object makeArray(Object value) {
+        if (!(value instanceof Collection))
+            return value;
+        Collection c = (Collection) value;
+        if (c.isEmpty())
+            return "";
+
+        StringBuilder sb = new StringBuilder();
+        for (Object e : c) {
+            if (sb.length() > 0)
+                sb.append(",");
+            sb.append(e.toString());
+        }
+        return sb.toString();
     }
 
     private static Object defaultValue(Object value) {
@@ -164,8 +187,8 @@ public class CollExt {
     //
 
     @UserFunction
-    @Description("apoc.coll.setOrExtend2(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
-    public List<Object> setOrExtend2(@Name("coll") List<Object> coll, @Name("index1") long index1, @Name("index2") long index2, @Name("value") Object value) {
+    @Description("apoc.coll.array2Set(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
+    public List<Object> array2Set(@Name("coll") List<Object> coll, @Name("index1") long index1, @Name("index2") long index2, @Name("value") Object value) {
         if (value == null)
             return null;
 
@@ -193,6 +216,13 @@ public class CollExt {
         list.set((int)index1, sb.toString());
 
         return list;
+    }
+
+    @Deprecated
+    @UserFunction
+    @Description("apoc.coll.setOrExtend2(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
+    public List<Object> setOrExtend2(@Name("coll") List<Object> coll, @Name("index1") long index1, @Name("index2") long index2, @Name("value") Object value) {
+        return array2Set(coll, index1, index2, value);
     }
 
     private static List<String> split(String s) {
@@ -226,7 +256,7 @@ public class CollExt {
     }
 
     //
-    // support for 2-dimensional arrays
+    // support for 2-dimensional lists
     //
 
     @UserFunction
@@ -254,7 +284,6 @@ public class CollExt {
         list.set((int)index, seq);
         return list;
     }
-
 
     @UserFunction
     @Description("apoc.coll.asArray2(coll, index, value) | Convert coll in an array of array of type")

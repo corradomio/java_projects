@@ -184,6 +184,16 @@ public class MapUtils {
         return dArray[index];
     }
 
+    public static boolean getBooleanOrDefault(Map<String, Object> map, String key,
+                                            int index, boolean defaultValue){
+        boolean[] dArray = getBooleanArray(map, key);
+
+        if(dArray == null || dArray.length<=index)
+            return defaultValue;
+
+        return dArray[index];
+    }
+
     public static String getString(Map<String, Object> map, String... keys) {
         Object value = get(map, keys);
         if (value == null) return null;

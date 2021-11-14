@@ -666,7 +666,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         File moduleHome = module.getModuleHome();
 
         List<Source> list = FileUtils.asList(dir.listFiles(resource ->
-            fpSources.accept(moduleHome, resource))
+            fpSources.accept(moduleHome, resource) && !fpExcludes.accept(moduleHome, resource))
         ).stream()
             .map(file -> SourceCode.newSource(file, module))
             .filter(source -> selector.test(source.getPath()))

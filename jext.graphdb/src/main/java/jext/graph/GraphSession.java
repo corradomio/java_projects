@@ -76,11 +76,11 @@ public interface GraphSession extends AutoCloseable {
 
     GraphDatabase getDatabase();
 
-    /**
-     * Check if a connection with the database is active
-     * @return if exists a connection
-     */
-    boolean isConnected();
+    // /**
+    //  * Check if a connection with the database is active
+    //  * @return if exists a connection
+    //  */
+    // boolean isConnected();
 
     /**
      * Close the connection with the database.
@@ -286,9 +286,9 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      * @return
      */
-    Query queryPath(String edgeType,
-                    String fromId, String toId, Direction direction, boolean recursive,
-                    Map<String, Object> edgeProps);
+    Query  queryPath(String edgeType,
+                     String fromId, String toId, Direction direction, boolean recursive,
+                     Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge

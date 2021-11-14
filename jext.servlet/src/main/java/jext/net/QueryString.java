@@ -3,6 +3,7 @@ package jext.net;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,6 +45,23 @@ public class QueryString extends HashMap<String, String[]> {
             return this.get(key)[0];
     }
 
+    public String[] getStringArray(String key) {
+        if (!this.containsKey(key))
+            return new String[]{};
+        String[] values = this.get(key);
+        List<String> list = new ArrayList<>();
+        for (String value : values) {
+            String[] items = value.split(",");
+            for (String item : items) {
+                item = item.trim();
+                if (!item.isEmpty())
+                    list.add(item);
+            }
+        }
+        values = list.toArray(values);
+        return values;
+    }
+
     // -- Integer
 
     public int getInt(String key) {
@@ -55,6 +73,13 @@ public class QueryString extends HashMap<String, String[]> {
             return defaultValue;
         else
             return parseInt(this.get(key)[0]);
+    }
+
+    public double getDouble(String key, double defaultValue) {
+        if (!this.containsKey(key))
+            return defaultValue;
+        else
+            return parseDouble(this.get(key)[0]);
     }
 
     public int[] getIntArray(String key) {
@@ -85,6 +110,15 @@ public class QueryString extends HashMap<String, String[]> {
         }
         catch (NumberFormatException e) {
             return 0;
+        }
+    }
+
+    private static double parseDouble(String s) {
+        try {
+            return Double.parseDouble(s);
+        }
+        catch (NumberFormatException e) {
+            return 0.0;
         }
     }
 

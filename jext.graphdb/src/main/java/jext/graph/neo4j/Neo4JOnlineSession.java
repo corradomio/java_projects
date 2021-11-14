@@ -93,15 +93,15 @@ public class Neo4JOnlineSession implements GraphSession {
     // Connect/Disconnect
     // ----------------------------------------------------------------------
 
-    public Neo4JOnlineSession connect(Map<String, Object> params) {
+    public Neo4JOnlineSession connect() {
         session = driver.session();
         return this;
     }
 
-    @Override
-    public boolean isConnected() {
-        return session != null && session.isOpen();
-    }
+    // @Override
+    // public boolean isConnected() {
+    //     return session != null && session.isOpen();
+    // }
 
     @Override
     public void close() {
@@ -110,25 +110,6 @@ public class Neo4JOnlineSession implements GraphSession {
         session.close();
         session = null;
     }
-
-    // ----------------------------------------------------------------------
-    // Transactions
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // public void beginTransaction() {
-    //
-    // }
-
-    // @Override
-    // public void commit() {
-    //
-    // }
-
-    // @Override
-    // public void rollback() {
-    //
-    // }
 
     // ----------------------------------------------------------------------
     // Named Queries
@@ -599,10 +580,10 @@ public class Neo4JOnlineSession implements GraphSession {
         }
         else {
             s = String.format(
-            "MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $to " +
-                "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
-            eblock
-        );
+                "MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $to " +
+                    "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
+                eblock
+            );
 
             params = Parameters.params()
                 .add(FROM, asIds(fromIds))
@@ -734,11 +715,15 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public void createEdges(String edgeType, String fromId, Collection<String> toIds,
                             Map<String, Object> findProps, Map<String, Object> updateProps) {
+        Parameters pparams = Parameters.params(findProps);
+        Parameters wparams = Parameters.params(findProps);
+        Parameters sparams = Parameters.params(updateProps);
 
         String s;
-        String pblock = pblock(E, findProps);
-        String wblock = wblock(E, findProps, WhereType.AND, true);
-        String sblock = sblock(E, updateProps);
+        String pblock = pblock(E, pparams);
+        String wblock = wblock(E, wparams, WhereType.AND, true);
+        String sblock = sblock(E, sparams);
+
         Parameters edgeProps = Parameters.params(findProps).add(updateProps);
         Set<String> reachableIds, missingIds;
 
@@ -772,7 +757,8 @@ public class Neo4JOnlineSession implements GraphSession {
         // 3) create the missing edges
         //
         {
-            pblock = pblock(E, findProps);
+            pparams = Parameters.params(findProps);
+            pblock = pblock(E, pparams);
             s = String.format("MATCH (from),(to) WHERE id(from)=$from AND id(to) IN $to " +
                     "CREATE (from) -[e:%s %s]-> (to) %s RETURN id(e)",
                 edgeType, pblock, sblock);
@@ -780,7 +766,11 @@ public class Neo4JOnlineSession implements GraphSession {
             Parameters params = Parameters.params(
                 FROM, asId(fromId),
                 TO, asIds(missingIds)           // missingIds
-            ).add(edgeProps).add(E, edgeProps);
+            ).add(edgeProps)
+                .add(E, edgeProps)
+                .add(E, pparams)
+                .add(E, sparams)
+                .add(E, wparams);
 
             this.execute(s, params);
         }
@@ -802,7 +792,11 @@ public class Neo4JOnlineSession implements GraphSession {
             Parameters params = Parameters.params(
                 FROM, asId(fromId),
                 TO, asIds(reachableIds)             // reachableIds
-            ).add(edgeProps).add(E, edgeProps);
+            ).add(edgeProps)
+                .add(E, edgeProps)
+                .add(E, pparams)
+                .add(E, sparams)
+                .add(E, wparams);
 
             this.execute(s, params);
         }
@@ -825,9 +819,16 @@ public class Neo4JOnlineSession implements GraphSession {
     public void setEdgeProperties(String edgeType, String fromId, Collection<String> toIds,
                                   Map<String,Object> findProps,
                                   Map<String,Object> updateProps) {
-        String pblock = pblock(E, findProps);
-        String wblock = wblock(E, findProps, WhereType.AND, true);
-        String sblock = sblock(E, updateProps);
+        if (toIds != null && toIds.isEmpty())
+            return;
+
+        Parameters pparams = Parameters.params(findProps);
+        Parameters wparams = Parameters.params(findProps);
+        Parameters sparams = Parameters.params(updateProps);
+
+        String pblock = pblock(E, pparams);
+        String wblock = wblock(E, wparams, WhereType.AND, true);
+        String sblock = sblock(E, sparams);
         String s;
 
         if (edgeType == null && toIds == null)
@@ -857,8 +858,9 @@ public class Neo4JOnlineSession implements GraphSession {
 
         Parameters params = Parameters.params(
             FROM, asId(fromId),
-            TO, asIds(toIds)
-        ).add(E, findProps).add(E, updateProps);
+            TO, asIds(toIds))
+            .add(E, pparams).add(E, wparams).add(E, sparams)
+            .add(pparams).add(wparams).add(sparams);
 
         this.execute(s, params);
     }

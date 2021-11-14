@@ -10,9 +10,10 @@ public class Assert {
         logger.errorf(message, args);
     }
 
-    public static void check(boolean condition, String message, Object... args) {
+    public static boolean check(boolean condition, String message, Object... args) {
         if (!condition)
             logger.errorf("AssertionError: %s ", String.format(message, args));
+        return condition;
     }
 
     public static void verify(boolean condition, String message, Object... args) {

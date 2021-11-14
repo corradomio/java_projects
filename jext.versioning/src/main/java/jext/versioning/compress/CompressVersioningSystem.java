@@ -27,7 +27,11 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
     public CompressVersioningSystem(String surl, Properties properties, File localDirectory) {
         super(surl, properties, localDirectory);
         String path = url.getPath();
-        compressedFile = new File(path);
+        String uploadHome = properties.getProperty("uploadHome");
+        if (uploadHome != null)
+            compressedFile = new File(uploadHome, path);
+        else
+            compressedFile = new File(path);
         base = url.getFragment();
     }
 
@@ -62,6 +66,7 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
     // ----------------------------------------------------------------------
 
     private void copyInto(File localDirectory) throws IOException {
+        // create the local directory
         try (ArchiveInputStream aistream = Archives.openArchive(compressedFile)) {
             ArchiveEntry entry;
             while((entry = aistream.getNextEntry()) != null) {
@@ -69,8 +74,10 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
                 String path = PathUtils.relativePath(base, archivePath);
                 File file = new File(localDirectory, path);
 
+                FileUtils.mkdirs(file.getParentFile());
+
                 if (entry.isDirectory()) {
-                    file.mkdirs();
+                    FileUtils.mkdirs(localDirectory);
                 }
                 else {
                     long lastModified = entry.getLastModifiedDate().getTime();

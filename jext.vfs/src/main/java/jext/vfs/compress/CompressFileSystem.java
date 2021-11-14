@@ -139,12 +139,12 @@ public class CompressFileSystem extends AbstractFileSystem {
         // resolve "${...}"
         String path = PropertiesUtils.resolveValue(url.getPath(), props);
         path = PathUtils.normalize(path);
-        String folder = props.getProperty(UPLOAD_HOME, null);
+        String uploadFolder = props.getProperty(UPLOAD_HOME, null);
         int pos;
 
         compressedFile = new File(path);
-        if (!compressedFile.exists() && folder != null)
-            compressedFile = new File(folder, path);
+        if (!compressedFile.exists() && uploadFolder != null)
+            compressedFile = new File(uploadFolder, path);
 
         // if (folder != null)
         //     compressedFile = new File(folder, path);

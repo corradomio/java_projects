@@ -26,10 +26,11 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
     // task status
     private TaskStatus status;
     private long timestamp;
-    private List<StatusChange> history;
-
     // current message
     private String message = "";
+
+    private List<StatusChange> history;
+
 
     // task parameters
     protected final Parameters parameters = new Parameters();
@@ -112,9 +113,6 @@ public abstract class AbstractTask implements Task, TaskStatusListener {
 
     @Override
     public String getType() { return taskType; }
-
-    // @Override
-    // public String getExtendedType() { return taskType; }
 
     @Override
     public String getMessage() { return message; }

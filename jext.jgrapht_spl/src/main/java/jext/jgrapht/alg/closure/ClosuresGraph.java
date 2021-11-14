@@ -13,6 +13,8 @@ import jext.util.concurrent.Serial;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.TransitiveReduction;
 import org.jgrapht.alg.cycle.CycleDetector;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,11 +36,7 @@ public class ClosuresGraph<V, E> {
     private static Logger logger = Logger.getLogger(ClosuresGraph.class);
 
     // ----------------------------------------------------------------------
-    // Closure
-    // ----------------------------------------------------------------------
-
-    // ----------------------------------------------------------------------
-    //
+    // Private Fields
     // ----------------------------------------------------------------------
 
     // current graph
@@ -60,11 +58,53 @@ public class ClosuresGraph<V, E> {
     //
     // ----------------------------------------------------------------------
 
-    public ClosuresGraph(Graph<V, E> graph) {
-        this.graph = graph; //new AsSynchronizedGraph<>(graph);
+    public ClosuresGraph() {
+        this.graph = new SimpleDirectedGraph(DefaultEdge.class);
+        this.closures = new HashMap<>();
+        this.bySize = new HashMap<>();
+    }
 
-        closures = new HashMap<>();
-        bySize = new HashMap<>();
+    public ClosuresGraph(Graph<V, E> graph, V singletoneId) {
+        this.graph = graph; //new AsSynchronizedGraph<>(graph);
+        this.closures = new HashMap<>();
+        this.bySize = new HashMap<>();
+
+        // add the 'pseudo-' singleton closure
+        this.singletonClosure = new Closure<>(singletoneId, new TreeSet<>(), 0, 0);
+        this.graph.addVertex(singletoneId);
+        this.closures.put(singletoneId, singletonClosure);
+    }
+
+    // ----------------------------------------------------------------------
+    // Set properties
+    // ----------------------------------------------------------------------
+
+    public ClosuresGraph<V, E> initWith(
+        Graph<V, E> cgraph,
+        Map<V, Set<V>> closures,
+        V singletoneId)
+    {
+        this.closureGraph = cgraph;
+        this.singletonClosure = new Closure<>(singletoneId, new TreeSet<>(), 0, 0);
+
+        for (V vertex : closures.keySet()) {
+            Set<V> closure = closures.get(vertex);
+            addClosure(vertex, closure);
+        }
+
+        return this;
+    }
+
+    public void addClosure(V vertex, Set<V> vclosure) {
+        if (vertex.equals(singletonClosure.vertex())) {
+            singletonClosure.members().addAll(vclosure);
+            add(singletonClosure);
+        }
+        else {
+            Closure<V> closure = new Closure<>(vertex, new TreeSet<>(vclosure), 0, 0);
+            closures.put(vertex, closure);
+            add(closure);
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -110,23 +150,6 @@ public class ClosuresGraph<V, E> {
      */
     public Closure<V> getClosure(V vertex) {
         return closures.get(vertex);
-    }
-
-    /**
-     * Retrieve the closure for the specified vertex
-     *
-     * @param vertex graph's vertex
-     * @param remap map to convert the current vertex in another vertex
-     * @return the vertex's closure
-     */
-    public Closure<V> getClosure(V vertex, Map<V, V> remap) {
-        Closure<V> closure = closures.get(vertex);
-        Set<V> mappedMembers = closure.members()
-            .stream()
-            .map(v -> remap.get(v))
-            .collect(Collectors.toSet());
-
-        return new Closure<>(closure.vertex(), mappedMembers, closure.inDegree(), closure.outDegree());
     }
 
     /**
@@ -201,11 +224,6 @@ public class ClosuresGraph<V, E> {
 
             Set<V> closure = computeClosure(vertex);
 
-            // if (slow)
-            //     closure = Graphs.closureOf(graph, vertex);
-            // else
-            //     closure = computeClosure(vertex);
-
             add(new Closure<>(vertex, closure, inDegree, outDegree));
         });
 
@@ -276,8 +294,8 @@ public class ClosuresGraph<V, E> {
      */
     public Set<V>  collectSingletons() {
         // check if already computed
-        if (singletonClosure != null)
-            return singletonClosure.members();
+        // if (singletonClosure != null)
+        //     return singletonClosure.members();
 
         logger.info("collectSingletons");
 
@@ -309,7 +327,8 @@ public class ClosuresGraph<V, E> {
 
         // create the closure for the 'singleton' object
         // select as singleton reference the first ordered vertex
-        singletonClosure = new Closure<>(singletonVertices);
+        singletonClosure.members().addAll(singletonVertices);
+        singletonClosure.members().remove(singletonClosure.vertex());
 
         // remove the singletons from 'closuresBySize' and 'closures'
         singletonVertices.forEach(this::remove);
@@ -433,7 +452,7 @@ public class ClosuresGraph<V, E> {
 
         List<Pair<V, V>> edges = new ConcurrentArrayList<>();
 
-        Serial/*Parallel*/.forEach(2, maxSize+1, size -> {
+        /*Serial*/Parallel.forEach(2, maxSize+1, size -> {
             logger.infoft("... computeClosureDependencies[%d]", size);
 
             List<Closure<V>> closures = getClosures(size);
@@ -557,7 +576,7 @@ public class ClosuresGraph<V, E> {
             removed.forEach(closureGraph::removeVertex);
             rootsRemoved.addAll(removed);
 
-            logger.warnf("... removed roots (%d) %s", rootsRemoved.size(), trimList(rootsRemoved));
+            logger.warnf("... removed roots (%d) %s", removed.size(), trimList(removed));
         }
 
         return rootsRemoved;

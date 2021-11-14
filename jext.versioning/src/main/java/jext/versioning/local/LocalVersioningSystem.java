@@ -68,11 +68,11 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
 
     @Override
     public void checkout() {
-        // copy the remote directory inside the local directory
-        // (if the local directory doesn't exist, it will be created
         if (!sourceDirectory.exists())
             throw new VersioningSystemException("Source directory " + sourceDirectory + " not existent");
 
+        // copy the source directory inside the local directory
+        // (if the local directory doesn't exist, it will be created
         FileUtils.copy(sourceDirectory, localDirectory, excludeFilter);
     }
 

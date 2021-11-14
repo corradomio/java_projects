@@ -1,8 +1,10 @@
 package jext.jgrapht.alg.closure;
 
+import jext.debug.Debug;
 import jext.jgrapht.util.Utils;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Closure<V> {
 
@@ -13,29 +15,39 @@ public class Closure<V> {
     private final int inDegree;
     private final int outDegree;
     private V vertex;
-    private final Set<V> members;
+    private final TreeSet<V> members;
     private boolean singletons;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    Closure(Set<V> members) {
-        this.inDegree = 0;
-        this.outDegree = 0;
-        this.vertex = null;
-        this.members = members;
-        this.singletons = true;
-
-        if (!members.isEmpty())
-            this.vertex = members.iterator().next();
-    }
+    // Closure(Set<V> members) {
+    //     this.inDegree = 0;
+    //     this.outDegree = 0;
+    //     this.vertex = null;
+    //     this.members = members;
+    //     this.singletons = true;
+    //
+    //     if (!members.isEmpty())
+    //         this.vertex = members.iterator().next();
+    //
+    //     checkMembers();
+    // }
 
     public Closure(V vertex, Set<V> members, int inDegree, int outDegree) {
         this.inDegree = inDegree;
         this.outDegree = outDegree;
         this.vertex = vertex;
-        this.members = members;
+        this.members = new TreeSet<>(members);
+
+        checkMembers();
+    }
+
+    private void checkMembers() {
+        for(V v : members)
+            if (v == null)
+                Debug.nop();
     }
 
     // ----------------------------------------------------------------------
@@ -54,7 +66,7 @@ public class Closure<V> {
         return outDegree;
     }
 
-    public Set<V> members() {
+    public TreeSet<V> members() {
         return members;
     }
 

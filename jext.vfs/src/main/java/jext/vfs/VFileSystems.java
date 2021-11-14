@@ -27,9 +27,9 @@ public class VFileSystems {
             for(String proto: props.stringPropertyNames()) {
                 String fclass = props.getProperty(proto);
                 try {
-                VFileSystemFactory factory = (VFileSystemFactory) Class.forName(fclass).newInstance();
-                protocols.put(proto, factory);
-            }
+                    VFileSystemFactory factory = (VFileSystemFactory) Class.forName(fclass).newInstance();
+                    protocols.put(proto, factory);
+                }
                 catch (Exception e) {
                     websites.put(proto, fclass);
                 }
@@ -74,6 +74,9 @@ public class VFileSystems {
      * @throws VFileSystemException
      */
     public static VFileSystem newFileSystem(String surl, Properties props) throws VFileSystemException {
+        if (surl.endsWith(".git") && !surl.startsWith("git+"))
+            surl = "git+" + surl;
+
         URL url = new URL(surl);
         String protocol;
 

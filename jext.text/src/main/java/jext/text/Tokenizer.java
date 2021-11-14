@@ -1,5 +1,7 @@
 package jext.text;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Tokenizer {
@@ -22,6 +24,7 @@ public class Tokenizer {
 
         String[] tokens = TOKENIZER.split(text);
 
+        tokens = normalize(tokens);
         //
         // it is not necessary because text IS NOT A FULL qualified name
         //
@@ -44,5 +47,21 @@ public class Tokenizer {
             }
         }
         return tokens;
+    }
+
+    //ensures that there are no tokens of length 1
+    private static String[] normalize(String[] array){
+        List<String> newArray = new ArrayList<>();
+        for(int i=0;i<array.length;i++){
+            String temp = array[i];
+            if(temp.length() == 1){
+                if(i+1< array.length){
+                    temp+=array[i+1];
+                    i++;
+                }
+            }
+            newArray.add(temp);
+        }
+        return newArray.toArray(new String[0]);
     }
 }
