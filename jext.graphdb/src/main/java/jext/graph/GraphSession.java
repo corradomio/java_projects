@@ -22,9 +22,9 @@ import java.util.Map;
     Supported assignments:
 
             name, value                     n.name <- value
-            name[index], value              n.name <- apoc.coll.arraySet(n.name, index, value)
-            name[+], value                  n.name <- apoc.coll.append(n.name, value)
-            name[!], value                  n.name <- apoc.coll.appendDistinct(n.name, value)
+            name[index], value              n.name <- apocx.coll.arraySet(n.name, index, value)
+            name[+], value                  n.name <- apocx.coll.append(n.name, value)
+            name[!], value                  n.name <- apocx.coll.appendDistinct(n.name, value)
 
     Supported predicates:
 
@@ -59,9 +59,9 @@ import java.util.Map;
      Support for array of array of int:
 
         assignment:
-            name[index,i2], value           n.name <- apoc.coll.array2Set(n.name, index, i2, value)
-            name[index,+], value            n.name <- apoc.coll.append2(n.name, index, value)
-            name[index,!], value            n.name <- apoc.coll.appendDistinct2(n.name, index, value)
+            name[index,i2], value           n.name <- apocx.coll.array2Set(n.name, index, i2, value)
+            name[index,+], value            n.name <- apocx.coll.append2(n.name, index, value)
+            name[index,!], value            n.name <- apocx.coll.appendDistinct2(n.name, index, value)
  */
 
 public interface GraphSession extends AutoCloseable {

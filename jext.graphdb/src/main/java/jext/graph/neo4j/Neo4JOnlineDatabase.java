@@ -37,8 +37,11 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     private final URL url;
     private final Properties props;
     private Driver driver;
+    private String version;
+    private int majorVersion;
 
-    private final Map<String, String> namedQueries = new HashMap<>();
+    //private final Map<String, String> namedQueries = new HashMap<>();
+    private final Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -65,6 +68,16 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
         if (password == null) password = props.getProperty(PASSWORD_EXT);
 
         this.driver = org.neo4j.driver.GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
+
+        try(GraphSession session = this.connect()) {
+            String s = "CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition";
+            Map<String, Object> result = session.query(s, Collections.emptyMap()).result().next();
+            version = result.get("version").toString();
+            if (version.startsWith("4."))
+                majorVersion = 4;
+            else
+                majorVersion = 3;
+        }
     }
 
     @Override
@@ -85,14 +98,32 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
      * @param nqueries named queries
      */
     public void registerQueries(Map<String, String> nqueries) {
+        for(String qname : nqueries.keySet())
+            add("", qname, nqueries.get(qname));
+    }
 
-        for(String qname : nqueries.keySet()) {
-            if (namedQueries.containsKey(qname))
-                logger.errorf("Query %s with body '%s' already defined as '%s'",
-                    qname, nqueries.get(qname), namedQueries.get(qname));
-            else {
-                namedQueries.put(qname, nqueries.get(qname));
+    public void registerVersionedQueries(Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries) {
+        for(String version : namedQueries.keySet()) {
+            Map<String, String> nqueries = namedQueries.get(version);
+            for(String qname : nqueries.keySet())  {
+                String body = nqueries.get(qname);
+                add(version, qname, body);
             }
+        }
+    }
+
+    private void add(String version, String qname, String body) {
+        if (!version.isEmpty() && !version.endsWith("."))
+            version += ".";
+        if (!namedQueries.containsKey(version))
+            namedQueries.put(version, new HashMap<>());
+
+        Map<String, String> nqueries = namedQueries.get(version);
+        if (nqueries.containsKey(qname))
+            logger.errorf("Query %s with body '%s' already defined as '%s' for version '%s'",
+                qname, body, namedQueries.get(qname), version);
+        else {
+            nqueries.put(qname, body);
         }
     }
 
@@ -121,10 +152,38 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     Driver getdriver() { return driver; }
 
     String getQuery(String qname) {
-        if (!namedQueries.containsKey(qname))
-            throw new DatabaseException("USER", String.format("Named query '%s' not defined", qname));
+        // if (!namedQueries.containsKey(qname))
+        //     throw new DatabaseException("USER", String.format("Named query '%s' not defined", qname));
 
-        return StringUtils.trim(namedQueries.get(qname));
+        Map<String, String> nqueries;
+
+        // check if is defined in specific version
+        for(String version : namedQueries.keySet()) {
+            nqueries = namedQueries.get(version);
+
+            // skip version ""
+            if (version.isEmpty()) continue;
+            // skip wrong version
+            if (!this.version.startsWith(version)) continue;
+            // skip if not defined
+            if (!nqueries.containsKey(qname)) continue;
+
+            return trim(nqueries.get(qname));
+        }
+
+        // check if it is defined in version ""
+        nqueries = namedQueries.get("");
+        if (nqueries.containsKey(qname))
+            return trim(nqueries.get(qname));
+
+        throw new DatabaseException("USER", String.format("Named query '%s' not defined", qname));
+    }
+
+    private String trim(String body) {
+        // Doesn't work! It is not enough to change the namespace!
+        // if (majorVersion == 4 && body.contains("algo."))
+        //     body = body.replace("algo.", "gds.");
+        return StringUtils.trim(body);
     }
 
 }

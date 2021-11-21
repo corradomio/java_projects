@@ -1598,7 +1598,7 @@ public class Neo4JOnlineSession implements GraphSession {
             // [revision, rev] -> inRevision[rev] = true -> inRevision = [...true]
             if (Param.isRevision(param)) {
                 String index = params.get(param).toString();
-                sb.append(String.format("%1$s.inRevision = apoc.coll.arraySet(%1$s.inRevision, $%1$s%3$s, true)",
+                sb.append(String.format("%1$s.inRevision = apocx.coll.arraySet(%1$s.inRevision, $%1$s%3$s, true)",
                     alias, index, param));
             }
             // name[!] -> appendDistinct(n.name, $pname)
@@ -1606,7 +1606,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 String name  = Param.nameOf(param);
                 String pname = Param.pnameOf(param);
 
-                sb.append(String.format("%1$s.%2$s = apoc.coll.appendDistinct(%1$s.%2$s, $%1$s%3$s)",
+                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct(%1$s.%2$s, $%1$s%3$s)",
                     alias, name, pname));
 
                 params.put(pname, params.get(param));
@@ -1617,7 +1617,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 String name  = Param.nameOf(param);
                 String pname = Param.pnameOf(param);
 
-                sb.append(String.format("%1$s.%2$s = apoc.coll.append(%1$s.%2$s, $%1$s%3$s)",
+                sb.append(String.format("%1$s.%2$s = apocx.coll.append(%1$s.%2$s, $%1$s%3$s)",
                     alias, name, pname));
 
                 params.put(pname, params.get(param));
@@ -1629,7 +1629,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 String pname = Param.pnameOf(param);
                 int index = Param.indexOf(param, 1);
 
-                sb.append(String.format("%1$s.%2$s = apoc.coll.appendDistinct2(%1$s.%2$s, %4$d, $%1$s%3$s)",
+                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct2(%1$s.%2$s, %4$d, $%1$s%3$s)",
                     alias, name, pname, index));
 
                 params.put(pname, params.get(param));
@@ -1641,7 +1641,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 String pname = Param.pnameOf(param);
                 int index = Param.indexOf(param, 1);
 
-                sb.append(String.format("%1$s.%2$s = apoc.coll.append2(%1$s.%2$s, %4$d, $%1$s%3$s)",
+                sb.append(String.format("%1$s.%2$s = apocx.coll.append2(%1$s.%2$s, %4$d, $%1$s%3$s)",
                     alias, name, pname, index));
 
                 params.put(pname, params.get(param));
@@ -1654,7 +1654,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 int index1 = Param.indexOf(param, 1);
                 int index2 = Param.indexOf(param, 2);
 
-                sb.append(String.format("%1$s.%2$s = apoc.coll.array2Set(%1$s.%2$s, %4$d, %5$d, $%1$s%3$s)",
+                sb.append(String.format("%1$s.%2$s = apocx.coll.array2Set(%1$s.%2$s, %4$d, %5$d, $%1$s%3$s)",
                     alias, name, pname, index1, index2));
 
                 params.put(pname, params.get(param));
@@ -1666,7 +1666,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 String pname = Param.pnameOf(param);
                 int index = Param.indexOf(param, 0);
 
-                sb.append(String.format("%1$s.%2$s = apoc.coll.arraySet(%1$s.%2$s, %4$d, $%1$s%3$s)",
+                sb.append(String.format("%1$s.%2$s = apocx.coll.arraySet(%1$s.%2$s, %4$d, $%1$s%3$s)",
                     alias, name, pname, index));
 
                 params.put(pname, params.get(param));

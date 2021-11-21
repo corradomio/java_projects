@@ -33,5 +33,6 @@ public interface GraphDatabase {
      *
      * @param namedQueries a map 'name -> Cypher statement'
      */
-    void registerQueries(Map<String, String> namedQueries);
+    void registerQueries(Map<String/*name*/, String/*body*/> namedQueries);
+    void registerVersionedQueries(Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries);
 }
