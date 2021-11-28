@@ -15,23 +15,35 @@
     </properties>
 
     <modules>
+        <module>../jext.commons</module>
+        <module>../jext.collections</module>
+        <module>../jext.concurrent</module>
         <module>../jext.und</module>
+        <module>../jext.project</module>
+        <module>../jext.java</module>
+        <module>../jext.cache</module>
+        <module>../jext.maven</module>
     </modules>
 
     <dependencies>
-        <!--<dependency>
+        <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.und</artifactId>
             <version>1.0</version>
-        </dependency>-->
+        </dependency>
         <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.project</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <!--<dependency>
             <groupId>com.scitools</groupId>
             <artifactId>understand</artifactId>
-            <!-- WITHOUT the version number, the library is not found! -->
+            &lt;!&ndash; WITHOUT the version number, the library is not found! &ndash;&gt;
             <version>6.1</version>
             <scope>system</scope>
             <systemPath>C:/Program Files/SciTools/bin/pc-win64/Java/Understand.jar</systemPath>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
 </project>
