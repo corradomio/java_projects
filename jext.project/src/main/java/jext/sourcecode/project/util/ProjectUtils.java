@@ -48,6 +48,12 @@ public class ProjectUtils {
         return sources;
     }
 
+    public static List<File> getSourceFiles(Project project) {
+        return getSources(project).stream()
+            .map(Resource::getFile)
+            .collect(Collectors.toList());
+    }
+
     public static List<Source> getSources(Project project, List<ModuleSource> moduleSources) {
         List<Source> sources = new ArrayList<>();
 
