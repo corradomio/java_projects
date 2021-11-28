@@ -1,3 +1,13 @@
+und create -db hibernate-orm.und
+und add . hibernate-orm.und
+und analyze hibernate-orm.und
+
+
+
+
+
+
+
 https://java.libhunt.com/zt-exec-alternatives
 https://stackoverflow.com/questions/3048212/deciding-between-apache-commons-exec-or-processbuilder
 
@@ -24,3 +34,10 @@ ZT exec (2020)
         <artifactId>zt-exec</artifactId>
         <version>1.12</version>
     </dependency>
+
+
+-----------------------------------------------------------------------------
+
+[Unresolved, Enum, Variable, Generic, Catch, Anonymous, Unknown, TypeVariable, Private, Lambda, Protected, Abstract,
+ Constructor, Public, Method, Annotation, Type, Parameter, EnumConstant, Class, Package, Implicit, Static, Module, File,
+ Interface]

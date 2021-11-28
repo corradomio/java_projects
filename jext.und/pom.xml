@@ -14,6 +14,13 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.10.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.zeroturnaround/zt-exec -->
         <dependency>
             <groupId>org.zeroturnaround</groupId>
@@ -21,17 +28,19 @@
             <version>1.12</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-exec -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
             <version>1.3</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>com.scitools</groupId>
             <artifactId>understand</artifactId>
+            <!-- WITHOUT the version number, the library is not found! -->
+            <version>6.1</version>
             <scope>system</scope>
-            <systemPath>C:/Program Files/SciTools/bin/pc-win64/Java/Understand.jar</systemPath>
+            <systemPath>${project.basedir}/lib/Understand.jar</systemPath>
         </dependency>
     </dependencies>
 
