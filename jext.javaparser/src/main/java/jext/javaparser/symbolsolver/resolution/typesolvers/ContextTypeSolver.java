@@ -17,6 +17,7 @@ import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParse
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
+import jext.javaparser.resolution.ReferencedTypeDeclaration;
 import jext.javaparser.resolution.ReferencedTypeUse;
 import jext.lang.JavaUtils;
 
@@ -41,10 +42,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     private final List<String> starImports = new ArrayList<>();
     private String namespace;
     private File file;
-
-    // cache used to patch a problem with the parser that it is unable
-    // to distinguish between a type and a namespace
-    // private final Map<String, NamespaceDeclaration> namespaces = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -99,7 +96,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
      * to add.
      */
     private void addDefaultImports() {
-        if (!this.namespace.isEmpty())
+        if (!this.namespace.isEmpty())                  // current package must be not empty
             this.starImports.add(this.namespace);       // import <currentPackage>.*
         this.starImports.add(JavaUtils.JAVA_LANG);      // import java.lang.*
         this.starImports.add(JavaUtils.ROOT);           // import <rootPackage>.*
@@ -170,13 +167,13 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         try {
             for (ClassOrInterfaceDeclaration c : cu.findAll(ClassOrInterfaceDeclaration.class))
                 if (c.isInterface() && name.equals(c.getNameAsString()))
-                        return Optional.of(
+                    return Optional.of(
                         ReferenceTypeImpl.undeterminedParameters(new JavaParserInterfaceDeclaration(c, this), this)
-                        );
+                    );
                 else if (!c.isInterface() && name.equals(c.getNameAsString()))
-                        return Optional.of(
+                    return Optional.of(
                         ReferenceTypeImpl.undeterminedParameters(new JavaParserClassDeclaration(c, this), this)
-                        );
+                    );
                     // try {
                     //     return Optional.of(
                     //         ReferenceTypeImpl.undeterminedParameters(new JavaParserClassDeclaration(c, this), this)
@@ -235,7 +232,12 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             return solved;
         }
 
-        // 3) it is not possible to solve the symbol using the context HERE
+        // 3) if the JDK is not defined, AT MINIMUM it is necessary to resolve
+        //      "Object" and "java.lang.Object" because it is the root of the Java object's system
+        if (JavaUtils.JAVA_LANG_OBJECT.equals(name) || JavaUtils.OBJECT.equals(name))
+            return SymbolReference.solved(new ReferencedTypeDeclaration(JavaUtils.JAVA_LANG_OBJECT, 0));
+
+        // 4) it is not possible to solve the symbol using the context HERE
         //    because we must use NOT only the imports but also the definitions of
         //    the inner classes
 
@@ -258,7 +260,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
                 return solved;
         }
 
-        return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        return UNSOLVED; //SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
     }
 
     // Resolution using the current context
@@ -288,7 +290,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         }
 
         // 4) none to do
-        return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        return UNSOLVED; //SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
     }
 
     // Context stack
@@ -309,6 +311,28 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         }
 
         return context;
+    }
+
+    // ----------------------------------------------------------------------
+    // safeSolve
+    // ----------------------------------------------------------------------
+
+    public void safeSolveType(String qualifiedType, TypeRegistry registry) {
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveType(qualifiedType);
+        if (!solved.isSolved())
+            registry.put(qualifiedType, 0);
+    }
+
+    public void safeSolveType(String name, int nTypeParameters, TypeRegistry registry) {
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveType(name);
+        if (!solved.isSolved()) {
+            registry.put(name, nTypeParameters);
+        }
+        else {
+            String qualifiedType = solved.getCorrespondingDeclaration().getQualifiedName();
+            if (solved.getCorrespondingDeclaration().getTypeParameters().size() != nTypeParameters)
+                registry.put(qualifiedType, nTypeParameters);
+        }
     }
 
     // ----------------------------------------------------------------------

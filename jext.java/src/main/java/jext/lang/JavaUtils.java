@@ -1,72 +1,8 @@
 package jext.lang;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
-public class JavaUtils {
-
-    public static final String ROOT = "";
-
-    public static final String VOID = "void";
-    public static final String ARRAY = "array";
-    public static final String NULL = "null";
-
-    public static final String JAVA_LANG = "java.lang";
-    public static final String JAVA_LANG_NULL = "java.lang.Null";
-    public static final String JAVA_LANG_VOID = "java.lang.Void";
-    public static final String JAVA_LANG_CLASS = "java.lang.Class";
-    public static final String JAVA_LANG_OBJECT = "java.lang.Object";
-
-    public static final String PUBLIC = "public";
-
-    public static final Set<String> VISIBILITIES =
-        new HashSet<>(Arrays.asList(
-            "public",
-            "protected",
-            "private",
-            "package"
-        ));
-
-    /*
-        B       byte
-        C       char
-        D       double
-        F       float
-        I       int
-        J       long
-        S       short
-        Z       boolean
-        L<className>;   class
-        [       array
-     */
-    public static final Set<String> PRIMITIVE_TYPES =
-        new HashSet<>(Arrays.asList(
-            "boolean",
-            "byte",
-            "char",
-            "short",
-            "int",
-            "long",
-            "float",
-            "double",
-            "void"));
-
-    public static final Map<String, String> PRIMITIVE_BOXED = new HashMap<String, String>(){{
-        put("byte",     "java.lang.Byte");
-        put("char",     "java.lang.Character");
-        put("double",   "java.lang.Double");
-        put("float",    "java.lang.Float");
-        put("int",      "java.lang.Integer");
-        put("long",     "java.lang.Long");
-        put("short",    "java.lang.Short");
-        put("void",     "java.lang.Void");
-        put("boolean",  "java.lang.Boolean");
-        put("null",     "java.lang.Null");
-    }};
+public class JavaUtils implements JavaConstants {
 
     public static boolean isPrimitive(String name) {
         return PRIMITIVE_TYPES.contains(name);
@@ -75,18 +11,6 @@ public class JavaUtils {
     public static String boxed(String name) {
         return PRIMITIVE_BOXED.getOrDefault(name, name);
     }
-
-    private static final Map<String, String> PRIMITIVE_SIGNATURE = new HashMap<String, String>(){{
-        put("B", "byte");
-        put("C", "char");
-        put("D", "double");
-        put("F", "float");
-        put("I", "int");
-        put("J", "long");
-        put("S", "short");
-        put("V", "void");
-        put("Z", "boolean");
-    }};
 
     public static String signature(String type) {
         if (PRIMITIVE_SIGNATURE.containsKey(type))

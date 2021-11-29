@@ -13,7 +13,7 @@ public class ContextSolvedSymbols {
         resolved = new HashMap<>();
 
     public synchronized void resolved(String qualifiedName) {
-        resolved.put(qualifiedName, new ReferencedTypeDeclaration(qualifiedName));
+        resolved.put(qualifiedName, new ReferencedTypeDeclaration(qualifiedName, 0));
     }
 
     public synchronized void resolved(ResolvedReferenceTypeDeclaration rdecl) {

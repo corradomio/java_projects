@@ -19,4 +19,9 @@ public class ReferencedTypeUse implements ResolvedType {
     public boolean isAssignableBy(ResolvedType other) {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return String.format("ReferencedTypeUse[%s]", qualifiedName);
+    }
 }

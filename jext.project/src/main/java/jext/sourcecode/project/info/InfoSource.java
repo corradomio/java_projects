@@ -28,7 +28,7 @@ public class InfoSource implements Source {
     // Constructor
     // ----------------------------------------------------------------------
 
-    InfoSource(InfoModule module, Map<String, Object> info) {
+    public InfoSource(InfoModule module, Map<String, Object> info) {
         if (info == null)
             throw new NullPointerException();
         this.module = module;

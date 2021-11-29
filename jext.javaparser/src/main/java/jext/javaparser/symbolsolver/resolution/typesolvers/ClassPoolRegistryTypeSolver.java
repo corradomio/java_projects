@@ -60,8 +60,7 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
                     this.getRoot()));
             }
             else {
-                // return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);;
-                return UNSOLVED;
+                return UNSOLVED; //SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
             }
         } catch (IOException var3) {
             throw new RuntimeException(var3);

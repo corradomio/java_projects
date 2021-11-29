@@ -5,6 +5,7 @@ import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.debug.Debug;
 
 public class CachedTypeSolver extends CompositeTypeSolver {
 
@@ -13,6 +14,7 @@ public class CachedTypeSolver extends CompositeTypeSolver {
     // ----------------------------------------------------------------------
 
     private String cacheName;
+    private Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> cache;
 
     // ----------------------------------------------------------------------
     // Constructors
@@ -32,7 +34,7 @@ public class CachedTypeSolver extends CompositeTypeSolver {
     // ----------------------------------------------------------------------
 
     public CachedTypeSolver withCache() {
-        withCache(this.cacheName);
+        withCache(DEFAULT);
         return this;
     }
 
@@ -52,8 +54,16 @@ public class CachedTypeSolver extends CompositeTypeSolver {
 
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
-        Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> cache =
-            CacheManager.getCache(this.cacheName);
-        return cache.get(name, () -> super.tryToSolveType(name));
+        // Cache<String, SymbolReference<ResolvedReferenceTypeDeclaration>> cache =
+        //     CacheManager.getCache(this.cacheName);
+
+        if (name.contains(".Collection") || name.equals("Collection"))
+            Debug.nop();
+
+        // the cache can be deleted!
+        cache = CacheManager.getCache(this.cacheName);
+
+        SymbolReference<ResolvedReferenceTypeDeclaration> ref = cache.get(name, () -> super.tryToSolveType(name));
+        return ref;
     }
 }

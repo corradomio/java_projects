@@ -12,6 +12,7 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ReferencedType extends NamedObject implements RefType {
@@ -20,10 +21,10 @@ public class ReferencedType extends NamedObject implements RefType {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final ReferencedType JAVA_LANG_NULL = new ReferencedType(JavaUtils.JAVA_LANG_NULL);
+    // public static final ReferencedType JAVA_LANG_NULL = new ReferencedType(JavaUtils.JAVA_LANG_NULL);
     public static final ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaUtils.JAVA_LANG_VOID);
     public static final ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaUtils.JAVA_LANG_OBJECT);
-    public static final ReferencedType JAVA_LANG_CLASS = new ReferencedType(JavaUtils.JAVA_LANG_CLASS);
+    // public static final ReferencedType JAVA_LANG_CLASS = new ReferencedType(JavaUtils.JAVA_LANG_CLASS);
     // public static final ReferencedType ARRAY = new ReferencedType(JavaUtils.ARRAY);
 
     // ----------------------------------------------------------------------
@@ -33,28 +34,35 @@ public class ReferencedType extends NamedObject implements RefType {
     protected static Logger logger = Logger.getLogger(ReferencedType.class);
 
     public Name namespace;
-    public int nTypeParams;
     public TypeRole role;
     public Library library;
-    private List<RefType> elements = new ArrayList<>();
+    private List<RefType> elements = Collections.emptyList();
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ReferencedType(String fullName) {
-        this(new ObjectName(fullName));
+    public ReferencedType(String qualifiedName) {
+        this(qualifiedName, 0, null);
     }
 
-    public ReferencedType(String fullName, Library library) {
-        this(new ObjectName(fullName), library);
+    public ReferencedType(String qualifiedName, Library library) {
+        this(qualifiedName, 0, library);
+    }
+
+    public ReferencedType(String qualifiedName, int nTypeParameters, Library library) {
+        this(new ObjectName(qualifiedName), nTypeParameters, library);
     }
 
     public ReferencedType(Name name) {
-        this(name, null);
+        this(name, 0, null);
     }
 
     public ReferencedType(Name name, Library library) {
+        this(name, 0, library);
+    }
+
+    public ReferencedType(Name name, int nTypeParams, Library library) {
         super(name);
         this.library = library;
         this.role = TypeRole.UNKNOWN;
@@ -64,8 +72,14 @@ public class ReferencedType extends NamedObject implements RefType {
         String fullname = name.getFullName();
         if (fullname.contains("<") || fullname.contains("[") || fullname.contains("\\") || fullname.contains("?"))
             Logger.getLogger(ReferencedType.class).errorf("Invalid: %s", fullname);
-        if (JavaUtils.isPrimitive(fullname)) {
+        if (JavaUtils.isPrimitive(fullname))
             setNameWithId(new ObjectName(JavaUtils.boxed(fullname)));
+
+        // add the type parameters. Es: Map<Object,Object>
+        if (nTypeParams > 0) {
+            this.elements = new ArrayList<>();
+            for (int i = 0; i < nTypeParams; ++i)
+                this.elements.add(JAVA_LANG_OBJECT);
         }
     }
 
@@ -120,7 +134,7 @@ public class ReferencedType extends NamedObject implements RefType {
 
     @Override
     public int getTypeParametersCount() {
-        return nTypeParams;
+        return elements.size();
     }
 
     @Override
@@ -151,6 +165,8 @@ public class ReferencedType extends NamedObject implements RefType {
     // ----------------------------------------------------------------------
 
     public void add(RefType refType) {
+        if (elements.size() == 0)
+            elements = new ArrayList<>();
         elements.add(refType);
     }
 

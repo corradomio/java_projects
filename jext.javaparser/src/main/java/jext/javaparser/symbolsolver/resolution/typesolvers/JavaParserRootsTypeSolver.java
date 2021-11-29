@@ -397,7 +397,7 @@ public class JavaParserRootsTypeSolver extends BaseTypeSolver {
             }
         }
 
-        return SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
+        return UNSOLVED; //SymbolReference.unsolved(ResolvedReferenceTypeDeclaration.class);
     }
 
     // ----------------------------------------------------------------------

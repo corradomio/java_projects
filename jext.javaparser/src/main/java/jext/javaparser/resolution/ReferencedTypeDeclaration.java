@@ -10,6 +10,8 @@ import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import jext.lang.JavaUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,14 +19,41 @@ import java.util.Set;
 
 public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclaration {
 
-    private String qualifiedName;
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
 
-    public ReferencedTypeDeclaration(String namespace, String typeName) {
-        this.qualifiedName = JavaUtils.qualifiedName(namespace, typeName);
-    }
+    private static final List<ResolvedTypeParameterDeclaration> NO_PARAMS = Collections.emptyList();
+    private static final List<ResolvedTypeParameterDeclaration> ONE_PARAM = Collections.singletonList(ObjectTypeParameter.object());
+    private static final List<ResolvedTypeParameterDeclaration> TWO_PARAMS = Arrays.asList(
+        ObjectTypeParameter.object(),
+        ObjectTypeParameter.object());
 
-    public ReferencedTypeDeclaration(String qualifiedName) {
+    private final String qualifiedName;
+    private List<ResolvedTypeParameterDeclaration> typeParams = NO_PARAMS;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    public ReferencedTypeDeclaration(String qualifiedName, int nTypeParameters) {
         this.qualifiedName = qualifiedName;
+        switch(nTypeParameters) {
+            case 0:
+                typeParams = NO_PARAMS;
+                break;
+            case 1:
+                typeParams = ONE_PARAM;
+                break;
+            case 2:
+                typeParams = TWO_PARAMS;
+                break;
+            default:
+                typeParams = new ArrayList<>();
+                for (int i=0; i<nTypeParameters; ++i)
+                    typeParams.add(ObjectTypeParameter.object());
+                break;
+        }
     }
 
     @Override
@@ -99,6 +128,11 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
 
     @Override
     public List<ResolvedTypeParameterDeclaration> getTypeParameters() {
-        return Collections.emptyList();
+        return typeParams;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ReferencedTypeDeclaration[%s]", qualifiedName);
     }
 }

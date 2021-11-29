@@ -1,5 +1,6 @@
 package jext.java;
 
+import jext.lang.JavaConstants;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.ObjectName;
@@ -10,16 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class FastJavaParser {
-
-    private static final String PACKAGE = "package ";
-    private static final String IMPORT_STATIC = "import static ";
-    private static final String IMPORT = "import ";
-    private static final String PUBLIC = "public ";
-    private static final String CLASS = "class ";
-    private static final String INTERFACE = "interface ";
-    private static final String ENUM = "enum ";
-    private static final String ANNOTATION = "@interface ";
+public class FastJavaParser implements JavaConstants {
 
     // ----------------------------------------------------------------------
     // Private fields

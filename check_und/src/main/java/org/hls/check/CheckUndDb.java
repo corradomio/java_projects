@@ -33,7 +33,6 @@ public class CheckUndDb {
         List<File> sources = ProjectUtils.getSourceFiles(project);
         Set<File> libraries = ProjectUtils.getLibraryFiles(project);
 
-
         udb.addSources(sources);
         udb.addLibraries(libraries);
         udb.analyze(false);
