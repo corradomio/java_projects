@@ -1,5 +1,6 @@
-package jext.logging;
+package jext.logging.v1;
 
+import jext.logging.ILogger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -101,7 +102,7 @@ public class Logger implements jext.logging.ILogger {
 
     private org.apache.log4j.Logger logger;
 
-    private Logger(org.apache.log4j.Logger logger) {
+    protected Logger(org.apache.log4j.Logger logger) {
         this.logger = logger;
     }
 

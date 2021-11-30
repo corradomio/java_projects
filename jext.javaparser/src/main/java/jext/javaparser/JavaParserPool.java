@@ -103,7 +103,7 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
 
     public JavaParserPool withCache() {
-        return withCache(this.name);
+        return withCache(this.cachePrefix);
     }
 
     public JavaParserPool withCache(String cachePrefix) {
@@ -121,6 +121,10 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
     // Source roots
     // ----------------------------------------------------------------------
+
+    public JavaParserPool withSourceRoots(Collection<File> sourceRoots) {
+        return addAll(sourceRoots);
+    }
 
     public JavaParserPool add(File sourceRoot) {
         this.sourceRoots.add(sourceRoot);

@@ -1,9 +1,7 @@
-package jext.logging;
+package jext.logging.v2;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.xml.DOMConfigurator;
+import jext.logging.ILogger;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.util.HashMap;
@@ -24,51 +22,30 @@ public class Logger implements jext.logging.ILogger {
     private static transient long timestamp;
     private static transient long count;
 
-    // configuration
-
     public static void configure() {
-        if (!configured) {
-            File log4j = new File("log4j.xml");
-            if (!log4j.exists())
-                log4j = new File("config/log4j.xml");
-            if (log4j.exists()) {
-                configure(log4j);
-                Logger.getLogger(Logger.class).infof("Configured using %s", log4j.getAbsolutePath());
-            }
-            else {
-                BasicConfigurator.configure();
-                Logger.getLogger(Logger.class).infof("Configured using basic configuration");
-            }
-            configured = true;
+        File configFile;
+
+        configFile = new File("log4j.xml");
+        if (configFile.exists()) {
+            configure(configFile);
+            return;
+        }
+        configFile = new File("config/log4j.xml");
+        if (configFile.exists()) {
+            configure(configFile);
+            return;
+        }
+        configFile = new File("WEB-INF/log4j.xml");
+        if (configFile.exists()) {
+            configure(configFile);
+            return;
         }
     }
 
-    public static void configure(File configFile) {
-        if (!configured) {
-            // support for Log4j v2
-            System.setProperty("log4j.configurationFile", configFile.getAbsolutePath());
-
-            // support for Log4j v1
-            if (configFile != null && configFile.exists()) {
-                DOMConfigurator.configureAndWatch(configFile.getAbsolutePath(), 15000);
-            }
-            else if (configFile == null) {
-                BasicConfigurator.configure();
-                Logger.getLogger(Logger.class).error("Configuration file is null");
-            }
-            else {
-                BasicConfigurator.configure();
-                Logger.getLogger(Logger.class).error("Configuration file not existent " + configFile.getAbsolutePath());
-            }
-            configured = true;
-        }
+    public static void configure(File configurationFile) {
+        //log4j.configurationFile=path/to/log4j2.xml
+        System.setProperty("log4j.configurationFile", configurationFile.getAbsolutePath());
     }
-
-    public static void setTimeout(int delta) {
-        timeout = delta;
-    }
-
-    // factory methods
 
     public static Logger getLogger() {
         return getLogger("$");
@@ -77,7 +54,8 @@ public class Logger implements jext.logging.ILogger {
     public static Logger getLogger(String name) {
         if (name.contains("/"))
             name = name.replace('.', '_').replace('/', '.');
-        return new Logger(LogManager.getLogger(name));
+        org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(name);
+        return new Logger(log);
     }
 
     public static Logger getLogger(String format, Object... args) {
@@ -97,12 +75,15 @@ public class Logger implements jext.logging.ILogger {
             return getLogger("%s.$", clazz.getCanonicalName(), name);
     }
 
-    // private fields and constructor
+    // public static Logger getLogger(Class<?> clazz) {
+    //     org.apache.logging.log4j.Logger log = org.apache.logging.log4j.LogManager.getLogger(clazz);
+    //     return new Logger(log);
+    // }
 
-    private org.apache.log4j.Logger logger;
+    private final org.apache.logging.log4j.Logger logger;
 
-    private Logger(org.apache.log4j.Logger logger) {
-        this.logger = logger;
+    private Logger(org.apache.logging.log4j.Logger log) {
+        this.logger = log;
     }
 
     // query

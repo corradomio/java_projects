@@ -26,11 +26,9 @@ import com.github.javaparser.resolution.types.ResolvedReferenceType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedTypeVariable;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.util.JPUtils;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /*
         Type

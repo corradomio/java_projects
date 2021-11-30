@@ -8,7 +8,7 @@
         <RollingFile  name="LogFile" fileName="/splserver-3.0.web.log" append="false"
                       filePattern="/spllogs/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} %m%n</Pattern>
+                <Pattern>%d %-5p [%c] %m%n</Pattern>
             </PatternLayout>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>

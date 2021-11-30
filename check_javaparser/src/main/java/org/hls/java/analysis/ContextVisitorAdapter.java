@@ -11,14 +11,16 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
 
     protected BaseVoidVisitorAdapter analyze(CompilationUnit cu, TypeSolver ts) {
-        ContextTypeSolver ctxts = (ContextTypeSolver) ts;
-        ctxts.setCu(cu);
+        return super.analyze(cu, ts);
 
-        SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
-        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
-
-        visit(cu, null);
-
-        return this;
+        // ContextTypeSolver ctxts = (ContextTypeSolver) ts;
+        // ctxts.setCu(cu);
+        //
+        // SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
+        // cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+        //
+        // visit(cu, null);
+        //
+        // return this;
     }
 }

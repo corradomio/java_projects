@@ -120,7 +120,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         this.fpResources = new FilePatterns().addAll(resources);
         this.fpExcludes = new FilePatterns().addAll(excludes);
 
-        this.logger = Logger.getLogger("%s.%s",
+        this.logger = Logger.getLogger("jext.project.%s.%s",
             getClass().getSimpleName(),
             getName().getName());
 

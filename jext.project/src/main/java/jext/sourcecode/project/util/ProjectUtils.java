@@ -121,13 +121,19 @@ public class ProjectUtils {
     // }
 
     public static List<File> getSourceRoots(Project project) {
-        File projectHome = project.getProjectHome();
-        Set<File> roots = new HashSet<>();
-        project.getSources().forEach(source -> {
-            Optional<String> sr = source.getSourceRoot();
-            sr.ifPresent(sourceRoot -> roots.add(new File(projectHome, sourceRoot)));
+        List<File> roots = new ArrayList<>();
+        project.getModules().forEach(module -> {
+            roots.addAll(module.getSourceRootDirectories());
         });
-        return new ArrayList<>(roots);
+        return roots;
+
+        // File projectHome = project.getProjectHome();
+        // Set<File> roots = new HashSet<>();
+        // project.getSources().forEach(source -> {
+        //     Optional<String> sr = source.getSourceRoot();
+        //     sr.ifPresent(sourceRoot -> roots.add(new File(projectHome, sourceRoot)));
+        // });
+        // return new ArrayList<>(roots);
     }
 
     public static Set<File> getLibraryFiles(Project project) {

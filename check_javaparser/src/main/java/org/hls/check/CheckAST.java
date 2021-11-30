@@ -11,6 +11,7 @@ import jext.javaparser.util.UnsolvedSymbols;
 import jext.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
+import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 
@@ -57,10 +58,8 @@ public class CheckAST {
             log.infof("ClassPoolRegistry");
 
             cpr = new ClassPoolRegistry()
-                .addJdk(new File("D:\\Java\\Jdk8.0.x64"));
-            project.getLibraries().forEach(library -> {
-                cpr.addAll(library.getFiles(), library.getName().getFullName());
-            });
+                .addJdk(new File("D:\\Java\\Jdk8.0.x64"))
+                .addAll(ProjectUtils.getLibraryFiles(project));
 
             css = new ContextSolvedSymbols();
             us = new UnsolvedSymbols();

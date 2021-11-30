@@ -1,13 +1,11 @@
 package org.hls.java.analysis;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.analysis.BaseVoidVisitorAdapter;
-import net.openhft.chronicle.core.util.ThrowingBiConsumer;
 
 public class MethodCalls extends ContextVisitorAdapter {
 

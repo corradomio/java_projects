@@ -10,10 +10,10 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -127,6 +127,14 @@ public class ClassPoolRegistry {
     // Operations
     // ----------------------------------------------------------------------
 
+    public ClassPoolRegistry withJdk(File jdk) {
+        return addJdk(jdk);
+    }
+
+    public ClassPoolRegistry withLibraries(Collection<File> libraryFiles) {
+        return addAll(libraryFiles);
+    }
+
     public ClassPoolRegistry addJdk(File jdk) {
         String libraryName = jdk.getName();
         add(new File(jdk, "lib"), libraryName);      // jdk 1 -> 8
@@ -135,9 +143,21 @@ public class ClassPoolRegistry {
         return this;
     }
 
-    public ClassPoolRegistry addAll(List<File> libraryFiles, String libraryName) {
+
+    public ClassPoolRegistry addAll(Collection<File> libraryFiles) {
+        libraryFiles.forEach(this::add);
+        return this;
+    }
+
+
+    public ClassPoolRegistry addAll(Collection<File> libraryFiles, String libraryName) {
         libraryFiles.forEach(libraryFile -> add(libraryFile, libraryName));
         return this;
+    }
+
+    public ClassPoolRegistry add(File libraryFile) {
+        String name = libraryFile.getName();
+        return add(libraryFile, libraryFile.getName());
     }
 
     public ClassPoolRegistry add(File libraryFile, String libraryName) {
@@ -274,6 +294,8 @@ public class ClassPoolRegistry {
         @Override
         public String toNamespace(String entryPath) {
             int pos = entryPath.lastIndexOf('/');
+            if (pos <= CLASSES_SLASH.length())
+                return "";
             String namespace = entryPath.substring(CLASSES_SLASH.length(), pos);
             namespace = namespace.replace('/', '.');
             return namespace;

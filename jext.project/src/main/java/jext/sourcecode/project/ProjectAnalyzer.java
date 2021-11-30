@@ -26,11 +26,6 @@ public class ProjectAnalyzer {
         pinfo.save(jsonFile);
     }
 
-    // public static void analyzeSources(Project project, File jsonFile) throws IOException {
-    //     SourceInfo sinfo = analyzeSources(project);
-    //     sinfo.save(jsonFile);
-    // }
-
     // -----------------------------------------------------------------------
 
     public static ProjectInfo analyzeProject(Project project) {
@@ -44,12 +39,6 @@ public class ProjectAnalyzer {
         ProjectInfo pinfo = analyzer.analyzeProject();
         return pinfo;
     }
-
-    // public static SourceInfo analyzeSources(Project project) {
-    //     ProjectAnalyzer analyzer = new ProjectAnalyzer(project);
-    //     SourceInfo sinfo = analyzer.analyzeSources();
-    //     return sinfo;
-    // }
 
     // ----------------------------------------------------------------------
     // Private Fields

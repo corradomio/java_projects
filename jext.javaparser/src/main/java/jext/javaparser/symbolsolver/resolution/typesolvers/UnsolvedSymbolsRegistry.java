@@ -1,4 +1,4 @@
-package jext.javaparser.util;
+package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import jext.javaparser.resolution.ReferencedTypeDeclaration;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class UnsolvedTypesRegistry implements TypeRegistry {
+public class UnsolvedSymbolsRegistry implements TypeRegistry {
 
     private Map<String, ResolvedReferenceTypeDeclaration> symbols = new TreeMap<>();
     private Set<String> namespaces = new HashSet<>();

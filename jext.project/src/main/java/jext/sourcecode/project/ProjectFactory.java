@@ -15,6 +15,7 @@ import jext.util.Parameters;
 import jext.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 import static jext.sourcecode.project.GuessProjectType.guessProjectType;
@@ -142,4 +143,18 @@ public class ProjectFactory {
     // public static Project newProject(File projectHome, Parameters params) {
     //     return newProject(projectHome.getName(), projectHome, params.toProperties());
     // }
+
+    public static Project newProjectInfo(File projectHome, Properties properties) throws IOException {
+        if (projectHome.isFile())
+            return newProject(projectHome, properties);
+
+        File projectInfoFile = new File(projectHome, "project-info.json");
+        if (projectInfoFile.exists())
+            return newProject(projectInfoFile, properties);
+
+        Project project = newProject(projectHome, properties);
+        ProjectInfo projectInfo = ProjectAnalyzer.analyzeProject(project);
+        projectInfo.save(projectInfoFile);
+        return newProject(projectInfoFile, properties);
+    }
 }

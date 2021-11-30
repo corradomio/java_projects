@@ -213,4 +213,20 @@ public class PropertiesUtils {
         List<String>[] result = new List[]{ names, values};
         return result;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public static Properties properties(String ... args) {
+        Properties properties = new Properties();
+        for(int i=0; i<args.length-1; i+=2)
+            properties.put(args[i+0], args[i+1]);
+        return properties;
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

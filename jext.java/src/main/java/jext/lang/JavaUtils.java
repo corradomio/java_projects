@@ -63,34 +63,32 @@ public class JavaUtils implements JavaConstants {
     private static String SPECIAL_CHARS = "|?<(,:";
 
 
+    // a namespace is composed by lowercase characters and '.'
     public static boolean isNamespace(String symbol) {
-        // a namespace is composed by lowercase characters and '.'
         return NAMESPACE.matcher(symbol).matches();
     }
 
+    // a constant is composed only by uppercase characters
     public static boolean isConstant(String symbol) {
-        // a constant is composed only by uppercase characters
         return CONSTANT.matcher(symbol).matches();
     }
 
+    // in general, an identifier starts with a lowercase letter
     public static boolean isIdentifier(String symbol) {
-        // in general, an identifier starts with a lowercase letter
         return IDENTIFIER.matcher(symbol).matches();
     }
 
+    // in general, a class starts with an uppercase letter or contains "." to be fully qualified
     public static boolean isClassName(String symbol) {
-        // in general, a class starts with an uppercase letter
-        // or it contains "." to fully qualified
-
-        //return symbol.contains(".") || CLASSNAME.matcher(symbol).matches();
         return CLASSNAME.matcher(symbol).matches() || INNER_CLASSNAME.matcher(symbol).matches();
     }
 
+    // in general, a symbol containing a dot is a qualified name
     public static boolean isQualified(String symbol) {
-        // in general, a symbol containing a dot is a qualified name
         return symbol.contains(".");
     }
 
+    // the symbol contains 'strange' characters as "|?<(,:"
     public static boolean isSpecialName(String symbol) {
         for (int i=0; i<SPECIAL_CHARS.length(); ++i)
             if (symbol.indexOf(SPECIAL_CHARS.charAt(i)) != -1)
@@ -101,17 +99,13 @@ public class JavaUtils implements JavaConstants {
     // ----------------------------------------------------------------------
 
     /**
-     * The string is a class. Can be a generics. It strip the generic part.
+     * The string is a class. Can be a generics. It strips the generic part.
      * Sometime, it can be a method call:
      *
      *      [type].method(...)
      *
-     * it strip also the 'method part'
-     *
-     * @param signature
-     * @return
+     * it strips also the 'method part'
      */
-
     public static String toPlainSignature(String signature) {
         int d;
         char ch;
