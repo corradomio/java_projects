@@ -351,56 +351,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             The problem is: WHEN and HOW 'EntityMapping' is resolved?
      */
 
-    // @Override
-    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
-    //     if (n.isArrayType())
-    //         return tryToSolveType(n.asArrayType().getComponentType());
-    //     if (n.isClassOrInterfaceType())
-    //         return solveClassOrInterfaceType(n.asClassOrInterfaceType());
-    //
-    //     if (n.isIntersectionType()) {
-    //         n.asIntersectionType().getElements().forEach(this::tryToSolveType);
-    //         return UNSOLVED;
-    //     }
-    //     if (n.isUnionType()) {
-    //         n.asUnionType().getElements().forEach(this::tryToSolveType);
-    //         return UNSOLVED;
-    //     }
-    //
-    //     return UNSOLVED;
-    // }
-
-    // private SymbolReference<ResolvedReferenceTypeDeclaration> solveClassOrInterfaceType(ClassOrInterfaceType n) {
-    //     Optional<NodeList<Type>> typeArgs = n.getTypeArguments();
-    //     int nTypeParams = 0;
-    //     if (typeArgs.isPresent())
-    //         nTypeParams = typeArgs.get().size();
-    //
-    //     String name = getNameWithScope(n);
-    //
-    //     // Note:
-    //     // 'List<EntityMappings>' is not resolved IF 'EntityMappings' is not resolved.
-    //     // The problem is: WHEN and HOW 'EntityMapping' is resolved?
-    //     SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveType(name);
-    //     if (solved.isSolved())
-    //         return solved;
-    //
-    //     // Force the solution based on the number of parameters
-    //     return tryToSolveType(name, nTypeParams);
-    // }
-
-    // private String getNameWithScope(ClassOrInterfaceType n) {
-    //     String name = n.getNameWithScope();
-    //     if (namedImports.containsKey(name))
-    //         return namedImports.get(name);
-    //     if (namedImportsSet.contains(name))
-    //         return name;
-    //     if (JavaUtils.isQualified(name))
-    //         return name;
-    //     else
-    //         return name;
-    // }
-
     // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------

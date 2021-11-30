@@ -91,15 +91,4 @@ public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
             return 0;
     }
 
-    // @Override
-    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
-    //     ResolvedReferenceTypeDeclaration rrtd = usr.get(name);
-    //     if (rrtd != null && (nTypeParams == 0 || nTypeParams == rrtd.getTypeParameters().size()))
-    //         return SymbolReference.solved(rrtd);
-    //
-    //     usr.register(name, nTypeParams);
-    //     rrtd = usr.get(name);
-    //     return SymbolReference.solved(rrtd);
-    // }
-
 }

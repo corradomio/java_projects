@@ -43,9 +43,9 @@ public class SymbolSolver extends ContextVisitorAdapter  {
             throw e;
         }
         catch (Throwable t) {
-            // System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
-            //     cu.getStorage().get().getPath(),
-            //     n.getTokenRange().get().getBegin().getRange().toString());
+            System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
+                cu.getStorage().get().getPath(),
+                n.getTokenRange().get().getBegin().getRange().toString());
         }
 
         // skip errors in AST

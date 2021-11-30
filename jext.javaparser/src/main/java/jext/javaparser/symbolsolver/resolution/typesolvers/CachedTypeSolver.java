@@ -44,21 +44,10 @@ public class CachedTypeSolver extends BaseTypeSolver {
     // Configuration
     // ----------------------------------------------------------------------
 
-    // public CachedTypeSolver withCache() {
-    //     withCache(this.name);
-    //     return this;
-    // }
-
     public CachedTypeSolver withCache(String cacheName) {
         this.cacheName = cacheName;
         return this;
     }
-
-    // public CachedTypeSolver add(TypeSolver ts) {
-    //     //super.add(ts);
-    //     this.ts = (TypeSolverExt) ts;
-    //     return this;
-    // }
 
     // ----------------------------------------------------------------------
     // Resolve
@@ -90,15 +79,5 @@ public class CachedTypeSolver extends BaseTypeSolver {
         cache.put(name, solved);
         return solved;
     }
-
-    // @Override
-    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeArgs) {
-    //     // the cache can be deleted!
-    //     cache = CacheManager.getCache(this.cacheName);
-    //     cache.remove(name);
-    //
-    //     SymbolReference<ResolvedReferenceTypeDeclaration> solved = cache.get(name, () -> super.tryToSolveType(name, nTypeArgs));
-    //     return solved;
-    // }
 
 }
