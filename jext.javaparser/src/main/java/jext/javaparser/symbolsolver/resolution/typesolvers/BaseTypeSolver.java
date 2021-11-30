@@ -91,11 +91,6 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
         return UNSOLVED;
     }
 
-    // @Override
-    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
-    //     return UNSOLVED;
-    // }
-
     // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------

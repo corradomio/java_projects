@@ -1,5 +1,6 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
@@ -52,6 +53,16 @@ public class CachedTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
     // Resolve
     // ----------------------------------------------------------------------
+
+    @Override
+    public void setCu(CompilationUnit cu) {
+        this.ts.setCu(cu);
+    }
+
+    @Override
+    public boolean isNamespace(String name) {
+        return this.ts.isNamespace(name);
+    }
 
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {

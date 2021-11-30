@@ -48,7 +48,7 @@
 	</logger>
 
 	<logger name="jext.javaparser.symbolsolver.resolution.typesolvers">
-		<level value="warn"/>
+		<level value="info"/>
 	</logger>
 
 	<!-- Root Logger -->
