@@ -19,67 +19,53 @@ public class SymbolSolver extends ContextVisitorAdapter  {
 
     @Override
     public void visit(ClassOrInterfaceType n, Void arg) {
+        super.visitArgs(n, arg);
         visit(n);
         super.visit(n, arg);
     }
 
     private void visit(ClassOrInterfaceType n) {
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved;
         String name = n.getNameWithScope();
 
-        if (tsx().isNamespace(name))
+        // skip errors in AST
+        if (tsx().isNamespace(name) || JPUtils.isTypeParameter(name, n))
             return;
-        if (JPUtils.isTypeParameter(name, n))
-            return;
-
-        int nTypeParams = 0;
-        if (n.getTypeArguments().isPresent()) {
-            nTypeParams = n.getTypeArguments().get().size();
-        }
 
         try {
             ResolvedReferenceType rrt = n.resolve();
             return;
         }
+        catch (UnsolvedSymbolException | UnsupportedOperationException | IllegalArgumentException e) {
+
+        }
         catch (StackOverflowError e) {
-            System.out.println("StackOverflow");
-        }
-        catch (UnsolvedSymbolException e) {
-            // System.err.printf(">>> Unsolved %s/%d\n  %s :: %s\n", n.getNameAsString(), nTypeParams,
-            //     cu.getStorage().get().getPath(),
-            //     n.getTokenRange().get().getBegin().getRange().toString());
-        }
-        catch (java.lang.UnsupportedOperationException e) {
-            // System.err.printf(">>> Unsolved %s/%d\n  %s :: %s\n", n.getNameAsString(), nTypeParams,
-            //     cu.getStorage().get().getPath(),
-            //     n.getTokenRange().get().getBegin().getRange().toString());
+            throw e;
         }
         catch (Throwable t) {
-            System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
-                cu.getStorage().get().getPath(),
-                n.getTokenRange().get().getBegin().getRange().toString());
+            // System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
+            //     cu.getStorage().get().getPath(),
+            //     n.getTokenRange().get().getBegin().getRange().toString());
         }
 
-        if (JavaUtils.isIdentifier(name))
-            return;
-        if (JPUtils.isMethodReferenceExpr(n))
+        // skip errors in AST
+        if (JPUtils.isMethodReferenceExpr(n) || JavaUtils.isIdentifier(name))
             return;
 
         try {
-            SymbolReference<ResolvedReferenceTypeDeclaration>
-            solved = tsx().tryToSolveType(name);
+            solved = tsx().tryToSolveType(n);
             if (!solved.isSolved()) {
+                int nTypeParams = 0;
+                if (n.getTypeArguments().isPresent()) {
+                    nTypeParams = n.getTypeArguments().get().size();
+                }
                 System.err.printf("Unsolved %s/%d\n  %s :: %s\n", n.getNameAsString(), nTypeParams,
                     cu.getStorage().get().getPath(),
                     n.getTokenRange().get().getBegin().getRange().toString());
             }
         }
         catch (StackOverflowError e) {
-            System.out.println("StackOverflow");
-        }
-        catch (UnsolvedSymbolException e) {
-            System.err.printf(">>> Unsolved %s/%d\n  %s :: %s\n", n.getNameAsString(), nTypeParams,
-                cu.getStorage().get().getPath(),
-                n.getTokenRange().get().getBegin().getRange().toString());
+            throw e;
         }
         catch (Throwable t) {
             System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),

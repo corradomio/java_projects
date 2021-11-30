@@ -1,5 +1,7 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
@@ -14,8 +16,7 @@ public class CompositeTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
 
     protected List<TypeSolver> elements = new ArrayList<>();
-    private List<TypeSolverExt> elementsExt = new ArrayList<>();
-
+    protected List<TypeSolverExt> elementsExt = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -24,7 +25,6 @@ public class CompositeTypeSolver extends BaseTypeSolver {
     public CompositeTypeSolver() {
         this(DEFAULT);
     }
-
 
     public CompositeTypeSolver(String name) {
         super(name);
@@ -60,6 +60,12 @@ public class CompositeTypeSolver extends BaseTypeSolver {
         return false;
     }
 
+    @Override
+    public void setCu(CompilationUnit cu) {
+        for (TypeSolverExt tsx : elementsExt)
+            tsx.setCu(cu);
+    }
+
     // ----------------------------------------------------------------------
     // Resolve
     // ----------------------------------------------------------------------
@@ -70,6 +76,28 @@ public class CompositeTypeSolver extends BaseTypeSolver {
 
         for (TypeSolver typeSolver : elements) {
             solved = typeSolver.tryToSolveType(name);
+            if (solved.isSolved())
+                return solved;
+        }
+        return UNSOLVED;
+    }
+
+    // @Override
+    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
+    //     for (TypeSolverExt tsx : elementsExt) {
+    //         SymbolReference<ResolvedReferenceTypeDeclaration>
+    //             solved = tsx.tryToSolveType(name, nTypeParams);
+    //         if (solved.isSolved())
+    //             return solved;
+    //     }
+    //     return UNSOLVED;
+    // }
+
+    @Override
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
+        for (TypeSolverExt tsx : elementsExt) {
+            SymbolReference<ResolvedReferenceTypeDeclaration>
+                solved = tsx.tryToSolveType(n);
             if (solved.isSolved())
                 return solved;
         }

@@ -47,6 +47,10 @@
 		<level value="info"/>
 	</logger>
 
+	<logger name="jext.javaparser.symbolsolver.resolution.typesolvers">
+		<level value="warn"/>
+	</logger>
+
 	<!-- Root Logger -->
 	<root>
 		<priority value="DEBUG" />

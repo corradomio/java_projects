@@ -1,5 +1,7 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
@@ -63,36 +65,6 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
     }
 
     // ----------------------------------------------------------------------
-    // Resolve
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // public ResolvedType resolve(Type type) {
-    //     return type.resolve();
-    // }
-    //
-    // @Override
-    // public ResolvedType resolve(NameExpr n) {
-    //     ResolvedValueDeclaration rvd = n.resolve();
-    //     return rvd.getType();
-    // }
-    //
-    // @Override
-    // public ResolvedMethodDeclaration resolve(MethodReferenceExpr n) {
-    //     return n.resolve();
-    // }
-    //
-    // @Override
-    // public ResolvedConstructorDeclaration resolve(ObjectCreationExpr n) {
-    //     return n.resolve();
-    // }
-    //
-    // @Override
-    // public ResolvedMethodDeclaration resolve(MethodCallExpr n) {
-    //     return n.resolve();
-    // }
-
-    // ----------------------------------------------------------------------
     // Extended operations
     // ----------------------------------------------------------------------
 
@@ -105,8 +77,27 @@ public abstract class BaseTypeSolver implements TypeSolverExt {
     // ----------------------------------------------------------------------
 
     @Override
+    public void setCu(CompilationUnit cu) {
+
+    }
+
+    @Override
     public boolean isNamespace(String name) {
         return false;
     }
+
+    @Override
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
+        return UNSOLVED;
+    }
+
+    // @Override
+    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
+    //     return UNSOLVED;
+    // }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

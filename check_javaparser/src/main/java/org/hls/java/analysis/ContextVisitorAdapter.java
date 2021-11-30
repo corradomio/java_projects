@@ -7,20 +7,13 @@ import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.analysis.BaseVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
 
 public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
 
     protected BaseVoidVisitorAdapter analyze(CompilationUnit cu, TypeSolver ts) {
+        if (ts instanceof TypeSolverExt)
+            ((TypeSolverExt) ts).setCu(cu);
         return super.analyze(cu, ts);
-
-        // ContextTypeSolver ctxts = (ContextTypeSolver) ts;
-        // ctxts.setCu(cu);
-        //
-        // SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
-        // cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
-        //
-        // visit(cu, null);
-        //
-        // return this;
     }
 }

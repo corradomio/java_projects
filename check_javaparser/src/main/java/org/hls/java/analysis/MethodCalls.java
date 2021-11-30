@@ -27,8 +27,6 @@ public class MethodCalls extends ContextVisitorAdapter {
 
     @Override
     public void visit(NameExpr n, Void arg) {
-        if (n.toString().contains("resolveClassLoadingStrategy"))
-            System.out.println("ok");
         super.visit(n, arg);
     }
 
@@ -39,10 +37,6 @@ public class MethodCalls extends ContextVisitorAdapter {
     }
 
     private void resolve(MethodCallExpr n) {
-        String call = n.toString();
-        if (call.contains("resolveClassLoadingStrategy"))
-            System.out.println("ok");
-
         try {
             ResolvedMethodDeclaration rmd = n.resolve();
             System.out.println(rmd.toString());

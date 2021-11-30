@@ -95,25 +95,16 @@ public class JPUtils {
     //
     // ----------------------------------------------------------------------
 
-    public static Optional<CompilationUnit> findCompilationUnit(Node n) {
+    public static CompilationUnit getCompilationUnit(Node n) {
         Optional<Node> optNode = n.getParentNode();
         while (optNode.isPresent()) {
             Node node = optNode.get();
             Class<?> declClass = node.getClass();
             if (declClass.equals(CompilationUnit.class))
-                return Optional.of((CompilationUnit) node);
-            if (declClass.equals(ClassOrInterfaceDeclaration.class))
-                return Optional.empty();
-            if (declClass.equals(LocalClassDeclarationStmt.class))
-                return Optional.empty();
-            if (declClass.equals(ObjectCreationExpr.class))
-                return Optional.empty();
-            if (declClass.equals(EnumDeclaration.class))
-                return Optional.empty();
-
+                return (CompilationUnit) node;
             optNode = node.getParentNode();
         }
-        return Optional.empty();
+        throw new RuntimeException("Unable to find the CompilationUnit node");
     }
 
     public static Optional<Node> findParentDeclaration(Node n) {

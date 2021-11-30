@@ -3,12 +3,14 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserClassDeclaration;
@@ -24,9 +26,11 @@ import jext.lang.JavaUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Stack;
 
 public class ContextTypeSolver extends CompositeTypeSolver {
@@ -39,6 +43,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
     private CompilationUnit cu;
     private final Map<String, String> namedImports = new HashMap<>();
+    private final Set<String> namedImportsSet = new HashSet<>();
     private final List<String> starImports = new ArrayList<>();
     private String namespace;
     private File file;
@@ -59,7 +64,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // Configuration
     // ----------------------------------------------------------------------
 
-    public ContextTypeSolver setCu(CompilationUnit cu) {
+    public void setCu(CompilationUnit cu) {
         this.cu = cu;
         this.namespace = "";
 
@@ -67,8 +72,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         cu.findAll(ImportDeclaration.class).forEach(this::addImport);
         cu.getStorage().ifPresent(storage -> file = storage.getPath().toFile());
         addDefaultImports();
-
-        return this;
     }
 
     private void setPackage(PackageDeclaration n) {
@@ -80,6 +83,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         if (n.isStatic()) {
             qualifiedName = JavaUtils.namespaceOf(qualifiedName);
             this.namedImports.put(JavaUtils.nameOf(qualifiedName), qualifiedName);
+            this.namedImportsSet.add(qualifiedName);
         }
         else if (n.isAsterisk()) {
             // '*' already stripped
@@ -87,6 +91,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         }
         else {
             this.namedImports.put(JavaUtils.nameOf(qualifiedName), qualifiedName);
+            this.namedImportsSet.add(qualifiedName);
         }
     }
 
@@ -202,7 +207,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // tryToSolveType
+    // tryToSolveType(String name)
     // ----------------------------------------------------------------------
 
     /**
@@ -244,13 +249,8 @@ public class ContextTypeSolver extends CompositeTypeSolver {
         return solved;
     }
 
-    // ----------------------------------------------------------------------
-    // Implementation
-    // ----------------------------------------------------------------------
-
     // Default implementation using the registered typeSolvers
-    private SymbolReference<ResolvedReferenceTypeDeclaration>
-    tryToSolveUsingSolvers(String name) {
+    private SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveUsingSolvers(String name) {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         // 2) check using the registered solvers
@@ -264,13 +264,14 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // Resolution using the current context
-    private SymbolReference<ResolvedReferenceTypeDeclaration>
-    tryToSolveUsingContext(String name, Node context) {
+    private SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveUsingContext(String name, Node context) {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
         // 1) try to solve using the full imports
         if (namedImports.containsKey(name))
             return tryToSolveUsingSolvers(namedImports.get(name));
+        if (namedImportsSet.contains(name))
+            return tryToSolveUsingSolvers(name);
 
         // 2) try to resolve using startImports (it contains also the current package
         //    AND "java.lang")
@@ -294,7 +295,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // Context stack
-    public static Stack<String> getContextStack(Node n) {
+    private static Stack<String> getContextStack(Node n) {
         Stack<String> context = new Stack<>();
 
         if (n == null)
@@ -314,26 +315,91 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // safeSolve
+    // tryToSolveType(Type n)
     // ----------------------------------------------------------------------
 
-    public void safeSolveType(String qualifiedType, TypeRegistry registry) {
-        SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveType(qualifiedType);
-        if (!solved.isSolved())
-            registry.put(qualifiedType, 0);
+    @Override
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved;
+
+        for (TypeSolver ts : getElements())
+            if (ts instanceof TypeSolverExt) {
+                solved = ((TypeSolverExt)ts).tryToSolveType(n);
+                if (solved.isSolved())
+                    return solved;
+            }
+
+        return UNSOLVED;
     }
 
-    public void safeSolveType(String name, int nTypeParameters, TypeRegistry registry) {
-        SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveType(name);
-        if (!solved.isSolved()) {
-            registry.put(name, nTypeParameters);
-        }
-        else {
-            String qualifiedType = solved.getCorrespondingDeclaration().getQualifiedName();
-            if (solved.getCorrespondingDeclaration().getTypeParameters().size() != nTypeParameters)
-                registry.put(qualifiedType, nTypeParameters);
-        }
-    }
+    /*
+        Type
+            IntersectionType
+            PrimitiveType
+            ReferenceType
+                ArrayType
+                ClassOrInterfaceType
+                TypeParameter
+            UnionType
+            UnknownType
+            VarType
+            VoidType
+            WildcardType
+
+        Note:
+            'List<EntityMappings>' is not resolved IF 'EntityMappings' is not resolved.
+            The problem is: WHEN and HOW 'EntityMapping' is resolved?
+     */
+
+    // @Override
+    // public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
+    //     if (n.isArrayType())
+    //         return tryToSolveType(n.asArrayType().getComponentType());
+    //     if (n.isClassOrInterfaceType())
+    //         return solveClassOrInterfaceType(n.asClassOrInterfaceType());
+    //
+    //     if (n.isIntersectionType()) {
+    //         n.asIntersectionType().getElements().forEach(this::tryToSolveType);
+    //         return UNSOLVED;
+    //     }
+    //     if (n.isUnionType()) {
+    //         n.asUnionType().getElements().forEach(this::tryToSolveType);
+    //         return UNSOLVED;
+    //     }
+    //
+    //     return UNSOLVED;
+    // }
+
+    // private SymbolReference<ResolvedReferenceTypeDeclaration> solveClassOrInterfaceType(ClassOrInterfaceType n) {
+    //     Optional<NodeList<Type>> typeArgs = n.getTypeArguments();
+    //     int nTypeParams = 0;
+    //     if (typeArgs.isPresent())
+    //         nTypeParams = typeArgs.get().size();
+    //
+    //     String name = getNameWithScope(n);
+    //
+    //     // Note:
+    //     // 'List<EntityMappings>' is not resolved IF 'EntityMappings' is not resolved.
+    //     // The problem is: WHEN and HOW 'EntityMapping' is resolved?
+    //     SymbolReference<ResolvedReferenceTypeDeclaration> solved = tryToSolveType(name);
+    //     if (solved.isSolved())
+    //         return solved;
+    //
+    //     // Force the solution based on the number of parameters
+    //     return tryToSolveType(name, nTypeParams);
+    // }
+
+    // private String getNameWithScope(ClassOrInterfaceType n) {
+    //     String name = n.getNameWithScope();
+    //     if (namedImports.containsKey(name))
+    //         return namedImports.get(name);
+    //     if (namedImportsSet.contains(name))
+    //         return name;
+    //     if (JavaUtils.isQualified(name))
+    //         return name;
+    //     else
+    //         return name;
+    // }
 
     // ----------------------------------------------------------------------
     // End

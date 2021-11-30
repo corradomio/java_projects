@@ -11,6 +11,7 @@ import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 
 import java.io.File;
@@ -33,13 +34,15 @@ public class ContextVisitorAdapter extends BaseVoidVisitorAdapter {
     // analyze
     // ----------------------------------------------------------------------
 
-    public void analyze(CompilationUnit cu, ContextTypeSolver ts) {
+    public BaseVoidVisitorAdapter analyze(CompilationUnit cu, TypeSolver ts) {
         cu.getStorage().ifPresent(storage ->
             source = storage.getPath().toFile());
 
-        this.ctx = ts;
-        this.ctx.setCu(cu);
-        super.analyze(cu, ts);
+        if (ts instanceof ContextTypeSolver) {
+            this.ctx = (ContextTypeSolver) ts;
+            this.ctx.setCu(cu);
+        }
+        return super.analyze(cu, ts);
     }
 
     // ----------------------------------------------------------------------

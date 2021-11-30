@@ -250,7 +250,6 @@ public class InfoProject implements Project {
     public Set<Library> getLibraries(Module module) {
         LibrarySet libraries = getLibraries();
         return libraries.resolveAll(module.getDeclaredLibraries());
-        // return module.getLibraries();
     }
 
     private Library composeLibrary(Map<String, Object> linfo) {
@@ -267,35 +266,6 @@ public class InfoProject implements Project {
 
     @Override
     public Library getLibrary(String nameOrId) {
-        // if (libraryMap == null) {
-        //     libraryMap = new java.util.TreeMap<>();
-        //     getLibraries().forEach(l -> {
-        //         libraryMap.put(l.getId(), l);
-        //         libraryMap.put(l.getName().getFullName(), l);
-        //         libraryMap.put(l.getName().getName(), l);
-        //     });
-        // }
-        //
-        // if (libraryMap.containsKey(nameOrId))
-        //     return libraryMap.get(nameOrId);
-
-        // check for Maven libraries
-        // if (nameOrId.contains(":")) {
-        //     int pos = nameOrId.lastIndexOf(":");
-        //     nameOrId = nameOrId.substring(0, pos);
-        // }
-
-        // if (libraryMap.containsKey(nameOrId))
-        //     return libraryMap.get(nameOrId);
-
-        // Set<Library> libraries = getLibraries();
-        // for (Library library : libraries) {
-        //     if (library.getName().getFullName().equals(nameOrId))
-        //         return library;
-        //     if (library.getId().equals(nameOrId))
-        //         return library;
-        // }
-
         LibrarySet libraries = getLibraries();
         return libraries.get(nameOrId);
     }

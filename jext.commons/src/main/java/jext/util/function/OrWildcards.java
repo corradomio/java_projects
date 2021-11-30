@@ -1,7 +1,5 @@
 package jext.util.function;
 
-import jext.debug.Debug;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

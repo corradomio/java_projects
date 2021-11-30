@@ -91,6 +91,7 @@ import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.IntersectionType;
 import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.ast.type.UnionType;
 import com.github.javaparser.ast.type.UnknownType;
@@ -102,6 +103,7 @@ import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.TypeSolverExt;
 import jext.javaparser.util.JPUtils;
 import jext.logging.Logger;
 
@@ -153,8 +155,8 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
         JPUtils.removeTypeSolver(ts);
     }
 
-    protected ContextTypeSolver tsx() {
-        return (ContextTypeSolver) ts;
+    protected TypeSolverExt tsx() {
+        return (TypeSolverExt) ts;
     }
 
     // ----------------------------------------------------------------------
@@ -249,6 +251,37 @@ public class BaseVoidVisitorAdapter extends VoidVisitorAdapter<Void> {
     @Override
     public void visit(ClassOrInterfaceType n, Void arg) {
         super.visit(n, arg);
+    }
+
+    protected void visitArgs(ClassOrInterfaceType n, Void arg) {
+        if (!n.getTypeArguments().isPresent())
+            return;
+
+        NodeList<Type> typeArgs = n.getTypeArguments().get();
+        typeArgs.forEach(targ -> {
+            if (targ.isIntersectionType())
+                visit(targ.asIntersectionType(), arg);
+            else if (targ.isPrimitiveType())
+                visit(targ.asPrimitiveType(), arg);
+            else if (targ.isArrayType())
+                visit(targ.asArrayType(), arg);
+            else if (targ.isClassOrInterfaceType())
+                visit(targ.asClassOrInterfaceType(), arg);
+            else if (targ.isTypeParameter())
+                visit(targ.asTypeParameter(), arg);
+            else if (targ.isUnionType())
+                visit(targ.asUnionType(), arg);
+            else if (targ.isUnknownType())
+                visit(targ.asUnknownType(), arg);
+            else if (targ.isVarType())
+                visit(targ.asVarType(), arg);
+            else if (targ.isVoidType())
+                visit(targ.asVoidType(), arg);
+            else if (targ.isWildcardType())
+                visit(targ.asWildcardType(), arg);
+            else
+                ;
+        });
     }
 
     @Override

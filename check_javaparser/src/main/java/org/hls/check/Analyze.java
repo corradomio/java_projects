@@ -94,10 +94,12 @@ public class Analyze {
     private static void solve(File source) {
         System.out.printf("== %s ==\n", source.getName());
 
-        CompositeTypeSolver ts = new CachedTypeSolver();
+        CompositeTypeSolver ts = new CompositeTypeSolver();
         ts.add(new ClassPoolRegistryTypeSolver(cpr));
         ts.add(new JavaParserPoolTypeSolver(pool));
         ts.add(new ContextSolvedSymbolsTypeSolver(css, us));
+
+        CachedTypeSolver cts = new CachedTypeSolver(ts);
 
         ParseResult<CompilationUnit> result = pool.parse(source);
         result.ifSuccessful(cu -> {

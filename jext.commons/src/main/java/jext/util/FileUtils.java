@@ -205,8 +205,6 @@ public class FileUtils {
 
     private static String normalize(String p) {
         p = p.replace('\\', '/');
-        // while (p.contains("//"))
-        //     p = p.replace("//", "/");
         return p;
     }
 

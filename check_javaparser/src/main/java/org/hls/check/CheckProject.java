@@ -4,6 +4,7 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
+import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
@@ -17,6 +18,7 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
+import jext.util.concurrent.Serial;
 import org.hls.java.analysis.SymbolSolver;
 
 import java.io.File;
@@ -44,7 +46,7 @@ public class CheckProject {
             new File(
                 "D:\\Projects.github\\other_projects\\hibernate-orm"
             ), PropertiesUtils.properties(
-                "module.exclude", "target,out,.*,test"
+                "module.exclude", "target,out,.*,test,asciidoc"
             ));
 
         log.infof("JavaParserPool");
@@ -88,6 +90,8 @@ public class CheckProject {
         ts.add(new ClassPoolRegistryTypeSolver(cpr));
         ts.add(new UnsolvedSymbolsRegistryTypeSolver(usr));
 
-        sym.analyze(cu, ts);
+        CachedTypeSolver cts = new CachedTypeSolver(ts);
+
+        sym.analyze(cu, cts);
     }
 }
