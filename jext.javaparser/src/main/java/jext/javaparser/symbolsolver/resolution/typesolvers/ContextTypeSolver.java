@@ -322,6 +322,13 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
+        if (n instanceof ClassOrInterfaceType) {
+            String name = ((ClassOrInterfaceType) n).getNameAsString();
+            solved = tryToSolveUsingContext(name, n);
+            if (solved.isSolved())
+                return solved;
+        }
+
         for (TypeSolver ts : getElements())
             if (ts instanceof TypeSolverExt) {
                 solved = ((TypeSolverExt)ts).tryToSolveType(n);
