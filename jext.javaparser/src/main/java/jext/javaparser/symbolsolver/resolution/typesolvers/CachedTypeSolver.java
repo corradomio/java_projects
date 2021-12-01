@@ -51,7 +51,7 @@ public class CachedTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // Resolve
+    // tryToSolveType
     // ----------------------------------------------------------------------
 
     @Override
@@ -90,5 +90,9 @@ public class CachedTypeSolver extends BaseTypeSolver {
         cache.put(name, solved);
         return solved;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

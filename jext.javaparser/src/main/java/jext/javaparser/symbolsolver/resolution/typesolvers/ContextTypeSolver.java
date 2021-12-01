@@ -3,7 +3,6 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -111,10 +110,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // resolve type
     // ----------------------------------------------------------------------
 
-    public  Optional<ResolvedType> resolve(ClassOrInterfaceType n) {
-        String name = n.getNameAsString();
-        return resolve(name, n);
-    }
+    // public  Optional<ResolvedType> resolve(ClassOrInterfaceType n) {
+    //     String name = n.getNameAsString();
+    //     return resolve(name, n);
+    // }
 
     public  Optional<ResolvedType> resolve(NameExpr n) {
         String name = n.getNameAsString();
@@ -318,6 +317,25 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // tryToSolveType(Type n)
     // ----------------------------------------------------------------------
 
+    /*
+        Type
+            IntersectionType
+            PrimitiveType
+            ReferenceType
+                ArrayType
+                ClassOrInterfaceType
+                TypeParameter
+            UnionType
+            UnknownType
+            VarType
+            VoidType
+            WildcardType
+
+        Note:
+            'List<EntityMappings>' is not resolved IF 'EntityMappings' is not resolved.
+            The problem is: WHEN and HOW 'EntityMapping' is resolved?
+     */
+
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
@@ -338,25 +356,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
 
         return UNSOLVED;
     }
-
-    /*
-        Type
-            IntersectionType
-            PrimitiveType
-            ReferenceType
-                ArrayType
-                ClassOrInterfaceType
-                TypeParameter
-            UnionType
-            UnknownType
-            VarType
-            VoidType
-            WildcardType
-
-        Note:
-            'List<EntityMappings>' is not resolved IF 'EntityMappings' is not resolved.
-            The problem is: WHEN and HOW 'EntityMapping' is resolved?
-     */
 
     // ----------------------------------------------------------------------
     // End
