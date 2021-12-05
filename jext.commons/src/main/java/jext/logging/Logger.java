@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Logger implements jext.logging.ILogger {
+public class Logger {
 
     private static boolean configured = false;
     private static int timeout = 3000;

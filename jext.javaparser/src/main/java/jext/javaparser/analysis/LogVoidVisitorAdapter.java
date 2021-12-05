@@ -19,7 +19,6 @@ public class LogVoidVisitorAdapter<A> extends VoidVisitorWithDefaults<A> {
 
     protected Logger logger = Logger.getLogger(getClass());
 
-    protected CompilationUnit cu;
     protected String fileName;
     protected Set<Class<?>> exclude = new HashSet<>();
     protected Set<Class<?>> include = new HashSet<>();
@@ -47,10 +46,8 @@ public class LogVoidVisitorAdapter<A> extends VoidVisitorWithDefaults<A> {
     // ----------------------------------------------------------------------
 
     public LogVoidVisitorAdapter analyze(CompilationUnit cu) {
-        this.cu = cu;
-        this.fileName = "";
-
-        visit(cu, null);
+        this.fileName = cu.getStorage().get().getFileName();
+        super.analyze(cu);
         return this;
     }
 

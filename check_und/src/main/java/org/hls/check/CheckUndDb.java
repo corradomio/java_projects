@@ -30,7 +30,7 @@ public class CheckUndDb {
         udb.create();
 
         Project project = Projects.newProject(hibernateProject, PropertiesUtils.empty());
-        List<File> sources = ProjectUtils.getSourceFiles(project);
+        List<File> sources  = ProjectUtils.getSourceFiles(project);
         Set<File> libraries = ProjectUtils.getLibraryFiles(project);
 
         udb.addSources(sources);

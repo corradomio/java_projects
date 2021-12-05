@@ -90,14 +90,6 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
-    public List<File> getSourceRootDirectories() {
-        File moduleHome = getModuleHome();
-        return getSourceRoots().stream()
-            .map(sourceRoot -> new File(moduleHome, sourceRoot))
-            .collect(Collectors.toList());
-    }
-
-    @Override
     public List<Module> getDependencies() {
         List<String> mdepends = MapUtils.get(info, "dependencies");
         return mdepends.stream()
@@ -122,8 +114,23 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
+    public List<File> getSourceFiles() {
+        return getSources().stream()
+            .map(Resource::getFile)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Set<String> getSourceRoots() {
         return new HashSet<>(MapUtils.get(info, "sourceRoots"));
+    }
+
+    @Override
+    public List<File> getSourceRootDirectories() {
+        File moduleHome = getModuleHome();
+        return getSourceRoots().stream()
+            .map(sourceRoot -> new File(moduleHome, sourceRoot))
+            .collect(Collectors.toList());
     }
 
     @Override

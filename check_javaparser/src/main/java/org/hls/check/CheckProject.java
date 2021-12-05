@@ -9,6 +9,8 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.JavaRuntimeTypeSolver;
+import jext.javaparser.symbolsolver.resolution.typesolvers.LibrariesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.UnsolvedSymbolsRegistry;
 import jext.javaparser.symbolsolver.resolution.typesolvers.UnsolvedSymbolsRegistryTypeSolver;
 import jext.logging.v1.Logger;
@@ -30,8 +32,10 @@ public class CheckProject {
 
     static Logger log = Logger.getLogger("CheckProject");
     static Project project;
+
     static JavaParserPool pool;
-    static ClassPoolRegistry cpr;
+    static ClassPoolRegistry cprlib;
+    static ClassPoolRegistry cpjdk;
     static UnsolvedSymbolsRegistry usr;
     static AtomicInteger count = new AtomicInteger();
 
@@ -53,10 +57,13 @@ public class CheckProject {
         pool = JavaParserPool.getPool()
             .withSourceRoots(ProjectUtils.getSourceRoots(project));
 
-        log.infof("ClassPoolRegistry");
-        cpr = new ClassPoolRegistry()
-            .withJdk(new File("D:\\Java\\Jdk11.0"))
+        log.infof("ClassPoolRegistry/libraries");
+        cprlib = new ClassPoolRegistry()
             .withLibraries(ProjectUtils.getLibraryFiles(project));
+
+        log.infof("ClassPoolRegistry/JDK");
+        cpjdk = new ClassPoolRegistry()
+            .withJdk(new File("D:\\Java\\Jdk11.0"));
 
         usr = new UnsolvedSymbolsRegistry();
 
@@ -87,7 +94,8 @@ public class CheckProject {
         SymbolSolver sym = new SymbolSolver();
         ContextTypeSolver ts = new ContextTypeSolver();
         ts.add(new JavaParserPoolTypeSolver(pool));
-        ts.add(new ClassPoolRegistryTypeSolver(cpr));
+        ts.add(new LibrariesTypeSolver(cprlib));
+        ts.add(new JavaRuntimeTypeSolver(cpjdk));
         ts.add(new UnsolvedSymbolsRegistryTypeSolver(usr));
 
         CachedTypeSolver cts = new CachedTypeSolver(ts);

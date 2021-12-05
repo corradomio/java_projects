@@ -100,8 +100,8 @@ public interface JavaConstants {
         "java.lang.AutoCloseable",
         "java.lang.CharSequence",
         "java.lang.Cloneable",
-        "java.lang.Comparable",
-        "java.lang.Iterable",
+        // "java.lang.Comparable",     // 1
+        // "java.lang.Iterable",       // 1
         "java.lang.Readable",
         "java.lang.Runnable",
         // "java.lang.Thread.UncaughtExceptionHandler",
@@ -114,7 +114,7 @@ public interface JavaConstants {
         "java.lang.Character",
         // "java.lang.Character.Subset",
         // "java.lang.Character.UnicodeBlock",
-        "java.lang.Class",
+        // "java.lang.Class",          // 1
         "java.lang.ClassLoader",
         "java.lang.ClassValue",
         "java.lang.Compiler",
@@ -143,7 +143,7 @@ public interface JavaConstants {
         "java.lang.System",
         "java.lang.Thread",
         "java.lang.ThreadGroup",
-        "java.lang.ThreadLocal",
+        // "java.lang.ThreadLocal",        // 1
         "java.lang.Throwable",
         "java.lang.Void",
 
@@ -217,6 +217,21 @@ public interface JavaConstants {
         "java.lang.Override",
         "java.lang.SafeVarargs",
         "java.lang.SuppressWarnings"
+    };
+
+    String[] JAVA_LANG_GENERICS_ONE = {
+        //
+        // Interfaces
+        //
+        "java.lang.Comparable",     // Comparable<T>
+        "java.lang.Iterable",       // Iterable<T>
+
+        //
+        // Classes
+        //
+        "java.lang.Class",          // Class<T>
+        "java.lang.ThreadLocal",    // ThreadLocal<T>
+
     };
 
 }

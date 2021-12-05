@@ -18,7 +18,7 @@
         <module>../jext.commons</module>
         <module>../jext.collections</module>
         <module>../jext.concurrent</module>
-        <module>../jext.und</module>
+        <module>../jext.scitools</module>
         <module>../jext.project</module>
         <module>../jext.java</module>
         <module>../jext.cache</module>
@@ -28,7 +28,7 @@
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.und</artifactId>
+            <artifactId>jext.scitools</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

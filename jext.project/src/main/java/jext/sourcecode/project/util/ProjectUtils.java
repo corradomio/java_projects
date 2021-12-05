@@ -48,6 +48,14 @@ public class ProjectUtils {
         return sources;
     }
 
+    public static List<File> getSourceFiles(Project project) {
+        List<File> sourceFiles = new ArrayList<>();
+        project.getModules().forEach(module -> {
+            sourceFiles.addAll(module.getSourceFiles());
+        });
+        return sourceFiles;
+    }
+
     public static List<Source> getSources(Project project, List<ModuleSource> moduleSources) {
         List<Source> sources = new ArrayList<>();
 

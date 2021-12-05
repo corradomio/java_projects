@@ -50,22 +50,28 @@ public class JPUtils {
     // private static final Class<?> OBJECT_CREATION_EXPR = ObjectCreationExpr.class;
     // private static final Class<?> CLASS_OR_INTERFACE = ObjectCreationExpr.class;
 
-    public static void setSymbolSolver(CompilationUnit cu, TypeSolver ts) {
-        SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
-        cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
-    }
+    // public static void setSymbolSolver(CompilationUnit cu, TypeSolver ts) {
+    //     SymbolResolver symbolResolver = new JavaSymbolSolver(ts);
+    //     cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
+    // }
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
-    public static ResolvedType getDeclaringType(ResolvedMethodDeclaration rdecl) {
-        String packageName = rdecl.getPackageName();
-        String className = rdecl.getClassName();
+    // public static ResolvedType getDeclaringType(ResolvedMethodDeclaration rdecl) {
+    //     String packageName = rdecl.getPackageName();
+    //     String className = rdecl.getClassName();
+    //
+    //     return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
+    // }
 
-        return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
+    public static int getTypeArgumentsCount(ClassOrInterfaceType n) {
+        if (!n.getTypeArguments().isPresent())
+            return 0;
+        else
+            return n.getTypeArguments().get().size();
     }
-
 
     // ----------------------------------------------------------------------
     //
@@ -436,4 +442,9 @@ public class JPUtils {
         }
         return sb.toString();
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

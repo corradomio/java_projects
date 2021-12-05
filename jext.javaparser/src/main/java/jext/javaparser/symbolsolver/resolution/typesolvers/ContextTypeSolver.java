@@ -316,6 +316,24 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // ----------------------------------------------------------------------
     // tryToSolveType(Type n)
     // ----------------------------------------------------------------------
+    /*
+        Type
+            IntersectionType
+            PrimitiveType
+            ReferenceType
+                ArrayType
+                ClassOrInterfaceType
+                TypeParameter
+            UnionType
+            UnknownType
+            VarType
+            VoidType
+            WildcardType
+
+        Note:
+            'List<EntityMappings>' is not resolved IF 'EntityMappings' is not resolved.
+            The problem is: WHEN and HOW 'EntityMapping' is resolved?
+     */
 
     /*
         Type

@@ -56,8 +56,6 @@ public class CheckMethodCalls {
         ts.add(new JavaParserPoolTypeSolver(JavaParserPool.getPool()));
         ts.add(new ClassPoolRegistryTypeSolver(cpr));
 
-        JPUtils.setSymbolSolver(cu, ts);
-
         LogVoidVisitorAdapter<Void> lva = new LogVoidVisitorAdapter<Void>()
             .include(MethodCallExpr.class, ObjectCreationExpr.class);
         lva.analyze(cu);

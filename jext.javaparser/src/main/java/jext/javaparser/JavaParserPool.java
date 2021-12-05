@@ -40,7 +40,7 @@ import static com.github.javaparser.ParserConfiguration.LanguageLevel.BLEEDING_E
 public class JavaParserPool {
 
     // ----------------------------------------------------------------------
-    // Pool
+    // Parser Pool
     // ----------------------------------------------------------------------
 
     private static JavaParserPool pool = new JavaParserPool();
@@ -51,6 +51,10 @@ public class JavaParserPool {
 
     public static JavaParserPool newPool(String name) {
         return new JavaParserPool(name);
+    }
+
+    public static void removePools(String poolPrefix) {
+
     }
 
     // ----------------------------------------------------------------------
@@ -79,11 +83,11 @@ public class JavaParserPool {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public JavaParserPool() {
+    private JavaParserPool() {
         this(DEFAULT /*, new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE), CACHE_SIZE_UNSET */);
     }
 
-    public JavaParserPool(String name /*, ParserConfiguration parserConfiguration, long cacheSizeLimit*/) {
+    private JavaParserPool(String name /*, ParserConfiguration parserConfiguration, long cacheSizeLimit*/) {
         this.name = name;
         this.cachePrefix = name;
         this.pathRoots = new HashSet<>();

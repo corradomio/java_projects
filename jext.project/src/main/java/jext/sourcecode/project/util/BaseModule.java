@@ -237,6 +237,13 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     }
 
     @Override
+    public List<File> getSourceFiles() {
+        return getSources().stream()
+            .map(Resource::getFile)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Source getSource(String nameOrId) {
         // for (SourceRoot sourceRoot : getSourceRoots())
         // for (Source source : sourceRoot.getSources()) {

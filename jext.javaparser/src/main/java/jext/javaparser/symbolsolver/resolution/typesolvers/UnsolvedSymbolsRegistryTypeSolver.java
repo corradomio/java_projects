@@ -23,6 +23,8 @@ public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
 
     public UnsolvedSymbolsRegistryTypeSolver(UnsolvedSymbolsRegistry usr) {
         super(UnsolvedSymbolsRegistryTypeSolver.class.getName());
+        if (usr == null)
+            throw new IllegalArgumentException("usr mast be not null");
         this.usr = usr;
     }
 

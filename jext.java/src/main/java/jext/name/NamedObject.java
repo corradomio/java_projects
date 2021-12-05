@@ -11,6 +11,7 @@ public class NamedObject implements IdNamed {
 
     protected NamedObject(Name name) {
         this.name = name;
+        setIdFromName();
     }
 
     // ----------------------------------------------------------------------
