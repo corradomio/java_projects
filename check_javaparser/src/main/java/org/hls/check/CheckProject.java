@@ -19,6 +19,8 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
+import jext.util.concurrent.Serial;
+import org.hls.java.analysis.MethodSolver;
 import org.hls.java.analysis.SymbolSolver;
 
 import java.io.File;
@@ -47,6 +49,7 @@ public class CheckProject {
         project = Projects.newProjectInfo(
             new File(
                 "D:\\Projects.github\\other_projects\\hibernate-orm"
+                // "D:\\Projects.github\\java_projects\\check_typesolver"
             ), PropertiesUtils.properties(
                 "module.exclude", "target,out,.*"
                 // , "module.exclude.1", "test,asciidoc"
@@ -127,7 +130,7 @@ public class CheckProject {
             cu = parsed.getResult().get();
         }
 
-        SymbolSolver sym = new SymbolSolver();
+        MethodSolver sym = new MethodSolver();
         ContextTypeSolver ts = new ContextTypeSolver();
         ts.add(new JavaParserPoolTypeSolver(pool));
         ts.add(new LibrariesTypeSolver(cprlib));

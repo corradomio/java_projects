@@ -1,0 +1,103 @@
+{
+  "version" : "1.1",
+  "name" : "check_typesolver",
+  "repository" : "java_projects",
+  "fullname" : "java_projects/check_typesolver",
+  "id" : "8c66407c",
+  "type" : "maven",
+  "properties" : {
+    "project.type" : "maven",
+    "module.exclude" : "target,out,.*",
+    "module.resources.$" : ".xml,.properties,.json,.gradle,.project,.classpath",
+    "module.sources.$" : ".java",
+    "module.exclude.$" : ".*",
+    "project.module" : "pom.xml"
+  },
+  "counts" : {
+    "unusedLibraries" : 0,
+    "mavenRepositories" : 1,
+    "runtimeLibraries" : 1,
+    "sources" : 2,
+    "libraries" : 0,
+    "modules" : 1
+  },
+  "modules" : {
+    "" : {
+      "path" : "",
+      "sources" : {
+        "src/main/java/org/hls/check/App" : {
+          "path" : "src/main/java/org/hls/check/App.java",
+          "sourceInfo" : {
+            "version" : "1.1",
+            "count" : 1,
+            "bytes" : 233,
+            "totalLines" : 14,
+            "blankLines" : 5,
+            "codeLines" : 9
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "org.hls.check.App" ],
+          "name" : "App",
+          "digest" : "2vdjdmbkg12jz",
+          "language" : "java",
+          "fullname" : "src/main/java/org/hls/check/App",
+          "id" : "1646546733",
+          "mimeType" : "text/x-java-source"
+        },
+        "src/main/java/org/hls/missing/Missing" : {
+          "path" : "src/main/java/org/hls/missing/Missing.java",
+          "sourceInfo" : {
+            "version" : "1.1",
+            "count" : 1,
+            "bytes" : 66,
+            "totalLines" : 4,
+            "blankLines" : 0,
+            "codeLines" : 4
+          },
+          "sourceRoot" : null,
+          "types" : [ "Unknown" ],
+          "name" : "Missing",
+          "digest" : "1t7gndghmml0r",
+          "language" : "java",
+          "fullname" : "src/main/java/org/hls/missing/Missing",
+          "id" : "-1893937648",
+          "mimeType" : "text/x-java-source"
+        }
+      },
+      "counts" : {
+        "types" : 2,
+        "sources" : 2,
+        "resources" : 1,
+        "usedTypes" : 1,
+        "sourceRoots" : 1,
+        "declaredLibraries" : 0,
+        "dependencies" : 0
+      },
+      "runtimeLibrary" : "jdk8",
+      "name" : "",
+      "digest" : "1af6px16dd21o",
+      "fullname" : "",
+      "id" : "0",
+      "sourceRoots" : [ "src/main/java" ],
+      "declaredLibraries" : [ ],
+      "properties" : {
+        "module.definition" : "configurationFile"
+      },
+      "dependencies" : [ ]
+    }
+  },
+  "libraries" : [ ],
+  "unusedLibraries" : [ ],
+  "runtimeLibraries" : [ {
+    "digest" : "0",
+    "file" : null,
+    "files" : [ ],
+    "fullname" : "jdk8",
+    "id" : "31b3e7",
+    "libraryType" : "INVALID",
+    "name" : "jdk8",
+    "valid" : false,
+    "version" : ""
+  } ],
+  "mavenRepositories" : [ "https://repo.maven.apache.org/maven2" ]
+}

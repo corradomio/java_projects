@@ -43,7 +43,8 @@ public class SymbolSolver extends ContextVisitorAdapter  {
             throw e;
         }
         catch (Throwable t) {
-            System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
+            logger.errorf(">>> [%s] %s\n  %s :: %s\n",
+                t.getClass().getSimpleName(), t.getMessage(),
                 cu.getStorage().get().getPath(),
                 n.getTokenRange().get().getBegin().getRange().toString());
         }
@@ -59,7 +60,7 @@ public class SymbolSolver extends ContextVisitorAdapter  {
                 if (n.getTypeArguments().isPresent()) {
                     nTypeParams = n.getTypeArguments().get().size();
                 }
-                System.err.printf("Unsolved %s/%d\n  %s :: %s\n", n.getNameAsString(), nTypeParams,
+                logger.errorf("Unsolved %s/%d\n  %s :: %s\n", n.getNameAsString(), nTypeParams,
                     cu.getStorage().get().getPath(),
                     n.getTokenRange().get().getBegin().getRange().toString());
             }
@@ -68,7 +69,8 @@ public class SymbolSolver extends ContextVisitorAdapter  {
             throw e;
         }
         catch (Throwable t) {
-            System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
+            logger.errorf(">>> [%s] %s\n  %s :: %s\n",
+                t.getClass().getSimpleName(), t.getMessage(),
                 cu.getStorage().get().getPath(),
                 n.getTokenRange().get().getBegin().getRange().toString());
         }

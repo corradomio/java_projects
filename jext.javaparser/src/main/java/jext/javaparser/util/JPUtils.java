@@ -7,6 +7,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
@@ -28,6 +29,7 @@ import jext.cache.Cache;
 import jext.javaparser.exception.ResolveTimeoutException;
 import jext.javaparser.resolution.ReferencedTypeUse;
 import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
+import jext.lang.JavaConstants;
 import jext.lang.JavaUtils;
 import jext.util.PropertiesUtils;
 
@@ -59,12 +61,49 @@ public class JPUtils {
     //
     // ----------------------------------------------------------------------
 
-    // public static ResolvedType getDeclaringType(ResolvedMethodDeclaration rdecl) {
-    //     String packageName = rdecl.getPackageName();
-    //     String className = rdecl.getClassName();
-    //
-    //     return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
-    // }
+    public static ResolvedType getDeclaringType(FieldDeclaration fdecl) {
+        return declaringTypeOf(fdecl);
+    }
+    public static ResolvedType getDeclaringType(MethodDeclaration mdecl) {
+        return declaringTypeOf(mdecl);
+    }
+
+    public static ResolvedType declaringTypeOf(Node decl) {
+        Node declaringClass = decl;
+        while (declaringClass != null) {
+            if (declaringClass instanceof ClassOrInterfaceDeclaration)
+                break;
+            if (declaringClass instanceof ObjectCreationExpr)
+                break;
+
+            declaringClass = declaringClass.getParentNode().get();
+        }
+        String fullQualifiedName;
+        if (declaringClass == null) {
+            fullQualifiedName = JavaConstants.JAVA_LANG_OBJECT;
+        }
+        else if (declaringClass instanceof ClassOrInterfaceDeclaration) {
+            ClassOrInterfaceDeclaration cidecl = (ClassOrInterfaceDeclaration) declaringClass;
+            fullQualifiedName = cidecl.getFullyQualifiedName().get();
+        }
+        else if (declaringClass instanceof ObjectCreationExpr) {
+            ObjectCreationExpr oce = (ObjectCreationExpr) declaringClass;
+            fullQualifiedName = oce.getType().getNameWithScope();
+        }
+
+        else {
+            fullQualifiedName = JavaConstants.JAVA_LANG_OBJECT;
+        }
+
+        return new ReferencedTypeUse(fullQualifiedName);
+    }
+
+    public static ResolvedType getDeclaringType(ResolvedMethodDeclaration rdecl) {
+        String packageName = rdecl.getPackageName();
+        String className = rdecl.getClassName();
+
+        return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
+    }
 
     public static int getTypeParametersCount(ClassOrInterfaceType n) {
         if (!n.getTypeArguments().isPresent())

@@ -3,13 +3,13 @@ package org.hls.java.analysis;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedFieldDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
-import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaration;
+import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.analysis.BaseVoidVisitorAdapter;
+import jext.javaparser.util.JPUtils;
 
 public class MethodSolver extends ContextVisitorAdapter {
 
@@ -26,6 +26,14 @@ public class MethodSolver extends ContextVisitorAdapter {
     private void visit(MethodDeclaration n) {
         try {
             ResolvedMethodDeclaration rmd = n.resolve();
+
+            ResolvedType returnType = rmd.getReturnType();
+            int nParams = rmd.getNumberOfParams();
+            for (int i=0; i<nParams; ++i) {
+                ResolvedParameterDeclaration rpd = rmd.getParam(i);
+                ResolvedType parameterType = rpd.getType();
+                parameterType = null;
+            }
             return;
         }
         // catch (UnsolvedSymbolException | UnsupportedOperationException | IllegalArgumentException e) {
@@ -35,7 +43,10 @@ public class MethodSolver extends ContextVisitorAdapter {
             throw e;
         }
         catch (Throwable t) {
-            System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
+            logger.errorf(">>> [%s] <%s::%s> %s\n  %s :: %s\n",
+                t.getClass().getSimpleName(),
+                JPUtils.getDeclaringType(n).describe(),  n.getNameAsString(),
+                t.getMessage(),
                 cu.getStorage().get().getPath(),
                 n.getTokenRange().get().getBegin().getRange().toString());
         }
@@ -59,7 +70,10 @@ public class MethodSolver extends ContextVisitorAdapter {
             throw e;
         }
         catch (Throwable t) {
-            System.err.printf(">>> [%s] %s\n  %s :: %s\n", t.getClass(), t.getMessage(),
+            logger.errorf(">>> [%s] <%s::%s> %s\n  %s :: %s\n",
+                t.getClass().getSimpleName(),
+                JPUtils.getDeclaringType(n).describe(),  n.toString(),
+                t.getMessage(),
                 cu.getStorage().get().getPath(),
                 n.getTokenRange().get().getBegin().getRange().toString());
         }

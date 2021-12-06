@@ -1,6 +1,7 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
@@ -77,39 +78,33 @@ public class CachedTypeSolver extends BaseTypeSolver {
 
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
-        // SymbolReference<ResolvedReferenceTypeDeclaration> solved;
-        //
-        // // the cache can be deleted!
-        // cache = CacheManager.getCache(this.cacheName);
-        //
-        // solved = cache.get(name, () -> this.ts.tryToSolveType(name, nTypeParams));
-        // return solved;
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
+        solved = this.ts.tryToSolveType(name, nTypeParams);
+        if (!solved.isSolved())
+            return solved;
+
+        // the cache can be deleted!
         cache = CacheManager.getCache(this.cacheName);
-        cache.remove(name);
 
-        return this.ts.tryToSolveType(name, nTypeParams);
+        cache.put(name, solved);
+        return solved;
     }
 
     @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
-        // SymbolReference<ResolvedReferenceTypeDeclaration> solved;
-        //
-        // solved = this.ts.tryToSolveType(n);
-        // if (!solved.isSolved())
-        //     return solved;
-        //
-        // // the cache can be deleted!
-        // cache = CacheManager.getCache(this.cacheName);
-        //
-        // String name = solved.getCorrespondingDeclaration().getQualifiedName();
-        // cache.put(name, solved);
-        // return solved;
+        SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
+        solved = this.ts.tryToSolveType(n);
+        if (!solved.isSolved())
+            return solved;
+
+        // the cache can be deleted!
         cache = CacheManager.getCache(this.cacheName);
-        cache.remove(n.toString());
 
-        return this.ts.tryToSolveType(n);
+        String name = solved.getCorrespondingDeclaration().getQualifiedName();
+        cache.put(name, solved);
+        return solved;
     }
 
 }
