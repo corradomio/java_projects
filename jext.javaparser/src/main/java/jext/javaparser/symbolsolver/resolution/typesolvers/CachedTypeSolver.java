@@ -51,7 +51,7 @@ public class CachedTypeSolver extends BaseTypeSolver {
     }
 
     // ----------------------------------------------------------------------
-    // tryToSolveType
+    // Resolve
     // ----------------------------------------------------------------------
 
     @Override
@@ -76,23 +76,40 @@ public class CachedTypeSolver extends BaseTypeSolver {
     }
 
     @Override
-    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
-        SymbolReference<ResolvedReferenceTypeDeclaration> solved;
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
+        // SymbolReference<ResolvedReferenceTypeDeclaration> solved;
+        //
+        // // the cache can be deleted!
+        // cache = CacheManager.getCache(this.cacheName);
+        //
+        // solved = cache.get(name, () -> this.ts.tryToSolveType(name, nTypeParams));
+        // return solved;
 
-        solved = this.ts.tryToSolveType(n);
-        if (!solved.isSolved())
-            return solved;
-
-        // the cache can be deleted!
         cache = CacheManager.getCache(this.cacheName);
+        cache.remove(name);
 
-        String name = solved.getCorrespondingDeclaration().getQualifiedName();
-        cache.put(name, solved);
-        return solved;
+        return this.ts.tryToSolveType(name, nTypeParams);
     }
 
-    // ----------------------------------------------------------------------
-    // End
-    // ----------------------------------------------------------------------
+    @Override
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
+        // SymbolReference<ResolvedReferenceTypeDeclaration> solved;
+        //
+        // solved = this.ts.tryToSolveType(n);
+        // if (!solved.isSolved())
+        //     return solved;
+        //
+        // // the cache can be deleted!
+        // cache = CacheManager.getCache(this.cacheName);
+        //
+        // String name = solved.getCorrespondingDeclaration().getQualifiedName();
+        // cache.put(name, solved);
+        // return solved;
+
+        cache = CacheManager.getCache(this.cacheName);
+        cache.remove(n.toString());
+
+        return this.ts.tryToSolveType(n);
+    }
 
 }

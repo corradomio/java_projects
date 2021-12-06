@@ -11,6 +11,6 @@ public interface TypeSolverExt extends TypeSolver {
 
     boolean isNamespace(String name);
 
+    SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams);
     SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n);
-
 }

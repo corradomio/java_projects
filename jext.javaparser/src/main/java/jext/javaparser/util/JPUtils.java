@@ -66,7 +66,7 @@ public class JPUtils {
     //     return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
     // }
 
-    public static int getTypeArgumentsCount(ClassOrInterfaceType n) {
+    public static int getTypeParametersCount(ClassOrInterfaceType n) {
         if (!n.getTypeArguments().isPresent())
             return 0;
         else

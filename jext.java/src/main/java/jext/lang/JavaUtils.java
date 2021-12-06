@@ -8,9 +8,9 @@ public class JavaUtils implements JavaConstants {
         return PRIMITIVE_TYPES.contains(name);
     }
 
-    public static String boxed(String name) {
-        return PRIMITIVE_BOXED.getOrDefault(name, name);
-    }
+    // public static String boxed(String name) {
+    //     return PRIMITIVE_BOXED.getOrDefault(name, name);
+    // }
 
     public static String signature(String type) {
         if (PRIMITIVE_SIGNATURE.containsKey(type))

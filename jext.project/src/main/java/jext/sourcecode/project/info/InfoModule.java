@@ -17,6 +17,7 @@ import jext.util.MapUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,9 @@ public class InfoModule implements Module, Comparable<Named> {
     private final Map<String, Object> info;
     private final Name name;
     private List<Source> sources;
+    private final Map<String, Source> pathMap = new HashMap<>();
+    private final Map<String, Source> nameMap = new HashMap<>();
+    private final Map<String, Source> idMap = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -106,8 +110,13 @@ public class InfoModule implements Module, Comparable<Named> {
         Map<String, Object> sinfos = MapUtils.get(info, "sources");
         for (String fullname : sinfos.keySet()) {
             Map<String, Object> sinfo = MapUtils.get(sinfos, fullname);
-            if (project.isAccepted(MapUtils.get(sinfo, "path")))
-                sources.add(new InfoSource(this, sinfo));
+            if (project.isAccepted(MapUtils.get(sinfo, "path"))) {
+                InfoSource source  = new InfoSource(this, sinfo);
+                sources.add(source);
+                idMap.put(source.getId(), source);
+                nameMap.put(source.getName().getFullName(), source);
+                pathMap.put(source.getPath(), source);
+            }
         }
 
         return sources;
@@ -134,12 +143,19 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
-    public Source getSource(String nameOrId) {
+    public Source getSource(String nameOrPathOrId) {
+        if (pathMap.containsKey(nameOrPathOrId))
+            return pathMap.get(nameOrPathOrId);
+        if (nameMap.containsKey(nameOrPathOrId))
+            return nameMap.get(nameOrPathOrId);
+        if (idMap.containsKey(nameOrPathOrId))
+            return nameMap.get(nameOrPathOrId);
+
         List<Source> sources = getSources();
         for (Source source : sources) {
-            if (source.getName().getFullName().equals(nameOrId))
+            if (source.getName().getFullName().equals(nameOrPathOrId))
                 return source;
-            if (source.getId().equals(nameOrId))
+            if (source.getId().equals(nameOrPathOrId))
                 return source;
         }
         return null;

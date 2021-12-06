@@ -23,6 +23,8 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
     // Private fields
     // ----------------------------------------------------------------------
 
+    public static final ReferencedTypeDeclaration OBJECT = new ReferencedTypeDeclaration(JavaUtils.JAVA_LANG_OBJECT, 0);
+
     private static final List<ResolvedTypeParameterDeclaration> NO_PARAMS = Collections.emptyList();
     private static final List<ResolvedTypeParameterDeclaration> ONE_PARAM = Collections.singletonList(ObjectTypeParameter.object());
     private static final List<ResolvedTypeParameterDeclaration> TWO_PARAMS = Arrays.asList(
@@ -30,7 +32,7 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
         ObjectTypeParameter.object());
 
     private final String qualifiedName;
-    private List<ResolvedTypeParameterDeclaration> typeParams = NO_PARAMS;
+    private List<ResolvedTypeParameterDeclaration> typeParams;
 
     // ----------------------------------------------------------------------
     // Constructor

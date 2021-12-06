@@ -49,6 +49,11 @@ public class ClassPoolRegistryTypeSolver extends BaseTypeSolver {
     // ----------------------------------------------------------------------
 
     @Override
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
+        return tryToSolveType(name);
+    }
+
+    @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
 
         if(classPoolRegistry.isNamespace(name))

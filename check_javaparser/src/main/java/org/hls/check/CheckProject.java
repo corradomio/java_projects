@@ -6,7 +6,6 @@ import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.symbolsolver.resolution.typesolvers.CachedTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
-import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaRuntimeTypeSolver;
@@ -20,7 +19,6 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
-import jext.util.concurrent.Serial;
 import org.hls.java.analysis.SymbolSolver;
 
 import java.io.File;
@@ -50,7 +48,8 @@ public class CheckProject {
             new File(
                 "D:\\Projects.github\\other_projects\\hibernate-orm"
             ), PropertiesUtils.properties(
-                "module.exclude", "target,out,.*,test,asciidoc"
+                "module.exclude", "target,out,.*"
+                // , "module.exclude.1", "test,asciidoc"
             ));
 
         log.infof("JavaParserPool");
@@ -59,24 +58,35 @@ public class CheckProject {
 
         log.infof("ClassPoolRegistry/libraries");
         cprlib = new ClassPoolRegistry()
-            .withLibraries(ProjectUtils.getLibraryFiles(project));
+            .addAll(ProjectUtils.getLibraryFiles(project));
 
         log.infof("ClassPoolRegistry/JDK");
         cpjdk = new ClassPoolRegistry()
-            .withJdk(new File("D:\\Java\\Jdk11.0"));
+            .addJdk(new File("D:\\Java\\Jdk11.0"));
 
         usr = new UnsolvedSymbolsRegistry();
 
-        log.infof("Parallel.forEach");
+        // --
+        log.infof("Sources");
         List<Source> sources = project.getSources();
-        Parallel.forEach(sources, CheckProject::analyze);
-        log.printf("processed %d files\n", sources.size());
 
+        // --
+        log.infof("Parallel.analyzeTypes");
+        count = new AtomicInteger();
+        Parallel.forEach(sources, CheckProject::analyzeTypes);
+
+        // --
+        log.infof("Parallel.analyzeMethods");
+        count = new AtomicInteger();
+        Parallel.forEach(sources, CheckProject::analyzeMethods);
+
+        // --
+        log.printf("processed %d files\n", sources.size());
         Parallel.shutdown();
         CacheManager.shutdown();
     }
 
-    static void analyze(Source source) {
+    static void analyzeTypes(Source source) {
         int n = count.incrementAndGet();
         if (n%1000 == 0)
             System.out.printf("... processed %d files\n", n);
@@ -97,7 +107,32 @@ public class CheckProject {
         ts.add(new LibrariesTypeSolver(cprlib));
         ts.add(new JavaRuntimeTypeSolver(cpjdk));
         ts.add(new UnsolvedSymbolsRegistryTypeSolver(usr));
+        CachedTypeSolver cts = new CachedTypeSolver(ts);
 
+        sym.analyze(cu, cts);
+    }
+
+    static void analyzeMethods(Source source) {
+        int n = count.incrementAndGet();
+        if (n%1000 == 0)
+            System.out.printf("... processed %d files\n", n);
+
+        CompilationUnit cu;
+        ParseResult<CompilationUnit> parsed = pool.parse(source.getFile());
+        if (!parsed.isSuccessful() || !parsed.getResult().isPresent()) {
+            log.errorf("ERROR ... %s: %s", source.getFile(), parsed.getProblems());
+            return;
+        }
+        else {
+            cu = parsed.getResult().get();
+        }
+
+        SymbolSolver sym = new SymbolSolver();
+        ContextTypeSolver ts = new ContextTypeSolver();
+        ts.add(new JavaParserPoolTypeSolver(pool));
+        ts.add(new LibrariesTypeSolver(cprlib));
+        ts.add(new JavaRuntimeTypeSolver(cpjdk));
+        ts.add(new UnsolvedSymbolsRegistryTypeSolver(usr));
         CachedTypeSolver cts = new CachedTypeSolver(ts);
 
         sym.analyze(cu, cts);

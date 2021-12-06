@@ -83,6 +83,17 @@ public class CompositeTypeSolver extends BaseTypeSolver {
     }
 
     @Override
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
+        for (TypeSolverExt tsx : elementsExt) {
+            SymbolReference<ResolvedReferenceTypeDeclaration>
+                solved = tsx.tryToSolveType(name, nTypeParams);
+            if (solved.isSolved())
+                return solved;
+        }
+        return UNSOLVED;
+    }
+
+    @Override
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(Type n) {
         for (TypeSolverExt tsx : elementsExt) {
             SymbolReference<ResolvedReferenceTypeDeclaration>

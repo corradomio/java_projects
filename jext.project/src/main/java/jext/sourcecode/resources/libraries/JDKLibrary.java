@@ -1,15 +1,17 @@
 package jext.sourcecode.resources.libraries;
 
-import jext.lang.JavaUtils;
+import jext.android.AndroidConstants;
+import jext.lang.JavaConstants;
 import jext.name.Name;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.RuntimeLibrary;
-import jext.util.MapUtils;
+import jext.sourcecode.project.util.ReferencedType;
 
 import java.io.File;
-import java.util.Map;
+import java.util.Set;
 
-public class JDKLibrary extends DirectoryLibrary implements RuntimeLibrary {
+public class JDKLibrary extends DirectoryLibrary implements RuntimeLibrary, JavaConstants, AndroidConstants {
 
     public JDKLibrary(String libraryName, File libraryFile, Project project) {
         super(libraryName, libraryFile, project);
@@ -17,23 +19,11 @@ public class JDKLibrary extends DirectoryLibrary implements RuntimeLibrary {
 
     @Override
     public boolean contains(Name typeName) {
-        if (JavaUtils.PRIMITIVE_TYPES.contains(typeName.getFullName()))
+        if (PRIMITIVE_TYPES.contains(typeName.getFullName()))
             return true;
         else
             return super.contains(typeName);
     }
-
-    private static Map<String,String> ANDROID_VERSIONS = MapUtils.asMap(
-        "honeycomb", "3.0.0",
-        "icecream", "4.0.0",
-        "jellybean", "4.1.0",
-        "kitkat", "4.4.0",
-        "lollipop", "5.0.0",
-        "marshmallow", "6.0.0",
-        "nougat", "7.0.0",
-        "oreo", "8.0.0",
-        "pie", "9.0.0"
-    );
 
     @Override
     public String getVersion() {
@@ -50,5 +40,19 @@ public class JDKLibrary extends DirectoryLibrary implements RuntimeLibrary {
         else
             return ANDROID_VERSIONS.getOrDefault(name, "");
     }
+
+    @Override
+    protected Set<RefType> collectTypes() {
+        Set<RefType> types = super.collectTypes();
+
+        for(String primitiveType : PRIMITIVE_TYPES)
+            types.add(new ReferencedType(primitiveType, JDKLibrary.this));
+
+        types.add(ReferencedType.JAVA_LANG_OBJECT);
+        types.add(ReferencedType.JAVA_LANG_VOID);
+
+        return types;
+    }
+
 
 }

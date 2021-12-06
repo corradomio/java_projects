@@ -1,6 +1,7 @@
 package jext.sourcecode.project.util;
 
 import jext.java.TypeRole;
+import jext.lang.JavaConstants;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
 import jext.name.Name;
@@ -13,19 +14,36 @@ import jext.sourcecode.project.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ReferencedType extends NamedObject implements RefType {
+public class ReferencedType extends NamedObject implements RefType, JavaConstants {
+
+    private static Map<String, ReferencedType> map = new HashMap<>();
+    public static ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaConstants.JAVA_LANG_VOID);
+    public static ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaConstants.JAVA_LANG_OBJECT);
+
+    static {
+        for (String primitiveType : JavaConstants.PRIMITIVE_TYPES)
+            map.put(primitiveType, new ReferencedType(primitiveType));
+        map.put(JavaConstants.JAVA_LANG_VOID, JAVA_LANG_VOID);
+        map.put(JavaConstants.JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
+    }
+
+    public static ReferencedType of(String typeName) {
+        ReferencedType rtype = map.get(typeName);
+        if (rtype == null)
+            rtype = new ReferencedType(typeName);
+        return rtype;
+    }
 
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
 
-    // public static final ReferencedType JAVA_LANG_NULL = new ReferencedType(JavaUtils.JAVA_LANG_NULL);
-    public static final ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaUtils.JAVA_LANG_VOID);
-    public static final ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaUtils.JAVA_LANG_OBJECT);
-    // public static final ReferencedType JAVA_LANG_CLASS = new ReferencedType(JavaUtils.JAVA_LANG_CLASS);
-    // public static final ReferencedType ARRAY = new ReferencedType(JavaUtils.ARRAY);
+    // public static final ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaUtils.JAVA_LANG_VOID);
+    // public static final ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaUtils.JAVA_LANG_OBJECT);
 
     // ----------------------------------------------------------------------
     // Fields
@@ -72,8 +90,8 @@ public class ReferencedType extends NamedObject implements RefType {
         String fullname = name.getFullName();
         if (fullname.contains("<") || fullname.contains("[") || fullname.contains("\\") || fullname.contains("?"))
             Logger.getLogger(ReferencedType.class).errorf("Invalid: %s", fullname);
-        if (JavaUtils.isPrimitive(fullname))
-            setNameWithId(new ObjectName(JavaUtils.boxed(fullname)));
+        // if (JavaUtils.isPrimitive(fullname))
+        //     setNameWithId(new ObjectName(JavaUtils.boxed(fullname)));
 
         // add the type parameters. Es: Map<Object,Object>
         if (nTypeParams > 0) {

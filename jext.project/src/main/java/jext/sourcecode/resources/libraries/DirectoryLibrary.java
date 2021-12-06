@@ -84,27 +84,19 @@ public class DirectoryLibrary extends BaseLibrary {
     public Set<RefType> getTypes() {
         Cache<String, Set<RefType>> cache = CacheManager.getCache(String.format("dependency.%s.library.types", project.getId()));
 
-        return cache.get(getId(), () -> {
-            Set<RefType> types = new HashSet<>();
+        return cache.get(getId(), this::collectTypes);
+    }
 
-            getFiles().forEach(libraryFile -> {
-                JarUtils.listClassNames(libraryFile).forEach(typeName -> {
-                    types.add(new ReferencedType(typeName));
-                });
+    protected Set<RefType> collectTypes() {
+        Set<RefType> types = new HashSet<>();
+
+        getFiles().forEach(libraryFile -> {
+            JarUtils.listClassNames(libraryFile).forEach(typeName -> {
+                types.add(new ReferencedType(typeName, DirectoryLibrary.this));
             });
-
-            return types;
         });
 
-        // Set<RefType> types = new HashSet<>();
-        //
-        // getFiles().forEach(libraryFile -> {
-        //     JarUtils.listClassNames(libraryFile).forEach(typeName -> {
-        //         types.add(new ReferencedType(typeName));
-        //     });
-        // });
-        //
-        // return types;
+        return types;
     }
 
     // ----------------------------------------------------------------------

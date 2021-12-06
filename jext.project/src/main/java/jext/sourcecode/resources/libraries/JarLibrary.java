@@ -83,7 +83,7 @@ public class JarLibrary extends BaseLibrary {
             Set<RefType> types = new HashSet<>();
 
             JarUtils.listClassNames(libraryFile).forEach(typeName -> {
-                types.add(new ReferencedType(typeName));
+                types.add(new ReferencedType(typeName, JarLibrary.this));
             });
 
             return types;

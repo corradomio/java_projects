@@ -143,7 +143,7 @@ public class MavenLibrary extends BaseLibrary {
 
             getFiles().forEach(libraryFile -> {
                 JarUtils.listClassNames(libraryFile).forEach(typeName -> {
-                    types.add(new ReferencedType(typeName));
+                    types.add(new ReferencedType(typeName, MavenLibrary.this));
                 });
             });
 

@@ -3,6 +3,7 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
+import jext.lang.JavaConstants;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
 
@@ -14,13 +15,14 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class ClassPoolRegistry {
+public class ClassPoolRegistry implements JavaConstants {
 
     // ----------------------------------------------------------------------
     //
@@ -106,33 +108,13 @@ public class ClassPoolRegistry {
     }
 
     // ----------------------------------------------------------------------
-    // Operations without name
-    // ----------------------------------------------------------------------
-
-    // public ClassPoolRegistry addAll(List<File> libraryFiles) {
-    //     libraryFiles.forEach(libraryFile -> add(libraryFile));
-    //     return this;
-    // }
-
-    // public ClassPoolRegistry add(File libraryFile) {
-    //     add(libraryFile, FileUtils.getNameWithoutExt(libraryFile));
-    //     return this;
-    // }
-
-    // protected void addElement(String name, String namespace, File libraryFile, JarEntry entry) {
-    //     addElement(name, namespace, libraryFile, entry, FileUtils.getNameWithoutExt(libraryFile));
-    // }
-
-    // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
 
-    public ClassPoolRegistry withJdk(File jdk) {
-        return addJdk(jdk);
-    }
-
-    public ClassPoolRegistry withLibraries(Collection<File> libraryFiles) {
-        return addAll(libraryFiles);
+    public ClassPoolRegistry addJdk(Collection<File> jdkFiles, String jdkName) {
+        addAll(jdkFiles, jdkName);
+        addPrimitiveTypes(jdkName);
+        return this;
     }
 
     public ClassPoolRegistry addJdk(File jdk) {
@@ -140,15 +122,15 @@ public class ClassPoolRegistry {
         add(new File(jdk, "lib"), libraryName);      // jdk 1 -> 8
         add(new File(jdk, "jre/lib"), libraryName);  // jre 1 -> 8
         add(new File(jdk, "jmods"), libraryName);    // jdk 9 -> ...
+        addPrimitiveTypes(libraryName);
+
         return this;
     }
-
 
     public ClassPoolRegistry addAll(Collection<File> libraryFiles) {
         libraryFiles.forEach(this::add);
         return this;
     }
-
 
     public ClassPoolRegistry addAll(Collection<File> libraryFiles, String libraryName) {
         libraryFiles.forEach(libraryFile -> add(libraryFile, libraryName));
@@ -168,6 +150,13 @@ public class ClassPoolRegistry {
         // else
         //     logger.warnf("Library file %s not existent", FileUtils.getAbsolutePath(libraryFile));
         return this;
+    }
+
+    // ----------------------------------------------------------------------
+
+    private void addPrimitiveTypes(String libraryName) {
+        for (String primitiveType : PRIMITIVE_TYPES)
+            addElement(primitiveType, null, null, libraryName);
     }
 
     private void addDirectory(File directory, String libraryName) {
@@ -210,9 +199,9 @@ public class ClassPoolRegistry {
                 entry = e.nextElement();
                 if (entry != null && !entry.isDirectory() && entry.getName().endsWith(DOT_CLASS)) {
                     String entryName = entry.getName();
-                    String className = epc.toClassName(entryName);
+                    String qualifiedName = epc.toClassName(entryName);
                     String namespace = epc.toNamespace(entryName);
-                    addElement(className, namespace, libraryFile, entry, libraryName);
+                    addElement(qualifiedName, /*namespace,*/ libraryFile, entry, libraryName);
                     addNamespace(namespace);
                 }
             }
@@ -222,17 +211,17 @@ public class ClassPoolRegistry {
         }
     }
 
-    private void addElement(String name, String namespace, File libraryFile, JarEntry entry, String libraryName) {
-        if (classpathElements.containsKey(name))
+    private void addElement(String qualifiedName, /*String namespace,*/ File libraryFile, JarEntry entry, String libraryName) {
+        if (classpathElements.containsKey(qualifiedName))
             return;
 
         ClasspathElement element = new ClasspathElement();
-        element.name = name;
+        element.name = qualifiedName;
         element.entry = entry;
         element.libraryFile = libraryFile;
         element.libraryName = libraryName;
 
-        classpathElements.put(name, element);
+        classpathElements.put(qualifiedName, element);
     }
 
     private void addNamespace(String namespace) {

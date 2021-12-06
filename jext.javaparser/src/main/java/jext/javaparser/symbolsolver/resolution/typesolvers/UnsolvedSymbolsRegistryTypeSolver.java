@@ -57,8 +57,13 @@ public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
 
         ClassOrInterfaceType cit = n.asClassOrInterfaceType();
         String name = getNameWithScope(cit);
-        int nTypeParams = getTypeParamsCount(cit);
+        int nTypeParams = JPUtils.getTypeParametersCount(cit);
 
+        return tryToSolveType(name, nTypeParams);
+    }
+
+    @Override
+    public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name, int nTypeParams) {
         ResolvedReferenceTypeDeclaration rrtd = usr.get(name);
         if (rrtd != null && (nTypeParams == 0 || nTypeParams == rrtd.getTypeParameters().size()))
             return SymbolReference.solved(rrtd);
@@ -84,13 +89,6 @@ public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
                 return imported;
         }
         return name;
-    }
-
-    private int getTypeParamsCount(ClassOrInterfaceType n) {
-        if (n.getTypeArguments().isPresent())
-            return n.getTypeArguments().get().size();
-        else
-            return 0;
     }
 
 }

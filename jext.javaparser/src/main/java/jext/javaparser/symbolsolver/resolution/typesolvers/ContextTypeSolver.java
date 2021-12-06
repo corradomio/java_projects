@@ -18,7 +18,6 @@ import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParse
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
-import jext.javaparser.resolution.ReferencedTypeDeclaration;
 import jext.javaparser.resolution.ReferencedTypeUse;
 import jext.lang.JavaUtils;
 
@@ -110,10 +109,10 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // resolve type
     // ----------------------------------------------------------------------
 
-    // public  Optional<ResolvedType> resolve(ClassOrInterfaceType n) {
-    //     String name = n.getNameAsString();
-    //     return resolve(name, n);
-    // }
+    public  Optional<ResolvedType> resolve(ClassOrInterfaceType n) {
+        String name = n.getNameAsString();
+        return resolve(name, n);
+    }
 
     public  Optional<ResolvedType> resolve(NameExpr n) {
         String name = n.getNameAsString();
@@ -219,12 +218,15 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     public SymbolReference<ResolvedReferenceTypeDeclaration> tryToSolveType(String name) {
         SymbolReference<ResolvedReferenceTypeDeclaration> solved;
 
-        // 0) sometimes, the typesolver try to solve a generic type (with "<...>").
+        // 0) sometimes, the type solver try to solve a generic type (with "<...>").
         // This step remove the "<...>"
         if (!JavaUtils.isPlainSignature(name))
             name = JavaUtils.toPlainSignature(name);
 
         // 1) try to solve using the standard methods
+        //    Note: "Object", "java.lang.Object" and all primitive types are
+        //          automatically resolved in "JavaRuntimeTypeSolver", one of the
+        //          type solvers in the solvers' list
         solved = tryToSolveUsingSolvers(name);
         if (solved.isSolved()) {
             return solved;
@@ -236,12 +238,7 @@ public class ContextTypeSolver extends CompositeTypeSolver {
             return solved;
         }
 
-        // 3) if the JDK is not defined, AT MINIMUM it is necessary to resolve
-        //      "Object" and "java.lang.Object" because it is the root of the Java object's system
-        if (JavaUtils.JAVA_LANG_OBJECT.equals(name) || JavaUtils.OBJECT.equals(name))
-            return SymbolReference.solved(new ReferencedTypeDeclaration(JavaUtils.JAVA_LANG_OBJECT, 0));
-
-        // 4) it is not possible to solve the symbol using the context HERE
+        // 3) it is not possible to solve the symbol using the context HERE
         //    because we must use NOT only the imports but also the definitions of
         //    the inner classes
 
@@ -316,25 +313,6 @@ public class ContextTypeSolver extends CompositeTypeSolver {
     // ----------------------------------------------------------------------
     // tryToSolveType(Type n)
     // ----------------------------------------------------------------------
-    /*
-        Type
-            IntersectionType
-            PrimitiveType
-            ReferenceType
-                ArrayType
-                ClassOrInterfaceType
-                TypeParameter
-            UnionType
-            UnknownType
-            VarType
-            VoidType
-            WildcardType
-
-        Note:
-            'List<EntityMappings>' is not resolved IF 'EntityMappings' is not resolved.
-            The problem is: WHEN and HOW 'EntityMapping' is resolved?
-     */
-
     /*
         Type
             IntersectionType
