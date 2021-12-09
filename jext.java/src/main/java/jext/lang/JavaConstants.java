@@ -14,21 +14,21 @@ public interface JavaConstants {
     String PUBLIC = "public ";
     String CLASS = "class ";
     String INTERFACE = "interface ";
+    String RECORD = "record ";
     String ENUM = "enum ";
     String ANNOTATION = "@interface ";
 
     String ROOT = "";
 
     String VOID = "void";
-    String ARRAY = "array";
     String NULL = "null";
     String OBJECT = "Object";
 
     String JAVA_LANG = "java.lang";
 
-    String JAVA_LANG_NULL = "java.lang.Null";
-    String JAVA_LANG_VOID = "java.lang.Void";
-    String JAVA_LANG_CLASS = "java.lang.Class";
+    String JAVA_LANG_NULL   = "java.lang.Null";
+    String JAVA_LANG_VOID   = "java.lang.Void";
+    String JAVA_LANG_CLASS  = "java.lang.Class";
     String JAVA_LANG_OBJECT = "java.lang.Object";
 
     Set<String> VISIBILITIES =
@@ -38,18 +38,7 @@ public interface JavaConstants {
             "private",
             "package"
         ));
-    /*
-            B       byte
-            C       char
-            D       double
-            F       float
-            I       int
-            J       long
-            S       short
-            Z       boolean
-            L<className>;   class
-            [       array
-         */
+
     Set<String> PRIMITIVE_TYPES =
         new HashSet<>(Arrays.asList(
             "boolean",
@@ -75,6 +64,19 @@ public interface JavaConstants {
         put("null",     "java.lang.Null");
     }};
 
+
+    /*
+        B       byte
+        C       char
+        D       double
+        F       float
+        I       int
+        J       long
+        S       short
+        Z       boolean
+        L<className>;   class
+        [       array
+     */
     Map<String, String> PRIMITIVE_SIGNATURE = new HashMap<String, String>(){{
         put("B", "byte");
         put("C", "char");
@@ -231,7 +233,9 @@ public interface JavaConstants {
         //
         "java.lang.Class",          // Class<T>
         "java.lang.ThreadLocal",    // ThreadLocal<T>
-
     };
 
+    String[] JAVA_LANG_GENERICS_TWO = {
+
+    };
 }

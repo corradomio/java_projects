@@ -18,7 +18,8 @@ public class DumpAST {
             // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\cocome-maven-project\\cloud-logic-service\\cloud-logic-core-impl\\src\\main\\java\\org\\cocome\\tradingsystem\\inventory\\data\\enterprise\\Product.java"
             // "D:\\Projects.github\\other_projects\\hibernate-orm\\hibernate-core\\src\\main\\java\\org\\hibernate\\bytecode\\internal\\bytebuddy\\ByteBuddyState.java"
             // "D:\\SPLGroup\\spl-workspaces\\dev-ws-2\\NetworkRouting\\com\\bt\\ebtic\\test\\demo\\HelloJGraphT.java"
-            "D:\\Projects.github\\java_projects\\check_javaparser\\src\\test\\java\\a\\b\\c\\d\\TestHLS8.java"
+            // "D:\\Projects.github\\java_projects\\check_javaparser\\src\\test\\java\\a\\b\\c\\d\\TestHLS8.java"
+            "D:\\Projects.github\\java_projects\\check_typesolver\\src\\main\\java\\org\\hls\\cdecl\\ACTemplate2.java"
         );
 
         JavaParserPool jpp = JavaParserPool.getPool();

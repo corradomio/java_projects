@@ -12,11 +12,11 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.analysis.BaseVoidVisitorAdapter;
+import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarsTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
-import jext.javaparser.util.ClassPoolRegistry;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.PathName;

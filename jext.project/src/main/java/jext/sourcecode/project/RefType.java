@@ -12,11 +12,9 @@ import java.util.List;
 public interface RefType extends IdNamed {
 
     String getId();
-
     Name getName();
 
     Project getProject();
-
     Library getLibrary();
 
     Name getNamespace();
@@ -34,19 +32,11 @@ public interface RefType extends IdNamed {
      * external library
      */
     boolean isType();
-
-    boolean isCollection();
-
-    List<RefType> getElements();
-
-    /**
-     * Type conversion
-     */
     Type asType();
 
-    /**
-     *
-     */
+    boolean isCollection();
+    List<RefType> getElements();
+
     int getTypeParametersCount();
 
     boolean isAnonymous();

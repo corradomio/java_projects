@@ -90,12 +90,13 @@ public class FastJavaParser implements JavaConstants {
 
             line = line.trim();
 
-            // // ...
+            // line comment // ...
             if (line.startsWith("//" ) || line.contains("*"))
                 continue;
-                // package ...
+            // empty line
             else if (line.isEmpty())
                 continue;
+            // package ...
             else if (line.startsWith(PACKAGE)) {
                 namespace = parseNamespace(line);
             }
@@ -114,18 +115,26 @@ public class FastJavaParser implements JavaConstants {
                 else
                     this.classImports.add(refType);
             }
-            // [public] [abstract] [final] [static] class|enum|[@]interface <name>[typeParams] { ...
+            // [public] [abstract] [final] [static] class|enum|[@]interface|record <name>[typeParams] { ...
+            // ... class ...
             else if (line.contains(CLASS)) {
                 this.role = TypeRole.CLASS;
                 exit = true;
+            // ... @interface ...
+            } else if (line.contains(ANNOTATION)) {
+                this.role = TypeRole.ANNOTATION;
+                exit = true;
+            // ... interface ...
             } else if (line.contains(INTERFACE)) {
                 this.role = TypeRole.INTERFACE;
                 exit = true;
+            // ... enum ...
             } else if (line.contains(ENUM)) {
                 this.role = TypeRole.ENUM;
                 exit = true;
-            } else if (line.contains(ANNOTATION)) {
-                this.role = TypeRole.ANNOTATION;
+            // ... record ...
+            } else if (line.contains(RECORD)) {
+                this.role = TypeRole.CLASS;
                 exit = true;
             } else {
                 //

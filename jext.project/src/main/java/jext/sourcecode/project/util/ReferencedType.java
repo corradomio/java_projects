@@ -13,6 +13,7 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +21,14 @@ import java.util.Map;
 
 public class ReferencedType extends NamedObject implements RefType, JavaConstants {
 
-    private static Map<String, ReferencedType> map = new HashMap<>();
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
     public static ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaConstants.JAVA_LANG_VOID);
     public static ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaConstants.JAVA_LANG_OBJECT);
 
+    private static Map<String, ReferencedType> map = new HashMap<>();
     static {
         for (String primitiveType : JavaConstants.PRIMITIVE_TYPES)
             map.put(primitiveType, new ReferencedType(primitiveType));
@@ -31,19 +36,20 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
         map.put(JavaConstants.JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
     }
 
+    private static final List<RefType> NO_TYPE_PARAMS = Collections.emptyList();
+    private static final List<RefType> ONE_TYPE_PARAM = Collections.singletonList(JAVA_LANG_OBJECT);
+    private static final List<RefType> TWO_TYPE_PARAMS = Arrays.asList(JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
+
+    // ----------------------------------------------------------------------
+    // Statis constructor
+    // ----------------------------------------------------------------------
+
     public static ReferencedType of(String typeName) {
         ReferencedType rtype = map.get(typeName);
         if (rtype == null)
             rtype = new ReferencedType(typeName);
         return rtype;
     }
-
-    // ----------------------------------------------------------------------
-    // Constants
-    // ----------------------------------------------------------------------
-
-    // public static final ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaUtils.JAVA_LANG_VOID);
-    // public static final ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaUtils.JAVA_LANG_OBJECT);
 
     // ----------------------------------------------------------------------
     // Fields
@@ -94,7 +100,17 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
         //     setNameWithId(new ObjectName(JavaUtils.boxed(fullname)));
 
         // add the type parameters. Es: Map<Object,Object>
-        if (nTypeParams > 0) {
+        switch(nTypeParams) {
+            case 0:
+                this.elements = NO_TYPE_PARAMS;
+                break;
+            case 1:
+                this.elements = ONE_TYPE_PARAM;
+                break;
+            case 2:
+                this.elements = TWO_TYPE_PARAMS;
+                break;
+            default:
             this.elements = new ArrayList<>();
             for (int i = 0; i < nTypeParams; ++i)
                 this.elements.add(JAVA_LANG_OBJECT);
@@ -178,6 +194,40 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
         return library.getProject();
     }
 
+    // @Override
+    // public boolean isTemplateType() {
+    //     return nTypeParams > 0;
+    // }
+
+    // @Override
+    // public List<RefType> getTypeParameters() {
+    //     switch (nTypeParams) {
+    //         case 0:
+    //             return NO_TYPE_PARAMS;
+    //         case 1:
+    //             return ONE_TYPE_PARAM;
+    //         case 2:
+    //             return TWO_TYPE_PARAMS;
+    //         default:
+    //             List<RefType> typeParams = new ArrayList<>();
+    //             for (int i=0; i<nTypeParams; ++i)
+    //                 typeParams.add(JAVA_LANG_OBJECT);
+    //             return typeParams;
+    //     }
+    // }
+
+    // --
+
+    // @Override
+    // public boolean isArrayType() {
+    //     return false;
+    // }
+
+    // @Override
+    // public int getRank() {
+    //     return 0;
+    // }
+
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
@@ -192,5 +242,9 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
     public String toString() {
         return this.getName().getFullName();
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

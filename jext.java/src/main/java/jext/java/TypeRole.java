@@ -27,7 +27,7 @@ public enum TypeRole {
     ENUM,           // is an enumeration
     ANNOTATION,     // is an annotation
 
-    //TYPE_PARAM,   // is a type parameter (used in class|interface|enum definition)
+    TYPE_PARAMETER, // is a type parameter (used in class|interface|enum definition)
 
     // JavaParser types not supported (yet)
     //INTERSECTION,

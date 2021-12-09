@@ -29,8 +29,8 @@
         <module>..\jext.cache</module>
         <module>..\jext.concurrent</module>
         <module>..\jext.collections</module>
-        <module>..\jext.keyvalue</module>
-        <module>..\jext.serialization</module>
+        <!--<module>..\jext.keyvalue</module>-->
+        <!--<module>..\jext.serialization</module>-->
         <module>..\jext.project</module>
         <module>..\jext.maven</module>
     </modules>
@@ -61,16 +61,16 @@
             <artifactId>jext.javaparser</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.keyvalue</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--<dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.serialization</artifactId>
             <version>1.0</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.project</artifactId>
