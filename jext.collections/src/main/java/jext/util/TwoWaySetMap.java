@@ -1,5 +1,7 @@
 package jext.util;
 
+import java.util.Set;
+
 public class TwoWaySetMap<K, V> {
 
     // ----------------------------------------------------------------------

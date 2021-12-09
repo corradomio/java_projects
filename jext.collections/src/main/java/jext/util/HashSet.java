@@ -20,4 +20,15 @@ public class HashSet<E> extends java.util.HashSet<E> implements Set<E> {
         super(initialCapacity);
     }
 
+    @Override
+    public Set<E> addThis(E e) {
+        super.add(e);
+        return this;
+    }
+
+    @Override
+    public Set<E> addAllThis(Collection<? extends E> c) {
+        super.addAll(c);
+        return this;
+    }
 }
