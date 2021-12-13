@@ -11,10 +11,14 @@ public interface Method extends IdNamed {
     String CLASS_INITIALIZER  = "$classInitializer";
     String STATIC_INITIALIZER = "$staticInitializer";
 
-    String getId();
-    Name getName();
+    // String getId();
 
-    MethodName getMethodName();
+    // it returns a 'MethodName' a specialized version of 'Name' containing information
+    // on method signature
+    MethodName/*MethodName*/ getName();
+
+    // specialized version of 'getName()'
+    // MethodName getMethodName();
 
     String[] getModifiers();
 
@@ -25,13 +29,14 @@ public interface Method extends IdNamed {
     boolean isStatic();
 
     List<Parameter> getParameters();
+    int getNumOfParams();
 
-    String getSignature();
+    // String getSignature();
     String getDeclaration();
     String getDigest();
 
-    RefType getOwnerType();
+    RefType  getOwnerType();
 
-    ReturnType getReturnType();
+    DeclType getReturnType();
 
 }

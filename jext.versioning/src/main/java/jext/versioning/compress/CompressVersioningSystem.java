@@ -120,4 +120,8 @@ public class CompressVersioningSystem extends AbstractVersioningSystem {
         return root;
     }
 
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

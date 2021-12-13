@@ -1,6 +1,5 @@
 package jext.versioning.novs;
 
-import jext.util.FileUtils;
 import jext.versioning.AbstractVersioningSystem;
 import jext.versioning.VersioningSystemException;
 
@@ -28,17 +27,20 @@ public class NovsVersioningSystem extends AbstractVersioningSystem {
 
     @Override
     public void checkout() throws VersioningSystemException {
-
+        if (!localDirectory.exists())
+            throw new VersioningSystemException("Local directory " + localDirectory + " not existent");
     }
 
     @Override
     public void update() throws VersioningSystemException {
-
+        if (!localDirectory.exists())
+            throw new VersioningSystemException("Local directory " + localDirectory + " not existent");
     }
 
     @Override
     public void commit() throws VersioningSystemException {
-
+        if (!localDirectory.exists())
+            throw new VersioningSystemException("Local directory " + localDirectory + " not existent");
     }
 
     @Override

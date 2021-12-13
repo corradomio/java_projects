@@ -6,5 +6,6 @@ public enum TypeUse {
     HIERARCHY,  // EXTENDS or IMPLEMENTS
     EXTENDS,
     IMPLEMENTS,
-    DEPENDS_ON
+    DEPENDS_ON,
+    TEMPLATE    // used in type parameters
 }

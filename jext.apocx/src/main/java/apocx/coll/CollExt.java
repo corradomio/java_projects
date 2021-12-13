@@ -1,4 +1,4 @@
-package apoc.coll;
+package apocx.coll;
 
 import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class CollExt {
 
     @UserFunction
-    @Description("apoc.coll.arrayGet(coll, index) | get coll[index] value, supporting indices < 0")
+    @Description("apocx.coll.arrayGet(coll, index) | get coll[index] value, supporting indices < 0")
     public Object arrayGet(@Name("coll") List<Object> coll, @Name("index") long index) {
         if (coll == null)
             return null;
@@ -30,7 +30,7 @@ public class CollExt {
     }
 
     @UserFunction
-    @Description("apoc.coll.arraySet(coll, index, value) | set coll[index] to value, extend coll if necessary")
+    @Description("apocx.coll.arraySet(coll, index, value) | set coll[index] to value, extend coll if necessary")
     public List<Object> arraySet(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
         // if (coll == null) return null;
         // if (index < 0 || value == null || index >= coll.size()) return coll;
@@ -60,20 +60,20 @@ public class CollExt {
         int n = list.size();
         if (n > 0)
             lastValue = list.get(n-1);
-        // else if (value instanceof Boolean)
-        //     lastValue = false;
-        // else if (value instanceof Integer)
-        //     lastValue = 0;
-        // else if (value instanceof Long)
-        //     lastValue = 0L;
-        // else if (value instanceof Float)
-        //     lastValue = 0.f;
-        // else if (value instanceof Double)
-        //     lastValue = 0.;
-        // else if (value instanceof String)
-        //     lastValue = "";
-        // else
-        //     throw new IllegalArgumentException(value.toString());
+            // else if (value instanceof Boolean)
+            //     lastValue = false;
+            // else if (value instanceof Integer)
+            //     lastValue = 0;
+            // else if (value instanceof Long)
+            //     lastValue = 0L;
+            // else if (value instanceof Float)
+            //     lastValue = 0.f;
+            // else if (value instanceof Double)
+            //     lastValue = 0.;
+            // else if (value instanceof String)
+            //     lastValue = "";
+            // else
+            //     throw new IllegalArgumentException(value.toString());
         else
             lastValue = defaultValue(value);
 
@@ -86,7 +86,7 @@ public class CollExt {
 
     @Deprecated
     @UserFunction
-    @Description("apoc.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
+    @Description("apocx.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
     public List<Object> setOrExtend(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
         return arraySet(coll, index, value);
     }
@@ -127,7 +127,7 @@ public class CollExt {
     }
 
     @UserFunction
-    @Description("apoc.coll.append(coll, value) | append value to collection")
+    @Description("apocx.coll.append(coll, value) | append value to collection")
     public List<Object> append(@Name("coll") List<Object> coll, @Name("value") Object value) {
         if (value == null)
             return coll;
@@ -144,7 +144,7 @@ public class CollExt {
     }
 
     @UserFunction
-    @Description("apoc.coll.appendDistinct(coll, value) | append value to collection without duplicates")
+    @Description("apocx.coll.appendDistinct(coll, value) | append value to collection without duplicates")
     public List<Object> appendDistinct(@Name("coll") List<Object> coll, @Name("value") Object value) {
         if (value == null)
             return coll;
@@ -162,7 +162,7 @@ public class CollExt {
     }
 
     @UserFunction
-    @Description("apoc.coll.resize(coll, length) | resize the collection")
+    @Description("apocx.coll.resize(coll, length) | resize the collection")
     public List<Object> resize(@Name("coll") List<Object> coll, @Name("length") long length) {
         if (coll == null || coll.isEmpty())
             return coll;
@@ -187,7 +187,7 @@ public class CollExt {
     //
 
     @UserFunction
-    @Description("apoc.coll.array2Set(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
+    @Description("apocx.coll.array2Set(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
     public List<Object> array2Set(@Name("coll") List<Object> coll, @Name("index1") long index1, @Name("index2") long index2, @Name("value") Object value) {
         if (value == null)
             return null;
@@ -220,7 +220,7 @@ public class CollExt {
 
     @Deprecated
     @UserFunction
-    @Description("apoc.coll.setOrExtend2(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
+    @Description("apocx.coll.setOrExtend2(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
     public List<Object> setOrExtend2(@Name("coll") List<Object> coll, @Name("index1") long index1, @Name("index2") long index2, @Name("value") Object value) {
         return array2Set(coll, index1, index2, value);
     }
@@ -235,7 +235,7 @@ public class CollExt {
 
 
     @UserFunction
-    @Description("apoc.coll.append2(coll, index, value) | append value to collection")
+    @Description("apocx.coll.append2(coll, index, value) | append value to collection")
     public List<Object> append2(@Name("coll") List<Object> coll,  @Name("value") long index, @Name("value") Object value) {
         if (value == null)
             return null;
@@ -260,7 +260,7 @@ public class CollExt {
     //
 
     @UserFunction
-    @Description("apoc.coll.appendDistinct2(coll, index, value) | append value to collection")
+    @Description("apocx.coll.appendDistinct2(coll, index, value) | append value to collection")
     public List<Object> appendDistinct2(@Name("coll") List<Object> coll,  @Name("value") long index, @Name("value") Object value) {
         if (value == null)
             return null;
@@ -286,7 +286,7 @@ public class CollExt {
     }
 
     @UserFunction
-    @Description("apoc.coll.asArray2(coll, index, value) | Convert coll in an array of array of type")
+    @Description("apocx.coll.asArray2(coll, index, value) | Convert coll in an array of array of type")
     public List<List<Object>> asArray2(@Name("coll") List<Object> coll, @Name("type") String type) {
         if (coll == null)
             return null;

@@ -3,7 +3,10 @@ package jext.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public abstract class AbstractSet<E> implements Set<E> {
@@ -76,6 +79,11 @@ public abstract class AbstractSet<E> implements Set<E> {
         throw new UnsupportedOperationException();
     }
 
+    // @Override
+    public <T> T[] toArray(IntFunction<T[]> generator) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public boolean add(E e) {
         throw new UnsupportedOperationException();
@@ -107,7 +115,27 @@ public abstract class AbstractSet<E> implements Set<E> {
     }
 
     @Override
+    public boolean removeIf(Predicate<? super E> filter) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Spliterator<E> spliterator() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Stream<E> parallelStream() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean contains(Object o) {
         throw new UnsupportedOperationException();
     }
 

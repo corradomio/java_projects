@@ -25,23 +25,48 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
     // Constants
     // ----------------------------------------------------------------------
 
-    public static ReferencedType JAVA_LANG_VOID = new ReferencedType(JavaConstants.JAVA_LANG_VOID);
-    public static ReferencedType JAVA_LANG_OBJECT = new ReferencedType(JavaConstants.JAVA_LANG_OBJECT);
+    public static ReferencedType VOID;
+    public static ReferencedType NULL;
+    public static ReferencedType JAVA_LANG_VOID;
+    public static ReferencedType JAVA_LANG_OBJECT;
 
-    private static Map<String, ReferencedType> map = new HashMap<>();
-    static {
-        for (String primitiveType : JavaConstants.PRIMITIVE_TYPES)
-            map.put(primitiveType, new ReferencedType(primitiveType));
-        map.put(JavaConstants.JAVA_LANG_VOID, JAVA_LANG_VOID);
-        map.put(JavaConstants.JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
-    }
-
-    private static final List<RefType> NO_TYPE_PARAMS = Collections.emptyList();
-    private static final List<RefType> ONE_TYPE_PARAM = Collections.singletonList(JAVA_LANG_OBJECT);
-    private static final List<RefType> TWO_TYPE_PARAMS = Arrays.asList(JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
+    private static List<RefType> NO_TYPE_PARAMS;
+    private static List<RefType> ONE_TYPE_PARAM;
+    private static List<RefType> TWO_TYPE_PARAMS;
 
     // ----------------------------------------------------------------------
-    // Statis constructor
+    // Static fields
+    // ----------------------------------------------------------------------
+
+    private static final Map<String, ReferencedType> map = new HashMap<>();
+
+    static {
+        //
+        // DOESN't change the order!
+        //
+
+        // initialized AS FIRST!
+        NO_TYPE_PARAMS = Collections.emptyList();
+
+        VOID   = new ReferencedType(JavaConstants.VOID);
+        NULL   = new ReferencedType(JavaConstants.NULL);
+        JAVA_LANG_OBJECT = new ReferencedType(JavaConstants.JAVA_LANG_OBJECT);
+        JAVA_LANG_VOID   = new ReferencedType(JavaConstants.JAVA_LANG_VOID);
+
+        ONE_TYPE_PARAM  = Collections.singletonList(JAVA_LANG_OBJECT);
+        TWO_TYPE_PARAMS = Arrays.asList(JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
+
+        for (String primitiveType : JavaConstants.PRIMITIVE_TYPES) {
+            map.put(primitiveType, new ReferencedType(primitiveType));
+        }
+
+        map.put(VOID.getName().getFullName(), VOID);
+        map.put(JAVA_LANG_OBJECT.getName().getFullName(), JAVA_LANG_OBJECT);
+        map.put(JAVA_LANG_VOID.getName().getFullName(), JAVA_LANG_VOID);
+    }
+
+    // ----------------------------------------------------------------------
+    // Static constructor
     // ----------------------------------------------------------------------
 
     public static ReferencedType of(String typeName) {
@@ -60,7 +85,7 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
     public Name namespace;
     public TypeRole role;
     public Library library;
-    private List<RefType> elements = Collections.emptyList();
+    private List<RefType> elements;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -111,9 +136,9 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
                 this.elements = TWO_TYPE_PARAMS;
                 break;
             default:
-            this.elements = new ArrayList<>();
-            for (int i = 0; i < nTypeParams; ++i)
-                this.elements.add(JAVA_LANG_OBJECT);
+                this.elements = new ArrayList<>();
+                for (int i = 0; i < nTypeParams; ++i)
+                    this.elements.add(JAVA_LANG_OBJECT);
         }
     }
 
@@ -233,7 +258,7 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
     // ----------------------------------------------------------------------
 
     public void add(RefType refType) {
-        if (elements.size() == 0)
+        if (elements == null || elements.size() == 0)
             elements = new ArrayList<>();
         elements.add(refType);
     }

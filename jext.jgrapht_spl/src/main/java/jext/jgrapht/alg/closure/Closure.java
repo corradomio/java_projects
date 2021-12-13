@@ -1,7 +1,7 @@
 package jext.jgrapht.alg.closure;
 
-import jext.debug.Debug;
 import jext.jgrapht.util.Utils;
+import jext.util.Assert;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -47,7 +47,7 @@ public class Closure<V> {
     private void checkMembers() {
         for(V v : members)
             if (v == null)
-                Debug.nop();
+                Assert.nop();
     }
 
     // ----------------------------------------------------------------------

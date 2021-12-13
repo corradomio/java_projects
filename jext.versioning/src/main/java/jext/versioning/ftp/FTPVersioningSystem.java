@@ -2,6 +2,7 @@ package jext.versioning.ftp;
 
 import jext.util.PathUtils;
 import jext.versioning.AbstractVersioningSystem;
+import jext.versioning.VersioningSystemException;
 import jext.versioning.util.Authentication;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -29,13 +30,14 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
     // ----------------------------------------------------------------------
 
     @Override
-    public void checkout() {
+    public void checkout() throws VersioningSystemException {
         try {
             RemoteFile root = connect();
             root.copyInto(localDirectory);
         }
         catch (IOException e) {
-            logger.error(e, e);
+            //logger.error(e, e);
+            throw new VersioningSystemException(e);
         }
         finally {
             close();
@@ -43,13 +45,14 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
     }
 
     @Override
-    public void update() {
+    public void update() throws VersioningSystemException {
         try {
             RemoteFile root = connect();
             root.alignWith(localDirectory);
         }
         catch (IOException e) {
-            logger.error(e, e);
+            // logger.error(e, e);
+            throw new VersioningSystemException(e);
         }
         finally {
             close();
@@ -106,4 +109,9 @@ public class FTPVersioningSystem extends AbstractVersioningSystem {
     protected File getIgnoreFile() {
         return new File(localDirectory, ".fileignore");
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

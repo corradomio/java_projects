@@ -33,6 +33,10 @@ public class UnsolvedSymbolsRegistry {
     // Operations
     // ----------------------------------------------------------------------
 
+    public boolean contains(String name) {
+        return symbols.containsKey(name);
+    }
+
     public ResolvedReferenceTypeDeclaration get(String name) {
         return symbols.get(name);
     }

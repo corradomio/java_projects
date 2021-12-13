@@ -65,11 +65,6 @@ public abstract class AbstractVersioningSystem implements VersioningSystem {
 
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public void copy(File savedDirectory) {
-    //     FileUtils.copy(localDirectory, savedDirectory, copyExclude());
-    // }
-
     @Override
     public void delete() {
         FileUtils.delete(localDirectory, localExclude);

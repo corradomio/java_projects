@@ -30,16 +30,22 @@ public class LinkVersioningSystem  extends AbstractVersioningSystem {
 
     @Override
     public void checkout() throws VersioningSystemException {
+        if (!linkDirectory.exists())
+            throw new VersioningSystemException("Link directory " + linkDirectory + " not existent");
 
     }
 
     @Override
     public void update() throws VersioningSystemException {
+        if (!linkDirectory.exists())
+            throw new VersioningSystemException("Link directory " + linkDirectory + " not existent");
 
     }
 
     @Override
     public void commit() throws VersioningSystemException {
+        if (!linkDirectory.exists())
+            throw new VersioningSystemException("Link directory " + linkDirectory + " not existent");
 
     }
 

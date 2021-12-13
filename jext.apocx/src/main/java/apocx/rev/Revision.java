@@ -1,4 +1,4 @@
-package apoc.rev;
+package apocx.rev;
 
 import org.neo4j.procedure.Description;
 import org.neo4j.procedure.Name;
@@ -11,8 +11,8 @@ import java.util.List;
 
 public class Revision {
     @UserFunction
-    @Description("apoc.rev.test(inRevision, null|r|[]|[r]|[r1,r2]) | check if the node is available in the selected revision(s)")
-    public Object test(@Name("inRevision")List<Boolean> inRevision, @Name("rev")Object rev) {
+    @Description("apocx.rev.test(inRevision, null|r|[]|[r]|[r1,r2]) | check if the node is available in the selected revision(s)")
+    public Object test(@Name("inRevision") List<Boolean> inRevision, @Name("rev")Object rev) {
         if (inRevision == null)
             return true;
         if (inRevision.isEmpty())

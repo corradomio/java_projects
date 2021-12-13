@@ -4,10 +4,11 @@ import jext.name.IdNamed;
 
 public interface Field extends IdNamed {
 
-    RefType getType();
+    FieldName getName();
 
-    int getRank();
+    // RefType getType();
+    // int getRank();
+    DeclType getType();
 
     RefType getOwnerType();
-
 }

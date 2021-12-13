@@ -7,4 +7,8 @@ public class AnotherTemplate<T extends Integer> extends ACTemplate<T> {
 
     ACTemplate<T> tfield;
 
+    AnotherTemplate(T init) {
+
+    }
+
 }

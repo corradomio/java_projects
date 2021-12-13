@@ -1,7 +1,5 @@
 package jext.versioning;
 
-import java.io.File;
-
 public interface VersioningSystem {
 
     // VersioningSystem setLocalDirectory(File localDirectory);

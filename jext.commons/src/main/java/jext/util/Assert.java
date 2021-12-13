@@ -21,4 +21,8 @@ public class Assert {
             throw new AssertionError(String.format(message, args));
     }
 
+    public static void nop() {
+
+    }
+
 }

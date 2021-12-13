@@ -25,9 +25,9 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
 
     public static final ReferencedTypeDeclaration OBJECT = new ReferencedTypeDeclaration(JavaUtils.JAVA_LANG_OBJECT, 0);
 
-    private static final List<ResolvedTypeParameterDeclaration> NO_PARAMS = Collections.emptyList();
-    private static final List<ResolvedTypeParameterDeclaration> ONE_PARAM = Collections.singletonList(ObjectTypeParameter.object());
-    private static final List<ResolvedTypeParameterDeclaration> TWO_PARAMS = Arrays.asList(
+    private static final List<ResolvedTypeParameterDeclaration> NO_TYPE_PARAMS = Collections.emptyList();
+    private static final List<ResolvedTypeParameterDeclaration> ONE_TYPE_PARAM = Collections.singletonList(ObjectTypeParameter.object());
+    private static final List<ResolvedTypeParameterDeclaration> TWO_TYPE_PARAMS = Arrays.asList(
         ObjectTypeParameter.object(),
         ObjectTypeParameter.object());
 
@@ -42,13 +42,13 @@ public class ReferencedTypeDeclaration implements ResolvedReferenceTypeDeclarati
         this.qualifiedName = qualifiedName;
         switch(nTypeParameters) {
             case 0:
-                typeParams = NO_PARAMS;
+                typeParams = NO_TYPE_PARAMS;
                 break;
             case 1:
-                typeParams = ONE_PARAM;
+                typeParams = ONE_TYPE_PARAM;
                 break;
             case 2:
-                typeParams = TWO_PARAMS;
+                typeParams = TWO_TYPE_PARAMS;
                 break;
             default:
                 typeParams = new ArrayList<>();

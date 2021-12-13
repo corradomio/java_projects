@@ -1,9 +1,7 @@
 package jext.versioning.local;
 
-import jext.io.filters.FalseFileFilter;
 import jext.io.filters.FileFilters;
 import jext.io.filters.WildcardFileFilter;
-import jext.net.URL;
 import jext.util.FileUtils;
 import jext.util.StringUtils;
 import jext.versioning.AbstractVersioningSystem;
@@ -72,13 +70,27 @@ public class LocalVersioningSystem extends AbstractVersioningSystem {
             throw new VersioningSystemException("Source directory " + sourceDirectory + " not existent");
 
         // copy the source directory inside the local directory
-        // (if the local directory doesn't exist, it will be created
+        // if the local directory doesn't exist, it will be created
         FileUtils.copy(sourceDirectory, localDirectory, excludeFilter);
     }
 
     @Override
     public void update() {
+        if (!sourceDirectory.exists())
+            throw new VersioningSystemException("Source directory " + sourceDirectory + " not existent");
+
         FileUtils.align(sourceDirectory, localDirectory, excludeFilter);
+    }
+
+    @Override
+    public void commit() {
+        if (!sourceDirectory.exists())
+            throw new VersioningSystemException("Source directory " + sourceDirectory + " not existent");
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
     }
 
 }

@@ -5,6 +5,16 @@ import java.util.Map;
 public interface GraphDatabase {
 
     /**
+     * Neo4j version as string "3.5.xx"
+     */
+    String getVersion();
+
+    /**
+     * Neo4j major version as integer (3, 4 etc
+     */
+    int getMajorVersion();
+
+    /**
      * Initialize the database Connector
      */
     void initialize();

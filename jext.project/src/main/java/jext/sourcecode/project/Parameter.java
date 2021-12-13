@@ -5,14 +5,9 @@ import jext.name.Name;
 
 public interface Parameter extends IdNamed {
 
-    String getId();
-    Name getName();
+    DeclType getType();
 
-    RefType getType();
-
-    Method getOwnerMethod();
-
+    Method  getOwnerMethod();
     RefType getOwnerType();
 
-    int getRank();
 }

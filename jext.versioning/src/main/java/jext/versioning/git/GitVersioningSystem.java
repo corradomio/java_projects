@@ -78,8 +78,9 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
             }
 
             result = clone.call();
-        } catch (GitAPIException e) {
-            throw new VersioningSystemException(e);
+        }
+        catch (Throwable e) {
+            throw new VersioningSystemException(e.getMessage(), e);
         }
         finally {
             if (result != null)
@@ -91,6 +92,7 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
     @Override
     public void update() throws VersioningSystemException {
         Authentication auth = getAuthentication();
+        PullResult result = null;
 
         try(Git git = Git.open(localDirectory)) {
             PullCommand update = git.pull();
@@ -102,9 +104,12 @@ public class GitVersioningSystem  extends AbstractVersioningSystem {
                 update.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password));
             }
 
-            PullResult result = update.call();
-        } catch (IOException | GitAPIException e) {
-            throw new VersioningSystemException(e);
+            result = update.call();
+            if (!result.isSuccessful())
+                throw new IOException(result.toString());
+
+        } catch (Throwable e) {
+            throw new VersioningSystemException(e.getMessage(), e);
         }
         finally {
 

@@ -149,6 +149,16 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     // Properties
     // ----------------------------------------------------------------------
 
+    @Override
+    public String getVersion() {
+        return version;
+    }
+
+    @Override
+    public int getMajorVersion() {
+        return majorVersion;
+    }
+
     Driver getdriver() { return driver; }
 
     String getQuery(String qname) {

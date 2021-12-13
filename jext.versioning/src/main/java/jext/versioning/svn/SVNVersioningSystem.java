@@ -8,6 +8,7 @@ import jext.versioning.svn.util.SVNLogging;
 import jext.versioning.svn.util.SVNUtils;
 import jext.versioning.util.Authentication;
 import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
@@ -77,52 +78,57 @@ public class SVNVersioningSystem  extends AbstractVersioningSystem {
 
     @Override
     public void checkout() {
-        internalUpdate(localDirectory);
+        try {
+            internalUpdate(localDirectory);
+        }
+        catch (Throwable e) {
+            throw new VersioningSystemException(e);
+        }
     }
 
     @Override
     public void update() {
-        internalUpdate(localDirectory);
-    }
-
-    private void internalUpdate(File localDirectory) {
         try {
-            SVNURL svnUrl = SVNUtils.setup(this.url);
-
-            Authentication auth = getAuthentication();
-
-            // ISVNOptions options = new DefaultSVNOptions();
-            SVNClientManager clientManager = SVNClientManager.newInstance(/*options*/);
-            clientManager.setDebugLog(new SVNLogging(this.logger));
-
-            if (auth.isAuthenticated()) {
-                String username = auth.getUsername();
-                String password = auth.getPassword();
-
-                SVNPasswordAuthentication svnpa = SVNPasswordAuthentication.newInstance(
-                    username,
-                    password.toCharArray(),
-                    false,
-                    null,
-                    false
-                );
-
-                ISVNAuthenticationManager authManager = new BasicAuthenticationManager(new SVNAuthentication[]{svnpa});
-                clientManager.setAuthenticationManager(authManager);
-            }
-
-            SVNUpdateClient client = clientManager.getUpdateClient();
-            client.doCheckout(
-                svnUrl,
-                localDirectory,
-                SVNRevision.UNDEFINED,
-                SVNRevision.HEAD,
-                SVNDepth.UNKNOWN,
-                false);
+            internalUpdate(localDirectory);
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             throw new VersioningSystemException(e);
         }
+    }
+
+    private void internalUpdate(File localDirectory) throws SVNException {
+        SVNURL svnUrl = SVNUtils.setup(this.url);
+
+        Authentication auth = getAuthentication();
+
+        // ISVNOptions options = new DefaultSVNOptions();
+        SVNClientManager clientManager = SVNClientManager.newInstance(/*options*/);
+        clientManager.setDebugLog(new SVNLogging(this.logger));
+
+        if (auth.isAuthenticated()) {
+            String username = auth.getUsername();
+            String password = auth.getPassword();
+
+            SVNPasswordAuthentication svnpa = SVNPasswordAuthentication.newInstance(
+                username,
+                password.toCharArray(),
+                false,
+                null,
+                false
+            );
+
+            ISVNAuthenticationManager authManager = new BasicAuthenticationManager(new SVNAuthentication[]{svnpa});
+            clientManager.setAuthenticationManager(authManager);
+        }
+
+        SVNUpdateClient client = clientManager.getUpdateClient();
+        client.doCheckout(
+            svnUrl,
+            localDirectory,
+            SVNRevision.UNDEFINED,
+            SVNRevision.HEAD,
+            SVNDepth.UNKNOWN,
+            false);
     }
 
     // ----------------------------------------------------------------------

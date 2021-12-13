@@ -11,10 +11,14 @@ import jext.lang.JavaUtils;
 
 public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private final UnsolvedSymbolsRegistry usr;
 
     // ----------------------------------------------------------------------
-    // Private fields
+    // Constructor
     // ----------------------------------------------------------------------
 
     public UnsolvedSymbolsRegistryTypeSolver() {
@@ -90,5 +94,9 @@ public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
         }
         return name;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }
