@@ -26,18 +26,20 @@ public interface Module extends RefIdNamed {
     /** Module dependencies */
     List<Module> getDependencies();
 
-    /** Source roots (relative paths respect moduleHome) */
-    Set<String> getSourceRoots();
-    List<File>  getSourceRootDirectories();
+    // /** Source roots (relative paths respect moduleHome) */
+    // Set<String> getSourceRoots();
+    // List<File>  getSourceRootDirectories();
 
     // -- sources
 
     /** Sources available inside the module */
-    List<Source> getSources();
-    List<File>   getSourceFiles();
+    // List<Source> getSources();
+    // List<File>   getSourceFiles();
 
-    /** Retrieve a source by id/fullname/name */
-    Source getSource(String nameOrId);
+    // /** Retrieve a source by id/fullname/name */
+    // Source getSource(String nameOrId);
+
+    Sources getSources();
 
     // -- libraries
 
@@ -63,11 +65,13 @@ public interface Module extends RefIdNamed {
     // -- resources
     // 01/06/2021: not necessary
 
-    /** Resources used by the module */
-    List<Resource> getResources();
+    Resources getResources();
 
-    /** Retrieve the resource by name or id/fullname/name */
-    Resource getResource(String nameOrId);
+    // /** Resources used by the module */
+    // List<Resource> getResources();
+
+    // /** Retrieve the resource by name or id/fullname/name */
+    // Resource getResource(String nameOrId);
 
     // -- types
 

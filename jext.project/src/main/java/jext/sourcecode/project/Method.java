@@ -11,32 +11,21 @@ public interface Method extends IdNamed {
     String CLASS_INITIALIZER  = "$classInitializer";
     String STATIC_INITIALIZER = "$staticInitializer";
 
-    // String getId();
-
     // it returns a 'MethodName' a specialized version of 'Name' containing information
     // on method signature
-    MethodName/*MethodName*/ getName();
+    MethodName getName();
 
-    // specialized version of 'getName()'
-    // MethodName getMethodName();
-
-    String[] getModifiers();
-
-    // Set<String> getModifiers();
-    // String      getVisibility();
-    // Set<String> getStructure();
-
-    boolean isStatic();
-
-    List<Parameter> getParameters();
-    int getNumOfParams();
-
-    // String getSignature();
+    String getSignature();
     String getDeclaration();
     String getDigest();
 
-    RefType  getOwnerType();
+    String[] getModifiers();
+    boolean isStatic();
 
+    int getNumOfParams();
+    List<Parameter> getParameters();
+
+    RefType  getOwnerType();
     DeclType getReturnType();
 
 }

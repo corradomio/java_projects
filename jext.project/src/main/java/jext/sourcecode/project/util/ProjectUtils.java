@@ -35,7 +35,7 @@ public class ProjectUtils {
             return Collections.emptyList();
 
         return moduleNames.stream()
-            .map(moduleName -> project.getModule(moduleName))
+            .map(moduleName -> project.getModules().getModule(moduleName))
             .collect(Collectors.toList());
     }
 
@@ -51,7 +51,7 @@ public class ProjectUtils {
     public static List<File> getSourceFiles(Project project) {
         List<File> sourceFiles = new ArrayList<>();
         project.getModules().forEach(module -> {
-            sourceFiles.addAll(module.getSourceFiles());
+            sourceFiles.addAll(module.getSources().getSourceFiles());
         });
         return sourceFiles;
     }
@@ -61,13 +61,13 @@ public class ProjectUtils {
 
         for (ModuleSource ms : moduleSources) {
 
-            Module module = project.getModule(ms.module);
+            Module module = project.getModules().getModule(ms.module);
             if (module == null) {
                 logger.errorf("Module %s not found in project %s", ms.module, project.getName().getFullName());
                 continue;
             }
 
-            Source source = module.getSource(ms.source);
+            Source source = module.getSources().getSource(ms.source);
             if (source == null) {
                 logger.errorf("Source %s not found in module %s of project %s", ms.source, ms.module, project.getName().getFullName());
                 continue;
@@ -131,7 +131,7 @@ public class ProjectUtils {
     public static List<File> getSourceRoots(Project project) {
         List<File> roots = new ArrayList<>();
         project.getModules().forEach(module -> {
-            roots.addAll(module.getSourceRootDirectories());
+            roots.addAll(module.getSources().getSourceRootDirectories());
         });
         return roots;
 
@@ -165,7 +165,7 @@ public class ProjectUtils {
 
     public static Resource getResource(Project project, String nameOrId) {
         for (Module module : project.getModules()) {
-            Resource resource = module.getResource(nameOrId);
+            Resource resource = module.getResources().getResource(nameOrId);
             if (resource != null)
                 return resource;
         }

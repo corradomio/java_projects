@@ -6,6 +6,7 @@ import org.hls.cdecl.ACTemplate1;
 public class AnotherTemplate<T extends Integer> extends ACTemplate<T> {
 
     ACTemplate<T> tfield;
+    private final T psftfield = null;
 
     AnotherTemplate(T init) {
 

@@ -1,5 +1,6 @@
 package jext.sourcecode.project.info.library;
 
+import jext.name.EmptyName;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.NamedObject;
@@ -40,7 +41,7 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     }
 
     public InfoLibrary(InfoProject project, LibraryType libraryType, Map<String, Object> info) {
-        super(ObjectName.empty());
+        super(EmptyName.empty());
 
         this.project = project;
         this.info = info;

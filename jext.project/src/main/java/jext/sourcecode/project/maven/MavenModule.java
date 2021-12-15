@@ -65,7 +65,7 @@ public class MavenModule extends BaseModule {
         List<Module> dmodules = new ArrayList<>();
         pom.getDependencies()
             .stream()
-            .map(coords -> getProject().getModule(coords.toString()))
+            .map(coords -> project.getModules().getModule(coords.toString()))
             .filter(Objects::nonNull)
             .forEach(dmodule -> {
                 dmodules.add(dmodule);
@@ -111,7 +111,7 @@ public class MavenModule extends BaseModule {
     }
 
     private boolean isLibrary(MavenCoords coords) {
-        return project.getModule(coords.toString()) == null;
+        return project.getModules().getModule(coords.toString()) == null;
     }
 
     // ----------------------------------------------------------------------

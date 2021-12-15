@@ -48,6 +48,16 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     // ----------------------------------------------------------------------
 
     @Override
+    public Library getLibrary(String nameOrId) {
+        return get(nameOrId);
+    }
+
+    @Override
+    public Library getLibrary(Library library) {
+        return resolve(library);
+    }
+
+    @Override
     public Iterator<Library> iterator() {
         return getUsedLibraries().iterator();
     }
@@ -76,16 +86,6 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
         else
             return Collections.emptySet();
     }
-
-    // private Iterator<Library> libraries(boolean allVersions) {
-    //     List<Library> libraries = new ArrayList<>();
-    //     libraries.addAll(localLibraries);
-    //     if (allVersions)
-    //         libraries.addAll(mavenLibraries.values());
-    //     else
-    //         libraries.addAll(highestLibraries.values());
-    //     return libraries.iterator();
-    // }
 
     @Override
     public int size() {

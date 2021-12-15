@@ -43,6 +43,16 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     // ----------------------------------------------------------------------
 
     @Override
+    public Library getLibrary(String nameOrId) {
+        return get(nameOrId);
+    }
+
+    @Override
+    public Library getLibrary(Library library) {
+        return resolve(library);
+    }
+
+    @Override
     public Iterator<Library> iterator() {
         return getUsedLibraries().iterator();
     }

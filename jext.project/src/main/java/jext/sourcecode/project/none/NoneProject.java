@@ -16,7 +16,7 @@ public class NoneProject  extends BaseProject {
     }
 
     public static Module module() {
-        return instance.getModule();
+        return instance.getModules().getModule();
     }
 
     protected NoneProject() {

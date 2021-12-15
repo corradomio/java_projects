@@ -5,7 +5,8 @@ import jext.sourcecode.project.DeclType;
 import jext.sourcecode.project.Field;
 import jext.sourcecode.project.FieldName;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.util.FieldNameObject;
+import jext.util.LongHash;
+import jext.util.StringUtils;
 
 public class DefinedField extends NamedObject implements Field {
 
@@ -20,6 +21,8 @@ public class DefinedField extends NamedObject implements Field {
 
     private final DeclType fieldType;
     private final RefType  ownerType;
+    private String[] modifiers = StringUtils.emptyArray();
+    private String digest = "0";
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -29,7 +32,7 @@ public class DefinedField extends NamedObject implements Field {
         super(new FieldNameObject(ownerType.getName(), fieldName));
         this.ownerType = ownerType;
         this.fieldType = fieldType;
-        ((FieldNameObject)getName()).setHash(fieldType.getHash());
+        this.digest = LongHash.asString(fieldType.getSignature());
     }
 
     // ----------------------------------------------------------------------
@@ -49,6 +52,25 @@ public class DefinedField extends NamedObject implements Field {
     @Override
     public RefType getOwnerType() {
         return ownerType;
+    }
+
+    @Override
+    public String getDigest() {
+        return digest;
+    }
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    @Override
+    public String[] getModifiers() {
+        return modifiers;
+    }
+
+    public void setModifiers(String[] modifiers) {
+        this.modifiers = modifiers;
+        this.digest = LongHash.asString(modifiers, fieldType.getSignature());
     }
 
     // ----------------------------------------------------------------------

@@ -1,7 +1,10 @@
 package jext.sourcecode.project.maven;
 
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Modules;
+import jext.sourcecode.project.maven.util.MavenModulesImpl;
 import jext.sourcecode.project.util.BaseProject;
+import jext.sourcecode.project.util.ModulesImpl;
 
 import java.io.File;
 import java.util.Properties;
@@ -43,17 +46,33 @@ public class MavenProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     @Override
+    public Modules getModules() {
+        if (modules != null)
+            return modules;
+
+        modules = new MavenModulesImpl();
+
+        findModulesByScan();
+        findModulesByJavaSourceRoots();
+        addRootModule();
+        addParentModules();
+        sortModules();
+
+        return modules;
+    }
+
+    @Override
     protected Module newModule(File moduleHome) {
         return new MavenModule(moduleHome, this);
     }
 
-    @Override
-    public Module getModule(String nameOrId) {
-        for (Module module : getModules()) {
-            if (((MavenModule) module).getMavenCoords().equals(nameOrId))
-                return module;
-        }
-
-        return super.getModule(nameOrId);
-    }
+    // @Override
+    // public Module getModule(String nameOrId) {
+    //     for (Module module : getModules()) {
+    //         if (((MavenModule) module).getMavenCoords().equals(nameOrId))
+    //             return module;
+    //     }
+    //
+    //     return super.getModule(nameOrId);
+    // }
 }

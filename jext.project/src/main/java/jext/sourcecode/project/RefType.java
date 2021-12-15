@@ -11,13 +11,13 @@ import java.util.List;
  */
 public interface RefType extends IdNamed {
 
-    String getId();
-    Name getName();
+    String  getId();
+    Name    getName();
 
     Project getProject();
     Library getLibrary();
 
-    Name getNamespace();
+    Name    getNamespace();
 
     /**
      * Role of the type
@@ -34,7 +34,7 @@ public interface RefType extends IdNamed {
     boolean isType();
     Type asType();
 
-    boolean isCollection();
+    boolean       isCollection();
     List<RefType> getElements();
 
     int getTypeParametersCount();

@@ -67,7 +67,7 @@ public class ProjectDump {
             });
 
             spaces(stream, 2).print("sourceRoots:\n");
-            m.getSourceRoots().forEach(sr -> {
+            m.getSources().getSourceRoots().forEach(sr -> {
                 spaces(stream, 3).printf("- %s\n", sr);
             });
 

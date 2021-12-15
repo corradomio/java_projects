@@ -2,6 +2,7 @@ package jext.sourcecode.resources.libraries;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.name.EmptyName;
 import jext.name.VersionName;
 import jext.name.Name;
 import jext.name.ObjectName;
@@ -29,7 +30,7 @@ public class JarLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     public JarLibrary(File jarFile, Module module) {
-        super(ObjectName.empty(), module.getProject());
+        super(EmptyName.empty(), module.getProject());
 
         String name = FileUtils.getNameWithoutExt(jarFile);
         this.version = LibraryVersion.versionOf(name);

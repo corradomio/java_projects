@@ -1,10 +1,13 @@
 package jext.sourcecode.project;
 
+import jext.name.IdNamed;
+
 import java.util.List;
 
-public interface DeclType {
+public interface DeclType extends IdNamed {
 
-    String  getName();
+    String getSignature();
+
     RefType getType();
 
     boolean isArray();
@@ -14,6 +17,6 @@ public interface DeclType {
     int            getTypeParamsCount();
     List<DeclType> getTypeParameters();
 
-    long getHash();
+    // long getHash();
 
 }

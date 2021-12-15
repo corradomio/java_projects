@@ -6,9 +6,12 @@ public interface Field extends IdNamed {
 
     FieldName getName();
 
-    // RefType getType();
-    // int getRank();
-    DeclType getType();
+    DeclType  getType();
 
-    RefType getOwnerType();
+    RefType   getOwnerType();
+
+    String[]  getModifiers();
+
+    String getDigest();
+
 }

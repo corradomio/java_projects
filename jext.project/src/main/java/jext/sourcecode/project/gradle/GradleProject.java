@@ -5,12 +5,14 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.gradle.collectors.AllDepsCollector;
 import jext.sourcecode.project.gradle.collectors.ErrorsCollector;
 import jext.sourcecode.project.gradle.collectors.LoggerCollector;
 import jext.sourcecode.project.util.LibrarySet;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseProject;
+import jext.sourcecode.project.util.ModulesImpl;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
 import org.gradle.tooling.BuildAction;
@@ -111,11 +113,11 @@ public class GradleProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Module> getModules() {
+    public Modules getModules() {
         if (modules != null)
             return modules;
 
-        modules = new ArrayList<>();
+        modules = new ModulesImpl();
 
         addModule(rootModule);
         findModulesByConfig();
@@ -127,7 +129,7 @@ public class GradleProject extends BaseProject {
     }
 
     void addModule(Module module) {
-        if (getModule(module.getPath()) != null)
+        if (modules.getModule(module.getPath()) != null)
             return;
 
         modules.add(module);

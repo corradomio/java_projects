@@ -7,17 +7,15 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.Resource;
-import jext.sourcecode.project.Source;
+import jext.sourcecode.project.Resources;
+import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
-import jext.sourcecode.resources.ResourceFile;
-import jext.util.FileUtils;
+import jext.sourcecode.project.util.ResourcesImpl;
+import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.MapUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +28,10 @@ public class InfoModule implements Module, Comparable<Named> {
     private final InfoProject project;
     private final Map<String, Object> info;
     private final Name name;
-    private List<Source> sources;
-    private final Map<String, Source> pathMap = new HashMap<>();
-    private final Map<String, Source> nameMap = new HashMap<>();
-    private final Map<String, Source> idMap = new HashMap<>();
+    private SourcesImpl sources;
+    // private final Map<String, Source> pathMap = new HashMap<>();
+    // private final Map<String, Source> nameMap = new HashMap<>();
+    // private final Map<String, Source> idMap = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -97,69 +95,71 @@ public class InfoModule implements Module, Comparable<Named> {
     public List<Module> getDependencies() {
         List<String> mdepends = MapUtils.get(info, "dependencies");
         return mdepends.stream()
-            .map(mname -> project.getModule(mname))
+            .map(mname -> project.getModules().getModule(mname))
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<Source> getSources() {
+    public Sources getSources() {
         if (sources != null)
             return sources;
 
-        sources = new ArrayList<>();
+        sources = new SourcesImpl(this);
         Map<String, Object> sinfos = MapUtils.get(info, "sources");
         for (String fullname : sinfos.keySet()) {
             Map<String, Object> sinfo = MapUtils.get(sinfos, fullname);
             if (project.isAccepted(MapUtils.get(sinfo, "path"))) {
                 InfoSource source  = new InfoSource(this, sinfo);
                 sources.add(source);
-                idMap.put(source.getId(), source);
-                nameMap.put(source.getName().getFullName(), source);
-                pathMap.put(source.getPath(), source);
+                // idMap.put(source.getId(), source);
+                // nameMap.put(source.getName().getFullName(), source);
+                // pathMap.put(source.getPath(), source);
             }
         }
+
+        // sources.sort(Comparable::compareTo);
 
         return sources;
     }
 
-    @Override
-    public List<File> getSourceFiles() {
-        return getSources().stream()
-            .map(Resource::getFile)
-            .collect(Collectors.toList());
-    }
+    // @Override
+    // public List<File> getSourceFiles() {
+    //     return getSources().stream()
+    //         .map(Resource::getFile)
+    //         .collect(Collectors.toList());
+    // }
 
-    @Override
-    public Set<String> getSourceRoots() {
-        return new HashSet<>(MapUtils.get(info, "sourceRoots"));
-    }
+    // @Override
+    // public Set<String> getSourceRoots() {
+    //     return new HashSet<>(MapUtils.get(info, "sourceRoots"));
+    // }
 
-    @Override
-    public List<File> getSourceRootDirectories() {
-        File moduleHome = getModuleHome();
-        return getSourceRoots().stream()
-            .map(sourceRoot -> new File(moduleHome, sourceRoot))
-            .collect(Collectors.toList());
-    }
+    // @Override
+    // public List<File> getSourceRootDirectories() {
+    //     File moduleHome = getModuleHome();
+    //     return getSourceRoots().stream()
+    //         .map(sourceRoot -> new File(moduleHome, sourceRoot))
+    //         .collect(Collectors.toList());
+    // }
 
-    @Override
-    public Source getSource(String nameOrPathOrId) {
-        if (pathMap.containsKey(nameOrPathOrId))
-            return pathMap.get(nameOrPathOrId);
-        if (nameMap.containsKey(nameOrPathOrId))
-            return nameMap.get(nameOrPathOrId);
-        if (idMap.containsKey(nameOrPathOrId))
-            return nameMap.get(nameOrPathOrId);
-
-        List<Source> sources = getSources();
-        for (Source source : sources) {
-            if (source.getName().getFullName().equals(nameOrPathOrId))
-                return source;
-            if (source.getId().equals(nameOrPathOrId))
-                return source;
-        }
-        return null;
-    }
+    // @Override
+    // public Source getSource(String nameOrPathOrId) {
+    //     if (pathMap.containsKey(nameOrPathOrId))
+    //         return pathMap.get(nameOrPathOrId);
+    //     if (nameMap.containsKey(nameOrPathOrId))
+    //         return nameMap.get(nameOrPathOrId);
+    //     if (idMap.containsKey(nameOrPathOrId))
+    //         return nameMap.get(nameOrPathOrId);
+    //
+    //     List<Source> sources = getSources();
+    //     for (Source source : sources) {
+    //         if (source.getName().getFullName().equals(nameOrPathOrId))
+    //             return source;
+    //         if (source.getId().equals(nameOrPathOrId))
+    //             return source;
+    //     }
+    //     return null;
+    // }
 
     @Override
     public Set<String> getMavenRepositories() {
@@ -169,7 +169,7 @@ public class InfoModule implements Module, Comparable<Named> {
     @Override
     public Library getRuntimeLibrary() {
         String rtlib = MapUtils.get(info, "runtimeLibrary");
-        return project.getLibrary(rtlib);
+        return project.getLibraries().getLibrary(rtlib);
     }
 
     // @Override
@@ -189,7 +189,7 @@ public class InfoModule implements Module, Comparable<Named> {
         List<String> libraryNames = MapUtils.get(info, "declaredLibraries");
         Set<Library> libraries = new HashSet<>();
         libraryNames.forEach(libraryName -> {
-            Library library = project.getLibrary(libraryName);
+            Library library = project.getLibraries().getLibrary(libraryName);
             if (library != null)
                 libraries.add(library);
         });
@@ -213,27 +213,27 @@ public class InfoModule implements Module, Comparable<Named> {
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Resource> getResources() {
-        return Collections.emptyList();
+    public Resources getResources() {
+        return new ResourcesImpl(this);
     }
 
-    @Override
-    public Resource getResource(String nameOrId) {
-        File directory = FileUtils.addParentPath(getModuleHome(), nameOrId);
-
-        List<File> resources = FileUtils.listFiles(directory);
-        for (File resourceFile : resources) {
-            Resource resource = new ResourceFile(resourceFile, this);
-            if (resource.getName().getFullName().equals(nameOrId))
-                return resource;
-            if (resource.getId().equals(nameOrId))
-                return resource;
-            if (resource.getName().getName().equals(nameOrId))
-                return resource;
-        }
-
-        return null;
-    }
+    // @Override
+    // public Resource getResource(String nameOrId) {
+    //     File directory = FileUtils.addParentPath(getModuleHome(), nameOrId);
+    //
+    //     List<File> resources = FileUtils.listFiles(directory);
+    //     for (File resourceFile : resources) {
+    //         Resource resource = new ResourceFile(resourceFile, this);
+    //         if (resource.getName().getFullName().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getId().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getName().getName().equals(nameOrId))
+    //             return resource;
+    //     }
+    //
+    //     return null;
+    // }
 
     // ----------------------------------------------------------------------
     // Types

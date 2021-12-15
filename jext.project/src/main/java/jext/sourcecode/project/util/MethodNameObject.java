@@ -9,6 +9,10 @@ import java.util.Objects;
 
 public class MethodNameObject extends ObjectName implements MethodName {
 
+    // ----------------------------------------------------------------------
+    // Private Fields
+    // ----------------------------------------------------------------------
+
     private final String signature;
 
     // ----------------------------------------------------------------------
@@ -16,12 +20,7 @@ public class MethodNameObject extends ObjectName implements MethodName {
     // ----------------------------------------------------------------------
 
     public MethodNameObject(Name name, String methodName, String signature) {
-        this(name.getFullName(), methodName, signature);
-    }
-
-    public MethodNameObject(String typeName, String methodName, String signature) {
-        super(typeName, methodName);
-
+        super(name, methodName);
         Assert.check(signature != null, "signature must be not null");
         this.signature = signature;
     }
@@ -36,12 +35,12 @@ public class MethodNameObject extends ObjectName implements MethodName {
     }
 
     // ----------------------------------------------------------------------
-    // Override
+    // Overrides
     // ----------------------------------------------------------------------
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFullName(), signature);
+        return Objects.hash(getFullName(), getSignature());
     }
 
     @Override
@@ -52,16 +51,11 @@ public class MethodNameObject extends ObjectName implements MethodName {
     }
 
     @Override
-    public int compareTo(Name name) {
-        MethodName that = (MethodName) name;
+    public int compareTo(Name o) {
+        MethodName that = (MethodName) o;
         int cmp = this.getFullName().compareTo(that.getFullName());
         if (cmp != 0) return cmp;
         return this.getSignature().compareTo(that.getSignature());
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s", getName());
     }
 
     // ----------------------------------------------------------------------

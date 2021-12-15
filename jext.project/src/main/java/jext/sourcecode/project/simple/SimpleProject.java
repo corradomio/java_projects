@@ -1,7 +1,9 @@
 package jext.sourcecode.project.simple;
 
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.util.BaseProject;
+import jext.sourcecode.project.util.ModulesImpl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,11 +46,11 @@ public class SimpleProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Module> getModules() {
+    public Modules getModules() {
         if (modules != null)
             return modules;
 
-        modules = new ArrayList<>();
+        modules = new ModulesImpl();
 
         findModulesByJavaSourceRoots();
         addRootModule();

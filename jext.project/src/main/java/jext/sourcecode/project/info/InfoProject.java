@@ -9,14 +9,18 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Source;
+import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.info.library.InfoInvalidLibrary;
 import jext.sourcecode.project.info.library.InfoLocalLibrary;
 import jext.sourcecode.project.info.library.InfoMavenLibrary;
 import jext.sourcecode.project.info.library.InfoRTLibrary;
 import jext.sourcecode.project.info.library.LibrarySet;
 import jext.sourcecode.project.maven.MavenRepository;
+import jext.sourcecode.project.util.ModulesImpl;
+import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 
@@ -53,12 +57,15 @@ public class InfoProject implements Project {
     private LibraryFinder lfinder;
 
     private Map<String, Object> info;
-    private List<Module> modules;
-    private Map<String, Module> moduleMap;
+    // private List<Module> modules;
+    // private Map<String, Module> moduleMap;
     //private Set<Library> libraries;
     private LibrarySet libraries;
     // private Map<String, Library> libraryMap;
-    private List<Source> sources;
+    // private List<Source> sources;
+
+    private ModulesImpl modules;
+    private SourcesImpl sources;
     private Map<String, Source> sourceMap;
 
     // ----------------------------------------------------------------------
@@ -130,37 +137,37 @@ public class InfoProject implements Project {
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Source> getSources() {
+    public Sources getSources() {
         if (sources != null)
             return sources;
 
-        sources = new ArrayList<>();
+        sources = new SourcesImpl(getProjectHome());
         for (Module module : getModules())
             sources.addAll(module.getSources());
 
         return sources;
     }
 
-    @Override
-    public Source getSource(String sourceId) {
-        if (sourceMap == null) {
-            sourceMap = new HashMap<>();
-            for (Source source : getSources())
-                sourceMap.put(source.getId(), source);
-        }
-        return sourceMap.get(sourceId);
-    }
+    // @Override
+    // public Source getSource(String sourceId) {
+    //     if (sourceMap == null) {
+    //         sourceMap = new HashMap<>();
+    //         for (Source source : getSources())
+    //             sourceMap.put(source.getId(), source);
+    //     }
+    //     return sourceMap.get(sourceId);
+    // }
 
     // ----------------------------------------------------------------------
     // Modules
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Module> getModules() {
+    public Modules getModules() {
         if (modules != null)
             return modules;
 
-        modules = new ArrayList<>();
+        modules = new ModulesImpl();
         Map<String, Object> mminfos = MapUtils.get(info, "modules");
         for (String mname: mminfos.keySet()) {
             Map<String, Object> mminfo = MapUtils.get(mminfos, mname);
@@ -170,31 +177,31 @@ public class InfoProject implements Project {
         return modules;
     }
 
-    @Override
-    public Module getModule(String nameOrId) {
-        if (moduleMap == null) {
-            moduleMap = new java.util.TreeMap<>();
-            getModules().forEach(m -> {
-                moduleMap.put(m.getId(), m);
-                moduleMap.put(m.getName().getFullName(), m);
-            });
-        }
-
-        if (moduleMap.containsKey(nameOrId))
-            return moduleMap.get(nameOrId);
-
-        // List<Module> modules = getModules();
-        // for (Module m : modules) {
-        //     if (m.getName().getFullName().equals(nameOrId))
-        //         return m;
-        //     if (m.getId().equals(nameOrId))
-        //         return m;
-        //     if (m.getName().getName().equals(nameOrId))
-        //         return m;
-        // }
-
-        return null;
-    }
+    // @Override
+    // public Module getModule(String nameOrId) {
+    //     if (moduleMap == null) {
+    //         moduleMap = new java.util.TreeMap<>();
+    //         getModules().forEach(m -> {
+    //             moduleMap.put(m.getId(), m);
+    //             moduleMap.put(m.getName().getFullName(), m);
+    //         });
+    //     }
+    //
+    //     if (moduleMap.containsKey(nameOrId))
+    //         return moduleMap.get(nameOrId);
+    //
+    //     // List<Module> modules = getModules();
+    //     // for (Module m : modules) {
+    //     //     if (m.getName().getFullName().equals(nameOrId))
+    //     //         return m;
+    //     //     if (m.getId().equals(nameOrId))
+    //     //         return m;
+    //     //     if (m.getName().getName().equals(nameOrId))
+    //     //         return m;
+    //     // }
+    //
+    //     return null;
+    // }
 
     // ----------------------------------------------------------------------
     // Libraries
@@ -264,17 +271,17 @@ public class InfoProject implements Project {
             return new InfoInvalidLibrary(this, linfo);
     }
 
-    @Override
-    public Library getLibrary(String nameOrId) {
-        LibrarySet libraries = getLibraries();
-        return libraries.get(nameOrId);
-    }
+    // @Override
+    // public Library getLibrary(String nameOrId) {
+    //     LibrarySet libraries = getLibraries();
+    //     return libraries.get(nameOrId);
+    // }
 
-    @Override
-    public Library getLibrary(Library library) {
-        LibrarySet projectLibraries = (LibrarySet) getLibraries();
-        return projectLibraries.resolve(library);
-    }
+    // @Override
+    // public Library getLibrary(Library library) {
+    //     LibrarySet projectLibraries = (LibrarySet) getLibraries();
+    //     return projectLibraries.resolve(library);
+    // }
 
     @Override
     public Set<LibraryRepository> getLibraryRepositories() {
@@ -298,10 +305,10 @@ public class InfoProject implements Project {
     // Extras
     // ----------------------------------------------------------------------
 
-    @Override
-    public double getComplexity(double threshold) {
-        return 0;
-    }
+    // @Override
+    // public double getComplexity(double threshold) {
+    //     return 0;
+    // }
 
     @Override
     public void abort() {

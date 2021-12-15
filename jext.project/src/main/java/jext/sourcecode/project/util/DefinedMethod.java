@@ -1,5 +1,6 @@
 package jext.sourcecode.project.util;
 
+import jext.name.Name;
 import jext.name.NamedObject;
 import jext.sourcecode.project.DeclType;
 import jext.sourcecode.project.Method;
@@ -15,67 +16,76 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefinedMethod extends NamedObject implements Method {
 
+    public static DefinedMethod of(RefType ownerType, String methodName) {
+        return of(ownerType, methodName, methodName);
+    }
+
+    public static DefinedMethod of(RefType ownerType, String methodName, String signature) {
+        return new DefinedMethod(ownerType, methodName, signature);
+    }
+
+    public static DefinedMethod of(RefType ownerType, DeclType returnType, String methodName, String signature) {
+        DefinedMethod method = of(ownerType, methodName, signature);
+        method.setReturnType(returnType);
+        return method;
+    }
+
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
-    private final String declaration;
+    private static final String STATIC = "static";
+
     private final RefType ownerType;
     private DeclType returnType;
+    private Name lastCallName;
     private final List<Parameter> parameters = new ArrayList<>();
+
+    private String[] modifiers = StringUtils.EMPTY_ARRAY_STRING;
+    private String declaration;
+    private final String signature;
+
     private final AtomicInteger callIndex;
-    private MethodName lastCallName;
-    private boolean isStatic;
-    private String digest;
-    private String[] modifiers = StringUtils.emptyArray();
+    private String digest = "0";
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public DefinedMethod(RefType ownerType, String methodName) {
-        this(ownerType, methodName, signatureOf(methodName), null);
-    }
-
-    public DefinedMethod(RefType ownerType,
-                         String methodName,
-                         String signature,
-                         String declaration) {
+    private DefinedMethod(
+        RefType ownerType,
+        String methodName,
+        String signature)
+    {
         super(new MethodNameObject(ownerType.getName(), methodName, signature));
-
-        // remove spaces
-        if (declaration != null)
-            declaration = declaration.trim();
 
         this.ownerType = ownerType;
         this.callIndex = new AtomicInteger();
         this.lastCallName = getName();
-        this.declaration = declaration;
-        setReturnType(DeclaredType.of(ReferencedType.VOID));
-    }
-
-    private static String signatureOf(String name) {
-        return String.format("%s()", name);
+        this.returnType   = DeclaredType.VOID;
+        this.signature    = signature;
+        this.declaration  = signature;
     }
 
     // ----------------------------------------------------------------------
     // Setters
     // ----------------------------------------------------------------------
 
-    public void setStatic(boolean isStatic) {
-        this.isStatic = isStatic;
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public void setModifiers(String... modifiers) {
+        this.modifiers = modifiers;
     }
 
     public void setReturnType(DeclType returnType) {
         this.returnType = returnType;
     }
 
-    public void setDigest(String digest) {
-        this.digest = digest;
-    }
-
-    public void setModifiers(String[] modifiers) {
-        this.modifiers = modifiers;
+    public void setDeclaration(String declaration) {
+        if (declaration != null)
+            this.declaration = declaration.trim();
     }
 
     public void add(DeclType parameterType, String parameterName) {
@@ -117,10 +127,10 @@ public class DefinedMethod extends NamedObject implements Method {
         return ownerType;
     }
 
-    // @Override
-    // public String getSignature() {
-    //     return getMethodName().getSignature();
-    // }
+    @Override
+    public String getSignature() {
+        return signature;
+    }
 
     @Override
     public String getDeclaration() {
@@ -134,7 +144,10 @@ public class DefinedMethod extends NamedObject implements Method {
 
     @Override
     public boolean isStatic() {
-        return isStatic;
+        for (int i=0; i<modifiers.length; ++i)
+            if (STATIC.equals(modifiers[i]))
+                return true;
+        return false;
     }
 
     // ----------------------------------------------------------------------

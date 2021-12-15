@@ -135,9 +135,9 @@ public class ProjectAnalyzer {
 
         // object counts
         minfo.put("counts", MapUtils.asMap(
-            "resources", m.getResources().size(),
+            // "resources", m.getResources().size(),
             "sources", m.getSources().size(),
-            "sourceRoots", m.getSourceRoots().size(),
+            "sourceRoots", m.getSources().getSourceRoots().size(),
             "dependencies", m.getDependencies().size(),
             // "libraries", m.getLibraries().size(),
             "declaredLibraries", declaredLibraries.size(),
@@ -146,7 +146,7 @@ public class ProjectAnalyzer {
         ));
 
         // source roots
-        minfo.put("sourceRoots", m.getSourceRoots());
+        minfo.put("sourceRoots", m.getSources().getSourceRoots());
 
         // sources
         // Map<String, Object> sinfos = new TreeMap<>();

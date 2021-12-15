@@ -4,7 +4,6 @@ import jext.maven.MavenDownloader;
 import jext.name.IdNamed;
 
 import java.io.File;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -87,14 +86,18 @@ public interface Project extends IdNamed {
     // ----------------------------------------------------------------------
     // Module/Source
     // ----------------------------------------------------------------------
-    List<Module> getModules();
-    Module getModule(String nameOrId);
-    default Module getModule() {
-        return getModule(ROOT_MODULE_NAME);
-    }
+    // List<Module> getModules();
+    // Module getModule(String nameOrId);
+    // default Module getModule() {
+    //     return getModule(ROOT_MODULE_NAME);
+    // }
+    //
+    // List<Source> getSources();
+    // Source getSource(String sourceId);
 
-    List<Source> getSources();
-    Source getSource(String sourceId);
+    Modules getModules();
+
+    Sources getSources();
 
     // ----------------------------------------------------------------------
     // Libraries
@@ -112,11 +115,11 @@ public interface Project extends IdNamed {
     /** List of module libraries RESOLVED with HIGHEST version */
     Set<Library> getLibraries(Module module);
 
-    /** Library by name or id */
-    Library getLibrary(String nameOrId);
+    // /** Library by name or id */
+    // Library getLibrary(String nameOrId);
 
-    /** Library with HIGHEST version */
-    Library getLibrary(Library library);
+    // /** Library with HIGHEST version */
+    // Library getLibrary(Library library);
 
     Set<LibraryRepository> getLibraryRepositories();
     LibraryRepository getLibraryRepository(String librepoId);
@@ -125,7 +128,7 @@ public interface Project extends IdNamed {
     // Extras
     // ----------------------------------------------------------------------
 
-    double getComplexity(double threshold);
+    // double getComplexity(double threshold);
 
     // ----------------------------------------------------------------------
     // Abort

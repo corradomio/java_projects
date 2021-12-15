@@ -15,11 +15,11 @@ public class ObjectName implements Name {
     // Static methods
     // ----------------------------------------------------------------------
 
-    public static ObjectName NO_NAME = new ObjectName("");
+    // public static ObjectName NO_NAME = new ObjectName("");
 
-    public static ObjectName empty() {
-        return NO_NAME;
-    }
+    // public static ObjectName empty() {
+    //     return NO_NAME;
+    // }
 
     // ----------------------------------------------------------------------
     // Fields
@@ -30,6 +30,10 @@ public class ObjectName implements Name {
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
+
+    public ObjectName(Name name) {
+        this.name = name.getFullName();
+    }
 
     public ObjectName(String name) {
         this.name = name;

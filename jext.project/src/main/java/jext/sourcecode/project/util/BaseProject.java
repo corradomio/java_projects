@@ -13,9 +13,11 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.LibrarySet;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Source;
+import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.maven.MavenRepository;
 import jext.sourcecode.resources.ResourceFile;
 import jext.sourcecode.resources.SourceCode;
@@ -70,8 +72,8 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected Properties properties;
     protected Predicate<String> selector;
 
-    protected List<Module> modules;
-    protected List<Source> sources;
+    protected ModulesImpl modules;
+    protected SourcesImpl sources;
     protected jext.sourcecode.project.util.LibrarySet libraries;
 
     protected LibraryFinder lfinder;
@@ -158,39 +160,39 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Source> getSources() {
+    public Sources getSources() {
         if (sources != null)
             return sources;
 
-        sources = new ArrayList<>();
+        sources = new SourcesImpl(getProjectHome());
         for (Module module : getModules())
             sources.addAll(module.getSources());
         return sources;
     }
 
-    @Override
-    public Source getSource(String sourceId) {
-        for (Source source : getSources()) {
-            if (source.getId().equals(sourceId))
-                return source;
-            if (source.getName().getFullName().equals(sourceId))
-                return source;
-            if (source.getName().getName().equals(sourceId))
-                return source;
-        }
-        return null;
-    }
+    // @Override
+    // public Source getSource(String sourceId) {
+    //     for (Source source : getSources()) {
+    //         if (source.getId().equals(sourceId))
+    //             return source;
+    //         if (source.getName().getFullName().equals(sourceId))
+    //             return source;
+    //         if (source.getName().getName().equals(sourceId))
+    //             return source;
+    //     }
+    //     return null;
+    // }
 
     // ----------------------------------------------------------------------
     // Modules
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Module> getModules() {
+    public Modules getModules() {
         if (modules != null)
             return modules;
 
-        modules = new ArrayList<>();
+        modules = new ModulesImpl();
 
         findModulesByScan();
         findModulesByJavaSourceRoots();
@@ -460,28 +462,28 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     // ----------------------------------------------------------------------
 
-    @Override
-    public Module getModule(String nameOrId) {
-        if (nameOrId.isEmpty() || nameOrId.equals("0"))
-            nameOrId = ROOT_MODULE_NAME;
-
-        for (Module module : getModules()) {
-            if (module.getId().equals(nameOrId))
-                return module;
-            if (module.getRefId().equals(nameOrId))
-                return module;
-            if (module.getName().getFullName().equals(nameOrId))
-                return module;
-            if (module.getPath().equals(nameOrId))
-                return module;
-
-            // DANGEROUS
-            if (module.getName().getName().equals(nameOrId))
-                return module;
-        }
-
-        return null;
-    }
+    // @Override
+    // public Module getModule(String nameOrId) {
+    //     if (nameOrId.isEmpty() || nameOrId.equals("0"))
+    //         nameOrId = ROOT_MODULE_NAME;
+    //
+    //     for (Module module : getModules()) {
+    //         if (module.getId().equals(nameOrId))
+    //             return module;
+    //         if (module.getRefId().equals(nameOrId))
+    //             return module;
+    //         if (module.getName().getFullName().equals(nameOrId))
+    //             return module;
+    //         if (module.getPath().equals(nameOrId))
+    //             return module;
+    //
+    //         // DANGEROUS
+    //         if (module.getName().getName().equals(nameOrId))
+    //             return module;
+    //     }
+    //
+    //     return null;
+    // }
 
     protected Module newModule(File moduleHome) {
         throw new UnsupportedOperationException();
@@ -575,26 +577,26 @@ public abstract class BaseProject extends NamedObject implements Project {
         return projectLibraries.resolveAll(module.getDeclaredLibraries());
     }
 
-    @Override
-    public Library getLibrary(String nameOrId) {
-        for (Library library : getLibraries()) {
-            if (library.getId().equals(nameOrId))
-                return library;
-            if (library.getName().getFullName().equals(nameOrId))
-                return library;
-            if (library.getName().getName().equals(nameOrId))
-                return library;
-            if (library.getPath().equals(nameOrId))
-                return library;
-        }
-        return null;
-    }
+    // @Override
+    // public Library getLibrary(String nameOrId) {
+    //     for (Library library : getLibraries()) {
+    //         if (library.getId().equals(nameOrId))
+    //             return library;
+    //         if (library.getName().getFullName().equals(nameOrId))
+    //             return library;
+    //         if (library.getName().getName().equals(nameOrId))
+    //             return library;
+    //         if (library.getPath().equals(nameOrId))
+    //             return library;
+    //     }
+    //     return null;
+    // }
 
-    @Override
-    public Library getLibrary(Library library) {
-        jext.sourcecode.project.util.LibrarySet projectLibraries = (jext.sourcecode.project.util.LibrarySet) getLibraries();
-        return projectLibraries.resolve(library);
-    }
+    // @Override
+    // public Library getLibrary(Library library) {
+    //     jext.sourcecode.project.util.LibrarySet projectLibraries = (jext.sourcecode.project.util.LibrarySet) getLibraries();
+    //     return projectLibraries.resolve(library);
+    // }
 
     @Override
     public Set<LibraryRepository> getLibraryRepositories() {
@@ -705,10 +707,10 @@ public abstract class BaseProject extends NamedObject implements Project {
     // Extras
     // ----------------------------------------------------------------------
 
-    @Override
-    public double getComplexity(double threshold) {
-        return 0.;
-    }
+    // @Override
+    // public double getComplexity(double threshold) {
+    //     return 0.;
+    // }
 
     // ----------------------------------------------------------------------
     // Abort

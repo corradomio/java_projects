@@ -6,14 +6,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class Sources extends ArrayList<Source> {
+public interface Sources extends List<Source> {
 
-    Set<String> getSourceRoots() {
-        return Collections.emptySet();
-    }
+    Source getSource(String nameOrId);
 
-    List<File> getSourceRootDirectories() {
-        return Collections.emptyList();
-    }
+    List<File> getSourceFiles();
+
+    Set<String> getSourceRoots();
+    List<File> getSourceRootDirectories();
 
 }

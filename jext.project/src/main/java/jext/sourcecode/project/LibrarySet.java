@@ -5,9 +5,12 @@ import jext.maven.MavenDownloader;
 import java.util.Set;
 
 public interface LibrarySet extends Set<Library> {
-    boolean add(Library library);
+    // boolean add(Library library);
 
     Library get(String nameOrId);
+
+    Library getLibrary(String nameOrId);
+    Library getLibrary(Library library);
 
     Set<Library> getUsedLibraries();
     Set<Library> getUnusedLibraries();

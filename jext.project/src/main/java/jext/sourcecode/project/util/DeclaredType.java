@@ -1,5 +1,7 @@
 package jext.sourcecode.project.util;
 
+import jext.name.Name;
+import jext.name.NamedObject;
 import jext.sourcecode.project.DeclType;
 import jext.sourcecode.project.RefType;
 import jext.util.Assert;
@@ -8,7 +10,9 @@ import jext.util.LongHash;
 import java.util.Collections;
 import java.util.List;
 
-public class DeclaredType implements DeclType {
+public class DeclaredType extends NamedObject implements DeclType {
+
+    public static DeclaredType VOID = of(ReferencedType.VOID);
 
     // ----------------------------------------------------------------------
     // Factory methods
@@ -30,29 +34,28 @@ public class DeclaredType implements DeclType {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private String name;
+    private String token;
     private final RefType refType;
     private final int rank;
     private List<DeclType> typeParams = Collections.emptyList();
+    // private long hash;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     private DeclaredType(RefType refType, int rank) {
+        super(refType.getName());
         this.refType = refType;
         this.rank = rank;
-        this.name = refType.getName().getName();
-        if (this.name == null)
-            Assert.nop();
+        this.token = refType.getName().getName();
         for (int i=0; i<rank; ++i)
-            this.name += "[]";
+            this.token += "[]";
     }
 
-    private DeclaredType(RefType refType, int rank, String name) {
-        this.refType = refType;
-        this.rank = rank;
-        this.name = name;
+    private DeclaredType(RefType refType, int rank, String token) {
+        this(refType, rank);
+        this.token = token;
     }
 
     // ----------------------------------------------------------------------
@@ -60,8 +63,13 @@ public class DeclaredType implements DeclType {
     // ----------------------------------------------------------------------
 
     @Override
-    public String getName() {
-        return name;
+    public Name getName() {
+        return refType.getName();
+    }
+
+    @Override
+    public String getSignature() {
+        return token;
     }
 
     @Override
@@ -94,14 +102,17 @@ public class DeclaredType implements DeclType {
         return typeParams;
     }
 
-    @Override
-    public long getHash() {
-        long hash = LongHash.hash(refType.getName().getFullName());
-        hash = LongHash.concat(rank, hash);
-        for (DeclType typeParam : typeParams)
-            hash = LongHash.concat(hash, typeParam.getHash());
-        return hash;
-    }
+    // @Override
+    // public long getHash() {
+    //     if (hash != 0)
+    //         return hash;
+    //
+    //     hash = LongHash.hash(refType.getName().getFullName());
+    //     hash = LongHash.concat(rank, hash);
+    //     for (DeclType typeParam : typeParams)
+    //         hash = LongHash.concat(hash, typeParam.getHash());
+    //     return hash;
+    // }
 
     // ----------------------------------------------------------------------
     // Operations

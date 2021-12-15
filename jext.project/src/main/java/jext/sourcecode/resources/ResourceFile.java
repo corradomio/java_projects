@@ -1,5 +1,6 @@
 package jext.sourcecode.resources;
 
+import jext.name.EmptyName;
 import jext.name.NamedObject;
 import jext.name.ObjectName;
 import jext.name.PathName;
@@ -27,7 +28,7 @@ public class ResourceFile extends NamedObject implements Resource {
     // ----------------------------------------------------------------------
 
     public ResourceFile(File file, Module module) {
-        super(ObjectName.empty());
+        super(EmptyName.empty());
 
         this.module = module;
         this.file = file;

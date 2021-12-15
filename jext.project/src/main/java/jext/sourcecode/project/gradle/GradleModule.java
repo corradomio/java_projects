@@ -84,7 +84,7 @@ public class GradleModule extends BaseModule {
             return super.getDependencies();
 
         dnames.forEach(dname -> {
-            Module dmodule = project.getModule(dname.toString());
+            Module dmodule = project.getModules().getModule(dname.toString());
             if (dmodule != null)
                 orderedDeps.add(dmodule);
         });
@@ -207,7 +207,7 @@ public class GradleModule extends BaseModule {
 
         dmodules = dmods
             .stream()
-            .map(name -> project.getModule(name))
+            .map(name -> project.getModules().getModule(name))
             .filter(Objects::nonNull)
             .map(Module::getName)
             .sorted()

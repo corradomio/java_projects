@@ -15,8 +15,10 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resource;
+import jext.sourcecode.project.Resources;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Source;
+import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.ant.util.IvyFile;
 import jext.sourcecode.project.eclipse.util.ClasspathFile;
@@ -52,8 +54,8 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     protected List<File> directories;
     protected Set<Library> libraries;
     protected List<Module> dependencies;
-    protected List<Source> sources;
-    protected Set<String> sourceRoots;
+    protected SourcesImpl sources;
+    protected ResourcesImpl resources;
 
     protected Logger logger;
 
@@ -108,12 +110,12 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         return this.moduleHome;
     }
 
-    @Override
-    public List<File> getSourceRootDirectories() {
-        return getSourceRoots().stream()
-            .map(sourceRoot -> new File(moduleHome, sourceRoot))
-            .collect(Collectors.toList());
-    }
+    // @Override
+    // public List<File> getSourceRootDirectories() {
+    //     return getSourceRoots().stream()
+    //         .map(sourceRoot -> new File(moduleHome, sourceRoot))
+    //         .collect(Collectors.toList());
+    // }
 
     @Override
     public String getDigest() {
@@ -222,12 +224,12 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Source> getSources() {
+    public Sources getSources() {
         if (sources != null)
             return sources;
 
+        sources = new SourcesImpl(this);
         directories = getBaseProject().getDirectories(moduleHome);
-        sources = new ArrayList<>();
         getDirectories().forEach(dir -> {
             List<Source> srclist = getBaseProject().getSources(dir, this);
             sources.addAll(srclist);
@@ -236,43 +238,43 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         return sources;
     }
 
-    @Override
-    public List<File> getSourceFiles() {
-        return getSources().stream()
-            .map(Resource::getFile)
-            .collect(Collectors.toList());
-    }
+    // @Override
+    // public List<File> getSourceFiles() {
+    //     return getSources().stream()
+    //         .map(Resource::getFile)
+    //         .collect(Collectors.toList());
+    // }
 
-    @Override
-    public Source getSource(String nameOrId) {
-        // for (SourceRoot sourceRoot : getSourceRoots())
-        // for (Source source : sourceRoot.getSources()) {
-        for (Source source : getSources()) {
-            if (source.getId().equals(nameOrId))
-                return source;
-            if (source.getName().getFullName().equals(nameOrId))
-                return source;
-            if (source.getName().getName().equals(nameOrId))
-                return source;
-            if (source.getPath().equals(nameOrId))
-                return source;
-        }
-        return null;
-    }
+    // @Override
+    // public Source getSource(String nameOrId) {
+    //     // for (SourceRoot sourceRoot : getSourceRoots())
+    //     // for (Source source : sourceRoot.getSources()) {
+    //     for (Source source : getSources()) {
+    //         if (source.getId().equals(nameOrId))
+    //             return source;
+    //         if (source.getName().getFullName().equals(nameOrId))
+    //             return source;
+    //         if (source.getName().getName().equals(nameOrId))
+    //             return source;
+    //         if (source.getPath().equals(nameOrId))
+    //             return source;
+    //     }
+    //     return null;
+    // }
 
-    @Override
-    public Set<String> getSourceRoots() {
-        if (sourceRoots != null)
-            return sourceRoots;
-
-        sourceRoots = new HashSet<>();
-        for (Source source : getSources()) {
-            source.getSourceRoot().ifPresent(sourceRoot ->
-                sourceRoots.add(sourceRoot));
-        }
-
-        return sourceRoots;
-    }
+    // @Override
+    // public Set<String> getSourceRoots() {
+    //     if (sourceRoots != null)
+    //         return sourceRoots;
+    //
+    //     sourceRoots = new HashSet<>();
+    //     for (Source source : getSources()) {
+    //         source.getSourceRoot().ifPresent(sourceRoot ->
+    //             sourceRoots.add(sourceRoot));
+    //     }
+    //
+    //     return sourceRoots;
+    // }
 
     // ----------------------------------------------------------------------
     // Libraries
@@ -382,7 +384,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
     @Override
     public Library getLibrary(String nameOrId) {
-        Library selected = project.getLibrary(nameOrId);
+        Library selected = project.getLibraries().getLibrary(nameOrId);
         if (selected != null)
             return selected;
 
@@ -435,9 +437,11 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // ----------------------------------------------------------------------
 
     @Override
-    public List<Resource> getResources() {
+    public Resources getResources() {
+        if (resources != null)
+            return resources;
 
-        List<Resource> resources = new ArrayList<>();
+        resources = new ResourcesImpl(this);
 
         // local resources
         resources.addAll(getBaseProject().getResources(moduleHome, this));
@@ -451,20 +455,37 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         return resources;
     }
 
-    @Override
-    public Resource getResource(String nameOrId) {
-        for (Resource resource : getResources()) {
-            if (resource.getId().equals(nameOrId))
-                return resource;
-            if (resource.getName().getFullName().equals(nameOrId))
-                return resource;
-            if (resource.getName().getName().equals(nameOrId))
-                return resource;
-            if (resource.getPath().equals(nameOrId))
-                return resource;
-        }
-        return null;
-    }
+    // @Override
+    // public List<Resource> getResources() {
+    //
+    //     List<Resource> resources = new ArrayList<>();
+    //
+    //     // local resources
+    //     resources.addAll(getBaseProject().getResources(moduleHome, this));
+    //
+    //     // sub resources
+    //     getDirectories().forEach(dir -> {
+    //         List<Resource> reslist = getBaseProject().getResources(dir, this);
+    //         resources.addAll(reslist);
+    //     });
+    //
+    //     return resources;
+    // }
+
+    // @Override
+    // public Resource getResource(String nameOrId) {
+    //     for (Resource resource : getResources()) {
+    //         if (resource.getId().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getName().getFullName().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getName().getName().equals(nameOrId))
+    //             return resource;
+    //         if (resource.getPath().equals(nameOrId))
+    //             return resource;
+    //     }
+    //     return null;
+    // }
 
     // ----------------------------------------------------------------------
     // Types

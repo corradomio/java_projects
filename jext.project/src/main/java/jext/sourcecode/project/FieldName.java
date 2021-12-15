@@ -4,5 +4,4 @@ import jext.name.Name;
 
 public interface FieldName extends Name {
 
-    long getHash();
 }
