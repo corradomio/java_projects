@@ -350,7 +350,7 @@ public class UndDatabase implements AutoCloseable {
         try {
             new ProcessExecutor()
                 .command(UND_APP,
-                    "analyze", update ? "-changed" : "-all",
+                    "-verbose", "analyze", update ? "-changed" : "-all",
                     undDatabase.getAbsolutePath()
                 )
                 .redirectOutput(new OutputStream() {
@@ -387,12 +387,12 @@ public class UndDatabase implements AutoCloseable {
         return database.name();
     }
 
-    public Entity[] ents(String s) {
-        return Entity.of(database.ents(s));
+    public Ent[] ents(String s) {
+        return Ent.of(database.ents(s));
     }
 
-    public Entity lookup_uniquename(String s) {
-        return Entity.of(database.lookup_uniquename(s));
+    public Ent lookup_uniquename(String s) {
+        return Ent.of(database.lookup_uniquename(s));
     }
 
     @Override

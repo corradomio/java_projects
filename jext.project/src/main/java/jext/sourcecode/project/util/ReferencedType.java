@@ -11,6 +11,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.project.TypeParam;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,9 +31,9 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
     public static ReferencedType JAVA_LANG_VOID;
     public static ReferencedType JAVA_LANG_OBJECT;
 
-    private static List<RefType> NO_TYPE_PARAMS;
-    private static List<RefType> ONE_TYPE_PARAM;
-    private static List<RefType> TWO_TYPE_PARAMS;
+    //private static List<TypeParam> NO_TYPE_PARAMS = Collections.emptyList();;
+    //private static List<TypeParam> ONE_TYPE_PARAM = Arrays.asList(new TypeParamImpl("T"));
+    //private static List<TypeParam> TWO_TYPE_PARAMS = Arrays.asList(new TypeParamImpl("T1"), new TypeParamImpl("T2"));
 
     // ----------------------------------------------------------------------
     // Static fields
@@ -46,15 +47,15 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
         //
 
         // initialized AS FIRST!
-        NO_TYPE_PARAMS = Collections.emptyList();
+        // NO_TYPE_PARAMS = Collections.emptyList();
 
         VOID   = new ReferencedType(JavaConstants.VOID);
         NULL   = new ReferencedType(JavaConstants.NULL);
         JAVA_LANG_OBJECT = new ReferencedType(JavaConstants.JAVA_LANG_OBJECT);
         JAVA_LANG_VOID   = new ReferencedType(JavaConstants.JAVA_LANG_VOID);
 
-        ONE_TYPE_PARAM  = Collections.singletonList(JAVA_LANG_OBJECT);
-        TWO_TYPE_PARAMS = Arrays.asList(JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
+        // ONE_TYPE_PARAM  = Collections.singletonList(JAVA_LANG_OBJECT);
+        // TWO_TYPE_PARAMS = Arrays.asList(JAVA_LANG_OBJECT, JAVA_LANG_OBJECT);
 
         for (String primitiveType : JavaConstants.PRIMITIVE_TYPES) {
             map.put(primitiveType, new ReferencedType(primitiveType));
@@ -85,7 +86,8 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
     public Name namespace;
     public TypeRole role;
     public Library library;
-    private List<RefType> elements;
+    private List<RefType> elements = Collections.emptyList();
+    private List<TypeParam> tparams;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -125,21 +127,17 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
         //     setNameWithId(new ObjectName(JavaUtils.boxed(fullname)));
 
         // add the type parameters. Es: Map<Object,Object>
-        switch(nTypeParams) {
-            case 0:
-                this.elements = NO_TYPE_PARAMS;
-                break;
-            case 1:
-                this.elements = ONE_TYPE_PARAM;
-                break;
-            case 2:
-                this.elements = TWO_TYPE_PARAMS;
-                break;
-            default:
-                this.elements = new ArrayList<>();
-                for (int i = 0; i < nTypeParams; ++i)
-                    this.elements.add(JAVA_LANG_OBJECT);
+        if (nTypeParams == 0) {
+            this.tparams = Collections.emptyList();
         }
+        else {
+            this.tparams = new ArrayList<>();
+            for (int i=0; i<nTypeParams; ++i) {
+                String tname = String.format("T%d", i + 1);
+                this.tparams.add(new TypeParamImpl(name, tname, tname));
+            }
+        }
+
     }
 
     private Name guessNamespace() {
@@ -193,7 +191,12 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
 
     @Override
     public int getTypeParametersCount() {
-        return elements.size();
+        return tparams.size();
+    }
+
+    @Override
+    public List<TypeParam> getTypeParameters() {
+        return tparams;
     }
 
     @Override

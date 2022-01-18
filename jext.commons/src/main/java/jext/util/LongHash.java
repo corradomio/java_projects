@@ -296,6 +296,10 @@ public class LongHash {
     // Conversion
     // ----------------------------------------------------------------------
 
+    public static String asString(Object... values) {
+        return toString(hash(values));
+    }
+
     public static String toString(long hashCode) {
         return Long.toUnsignedString(hashCode, Character.MAX_RADIX);
     }

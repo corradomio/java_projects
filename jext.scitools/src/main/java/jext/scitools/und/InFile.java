@@ -2,9 +2,17 @@ package jext.scitools.und;
 
 public class InFile {
 
+    // ----------------------------------------------------------------------
+    // Private Fields
+    // ----------------------------------------------------------------------
+
     private com.scitools.understand.Entity file;
     private int line;
     private int column;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public InFile(com.scitools.understand.Entity file, int line, int column) {
         this.file = file;
@@ -12,8 +20,12 @@ public class InFile {
         this.column = column;
     }
 
-    public Entity file() {
-        return Entity.of(file);
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    public Ent file() {
+        return Ent.of(file);
     }
 
     public int line() {

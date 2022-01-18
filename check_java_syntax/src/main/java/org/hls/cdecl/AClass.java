@@ -1,2 +1,5 @@
-package org.hls.cdecl;public class AClass {
+package org.hls.cdecl;
+
+public class AClass {
+
 }

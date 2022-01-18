@@ -10,6 +10,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.project.TypeParam;
 import jext.util.StringUtils;
 
 import java.util.Collections;
@@ -81,6 +82,11 @@ public class InfoType implements Type {
     @Override
     public int getTypeParametersCount() {
         return 0;
+    }
+
+    @Override
+    public List<TypeParam> getTypeParameters() {
+        return Collections.emptyList();
     }
 
     @Override

@@ -12,7 +12,9 @@ import jext.sourcecode.project.gradle.collectors.ProjectsCollector;
 import jext.sourcecode.project.gradle.util.BuildGradleFile;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
+import jext.util.FileUtils;
 import org.gradle.tooling.BuildException;
+import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.ProjectConnection;
 
 import java.io.File;
@@ -24,6 +26,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import static jext.sourcecode.project.gradle.GradleProject.GRADLE_JAVA_HOME;
 
 public class GradleModule extends BaseModule {
 
@@ -240,14 +244,19 @@ public class GradleModule extends BaseModule {
         ErrorsCollector err = new ErrorsCollector(logger);
         ProjectsCollector projects = new ProjectsCollector();
         LoggerCollector logcoll = new LoggerCollector(logger, projects);
+
+        // File javaHome = findJavaHome();
+
         try(ProjectConnection connection = getGradleProject().getConnection()) {
-            connection
-                .newBuild().forTasks(projectsTask)
-                    .withArguments("--continue")
+            BuildLauncher launcher = connection
+                .newBuild()
+                .forTasks(projectsTask)
+                .withArguments("--continue")
                 // .setStandardOutput(projects)             // this
                 .setStandardOutput(logcoll)                 // OR this
-                .setStandardError(err)
-                .run();
+                .setStandardError(err);
+
+            launcher.run();
         }
         catch (BuildException e) {
             String message = e.getCause().getMessage();

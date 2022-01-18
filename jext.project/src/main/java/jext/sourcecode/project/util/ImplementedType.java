@@ -10,7 +10,9 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.project.TypeParam;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,10 +24,10 @@ public class ImplementedType extends NamedObject implements Type {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private Name namespace;
-    private Source source;
-    private TypeRole role;
-    private int nParams;
+    private final Name namespace;
+    private final Source source;
+    private final TypeRole role;
+    private final List<TypeParam> tparams = new ArrayList<>();
     private String digest;
     private String[] modifiers;
 
@@ -113,7 +115,12 @@ public class ImplementedType extends NamedObject implements Type {
 
     @Override
     public int getTypeParametersCount() {
-        return nParams;
+        return tparams.size();
+    }
+
+    @Override
+    public List<TypeParam> getTypeParameters() {
+        return tparams;
     }
 
     @Override
@@ -148,6 +155,10 @@ public class ImplementedType extends NamedObject implements Type {
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+
+    public void addTypeParameter(String name, String signature) {
+        tparams.add(new TypeParamImpl(getName(), name, signature));
+    }
 
     @Override
     public String toString() {

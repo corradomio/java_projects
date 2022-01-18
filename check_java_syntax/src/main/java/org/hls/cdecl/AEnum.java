@@ -1,2 +1,5 @@
-package org.hls.cdecl;public enum AEnum {
+package org.hls.cdecl;
+
+public enum AEnum {
+
 }

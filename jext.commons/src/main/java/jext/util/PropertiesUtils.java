@@ -4,8 +4,10 @@ import jext.logging.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -39,6 +41,15 @@ public class PropertiesUtils {
     // ----------------------------------------------------------------------
     // Load properties
     // ----------------------------------------------------------------------
+
+    public static Properties save(File propertiesFile, Properties properties) {
+        try (OutputStream stream = new FileOutputStream(propertiesFile)) {
+            properties.store(stream, "");
+        } catch (IOException e) {
+            Logger.getLogger(PropertiesUtils.class).error(e, e);
+        }
+        return properties;
+    }
 
     public static Properties load(String path) {
         return load(new File(path));

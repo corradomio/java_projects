@@ -1,156 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<Configuration monitorInterval="30">
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile  name="LogFile" fileName="/splserver-3.0.web.log" append="false"
+                      filePattern="/spllogs/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="256 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile >
+    </Appenders>
+    <Loggers>
+        <Logger name="org.gradle.tooling" level="WARN"/>
+        <Logger name="org.apache.http" level="INFO" />
 
-<!-- ===================================================================== -->
-<!--                                                                       -->
-<!--  Log4j Configuration                                                  -->
-<!--                                                                       -->
-<!--  Default log configuration file for the Workbench.                    -->
-<!--  Copied to the user home directory, where the user can change         -->
-<!--  settings for their own purposes.                                     -->
-<!--                                                                       -->
-<!--  Sends log messages to the console and the workbench.log file         -->
-<!--  in the user's home directory.                                        -->
-<!--                                                                       -->
-<!-- ===================================================================== -->
+        <Logger name="org.springframework" level="INFO" />
+        <Logger name="org.springframework.web.socket.config" level="WARN" />
+        <Logger name="org.apache.commons.beanutils" level="INFO" />
+        <Logger name="org.neo4j.driver" level="INFO" />
 
-<!-- $Id$ -->
+        <logger name="org.neo4j.ogm" level="INFO"/>
+        <logger name="org.neo4j.ogm.drivers.bolt.request.BoltRequest" level="INFO"/>
+        <logger name="org.neo4j.ogm.context.GraphEntityMapper" level="ERROR"/>
 
-<!--
-   | For more configuration infromation and examples see the Jakarta Log4j
-   | owebsite: http://jakarta.apache.org/log4j
- -->
+        <Logger name="jext.util" level="INFO" />
+        <Logger name="jext.cache" level="WARN"/>
+        <Logger name="jext.graph.neo4j" level="INFO" />
+        <logger name="jext.graph.neo4j.Neo4JOnlineSession" level="INFO" />
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+        <Logger name="ae.ebtic.spl.server.controller.wsocket" level="WARN" />
+        <Logger name="ae.ebtic.spl.analysis.dependencyv3" level="INFO" />
+        <Logger name="ae.ebtic.spl.analysis.dependencyv3.analysis" level="DEBUG" />
 
-    <!-- ================================= -->
-    <!-- Preserve messages in a local file -->
-    <!-- ================================= -->
+        <Logger name="ae.ebtic.spl.task" level="INFO" />
 
-    <!-- A size based file rolling appender, capturing everything  -->
-
-    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="/splserver-2.6.log"/>
-        <param name="Append" value="false"/>
-        <param name="MaxFileSize" value="32MB"/>
-        <param name="MaxBackupIndex" value="16"/>
-
-        <layout class="org.apache.log4j.PatternLayout">
-            <!-- param name="ConversionPattern" value="%d %-5p [%c{1}] %m%n"/ -->
-            <param name="ConversionPattern" value="%d %-5p [%c{1}] %m%n"/>
-        </layout>
-    </appender>
-
-    <!-- ============================== -->
-    <!-- Append messages to the console -->
-    <!-- ============================== -->
-
-    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-        <param name="Target" value="System.out"/>
-        <param name="Threshold" value="INFO"/>
-
-        <layout class="org.apache.log4j.PatternLayout">
-            <!-- The default pattern: Date Priority [Category] Message\n -->
-            <!--
-                c: only the class name
-                C: the full class name
-              -->
-            <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c] %m%n"/>
-        </layout>
-    </appender>
-
-    <!-- ================ -->
-    <!-- Limit categories -->
-    <!-- ================ -->
-
-    <category name="Main">
-        <priority value="DEBUG"/>
-    </category>
-
-
-    <category name="org.apache">
-        <priority value="WARN"/>
-    </category>
-
-    <category name="org.apache.spark.util">
-        <priority value="ERROR"/>
-    </category>
-
-    <category name="com.github">
-        <priority value="ERROR"/>
-    </category>
-
-    <category name="breeze.optimize">
-        <priority value="ERROR"/>
-    </category>
-
-    <category name="org.apache.commons.beanutils">
-        <priority value="WARN"/>
-    </category>
-
-    <category name="org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler">
-        <priority value="WARN"/>
-    </category>
-
-
-    <category name="jext.util">
-        <priority value="WARN"/>
-    </category>
-
-    <category name="jext.graph.neo4j.Neo4JOnlineSession">
-        <priority value="INFO"/>
-    </category>
-
-    <category name="jext.javassist.ByteCodeAnalyzer">
-        <priority value="WARN"/>
-    </category>
-
-
-    <category name="jext.maven.MavenDownloader">
-        <priority value="DEBUG"/>
-    </category>
-
-    <category name="ae.ebtic.spl.analysis.sourcecode.model.Library">
-        <priority value="WARN"/>
-    </category>
-
-    <category name="ae.ebtic.spl.analysis.components.ComponentAnalyzer">
-        <priority value="DEBUG"/>
-    </category>
-
-    <category name="ae.ebtic.spl.analysis.dependencyv2.java.ASTMethodDeclarations">
-        <priority value="INFO"/>
-    </category>
-
-    <category name="ae.ebtic.spl.analysis.dependencyv2.java.ASTMethodDependencies">
-        <priority value="DEBUG"/>
-    </category>
-
-    <category name="ae.ebtic.spl.analysis.runtime.RuntimeAnalyzer">
-        <priority value="DEBUG"/>
-    </category>
-
-    <category name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-        <priority value="WARN"/>
-    </category>
-
-    <category name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-        <priority value="WARN"/>
-    </category>
-
-    <category name="symbolsolver">
-        <priority value="ERROR"/>
-    </category>
-
-    <!-- ======================= -->
-    <!-- Setup the Root category -->
-    <!-- ======================= -->
-
-    <root>
-        <!-- priority values="INFO" -->
-        <priority value="INFO"/>
-        <!-- appender-ref ref="CONSOLE"/ -->
-        <appender-ref ref="FILE"/>
-    </root>
-
-</log4j:configuration>
+        <Root level="DEBUG">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="LogFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

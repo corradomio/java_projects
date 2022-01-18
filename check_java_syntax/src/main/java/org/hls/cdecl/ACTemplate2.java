@@ -1,2 +1,9 @@
-package org.hls.cdecl;public class ATemplate2 {
+package org.hls.cdecl;
+
+class ACTemplate21 {
+
+}
+
+public class ACTemplate2 {
+
 }

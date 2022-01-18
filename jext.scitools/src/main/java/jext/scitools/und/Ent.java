@@ -3,16 +3,16 @@ package jext.scitools.und;
 import com.scitools.understand.Lexer;
 import com.scitools.understand.UnderstandException;
 
-public class Entity {
+public class Ent {
 
-    public static Entity of(com.scitools.understand.Entity uent) {
-        return new Entity(uent);
+    public static Ent of(com.scitools.understand.Entity uent) {
+        return new Ent(uent);
     }
 
-    public static Entity[] of(com.scitools.understand.Entity[] uents) {
-        Entity[] ents = new Entity[uents.length];
+    public static Ent[] of(com.scitools.understand.Entity[] uents) {
+        Ent[] ents = new Ent[uents.length];
         for(int i=0; i<uents.length; ++i)
-            ents[i] = Entity.of(uents[i]);
+            ents[i] = Ent.of(uents[i]);
         return ents;
     }
 
@@ -26,7 +26,7 @@ public class Entity {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private Entity(com.scitools.understand.Entity uent) {
+    private Ent(com.scitools.understand.Entity uent) {
         this.uent = uent;
     }
 
@@ -50,13 +50,13 @@ public class Entity {
         return uent.longname();
     }
 
-    public Reference ref(String refkindstring , String entkindstring) {
-        Reference[] refs = Reference.of(uent.refs(refkindstring, entkindstring , true));
+    public Ref ref(String refkindstring , String entkindstring) {
+        Ref[] refs = Ref.of(uent.refs(refkindstring, entkindstring , true));
         return refs == null || refs.length == 0 ? null : refs[0];
     }
 
-    public Reference[] refs(String refkindstring , String entkindstring ) {
-        return Reference.of(uent.refs(refkindstring, entkindstring , false));
+    public Ref[] refs(String refkindstring , String entkindstring ) {
+        return Ref.of(uent.refs(refkindstring, entkindstring , false));
     }
 
     public Kind kind() {

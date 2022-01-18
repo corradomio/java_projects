@@ -2,6 +2,10 @@ package org.hls.modified;
 
 public class Modified {
 
-    public int afield;
+    private final double afield = 0;
+
+    protected static long amethod() { return 0; }
+
+    public void nm() {}
 
 }

@@ -1,2 +1,5 @@
-package org.hls.cdecl;public class AInterface {
+package org.hls.cdecl;
+
+public class AInterface {
+
 }

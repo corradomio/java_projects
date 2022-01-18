@@ -12,6 +12,7 @@ public interface Field extends IdNamed {
 
     String[]  getModifiers();
 
-    String getDigest();
+    String    getDeclaration();
+    String    getDigest();
 
 }

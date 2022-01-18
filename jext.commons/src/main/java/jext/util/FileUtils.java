@@ -62,31 +62,7 @@ public class FileUtils {
 
     public static String digest(File file) {
         return LongHash.toString(digestAsLong(file));
-        // if (!file.exists() || !file.isFile())
-        //     return NO_DIGEST;
-        //
-        // try {
-        //     MessageDigest md = algorithm();
-        //     update(md, file);
-        //     return toDigest(md);
-        // }
-        // catch (Exception e) {
-        //     logger.error(e, e);
-        //     return NO_DIGEST;
-        // }
     }
-
-    // public static String digest(InputStream in) {
-    //     try {
-    //         MessageDigest md = algorithm();
-    //         update(md, in);
-    //         return toDigest(md);
-    //     }
-    //     catch (Exception e) {
-    //         logger.error(e, e);
-    //         return "0";
-    //     }
-    // }
 
     private static void update(MessageDigest md, File file) throws IOException {
         try(InputStream in = new FileInputStream(file)) {

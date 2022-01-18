@@ -13,7 +13,7 @@ public class ArrayUtils {
     public static long[] EMPTY_LONG_ARRAY = new long[0];
     public static double[] EMPTY_DOUBLE_ARRAY = new double[0];
     public static boolean[] EMPTY_BOOLEAN_ARRAY = new boolean[0];
-    public static String[] EMPTY_STRING_ARRAY = new String[0];
+    private static String[]  EMPTY_STRING_ARRAY = new String[0];
 
     // ----------------------------------------------------------------------
     // range
@@ -107,6 +107,10 @@ public class ArrayUtils {
     }
 
     public static int[] asArray(int... a) {
+        return a;
+    }
+
+    public static long[] asArray(long... a) {
         return a;
     }
 
@@ -215,6 +219,12 @@ public class ArrayUtils {
 
     public static boolean[] asArray(int index, boolean value) {
         boolean[] array = new boolean[index+1];
+        array[index] = value;
+        return array;
+    }
+
+    public static long[] asArray(int index, long value) {
+        long[] array = new long[index+1];
         array[index] = value;
         return array;
     }

@@ -3,8 +3,8 @@ package org.hls.check;
 import com.scitools.understand.UnderstandException;
 import jext.cache.CacheManager;
 import jext.logging.Logger;
-import jext.scitools.und.Entity;
-import jext.scitools.und.Reference;
+import jext.scitools.und.Ent;
+import jext.scitools.und.Ref;
 import jext.scitools.und.UndDatabase;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
@@ -22,8 +22,13 @@ public class CheckUndDb {
     public static void main(String[] args) throws UnderstandException, IOException {
         Logger.configure();
         CacheManager.configure();
-        File hibernateProject = new File("D:\\Projects.github\\other_projects\\hibernate-orm");
-        File hibernateUnddb = new File(hibernateProject, "hibernate-orm.und");
+        File hibernateProject =
+                // new File("D:\\Projects.github\\other_projects\\hibernate-orm")
+                // new File("D:\\Projects.github\\java_projects\\check_java_syntax")
+                // new File("D:\\SPLGroup\\spl-workspaces\\sample-projects\\ForSalwa")
+                new File("D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project")
+                ;
+        File hibernateUnddb = new File(hibernateProject, "scitools.und");
         UndDatabase udb = UndDatabase.database(hibernateUnddb, "java", 8);
 
         udb.delete();
@@ -41,12 +46,12 @@ public class CheckUndDb {
 
         try(UndDatabase db  = UndDatabase.database(hibernateUnddb, "java", 8).open()) {
 
-            Entity[] ents = db.ents("");
-            for (Entity ent : ents) {
+            Ent[] ents = db.ents("");
+            for (Ent ent : ents) {
                 System.out.println(ent.longname());
 
-                Reference[] refs = ent.refs("", "", false);
-                for(Reference ref : refs) {
+                Ref[] refs = ent.refs("", "");
+                for(Ref ref : refs) {
                     System.out.print("... ");
                     System.out.printf("%s: %s\n", ref.scope().name(), ref.ent().name());
                 }
@@ -60,5 +65,7 @@ public class CheckUndDb {
             System.out.println(ents.length);
             System.out.println(kinds);
         }
+
+        udb.close();
     }
 }

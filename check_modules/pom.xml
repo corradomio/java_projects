@@ -11,12 +11,10 @@
     <modules>
 <!--        <module>m1</module>-->
 <!--        <module>m2</module>-->
-<!--        <module>main</module>-->
+        <module>main</module>
 <!--        <module>m3</module>-->
 <!--        <module>m4</module>-->
         <module>m5</module>
-        <module>outer</module>
-        <module>outer/inner</module>
     </modules>
 
     <properties>

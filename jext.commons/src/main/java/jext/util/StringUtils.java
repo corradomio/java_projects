@@ -16,8 +16,8 @@ public class StringUtils {
 
     private static final Logger logger = Logger.getLogger(StringUtils.class) ;
 
-    private static final String EMPTY_STRING = "";
-    private static final String[] EMPTY_ARRAY = new String[0];
+    public static final String EMPTY_STRING = "";
+    public static final String[] EMPTY_ARRAY_STRING = new String[0];
 
     // ----------------------------------------------------------------------
     // Empty String
@@ -27,7 +27,7 @@ public class StringUtils {
     public static String empty() {
         return EMPTY_STRING;
     }
-    public static String[] emptyArray() { return EMPTY_ARRAY; }
+    public static String[] emptyArray() { return EMPTY_ARRAY_STRING; }
 
     public static boolean isEmpty(String s) {
         return s == null || s.isEmpty();
@@ -79,7 +79,7 @@ public class StringUtils {
 
     public static String[] toArray(Collection<String> l) {
         if (l == null || l.isEmpty())
-            return EMPTY_ARRAY;
+            return EMPTY_ARRAY_STRING;
         String[] a = new String[l.size()];
         int i=0;
         for (String e : l) {

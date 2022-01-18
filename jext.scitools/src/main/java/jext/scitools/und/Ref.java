@@ -1,13 +1,13 @@
 package jext.scitools.und;
 
-public class Reference {
+public class Ref {
 
-    public static Reference of(com.scitools.understand.Reference uref) {
-        return new Reference(uref);
+    public static Ref of(com.scitools.understand.Reference uref) {
+        return new Ref(uref);
     }
 
-    public static Reference[] of(com.scitools.understand.Reference[] urefs) {
-        Reference[] refs = new Reference[urefs.length];
+    public static Ref[] of(com.scitools.understand.Reference[] urefs) {
+        Ref[] refs = new Ref[urefs.length];
         for(int i=0; i<urefs.length; ++i)
             refs[i] = of(urefs[i]);
         return refs;
@@ -23,7 +23,7 @@ public class Reference {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private Reference(com.scitools.understand.Reference uref) {
+    private Ref(com.scitools.understand.Reference uref) {
         this.uref = uref;
     }
 
@@ -41,12 +41,12 @@ public class Reference {
     //     return uref.isforward()
     // }
 
-    public Entity ent() {
-        return Entity.of(uref.ent());
+    public Ent ent() {
+        return Ent.of(uref.ent());
     }
 
-    public Entity scope() {
-        return Entity.of(uref.scope());
+    public Ent scope() {
+        return Ent.of(uref.scope());
     }
 
     public InFile inFile() {

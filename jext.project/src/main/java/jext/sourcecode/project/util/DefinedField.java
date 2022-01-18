@@ -23,6 +23,7 @@ public class DefinedField extends NamedObject implements Field {
     private final RefType  ownerType;
     private String[] modifiers = StringUtils.emptyArray();
     private String digest = "0";
+    private String declaration = "";
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -52,6 +53,16 @@ public class DefinedField extends NamedObject implements Field {
     @Override
     public RefType getOwnerType() {
         return ownerType;
+    }
+
+    @Override
+    public String getDeclaration() {
+        return declaration;
+    }
+
+    public void setDeclaration(String declaration) {
+        if (declaration != null)
+            this.declaration = declaration.trim();
     }
 
     @Override

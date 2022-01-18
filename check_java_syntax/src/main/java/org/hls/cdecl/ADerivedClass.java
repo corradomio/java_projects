@@ -1,2 +1,5 @@
-package org.hls.cdecl;public class ADerivedClass {
+package org.hls.cdecl;
+
+public class ADerivedClass extends AClass {
+
 }

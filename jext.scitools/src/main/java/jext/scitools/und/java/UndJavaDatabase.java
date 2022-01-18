@@ -75,7 +75,7 @@ public class UndJavaDatabase extends UndDatabase {
     public void addLibraries(Collection<File> libraryFiles) throws IOException {
         List<File> lfiles = new ArrayList<>(libraryFiles);
         int n = lfiles.size();
-        int ssize = 20;
+        int ssize = MAX_FILES_INLINE;
 
         for (int i=0; i<n; i += ssize) {
             int l = Math.min(i + ssize, n);

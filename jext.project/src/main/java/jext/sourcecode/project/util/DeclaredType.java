@@ -13,6 +13,7 @@ import java.util.List;
 public class DeclaredType extends NamedObject implements DeclType {
 
     public static DeclaredType VOID = of(ReferencedType.VOID);
+    public static DeclaredType OBJECT = of(ReferencedType.JAVA_LANG_OBJECT);
 
     // ----------------------------------------------------------------------
     // Factory methods

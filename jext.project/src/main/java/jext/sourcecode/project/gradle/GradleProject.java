@@ -58,6 +58,9 @@ public class GradleProject extends BaseProject {
     public static final String GRADLE_HOMEDIR = "gradle.home";
     public static final String GRADLE_BUILD = "gradle.build";
     public static final String GRADLE_CONFIGURATION = "gradle.configuration";
+    public static final String GRADLE_PROPERTIES = "gradle.properties";
+
+    public static final String GRADLE_JAVA_HOME = "org.gradle.java.home";
 
     private static final String GRADLE_HOME = "GRADLE_HOME";
     private static final String NO_GRADLE_HOME = "NO_GRADLE_HOME";
@@ -104,7 +107,10 @@ public class GradleProject extends BaseProject {
 
         // FIRST update 'build.gradle' THEN create the GradleToolingAPI connector!
         // updateBuildGradle();
-        connect();
+        // connect();
+
+        // ERROR: this is not the correct place where to set the property "org.gradle.java.home"
+        // setOrgGradleJavaHome();
         // retrieveAllDependencies();
     }
 
@@ -390,6 +396,7 @@ public class GradleProject extends BaseProject {
     }
 
     private void openConnection() {
+        connect();
         connection = connector.connect();
     }
 
@@ -401,6 +408,13 @@ public class GradleProject extends BaseProject {
     }
 
     private void connect() {
+        if (connector == null) {
+            setOrgGradleJavaHome();
+            createGradleConnector();
+        }
+    }
+
+    private void createGradleConnector() {
         connector = GradleConnector.newConnector().forProjectDirectory(projectHome);
 
         // useInstallation(File gradleHome);
@@ -473,6 +487,27 @@ public class GradleProject extends BaseProject {
                 connector.useBuildDistribution();
         }
 
+    }
+
+    private void setOrgGradleJavaHome() {
+        String ogjh = getProperties().getProperty(GRADLE_JAVA_HOME);
+        if (ogjh == null) return;
+
+        File javaHome = new File(ogjh);
+        if (!javaHome.isDirectory()) return;
+
+        Properties gradleProperties;
+        File gradlePropertiesFile = new File(projectHome, GRADLE_PROPERTIES);
+        if (gradlePropertiesFile.isFile())
+            gradleProperties = PropertiesUtils.load(gradlePropertiesFile);
+        else
+            gradleProperties = new Properties();
+
+        // if (gradleProperties.containsKey(GRADLE_JAVA_HOME))
+        //     return;
+
+        gradleProperties.setProperty(GRADLE_JAVA_HOME, FileUtils.getAbsolutePath(javaHome));
+        PropertiesUtils.save(gradlePropertiesFile, gradleProperties);
     }
 
     // ----------------------------------------------------------------------

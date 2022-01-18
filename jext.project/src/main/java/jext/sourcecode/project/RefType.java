@@ -38,6 +38,7 @@ public interface RefType extends IdNamed {
     List<RefType> getElements();
 
     int getTypeParametersCount();
+    List<TypeParam> getTypeParameters();
 
     boolean isAnonymous();
 
