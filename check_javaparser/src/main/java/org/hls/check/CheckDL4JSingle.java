@@ -40,7 +40,7 @@ public class CheckDL4JSingle {
             pool = JavaParserPool.getPool().withCache();
 
             project.getModules().forEach(module -> {
-                pool.addAll(module.getSourceRootDirectories());
+                pool.addAll(module.getSources().getSourceRootDirectories());
             });
 
             cpr = new ClassPoolRegistry()

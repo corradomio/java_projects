@@ -3,13 +3,19 @@ package org.hls.check;
 import com.scitools.understand.UnderstandException;
 import jext.cache.CacheManager;
 import jext.logging.Logger;
+import jext.maven.MavenDownloader;
 import jext.scitools.und.Ent;
 import jext.scitools.und.Ref;
 import jext.scitools.und.UndDatabase;
+import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectAnalyzer;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectUtils;
+import jext.sourcecode.resources.libraries.JavaLibraryFinder;
+import jext.util.MapUtils;
 import jext.util.PropertiesUtils;
+import jext.util.concurrent.Parallel;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,32 +25,10 @@ import java.util.Set;
 
 public class CheckUndDb {
 
-    public static void main(String[] args) throws UnderstandException, IOException {
-        Logger.configure();
-        CacheManager.configure();
-        File hibernateProject =
-                // new File("D:\\Projects.github\\other_projects\\hibernate-orm")
-                // new File("D:\\Projects.github\\java_projects\\check_java_syntax")
-                // new File("D:\\SPLGroup\\spl-workspaces\\sample-projects\\ForSalwa")
-                new File("D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project")
-                ;
-        File hibernateUnddb = new File(hibernateProject, "scitools.und");
-        UndDatabase udb = UndDatabase.database(hibernateUnddb, "java", 8);
-
-        udb.delete();
-        udb.create();
-
-        Project project = Projects.newProject(hibernateProject, PropertiesUtils.empty());
-        List<File> sources  = ProjectUtils.getSourceFiles(project);
-        Set<File> libraries = ProjectUtils.getLibraryFiles(project);
-
-        udb.addSources(sources);
-        udb.addLibraries(libraries);
-        udb.analyze(false);
-
+    private static void analyze(File undDir) throws UnderstandException {
         Set<String> kinds = new HashSet<>();
 
-        try(UndDatabase db  = UndDatabase.database(hibernateUnddb, "java", 8).open()) {
+        try(UndDatabase db  = UndDatabase.database(undDir, "java", 8).open()) {
 
             Ent[] ents = db.ents("");
             for (Ent ent : ents) {
@@ -65,7 +49,47 @@ public class CheckUndDb {
             System.out.println(ents.length);
             System.out.println(kinds);
         }
+    }
+
+    public static void main(String[] args) throws UnderstandException, IOException {
+        Logger.configure();
+        CacheManager.configure();
+        File projectDir = new File(
+                // "D:\\Projects.github\\other_projects\\hibernate-orm"
+                // new File("D:\\Projects.github\\other_projects\\deeplearning4j"
+                // "D:\\Projects.github\\other_projects\\elasticsearch"
+                // "D:\\Projects.github\\other_projects\\javaparser"
+                // "D:\\Projects.github\\other_projects\\spark"
+                "D:\\Projects.github\\other_projects\\orientdb-3.2.4"
+        );
+        File undDir = new File(projectDir, "scitools.und");
+        UndDatabase udb = UndDatabase.database(undDir, "java", 8);
+
+        udb.delete();
+        udb.create();
+
+        MavenDownloader md = new MavenDownloader();
+        LibraryFinder lf = new JavaLibraryFinder()
+                .setDownloader(md)
+                .setNamedLibraries(MapUtils.asMap(
+                        "jdk8", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk8"),
+                        "jdk14", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk14")
+                ));
+
+        Project project = Projects.newProject(projectDir, PropertiesUtils.empty());
+        project.setLibraryFinder(lf);
+        List<File> sources  = ProjectUtils.getSourceFiles(project);
+        Set<File> libraries = ProjectUtils.getLibraryFiles(project);
+
+        ProjectAnalyzer.analyzeProject(project, new File(project.getName().getName() + ".json"));
+
+        udb.addSources(sources);
+        udb.addLibraries(libraries);
+        udb.analyze(false);
+
+        // analyze(undDir);
 
         udb.close();
+        Parallel.shutdown();
     }
 }

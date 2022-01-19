@@ -12,7 +12,7 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.JavaRuntimeTypeSolver
 import jext.javaparser.symbolsolver.resolution.typesolvers.LibrariesTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.UnsolvedSymbolsRegistry;
 import jext.javaparser.symbolsolver.resolution.typesolvers.UnsolvedSymbolsRegistryTypeSolver;
-import jext.logging.v1.Logger;
+import jext.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.Source;
@@ -41,7 +41,7 @@ public class CheckProject {
 
     public static void main(String[] args) throws IOException {
         jext.logging.v2.Logger.configure(new File("config/log4jv2.xml"));
-        jext.logging.v1.Logger.configure(new File("config/log4jv1.xml"));
+        // jext.logging.v1.Logger.configure(new File("config/log4jv1.xml"));
         Parallel.setup();
         CacheManager.configure();
 

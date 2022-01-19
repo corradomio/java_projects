@@ -117,7 +117,7 @@ public class JavaLibraryFinder implements LibraryFinder {
      * If it is a directory, the directory is scanned recursively for ".jar"
      * and ".jmod" files
      */
-    public void setNamedLibrary(String libraryName, File libraryPath) {
+    public JavaLibraryFinder setNamedLibrary(String libraryName, File libraryPath) {
         if (namedLibraries.containsKey(libraryName)) {
             logger.warnf("Library %s already registered with %s (new: %s): SKIPPED",
                 libraryName, namedLibraries.get(libraryName), libraryPath);
@@ -125,6 +125,8 @@ public class JavaLibraryFinder implements LibraryFinder {
         else {
             namedLibraries.put(libraryName, libraryPath);
         }
+
+        return this;
     }
 
     public JavaLibraryFinder setNamedLibraries(Map<String, File> librariesMap){
