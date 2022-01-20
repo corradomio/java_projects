@@ -137,7 +137,7 @@ public class ProjectFactory {
     public static Project newProject(File projectHome, Properties properties) {
         String projectName = projectHome.getName();
         String repositoryName = projectHome.getAbsoluteFile().getParentFile().getName();
-        return newProject(new PathName(repositoryName, projectName), projectHome, properties);
+        return newProject(PathName.of(repositoryName, projectName), projectHome, properties);
     }
 
     // public static Project newProject(File projectHome, Parameters params) {

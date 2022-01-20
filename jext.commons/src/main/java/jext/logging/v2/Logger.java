@@ -1,5 +1,6 @@
 package jext.logging.v2;
 
+import jext.logging.ILogger;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -22,22 +23,23 @@ public class Logger implements jext.logging.ILogger {
     private static transient long count;
 
     public static void configure() {
-        File configFile = new File("log4j2.xml");
-        if (!configFile.exists())
-            configFile = new File("config/log4j2.xml");
-        if (!configFile.exists())
-            configFile = new File("WEB-INF/log4j2.xml");
+        File configFile;
 
-        // compatibility with log4jv1
-        if (!configFile.exists())
-            configFile = new File("log4j.xml");
-        if (!configFile.exists())
-            configFile = new File("config/log4j.xml");
-        if (!configFile.exists())
-            configFile = new File("WEB-INF/log4j.xml");
-
-        if (configFile.exists())
+        configFile = new File("log4j.xml");
+        if (configFile.exists()) {
             configure(configFile);
+            return;
+        }
+        configFile = new File("config/log4j.xml");
+        if (configFile.exists()) {
+            configure(configFile);
+            return;
+        }
+        configFile = new File("WEB-INF/log4j.xml");
+        if (configFile.exists()) {
+            configure(configFile);
+            return;
+        }
     }
 
     public static void configure(File configurationFile) {
@@ -80,7 +82,7 @@ public class Logger implements jext.logging.ILogger {
 
     private final org.apache.logging.log4j.Logger logger;
 
-    protected Logger(org.apache.logging.log4j.Logger log) {
+    private Logger(org.apache.logging.log4j.Logger log) {
         this.logger = log;
     }
 

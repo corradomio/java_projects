@@ -12,5 +12,5 @@ public interface TypeParam {
 
     String getSignature();
 
-    // String getDigest();
+    // long getDigest();
 }

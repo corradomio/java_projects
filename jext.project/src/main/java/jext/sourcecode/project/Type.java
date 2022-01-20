@@ -18,7 +18,7 @@ public interface Type extends RefType {
 
     Module getModule();
 
-    String getDigest();
+    long getDigest();
 
     String[] getModifiers();
 

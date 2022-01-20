@@ -60,8 +60,8 @@ public class FileUtils {
 
     private static final String NO_DIGEST = "0";
 
-    public static String digest(File file) {
-        return LongHash.toString(digestAsLong(file));
+    public static long digest(File file) {
+        return digestAsLong(file);
     }
 
     private static void update(MessageDigest md, File file) throws IOException {

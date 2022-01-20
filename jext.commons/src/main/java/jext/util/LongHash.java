@@ -29,9 +29,9 @@ public class LongHash {
         return result;
     }
 
-    public static long concat(long hashCode, String hexString) {
-        return concat(hashCode, fromString(hexString));
-    }
+    // public static long concat(long hashCode, String hexString) {
+    //     return concat(hashCode, fromString(hexString));
+    // }
 
     // ----------------------------------------------------------------------
     // Hash code for collections & maps
@@ -109,7 +109,7 @@ public class LongHash {
      * seems to be modified everywhere.
      *
      * Solution: it is applied a 'text normalization' removing multiple spaces
-     * and considering '\t', '\f', '\n', and '\r' as ' ' (space
+     * and considering '\t', '\f', '\n', and '\r' as ' ' (space)
      *
      * @param value
      * @return
@@ -296,20 +296,20 @@ public class LongHash {
     // Conversion
     // ----------------------------------------------------------------------
 
-    public static String asString(Object... values) {
-        return toString(hash(values));
-    }
+    // public static String asString(Object... values) {
+    //     return toString(hash(values));
+    // }
 
-    public static String toString(long hashCode) {
-        return Long.toUnsignedString(hashCode, Character.MAX_RADIX);
-    }
+    // public static String toString(long hashCode) {
+    //     return Long.toUnsignedString(hashCode, Character.MAX_RADIX);
+    // }
 
-    public static long fromString(String hashCode) {
-        if (hashCode.isEmpty())
-            return 0;
-        else
-            return Long.parseUnsignedLong(hashCode, Character.MAX_RADIX);
-    }
+    // public static long fromString(String hashCode) {
+    //     if (hashCode.isEmpty())
+    //         return 0;
+    //     else
+    //         return Long.parseUnsignedLong(hashCode, Character.MAX_RADIX);
+    // }
 
     // ----------------------------------------------------------------------
     // End

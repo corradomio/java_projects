@@ -11,6 +11,18 @@ import jext.util.PathUtils;
 
 public class PathName implements Name {
 
+    public static PathName of(String path) {
+        return new PathName(path);
+    }
+
+    public static PathName of(String ns, String name) {
+        return new PathName(ns, name);
+    }
+
+    public static PathName of(Name parent, String name) {
+        return new PathName((PathName)parent, name);
+    }
+
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
@@ -21,15 +33,15 @@ public class PathName implements Name {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public PathName(String path) {
+    private PathName(String path) {
         this.path = PathUtils.normalize(path);
     }
 
-    public PathName(String ns, String name) {
+    private PathName(String ns, String name) {
         this.path = PathUtils.concat(ns, name);
     }
 
-    public PathName(Name parent, String name) {
+    private PathName(PathName parent, String name) {
         this.path = PathUtils.concat(parent.getFullName(), name);
     }
 
@@ -52,7 +64,7 @@ public class PathName implements Name {
         if (isRoot())
             return null;
         else
-            return new PathName(PathUtils.getParent(path));
+            return PathName.of(PathUtils.getParent(path));
     }
 
     @Override
@@ -79,7 +91,7 @@ public class PathName implements Name {
 
     // @Override
     // public Name compose(String name) {
-    //     return new PathName(path, name);
+    //     return PathName.of(path, name);
     // }
 
     // ----------------------------------------------------------------------

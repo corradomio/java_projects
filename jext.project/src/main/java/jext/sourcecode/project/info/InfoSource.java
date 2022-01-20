@@ -33,7 +33,7 @@ public class InfoSource implements Source {
             throw new NullPointerException();
         this.module = module;
         this.info = info;
-        this.name = new PathName(MapUtils.get(info, "fullname"));
+        this.name = PathName.of(MapUtils.get(info, "fullname"));
     }
 
     // ----------------------------------------------------------------------
@@ -71,8 +71,9 @@ public class InfoSource implements Source {
     }
 
     @Override
-    public String getDigest() {
-        return MapUtils.getString(info, "digest");
+    public long getDigest() {
+        // return MapUtils.getString(info, "digest");
+        return MapUtils.getLong(info, "digest");
     }
 
     @Override

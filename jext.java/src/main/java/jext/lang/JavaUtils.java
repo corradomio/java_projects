@@ -54,8 +54,8 @@ public class JavaUtils implements JavaConstants {
     // Class name   <upperCase><name>
     //
 
-
     private static Pattern INNER_CLASSNAME = Pattern.compile("[A-Z$][0-9A-Za-z_$]*(\\.[A-Z$][0-9A-Za-z_$]*)+");
+    private static Pattern QUALIFIED_NAME  = Pattern.compile("[A-Za-z_$][0-9A-Za-z_$]*(\\.[A-Za-z_$][0-9A-Za-z_$]*)+");
     private static Pattern CLASSNAME  = Pattern.compile("[A-Z$][0-9A-Za-z_$]*");
     private static Pattern IDENTIFIER = Pattern.compile("[a-z_$][0-9A-Za-z_$]*");
     private static Pattern CONSTANT = Pattern.compile("[0-9A-Z_$]+");
@@ -83,9 +83,9 @@ public class JavaUtils implements JavaConstants {
         return CLASSNAME.matcher(symbol).matches() || INNER_CLASSNAME.matcher(symbol).matches();
     }
 
-    // in general, a symbol containing a dot is a qualified name
-    public static boolean isQualified(String symbol) {
-        return symbol.contains(".");
+        // in general, a symbol containing a dot is a qualified name
+    public static boolean isQualifiedName(String symbol) {
+        return QUALIFIED_NAME.matcher(symbol).matches();
     }
 
     // the symbol contains 'strange' characters as "|?<(,:"

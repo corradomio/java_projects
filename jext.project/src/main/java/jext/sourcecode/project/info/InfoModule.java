@@ -42,7 +42,7 @@ public class InfoModule implements Module, Comparable<Named> {
             throw new NullPointerException();
         this.project = project;
         this.info = info;
-        this.name = new PathName(MapUtils.get(info, "fullname"));
+        this.name = PathName.of(MapUtils.get(info, "fullname"));
     }
 
     // ----------------------------------------------------------------------
@@ -82,8 +82,9 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
-    public String getDigest() {
-        return MapUtils.getString(info, "digest");
+    public long getDigest() {
+        // return MapUtils.getString(info, "digest");
+        return MapUtils.getLong(info, "digest");
     }
 
     @Override

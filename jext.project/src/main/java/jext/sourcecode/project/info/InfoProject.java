@@ -73,7 +73,7 @@ public class InfoProject implements Project {
     // ----------------------------------------------------------------------
 
     public InfoProject(String projectName, File projectHome, Properties properties) {
-        this.name = new PathName(projectName);
+        this.name = PathName.of(projectName);
         this.properties = properties;
         if (projectHome.isFile()) {
             this.infoFile = projectHome;

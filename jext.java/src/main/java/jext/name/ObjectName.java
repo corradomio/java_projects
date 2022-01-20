@@ -15,6 +15,10 @@ public class ObjectName implements Name {
     // Static methods
     // ----------------------------------------------------------------------
 
+    public static ObjectName of(String qualifiedName) {
+        return new ObjectName(qualifiedName);
+    }
+
     // public static ObjectName NO_NAME = new ObjectName("");
 
     // public static ObjectName empty() {
