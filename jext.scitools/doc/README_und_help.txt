@@ -1,3 +1,37 @@
+Good day Salwa,
+Good day Ahmed,
+
+Thank you for the speedy signing of our Letter of Intent.
+
+Here is your first 6-month Understand development licence:
+Licence Key: MDsqWKp60Z97vB3h
+Valid until: 23 May 2022
+Download LINK
+
+Please let me know if you have any questions.
+For questions of a technical nature, you are free to contact Ian @ support@emenda.com.
+The understand support page can be found HERE.
+
+I look forward to working with you and if I don't hear from you, I will assume all is going well with Understand and the product release, but I will contact you in about 3-months to find out if you need anything from Emenda.
+
+Kind regards
+Jason
+
+https://support.scitools.com/support/solutions/articles/70000582782-command-line-licensing
+
+und -setlicensecode MDsqWKp60Z97vB3h
+
+
+https://support.scitools.com/support/solutions/articles/70000582856-api-documentation
+
+Set the license code from command line
+
+und -setlicensecode MDsqWKp60Z97vB3h
+
+
+
+
+
 
 Und is the command line interface for Understand. It can be run in
 three modes.

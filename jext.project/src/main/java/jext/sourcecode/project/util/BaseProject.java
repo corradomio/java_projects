@@ -90,7 +90,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     protected BaseProject(String projectName, File projectHome, Properties properties, String projectType){
-        super(new PathName(projectName));
+        super(PathName.of(projectName));
         this.projectHome = projectHome;
         this.projectType = projectType;
 

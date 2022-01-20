@@ -46,7 +46,7 @@ public class DefinedMethod extends NamedObject implements Method {
     private final String signature;
 
     private final AtomicInteger callIndex;
-    private String digest = "0";
+    private long digest = 0;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -71,7 +71,7 @@ public class DefinedMethod extends NamedObject implements Method {
     // Setters
     // ----------------------------------------------------------------------
 
-    public void setDigest(String digest) {
+    public void setDigest(long digest) {
         this.digest = digest;
     }
 
@@ -138,7 +138,7 @@ public class DefinedMethod extends NamedObject implements Method {
     }
 
     @Override
-    public String getDigest() {
+    public long getDigest() {
         return digest;
     }
 

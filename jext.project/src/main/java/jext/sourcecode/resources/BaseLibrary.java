@@ -8,6 +8,7 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.util.FileUtils;
+import jext.util.LongHash;
 import jext.util.StringUtils;
 
 import javax.annotation.Nullable;
@@ -77,7 +78,8 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     }
 
     @Override
-    public String getDigest() {
+    public long getDigest() {
+        // return LongHash.toString(FileUtils.digest(libraryFile));
         return FileUtils.digest(libraryFile);
     }
 

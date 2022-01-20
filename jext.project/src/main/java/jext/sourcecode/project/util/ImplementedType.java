@@ -28,7 +28,7 @@ public class ImplementedType extends NamedObject implements Type {
     private final Source source;
     private final TypeRole role;
     private final List<TypeParam> tparams = new ArrayList<>();
-    private String digest;
+    private long digest;
     private String[] modifiers;
 
     // ----------------------------------------------------------------------
@@ -44,7 +44,8 @@ public class ImplementedType extends NamedObject implements Type {
         this.namespace = namespace;
         this.source = source;
         this.role = role;
-        this.digest = "0";
+        // this.digest = "0";
+        this.digest = 0;
     }
 
     public ImplementedType(String namespace, String name, TypeRole role, Source source) {
@@ -55,7 +56,7 @@ public class ImplementedType extends NamedObject implements Type {
     // Properties
     // ----------------------------------------------------------------------
 
-    public void setDigest(String digest) {
+    public void setDigest(long digest) {
         this.digest = digest;
     }
 
@@ -136,7 +137,7 @@ public class ImplementedType extends NamedObject implements Type {
     }
 
     @Override
-    public String getDigest() {
+    public long getDigest() {
         return digest;
     }
 

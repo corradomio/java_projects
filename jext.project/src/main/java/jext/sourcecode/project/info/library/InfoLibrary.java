@@ -61,7 +61,7 @@ public abstract class InfoLibrary extends NamedObject implements Library {
             case RUNTIME:
             case INVALID:
             default:
-                this.name = new PathName(fullname);
+                this.name = PathName.of(fullname);
                 break;
         }
 
@@ -90,8 +90,9 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     }
 
     @Override
-    public String getDigest() {
-        return MapUtils.getString(info, "digest");
+    public long getDigest() {
+        // return MapUtils.getString(info, "digest");
+        return MapUtils.getLong(info, "digest");
     }
 
     @Override

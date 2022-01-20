@@ -70,7 +70,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         this.properties = new Properties();
 
         this.path = FileUtils.relativePath(project.getProjectHome(), moduleHome);
-        setNameWithId(new PathName(this.path));
+        setNameWithId(PathName.of(this.path));
         setRefIdFromName();
 
         this.logger = Logger.getLogger("jext.project.module.%s.%s.%s",
@@ -118,12 +118,13 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // }
 
     @Override
-    public String getDigest() {
+    public long getDigest() {
         long[] digest = new long[1];
         getSources().forEach(source -> {
             digest[0] = LongHash.concat(digest[0], source.getDigest());
         });
-        return LongHash.toString(digest[0]);
+        // return LongHash.toString(digest[0]);
+        return digest[0];
     }
 
     // ----------------------------------------------------------------------

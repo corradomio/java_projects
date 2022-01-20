@@ -4,6 +4,7 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Sources;
 import jext.util.Assert;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,7 +76,14 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
             return sourceRootDirectories;
 
         sourceRootDirectories = getSourceRoots().stream()
-            .map(sroot -> new File(moduleHome, sroot))
+            .map(sroot -> {
+                if(FileUtils.isAbsolute(sroot)){
+                    return new File(sroot);
+                }
+                else {
+                    return new File(moduleHome, sroot);
+                }
+            })
             .peek(sourceRoot -> Assert.verify(sourceRoot.isDirectory(), "%s is not a directory", sourceRoot))
             .collect(Collectors.toList());
         return sourceRootDirectories;

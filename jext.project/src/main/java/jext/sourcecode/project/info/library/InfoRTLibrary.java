@@ -10,11 +10,11 @@ public class InfoRTLibrary extends InfoLibrary {
 
     public InfoRTLibrary(InfoModule module, Map<String, Object> info) {
         super(module, LibraryType.RUNTIME, info);
-        // setNameWithId(new PathName(MapUtils.get(info,"fullname")));
+        // setNameWithId(PathName.of(MapUtils.get(info,"fullname")));
     }
 
     public InfoRTLibrary(InfoProject project, Map<String, Object> info) {
         super(project, LibraryType.RUNTIME, info);
-        // setNameWithId(new PathName(MapUtils.get(info,"fullname")));
+        // setNameWithId(PathName.of(MapUtils.get(info,"fullname")));
     }
 }

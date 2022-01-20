@@ -16,7 +16,7 @@ import java.util.Set;
 public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
 
     public InvalidLibrary(String libraryName, Project project) {
-        super(new PathName(libraryName), project);
+        super(PathName.of(libraryName), project);
     }
 
     public InvalidLibrary(Name libraryName, Project project) {
@@ -44,8 +44,9 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
     }
 
     @Override
-    public String getDigest() {
-        return "0";
+    public long getDigest() {
+        // return "0";
+        return 0;
     }
 
     @Override

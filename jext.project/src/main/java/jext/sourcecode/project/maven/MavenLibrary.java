@@ -95,7 +95,7 @@ public class MavenLibrary extends BaseLibrary {
     }
 
     @Override
-    public String getDigest() {
+    public long getDigest() {
         File digestFile;
         MavenPom pom = md.getPom(coords);
         if (pom != null && pom.isPomPackaging())

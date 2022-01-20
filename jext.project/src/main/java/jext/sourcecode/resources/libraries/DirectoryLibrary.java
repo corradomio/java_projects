@@ -36,7 +36,7 @@ public class DirectoryLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     public DirectoryLibrary(String libraryName, File libraryFile, Project project) {
-        super(new PathName(libraryName), project);
+        super(PathName.of(libraryName), project);
         this.libraryFile = libraryFile;
         this.libraryType = LibraryType.RUNTIME; //LibraryType.LOCAL_COLLECTION;
     }

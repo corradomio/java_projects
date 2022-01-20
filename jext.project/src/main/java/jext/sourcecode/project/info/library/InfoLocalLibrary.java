@@ -14,7 +14,7 @@ public class InfoLocalLibrary extends InfoLibrary {
         super(module, LibraryType.LOCAL, info);
         String fullname = MapUtils.get(info,"fullname");
         String version = MapUtils.get(info,"version");
-        // this.name = new PathName(MapUtils.get(info,"fullname"));
+        // this.name = PathName.of(MapUtils.get(info,"fullname"));
         setNameWithId(new VersionName(fullname, version));
     }
 
@@ -22,7 +22,7 @@ public class InfoLocalLibrary extends InfoLibrary {
         super(project, LibraryType.LOCAL, info);
         String fullname = MapUtils.get(info,"fullname");
         String version = MapUtils.get(info,"version");
-        // this.name = new PathName(MapUtils.get(info,"fullname"));
+        // this.name = PathName.of(MapUtils.get(info,"fullname"));
         setNameWithId(new VersionName(fullname, version));
     }
 

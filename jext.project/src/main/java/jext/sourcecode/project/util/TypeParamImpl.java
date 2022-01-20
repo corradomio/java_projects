@@ -41,7 +41,7 @@ public class TypeParamImpl extends NamedObject implements TypeParam {
     }
 
     // @Override
-    // public String getDigest() {
+    // public long getDigest() {
     //     return LongHash.asString(name.getFullName(), signature);
     // }
 
