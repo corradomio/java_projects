@@ -9,6 +9,14 @@ public interface Source extends Resource {
 
     SourceInfo getSourceInfo();
 
+    /**
+     * The source root is present ONLY if the source file
+     * is a ""valid"" source file, located in a ""valid""
+     * directory.
+     *
+     * The concept of "valid" depends on the programming
+     * language
+     */
     Optional<String> getSourceRoot();
 
     String getLanguage();

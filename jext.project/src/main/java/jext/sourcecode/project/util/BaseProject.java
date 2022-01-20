@@ -667,14 +667,22 @@ public abstract class BaseProject extends NamedObject implements Project {
     public List<Source> getSources(File dir, Module module) {
         File moduleHome = module.getModuleHome();
 
-        List<Source> list = FileUtils.asList(dir.listFiles(resource ->
-            fpSources.accept(moduleHome, resource) && !fpExcludes.accept(moduleHome, resource))
-        ).stream()
-            .map(file -> SourceCode.newSource(file, module))
-            .filter(source -> selector.test(source.getPath()))
-            .collect(Collectors.toList());
+        // scan the directory to retrieve all possible 'source' files
+        List<File> sourceFiles = FileUtils.asList(dir.listFiles(resource ->
+                fpSources.accept(moduleHome, resource) && !fpExcludes.accept(moduleHome, resource))
+        );
 
-        return list;
+        List<Source> sources = sourceFiles
+                .stream()
+                // file -> <Type>Source
+                .map(file -> SourceCode.newSource(file, module))
+                // check if it is a ""valid"" source file
+                .filter(source -> source.getSourceRoot().isPresent())
+                // check if the path is valid
+                .filter(source -> selector.test(source.getPath()))
+                .collect(Collectors.toList());
+
+        return sources;
     }
 
     public List<Resource> getResources(File dir, Module module) {

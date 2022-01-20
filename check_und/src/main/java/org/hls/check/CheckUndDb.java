@@ -64,11 +64,16 @@ public class CheckUndDb {
                 // "D:\\Projects.github\\apache_projects\\commons-lang"
                 "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project"
         );
-        File undDir = new File(projectDir, "scitools.und");
-        UndDatabase udb = UndDatabase.database(undDir, "java", 8);
 
-        udb.delete();
-        udb.create();
+        Project project = loadProject(projectDir);
+        saveProject(project);
+
+        // ------------------------------------------------------------------
+
+        Parallel.shutdown();
+    }
+
+    static Project loadProject(File projectDir ) throws IOException {
 
         MavenDownloader md = new MavenDownloader();
         LibraryFinder lf = new JavaLibraryFinder()
@@ -80,10 +85,26 @@ public class CheckUndDb {
 
         Project project = Projects.newProject(projectDir, PropertiesUtils.empty());
         project.setLibraryFinder(lf);
+
         List<File> sources  = ProjectUtils.getSourceFiles(project);
         Set<File> libraries = ProjectUtils.getLibraryFiles(project);
 
         ProjectAnalyzer.analyzeProject(project, new File(project.getName().getName() + ".json"));
+
+        return project;
+    }
+
+    static void saveProject(Project project) throws IOException {
+
+        File projectDir = project.getProjectHome();
+        List<File> sources  = ProjectUtils.getSourceFiles(project);
+        Set<File> libraries = ProjectUtils.getLibraryFiles(project);
+
+        File undDir = new File(projectDir, "scitools.und");
+        UndDatabase udb = UndDatabase.database(undDir, "java", 8);
+
+        udb.delete();
+        udb.create();
 
         udb.addSources(sources);
         udb.addLibraries(libraries);
@@ -92,6 +113,5 @@ public class CheckUndDb {
         // analyze(undDir);
 
         udb.close();
-        Parallel.shutdown();
     }
 }
