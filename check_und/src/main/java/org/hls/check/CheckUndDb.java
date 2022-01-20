@@ -56,11 +56,13 @@ public class CheckUndDb {
         CacheManager.configure();
         File projectDir = new File(
                 // "D:\\Projects.github\\other_projects\\hibernate-orm"
-                // new File("D:\\Projects.github\\other_projects\\deeplearning4j"
+                // "D:\\Projects.github\\other_projects\\deeplearning4j"
                 // "D:\\Projects.github\\other_projects\\elasticsearch"
                 // "D:\\Projects.github\\other_projects\\javaparser"
                 // "D:\\Projects.github\\other_projects\\spark"
-                "D:\\Projects.github\\other_projects\\orientdb-3.2.4"
+                // "D:\\Projects.github\\other_projects\\orientdb-3.2.4"
+                // "D:\\Projects.github\\apache_projects\\commons-lang"
+                "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project"
         );
         File undDir = new File(projectDir, "scitools.und");
         UndDatabase udb = UndDatabase.database(undDir, "java", 8);
