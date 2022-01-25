@@ -66,7 +66,7 @@ public class ProjectAnalyzer {
         pinfo.put("fullname", project.getName().getFullName());
         pinfo.put("id", project.getId());
         pinfo.put("type", project.getProjectType());
-        // pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
+        pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
         pinfo.put("properties", project.getProperties());
 
         List<Module> modules = project.getModules();
@@ -75,6 +75,7 @@ public class ProjectAnalyzer {
         Set<Library> unusedLibraries = libraries.getUnusedLibraries();
         Set<Library> rtLibraries = ProjectUtils.getRuntimeLibraries(project);
         Set<String> mavenRepos = ProjectUtils.getMavenRepositories(project);
+        Set<LibraryRepository> libRepos = ProjectUtils.getLibraryRepositories(project);
 
         pinfo.put("counts", MapUtils.asMap(
             "modules", modules.size(),
@@ -82,7 +83,9 @@ public class ProjectAnalyzer {
             "unusedLibraries", unusedLibraries.size(),
             "runtimeLibraries", rtLibraries.size(),
             "sources", project.getSources().size(),
-            "mavenRepositories", mavenRepos.size()
+            "mavenRepositories", mavenRepos.size(),
+            "libraryRepositories", libRepos.size()
+
         ));
 
         pinfo.put("modules", modules
@@ -106,6 +109,11 @@ public class ProjectAnalyzer {
             .collect(Collectors.toList()));
 
         pinfo.put("mavenRepositories", mavenRepos);
+
+        pinfo.put("libraryRepositories", libRepos
+            .stream()
+            .map(this::analyzeLibrepo)
+            .collect(Collectors.toList()));
 
         return pinfo;
     }
@@ -200,6 +208,7 @@ public class ProjectAnalyzer {
             "id", l.getId(),
             "digest", l.getDigest(),
             "libraryType", l.getLibraryType(),
+            "language", l.getLanguage(),
             "version", l.getVersion(),
             "valid", l.isValid(),
             "file", FileUtils.getAbsolutePath(l.getFile()),
@@ -207,6 +216,16 @@ public class ProjectAnalyzer {
         );
 
         return linfo;
+    }
+
+    private Map<String, Object> analyzeLibrepo(LibraryRepository lr) {
+        Map<String, Object> lrinfo = MapUtils.asTreeMap(
+            "id", lr.getId(),
+            "name", lr.getName(),
+            "repositoryType", lr.getRepositoryType(),
+            "url", lr.getUrl()
+        );
+        return lrinfo;
     }
 
     private Map<String, Object> analyzeSource(Source s) {

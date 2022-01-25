@@ -7,11 +7,10 @@ import jext.sourcecode.project.Method;
 import jext.sourcecode.project.MethodName;
 import jext.sourcecode.project.Parameter;
 import jext.sourcecode.project.RefType;
+import jext.util.SetUtils;
 import jext.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefinedMethod extends NamedObject implements Method {
@@ -41,7 +40,7 @@ public class DefinedMethod extends NamedObject implements Method {
     private Name lastCallName;
     private final List<Parameter> parameters = new ArrayList<>();
 
-    private String[] modifiers = StringUtils.EMPTY_ARRAY_STRING;
+    private Set<String> modifiers = Collections.emptySet();
     private String declaration;
     private final String signature;
 
@@ -75,8 +74,15 @@ public class DefinedMethod extends NamedObject implements Method {
         this.digest = digest;
     }
 
-    public void setModifiers(String... modifiers) {
-        this.modifiers = modifiers;
+    public void setModifiers(String ... modifiers) {
+        setModifiers(SetUtils.asSet(modifiers));
+    }
+
+    public void setModifiers(Set<String> modifiers) {
+        if (this.modifiers.isEmpty())
+            this.modifiers = new TreeSet<>(modifiers);
+        else
+            this.modifiers.addAll(modifiers);
     }
 
     public void setReturnType(DeclType returnType) {
@@ -103,7 +109,7 @@ public class DefinedMethod extends NamedObject implements Method {
     }
 
     @Override
-    public String[] getModifiers() {
+    public Set<String> getModifiers() {
         return modifiers;
     }
 
@@ -144,10 +150,11 @@ public class DefinedMethod extends NamedObject implements Method {
 
     @Override
     public boolean isStatic() {
-        for (int i=0; i<modifiers.length; ++i)
-            if (STATIC.equals(modifiers[i]))
-                return true;
-        return false;
+        // for (int i=0; i<modifiers.length; ++i)
+        //     if (STATIC.equals(modifiers[i]))
+        //         return true;
+        // return false;
+        return modifiers.contains(STATIC);
     }
 
     // ----------------------------------------------------------------------

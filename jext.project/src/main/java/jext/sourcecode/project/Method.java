@@ -19,7 +19,7 @@ public interface Method extends IdNamed {
     String getDeclaration();
     long getDigest();
 
-    String[] getModifiers();
+    Set<String> getModifiers();
     boolean isStatic();
 
     int getNumOfParams();

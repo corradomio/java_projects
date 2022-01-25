@@ -23,6 +23,11 @@ public class MavenRepository implements LibraryRepository {
     }
 
     @Override
+    public String getRepositoryType() {
+        return "MAVEN";
+    }
+
+    @Override
     public String getUrl() {
         return url;
     }

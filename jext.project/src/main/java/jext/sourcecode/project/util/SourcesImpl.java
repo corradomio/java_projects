@@ -17,9 +17,9 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
 
     private File projectHome;
     private File moduleHome;
-    private List<File> sourceRootDirectories;
+    // private List<File> sourceRootDirectories;
     private List<File> sourceFiles;
-    private Set<String> sourceRoots = new HashSet<>();
+    private Set<String> sourceRoots;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -41,7 +41,9 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
 
     @Override
     public boolean add(Source source) {
-        source.getSourceRoot().ifPresent(sroot -> sourceRoots.add(sroot));
+        // if (sourceRoots == null)
+        //     sourceRoots = new HashSet<>();
+        // source.getSourceRoot().ifPresent(sroot -> sourceRoots.add(sroot));
         return super.add(source);
     }
 
@@ -72,21 +74,26 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
 
     @Override
     public List<File> getSourceRootDirectories() {
-        if (sourceRootDirectories != null)
-            return sourceRootDirectories;
+        // if (sourceRootDirectories != null)
+        //     return sourceRootDirectories;
+        //
+        // sourceRootDirectories = getSourceRoots().stream()
+        //     .map(sroot -> {
+        //         if(FileUtils.isAbsolute(sroot)){
+        //             return new File(sroot);
+        //         }
+        //         else {
+        //             return new File(moduleHome, sroot);
+        //         }
+        //     })
+        //     .peek(sourceRoot -> Assert.verify(sourceRoot.isDirectory(), "%s is not a directory", sourceRoot))
+        //     .collect(Collectors.toList());
+        // return sourceRootDirectories;
 
-        sourceRootDirectories = getSourceRoots().stream()
-            .map(sroot -> {
-                if(FileUtils.isAbsolute(sroot)){
-                    return new File(sroot);
-                }
-                else {
-                    return new File(moduleHome, sroot);
-                }
-            })
-            .peek(sourceRoot -> Assert.verify(sourceRoot.isDirectory(), "%s is not a directory", sourceRoot))
-            .collect(Collectors.toList());
-        return sourceRootDirectories;
+        return getSourceRoots().stream()
+                .map(sroot -> new File(moduleHome, sroot))
+                .peek(sourceRoot -> Assert.verify(sourceRoot.isDirectory(), "%s is not a directory", sourceRoot))
+                .collect(Collectors.toList());
     }
 
     @Override

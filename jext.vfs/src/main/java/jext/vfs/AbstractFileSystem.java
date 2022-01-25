@@ -144,6 +144,9 @@ public abstract class AbstractFileSystem implements VFileSystem {
         if (rfile.isFolder()) {
             fc.processFolder();
 
+            boolean created = lfile.mkdirs();
+            logger.debugf("Created directory %s with result %b", lfile.getAbsolutePath(), created);
+
             for(VFile rchild : rfile.listFiles()) {
                 File lchild = new File(lfile, rchild.getName());
                 valid &= copyFiles(rchild, exclude, lchild, fc, pm);

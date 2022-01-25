@@ -1,5 +1,6 @@
 package jext.sourcecode.resources.libraries;
 
+import jext.lang.JavaConstants;
 import jext.name.Name;
 import jext.name.PathName;
 import jext.sourcecode.project.LibraryType;
@@ -62,6 +63,11 @@ public class InvalidLibrary extends BaseLibrary implements RuntimeLibrary {
     @Override
     public boolean contains(Name typeName) {
         return false;
+    }
+
+    @Override
+    public String getLanguage() {
+        return JavaConstants.JAVA;
     }
 
     @Override

@@ -17,6 +17,7 @@ import jext.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.UUID;
 
 import static jext.sourcecode.project.GuessProjectType.guessProjectType;
 import static jext.sourcecode.project.Project.PROJECT_TYPE;
@@ -75,6 +76,10 @@ public class ProjectFactory {
         //      4) Ant
         //      5) Simple
         //
+
+        // add a "revisionId"
+        properties = new Properties(properties);
+        properties.put("revisionId", UUID.randomUUID().toString());
 
         projectType = properties.getProperty(PROJECT_TYPE, AUTO);
         if (StringUtils.isEmpty(projectName) || AUTO.equals(projectType));

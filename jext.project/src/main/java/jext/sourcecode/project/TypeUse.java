@@ -7,5 +7,6 @@ public enum TypeUse {
     EXTENDS,
     IMPLEMENTS,
     DEPENDS_ON,
-    TEMPLATE    // used in type parameters
+    TEMPLATE,   // used in type parameters
+    IMPLICIT
 }

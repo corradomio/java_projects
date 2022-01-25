@@ -2,6 +2,8 @@ package jext.sourcecode.project;
 
 import jext.name.IdNamed;
 
+import java.util.Set;
+
 public interface Field extends IdNamed {
 
     FieldName getName();
@@ -10,7 +12,7 @@ public interface Field extends IdNamed {
 
     RefType   getOwnerType();
 
-    String[]  getModifiers();
+    Set<String> getModifiers();
 
     String    getDeclaration();
     long      getDigest();

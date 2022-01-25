@@ -15,8 +15,6 @@ public interface Library extends IdNamed {
     /**
      * Check if the library is valid, that is the list of files
      * returned by 'getFiles()' are present locally
-     *
-     * @return
      */
     boolean isValid();
 
@@ -32,6 +30,8 @@ public interface Library extends IdNamed {
 
     /** Library tpe */
     LibraryType getLibraryType();
+
+    String getLanguage();
 
     /** File path where the library is saved */
     String getPath();

@@ -11,6 +11,7 @@ import jext.name.PathName;
 import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
+import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -23,6 +24,7 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.project.ant.util.IvyFile;
 import jext.sourcecode.project.eclipse.util.ClasspathFile;
 import jext.sourcecode.project.maven.MavenLibrary;
+import jext.sourcecode.project.maven.MavenRepository;
 import jext.sourcecode.resources.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
@@ -431,6 +433,15 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     @Override
     public Set<String> getMavenRepositories() {
         return Collections.emptySet();
+    }
+
+    @Override
+    public Set<LibraryRepository> getLibraryRepositories() {
+        Set<LibraryRepository> librepos = new HashSet<>();
+
+        for (String mavenUrl : getMavenRepositories())
+            librepos.add(new MavenRepository(mavenUrl));
+        return librepos;
     }
 
     // ----------------------------------------------------------------------

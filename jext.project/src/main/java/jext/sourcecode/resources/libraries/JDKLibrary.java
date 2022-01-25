@@ -26,6 +26,11 @@ public class JDKLibrary extends DirectoryLibrary implements RuntimeLibrary, Java
     }
 
     @Override
+    public String getLanguage() {
+        return JavaConstants.JAVA;
+    }
+
+    @Override
     public String getVersion() {
         String name = getName().getName().toLowerCase();
         return getVersion(name);

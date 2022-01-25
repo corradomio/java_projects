@@ -57,6 +57,16 @@ public class JPUtils {
     //     cu.setData(Node.SYMBOL_RESOLVER_KEY, symbolResolver);
     // }
 
+    public static ClassOrInterfaceDeclaration findMainType(List<ClassOrInterfaceDeclaration> cids) {
+        for (ClassOrInterfaceDeclaration cid : cids) {
+
+            if (cid.isInnerClass() || cid.isLocalClassDeclaration() || !cid.isPublic())
+                continue;
+            return cid;
+        }
+        return cids.get(0);
+    }
+
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------

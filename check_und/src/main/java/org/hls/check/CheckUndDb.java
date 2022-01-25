@@ -54,6 +54,8 @@ public class CheckUndDb {
     public static void main(String[] args) throws UnderstandException, IOException {
         Logger.configure();
         CacheManager.configure();
+        Parallel.setup();
+
         File projectDir = new File(
                 // "D:\\Projects.github\\other_projects\\hibernate-orm"
                 // "D:\\Projects.github\\other_projects\\deeplearning4j"
@@ -66,7 +68,7 @@ public class CheckUndDb {
         );
 
         Project project = loadProject(projectDir);
-        saveProject(project);
+        // saveProject(project);
 
         // ------------------------------------------------------------------
 

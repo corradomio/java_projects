@@ -70,6 +70,11 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     }
 
     @Override
+    public String getLanguage() {
+        return MapUtils.get(info, "language");
+    }
+
+    @Override
     public String getVersion() {
         return MapUtils.get(info, "version");
     }

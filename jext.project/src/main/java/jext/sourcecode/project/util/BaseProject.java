@@ -558,7 +558,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         getModules().forEach(module -> {
             libraries.addAll(module.getDeclaredLibraries());
-            // libraries.add(module.getRuntimeLibrary());
+            libraries.add(module.getRuntimeLibrary());
         });
 
         MavenDownloader md = getLibraryDownloader();
@@ -669,18 +669,18 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         // scan the directory to retrieve all possible 'source' files
         List<File> sourceFiles = FileUtils.asList(dir.listFiles(resource ->
-                fpSources.accept(moduleHome, resource) && !fpExcludes.accept(moduleHome, resource))
+            fpSources.accept(moduleHome, resource) && !fpExcludes.accept(moduleHome, resource))
         );
 
         List<Source> sources = sourceFiles
                 .stream()
                 // file -> <Type>Source
-                .map(file -> SourceCode.newSource(file, module))
+            .map(file -> SourceCode.newSource(file, module))
                 // check if it is a ""valid"" source file
                 .filter(source -> source.getSourceRoot().isPresent())
                 // check if the path is valid
-                .filter(source -> selector.test(source.getPath()))
-                .collect(Collectors.toList());
+            .filter(source -> selector.test(source.getPath()))
+            .collect(Collectors.toList());
 
         return sources;
     }

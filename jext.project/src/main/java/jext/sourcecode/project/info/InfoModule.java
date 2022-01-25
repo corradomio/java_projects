@@ -4,12 +4,14 @@ import jext.name.Name;
 import jext.name.Named;
 import jext.name.PathName;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resources;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.project.maven.MavenRepository;
 import jext.sourcecode.project.util.ResourcesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.MapUtils;
@@ -165,6 +167,15 @@ public class InfoModule implements Module, Comparable<Named> {
     @Override
     public Set<String> getMavenRepositories() {
         return Collections.emptySet();
+    }
+
+    @Override
+    public Set<LibraryRepository> getLibraryRepositories() {
+        Set<LibraryRepository> librepos = new HashSet<>();
+
+        for (String mavenUrl : getMavenRepositories())
+            librepos.add(new MavenRepository(mavenUrl));
+        return librepos;
     }
 
     @Override

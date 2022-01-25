@@ -15,6 +15,7 @@ import jext.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class InfoType implements Type {
 
@@ -105,8 +106,8 @@ public class InfoType implements Type {
     }
 
     @Override
-    public String[] getModifiers() {
-        return StringUtils.emptyArray();
+    public Set<String> getModifiers() {
+        return Collections.emptySet();
     }
 
     @Override

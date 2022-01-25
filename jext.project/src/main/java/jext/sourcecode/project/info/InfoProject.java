@@ -11,7 +11,6 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.info.library.InfoInvalidLibrary;
 import jext.sourcecode.project.info.library.InfoLocalLibrary;
@@ -26,7 +25,6 @@ import jext.util.MapUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -66,30 +64,55 @@ public class InfoProject implements Project {
 
     private ModulesImpl modules;
     private SourcesImpl sources;
-    private Map<String, Source> sourceMap;
+    // private Map<String, Source> sourceMap;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public InfoProject(String projectName, File projectHome, Properties properties) {
+    public InfoProject(String projectName, File infoFileOrProjectHome, Properties properties) {
         this.name = PathName.of(projectName);
         this.properties = properties;
-        if (projectHome.isFile()) {
-            this.infoFile = projectHome;
-            this.projectHome = this.infoFile.getAbsoluteFile().getParentFile();
-            if (this.projectHome.getName().startsWith("."))
-                this.projectHome = this.projectHome.getParentFile();
+
+        loadInfo(infoFileOrProjectHome);
+        setProjectHome();
+    }
+
+    private void loadInfo(File infoFileOrProjectHome) {
+        if (infoFileOrProjectHome.isFile()) {
+            this.infoFile = infoFileOrProjectHome;
         }
         else {
-            this.projectHome = projectHome;
-            this.infoFile = new File(projectHome,"project-info.json");
+            this.infoFile = new File(infoFileOrProjectHome,"project-info.json");
             if (!this.infoFile.exists())
-                this.infoFile = new File(projectHome,".spl/project-info.json");
+                this.infoFile = new File(infoFileOrProjectHome,".spl/project-info.json");
         }
         this.selector = (p) -> true;
 
-        load();
+        try {
+            info = JSONUtils.load(infoFile, HashMap.class);
+        } catch (IOException e) {
+            info = Collections.emptyMap();
+        }
+
+    }
+
+    private void setProjectHome() {
+        try {
+            info = JSONUtils.load(infoFile, HashMap.class);
+        } catch (IOException e) {
+            info = Collections.emptyMap();
+        }
+
+        String projectHome = MapUtils.get(info, "projectHome");
+        if (projectHome != null) {
+            this.projectHome = new File(projectHome);
+        }
+        else {
+            this.projectHome = infoFile.getParentFile();
+            if (this.projectHome.getName().startsWith("."))
+                this.projectHome = this.projectHome.getParentFile();
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -326,17 +349,6 @@ public class InfoProject implements Project {
 
     boolean isAccepted(String path) {
         return this.selector.test(path);
-    }
-
-    private void load() {
-        if (info != null)
-            return;
-
-        try {
-            info = JSONUtils.load(infoFile, HashMap.class);
-        } catch (IOException e) {
-            info = Collections.emptyMap();
-        }
     }
 
     // ----------------------------------------------------------------------

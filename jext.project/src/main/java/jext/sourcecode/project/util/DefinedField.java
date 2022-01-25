@@ -6,7 +6,12 @@ import jext.sourcecode.project.Field;
 import jext.sourcecode.project.FieldName;
 import jext.sourcecode.project.RefType;
 import jext.util.LongHash;
+import jext.util.SetUtils;
 import jext.util.StringUtils;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class DefinedField extends NamedObject implements Field {
 
@@ -21,7 +26,7 @@ public class DefinedField extends NamedObject implements Field {
 
     private final DeclType fieldType;
     private final RefType  ownerType;
-    private String[] modifiers = StringUtils.emptyArray();
+    private Set<String> modifiers = Collections.emptySet();
     private long digest = 0;
     private String declaration = "";
 
@@ -76,12 +81,19 @@ public class DefinedField extends NamedObject implements Field {
     }
 
     @Override
-    public String[] getModifiers() {
+    public Set<String> getModifiers() {
         return modifiers;
     }
 
-    public void setModifiers(String[] modifiers) {
-        this.modifiers = modifiers;
+    public void setModifiers(String ... modifiers) {
+        setModifiers(SetUtils.asSet(modifiers));
+    }
+
+    public void setModifiers(Set<String> modifiers) {
+        if (this.modifiers.isEmpty())
+            this.modifiers = new TreeSet<>(modifiers);
+        else
+            this.modifiers.addAll(modifiers);
         this.digest = LongHash.hash(modifiers, fieldType.getSignature());
     }
 

@@ -2,6 +2,7 @@ package jext.sourcecode.project.util;
 
 import jext.logging.Logger;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.ModuleSource;
 import jext.sourcecode.project.Project;
@@ -18,12 +19,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProjectUtils {
@@ -145,7 +141,7 @@ public class ProjectUtils {
     }
 
     public static Set<File> getLibraryFiles(Project project) {
-        Set<File> lfiles = new HashSet<>();
+        Set<File> lfiles = new TreeSet<>();
         project.getLibraries().forEach(library -> {
             lfiles.addAll(library.getFiles());
         });
@@ -257,6 +253,14 @@ public class ProjectUtils {
             mavenRepos.addAll(module.getMavenRepositories());
         });
         return mavenRepos;
+    }
+
+    public static Set<LibraryRepository> getLibraryRepositories(Project project) {
+        Set<LibraryRepository> libRepos = new HashSet<>();
+        project.getModules().forEach(module -> {
+            libRepos.addAll(module.getLibraryRepositories());
+        });
+        return libRepos;
     }
 
     // ----------------------------------------------------------------------

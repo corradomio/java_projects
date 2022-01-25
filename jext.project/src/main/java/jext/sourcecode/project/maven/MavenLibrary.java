@@ -2,6 +2,7 @@ package jext.sourcecode.project.maven;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.lang.JavaConstants;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
@@ -50,6 +51,11 @@ public class MavenLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public String getLanguage() {
+        return JavaConstants.JAVA;
+    }
 
     @Override
     public boolean isValid() {

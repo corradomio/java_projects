@@ -2,6 +2,7 @@ package jext.sourcecode.resources.libraries;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.lang.JavaConstants;
 import jext.name.EmptyName;
 import jext.name.VersionName;
 import jext.name.Name;
@@ -49,6 +50,11 @@ public class JarLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public String getLanguage() {
+        return JavaConstants.JAVA;
+    }
 
     @Override
     public String getVersion() {

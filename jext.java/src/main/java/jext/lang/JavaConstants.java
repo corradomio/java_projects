@@ -8,6 +8,8 @@ import java.util.Set;
 
 public interface JavaConstants {
 
+    String JAVA = "java";
+
     String PACKAGE = "package ";
     String IMPORT_STATIC = "import static ";
     String IMPORT = "import ";

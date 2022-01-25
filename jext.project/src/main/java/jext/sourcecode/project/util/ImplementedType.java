@@ -11,10 +11,9 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.TypeParam;
+import jext.util.SetUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ImplementedType extends NamedObject implements Type {
 
@@ -29,7 +28,7 @@ public class ImplementedType extends NamedObject implements Type {
     private final TypeRole role;
     private final List<TypeParam> tparams = new ArrayList<>();
     private long digest;
-    private String[] modifiers;
+    private Set<String> modifiers = Collections.emptySet();
 
     // ----------------------------------------------------------------------
     // Constructors
@@ -60,8 +59,15 @@ public class ImplementedType extends NamedObject implements Type {
         this.digest = digest;
     }
 
-    public void setModifiers(String[] modifiers) {
-        this.modifiers = modifiers;
+    public void setModifiers(String ... modifiers) {
+        setModifiers(SetUtils.asSet(modifiers));
+    }
+
+    public void setModifiers(Set<String> modifiers) {
+        if (this.modifiers.isEmpty())
+            this.modifiers = new TreeSet<>(modifiers);
+        else
+            this.modifiers.addAll(modifiers);
     }
 
     // ----------------------------------------------------------------------
@@ -142,7 +148,7 @@ public class ImplementedType extends NamedObject implements Type {
     }
 
     @Override
-    public String[] getModifiers() {
+    public Set<String> getModifiers() {
         return modifiers;
     }
 

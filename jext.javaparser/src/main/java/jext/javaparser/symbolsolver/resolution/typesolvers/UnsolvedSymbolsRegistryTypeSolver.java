@@ -8,6 +8,7 @@ import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclar
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import jext.javaparser.util.JPUtils;
 import jext.lang.JavaUtils;
+import jext.util.Assert;
 
 public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
 
@@ -27,8 +28,7 @@ public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {
 
     public UnsolvedSymbolsRegistryTypeSolver(UnsolvedSymbolsRegistry usr) {
         super(UnsolvedSymbolsRegistryTypeSolver.class.getName());
-        if (usr == null)
-            throw new IllegalArgumentException("usr mast be not null");
+        Assert.verify(usr != null, "usr must be not null");
         this.usr = usr;
     }
 

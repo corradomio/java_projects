@@ -6,6 +6,7 @@ import javassist.NotFoundException;
 import jext.lang.JavaConstants;
 import jext.lang.JavaUtils;
 import jext.logging.Logger;
+import jext.util.FileUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -111,19 +112,24 @@ public class ClassPoolRegistry implements JavaConstants {
     // Operations
     // ----------------------------------------------------------------------
 
-    public ClassPoolRegistry addJdk(Collection<File> jdkFiles, String jdkName) {
-        addAll(jdkFiles, jdkName);
-        addPrimitiveTypes(jdkName);
-        return this;
-    }
+    // public ClassPoolRegistry addJdk(Collection<File> jdkFiles, String jdkName) {
+    //     addAll(jdkFiles, jdkName);
+    //     addPrimitiveTypes(jdkName);
+    //     checkJdk();
+    //     return this;
+    // }
 
     public ClassPoolRegistry addJdk(File jdk) {
-        String libraryName = jdk.getName();
-        add(new File(jdk, "lib"), libraryName);      // jdk 1 -> 8
-        add(new File(jdk, "jre/lib"), libraryName);  // jre 1 -> 8
-        add(new File(jdk, "jmods"), libraryName);    // jdk 9 -> ...
-        addPrimitiveTypes(libraryName);
+        return addJdk(jdk, jdk.getName());
+    }
 
+    public ClassPoolRegistry addJdk(File jdk, String rtName) {
+        add(jdk, rtName);                             // current directory
+        add(new File(jdk, "lib"), rtName);      // jdk 1 -> 8
+        add(new File(jdk, "jre/lib"), rtName);  // jre 1 -> 8
+        add(new File(jdk, "jmods"), rtName);    // jdk 9 -> ...
+        checkJdk(rtName, jdk);
+        addPrimitiveTypes(rtName);
         return this;
     }
 
@@ -153,6 +159,11 @@ public class ClassPoolRegistry implements JavaConstants {
     }
 
     // ----------------------------------------------------------------------
+
+    private void checkJdk(String rtName, File jdk) {
+        if (classpathElements.isEmpty())
+            logger.errorf("Invalid runtime library %s located at %s", rtName, FileUtils.getAbsolutePath(jdk));
+    }
 
     private void addPrimitiveTypes(String libraryName) {
         for (String primitiveType : PRIMITIVE_TYPES)
