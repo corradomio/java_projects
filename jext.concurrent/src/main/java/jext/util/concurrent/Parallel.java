@@ -366,7 +366,10 @@ public class Parallel {
 
     private static synchronized void parkExecutorService(ExecutorService executor) {
         if (executor == null) return;
-        running.remove(executor);
+        if (running != null)
+            running.remove(executor);
+        if (waiting == null)
+            waiting = new LinkedList<>();
         waiting.add(new WaitingExecutorService(executor));
 
         waiting.removeIf(wes -> wes.waitingTime() > TIMEOUT);

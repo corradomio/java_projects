@@ -133,6 +133,8 @@ public class ProjectAnalyzer {
         minfo.put("path", m.getPath());
         minfo.put("properties", m.getProperties());
         minfo.put("digest", m.getDigest());
+        minfo.put("refId", m.getRefId());
+        minfo.put("type", "module");
 
         // module dependencies
         minfo.put("dependencies", m.getDependencies()
@@ -212,7 +214,8 @@ public class ProjectAnalyzer {
             "version", l.getVersion(),
             "valid", l.isValid(),
             "file", FileUtils.getAbsolutePath(l.getFile()),
-            "files", FileUtils.getAbsolutePaths(l.getFiles())
+            "files", FileUtils.getAbsolutePaths(l.getFiles()),
+            "type", "library"
         );
 
         return linfo;
@@ -223,7 +226,8 @@ public class ProjectAnalyzer {
             "id", lr.getId(),
             "name", lr.getName(),
             "repositoryType", lr.getRepositoryType(),
-            "url", lr.getUrl()
+            "url", lr.getUrl(),
+            "type", "librepo"
         );
         return lrinfo;
     }
@@ -248,6 +252,7 @@ public class ProjectAnalyzer {
             ,"types", s.getTypes().stream()
                 .map(type -> type.getName().getFullName())
                 .collect(Collectors.toList())
+            ,"type", "source"
         );
     }
 
@@ -255,22 +260,22 @@ public class ProjectAnalyzer {
     // Analyze sources
     // ----------------------------------------------------------------------
 
-    private SourceInfo  analyzeSources() {
-        // create the main map
-        ModulesInfo minfo = new ModulesInfo();
-        minfo.init();
-        project.getSources()
-            .parallelStream()
-            .forEach(source -> analyzeSource(minfo, source));
-        return minfo;
-    }
+    // private SourceInfo  analyzeSources() {
+    //     // create the main map
+    //     ModulesInfo minfo = new ModulesInfo();
+    //     minfo.init();
+    //     project.getSources()
+    //         .parallelStream()
+    //         .forEach(source -> analyzeSource(minfo, source));
+    //     return minfo;
+    // }
 
-    private void analyzeSource(ModulesInfo minfo, Source source) {
-        minfo.add(source.getSourceInfo());
-        String modulePath = source.getModule().getName().getFullName();
-        String sourcePath = source.getName().getFullName();
-        long digest = source.getDigest();
-        minfo.addDigest(modulePath, sourcePath, digest);
-    }
+    // private void analyzeSource(ModulesInfo minfo, Source source) {
+    //     minfo.add(source.getSourceInfo());
+    //     String modulePath = source.getModule().getName().getFullName();
+    //     String sourcePath = source.getName().getFullName();
+    //     long digest = source.getDigest();
+    //     minfo.addDigest(modulePath, sourcePath, digest);
+    // }
 
 }
