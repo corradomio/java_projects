@@ -77,10 +77,6 @@ public class ProjectFactory {
         //      5) Simple
         //
 
-        // add a "revisionId"
-        properties = new Properties(properties);
-        properties.put("revisionId", UUID.randomUUID().toString());
-
         projectType = properties.getProperty(PROJECT_TYPE, AUTO);
         if (StringUtils.isEmpty(projectName) || AUTO.equals(projectType));
             projectType = guessProjectType(projectHome, properties);
@@ -119,6 +115,10 @@ public class ProjectFactory {
         MavenDownloader md = new MavenDownloader();
         LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(md);
         project.setLibraryFinder(lfinder);
+
+        // initialize the revisionId if not already available in project 'properties'
+        if (!project.getProperties().containsKey("revisionId"))
+            project.getProperties().setProperty("revisionId", UUID.randomUUID().toString());
 
         return project;
     }

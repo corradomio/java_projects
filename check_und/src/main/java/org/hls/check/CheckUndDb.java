@@ -85,7 +85,7 @@ public class CheckUndDb {
                         "jdk14", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk14")
                 ));
 
-        Project project = Projects.newProject(projectDir, PropertiesUtils.empty());
+        Project project = Projects.newProject(new File(projectDir, "/.spl"), PropertiesUtils.empty());
         project.setLibraryFinder(lf);
 
         List<File> sources  = ProjectUtils.getSourceFiles(project);
