@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 public class ProjectInfo extends LinkedHashMap<String, Object> {
 
     private static final String VERSION = "version";
-    private static final String VERSION_NUMBER = "3.3";
+    private static final String VERSION_NUMBER = "2.0";
 
     public ProjectInfo() {
 

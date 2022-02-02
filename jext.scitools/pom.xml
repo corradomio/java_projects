@@ -11,6 +11,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <scitools.home>C:/Program Files/SciTools/bin/pc-win64/Java</scitools.home>
     </properties>
 
     <dependencies>
@@ -40,7 +41,7 @@
             <!-- WITHOUT the version number, the library is not found! -->
             <version>6.1</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Understand.jar</systemPath>
+            <systemPath>${scitools.home}/Understand.jar</systemPath>
         </dependency>
     </dependencies>
 

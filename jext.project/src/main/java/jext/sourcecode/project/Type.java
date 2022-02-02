@@ -20,7 +20,7 @@ public interface Type extends RefType {
 
     Module getModule();
 
-    long getDigest();
+    String getDigest();
 
     Set<String> getModifiers();
 

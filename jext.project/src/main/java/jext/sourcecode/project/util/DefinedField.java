@@ -27,7 +27,7 @@ public class DefinedField extends NamedObject implements Field {
     private final DeclType fieldType;
     private final RefType  ownerType;
     private Set<String> modifiers = Collections.emptySet();
-    private long digest = 0;
+    private String digest = "0";
     private String declaration = "";
 
     // ----------------------------------------------------------------------
@@ -38,8 +38,7 @@ public class DefinedField extends NamedObject implements Field {
         super(new FieldNameObject(ownerType.getName(), fieldName));
         this.ownerType = ownerType;
         this.fieldType = fieldType;
-        // this.digest = LongHash.asString(fieldType.getSignature());
-        this.digest = LongHash.hash(fieldType.getSignature());
+        this.digest = LongHash.asString(fieldType.getSignature());
     }
 
     // ----------------------------------------------------------------------
@@ -72,11 +71,11 @@ public class DefinedField extends NamedObject implements Field {
     }
 
     @Override
-    public long getDigest() {
+    public String getDigest() {
         return digest;
     }
 
-    public void setDigest(long digest) {
+    public void setDigest(String digest) {
         this.digest = digest;
     }
 
@@ -94,7 +93,7 @@ public class DefinedField extends NamedObject implements Field {
             this.modifiers = new TreeSet<>(modifiers);
         else
             this.modifiers.addAll(modifiers);
-        this.digest = LongHash.hash(modifiers, fieldType.getSignature());
+        this.digest = LongHash.toString(LongHash.hash(modifiers, fieldType.getSignature()));
     }
 
     // ----------------------------------------------------------------------

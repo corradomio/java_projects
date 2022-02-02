@@ -86,5 +86,5 @@ public interface Module extends RefIdNamed {
     Set<RefType> getUsedTypes();
 
     /** Module digest as composition of source's digests */
-    long getDigest();
+    String getDigest();
 }

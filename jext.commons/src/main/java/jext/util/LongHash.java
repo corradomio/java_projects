@@ -296,20 +296,46 @@ public class LongHash {
     // Conversion
     // ----------------------------------------------------------------------
 
-    // public static String asString(Object... values) {
-    //     return toString(hash(values));
-    // }
+    public static String asString(Object... values) {
+        return toString(hash(values));
+    }
 
-    // public static String toString(long hashCode) {
-    //     return Long.toUnsignedString(hashCode, Character.MAX_RADIX);
-    // }
+    private static final String BASE36  = "0123456789abcdefghijklmnopqrstuvwxyz";
+    private static final String BASE64x = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
+    private static final String BASE64  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    // public static long fromString(String hashCode) {
-    //     if (hashCode.isEmpty())
-    //         return 0;
-    //     else
-    //         return Long.parseUnsignedLong(hashCode, Character.MAX_RADIX);
-    // }
+    public static String toString(long hashCode) {
+        //return Long.toUnsignedString(hashCode, Character.MAX_RADIX);
+        if (hashCode == 0)
+            return "0";
+
+        StringBuilder sb = new StringBuilder();
+        while (hashCode != 0) {
+            int d = (int)(hashCode & 0x3F); // 6 bits
+            sb.append(BASE64.charAt(d));
+            hashCode >>>= 6;
+        }
+        return sb.reverse().toString();
+    }
+
+    public static long fromString(String hashCode) {
+        // if (hashCode.isEmpty())
+        //     return 0;
+        // else
+        //     return Long.parseUnsignedLong(hashCode, Character.MAX_RADIX);
+
+        if (hashCode == null || hashCode.isEmpty())
+            return 0;
+
+        long hc = 0;
+        for (int i=0; i<hashCode.length(); ++i) {
+            char c = hashCode.charAt(i);
+            int d = BASE64.indexOf(c);
+            hc = hc*64 + d;
+        }
+        return hc;
+
+    }
 
     // ----------------------------------------------------------------------
     // End

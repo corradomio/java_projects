@@ -17,7 +17,7 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
 
     private File projectHome;
     private File moduleHome;
-    // private List<File> sourceRootDirectories;
+    private List<File> sourceRootDirectories;
     private List<File> sourceFiles;
     private Set<String> sourceRoots;
 
@@ -40,10 +40,10 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
     // ----------------------------------------------------------------------
 
     @Override
-    public boolean add(Source source) {
-        // if (sourceRoots == null)
-        //     sourceRoots = new HashSet<>();
-        // source.getSourceRoot().ifPresent(sroot -> sourceRoots.add(sroot));
+    public synchronized boolean add(Source source) {
+        sourceRootDirectories = null;
+        sourceRoots = null;
+        sourceFiles = null;
         return super.add(source);
     }
 
@@ -61,7 +61,23 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
     }
 
     @Override
-    public Set<String> getSourceRoots() {
+    public synchronized Set<String> getSourceRoots() {
+        return getSourceRootsNoSync();
+    }
+
+    @Override
+    public synchronized List<File> getSourceRootDirectories() {
+        if (sourceRootDirectories != null)
+            return sourceRootDirectories;
+
+        sourceRootDirectories = getSourceRootsNoSync().stream()
+                .map(sroot -> new File(moduleHome, sroot))
+            .peek(sourceRoot -> Assert.verify(sourceRoot.isDirectory(), "%s is not a directory", sourceRoot))
+            .collect(Collectors.toList());
+        return sourceRootDirectories;
+    }
+
+    private Set<String> getSourceRootsNoSync() {
         if (sourceRoots != null)
             return sourceRoots;
 
@@ -73,31 +89,7 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
     }
 
     @Override
-    public List<File> getSourceRootDirectories() {
-        // if (sourceRootDirectories != null)
-        //     return sourceRootDirectories;
-        //
-        // sourceRootDirectories = getSourceRoots().stream()
-        //     .map(sroot -> {
-        //         if(FileUtils.isAbsolute(sroot)){
-        //             return new File(sroot);
-        //         }
-        //         else {
-        //             return new File(moduleHome, sroot);
-        //         }
-        //     })
-        //     .peek(sourceRoot -> Assert.verify(sourceRoot.isDirectory(), "%s is not a directory", sourceRoot))
-        //     .collect(Collectors.toList());
-        // return sourceRootDirectories;
-
-        return getSourceRoots().stream()
-                .map(sroot -> new File(moduleHome, sroot))
-                .peek(sourceRoot -> Assert.verify(sourceRoot.isDirectory(), "%s is not a directory", sourceRoot))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<File> getSourceFiles() {
+    public synchronized List<File> getSourceFiles() {
         if (sourceFiles != null)
             return sourceFiles;
 

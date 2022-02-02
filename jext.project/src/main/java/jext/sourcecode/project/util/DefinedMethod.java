@@ -10,7 +10,12 @@ import jext.sourcecode.project.RefType;
 import jext.util.SetUtils;
 import jext.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefinedMethod extends NamedObject implements Method {
@@ -45,7 +50,7 @@ public class DefinedMethod extends NamedObject implements Method {
     private final String signature;
 
     private final AtomicInteger callIndex;
-    private long digest = 0;
+    private String digest = "0";
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -70,7 +75,7 @@ public class DefinedMethod extends NamedObject implements Method {
     // Setters
     // ----------------------------------------------------------------------
 
-    public void setDigest(long digest) {
+    public void setDigest(String digest) {
         this.digest = digest;
     }
 
@@ -144,7 +149,7 @@ public class DefinedMethod extends NamedObject implements Method {
     }
 
     @Override
-    public long getDigest() {
+    public String getDigest() {
         return digest;
     }
 

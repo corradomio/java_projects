@@ -13,7 +13,11 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.project.TypeParam;
 import jext.util.SetUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ImplementedType extends NamedObject implements Type {
 
@@ -27,7 +31,7 @@ public class ImplementedType extends NamedObject implements Type {
     private final Source source;
     private final TypeRole role;
     private final List<TypeParam> tparams = new ArrayList<>();
-    private long digest;
+    private String digest;
     private Set<String> modifiers = Collections.emptySet();
 
     // ----------------------------------------------------------------------
@@ -43,8 +47,7 @@ public class ImplementedType extends NamedObject implements Type {
         this.namespace = namespace;
         this.source = source;
         this.role = role;
-        // this.digest = "0";
-        this.digest = 0;
+        this.digest = "0";
     }
 
     public ImplementedType(String namespace, String name, TypeRole role, Source source) {
@@ -55,7 +58,7 @@ public class ImplementedType extends NamedObject implements Type {
     // Properties
     // ----------------------------------------------------------------------
 
-    public void setDigest(long digest) {
+    public void setDigest(String digest) {
         this.digest = digest;
     }
 
@@ -143,7 +146,7 @@ public class ImplementedType extends NamedObject implements Type {
     }
 
     @Override
-    public long getDigest() {
+    public String getDigest() {
         return digest;
     }
 

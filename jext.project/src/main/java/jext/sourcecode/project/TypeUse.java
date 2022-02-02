@@ -8,5 +8,6 @@ public enum TypeUse {
     IMPLEMENTS,
     DEPENDS_ON,
     TEMPLATE,   // used in type parameters
-    IMPLICIT
+    IMPLICIT,
+    IMPORT
 }

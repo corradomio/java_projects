@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class CheckUndDb {
@@ -68,7 +69,7 @@ public class CheckUndDb {
         );
 
         Project project = loadProject(projectDir);
-        // saveProject(project);
+        saveProject(project);
 
         // ------------------------------------------------------------------
 
@@ -85,7 +86,9 @@ public class CheckUndDb {
                         "jdk14", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk14")
                 ));
 
-        Project project = Projects.newProject(new File(projectDir, "/.spl"), PropertiesUtils.empty());
+        File projectFile = new File("D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project\\.spl\\f127d92c-source-project-r00.json");
+
+        Project project = Projects.newProject(projectFile, PropertiesUtils.empty());
         project.setLibraryFinder(lf);
 
         List<File> sources  = ProjectUtils.getSourceFiles(project);

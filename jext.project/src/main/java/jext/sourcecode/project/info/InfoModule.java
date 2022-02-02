@@ -63,7 +63,7 @@ public class InfoModule implements Module, Comparable<Named> {
 
     @Override
     public String getRefId() {
-        return Integer.toString(getName().getFullName().hashCode(), 16);
+        return  MapUtils.get(info, "refId");
     }
 
     @Override
@@ -84,9 +84,8 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
-    public long getDigest() {
-        // return MapUtils.getString(info, "digest");
-        return MapUtils.getLong(info, "digest");
+    public String getDigest() {
+        return MapUtils.getString(info, "digest");
     }
 
     @Override

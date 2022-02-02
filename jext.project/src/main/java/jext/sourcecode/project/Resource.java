@@ -14,7 +14,7 @@ public interface Resource extends IdNamed {
 
     Project getProject();
 
-    long getDigest();
+    String getDigest();
 
     String getMimeType();
 

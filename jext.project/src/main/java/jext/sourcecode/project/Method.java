@@ -17,7 +17,7 @@ public interface Method extends IdNamed {
 
     String getSignature();
     String getDeclaration();
-    long getDigest();
+    String getDigest();
 
     Set<String> getModifiers();
     boolean isStatic();

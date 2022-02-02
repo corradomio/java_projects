@@ -19,7 +19,8 @@ public class TypeParamImpl extends NamedObject implements TypeParam {
 
     public TypeParamImpl(Name typeName, String name, String signature) {
         super(new ObjectName(typeName, name));
-        this.signature = String.format("%s::%s", getName().getFullName(), signature);
+        // this.signature = String.format("%s::%s", getName().getFullName(), signature);
+        this.signature = getName().getFullName();
     }
 
     @Override
@@ -41,7 +42,7 @@ public class TypeParamImpl extends NamedObject implements TypeParam {
     }
 
     // @Override
-    // public long getDigest() {
+    // public String getDigest() {
     //     return LongHash.asString(name.getFullName(), signature);
     // }
 

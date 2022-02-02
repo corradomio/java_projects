@@ -95,9 +95,8 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     }
 
     @Override
-    public long getDigest() {
-        // return MapUtils.getString(info, "digest");
-        return MapUtils.getLong(info, "digest");
+    public String getDigest() {
+        return MapUtils.getString(info, "digest");
     }
 
     @Override

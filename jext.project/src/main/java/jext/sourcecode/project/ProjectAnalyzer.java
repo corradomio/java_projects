@@ -1,15 +1,12 @@
 package jext.sourcecode.project;
 
-import jext.sourcecode.project.util.ModulesInfo;
 import jext.sourcecode.project.util.ProjectUtils;
-import jext.sourcecode.project.util.SourceInfo;
 import jext.util.FileUtils;
 import jext.util.MapUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

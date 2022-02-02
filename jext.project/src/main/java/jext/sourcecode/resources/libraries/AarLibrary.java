@@ -33,7 +33,7 @@ public class AarLibrary extends JarLibrary {
     }
 
     @Override
-    public long getDigest() {
+    public String getDigest() {
         extractClasses();
         return super.getDigest();
     }

@@ -17,7 +17,6 @@ import jext.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.UUID;
 
 import static jext.sourcecode.project.GuessProjectType.guessProjectType;
 import static jext.sourcecode.project.Project.PROJECT_TYPE;
@@ -115,10 +114,6 @@ public class ProjectFactory {
         MavenDownloader md = new MavenDownloader();
         LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(md);
         project.setLibraryFinder(lfinder);
-
-        // initialize the revisionId if not already available in project 'properties'
-        if (!project.getProperties().containsKey("revisionId"))
-            project.getProperties().setProperty("revisionId", UUID.randomUUID().toString());
 
         return project;
     }

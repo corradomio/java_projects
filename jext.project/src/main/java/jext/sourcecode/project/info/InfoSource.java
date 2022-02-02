@@ -71,9 +71,8 @@ public class InfoSource implements Source {
     }
 
     @Override
-    public long getDigest() {
-        // return MapUtils.getString(info, "digest");
-        return MapUtils.getLong(info, "digest");
+    public String getDigest() {
+        return MapUtils.getString(info, "digest");
     }
 
     @Override

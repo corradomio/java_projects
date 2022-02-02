@@ -101,7 +101,7 @@ public class InfoType implements Type {
     }
 
     @Override
-    public long getDigest() {
+    public String getDigest() {
         return getSource().getDigest();
     }
 
