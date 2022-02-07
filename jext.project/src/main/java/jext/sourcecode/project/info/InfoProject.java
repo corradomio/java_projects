@@ -257,23 +257,23 @@ public class InfoProject implements Project {
             return libraries;
 
         libraries = new LibrarySet();
-        List<Map<String, Object>> linfos = MapUtils.get(info, "libraries");
-        for(Map<String, Object> linfo : linfos) {
+        Map<String, Map<String, Object>> libraries = MapUtils.get(info, "libraries");
+        for(Map<String, Object> linfo : libraries.values()) {
             Library l = composeLibrary(linfo);
-            libraries.add(l);
+            this.libraries.add(l);
         }
         List<Map<String, Object>> uinfos = MapUtils.get(info, "unusedLibraries");
         for(Map<String, Object> uinfo : uinfos) {
             Library l = composeLibrary(uinfo);
-            libraries.add(l);
+            this.libraries.add(l);
         }
         List<Map<String, Object>> rtinfos = MapUtils.get(info, "runtimeLibraries");
         for(Map<String, Object> rtinfo : rtinfos) {
             Library l = composeLibrary(rtinfo);
-            libraries.add(l);
+            this.libraries.add(l);
         }
 
-        return libraries;
+        return this.libraries;
     }
 
     @Override

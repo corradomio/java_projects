@@ -1,8 +1,12 @@
-package jext.scitools.und;
+package jext.scitools;
 
 import com.scitools.understand.Understand;
 import com.scitools.understand.UnderstandException;
+import jext.scitools.und.Ent;
 import jext.scitools.und.java.UndJavaDatabase;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.File;
@@ -48,11 +52,23 @@ import java.util.concurrent.TimeoutException;
        version                gives the current version
  */
 
-
+/**
+ * Class used to create/update/delete the SciTools "und" database
+ */
 public class UndDatabase implements AutoCloseable {
 
     public static final String JAVA = "java";
+    private static final String NO_LANGUAGE = "";
+    private static Logger logger = LogManager.getLogger(UndDatabase.class);
 
+    /**
+     * Factory method used to to access the SciTools "und' database
+     *
+     * @param undDatabase database full path
+     * @param language programming language of the analyzed source code
+     * @param version programming language version
+     * @return
+     */
     public static UndDatabase database(File undDatabase, String language, int version) {
         if (JAVA.equals(language))
             return new UndJavaDatabase(undDatabase, version);
@@ -64,7 +80,6 @@ public class UndDatabase implements AutoCloseable {
     // Private fields
     // ----------------------------------------------------------------------
 
-    protected static final String UND_APP = "und";
     protected static final int MAX_FILES_INLINE = 20;
 
     protected File undDatabase;
@@ -83,45 +98,61 @@ public class UndDatabase implements AutoCloseable {
     }
 
     // ----------------------------------------------------------------------
-    // Database create/write
+    // Database create/delete/exists
     // ----------------------------------------------------------------------
 
+    /**
+     * Check if the database exists
+     * @return true if the db exists, false otherwise
+     */
     public boolean exists() {
         return undDatabase.exists();
     }
 
     /**
-     * Delete the 'und' database
+     * Delete the database
      *
-     * @throws IOException
+     * @throws IOException if the db doesn't exists or there are other pfoblema
      */
     public void delete() throws IOException {
         if (!exists())
             return;
 
-        Files.walkFileTree(undDatabase.toPath(), new FileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
+        File[] content = undDatabase.listFiles();
+        if (content != null)
+            for (File f : content)
+                delete(f);
 
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
+        delete (undDatabase);
 
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
+        // Files.walkFileTree(undDatabase.toPath(), new FileVisitor<Path>() {
+        //     @Override
+        //     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        //         return FileVisitResult.CONTINUE;
+        //     }
+        //
+        //     @Override
+        //     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        //         Files.delete(file);
+        //         return FileVisitResult.CONTINUE;
+        //     }
+        //
+        //     @Override
+        //     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        //         return FileVisitResult.CONTINUE;
+        //     }
+        //
+        //     @Override
+        //     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        //         Files.delete(dir);
+        //         return FileVisitResult.CONTINUE;
+        //     }
+        // });
+    }
 
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+    private static void delete (File f) {
+        if (!f.delete())
+            logger.warn(String.format("Unable to delete %s", f.getAbsolutePath()));
     }
 
     /*
@@ -137,9 +168,11 @@ public class UndDatabase implements AutoCloseable {
         if (exists())
             throw new IOException("Database '" + undDatabase.getAbsolutePath() + "' already existent");
 
+        String undApp = SciTools.undApp();
+
         try {
             new ProcessExecutor()
-                .command(UND_APP, "create",
+                .command(undApp, "create",
                     "-db", undDatabase.getAbsolutePath(),
                     "-languages", language)
                 .redirectOutput(new OutputStream() {
@@ -153,6 +186,13 @@ public class UndDatabase implements AutoCloseable {
             throw new IOException(e);
         }
     }
+
+    // ----------------------------------------------------------------------
+    // Add/remove source files
+    // ----------------------------------------------------------------------
+
+    private static final String ADD = "add";
+    private static final String REMOVE = "remove";
 
     /*
     Help for Add
@@ -249,52 +289,100 @@ public class UndDatabase implements AutoCloseable {
          Note that both fromdb and todb must be specified, even in interactive mode.
     */
     public void addSource(File fileOrDirectory) throws IOException {
+        applyOnSource(ADD, fileOrDirectory);
+    }
+
+    /*
+    Help For Remove
+    The remove command removes files, directories, visual studio files,
+    roots, and architectures from the project. It will detect whether the argument
+    is a file, directory, visual studio file, root or architecture. It will default to
+    directory in case of a conflict and can be forced to treat the argument
+    as a file, visual studio file, root, or architecture using the switches -file, -vs,
+    -root, and -arch respectively. The command could look like this
+
+        und remove someFile.cpp myProject.und
+        und remove C:\SomeDirectory myProject.und
+        und -db myProject.und remove vsFile1.vcproj vsFile2.vcproj
+        remove thisArch  (Interactive Mode)
+        remove NAMED_ROOT:  (Interactive Mode)
+
+    The command can take in a text file listing all the files, directories,
+    visual studio files, roots, OR architectures to delete, with one per line, # lines
+    ignored. The file is shown as a list file by @, so the command could look like
+    this
+
+    remove -file @listfile.txt (Interactive Mode)
+
+     */
+    public void removeSource(File fileOrDirectory) throws IOException {
+        applyOnSource(REMOVE, fileOrDirectory);
+    }
+
+    public void addSources(List<File> files) throws IOException {
+        applyOnSources(ADD, files);
+    }
+
+    public void removeSources(List<File> files) throws IOException {
+        applyOnSources(REMOVE, files);
+    }
+
+    // ----------------------------------------------------------------------
+
+    private void applyOnSource(String action, File fileOrDirectory) throws IOException {
+
+        String undApp = SciTools.undApp();
+
         try {
             if (fileOrDirectory.isDirectory()) {
+                // und <action> <directory> <database>
                 new ProcessExecutor()
-                    .command(UND_APP,
-                        "add", fileOrDirectory.getAbsolutePath(),
-                        undDatabase.getAbsolutePath())
-                    .redirectOutput(new OutputStream() {
-                        @Override
-                        public void write(int b) {
-                            System.out.write(b);
-                        }
-                    })
-                    .execute();
+                        .command(undApp,
+                                action, fileOrDirectory.getAbsolutePath(),
+                                undDatabase.getAbsolutePath())
+                        .redirectOutput(new OutputStream() {
+                            @Override
+                            public void write(int b) {
+                                System.out.write(b);
+                            }
+                        })
+                        .execute();
             }
             else {
+                // und <action> <file> <database>
                 new ProcessExecutor()
-                    .command(UND_APP,
-                        "add", "-file", fileOrDirectory.getAbsolutePath(),
-                        undDatabase.getAbsolutePath()
-                    )
-                    .redirectOutput(new OutputStream() {
-                        @Override
-                        public void write(int b) {
-                            System.out.write(b);
-                        }
-                    })
-                    .execute();
+                        .command(undApp,
+                                action, /* "-file", */ fileOrDirectory.getAbsolutePath(),
+                                undDatabase.getAbsolutePath()
+                        )
+                        .redirectOutput(new OutputStream() {
+                            @Override
+                            public void write(int b) {
+                                System.out.write(b);
+                            }
+                        })
+                        .execute();
             }
         } catch (InterruptedException | TimeoutException e) {
             throw new IOException(e);
         }
     }
 
-    public void addSources(List<File> files) throws IOException{
+    private void applyOnSources(String action, List<File> files) throws IOException {
+
+        String undApp = SciTools.undApp();
+
         try {
             File tempFile = createSourcesListFile(files);
 
             new ProcessExecutor()
-                .command(UND_APP,
-                    "add", "@"+tempFile.getAbsolutePath(),
-                    undDatabase.getAbsolutePath()
-                )
-                .execute();
+                    .command(undApp,
+                            action, "@"+tempFile.getAbsolutePath(),
+                            undDatabase.getAbsolutePath()
+                    )
+                    .execute();
 
-            if(!tempFile.delete())
-                System.out.println();
+            delete(tempFile);
 
         } catch (InterruptedException | TimeoutException e) {
             throw new IOException(e);
@@ -302,7 +390,10 @@ public class UndDatabase implements AutoCloseable {
     }
 
     private File createSourcesListFile(List<File> files) throws IOException {
-        File tempFile = Files.createTempFile(UND_APP, ".txt").toFile();
+
+        String undApp = SciTools.undApp();
+
+        File tempFile = Files.createTempFile(undApp, ".txt").toFile();
         try(Writer writer = new FileWriter(tempFile)) {
             files.forEach(file -> {
                 try {
@@ -315,6 +406,18 @@ public class UndDatabase implements AutoCloseable {
         }
         return tempFile;
     }
+
+    // ----------------------------------------------------------------------
+    // Add external libraries
+    // ----------------------------------------------------------------------
+
+    public void addLibraries(Collection<File> files) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    // ----------------------------------------------------------------------
+    // Analyze database content
+    // ----------------------------------------------------------------------
 
     /*
     Help For Analyze
@@ -347,9 +450,11 @@ public class UndDatabase implements AutoCloseable {
         if (!exists())
             throw new IOException("Database '" + undDatabase.getAbsolutePath() + "' not existent");
 
+        String undApp = SciTools.undApp();
+
         try {
             new ProcessExecutor()
-                .command(UND_APP,
+                .command(undApp,
                     "-verbose", "analyze", update ? "-changed" : "-all",
                     undDatabase.getAbsolutePath()
                 )
@@ -365,10 +470,6 @@ public class UndDatabase implements AutoCloseable {
         }
     }
 
-    public void addLibraries(Collection<File> files) throws IOException {
-        throw new UnsupportedOperationException();
-    }
-
     // ----------------------------------------------------------------------
     // Database read
     // ----------------------------------------------------------------------
@@ -380,7 +481,11 @@ public class UndDatabase implements AutoCloseable {
     }
 
     public String language() {
-        return database.language()[0];
+        String[] languages = database.language();
+        if (languages != null && languages.length > 0)
+            return languages[0];
+        else
+            return NO_LANGUAGE;
     }
 
     public String name() {

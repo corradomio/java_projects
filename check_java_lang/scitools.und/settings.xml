@@ -14,34 +14,18 @@
           <dir
             name="java">
             <dir
-              name="org">
-              <dir
-                name="hls">
-                <dir
-                  name="cdecl">
-                  <file
-                    name="ACTemplate.java"/>
-                  <file
-                    name="ACTemplate1.java"/>
-                  <file
-                    name="ACTemplate2.java"/>
-                  <file
-                    name="AClass.java"/>
-                  <file
-                    name="ADerivedClass.java"/>
-                  <file
-                    name="AEnum.java"/>
-                  <file
-                    name="AInterface.java"/>
-                </dir>
-                <dir
-                  name="deps">
-                  <file
-                    name="ClassOne.java"/>
-                  <file
-                    name="ClassTwo.java"/>
-                </dir>
-              </dir>
+              name="comments">
+              <file
+                name="AnotherCommentedClass.java"/>
+              <file
+                name="CommentedClass.java"/>
+            </dir>
+            <dir
+              name="types">
+              <file
+                name="ExampleExtra.java"/>
+              <file
+                name="ExampleFields.java"/>
             </dir>
           </dir>
         </dir>

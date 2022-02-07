@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hls.check</groupId>
+    <artifactId>check_jsondb</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.jsondb/jsondb-core -->
+        <dependency>
+            <groupId>io.jsondb</groupId>
+            <artifactId>jsondb-core</artifactId>
+            <version>1.0.115-j11</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.dizitart/nitrite -->
+        <dependency>
+            <groupId>org.dizitart</groupId>
+            <artifactId>nitrite</artifactId>
+            <version>3.4.3</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

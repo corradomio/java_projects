@@ -93,7 +93,7 @@ public class ProjectAnalyzer {
         pinfo.put("libraries", usedLibraries
             .parallelStream()
             .map(this::analyzeLibrary)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toMap(linfo -> linfo.get("fullname"), linfo -> linfo)));
 
         pinfo.put("unusedLibraries", unusedLibraries
             .parallelStream()
@@ -155,12 +155,6 @@ public class ProjectAnalyzer {
         // source roots
         minfo.put("sourceRoots", m.getSources().getSourceRoots());
 
-        // sources
-        // Map<String, Object> sinfos = new TreeMap<>();
-        // for (Source source : m.getSources())
-        //     sinfos.put(source.getName().getFullName(),
-        //         analyzeSource(source));
-
         minfo.put("sources", m.getSources()
             .parallelStream()
             .map(this::analyzeSource)
@@ -171,24 +165,10 @@ public class ProjectAnalyzer {
 
         // libraries
 
-        // minfo.put("libraries", m.getLibraries()
-        //     .stream()
-        //     .map(library -> library.getName().getFullName())
-        //     .collect(Collectors.toList()));
         minfo.put("declaredLibraries", m.getDeclaredLibraries()
             .stream()
             .map(library -> library.getName().getFullName())
             .collect(Collectors.toList()));
-
-        // types
-        // minfo.put("types", m.getTypes()
-        //     .parallelStream()
-        //     .map(type -> type.getName().getFullName())
-        //     .collect(Collectors.toList()));
-        // minfo.put("usedTypes", m.getUsedTypes()
-        //     .parallelStream()
-        //     .map(type -> type.getName().getFullName())
-        //     .collect(Collectors.toList()));
 
         return minfo;
     }

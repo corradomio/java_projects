@@ -5,7 +5,7 @@ import jext.cache.CacheManager;
 import jext.logging.Logger;
 import jext.scitools.und.Ent;
 import jext.scitools.und.Ref;
-import jext.scitools.und.UndDatabase;
+import jext.scitools.UndDatabase;
 
 import java.io.File;
 import java.io.IOException;

@@ -73,7 +73,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
         this.path = FileUtils.relativePath(project.getProjectHome(), moduleHome);
         setNameWithId(PathName.of(this.path));
-        // setRefIdFromName();
+        setRefIdFromName();
 
         this.logger = Logger.getLogger("jext.project.module.%s.%s.%s",
             getClass().getSimpleName(),

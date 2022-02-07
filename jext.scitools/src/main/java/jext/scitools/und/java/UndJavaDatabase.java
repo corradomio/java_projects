@@ -1,6 +1,7 @@
 package jext.scitools.und.java;
 
-import jext.scitools.und.UndDatabase;
+import jext.scitools.SciTools;
+import jext.scitools.UndDatabase;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.File;
@@ -77,13 +78,15 @@ public class UndJavaDatabase extends UndDatabase {
         int n = lfiles.size();
         int ssize = MAX_FILES_INLINE;
 
+        String undApp = SciTools.undApp();
+
         for (int i=0; i<n; i += ssize) {
             int l = Math.min(i + ssize, n);
             List<File> subList = lfiles.subList(i, l);
 
             try {
                 List<String> command = new ArrayList<>();
-                command.add(UND_APP);
+                command.add(undApp);
                 command.add("settings");
                 command.add("-JavaClassPathsAdd");
 

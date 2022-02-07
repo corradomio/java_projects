@@ -12,6 +12,7 @@ public class UseTemplate extends ArrayList<String> {
 
     ACTemplate<Integer> tfield;
     ACTemplate2<String, AClassAInterface> tfield2;
+
     List<Map<String, List<String>>> tfield3;
 
     UseTemplate() {

@@ -28,18 +28,67 @@
                   <file
                     name="AClass.java"/>
                   <file
+                    name="AClassAInterface.java"/>
+                  <file
                     name="ADerivedClass.java"/>
                   <file
                     name="AEnum.java"/>
                   <file
                     name="AInterface.java"/>
+                  <file
+                    name="OuterClass.java"/>
                 </dir>
                 <dir
-                  name="deps">
+                  name="check">
                   <file
-                    name="ClassOne.java"/>
+                    name="App.java"/>
                   <file
-                    name="ClassTwo.java"/>
+                    name="App2.java"/>
+                </dir>
+                <dir
+                  name="imports">
+                  <file
+                    name="AClassWithImport.java"/>
+                  <dir
+                    name="pkg">
+                    <file
+                      name="AImportedClass.java"/>
+                    <file
+                      name="AnotherImportedClass.java"/>
+                  </dir>
+                </dir>
+                <dir
+                  name="missing">
+                  <file
+                    name="Missing.java"/>
+                </dir>
+                <dir
+                  name="modified">
+                  <file
+                    name="Modified.java"/>
+                </dir>
+                <dir
+                  name="primitives">
+                  <file
+                    name="Modifiers.java"/>
+                  <file
+                    name="Primitives.java"/>
+                </dir>
+                <dir
+                  name="scitools">
+                  <file
+                    name="ExampleFields.java"/>
+                </dir>
+                <dir
+                  name="template">
+                  <file
+                    name="AnotherTemplate.java"/>
+                  <file
+                    name="OtherClass.java"/>
+                  <file
+                    name="UseACTemplate.java"/>
+                  <file
+                    name="UseTemplate.java"/>
                 </dir>
               </dir>
             </dir>

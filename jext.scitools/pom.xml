@@ -12,6 +12,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <scitools.home>C:/Program Files/SciTools/bin/pc-win64/Java</scitools.home>
+        <log4j.version>2.17.1</log4j.version> <!-- 2.13.3 -->
     </properties>
 
     <dependencies>
@@ -34,6 +35,18 @@
             <artifactId>commons-exec</artifactId>
             <version>1.3</version>
         </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-web -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-1.2-api -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.scitools</groupId>

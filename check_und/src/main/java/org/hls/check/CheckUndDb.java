@@ -6,7 +6,7 @@ import jext.logging.Logger;
 import jext.maven.MavenDownloader;
 import jext.scitools.und.Ent;
 import jext.scitools.und.Ref;
-import jext.scitools.und.UndDatabase;
+import jext.scitools.UndDatabase;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectAnalyzer;
@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class CheckUndDb {
@@ -57,7 +56,7 @@ public class CheckUndDb {
         CacheManager.configure();
         Parallel.setup();
 
-        File projectDir = new File(
+        File projectFile = new File(
                 // "D:\\Projects.github\\other_projects\\hibernate-orm"
                 // "D:\\Projects.github\\other_projects\\deeplearning4j"
                 // "D:\\Projects.github\\other_projects\\elasticsearch"
@@ -65,10 +64,14 @@ public class CheckUndDb {
                 // "D:\\Projects.github\\other_projects\\spark"
                 // "D:\\Projects.github\\other_projects\\orientdb-3.2.4"
                 // "D:\\Projects.github\\apache_projects\\commons-lang"
-                "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project"
+
+                // "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project\\.spl\\f127d92c-source-project-r00.json"
+                // "D:\\Projects.github\\java_projects\\check_typesolver\\.spl\\16431256-source-project-r00.json"
+                // "D:\\Projects.github\\java_projects\\check_java_lang\\.spl\\538f3a42-source-project-r00.json"
+                "D:\\Projects.github\\java_projects\\check_java_syntax\\.spl\\b9ee0f37-source-project-r00.json"
         );
 
-        Project project = loadProject(projectDir);
+        Project project = loadProject(projectFile);
         saveProject(project);
 
         // ------------------------------------------------------------------
@@ -76,7 +79,7 @@ public class CheckUndDb {
         Parallel.shutdown();
     }
 
-    static Project loadProject(File projectDir ) throws IOException {
+    static Project loadProject(File projectFile ) throws IOException {
 
         MavenDownloader md = new MavenDownloader();
         LibraryFinder lf = new JavaLibraryFinder()
@@ -86,13 +89,11 @@ public class CheckUndDb {
                         "jdk14", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk14")
                 ));
 
-        File projectFile = new File("D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project\\.spl\\f127d92c-source-project-r00.json");
-
         Project project = Projects.newProject(projectFile, PropertiesUtils.empty());
         project.setLibraryFinder(lf);
 
-        List<File> sources  = ProjectUtils.getSourceFiles(project);
-        Set<File> libraries = ProjectUtils.getLibraryFiles(project);
+        // List<File> sources  = ProjectUtils.getSourceFiles(project);
+        // Set<File> libraries = ProjectUtils.getLibraryFiles(project);
 
         ProjectAnalyzer.analyzeProject(project, new File(project.getName().getName() + ".json"));
 

@@ -183,18 +183,6 @@ public class InfoModule implements Module, Comparable<Named> {
         return project.getLibraries().getLibrary(rtlib);
     }
 
-    // @Override
-    // public Set<Library> getLibraries() {
-    //     List<String> libraryNames = MapUtils.get(info, "libraries");
-    //     Set<Library> libraries = new HashSet<>();
-    //     libraryNames.forEach(libraryName -> {
-    //         Library library = project.getLibrary(libraryName);
-    //         if (library != null)
-    //             libraries.add(library);
-    //     });
-    //     return libraries;
-    // }
-
     @Override
     public Set<Library> getDeclaredLibraries() {
         List<String> libraryNames = MapUtils.get(info, "declaredLibraries");

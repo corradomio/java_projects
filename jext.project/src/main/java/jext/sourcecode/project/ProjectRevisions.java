@@ -11,6 +11,7 @@ import java.io.IOException;
 public class ProjectRevisions implements Revisions {
 
     private final File splDirectory;
+    private final File projectHome;
     private final String refId;
 
     private static final String PROJECT_INFO_REV  = "%s-source-project-r%02d.json";
@@ -22,12 +23,13 @@ public class ProjectRevisions implements Revisions {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ProjectRevisions(String refId, File splDirectory) {
+    public ProjectRevisions(String refId, File projectHome, File splDirectory) {
         if (StringUtils.isEmpty(refId))
             this.refId = "none";
         else
             this.refId = refId;
         this.splDirectory = splDirectory;
+        this.projectHome = projectHome;
     }
 
     // ----------------------------------------------------------------------
@@ -55,9 +57,9 @@ public class ProjectRevisions implements Revisions {
      * @return true if the new revision is equals to the previous one
      *         false othwrwise
      */
-    public ProjectDifferences compareRevisions(int previousRevision, int currentRevision) {
+    public ProjectDifferences compareRevisions(int srcRevision, int dstRevision) {
 
-        File differencesInfo = getDifferenceInfoFile(previousRevision, currentRevision);
+        File differencesInfo = getDifferenceInfoFile(srcRevision, dstRevision);
         if (differencesInfo.exists())
             try {
                 JSONUtils.load(differencesInfo, ProjectDifferences.class);
@@ -67,16 +69,25 @@ public class ProjectRevisions implements Revisions {
 
         ProjectDifferences pdiff = new ProjectDifferences();
 
-        File prevProjectInfo = getProjectInfoFile(previousRevision);
-        File currProjectInfo = getProjectInfoFile(currentRevision);
+        File srcRevisionInfo = getProjectInfoFile(srcRevision);
+        File dstRevisionInfo = getProjectInfoFile(dstRevision);
 
-        if (previousRevision == NO_REVISION)
-            pdiff.compareProjects(null, currProjectInfo);
-        else
-            pdiff.compareProjects(prevProjectInfo, currProjectInfo);
+        // register the main information for the analyzed project
+        pdiff.setRevisionsInfo(
+                projectHome,
+                srcRevisionInfo, srcRevision,
+                dstRevisionInfo, dstRevision
+        );
+
+        pdiff.compareRevisions();
+
+        // if (previousRevision == NO_REVISION)
+        //     pdiff.compareProjects(null, currProjectInfo);
+        // else
+        //     pdiff.compareProjects(prevProjectInfo, currProjectInfo);
 
         if (pdiff.isEmpty()) {
-            FileUtils.delete(currProjectInfo);
+            FileUtils.delete(dstRevisionInfo);
             return pdiff;
         }
 
