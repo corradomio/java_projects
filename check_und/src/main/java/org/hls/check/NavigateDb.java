@@ -26,7 +26,7 @@ public class NavigateDb {
         Set<String> tents = new HashSet<>();
         Set<String> kinds = new HashSet<>();
 
-        try(UndDatabase db  = UndDatabase.database(hibernateUnddb, "java", 8).open()) {
+        try(UndDatabase db  = UndDatabase.database(hibernateUnddb).open()) {
 
             Ent[] ents = db.ents("File");
             for (Ent ent : ents) {

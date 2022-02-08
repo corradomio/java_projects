@@ -3,22 +3,21 @@ package jext.scitools;
 import com.scitools.understand.Understand;
 import com.scitools.understand.UnderstandException;
 import jext.scitools.und.Ent;
-import jext.scitools.und.java.UndJavaDatabase;
+import jext.xml.XPathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.util.FileUtils;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 import org.zeroturnaround.exec.ProcessExecutor;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -65,15 +64,14 @@ public class UndDatabase implements AutoCloseable {
      * Factory method used to to access the SciTools "und' database
      *
      * @param undDatabase database full path
-     * @param language programming language of the analyzed source code
-     * @param version programming language version
      * @return
      */
-    public static UndDatabase database(File undDatabase, String language, int version) {
-        if (JAVA.equals(language))
-            return new UndJavaDatabase(undDatabase, version);
-        else
-            return new UndDatabase(undDatabase, language, version);
+    public static UndDatabase database(File undDatabase) {
+        // if (JAVA.equals(language))
+        //     return new UndJavaDatabase(undDatabase, version);
+        // else
+        //     return new UndDatabase(undDatabase, language, version);
+        return new UndDatabase(undDatabase);
     }
 
     // ----------------------------------------------------------------------
@@ -84,17 +82,15 @@ public class UndDatabase implements AutoCloseable {
 
     protected File undDatabase;
     protected String language;
-    protected int languageVersion;
+    // protected int languageVersion;
     protected com.scitools.understand.Database database;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected UndDatabase(File undDatabase, String language, int languageVersion) {
+    protected UndDatabase(File undDatabase) {
         this.undDatabase = undDatabase;
-        this.language = language;
-        this.languageVersion = languageVersion;
     }
 
     // ----------------------------------------------------------------------
@@ -164,7 +160,7 @@ public class UndDatabase implements AutoCloseable {
 
         und create -db newDatabase.und -languages c++ c# plm ...
      */
-    public void create() throws IOException {
+    public void create(String language, int version) throws IOException {
         if (exists())
             throw new IOException("Database '" + undDatabase.getAbsolutePath() + "' already existent");
 
@@ -412,7 +408,59 @@ public class UndDatabase implements AutoCloseable {
     // ----------------------------------------------------------------------
 
     public void addLibraries(Collection<File> files) throws IOException {
-        throw new UnsupportedOperationException();
+        if (language == null)
+            retrieveLanguage();
+        if ("java".equals(this.language))
+            addJavaLibraries(files);
+        else
+            throw new UnsupportedOperationException("Unsupported language");
+    }
+
+    private void addJavaLibraries(Collection<File> libraryFiles) throws IOException {
+        List<File> lfiles = new ArrayList<>(libraryFiles);
+        int n = lfiles.size();
+        int ssize = MAX_FILES_INLINE;
+
+        String undApp = SciTools.undApp();
+
+        for (int i=0; i<n; i += ssize) {
+            int l = Math.min(i + ssize, n);
+            List<File> subList = lfiles.subList(i, l);
+
+            try {
+                List<String> command = new ArrayList<>();
+                command.add(undApp);
+                command.add("settings");
+                command.add("-JavaClassPathsAdd");
+
+                subList.forEach(libraryFile -> {
+                    command.add(libraryFile.getAbsolutePath());
+                });
+
+                command.add(undDatabase.getAbsolutePath());
+
+                new ProcessExecutor()
+                        .command(command)
+                        .redirectOutput(new OutputStream() {
+                            @Override
+                            public void write(int b) {
+                                System.out.write(b);
+                            }
+                        }).execute();
+            } catch (InterruptedException | TimeoutException e) {
+                throw new IOException(e);
+            }
+        }
+    }
+
+    private void retrieveLanguage() {
+        File settings = new File(undDatabase, "settings.xml");
+        try {
+            Element root = XPathUtils.parse(settings).getDocumentElement();
+            this.language = XPathUtils.getValue(root, "/project/languages/language/@name").toLowerCase();
+        } catch (Exception e) {
+            this.language = NO_LANGUAGE;
+        }
     }
 
     // ----------------------------------------------------------------------

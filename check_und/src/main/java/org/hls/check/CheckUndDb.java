@@ -3,53 +3,44 @@ package org.hls.check;
 import com.scitools.understand.UnderstandException;
 import jext.cache.CacheManager;
 import jext.logging.Logger;
-import jext.maven.MavenDownloader;
+import jext.scitools.UndDatabase;
 import jext.scitools.und.Ent;
 import jext.scitools.und.Ref;
-import jext.scitools.UndDatabase;
-import jext.sourcecode.project.LibraryFinder;
-import jext.sourcecode.project.Project;
-import jext.sourcecode.project.ProjectAnalyzer;
-import jext.sourcecode.project.Projects;
-import jext.sourcecode.project.util.ProjectUtils;
-import jext.sourcecode.resources.libraries.JavaLibraryFinder;
-import jext.util.MapUtils;
-import jext.util.PropertiesUtils;
+import jext.sourcecode.project.ProjectDifferences;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class CheckUndDb {
 
-    private static void analyze(File undDir) throws UnderstandException {
-        Set<String> kinds = new HashSet<>();
-
-        try(UndDatabase db  = UndDatabase.database(undDir, "java", 8).open()) {
-
-            Ent[] ents = db.ents("");
-            for (Ent ent : ents) {
-                System.out.println(ent.longname());
-
-                Ref[] refs = ent.refs("", "");
-                for(Ref ref : refs) {
-                    System.out.print("... ");
-                    System.out.printf("%s: %s\n", ref.scope().name(), ref.ent().name());
-                }
-
-                String kind = ent.kind().name();
-                String[] labels = kind.split(" ");
-                for (String label : labels)
-                    kinds.add(label);
-            }
-
-            System.out.println(ents.length);
-            System.out.println(kinds);
-        }
-    }
+    // private static void analyze(File undDir) throws UnderstandException {
+    //     Set<String> kinds = new HashSet<>();
+    //
+    //     try(UndDatabase db  = UndDatabase.database(undDir, "java", 8).open()) {
+    //
+    //         Ent[] ents = db.ents("");
+    //         for (Ent ent : ents) {
+    //             System.out.println(ent.longname());
+    //
+    //             Ref[] refs = ent.refs("", "");
+    //             for(Ref ref : refs) {
+    //                 System.out.print("... ");
+    //                 System.out.printf("%s: %s\n", ref.scope().name(), ref.ent().name());
+    //             }
+    //
+    //             String kind = ent.kind().name();
+    //             String[] labels = kind.split(" ");
+    //             for (String label : labels)
+    //                 kinds.add(label);
+    //         }
+    //
+    //         System.out.println(ents.length);
+    //         System.out.println(kinds);
+    //     }
+    // }
 
     public static void main(String[] args) throws UnderstandException, IOException {
         Logger.configure();
@@ -57,67 +48,82 @@ public class CheckUndDb {
         Parallel.setup();
 
         File projectFile = new File(
-                // "D:\\Projects.github\\other_projects\\hibernate-orm"
-                // "D:\\Projects.github\\other_projects\\deeplearning4j"
-                // "D:\\Projects.github\\other_projects\\elasticsearch"
-                // "D:\\Projects.github\\other_projects\\javaparser"
-                // "D:\\Projects.github\\other_projects\\spark"
-                // "D:\\Projects.github\\other_projects\\orientdb-3.2.4"
-                // "D:\\Projects.github\\apache_projects\\commons-lang"
-
-                // "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project\\.spl\\f127d92c-source-project-r00.json"
-                // "D:\\Projects.github\\java_projects\\check_typesolver\\.spl\\16431256-source-project-r00.json"
-                // "D:\\Projects.github\\java_projects\\check_java_lang\\.spl\\538f3a42-source-project-r00.json"
-                "D:\\Projects.github\\java_projects\\check_java_syntax\\.spl\\b9ee0f37-source-project-r00.json"
+            // "D:\\Projects.github\\java_projects\\check_java_syntax\\.spl\\b9ee0f37-source-diff-r-1-r00.json"
+            "D:\\Projects.github\\java_projects\\check_java_syntax\\.spl\\b9ee0f37-source-diff-r00-r01.json"
         );
 
-        Project project = loadProject(projectFile);
-        saveProject(project);
+        ProjectDifferences pdiff = ProjectDifferences.load(projectFile);
+
+        analyze(pdiff);
+
+        // Project project = loadProject(projectFile);
+        // saveProject(project);
 
         // ------------------------------------------------------------------
 
         Parallel.shutdown();
     }
 
-    static Project loadProject(File projectFile ) throws IOException {
+    static void analyze(ProjectDifferences pdiff) throws IOException {
 
-        MavenDownloader md = new MavenDownloader();
-        LibraryFinder lf = new JavaLibraryFinder()
-                .setDownloader(md)
-                .setNamedLibraries(MapUtils.asMap(
-                        "jdk8", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk8"),
-                        "jdk14", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk14")
-                ));
+        File undDir = new File(pdiff.getProjectHome(), "scitools.und");
+        UndDatabase udb = UndDatabase.database(undDir);
 
-        Project project = Projects.newProject(projectFile, PropertiesUtils.empty());
-        project.setLibraryFinder(lf);
+        if (!pdiff.isDifference()) {
+            udb.delete();
+            udb.create("java", 8);
+        }
+        else {
 
-        // List<File> sources  = ProjectUtils.getSourceFiles(project);
-        // Set<File> libraries = ProjectUtils.getLibraryFiles(project);
+        }
 
-        ProjectAnalyzer.analyzeProject(project, new File(project.getName().getName() + ".json"));
+        udb.addSources(pdiff.getAddedSourceFiles());
+        udb.removeSources(pdiff.getDeletedSourceFiles());
+        udb.addLibraries(pdiff.getAddedLibraryFiles());
 
-        return project;
+        udb.analyze(pdiff.isDifference());
     }
 
-    static void saveProject(Project project) throws IOException {
+    // static Project loadProject(File projectFile ) throws IOException {
+    //
+    //     MavenDownloader md = new MavenDownloader();
+    //     LibraryFinder lf = new JavaLibraryFinder()
+    //             .setDownloader(md)
+    //             .setNamedLibraries(MapUtils.asMap(
+    //                     "jdk8", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk8"),
+    //                     "jdk14", new File("D:\\SPLGroup\\SPLDevelopment3.0\\extlibs\\java\\jdk\\jdk14")
+    //             ));
+    //
+    //     Project project = Projects.newProject(projectFile, PropertiesUtils.empty());
+    //     project.setLibraryFinder(lf);
+    //
+    //     // List<File> sources  = ProjectUtils.getSourceFiles(project);
+    //     // Set<File> libraries = ProjectUtils.getLibraryFiles(project);
+    //
+    //     ProjectAnalyzer.analyzeProject(project, new File(project.getName().getName() + ".json"));
+    //
+    //     return project;
+    // }
 
-        File projectDir = project.getProjectHome();
-        List<File> sources  = ProjectUtils.getSourceFiles(project);
-        Set<File> libraries = ProjectUtils.getLibraryFiles(project);
-
-        File undDir = new File(projectDir, "scitools.und");
-        UndDatabase udb = UndDatabase.database(undDir, "java", 8);
-
-        udb.delete();
-        udb.create();
-
-        udb.addSources(sources);
-        udb.addLibraries(libraries);
-        udb.analyze(false);
-
-        // analyze(undDir);
-
-        udb.close();
-    }
+    // static void saveProject(Project project) throws IOException {
+    //
+    //     File projectDir = project.getProjectHome();
+    //     List<File> sources  = ProjectUtils.getSourceFiles(project);
+    //     Set<File> libraries = ProjectUtils.getLibraryFiles(project);
+    //
+    //     File undDir = new File(projectDir, "scitools.und");
+    //     UndDatabase udb = UndDatabase.database(undDir, "java", 8);
+    //
+    //     udb.delete();
+    //     udb.create();
+    //
+    //     udb.addSources(sources);
+    //     udb.addLibraries(libraries);
+    //
+    //     udb.analyze(false);
+    //
+    //     // analyze(undDir);
+    //
+    //     udb.close();
+    // }
 }
