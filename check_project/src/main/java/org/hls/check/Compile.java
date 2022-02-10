@@ -20,7 +20,7 @@ public class Compile {
         CacheManager.configure();
         Logger.configure();
 
-        Name name = new PathName("test/dl4j");
+        Name name = PathName.of("test/dl4j");
         Parameters params = Parameters.params();
 
         Project dl4j = Projects.newProject(name,
@@ -28,7 +28,7 @@ public class Compile {
             params
         );
 
-        System.out.println(dl4j.getModule().getTypes());
+        System.out.println(dl4j.getModules().getModule().getTypes());
 
         // System.out.println(dl4j.getProjectType());
         // dl4j.getLibraries().forEach(library -> {

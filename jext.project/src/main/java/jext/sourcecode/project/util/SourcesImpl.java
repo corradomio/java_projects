@@ -1,5 +1,6 @@
 package jext.sourcecode.project.util;
 
+import jext.name.Name;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Sources;
@@ -45,6 +46,11 @@ public class SourcesImpl extends ArrayList<Source> implements Sources {
         sourceRoots = null;
         sourceFiles = null;
         return super.add(source);
+    }
+
+    @Override
+    public Source getSource(Name name) {
+        return getSource(name.getFullName());
     }
 
     @Override

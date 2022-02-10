@@ -51,60 +51,64 @@ public class SetUtils {
 
     // ----------------------------------------------------------------------
 
-    public static <T> Set<T> union(Set<T>... sets){
+    public static <T> Set<T> union(Collection<T>... sets){
         Set<T> r = new HashSet<T>();
-        for (Set<T> s : sets)
+        for (Collection<T> s : sets)
             r.addAll(s);
         return r;
     }
 
-    public static <T> Set<T> union(Set<T> s1, Set<T> s2) {
-        Set<T> r = new HashSet<T>(s1);
-        r.addAll(s2);
-        return r;
+    public static <T> Set<T> union(Collection<T> s1, Collection<T> s2) {
+        // Set<T> r = new HashSet<T>(s1);
+        // r.addAll(s2);
+        // return r;
+        return union(s1, s2, false);
     }
 
-    public static <T> Set<T> intersection(Set<T> s1, Set<T> s2) {
-        Set<T> r = new HashSet<T>(s1);
-        r.retainAll(s2);
-        return r;
+    public static <T> Set<T> intersection(Collection<T> s1, Collection<T> s2) {
+        // Set<T> r = new HashSet<T>(s1);
+        // r.retainAll(s2);
+        // return r;
+        return intersection(s1, s2, false);
     }
 
-    public static <T> Set<T> difference(Set<T> s1, Set<T> s2) {
-        Set<T> r = new HashSet<T>(s1);
-        r.removeAll(s2);
-        return r;
+    public static <T> Set<T> difference(Collection<T> s1, Collection<T> s2) {
+        // Set<T> r = new HashSet<T>(s1);
+        // r.removeAll(s2);
+        // return r;
+        return difference(s1, s2, false);
     }
 
-    public static <T> Set<T> simmdiff(Set<T> s1, Set<T> s2) {
-        Set<T> r = new HashSet<T>();
-        r.addAll(difference(s1, s2));
-        r.addAll(difference(s2, s1));
-        return r;
+    public static <T> Set<T> simmdiff(Collection<T> s1, Collection<T> s2) {
+        // Set<T> r = new HashSet<T>();
+        // r.addAll(difference(s1, s2));
+        // r.addAll(difference(s2, s1));
+        // return r;
+        return simmdiff(s1, s2, false);
     }
 
     // ----------------------------------------------------------------------
 
-    public static <T> Set<T> unionOrdered(Set<T> s1, Set<T> s2) {
-        Set<T> r = new TreeSet<T>(s1);
+    public static <T> Set<T> union(Collection<T> s1, Collection<T> s2, boolean ordered) {
+        Set<T> r = ordered ? new TreeSet<T>(s1) : new HashSet<>(s1);
         r.addAll(s2);
         return r;
     }
 
-    public static <T> Set<T> intersectionOrdered(Set<T> s1, Set<T> s2) {
-        Set<T> r = new TreeSet<T>(s1);
+    public static <T> Set<T> intersection(Collection<T> s1, Collection<T> s2, boolean ordered) {
+        Set<T> r = ordered ? new TreeSet<T>(s1) : new HashSet<>(s1);
         r.retainAll(s2);
         return r;
     }
 
-    public static <T> Set<T> differenceOrdered(Set<T> s1, Set<T> s2) {
-        Set<T> r = new TreeSet<T>(s1);
+    public static <T> Set<T> difference(Collection<T> s1, Collection<T> s2, boolean ordered) {
+        Set<T> r = ordered ? new TreeSet<T>(s1) : new HashSet<>(s1);
         r.removeAll(s2);
         return r;
     }
 
-    public static <T> Set<T> simmdiffOrdered(Set<T> s1, Set<T> s2) {
-        Set<T> r = new TreeSet<T>();
+    public static <T> Set<T> simmdiff(Collection<T> s1, Collection<T> s2, boolean ordered) {
+        Set<T> r = ordered ? new TreeSet<T>(s1) : new HashSet<>(s1);
         r.addAll(difference(s1, s2));
         r.addAll(difference(s2, s1));
         return r;

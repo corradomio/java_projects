@@ -141,7 +141,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
         CacheManager.configure();
         Logger.configure();
 
-        Name name = new PathName("test/dl4j");
+        Name name = PathName.of("test/dl4j");
         Parameters params = Parameters.params();
 
         Project project = Projects.newProject(name,
@@ -156,11 +156,11 @@ public class Analysis extends BaseVoidVisitorAdapter {
     static void test1(Project project) {
 
         Analysis analysis = new Analysis(project);
-        analysis.analyze(project.getModule(ROOT_MODULE_NAME));
+        analysis.analyze(project.getModules().getModule(ROOT_MODULE_NAME));
     }
 
     static void test2(Project project) throws Exception {
-        Module module = project.getModule();
+        Module module = project.getModules().getModule();
         List<File> libs = project.getLibraries().stream()
             .flatMap(lib -> lib.getFiles().stream())
             .collect(Collectors.toList());
@@ -169,7 +169,7 @@ public class Analysis extends BaseVoidVisitorAdapter {
         ts.add(new JarsTypeSolver()
             .addJdk(new File("D:\\Java\\Jdk1.8.0.x64"))
             .addAll(libs));
-        module.getSourceRootDirectories().forEach(src -> {
+        module.getSources().getSourceRootDirectories().forEach(src -> {
             ts.add(new JavaParserTypeSolver(src));
         });
 

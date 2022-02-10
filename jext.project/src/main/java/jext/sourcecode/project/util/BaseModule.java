@@ -206,10 +206,10 @@ public abstract class BaseModule extends ReferencedObject implements Module {
             // EXTERNAL DEFINED types: all EXTERNAL DEFINED types MINUS LOCAL DEFINED types
             // to be sure to consider ONLY effective types NOT DEFINED locally
             Set<Type> ddefinedTypes = new HashSet<>(dmodule.getTypes());
-            Set<RefType> dtypes = new HashSet<>(SetUtils.differenceOrdered(ddefinedTypes, definedTypes));
+            Set<RefType> dtypes = new HashSet<>(SetUtils.difference(ddefinedTypes, definedTypes, true));
 
             // LOCAL USED types available in the EXTERNAL DEFINED types
-            Set<RefType> itypes = SetUtils.intersectionOrdered(usedTypes, dtypes);
+            Set<RefType> itypes = SetUtils.intersection(usedTypes, dtypes, true);
             int isize = itypes.size();
             if (isize == 0)
                 return;
@@ -547,7 +547,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
             getSources().forEach(source ->
                     usedTypes.addAll(source.getUsedTypes()));
 
-            return SetUtils.differenceOrdered(usedTypes, definedTypes);
+            return SetUtils.difference(usedTypes, definedTypes, true);
         });
     }
 

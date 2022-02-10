@@ -4,15 +4,11 @@ import com.scitools.understand.UnderstandException;
 import jext.cache.CacheManager;
 import jext.logging.Logger;
 import jext.scitools.UndDatabase;
-import jext.scitools.und.Ent;
-import jext.scitools.und.Ref;
-import jext.sourcecode.project.ProjectDifferences;
+import jext.sourcecode.project.ProjectComparator;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CheckUndDb {
 
@@ -52,7 +48,7 @@ public class CheckUndDb {
             "D:\\Projects.github\\java_projects\\check_java_syntax\\.spl\\b9ee0f37-source-diff-r00-r01.json"
         );
 
-        ProjectDifferences pdiff = ProjectDifferences.load(projectFile);
+        ProjectComparator pdiff = ProjectComparator.load(projectFile);
 
         analyze(pdiff);
 
@@ -64,7 +60,7 @@ public class CheckUndDb {
         Parallel.shutdown();
     }
 
-    static void analyze(ProjectDifferences pdiff) throws IOException {
+    static void analyze(ProjectComparator pdiff) throws IOException {
 
         File undDir = new File(pdiff.getProjectHome(), "scitools.und");
         UndDatabase udb = UndDatabase.database(undDir);

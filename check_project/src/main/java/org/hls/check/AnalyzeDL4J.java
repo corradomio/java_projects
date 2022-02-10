@@ -30,7 +30,7 @@ public class AnalyzeDL4J {
         Logger.configure();
         CacheManager.configure();
 
-        Name name = new PathName("test/dl4j");
+        Name name = PathName.of("test/dl4j");
         Parameters params = Parameters.params("module.exclude", "*test*");
 
         Project dl4j = Projects.newProject(name,
@@ -41,7 +41,7 @@ public class AnalyzeDL4J {
 
         pool = JavaParserPool.getPool().withCache();
         dl4j.getModules().forEach(module -> {
-            pool.addAll(module.getSourceRootDirectories());
+            pool.addAll(module.getSources().getSourceRootDirectories());
         });
 
         File JDK = new File("D:\\Java\\Jdk1.8.0.x64");
@@ -83,9 +83,9 @@ public class AnalyzeDL4J {
             // current module
             // JavaParserPoolTypeSolver mts = new JavaParserPoolTypeSolver(pool);
             JavaParserRootsTypeSolver mts = new JavaParserRootsTypeSolver().withCache();
-            mts.addAll(module.getSourceRootDirectories());
+            mts.addAll(module.getSources().getSourceRootDirectories());
             module.getDependencies().forEach(dmodule -> {
-                mts.addAll(dmodule.getSourceRootDirectories());
+                mts.addAll(dmodule.getSources().getSourceRootDirectories());
             });
 
             // runtime library

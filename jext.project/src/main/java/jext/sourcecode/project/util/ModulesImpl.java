@@ -1,5 +1,6 @@
 package jext.sourcecode.project.util;
 
+import jext.name.Name;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
@@ -34,6 +35,11 @@ public class ModulesImpl extends ArrayList<Module> implements Modules {
     @Override
     public Module getModule() {
         return getModule(Project.ROOT_MODULE_NAME);
+    }
+
+    @Override
+    public Module getModule(Name name) {
+        return getModule(name.getFullName());
     }
 
     @Override

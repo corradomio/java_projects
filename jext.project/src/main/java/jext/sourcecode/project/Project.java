@@ -3,6 +3,7 @@ package jext.sourcecode.project;
 import jext.maven.MavenDownloader;
 import jext.name.IdNamed;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.Properties;
 import java.util.Set;
@@ -72,6 +73,7 @@ public interface Project extends IdNamed {
     Properties getProperties();
 
     /** Path of the project in the filesystem, if it exists */
+    @Nonnull
     File getProjectHome();
 
     // ----------------------------------------------------------------------

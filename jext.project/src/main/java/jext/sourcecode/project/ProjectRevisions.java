@@ -3,10 +3,12 @@ package jext.sourcecode.project;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.JSONUtils;
+import jext.util.PropertiesUtils;
 import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+
 
 public class ProjectRevisions implements Revisions {
 
@@ -23,13 +25,13 @@ public class ProjectRevisions implements Revisions {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ProjectRevisions(String refId, File projectHome, File splDirectory) {
+    public ProjectRevisions(String refId, File splDirectory) {
         if (StringUtils.isEmpty(refId))
             this.refId = "none";
         else
             this.refId = refId;
         this.splDirectory = splDirectory;
-        this.projectHome = projectHome;
+        this.projectHome = splDirectory.getParentFile();
     }
 
     // ----------------------------------------------------------------------
@@ -57,49 +59,90 @@ public class ProjectRevisions implements Revisions {
      * @return true if the new revision is equals to the previous one
      *         false othwrwise
      */
-    public ProjectDifferences compareRevisions(int srcRevision, int dstRevision) {
-
+    public ProjectComparator compareRevisions(int srcRevision, int dstRevision) {
         File differencesInfo = getDifferenceInfoFile(srcRevision, dstRevision);
-        if (differencesInfo.exists())
+        if (differencesInfo.exists()) {
             try {
-                JSONUtils.load(differencesInfo, ProjectDifferences.class);
+                return JSONUtils.load(differencesInfo, ProjectComparator.class);
             } catch (IOException e) {
                 Logger.getLogger(getClass()).error(e, e);
             }
+        }
 
-        ProjectDifferences pdiff = new ProjectDifferences();
-
+        Project psrc = null, pdst = null;
         File srcRevisionInfo = getProjectInfoFile(srcRevision);
         File dstRevisionInfo = getProjectInfoFile(dstRevision);
 
-        // register the main information for the analyzed project
-        pdiff.setRevisionsInfo(
-                projectHome,
-                srcRevisionInfo, srcRevision,
-                dstRevisionInfo, dstRevision
-        );
+        if (srcRevisionInfo.exists())
+            psrc = Projects.newProject(srcRevisionInfo, PropertiesUtils.empty());
+        if (dstRevisionInfo.exists())
+            pdst = Projects.newProject(dstRevisionInfo, PropertiesUtils.empty());
 
-        pdiff.compareRevisions();
+        ProjectComparator pcomp = ProjectComparator.compare(psrc, pdst);
 
-        // if (previousRevision == NO_REVISION)
-        //     pdiff.compareProjects(null, currProjectInfo);
-        // else
-        //     pdiff.compareProjects(prevProjectInfo, currProjectInfo);
-
-        if (pdiff.isEmpty()) {
+        // check if there are no differences
+        if (pcomp.isEmpty()) {
             FileUtils.delete(dstRevisionInfo);
-            return pdiff;
         }
 
         try {
-            JSONUtils.save(differencesInfo, pdiff);
+            pcomp.save(differencesInfo);
         } catch (IOException e) {
             Logger.getLogger(getClass()).error(e, e);
-            return pdiff;
         }
 
-        return pdiff;
+        return pcomp;
     }
+
+    // /**
+    //  * If the current content of 'project-info.json' is the SAME than
+    //  * 'project-info-[revision].json', DELETE 'project-info-[revision].json'
+    //  *
+    //  * @return true if the new revision is equals to the previous one
+    //  *         false othwrwise
+    //  */
+    // public ProjectDifferences compareRevisionsOld(int srcRevision, int dstRevision) {
+    //
+    //     File differencesInfo = getDifferenceInfoFile(srcRevision, dstRevision);
+    //     if (differencesInfo.exists())
+    //         try {
+    //             return JSONUtils.load(differencesInfo, ProjectDifferences.class);
+    //         } catch (IOException e) {
+    //             Logger.getLogger(getClass()).error(e, e);
+    //         }
+    //
+    //     ProjectDifferences pdiff = new ProjectDifferences();
+    //
+    //     File srcRevisionInfo = getProjectInfoFile(srcRevision);
+    //     File dstRevisionInfo = getProjectInfoFile(dstRevision);
+    //
+    //     // register the main information for the analyzed project
+    //     pdiff.setRevisionsInfo(
+    //             projectHome,
+    //             srcRevisionInfo, srcRevision,
+    //             dstRevisionInfo, dstRevision
+    //     );
+    //
+    //     pdiff.compareRevisions();
+    //
+    //     // if (previousRevision == NO_REVISION)
+    //     //     pdiff.compareProjects(null, currProjectInfo);
+    //     // else
+    //     //     pdiff.compareProjects(prevProjectInfo, currProjectInfo);
+    //
+    //     if (pdiff.isEmpty()) {
+    //         FileUtils.delete(dstRevisionInfo);
+    //         return pdiff;
+    //     }
+    //
+    //     try {
+    //         JSONUtils.save(differencesInfo, pdiff);
+    //     } catch (IOException e) {
+    //         Logger.getLogger(getClass()).error(e, e);
+    //     }
+    //
+    //     return pdiff;
+    // }
 
     /**
      * Delete 'project-info.json' and all 'project-info-[revision].json'

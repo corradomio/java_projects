@@ -1,5 +1,6 @@
 package jext.sourcecode.project;
 
+import jext.exception.InvalidParameterException;
 import jext.logging.Logger;
 import jext.maven.MavenDownloader;
 import jext.name.Name;
@@ -135,6 +136,8 @@ public class ProjectFactory {
     // }
 
     public static Project newProject(File projectHome, Properties properties) {
+        if (!projectHome.exists())
+            throw new InvalidParameterException("projectHome", String.format("Invalid project home %s", projectHome.getAbsolutePath()));
         String projectName = projectHome.getName();
         String repositoryName = projectHome.getAbsoluteFile().getParentFile().getName();
         return newProject(PathName.of(repositoryName, projectName), projectHome, properties);
@@ -144,17 +147,17 @@ public class ProjectFactory {
     //     return newProject(projectHome.getName(), projectHome, params.toProperties());
     // }
 
-    public static Project newProjectInfo(File projectHome, Properties properties) throws IOException {
-        if (projectHome.isFile())
-            return newProject(projectHome, properties);
-
-        File projectInfoFile = new File(projectHome, "project-info.json");
-        if (projectInfoFile.exists())
-            return newProject(projectInfoFile, properties);
-
-        Project project = newProject(projectHome, properties);
-        ProjectInfo projectInfo = ProjectAnalyzer.analyzeProject(project);
-        projectInfo.save(projectInfoFile);
-        return newProject(projectInfoFile, properties);
-    }
+    // public static Project newProjectInfo(File projectHome, Properties properties) throws IOException {
+    //     if (projectHome.isFile())
+    //         return newProject(projectHome, properties);
+    //
+    //     File projectInfoFile = new File(projectHome, "project-info.json");
+    //     if (projectInfoFile.exists())
+    //         return newProject(projectInfoFile, properties);
+    //
+    //     Project project = newProject(projectHome, properties);
+    //     ProjectInfo projectInfo = ProjectAnalyzer.analyzeProject(project);
+    //     projectInfo.save(projectInfoFile);
+    //     return newProject(projectInfoFile, properties);
+    // }
 }

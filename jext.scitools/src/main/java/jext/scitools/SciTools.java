@@ -2,6 +2,7 @@ package jext.scitools;
 
 import org.apache.logging.log4j.LogManager;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -13,6 +14,40 @@ public abstract class SciTools {
 
     private static final String UNDERSTAND = "com.scitools.understand.Understand";
     private static String undApp = "und";
+    private static boolean enabled = false;
+
+    // ----------------------------------------------------------------------
+    // Configuration
+    // ----------------------------------------------------------------------
+
+    public static void enable() {
+        enabled = true;
+    }
+
+    public static void disable() {
+        enabled = false;
+    }
+
+    /**
+     * Check if the SciTools 'und' command line application is correctly configured
+     * @return true if the application is configured, false otherwise.
+     */
+    public static boolean isAvailable() {
+        if (enabled)
+            try {
+                // check if the class 'com.scitools.understand.Understand' can be loaded
+                Class.forName(UNDERSTAND);
+                // check if the command line tool 'und help' can be executed
+                Process p = Runtime.getRuntime().exec(undApp + " help");
+                p.waitFor();
+                return true;
+            } catch (ClassNotFoundException | IOException | InterruptedException e) {
+                LogManager.getLogger(SciTools.class).error("SciTools 'und' application not configured", e);
+                return false;
+            }
+
+        return false;
+    }
 
     // ----------------------------------------------------------------------
     //
@@ -27,6 +62,7 @@ public abstract class SciTools {
      */
     public static void undApp(String undApp) throws IllegalArgumentException {
         try {
+            SciTools.undApp = undApp;
             // check if the class 'com.scitools.understand.Understand' can be loaded
             Class.forName(UNDERSTAND);
             // check if the command line tool 'und help' can be executed
@@ -38,34 +74,12 @@ public abstract class SciTools {
     }
 
     /**
-     * SciTools 'und' application path  (based on PATH, or the absolute path)
+     * SciTools 'und' command line application path  (based on PATH, or the absolute path)
      * @return the 'und' application path
      */
     public static String undApp() {
         return undApp;
     }
-
-    /**
-     * Check if the SciTools 'und' command line application is correctly configured
-     * @return true if the application is configured, false otherwise.
-     */
-    public static boolean isPresent() {
-        try {
-            // check if the class 'com.scitools.understand.Understand' can be loaded
-            Class.forName(UNDERSTAND);
-            // check if the command line tool 'und help' can be executed
-            Process p = Runtime.getRuntime().exec(undApp + " help");
-            p.waitFor();
-            return true;
-        } catch (ClassNotFoundException | IOException | InterruptedException e) {
-            LogManager.getLogger(SciTools.class).error("SciTools 'und' application not configured", e);
-            return false;
-        }
-    }
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
 
     // ----------------------------------------------------------------------
     // End
