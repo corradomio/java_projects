@@ -22,8 +22,8 @@ public class ProjectComparator {
     // Factory method
     // ----------------------------------------------------------------------
 
-    public static ProjectComparator compare(Project psrc, Project pdst) {
-        ProjectComparator pcomp = new ProjectComparator(psrc, pdst);
+    public static ProjectComparator compare(Project psrc, Project pdst, int revision) {
+        ProjectComparator pcomp = new ProjectComparator(psrc, pdst, revision);
         pcomp.compare();
         return pcomp;
     }
@@ -32,6 +32,8 @@ public class ProjectComparator {
     // Private fields
     // ----------------------------------------------------------------------
 
+    /** Destination project revision */
+    private int revision;
     /** Source project revision */
     private Project psrc;
     /** Destination project revision */
@@ -45,10 +47,16 @@ public class ProjectComparator {
 
     public static class ProjectInfo {
         public File projectHome;
+        public int revision;
+        public String refId;
+        public long timestamp;
 
         public ProjectInfo() { }
-        private ProjectInfo(Project p) {
+        private ProjectInfo(Project p, int rev) {
+            revision = rev;
             projectHome = p.getProjectHome();
+            refId = p.getId();
+            timestamp = System.currentTimeMillis();
         }
     }
     public ProjectInfo project;
@@ -114,9 +122,10 @@ public class ProjectComparator {
 
     }
 
-    private ProjectComparator(Project psrc, Project pdst) {
+    private ProjectComparator(Project psrc, Project pdst, int revision) {
         this.psrc = psrc;
         this.pdst = pdst;
+        this.revision = revision;
     }
 
     // ----------------------------------------------------------------------
@@ -294,7 +303,7 @@ public class ProjectComparator {
         if (pdst == null)
             throw new InvalidParameterException("pdst", "Project can be not null");
 
-        this.project = new ProjectInfo(pdst);
+        this.project = new ProjectInfo(pdst, revision);
     }
 
     private int addModules(Collection<Module> modules, RevisionStatus status) {

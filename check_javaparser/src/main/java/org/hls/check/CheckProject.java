@@ -46,7 +46,7 @@ public class CheckProject {
         CacheManager.configure();
 
         log.infof("Projects.newProject");
-        project = Projects.newProjectInfo(
+        project = Projects.newProject(
             new File(
                 "D:\\Projects.github\\other_projects\\hibernate-orm"
                 // "D:\\Projects.github\\java_projects\\check_typesolver"

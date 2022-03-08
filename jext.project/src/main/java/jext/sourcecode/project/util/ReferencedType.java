@@ -77,6 +77,13 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
         return rtype;
     }
 
+    public static ReferencedType of(String typeName, int nTypeParameters) {
+        ReferencedType rtype = map.get(typeName);
+        if (rtype == null)
+            rtype = new ReferencedType(typeName, nTypeParameters);
+        return rtype;
+    }
+
     // ----------------------------------------------------------------------
     // Fields
     // ----------------------------------------------------------------------
@@ -99,6 +106,10 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
 
     public ReferencedType(String qualifiedName, Library library) {
         this(qualifiedName, 0, library);
+    }
+
+    public ReferencedType(String qualifiedName, int nTypeParameters) {
+        this(new ObjectName(qualifiedName), nTypeParameters, null);
     }
 
     public ReferencedType(String qualifiedName, int nTypeParameters, Library library) {

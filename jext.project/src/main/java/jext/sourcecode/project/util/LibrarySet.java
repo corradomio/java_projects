@@ -10,7 +10,9 @@ import jext.sourcecode.project.maven.MavenLibrary;
 import jext.util.HashSet;
 import jext.util.SetUtils;
 
+import java.io.File;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +46,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Properties
     // ----------------------------------------------------------------------
 
     @Override
@@ -75,6 +77,15 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
         Set<Library> mlibs = new HashSet<>(mavenLibraries.values());
         Set<Library> hlibs = new HashSet<>(highestLibraries.values());
         return SetUtils.difference(mlibs, hlibs);
+    }
+
+    @Override
+    public Set<File> getLibraryFiles() {
+        Set<File> files = new HashSet<>();
+        getUsedLibraries().forEach(library -> {
+            files.addAll(library.getFiles());
+        });
+        return files;
     }
 
     @Override
@@ -112,7 +123,6 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
         if (!mavenLibraries.containsKey(gavName))
             mavenLibraries.put(gavName, library);
 
-
         // register the library using [groupId:artifactId] with the HIGHEST version
         if (!highestLibraries.containsKey(gaName)) {
             highestLibraries.put(gaName, mavenLib);
@@ -131,10 +141,6 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
             return false;
         }
     }
-
-    // public List<Library> asList() {
-    //     return new ArrayList<>(highestLibraries.values());
-    // }
 
     @Override
     public Library get(String nameOrId) {

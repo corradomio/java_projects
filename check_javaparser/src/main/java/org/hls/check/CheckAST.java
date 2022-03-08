@@ -41,7 +41,8 @@ public class CheckAST {
                     // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
                     // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\bookstore"
                     // "D:\\Projects.github\\java_projects\\check_javaparser\\src\\test"
-                    "D:\\Projects.github\\java_projects\\check_java_syntax"
+                    // "D:\\Projects.github\\java_projects\\check_java_syntax"
+                        "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project\\cloud-logic-service\\cloud-store-logic\\store-logic-ejb\\src\\main\\java\\org\\cocome\\tradingsystem\\inventory\\application\\store\\StoreServer.java"
                 ), PropertiesUtils.empty());
 
             project.getLibraryDownloader().setDownloadDirectory(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));

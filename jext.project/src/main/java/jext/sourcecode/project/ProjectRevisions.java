@@ -78,7 +78,7 @@ public class ProjectRevisions implements Revisions {
         if (dstRevisionInfo.exists())
             pdst = Projects.newProject(dstRevisionInfo, PropertiesUtils.empty());
 
-        ProjectComparator pcomp = ProjectComparator.compare(psrc, pdst);
+        ProjectComparator pcomp = ProjectComparator.compare(psrc, pdst, dstRevision);
 
         // check if there are no differences
         if (pcomp.isEmpty()) {

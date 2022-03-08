@@ -20,7 +20,8 @@ public class DumpAST {
             // "D:\\SPLGroup\\spl-workspaces\\dev-ws-2\\NetworkRouting\\com\\bt\\ebtic\\test\\demo\\HelloJGraphT.java"
             // "D:\\Projects.github\\java_projects\\check_javaparser\\src\\test\\java\\a\\b\\c\\d\\TestHLS8.java"
             // "D:\\Projects.github\\java_projects\\check_typesolver\\src\\main\\java\\org\\hls\\cdecl\\ACTemplate2.java"
-            "D:\\Projects.github\\java_projects\\check_typesolver\\src\\main\\java\\org\\hls\\imports\\AClassWithImport.java"
+            // "D:\\Projects.github\\java_projects\\check_typesolver\\src\\main\\java\\org\\hls\\imports\\AClassWithImport.java"
+                "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project\\cloud-logic-service\\cloud-store-logic\\store-logic-ejb\\src\\main\\java\\org\\cocome\\tradingsystem\\inventory\\application\\store\\StoreServer.java"
         );
 
         JavaParserPool jpp = JavaParserPool.getPool();

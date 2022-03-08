@@ -8,7 +8,9 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.util.SetUtils;
 
+import java.io.File;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -74,6 +76,15 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     }
 
     @Override
+    public Set<File> getLibraryFiles() {
+        Set<File> files = new jext.util.HashSet<>();
+        getUsedLibraries().forEach(library -> {
+            files.addAll(library.getFiles());
+        });
+        return files;
+    }
+
+    @Override
     public Set<Library> getLibraries(LibraryType libraryType) {
         if (libraryType == LibraryType.LOCAL)
             return localLibraries;
@@ -82,15 +93,6 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
         else
             return Collections.emptySet();
     }
-
-    // private Set<Library> libraries(boolean allVersions) {
-    //     Set<Library> libraries = new HashSet<>(localLibraries);
-    //     if (allVersions)
-    //         libraries.addAll(mavenLibraries.values());
-    //     else
-    //         libraries.addAll(highestLibraries.values());
-    //     return libraries;
-    // }
 
     @Override
     public int size() {
@@ -128,10 +130,6 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
             return false;
         }
     }
-
-    // public List<Library> asList() {
-    //     return new ArrayList<>(highestLibraries.values());
-    // }
 
     /**
      * If the library is a Maven library, it return the latest version
