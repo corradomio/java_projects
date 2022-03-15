@@ -15,6 +15,7 @@ public class ProjectRevisions implements Revisions {
     private final File splDirectory;
     private final File projectHome;
     private final String refId;
+    private int srcRevision, dstRevision;
 
     private static final String PROJECT_INFO_REV  = "%s-source-project-r%02d.json";
     private static final String PROJECT_INFO_NAME = "%s-source-project";
@@ -38,13 +39,21 @@ public class ProjectRevisions implements Revisions {
     // Files
     // ----------------------------------------------------------------------
 
+    public File getSrcProjectInfoFile() {
+        return getProjectInfoFile(srcRevision);
+    }
+
+    public File getDstProjectInfoFile() {
+        return getProjectInfoFile(dstRevision);
+    }
+
     public File getProjectInfoFile(int revision) {
         String revProjectInfo = String.format(PROJECT_INFO_REV, refId, revision);
         return new File(splDirectory, revProjectInfo);
     }
 
-    public File getDifferenceInfoFile(int previousRevision, int currentRevision) {
-        String differenceInfo = String.format(DIFFERENCES_INFO, refId, previousRevision, currentRevision);
+    public File getDifferenceInfoFile() {
+        String differenceInfo = String.format(DIFFERENCES_INFO, refId, srcRevision, dstRevision);
         return new File(splDirectory, differenceInfo);
     }
 
@@ -60,7 +69,10 @@ public class ProjectRevisions implements Revisions {
      *         false othwrwise
      */
     public ProjectComparator compareRevisions(int srcRevision, int dstRevision) {
-        File differencesInfo = getDifferenceInfoFile(srcRevision, dstRevision);
+        this.srcRevision = srcRevision;
+        this.dstRevision = dstRevision;
+
+        File differencesInfo = getDifferenceInfoFile();
         if (differencesInfo.exists()) {
             try {
                 return JSONUtils.load(differencesInfo, ProjectComparator.class);

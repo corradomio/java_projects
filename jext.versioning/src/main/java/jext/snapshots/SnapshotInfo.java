@@ -10,17 +10,17 @@ public class SnapshotInfo {
 
     public String version = NO_VERSION;
 
-    public Map<String, Map<String, Long>> modules;
+    public Map<String, Map<String, String>> modules;
 
     public void init() {
         this.modules = new TreeMap<>();
         this.version = VERSION_NUMBER;
     }
 
-    public synchronized void addDigest(String modulePath, String filePath, long digest) {
+    public synchronized void addDigest(String modulePath, String filePath, String digest) {
         if (!modules.containsKey(modulePath))
             modules.put(modulePath, new TreeMap<>());
-        Map<String, Long> sdmap = modules.get(modulePath);
+        Map<String, String> sdmap = modules.get(modulePath);
         sdmap.put(filePath, digest);
     }
 
@@ -53,7 +53,7 @@ public class SnapshotInfo {
         return true;
     }
 
-    private boolean compareModule(String modulePath, Map<String, Map<String, Long>> that_modules) {
+    private boolean compareModule(String modulePath, Map<String, Map<String, String>> that_modules) {
         // check if the module is present in 'that'
         if (!that_modules.containsKey(modulePath))
             return false;
@@ -63,20 +63,20 @@ public class SnapshotInfo {
             return false;
 
         // compare the digests
-        Map<String, Long> this_digests = that_modules.get(modulePath);
-        Map<String, Long> that_digests = this.modules.get(modulePath);
+        Map<String, String> this_digests = that_modules.get(modulePath);
+        Map<String, String> that_digests = this.modules.get(modulePath);
         for (String filePath : that_digests.keySet())
             if (!compareDigest(filePath, that_digests, this_digests))
                 return false;
         return true;
     }
 
-    private boolean compareDigest(String filePath, Map<String, Long> this_digests, Map<String, Long> that_digests) {
+    private boolean compareDigest(String filePath, Map<String, String> this_digests, Map<String, String> that_digests) {
         if (!that_digests.containsKey(filePath))
             return false;
 
-        Long thisDigest = this_digests.get(filePath);
-        Long thatDigest = that_digests.get(filePath);
+        String thisDigest = this_digests.get(filePath);
+        String thatDigest = that_digests.get(filePath);
         return thisDigest.equals(thatDigest);
     }
 
@@ -95,7 +95,7 @@ public class SnapshotInfo {
         return sdiff;
     }
 
-    private void compareModules(SnapshotDifferences sdiff, Map<String, Map<String, Long>> that_modules) {
+    private void compareModules(SnapshotDifferences sdiff, Map<String, Map<String, String>> that_modules) {
         // check ADDED/CHANGED modules
         for (String modulePath : this.modules.keySet())
             if (!that_modules.containsKey(modulePath))
@@ -109,11 +109,11 @@ public class SnapshotInfo {
                 sdiff.addModuleStatus(modulePath, Snapshot.Status.REMOVED);
     }
 
-    private void compareDigests(SnapshotDifferences sdiff, Map<String, Map<String, Long>> that_modules) {
+    private void compareDigests(SnapshotDifferences sdiff, Map<String, Map<String, String>> that_modules) {
         for (String modulePath : this.modules.keySet())
             if (that_modules.containsKey(modulePath)) {
-                Map<String, Long> this_digests = this.modules.get(modulePath);
-                Map<String, Long> that_digests = that_modules.get(modulePath);
+                Map<String, String> this_digests = this.modules.get(modulePath);
+                Map<String, String> that_digests = that_modules.get(modulePath);
 
                 // check ADDED/CHANGED sources
                 for (String filePath : this_digests.keySet()) {

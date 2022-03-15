@@ -34,6 +34,11 @@ public class MethodNameObject extends ObjectName implements MethodName {
         return signature;
     }
 
+    @Override
+    public String getLongname() {
+        return String.format("%s.%s", getParentName(), signature);
+    }
+
     // ----------------------------------------------------------------------
     // Overrides
     // ----------------------------------------------------------------------

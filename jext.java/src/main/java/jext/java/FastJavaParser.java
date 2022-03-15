@@ -192,7 +192,7 @@ public class FastJavaParser implements JavaConstants {
         // 1) the file is in the root package OR
         // 2) the file is an 'example' file in some 'documentation' directory
         //
-        // As experiment, wi SUPPOSE that the file is in the correct directory IF
+        // As experiment, we SUPPOSE that the file is in the correct directory IF
         //
         // a) the parent directory is "src", "source" or "sources"
         // b) the parent directories are "src/main/java

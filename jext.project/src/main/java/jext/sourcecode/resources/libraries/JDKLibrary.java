@@ -55,7 +55,6 @@ public class JDKLibrary extends DirectoryLibrary implements RuntimeLibrary, Java
 
         types.add(ReferencedType.JAVA_LANG_OBJECT);
         types.add(ReferencedType.VOID);
-        // types.add(ReferencedType.JAVA_LANG_VOID);
 
         return types;
     }

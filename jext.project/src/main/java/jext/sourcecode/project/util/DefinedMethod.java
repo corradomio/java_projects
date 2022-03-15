@@ -45,6 +45,8 @@ public class DefinedMethod extends NamedObject implements Method {
     private Name lastCallName;
     private final List<Parameter> parameters = new ArrayList<>();
 
+    private int numOfTypeParams;
+
     private Set<String> modifiers = Collections.emptySet();
     private String declaration;
     private final String signature;
@@ -104,6 +106,10 @@ public class DefinedMethod extends NamedObject implements Method {
         parameters.add(parameter);
     }
 
+    public void setNumOfTypeParams(int nTypeParams) {
+        this.numOfTypeParams = nTypeParams;
+    }
+
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
@@ -126,6 +132,11 @@ public class DefinedMethod extends NamedObject implements Method {
     @Override
     public int getNumOfParams() {
         return parameters.size();
+    }
+
+    @Override
+    public int getNumOfTypeParams() {
+        return numOfTypeParams;
     }
 
     @Override

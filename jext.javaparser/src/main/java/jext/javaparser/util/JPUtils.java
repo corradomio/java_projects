@@ -4,10 +4,10 @@ import com.github.javaparser.ParseResult;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
@@ -15,14 +15,13 @@ import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.TypeParameter;
-import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodLikeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedIntersectionType;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.resolution.types.ResolvedUnionType;
-import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
@@ -31,6 +30,7 @@ import jext.javaparser.resolution.ReferencedTypeUse;
 import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
 import jext.lang.JavaConstants;
 import jext.lang.JavaUtils;
+import jext.util.Assert;
 import jext.util.PropertiesUtils;
 
 import java.lang.reflect.Field;
@@ -71,55 +71,261 @@ public class JPUtils {
     //
     // ----------------------------------------------------------------------
 
-    public static ResolvedType getDeclaringType(FieldDeclaration fdecl) {
-        return declaringTypeOf(fdecl);
-    }
-    public static ResolvedType getDeclaringType(MethodDeclaration mdecl) {
-        return declaringTypeOf(mdecl);
-    }
+    // public static ResolvedType getDeclaringType(FieldDeclaration fdecl) {
+    //     return declaringTypeOf(fdecl);
+    // }
+    // public static ResolvedType getDeclaringType(MethodDeclaration mdecl) {
+    //     return declaringTypeOf(mdecl);
+    // }
 
-    public static ResolvedType declaringTypeOf(Node decl) {
-        Node declaringClass = decl;
-        while (declaringClass != null) {
-            if (declaringClass instanceof ClassOrInterfaceDeclaration)
-                break;
-            if (declaringClass instanceof ObjectCreationExpr)
-                break;
+    // public static ResolvedType declaringTypeOf(Node decl) {
+    //     Node declaringClass = decl;
+    //     while (declaringClass != null) {
+    //         if (declaringClass instanceof ClassOrInterfaceDeclaration)
+    //             break;
+    //         if (declaringClass instanceof ObjectCreationExpr)
+    //             break;
+    //
+    //         declaringClass = declaringClass.getParentNode().get();
+    //     }
+    //     String fullQualifiedName;
+    //     if (declaringClass == null) {
+    //         fullQualifiedName = JavaConstants.JAVA_LANG_OBJECT;
+    //     }
+    //     else if (declaringClass instanceof ClassOrInterfaceDeclaration) {
+    //         ClassOrInterfaceDeclaration cidecl = (ClassOrInterfaceDeclaration) declaringClass;
+    //         fullQualifiedName = cidecl.getFullyQualifiedName().get();
+    //     }
+    //     else if (declaringClass instanceof ObjectCreationExpr) {
+    //         ObjectCreationExpr oce = (ObjectCreationExpr) declaringClass;
+    //         fullQualifiedName = oce.getType().getNameWithScope();
+    //     }
+    //
+    //     else {
+    //         fullQualifiedName = JavaConstants.JAVA_LANG_OBJECT;
+    //     }
+    //
+    //     return new ReferencedTypeUse(fullQualifiedName);
+    // }
 
-            declaringClass = declaringClass.getParentNode().get();
-        }
-        String fullQualifiedName;
-        if (declaringClass == null) {
-            fullQualifiedName = JavaConstants.JAVA_LANG_OBJECT;
-        }
-        else if (declaringClass instanceof ClassOrInterfaceDeclaration) {
-            ClassOrInterfaceDeclaration cidecl = (ClassOrInterfaceDeclaration) declaringClass;
-            fullQualifiedName = cidecl.getFullyQualifiedName().get();
-        }
-        else if (declaringClass instanceof ObjectCreationExpr) {
-            ObjectCreationExpr oce = (ObjectCreationExpr) declaringClass;
-            fullQualifiedName = oce.getType().getNameWithScope();
-        }
-
-        else {
-            fullQualifiedName = JavaConstants.JAVA_LANG_OBJECT;
-        }
-
-        return new ReferencedTypeUse(fullQualifiedName);
-    }
-
-    public static ResolvedType getDeclaringType(ResolvedMethodDeclaration rdecl) {
-        String packageName = rdecl.getPackageName();
-        String className = rdecl.getClassName();
-
-        return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
-    }
+    // public static ResolvedType getDeclaringType(ResolvedMethodDeclaration rdecl) {
+    //     String packageName = rdecl.getPackageName();
+    //     String className = rdecl.getClassName();
+    //
+    //     return new ReferencedTypeUse(JavaUtils.qualifiedName(packageName, className));
+    // }
 
     public static int getTypeParametersCount(ClassOrInterfaceType n) {
         if (!n.getTypeArguments().isPresent())
             return 0;
         else
             return n.getTypeArguments().get().size();
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    private static class Cleanup {
+        private String decl;
+        private int p;
+        private int len;
+
+        private Cleanup(String decl) {
+            this.decl = decl;
+        }
+
+        private String cleanup() {
+            removeBlockCommenst();
+            removeLineComments();
+            removeExtraSpaces();
+            simplifyWildcards();
+            replaceDotsWithArray();
+            removeAnnotations();
+            cleanupAnonymous();
+            return decl;
+        }
+
+        private void removeBlockCommenst() {
+            int p = decl.indexOf("/*");
+            while (p != -1) {
+                int e = decl.indexOf("*/", p+1)+2;
+                decl = decl.substring(0, p) + " " + decl.substring(e);
+                p = decl.indexOf("/*");
+            }
+        }
+
+        private void removeLineComments() {
+            int p = decl.indexOf("//");
+            while (p != -1) {
+                int e = decl.indexOf("\n", p);
+                if (e != -1)
+                    decl = decl.substring(0, p) + decl.substring(e);
+                else
+                    decl = decl.substring(0, p);
+                p = decl.indexOf("//");
+            }
+        }
+
+        private void removeExtraSpaces() {
+            decl = decl.replace('\n', ' ');
+            decl = decl.replace('\t', ' ');
+            // int p = decl.indexOf("  ");
+            // while (p != -1) {
+            //     decl = decl.replace("  ", " ");
+            //     p = decl.indexOf("  ");
+            // }
+            // p = decl.indexOf("( ");
+            // while (p != -1) {
+            //     decl = decl.replace("( ", "(");
+            //     p = decl.indexOf("( ");
+            // }
+            // p = decl.indexOf(" )");
+            // while (p != -1) {
+            //     decl = decl.replace(" )", ")");
+            //     p = decl.indexOf(" )");
+            // }
+        }
+
+        private void simplifyWildcards() {
+            // simplify multiple '<? extends ...>' -> '<?>'
+            int p = decl.indexOf('?');
+            while (p != -1) {
+                simplifyWildcard(p);
+                p = decl.indexOf('?', p+1);
+            }
+        }
+
+        private void simplifyWildcard(int s) {
+            this.p = s;
+            this.len = this.decl.length();
+            int depth = 0;
+            while (true) {
+                char c = ch();
+                if (c == 0)
+                    break;
+                if (c == '>') {
+                    if (depth == 0)
+                        break;
+                    else
+                        depth -= 1;
+                }
+                else if (c == '<') {
+                    depth += 1;
+                }
+            }
+            if (s+1 != p-1) {
+                decl = decl.substring(0, s+1) + decl.substring(p-1);
+            }
+        }
+
+        private void replaceDotsWithArray() {
+            int p = decl.indexOf("...");
+            while (p != -1) {
+                decl = decl.replace("...", "[]");
+                p = decl.indexOf("...");
+            }
+        }
+
+        private void removeAnnotations() {
+            if (decl.contains("@interface"))
+                return;
+
+            int p = decl.indexOf("@");
+            while (p != -1) {
+                removeAnnotation(p);
+                p = decl.indexOf("@");
+            }
+        }
+
+        private void removeAnnotation(int s) {
+            this.p = s;
+            this.len = this.decl.length();
+
+            //  Remove annotation
+            //
+            //      @ ID1 ( ...( ... ) ... ) ID2
+            //      @ ID1 ID2
+            //
+            //  states
+            //      0: start
+            //      1: in ID1
+            //      2: after ID1
+            //          '(' -> depth + 1
+            //          ')' -> depth - 1
+            //      3: after ID1 or after last ')'
+            int state = 0;
+            int depth = 0;
+
+            while (true) {
+                char c = ch();
+                if (c == 0)
+                    break;
+                if (state == 0) {
+                    if (c == '@')
+                        continue;
+                    if (" \n\r\t".indexOf(c) != -1)
+                        continue;
+                    else {
+                        p -= 1;
+                        state = 1;
+                    }
+                }
+                else if (state == 1) {
+                    // in ID1
+                    if (" \n\r\t".indexOf(c) != -1) {
+                        state = 2;
+                    }
+                    else if (c == '(') {
+                        state = 2;
+                        depth += 1;
+                    }
+                }
+                else if (state == 2) {
+                    // in '   ( ... )'
+                    if (" \n\r\t".indexOf(c) != -1) {
+                        continue;
+                    }
+                    else if (c == '(') {
+                        depth += 1;
+                    }
+                    else if (c == ')') {
+                        depth -= 1;
+                    }
+                    else if (depth == 0) {
+                        p -= 1;
+                        state = 3;
+                    }
+                }
+                else {
+                    p -= 1;
+                    decl = decl.substring(0, s) + decl.substring(p);
+                    break;
+                }
+            }
+        }
+
+        private void cleanupAnonymous() {
+            int o = decl.indexOf("new ");
+            while (o != -1) {
+                Assert.nop();
+                break;
+            }
+        }
+
+        private char ch() {
+            if (p < len)
+                return decl.charAt(p++);
+            else
+                return 0;
+        }
+    }
+
+    public static String getDeclarationAsString(CallableDeclaration<?> n) {
+        String decl = n.getDeclarationAsString();
+
+        // cleanup declaration
+        return new Cleanup(decl).cleanup();
     }
 
     // ----------------------------------------------------------------------
@@ -301,28 +507,42 @@ public class JPUtils {
     //
     // ----------------------------------------------------------------------
 
-    public static String getSignature(ConstructorDeclaration cd) {
+    public static String getSignature(CallableDeclaration cd) {
         String signature = cd.getSignature().asString();
-        return signature;
+        return normalizeSignature(signature);
     }
 
-    public static String getSignature(MethodDeclaration md) {
-        String signature = md.getSignature().asString();
-        return signature;
+    // public static String getSignature(MethodDeclaration md) {
+    //     String signature = md.getSignature().asString();
+    //     return normalizeSignature(signature);
+    // }
+
+    public static String getSignature(ResolvedMethodLikeDeclaration rmd) {
+        try {
+            String signature = rmd.getSignature();
+            return normalizeSignature(signature);
+        }
+        catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
+            // logger.errorf("Unable to resolve %s: %s (%s)", rmd.toString(), e.getClass().getName(), e.getMessage());
+        }
+        catch (RuntimeException e) {
+            //
+        }
+        return normalizeSignature(rmd.getQualifiedName());
     }
 
     public static String getSignature(ResolvedMethodDeclaration rmd) {
         try {
             String signature = rmd.getSignature();
-            return signature;
+            return normalizeSignature(signature);
         }
         catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
-            //logger.errorf("Unable to resolve %s: %s (%s)", rmd.toString(), e.getClass().getName(), e.getMessage());
+            // logger.errorf("Unable to resolve %s: %s (%s)", rmd.toString(), e.getClass().getName(), e.getMessage());
         }
         catch (RuntimeException e) {
-
+            //
         }
-        return rmd.getQualifiedName();
+        return normalizeSignature(rmd.getQualifiedName());
     }
 
     public static String getSignature(ResolvedConstructorDeclaration rcd) {
@@ -334,7 +554,7 @@ public class JPUtils {
                 int bgn = signature.lastIndexOf('.');
                 signature = signature.substring(0, pos) + signature.substring(bgn, pos);
             }
-            return signature;
+            return normalizeSignature(signature);
         }
         catch (UnsupportedOperationException | UnsolvedSymbolException | ResolveTimeoutException e) {
             //logger.errorf("Unable to resolve %s: %s (%s)", rcd.toString(), e.getClass().getName(), e.getMessage());
@@ -342,7 +562,13 @@ public class JPUtils {
         catch (RuntimeException e) {
 
         }
-        return rcd.getQualifiedName();
+        return normalizeSignature(rcd.getQualifiedName());
+    }
+
+    private static String normalizeSignature(String signature) {
+        // if (signature.contains("..."))
+        //     signature = signature.replace("...", "[]");
+        return signature;
     }
 
     // ----------------------------------------------------------------------

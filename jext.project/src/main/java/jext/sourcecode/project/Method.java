@@ -22,6 +22,8 @@ public interface Method extends IdNamed {
     Set<String> getModifiers();
     boolean isStatic();
 
+    int getNumOfTypeParams();
+
     int getNumOfParams();
     List<Parameter> getParameters();
 
