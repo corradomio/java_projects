@@ -6,6 +6,12 @@ import jext.util.TimeUtils;
 public class App {
 
     public static void main(String[] args) {
+        String s = "1/2:3/4";
+        String[] parts = s.split("/|:");
+        System.out.println(parts.length);
+    }
+
+    public static void main2(String[] args) {
         long l = 0xFFFFFFFFFFFFFFFFL;
 
         while (l != 0) {

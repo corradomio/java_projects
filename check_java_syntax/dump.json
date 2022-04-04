@@ -1,0 +1,1575 @@
+{
+    "595": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\cdecl\\ACTemplate.java",
+        "forward": {
+            "Define": [
+                "600",
+                "596"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "596": {
+        "kindname": "Public Generic Class",
+        "longname": "org.hls.cdecl.ACTemplate",
+        "forward": {
+            "Define": [
+                "595",
+                "597"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "End": [
+                "596"
+            ],
+            "Extend": [
+                "8139"
+            ]
+        },
+        "backward": {}
+    },
+    "597": {
+        "kindname": "TypeVariable",
+        "longname": "org.hls.cdecl.ACTemplate.T1",
+        "forward": {
+            "Define": [
+                "596"
+            ]
+        },
+        "backward": {}
+    },
+    "598": {
+        "kindname": "Package",
+        "longname": "org.hls",
+        "forward": {
+            "Declare": [
+                "600",
+                "5482",
+                "4014",
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "599": {
+        "kindname": "Package",
+        "longname": "org",
+        "forward": {
+            "Declare": [
+                "19648",
+                "16804",
+                "5477",
+                "31591",
+                "4009",
+                "8138",
+                "2667",
+                "27982",
+                "3729",
+                "20369",
+                "595",
+                "598",
+                "8694",
+                "19582",
+                "7962",
+                "10557",
+                "12478",
+                "16799"
+            ]
+        },
+        "backward": {}
+    },
+    "600": {
+        "kindname": "Package",
+        "longname": "org.hls.cdecl",
+        "forward": {
+            "Define": [
+                "8138",
+                "2667",
+                "3729",
+                "20369",
+                "595",
+                "10557",
+                "19582"
+            ],
+            "Contain": [
+                "19584",
+                "8139",
+                "2668",
+                "3730",
+                "3731",
+                "596",
+                "20370",
+                "19583"
+            ],
+            "Declare": [
+                "598"
+            ]
+        },
+        "backward": {}
+    },
+    "2667": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\cdecl\\AEnum.java",
+        "forward": {
+            "Define": [
+                "600",
+                "2668"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "2668": {
+        "kindname": "Public Enum Type",
+        "longname": "org.hls.cdecl.AEnum",
+        "forward": {
+            "Define": [
+                "2667",
+                "2669",
+                "2671"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "End": [
+                "2668"
+            ],
+            "Typed": [
+                "2669",
+                "2671"
+            ]
+        },
+        "backward": {}
+    },
+    "2669": {
+        "kindname": "Public Implicit Method",
+        "longname": "org.hls.cdecl.AEnum.valueOf",
+        "forward": {
+            "Define": [
+                "2668",
+                "2670"
+            ],
+            "Typed": [
+                "2668"
+            ]
+        },
+        "backward": {}
+    },
+    "2670": {
+        "kindname": "Parameter",
+        "longname": "org.hls.cdecl.AEnum.valueOf.s",
+        "forward": {
+            "Define": [
+                "2669"
+            ]
+        },
+        "backward": {}
+    },
+    "2671": {
+        "kindname": "Public Implicit Method",
+        "longname": "org.hls.cdecl.AEnum.values",
+        "forward": {
+            "Define": [
+                "2668"
+            ],
+            "Typed": [
+                "2668"
+            ]
+        },
+        "backward": {}
+    },
+    "3729": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\cdecl\\ADerivedClass.java",
+        "forward": {
+            "Define": [
+                "600",
+                "3730"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "3730": {
+        "kindname": "Public Class",
+        "longname": "org.hls.cdecl.ADerivedClass",
+        "forward": {
+            "Define": [
+                "3729"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "Extend": [
+                "3731"
+            ],
+            "End": [
+                "3730"
+            ]
+        },
+        "backward": {}
+    },
+    "3731": {
+        "kindname": "Public Class",
+        "longname": "org.hls.cdecl.AClass",
+        "forward": {
+            "Define": [
+                "10557"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "End": [
+                "3731"
+            ],
+            "Extend": [
+                "3730"
+            ]
+        },
+        "backward": {}
+    },
+    "4009": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\deps\\ClassOne.java",
+        "forward": {
+            "Define": [
+                "4010",
+                "4014"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "4010": {
+        "kindname": "Public Class",
+        "longname": "org.hls.deps.ClassOne",
+        "forward": {
+            "Define": [
+                "4009",
+                "4011",
+                "4012",
+                "4013"
+            ],
+            "Contain": [
+                "4014"
+            ],
+            "Couple": [
+                "4015"
+            ],
+            "End": [
+                "4010"
+            ],
+            "Typed": [
+                "8697",
+                "4011",
+                "8695"
+            ],
+            "Create": [
+                "4011",
+                "8695"
+            ]
+        },
+        "backward": {}
+    },
+    "4011": {
+        "kindname": "Public Method",
+        "longname": "org.hls.deps.ClassOne.one",
+        "forward": {
+            "Define": [
+                "4010"
+            ],
+            "Typed": [
+                "4010"
+            ],
+            "Create": [
+                "4010"
+            ],
+            "End": [
+                "4011"
+            ]
+        },
+        "backward": {}
+    },
+    "4012": {
+        "kindname": "Public Method",
+        "longname": "org.hls.deps.ClassOne.three",
+        "forward": {
+            "Define": [
+                "4010"
+            ],
+            "Typed": [
+                "4015"
+            ],
+            "Create": [
+                "4015"
+            ],
+            "End": [
+                "4012"
+            ]
+        },
+        "backward": {}
+    },
+    "4013": {
+        "kindname": "Variable",
+        "longname": "org.hls.deps.ClassOne.f3",
+        "forward": {
+            "Define": [
+                "4010"
+            ],
+            "Typed": [
+                "4015"
+            ]
+        },
+        "backward": {}
+    },
+    "4014": {
+        "kindname": "Package",
+        "longname": "org.hls.deps",
+        "forward": {
+            "Define": [
+                "4009",
+                "7962",
+                "12478",
+                "8694"
+            ],
+            "Contain": [
+                "4015",
+                "4010",
+                "7963",
+                "12479"
+            ],
+            "Declare": [
+                "598"
+            ]
+        },
+        "backward": {}
+    },
+    "4015": {
+        "kindname": "Public Class",
+        "longname": "org.hls.deps.ClassThree",
+        "forward": {
+            "Define": [
+                "8696",
+                "8697",
+                "8694",
+                "8695"
+            ],
+            "Contain": [
+                "4014"
+            ],
+            "Couple": [
+                "4010"
+            ],
+            "End": [
+                "4015"
+            ],
+            "Typed": [
+                "8696",
+                "4012",
+                "4013"
+            ],
+            "Create": [
+                "8696",
+                "4012"
+            ]
+        },
+        "backward": {}
+    },
+    "5477": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\annot\\AnnotatedClass.java",
+        "forward": {
+            "Define": [
+                "5482",
+                "5478"
+            ],
+            "Declare": [
+                "599"
+            ],
+            "Use": [
+                "5485"
+            ]
+        },
+        "backward": {}
+    },
+    "5478": {
+        "kindname": "Public Class",
+        "longname": "org.hls.annot.AnnotatedClass",
+        "forward": {
+            "Define": [
+                "5480",
+                "5481",
+                "5477",
+                "5479"
+            ],
+            "Contain": [
+                "5482"
+            ],
+            "End": [
+                "5478"
+            ]
+        },
+        "backward": {}
+    },
+    "5479": {
+        "kindname": "Method",
+        "longname": "org.hls.annot.AnnotatedClass.method",
+        "forward": {
+            "Define": [
+                "5478"
+            ],
+            "End": [
+                "5479"
+            ]
+        },
+        "backward": {}
+    },
+    "5480": {
+        "kindname": "Variable",
+        "longname": "org.hls.annot.AnnotatedClass.id",
+        "forward": {
+            "Define": [
+                "5478"
+            ]
+        },
+        "backward": {}
+    },
+    "5481": {
+        "kindname": "Variable",
+        "longname": "org.hls.annot.AnnotatedClass.name",
+        "forward": {
+            "Define": [
+                "5478"
+            ]
+        },
+        "backward": {}
+    },
+    "5482": {
+        "kindname": "Package",
+        "longname": "org.hls.annot",
+        "forward": {
+            "Define": [
+                "5477",
+                "27982"
+            ],
+            "Contain": [
+                "5485",
+                "5478"
+            ],
+            "Declare": [
+                "598"
+            ]
+        },
+        "backward": {}
+    },
+    "5485": {
+        "kindname": "Public Annotation",
+        "longname": "org.hls.annot.MyAnnotation",
+        "forward": {
+            "Define": [
+                "27982"
+            ],
+            "Contain": [
+                "5482"
+            ],
+            "End": [
+                "5485"
+            ],
+            "Use": [
+                "5477"
+            ]
+        },
+        "backward": {}
+    },
+    "7962": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\deps\\ClassFour.java",
+        "forward": {
+            "Define": [
+                "7963",
+                "4014"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "7963": {
+        "kindname": "Public Class",
+        "longname": "org.hls.deps.ClassFour",
+        "forward": {
+            "Define": [
+                "7962",
+                "7964"
+            ],
+            "Contain": [
+                "4014"
+            ],
+            "End": [
+                "7963"
+            ]
+        },
+        "backward": {}
+    },
+    "7964": {
+        "kindname": "Variable",
+        "longname": "org.hls.deps.ClassFour.entry",
+        "forward": {
+            "Define": [
+                "7963"
+            ]
+        },
+        "backward": {}
+    },
+    "8138": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\cdecl\\ACTemplate1.java",
+        "forward": {
+            "Define": [
+                "600",
+                "8139"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "8139": {
+        "kindname": "Public Generic Class",
+        "longname": "org.hls.cdecl.ACTemplate1",
+        "forward": {
+            "Define": [
+                "8138",
+                "8140",
+                "8141"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "Use": [
+                "8140"
+            ],
+            "Extend": [
+                "596"
+            ],
+            "End": [
+                "8139"
+            ]
+        },
+        "backward": {}
+    },
+    "8140": {
+        "kindname": "TypeVariable",
+        "longname": "org.hls.cdecl.ACTemplate1.T1",
+        "forward": {
+            "Define": [
+                "8139"
+            ],
+            "Use": [
+                "8139"
+            ]
+        },
+        "backward": {}
+    },
+    "8141": {
+        "kindname": "TypeVariable",
+        "longname": "org.hls.cdecl.ACTemplate1.T2",
+        "forward": {
+            "Define": [
+                "8139"
+            ]
+        },
+        "backward": {}
+    },
+    "8694": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\deps\\ClassThree.java",
+        "forward": {
+            "Define": [
+                "4014",
+                "4015"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "8695": {
+        "kindname": "Public Method",
+        "longname": "org.hls.deps.ClassThree.one",
+        "forward": {
+            "Define": [
+                "4015"
+            ],
+            "Typed": [
+                "4010"
+            ],
+            "Create": [
+                "4010"
+            ],
+            "End": [
+                "8695"
+            ]
+        },
+        "backward": {}
+    },
+    "8696": {
+        "kindname": "Public Method",
+        "longname": "org.hls.deps.ClassThree.three",
+        "forward": {
+            "Define": [
+                "4015"
+            ],
+            "Typed": [
+                "4015"
+            ],
+            "Create": [
+                "4015"
+            ],
+            "End": [
+                "8696"
+            ]
+        },
+        "backward": {}
+    },
+    "8697": {
+        "kindname": "Variable",
+        "longname": "org.hls.deps.ClassThree.f1",
+        "forward": {
+            "Define": [
+                "4015"
+            ],
+            "Typed": [
+                "4010"
+            ]
+        },
+        "backward": {}
+    },
+    "10557": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\cdecl\\AClass.java",
+        "forward": {
+            "Define": [
+                "600",
+                "3731"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "12478": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\deps\\ClassFive.java",
+        "forward": {
+            "Define": [
+                "4014",
+                "12479"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "12479": {
+        "kindname": "Public Class",
+        "longname": "org.hls.deps.ClassFive",
+        "forward": {
+            "Define": [
+                "12480",
+                "12478"
+            ],
+            "Contain": [
+                "4014"
+            ],
+            "End": [
+                "12479"
+            ]
+        },
+        "backward": {}
+    },
+    "12480": {
+        "kindname": "Method",
+        "longname": "org.hls.deps.ClassFive.m",
+        "forward": {
+            "Define": [
+                "12479"
+            ],
+            "End": [
+                "12480"
+            ]
+        },
+        "backward": {}
+    },
+    "16799": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\m3\\src\\main\\java\\org\\cocome\\tradingsystem\\Check.java",
+        "forward": {
+            "Define": [
+                "16800",
+                "16805"
+            ],
+            "Declare": [
+                "599"
+            ],
+            "Import": [
+                "16806"
+            ],
+            "DotRef": [
+                "16807"
+            ]
+        },
+        "backward": {}
+    },
+    "16800": {
+        "kindname": "Public Class",
+        "longname": "org.cocome.tradingsystem.Check",
+        "forward": {
+            "Define": [
+                "16801",
+                "16799"
+            ],
+            "Contain": [
+                "16805"
+            ],
+            "Couple": [
+                "16806"
+            ],
+            "End": [
+                "16800"
+            ]
+        },
+        "backward": {}
+    },
+    "16801": {
+        "kindname": "Public Static Method",
+        "longname": "org.cocome.tradingsystem.Check.main",
+        "forward": {
+            "Define": [
+                "16800",
+                "16802",
+                "16803"
+            ],
+            "DotRef": [
+                "16806"
+            ],
+            "Call": [
+                "16808"
+            ],
+            "Set": [
+                "16803"
+            ],
+            "End": [
+                "16801"
+            ]
+        },
+        "backward": {}
+    },
+    "16802": {
+        "kindname": "Parameter",
+        "longname": "org.cocome.tradingsystem.Check.main.args",
+        "forward": {
+            "Define": [
+                "16801"
+            ]
+        },
+        "backward": {}
+    },
+    "16803": {
+        "kindname": "Variable",
+        "longname": "org.cocome.tradingsystem.Check.main.iterables",
+        "forward": {
+            "Define": [
+                "16801"
+            ],
+            "Set": [
+                "16801"
+            ]
+        },
+        "backward": {}
+    },
+    "16804": {
+        "kindname": "Package",
+        "longname": "org.cocome",
+        "forward": {
+            "Declare": [
+                "16805",
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "16805": {
+        "kindname": "Package",
+        "longname": "org.cocome.tradingsystem",
+        "forward": {
+            "Define": [
+                "16799"
+            ],
+            "Contain": [
+                "16800"
+            ],
+            "Declare": [
+                "16804",
+                "19662"
+            ]
+        },
+        "backward": {}
+    },
+    "16806": {
+        "kindname": "Public Class",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables",
+        "forward": {
+            "Define": [
+                "19648",
+                "19649",
+                "19659",
+                "16808"
+            ],
+            "Contain": [
+                "16807"
+            ],
+            "Couple": [
+                "16800",
+                "19649",
+                "16806",
+                "19655"
+            ],
+            "End": [
+                "16806"
+            ],
+            "Import": [
+                "16799"
+            ],
+            "DotRef": [
+                "16801"
+            ]
+        },
+        "backward": {}
+    },
+    "16807": {
+        "kindname": "Package",
+        "longname": "org.cocome.tradingsystem.util.java",
+        "forward": {
+            "Define": [
+                "19648",
+                "31591"
+            ],
+            "Contain": [
+                "31592",
+                "16806"
+            ],
+            "Declare": [
+                "19662"
+            ],
+            "DotRef": [
+                "16799"
+            ]
+        },
+        "backward": {}
+    },
+    "16808": {
+        "kindname": "Public Static Generic Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable",
+        "forward": {
+            "Define": [
+                "19657",
+                "19658",
+                "16806",
+                "19655"
+            ],
+            "Use": [
+                "19657"
+            ],
+            "End": [
+                "16808"
+            ],
+            "Call": [
+                "16801"
+            ]
+        },
+        "backward": {}
+    },
+    "19582": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\cdecl\\ACTemplate2.java",
+        "forward": {
+            "Define": [
+                "600",
+                "19584",
+                "19583"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "19583": {
+        "kindname": "Public Class",
+        "longname": "org.hls.cdecl.ACTemplate2",
+        "forward": {
+            "Define": [
+                "19582"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "End": [
+                "19583"
+            ]
+        },
+        "backward": {}
+    },
+    "19584": {
+        "kindname": "Class",
+        "longname": "org.hls.cdecl.ACTemplate21",
+        "forward": {
+            "Define": [
+                "19582"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "End": [
+                "19584"
+            ]
+        },
+        "backward": {}
+    },
+    "19648": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\m2\\src\\main\\java\\org\\cocome\\tradingsystem\\util\\java\\Iterables.java",
+        "forward": {
+            "Define": [
+                "16806",
+                "16807"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "19649": {
+        "kindname": "Private Static Generic Class",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator",
+        "forward": {
+            "Define": [
+                "19650",
+                "19651",
+                "19653",
+                "19654",
+                "16806"
+            ],
+            "Use": [
+                "19650"
+            ],
+            "Couple": [
+                "19649",
+                "16806",
+                "19655"
+            ],
+            "End": [
+                "19649"
+            ],
+            "Create": [
+                "19656",
+                "19659"
+            ]
+        },
+        "backward": {}
+    },
+    "19650": {
+        "kindname": "TypeVariable",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.E",
+        "forward": {
+            "Define": [
+                "19649"
+            ],
+            "Use": [
+                "19649"
+            ],
+            "Typed": [
+                "19652",
+                "19654"
+            ]
+        },
+        "backward": {}
+    },
+    "19651": {
+        "kindname": "Private Constructor",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.ArrayIterator",
+        "forward": {
+            "Define": [
+                "19649",
+                "19652"
+            ],
+            "End": [
+                "19651"
+            ],
+            "Call": [
+                "19656",
+                "19659"
+            ]
+        },
+        "backward": {}
+    },
+    "19652": {
+        "kindname": "Parameter",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.ArrayIterator.array",
+        "forward": {
+            "Define": [
+                "19651"
+            ],
+            "Typed": [
+                "19650"
+            ]
+        },
+        "backward": {}
+    },
+    "19653": {
+        "kindname": "Public Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.hasNext",
+        "forward": {
+            "Define": [
+                "19649"
+            ],
+            "End": [
+                "19653"
+            ]
+        },
+        "backward": {}
+    },
+    "19654": {
+        "kindname": "Public Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.next",
+        "forward": {
+            "Define": [
+                "19649"
+            ],
+            "Typed": [
+                "19650"
+            ],
+            "End": [
+                "19654"
+            ]
+        },
+        "backward": {}
+    },
+    "19655": {
+        "kindname": "Anonymous Class",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.(Anon_1)",
+        "forward": {
+            "Define": [
+                "16808",
+                "19656"
+            ],
+            "Couple": [
+                "19649",
+                "16806"
+            ],
+            "End": [
+                "19655"
+            ]
+        },
+        "backward": {}
+    },
+    "19656": {
+        "kindname": "Public Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.(Anon_1).iterator",
+        "forward": {
+            "Define": [
+                "19655"
+            ],
+            "Use": [
+                "19657",
+                "19658"
+            ],
+            "Call": [
+                "19651"
+            ],
+            "Create": [
+                "19649"
+            ],
+            "End": [
+                "19656"
+            ]
+        },
+        "backward": {}
+    },
+    "19657": {
+        "kindname": "TypeVariable",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.E",
+        "forward": {
+            "Define": [
+                "16808"
+            ],
+            "Use": [
+                "16808",
+                "19656"
+            ],
+            "Typed": [
+                "19658"
+            ]
+        },
+        "backward": {}
+    },
+    "19658": {
+        "kindname": "Parameter",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.array",
+        "forward": {
+            "Define": [
+                "16808"
+            ],
+            "Use": [
+                "19656"
+            ],
+            "Typed": [
+                "19657"
+            ]
+        },
+        "backward": {}
+    },
+    "19659": {
+        "kindname": "Public Static Generic Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterator",
+        "forward": {
+            "Define": [
+                "19660",
+                "19661",
+                "16806"
+            ],
+            "Use": [
+                "19660",
+                "19661"
+            ],
+            "Call": [
+                "19651"
+            ],
+            "Create": [
+                "19649"
+            ],
+            "End": [
+                "19659"
+            ]
+        },
+        "backward": {}
+    },
+    "19660": {
+        "kindname": "TypeVariable",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterator.E",
+        "forward": {
+            "Define": [
+                "19659"
+            ],
+            "Use": [
+                "19659"
+            ],
+            "Typed": [
+                "19661"
+            ]
+        },
+        "backward": {}
+    },
+    "19661": {
+        "kindname": "Parameter",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterator.array",
+        "forward": {
+            "Define": [
+                "19659"
+            ],
+            "Use": [
+                "19659"
+            ],
+            "Typed": [
+                "19660"
+            ]
+        },
+        "backward": {}
+    },
+    "19662": {
+        "kindname": "Package",
+        "longname": "org.cocome.tradingsystem.util",
+        "forward": {
+            "Declare": [
+                "16805",
+                "16807"
+            ]
+        },
+        "backward": {}
+    },
+    "20369": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\cdecl\\AInterface.java",
+        "forward": {
+            "Define": [
+                "600",
+                "20370"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "20370": {
+        "kindname": "Public Class",
+        "longname": "org.hls.cdecl.AInterface",
+        "forward": {
+            "Define": [
+                "20369"
+            ],
+            "Contain": [
+                "600"
+            ],
+            "End": [
+                "20370"
+            ]
+        },
+        "backward": {}
+    },
+    "27982": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\main\\src\\main\\java\\org\\hls\\annot\\MyAnnotation.java",
+        "forward": {
+            "Define": [
+                "5482",
+                "5485"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "31591": {
+        "kindname": "File",
+        "longname": "D:\\Projects.github\\java_projects\\check_java_syntax\\m1\\src\\main\\java\\org\\cocome\\tradingsystem\\util\\java\\Iterables.java",
+        "forward": {
+            "Define": [
+                "31592",
+                "16807"
+            ],
+            "Declare": [
+                "599"
+            ]
+        },
+        "backward": {}
+    },
+    "31592": {
+        "kindname": "Public Class",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables",
+        "forward": {
+            "Define": [
+                "31593",
+                "31599",
+                "31604",
+                "31591"
+            ],
+            "Contain": [
+                "16807"
+            ],
+            "Couple": [
+                "31600",
+                "31593",
+                "16806",
+                "16800"
+            ],
+            "End": [
+                "31592"
+            ],
+            "Import": [
+                "16799"
+            ],
+            "DotRef": [
+                "16801"
+            ]
+        },
+        "backward": {}
+    },
+    "31593": {
+        "kindname": "Private Static Generic Class",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator",
+        "forward": {
+            "Define": [
+                "31592",
+                "31594",
+                "31595",
+                "31597",
+                "31598"
+            ],
+            "Couple": [
+                "19649",
+                "16806",
+                "19655",
+                "31592",
+                "31600"
+            ],
+            "Use": [
+                "31594"
+            ],
+            "End": [
+                "31593"
+            ],
+            "Create": [
+                "19656",
+                "31601",
+                "19659",
+                "31604"
+            ]
+        },
+        "backward": {}
+    },
+    "31594": {
+        "kindname": "TypeVariable",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.E",
+        "forward": {
+            "Define": [
+                "31593"
+            ],
+            "Use": [
+                "31593"
+            ],
+            "Typed": [
+                "19652",
+                "31596",
+                "31598"
+            ]
+        },
+        "backward": {}
+    },
+    "31595": {
+        "kindname": "Private Constructor",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.ArrayIterator",
+        "forward": {
+            "Define": [
+                "31593",
+                "31596"
+            ],
+            "End": [
+                "31595"
+            ],
+            "Call": [
+                "19656",
+                "31601",
+                "19659",
+                "31604"
+            ]
+        },
+        "backward": {}
+    },
+    "31596": {
+        "kindname": "Parameter",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.ArrayIterator.array",
+        "forward": {
+            "Define": [
+                "31595"
+            ],
+            "Typed": [
+                "31594"
+            ]
+        },
+        "backward": {}
+    },
+    "31597": {
+        "kindname": "Public Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.hasNext",
+        "forward": {
+            "Define": [
+                "31593"
+            ],
+            "End": [
+                "31597"
+            ]
+        },
+        "backward": {}
+    },
+    "31598": {
+        "kindname": "Public Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.ArrayIterator.next",
+        "forward": {
+            "Define": [
+                "31593"
+            ],
+            "Typed": [
+                "31594"
+            ],
+            "End": [
+                "31598"
+            ]
+        },
+        "backward": {}
+    },
+    "31599": {
+        "kindname": "Public Static Generic Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable",
+        "forward": {
+            "Define": [
+                "31592",
+                "31602",
+                "31603",
+                "31600"
+            ],
+            "Use": [
+                "31602"
+            ],
+            "End": [
+                "31599"
+            ],
+            "Call": [
+                "16801"
+            ]
+        },
+        "backward": {}
+    },
+    "31600": {
+        "kindname": "Anonymous Class",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.(Anon_1)",
+        "forward": {
+            "Define": [
+                "31601",
+                "31599"
+            ],
+            "Couple": [
+                "31592",
+                "31593"
+            ],
+            "End": [
+                "31600"
+            ]
+        },
+        "backward": {}
+    },
+    "31601": {
+        "kindname": "Public Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.(Anon_1).iterator",
+        "forward": {
+            "Define": [
+                "31600"
+            ],
+            "Use": [
+                "31602",
+                "31603"
+            ],
+            "Call": [
+                "31595"
+            ],
+            "Create": [
+                "31593"
+            ],
+            "End": [
+                "31601"
+            ]
+        },
+        "backward": {}
+    },
+    "31602": {
+        "kindname": "TypeVariable",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.E",
+        "forward": {
+            "Define": [
+                "31599"
+            ],
+            "Use": [
+                "31601",
+                "31599"
+            ],
+            "Typed": [
+                "19658",
+                "31603"
+            ]
+        },
+        "backward": {}
+    },
+    "31603": {
+        "kindname": "Parameter",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterable.array",
+        "forward": {
+            "Define": [
+                "31599"
+            ],
+            "Use": [
+                "31601"
+            ],
+            "Typed": [
+                "31602"
+            ]
+        },
+        "backward": {}
+    },
+    "31604": {
+        "kindname": "Public Static Generic Method",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterator",
+        "forward": {
+            "Define": [
+                "31592",
+                "31605",
+                "31606"
+            ],
+            "Use": [
+                "31605",
+                "31606"
+            ],
+            "Call": [
+                "31595"
+            ],
+            "Create": [
+                "31593"
+            ],
+            "End": [
+                "31604"
+            ]
+        },
+        "backward": {}
+    },
+    "31605": {
+        "kindname": "TypeVariable",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterator.E",
+        "forward": {
+            "Define": [
+                "31604"
+            ],
+            "Use": [
+                "31604"
+            ],
+            "Typed": [
+                "19661",
+                "31606"
+            ]
+        },
+        "backward": {}
+    },
+    "31606": {
+        "kindname": "Parameter",
+        "longname": "org.cocome.tradingsystem.util.java.Iterables.iterator.array",
+        "forward": {
+            "Define": [
+                "31604"
+            ],
+            "Use": [
+                "31604"
+            ],
+            "Typed": [
+                "31605"
+            ]
+        },
+        "backward": {}
+    }
+}
