@@ -38,9 +38,53 @@ public class BuildGradleFile extends GradleFile {
     }
 
     // ----------------------------------------------------------------------
-    // Dependencies
+    // Properties
     // ----------------------------------------------------------------------
 
+    /*
+        apply plugin: 'java'
+        compileJava {
+            sourceCompatibility = '1.8'
+            targetCompatibility = '1.8'
+        }
+
+        OR
+
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
+
+     */
+
+    public String getJavaVersion() {
+        String version = StringUtils.empty();
+        for(String line : this.content) {
+            if (!line.contains("sourceCompatibility"))
+                continue;
+
+            int p = line.indexOf("=");
+            if (p == -1) break;
+
+            version = line.substring(p+1).trim();
+            if (version.startsWith("\"") || version.startsWith("'"))
+                version = version.substring(1);
+            if (version.endsWith("\"") || version.endsWith("'"))
+                version = version.substring(0, version.length()-1);
+
+            // check if 'version' is a number (8, 1.8)
+            try {
+                Float.parseFloat(version);
+            }
+            catch (NumberFormatException e) {
+                version = "";
+            }
+            break;
+        }
+        return version;
+    }
+
+    // ----------------------------------------------------------------------
+    // Repositories
+    // ----------------------------------------------------------------------
 
     // "... url "..." ..."
     // " -> '
@@ -89,7 +133,7 @@ public class BuildGradleFile extends GradleFile {
     }
 
     // ----------------------------------------------------------------------
-    // Dependencies
+    // ModuleDependencies
     // ----------------------------------------------------------------------
 
     // (prefix) ":<moduleName>"
@@ -128,7 +172,7 @@ public class BuildGradleFile extends GradleFile {
     }
 
     // ----------------------------------------------------------------------
-    // Libraries
+    // MavenDependencies/JarLibraries
     // ----------------------------------------------------------------------
 
     public Set<MavenCoords> getMavenDependencies() {
@@ -372,5 +416,9 @@ public class BuildGradleFile extends GradleFile {
                 return true;
         return false;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

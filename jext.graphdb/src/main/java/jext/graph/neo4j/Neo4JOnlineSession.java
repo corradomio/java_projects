@@ -8,6 +8,7 @@ import jext.graph.Param;
 import jext.graph.Query;
 import jext.logging.Logger;
 import jext.util.ArrayUtils;
+import jext.util.Assert;
 import jext.util.MapUtils;
 import jext.util.Parameters;
 import jext.util.StringUtils;
@@ -15,6 +16,7 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.Transaction;
 import org.neo4j.driver.exceptions.TransientException;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
@@ -28,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.asIds;
@@ -49,8 +52,9 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String FROM = "from";
     private static final String TO = "to";
     private static final String NONE = "";
-    private static final int MAX_DELETE_NODES = 16*1024;
-    private static final int MAX_DELETE_EDGES = 128*1024;
+    static final int MAX_STATEMENTS = 8*1024;
+    static final int MAX_DELETE_NODES = 16*1024;
+    // private static final int MAX_DELETE_EDGES = 128*1024;
     private static final String NO_ID = "-1";
 
     private static final String USES = "uses";
@@ -72,6 +76,8 @@ public class Neo4JOnlineSession implements GraphSession {
     private final Neo4JOnlineDatabase graphdb;
     private final Driver driver;
     private Session session;
+    private Transaction transaction;
+    private AtomicInteger count = new AtomicInteger();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -79,7 +85,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     Neo4JOnlineSession(Neo4JOnlineDatabase graphdb) {
         this.graphdb = graphdb;
-        this.driver = graphdb.getdriver();
+        this.driver = graphdb.getDriver();
     }
 
     // ----------------------------------------------------------------------
@@ -95,6 +101,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     public Neo4JOnlineSession connect() {
         session = driver.session();
+        transaction = session.beginTransaction();
         return this;
     }
 
@@ -105,10 +112,14 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void close() {
-        if (session== null)
-            return;
+        if (transaction != null) {
+            transaction.commit();
+            transaction = null;
+        }
+        if (session != null) {
         session.close();
         session = null;
+    }
     }
 
     // ----------------------------------------------------------------------
@@ -161,7 +172,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         logStmt(s, params);
         try {
-            session.run(s, params);
+            session_run(s, params);
         }
         catch (Throwable t) {
             logStmt(s, params, t);
@@ -266,16 +277,18 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void deleteNodes(Collection<String> nodeIds) {
+        int maxdelete = graphdb.getMaxDelete();
+
         if (nodeIds == null || nodeIds.isEmpty())
             return;
 
-        if (nodeIds.size() > MAX_DELETE_NODES)
+        if (nodeIds.size() > maxdelete)
             nodeIds = new ArrayList<>(nodeIds);
 
-        while(nodeIds.size() > MAX_DELETE_NODES) {
+        while(nodeIds.size() > maxdelete) {
             int n = nodeIds.size();
-            deleteSomeNodes(((List<String>)nodeIds).subList(0, MAX_DELETE_NODES));
-            nodeIds = ((List<String>)nodeIds).subList(MAX_DELETE_NODES, n);
+            deleteSomeNodes(((List<String>)nodeIds).subList(0, maxdelete));
+            nodeIds = ((List<String>)nodeIds).subList(maxdelete, n);
         }
         if (!nodeIds.isEmpty())
             deleteSomeNodes(nodeIds);
@@ -292,7 +305,20 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long deleteNodes(String nodeType, Map<String, Object> nodeProps) {
-        return deleteNodes(nodeType, nodeProps, MAX_DELETE_NODES);
+        int maxdelete = graphdb.getMaxDelete();
+
+        // commit the transaction
+        long total = 0;
+        long deleted = 1;
+        while (deleted > 0) {
+            transaction.commit();
+            transaction = session.beginTransaction();
+
+            deleted = deleteNodes(nodeType, nodeProps, maxdelete);
+            total += deleted;
+        }
+
+        return deleted;
     }
 
     @Override
@@ -301,12 +327,19 @@ public class Neo4JOnlineSession implements GraphSession {
         String wblock = wblock(N, nodeProps, WhereType.WHERE, true);
         String s;
 
-        if (nodeType == null && count <= 0)
-            s = String.format("MATCH (n %s) %s DETACH DELETE n", pblock, wblock);
-        else if (nodeType == null)
+        Assert.verify(count > 0, "deleteNodes: count MUST BE > 0");
+
+        // if (nodeType == null && count <= 0)
+        //     s = String.format("MATCH (n %s) %s DETACH DELETE n", pblock, wblock);
+        // else if (nodeType == null)
+        //     s = String.format("MATCH (n %s) %s WITH n LIMIT %d DETACH DELETE n", pblock, wblock, count);
+        // else if (count <= 0)
+        //     s = String.format("MATCH (n:%s %s) %s DETACH DELETE n", nodeType, pblock, wblock);
+        // else
+        //     s = String.format("MATCH (n:%s %s) %s WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, wblock, count);
+
+        if (nodeType == null)
             s = String.format("MATCH (n %s) %s WITH n LIMIT %d DETACH DELETE n", pblock, wblock, count);
-        else if (count <= 0)
-            s = String.format("MATCH (n:%s %s) %s DETACH DELETE n", nodeType, pblock, wblock);
         else
             s = String.format("MATCH (n:%s %s) %s WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, wblock, count);
 
@@ -1031,7 +1064,7 @@ public class Neo4JOnlineSession implements GraphSession {
         logStmt(s, params);
 
         try {
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
             return toId(result.next().get(0).asLong());
         }
         catch (Throwable t) {
@@ -1048,7 +1081,7 @@ public class Neo4JOnlineSession implements GraphSession {
         logStmt(s, params);
 
         try {
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
             if (!result.hasNext())
                 return null;
 
@@ -1068,7 +1101,7 @@ public class Neo4JOnlineSession implements GraphSession {
         logStmt(s, params);
 
         try {
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
             if (!result.hasNext())
                 return null;
             else
@@ -1084,7 +1117,7 @@ public class Neo4JOnlineSession implements GraphSession {
         logStmt(s, params);
 
         try {
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
             return new Neo4JResultSet<String>(result) {
                 protected String compose(Record r) {
                     return toId(r.get(0).asLong());
@@ -1101,7 +1134,7 @@ public class Neo4JOnlineSession implements GraphSession {
         logStmt(s, params);
 
         try {
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
 
             return new Neo4JResultSet<Map<String, Object>>(result) {
                 protected Map<String, Object> compose(Record r) {
@@ -1119,7 +1152,7 @@ public class Neo4JOnlineSession implements GraphSession {
         logStmt(s, params);
 
         try {
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
 
             return new Neo4JResultSet<Map<String, Object>>(result) {
                 protected Map<String, Object> compose(Record r) {
@@ -1137,7 +1170,7 @@ public class Neo4JOnlineSession implements GraphSession {
         logStmt(s, params);
 
         try {
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
 
             return result.single().get(0).asLong();
         }
@@ -1212,7 +1245,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         try {
             s = StringUtils.format(s, params);
-            Result result = session.run(s, params);
+            Result result = session_run(s, params);
         }
         catch (Throwable t) {
             logStmt(s, params, t);
@@ -1224,36 +1257,51 @@ public class Neo4JOnlineSession implements GraphSession {
     // Implementation
     // ----------------------------------------------------------------------
 
+    private Result session_run(String s, Map<String, Object> params) {
+        int c = count.incrementAndGet();
+        if (c > graphdb.getMaxStatements()) {
+            transaction.commit();
+            transaction = session.beginTransaction();
+            count.set(0);
+        }
+
+        return transaction.run(s, params);
+    }
+
     private long delete(String s, Map<String, Object> params, boolean edge) {
         logStmt(s, params);
         long count = -1, total = 0;
 
         try {
             if (edge){
-                while (count != 0) {
-                    count = session.writeTransaction(tx ->
-                        tx.run(s, params)
-                            .consume()
-                            .counters()
-                            .relationshipsDeleted())
-                        .intValue();
+                // while (count != 0) {
+                    // count = session.writeTransaction(tx ->
+                    //     tx.run(s, params)
+                    //         .consume()
+                    //         .counters()
+                    //         .relationshipsDeleted())
+                    //     .intValue();
+
+                    count = session_run(s, params).consume().counters().relationshipsDeleted();
                     total += count;
-                    if (count > 0)
-                        logger.debugft("Deleted %d edges %s", total, params);
-                }
+                    // if (count > 0)
+                    //     logger.debugft("Deleted %d edges %s", total, params);
+                // }
             }
             else {
-                while(count != 0) {
-                    count = session.writeTransaction(tx ->
-                        tx.run(s, params)
-                            .consume()
-                            .counters()
-                            .nodesDeleted())
-                        .intValue();
+                // while(count != 0) {
+                    // count = session.writeTransaction(tx ->
+                    //     tx.run(s, params)
+                    //         .consume()
+                    //         .counters()
+                    //         .nodesDeleted())
+                    //     .intValue();
+
+                    count = session_run(s, params).consume().counters().nodesDeleted();
                     total += count;
-                    if (count > 0)
-                        logger.debugft("Deleted %d nodes %s", total, params);
-                }
+                    // if (count > 0)
+                    //     logger.debugft("Deleted %d nodes %s", total, params);
+                // }
             }
         }
         catch (Throwable t) {

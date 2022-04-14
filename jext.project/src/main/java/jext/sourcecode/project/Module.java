@@ -26,18 +26,7 @@ public interface Module extends RefIdNamed {
     /** Module dependencies */
     List<Module> getDependencies();
 
-    // /** Source roots (relative paths respect moduleHome) */
-    // Set<String> getSourceRoots();
-    // List<File>  getSourceRootDirectories();
-
     // -- sources
-
-    /** Sources available inside the module */
-    // List<Source> getSources();
-    // List<File>   getSourceFiles();
-
-    // /** Retrieve a source by id/fullname/name */
-    // Source getSource(String nameOrId);
 
     Sources getSources();
 
@@ -47,7 +36,15 @@ public interface Module extends RefIdNamed {
     Set<String> getMavenRepositories();
     Set<LibraryRepository> getLibraryRepositories();
 
-    /** Module runtime library */
+    /**
+     * Module runtime library.
+     * The library is retrieved in the following way:
+     *
+     *  1) check the configuration file for 'java source compatibility mode'
+     *  2) check if the project has a 'runtime.library' property defined (NOT 'auto' or '')
+     *  3) uses a 'default runtime library' embedded in the code ('jdk11')
+     *
+     */
     Library getRuntimeLibrary();
 
     /**
@@ -67,12 +64,6 @@ public interface Module extends RefIdNamed {
     // 01/06/2021: not necessary
 
     Resources getResources();
-
-    // /** Resources used by the module */
-    // List<Resource> getResources();
-
-    // /** Retrieve the resource by name or id/fullname/name */
-    // Resource getResource(String nameOrId);
 
     // -- types
 

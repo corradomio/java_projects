@@ -163,6 +163,10 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
             String namespace = fullname.substring(0, lst);
             return new ObjectName(namespace);
         }
+        else if (lst > 0 && !Character.isUpperCase(fullname.charAt(0))) {
+            String namespace = fullname.substring(0, lst);
+            return new ObjectName(namespace);
+        }
         else {
             return new ObjectName(JavaUtils.ROOT);
         }

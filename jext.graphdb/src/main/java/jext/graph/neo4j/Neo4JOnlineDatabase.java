@@ -4,6 +4,7 @@ import jext.graph.GraphDatabase;
 import jext.graph.GraphSession;
 import jext.logging.Logger;
 import jext.net.URL;
+import jext.util.PropertiesUtils;
 import jext.util.StringUtils;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
@@ -28,6 +29,9 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     private static final String USER_EXT = "neo4j.online.user";
     private static final String PASSWORD_EXT = "neo4j.online.password";
 
+    private static final String MAX_DELETE = "maxdelete";
+    private static final String MAX_STATEMENTS = "maxstatements";
+
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
@@ -39,6 +43,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     private Driver driver;
     private String version;
     private int majorVersion;
+
+    private int maxDelete, maxStatements;
 
     //private final Map<String, String> namedQueries = new HashMap<>();
     private final Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries = new HashMap<>();
@@ -59,12 +65,12 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     @Override
     public void initialize() {
 
-        String uri = url.getUrl();
-        String user = props.getProperty(USER);
-        String password = props.getProperty(PASSWORD);
+        String uri = this.url.getUrl();
+        String user = this.props.getProperty(USER);
+        String password = this.props.getProperty(PASSWORD);
 
         // compatibility with a previous implementation
-        if (user == null) user = props.getProperty(USER_EXT);
+        if (user == null) user = this.props.getProperty(USER_EXT);
         if (password == null) password = props.getProperty(PASSWORD_EXT);
 
         this.driver = org.neo4j.driver.GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
@@ -72,12 +78,15 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
         try(GraphSession session = this.connect()) {
             String s = "CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition";
             Map<String, Object> result = session.query(s, Collections.emptyMap()).result().next();
-            version = result.get("version").toString();
-            if (version.startsWith("4."))
-                majorVersion = 4;
+            this.version = result.get("version").toString();
+            if (this.version.startsWith("4."))
+                this.majorVersion = 4;
             else
-                majorVersion = 3;
+                this.majorVersion = 3;
         }
+
+        this.maxDelete = PropertiesUtils.getInt(props, MAX_DELETE, Neo4JOnlineSession.MAX_DELETE_NODES);
+        this.maxStatements = PropertiesUtils.getInt(props, MAX_STATEMENTS, Neo4JOnlineSession.MAX_STATEMENTS);
     }
 
     @Override
@@ -159,7 +168,15 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
         return majorVersion;
     }
 
-    Driver getdriver() { return driver; }
+    int getMaxDelete() {
+        return maxDelete;
+    }
+
+    int getMaxStatements() {
+        return maxStatements;
+    }
+
+    Driver getDriver() { return driver; }
 
     String getQuery(String qname) {
         // if (!namedQueries.containsKey(qname))

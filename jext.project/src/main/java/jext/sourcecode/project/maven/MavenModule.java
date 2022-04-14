@@ -4,9 +4,12 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.util.BaseModule;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ public class MavenModule extends BaseModule {
     MavenModule(File moduleHome, Project project) {
         super(moduleHome, project);
         this.pom = new MavenPom(moduleHome);
+        // retrieveRuntimeLibrary();
     }
 
     // ----------------------------------------------------------------------
@@ -44,6 +48,18 @@ public class MavenModule extends BaseModule {
     }
 
     // ----------------------------------------------------------------------
+
+    @Override
+    public RuntimeLibrary getRuntimeLibrary() {
+        // try with the current configuration
+        String javaVersion = pom.getJavaVersion();
+        if (StringUtils.isEmpty(javaVersion))
+            return super.getRuntimeLibrary();
+
+        String runtimeName = "jdk" + javaVersion;
+        return super.getRuntimeLibrary(runtimeName);
+    }
+
 
     @Override
     public List<Module> getDependencies() {

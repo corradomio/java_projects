@@ -30,6 +30,7 @@ import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
 import jext.util.LongHash;
 import jext.util.SetUtils;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -284,17 +285,37 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
     @Override
     public RuntimeLibrary getRuntimeLibrary() {
+        // check if it is possible to retrieve the runtime lbrary locally
         String runtimeName = GuessRuntimeLibrary.guessRuntimeLibrary(this);
+
+        // check if the project has a specified jdk
+        if (StringUtils.isEmpty(runtimeName)) {
+            runtimeName = project.getProperties().getProperty(Project.RUNTIME_LIBRARY, GuessRuntimeLibrary.NO_RUNTIME_LIBRARY);
+            if (runtimeName.equals("auto"))
+                runtimeName = StringUtils.empty();
+        }
+
+        // check if to use the default runtime library
+        if (StringUtils.isEmpty(runtimeName))
+            runtimeName = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+
+        return getRuntimeLibrary(runtimeName);
+    }
+
+    protected RuntimeLibrary getRuntimeLibrary(String runtimeName) {
 
         LibraryFinder lfinder = getProject().getLibraryFinder();
 
         RuntimeLibrary runtimeLibrary = lfinder.getRuntimeLibrary(runtimeName);
         if (runtimeLibrary == null) {
-            logger.errorf("JDK Library %s not available. Uses the default jdk8", runtimeName);
+            logger.errorf("JDK Library %s not available. Used the default %s", runtimeName, GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY);
             runtimeLibrary = lfinder.getRuntimeLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY);
         }
-        if (runtimeLibrary == null)
+
+        if (runtimeLibrary == null) {
+            logger.errorf("JDK Library %s not available. Used an 'empty library'", runtimeName);
             runtimeLibrary = new InvalidLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY, getProject());
+        }
 
         return runtimeLibrary;
     }

@@ -4,7 +4,9 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.gradle.collectors.DependenciesCollector;
 import jext.sourcecode.project.gradle.collectors.ErrorsCollector;
 import jext.sourcecode.project.gradle.collectors.LoggerCollector;
@@ -13,6 +15,7 @@ import jext.sourcecode.project.gradle.util.BuildGradleFile;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
 import jext.util.FileUtils;
+import jext.util.StringUtils;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.ProjectConnection;
@@ -110,6 +113,17 @@ public class GradleModule extends BaseModule {
     // ----------------------------------------------------------------------
     // Libraries
     // ----------------------------------------------------------------------
+
+    @Override
+    public RuntimeLibrary getRuntimeLibrary() {
+        // try with the current configuration
+        String javaVersion = buildGradle.getJavaVersion();
+        if (StringUtils.isEmpty(javaVersion))
+            return super.getRuntimeLibrary();
+
+        String runtimeName = "jdk" + javaVersion;
+        return super.getRuntimeLibrary(runtimeName);
+    }
 
     @Override
     public Set<String> getMavenRepositories() {

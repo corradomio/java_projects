@@ -1,5 +1,7 @@
 package jext.sourcecode.project;
 
+import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils;
+
 import java.util.Set;
 
 public class GuessRuntimeLibrary {
@@ -8,7 +10,8 @@ public class GuessRuntimeLibrary {
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final String DEFAULT_JAVA_RUNTIME_LIBRARY = "jdk8";
+    public static final String DEFAULT_JAVA_RUNTIME_LIBRARY = "jdk11";
+    public static final String NO_RUNTIME_LIBRARY = "";
     private static final String DEFAULT_ANDROID_RUNTIME_LIBRARY = "pie";
     private static final String ANDROID_NS  ="android.";
     private static final String ANDROIDX_NS  ="androidx.";
@@ -35,7 +38,7 @@ public class GuessRuntimeLibrary {
         if (runtimeName != null)
             return runtimeName;
 
-        return DEFAULT_JAVA_RUNTIME_LIBRARY;
+        return NO_RUNTIME_LIBRARY;
     }
 
     // ----------------------------------------------------------------------
@@ -53,9 +56,9 @@ public class GuessRuntimeLibrary {
     }
 
     private String checkConfiguration() {
-        String runtimeLibrary = module.getProperties().getProperty(Project.RUNTIME_LIBRARY, null);
-        if (runtimeLibrary == null)
-            runtimeLibrary = module.getProject().getProperties().getProperty(Project.RUNTIME_LIBRARY, null);
+        String runtimeLibrary = module.getProperties().getProperty(Project.RUNTIME_LIBRARY, NO_RUNTIME_LIBRARY);
+        if (StringUtils.isEmpty(runtimeLibrary))
+            runtimeLibrary = module.getProject().getProperties().getProperty(Project.RUNTIME_LIBRARY, NO_RUNTIME_LIBRARY);
         return runtimeLibrary;
     }
 
@@ -72,10 +75,10 @@ public class GuessRuntimeLibrary {
         if (androidCount > 0)
             return DEFAULT_ANDROID_RUNTIME_LIBRARY;
         else
-            return null;
+            return NO_RUNTIME_LIBRARY;
     }
 
     private String checkJavaProject() {
-        return null;
+        return NO_RUNTIME_LIBRARY;
     }
 }

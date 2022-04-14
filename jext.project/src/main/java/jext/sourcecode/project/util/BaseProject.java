@@ -526,17 +526,6 @@ public abstract class BaseProject extends NamedObject implements Project {
         return md;
     }
 
-    // public Library getRuntimeLibrary() {
-    //     String runtimeName = this.getProperties().getProperty(RUNTIME_LIBRARY, "jdk8");
-    //     Library runtimeLibrary = lfinder.getLibrary(runtimeName);
-    //     if (runtimeLibrary == null) {
-    //         logger.errorf("JDK Library %s not available. Uses the default jdk8", runtimeName);
-    //         runtimeLibrary = lfinder.getLibrary("jdk8");
-    //     }
-    //
-    //     return runtimeLibrary;
-    // }
-
     // ----------------------------------------------------------------------
     // Libraries
     // ----------------------------------------------------------------------

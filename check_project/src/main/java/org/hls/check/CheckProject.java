@@ -28,9 +28,14 @@ public class CheckProject {
                 // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
                 // "D:/SPLGroup/spl-workspaces/_anis_project/JunoWS-2021"
                 // "D:\\SPLGroup\\spl-workspaces\\etsalat-workspace\\Etisalat\\etisala-project-ebtic"
-                "D:\\Projects.github\\java_projects\\jext.linalg\\.spl\\project-info.json"
+                // "D:\\Projects.github\\java_projects\\jext.linalg\\.spl\\project-info.json"
+
+                "D:\\Projects.github\\other_projects\\spark-3.2.1"
+                    // "D:\\Projects.github\\other_projects\\hibernate-orm-5.2.0"
                 ),
-                PropertiesUtils.empty());
+                PropertiesUtils.properties("runtime.library", "auto"));
+
+            project.getModules().getModule().getRuntimeLibrary();
 
             ProjectDump.dump(project, 0);
 

@@ -1,7 +1,6 @@
 package org.hls.check;
 
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.ProjectDifferences;
 import jext.sourcecode.project.ProjectFactory;
 import jext.sourcecode.project.ProjectComparator;
 import jext.util.PropertiesUtils;
@@ -22,7 +21,7 @@ public class CompareProjects {
                 PropertiesUtils.empty());
 
         // ProjectComparator pcomp = ProjectComparator.compare(psrc, pdst);
-        ProjectComparator pcomp = ProjectComparator.compare(null, psrc);
+        ProjectComparator pcomp = ProjectComparator.compare(null, psrc, 0);
 
         File jsonFile = new File("test.json");
         pcomp.save(jsonFile);

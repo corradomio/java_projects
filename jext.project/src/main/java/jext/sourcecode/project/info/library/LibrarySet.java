@@ -160,8 +160,8 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
                 return library;
             if (library.getId().equals(nameOrId))
                 return library;
-            if (library.getName().getName().equals(nameOrId))
-                return library;
+            // if (library.getName().getName().equals(nameOrId))
+            //     return library;
             if (library.getPath().equals(nameOrId))
                 return library;
         }
@@ -171,8 +171,8 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
                 return library;
             if (library.getId().equals(nameOrId))
                 return library;
-            if (library.getName().getName().equals(nameOrId))
-                return library;
+            // if (library.getName().getName().equals(nameOrId))
+            //     return library;
             if (library.getPath().equals(nameOrId))
                 return library;
         }

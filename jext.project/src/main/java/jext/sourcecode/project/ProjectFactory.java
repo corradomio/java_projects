@@ -106,12 +106,6 @@ public class ProjectFactory {
         // But this can be expensive.
         //
 
-        // runtimeLibrary = project.getProperties().getProperty(RUNTIME_LIBRARY, null);
-        // if (runtimeLibrary == null)  {
-        //     runtimeLibrary = guessRuntimeLibrary(project);
-        //     project.getProperties().setProperty(RUNTIME_LIBRARY, runtimeLibrary);
-        // }
-
         MavenDownloader md = new MavenDownloader();
         LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(md);
         project.setLibraryFinder(lfinder);

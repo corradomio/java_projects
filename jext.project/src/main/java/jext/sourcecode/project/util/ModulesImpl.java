@@ -63,8 +63,8 @@ public class ModulesImpl extends ArrayList<Module> implements Modules {
                 return module;
 
             // DANGEROUS
-            if (module.getName().getName().equals(nameOrId))
-                return module;
+            // if (module.getName().getName().equals(nameOrId))
+            //     return module;
         }
 
         return null;

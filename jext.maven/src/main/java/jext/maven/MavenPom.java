@@ -3,6 +3,7 @@ package jext.maven;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
+import jext.util.StringUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -232,6 +233,31 @@ public class MavenPom implements MavenConst {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    //
+    // <project>
+    //      <properties>
+    //          <java.version>1.8</java.version>
+    //          <maven.compiler.source>8</maven.compiler.source>
+    //          <maven.compiler.target>8</maven.compiler.target>
+    //      </properties>
+    //      ...
+    // </project
+    //
+    //  return '8.0'
+
+    public String getJavaVersion() {
+        String version = XPathUtils.getValue(this.project, "/project/properties/java.version", "");
+        if (StringUtils.isEmpty(version))
+            version = XPathUtils.getValue(this.project, "/project/properties/maven.compiler.source",
+                "", getProperties());
+        if (StringUtils.isEmpty(version))
+            return NONE;
+        else if (version.contains("{"))
+            return NONE;
+        else
+            return version;
+    }
 
     public String getPackaging() {
         String packaging = XPathUtils.getValue(project, PACKAGING, PACKAGING_JAR);
