@@ -22,7 +22,7 @@ public class CommentedClass {
     // a line comment in class
     /*
         a block comment in class
-     */`
+     */
 
     /** CommentedClass.Counter */
     private int counter;
