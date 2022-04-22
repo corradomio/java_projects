@@ -24,6 +24,7 @@ public enum TypeRole {
 
     INTERFACE,      // is an interface
     CLASS,          // is a class
+    RECORD,         // is a record
     ENUM,           // is an enumeration
     ANNOTATION,     // is an annotation
 

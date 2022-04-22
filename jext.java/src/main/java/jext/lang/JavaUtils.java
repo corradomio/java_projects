@@ -4,6 +4,24 @@ import java.util.regex.Pattern;
 
 public class JavaUtils implements JavaConstants {
 
+    private static final String JDK = "jdk";
+
+    public static String languageVersionOf(String jdk) {
+        if (!jdk.startsWith(JDK))
+            return jdk;
+        else
+            return jdk.substring(3);
+    }
+
+    public static String toJDK(String languageVersion) {
+        if (languageVersion.startsWith(JDK))
+            return languageVersion;
+        else
+            return JDK + languageVersion;
+    }
+
+    // ----------------------------------------------------------------------
+
     public static boolean isPrimitive(String name) {
         return PRIMITIVE_TYPES.contains(name);
     }
@@ -63,22 +81,22 @@ public class JavaUtils implements JavaConstants {
     private static String SPECIAL_CHARS = "|?<(,:";
 
 
-    // a namespace is composed by lowercase characters and '.'
+        // a namespace is composed by lowercase characters and '.'
     public static boolean isNamespace(String symbol) {
         return NAMESPACE.matcher(symbol).matches();
     }
 
-    // a constant is composed only by uppercase characters
+        // a constant is composed only by uppercase characters
     public static boolean isConstant(String symbol) {
         return CONSTANT.matcher(symbol).matches();
     }
 
-    // in general, an identifier starts with a lowercase letter
+        // in general, an identifier starts with a lowercase letter
     public static boolean isIdentifier(String symbol) {
         return IDENTIFIER.matcher(symbol).matches();
     }
 
-    // in general, a class starts with an uppercase letter or contains "." to be fully qualified
+        // in general, a class starts with an uppercase letter or contains "." to be fully qualified
     public static boolean isClassName(String symbol) {
         return CLASSNAME.matcher(symbol).matches() || INNER_CLASSNAME.matcher(symbol).matches();
     }
