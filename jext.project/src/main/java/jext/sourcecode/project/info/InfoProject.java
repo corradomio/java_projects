@@ -4,6 +4,7 @@ import jext.maven.MavenDownloader;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.PathName;
+import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryRepository;
@@ -11,6 +12,7 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.info.library.InfoInvalidLibrary;
 import jext.sourcecode.project.info.library.InfoLocalLibrary;
@@ -29,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -55,16 +58,10 @@ public class InfoProject implements Project {
     private LibraryFinder lfinder;
 
     private Map<String, Object> info;
-    // private List<Module> modules;
-    // private Map<String, Module> moduleMap;
-    //private Set<Library> libraries;
     private LibrarySet libraries;
-    // private Map<String, Library> libraryMap;
-    // private List<Source> sources;
 
     private ModulesImpl modules;
     private SourcesImpl sources;
-    // private Map<String, Source> sourceMap;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -153,6 +150,16 @@ public class InfoProject implements Project {
     @Override
     public File getProjectHome() {
         return projectHome;
+    }
+
+    @Override
+    public String getRuntimeLibrary() {
+        String rtLibrary = properties.getProperty(RUNTIME_LIBRARY);
+
+        if (rtLibrary == null)
+            rtLibrary = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+
+        return rtLibrary;
     }
 
     // ----------------------------------------------------------------------

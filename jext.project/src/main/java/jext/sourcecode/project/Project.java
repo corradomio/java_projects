@@ -5,6 +5,7 @@ import jext.name.IdNamed;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -73,64 +74,48 @@ public interface Project extends IdNamed {
     Properties getProperties();
 
     /** Path of the project in the filesystem, if it exists */
-    @Nonnull
     File getProjectHome();
 
     // ----------------------------------------------------------------------
 
-    LibraryFinder   getLibraryFinder();
-
-    MavenDownloader getLibraryDownloader();
-
     /** Set the library finder */
     Project setLibraryFinder(LibraryFinder lfinder);
+
+    /** Retrieve the Library finder */
+    LibraryFinder   getLibraryFinder();
+
+    /** Equivalent to 'getLibraryFinder().getLibraryDownloader()' */
+    MavenDownloader getLibraryDownloader();
 
     // ----------------------------------------------------------------------
     // Module/Source
     // ----------------------------------------------------------------------
-    // List<Module> getModules();
-    // Module getModule(String nameOrId);
-    // default Module getModule() {
-    //     return getModule(ROOT_MODULE_NAME);
-    // }
-    //
-    // List<Source> getSources();
-    // Source getSource(String sourceId);
 
+    /** Retrieve all modules */
     Modules getModules();
 
+    /** retreive all sources (in all modules) */
     Sources getSources();
 
     // ----------------------------------------------------------------------
     // Libraries
     // ----------------------------------------------------------------------
 
-    enum LibrariesSelector {
-        USED,
-        UNUSED,
-        ALL,
-    }
-
     /** UNION of all module libraries with the HIGHEST version */
-    /*Set<Library>*/LibrarySet getLibraries();
+    LibrarySet getLibraries();
 
     /** List of module libraries RESOLVED with HIGHEST version */
     Set<Library> getLibraries(Module module);
 
-    // /** Library by name or id */
-    // Library getLibrary(String nameOrId);
+    /** Runtimelibrary assigned at project level */
+    String getRuntimeLibrary();
 
-    // /** Library with HIGHEST version */
-    // Library getLibrary(Library library);
+    // ----------------------------------------------------------------------
+    // LibraryRepositories
+    // ----------------------------------------------------------------------
 
     Set<LibraryRepository> getLibraryRepositories();
     LibraryRepository getLibraryRepository(String librepoId);
-
-    // ----------------------------------------------------------------------
-    // Extras
-    // ----------------------------------------------------------------------
-
-    // double getComplexity(double threshold);
 
     // ----------------------------------------------------------------------
     // Abort

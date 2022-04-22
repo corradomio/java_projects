@@ -6,6 +6,7 @@ import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.gradle.collectors.AllDepsCollector;
 import jext.sourcecode.project.gradle.collectors.ErrorsCollector;
 import jext.sourcecode.project.gradle.collectors.LoggerCollector;
@@ -15,9 +16,9 @@ import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
+import jext.util.StringUtils;
 import org.gradle.tooling.BuildAction;
 import org.gradle.tooling.BuildActionExecuter;
-import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnectionException;
 import org.gradle.tooling.GradleConnector;
@@ -119,6 +120,91 @@ public class GradleProject extends BaseProject {
     // ----------------------------------------------------------------------
 
     @Override
+    public String getRuntimeLibrary() {
+        if (properties.containsKey(RUNTIME_LIBRARY))
+            return super.getRuntimeLibrary();
+
+        String rtLibrary = getRuntimeLibraryFromGradleWrapper();
+        if (rtLibrary != null)
+            properties.setProperty(RUNTIME_LIBRARY, rtLibrary);
+
+        return super.getRuntimeLibrary();
+    }
+
+    /*
+        Java version    First Gradle version to support it
+        8               2.0
+        9               4.3
+        10              4.7
+        11              5.0
+        12              5.4
+        13              6.0
+        14              6.3
+        15              6.7
+        16              7.0
+        17              7.3
+     */
+    private static final double[] GRADLE_VERSIONS = new double[] {
+        //      JDK version
+        0.,     // 0
+        0.,     // 1
+        0.,     // 2
+        0.,     // 3
+        0.,     // 4
+        0.,     // 5
+        0.,     // 6
+        0.,     // 7
+        2.0,    // 8
+        4.3,    // 9
+        4.7,    // 10
+        5.0,    // 11
+        5.4,    // 12
+        6.0,    // 13
+        6.3,    // 14
+        6.7,    // 15
+        7.0,    // 16
+        7.3     // 17
+    };
+
+    private static final String GRADLE_PREFIX = "gradle-";
+    private static final String GRADLE_SUFFIX = "-bin.zip";
+
+    private String getRuntimeLibraryFromGradleWrapper() {
+        File gradleWrapperProperties = new File(getProjectHome(), "gradle/wrapper/gradle-wrapper.properties");
+        if (!gradleWrapperProperties.exists())
+            return null;
+
+        Properties gwProps = PropertiesUtils.load(gradleWrapperProperties);
+        String distributionUrl = gwProps.getProperty("distributionUrl", null);
+        if (distributionUrl == null)
+            return null;
+
+        // https://services.gradle.org/distributions/gradle-2.13-bin.zip
+        int b = distributionUrl.indexOf(GRADLE_PREFIX) + GRADLE_PREFIX.length();
+        int e = distributionUrl.indexOf(GRADLE_SUFFIX, b);
+        if (e == -1)
+            return null;
+
+        float gversion = 0;
+        String gradleVersion = distributionUrl.substring(b, e);
+        try {
+            gversion = Float.parseFloat(gradleVersion);
+        }
+        catch (NumberFormatException ex) { }
+        if (gversion == 0)
+            return null;
+
+        for(int i=9; i<GRADLE_VERSIONS.length; ++i) {
+            if (gversion < GRADLE_VERSIONS[i])
+                return String.format("jdk%d", i-1);
+        }
+
+        return String.format("jdk%d", GRADLE_VERSIONS.length-1);
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
     public Modules getModules() {
         if (modules != null)
             return modules;
@@ -134,7 +220,7 @@ public class GradleProject extends BaseProject {
         return modules;
     }
 
-    void addModule(Module module) {
+    private void addModule(Module module) {
         if (modules.getModule(module.getPath()) != null)
             return;
 
@@ -170,14 +256,7 @@ public class GradleProject extends BaseProject {
         });
     }
 
-    // private void addGradleModule(String moduleName) {
-    //     if (getModule(moduleName) != null)
-    //         return;
-    //
-    //     addModule(newModule(new File(projectHome, moduleName)));
-    // }
-
-    public void findModulesByGradle() {
+    private void findModulesByGradle() {
         if (isDependenciesResolved())
             addResolvedGradleModules();
         else
@@ -194,30 +273,14 @@ public class GradleProject extends BaseProject {
         finally {
             closeConnection();
         }
+    }
 
-        // try {
-        //     openConnection();
-        //
-        //     Set<GradleModule> visited = new HashSet<>();
-        //     Queue<GradleModule> toVisit = new LinkedList<>();
-        //     toVisit.add(rootModule);
-        //
-        //     while (!toVisit.isEmpty() && !isAborted()) {
-        //         GradleModule gmodule = toVisit.remove();
-        //         visited.add(gmodule);
-        //
-        //         toVisit.addAll(gmodule.getModules());
-        //     }
-        //
-        //     for (GradleModule gmodule : visited) {
-        //         gmodule.getDeclaredLibraries();
-        //         gmodule.getMavenRepositories();
-        //         addModule(gmodule);
-        //     }
-        // }
-        // finally {
-        //     closeConnection();
-        // }
+    private void addResolvedGradleModules() {
+        depsCollector.getGradleProjectNames().forEach(gradleProjectName -> {
+            Module module = newModule(new File(projectHome, gradleProjectName));
+            module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_CONFIGURATION);
+            addModule(module);
+        });
     }
 
     // ----------------------------------------------------------------------
@@ -226,72 +289,72 @@ public class GradleProject extends BaseProject {
     // this method append the content of the resource 'jext.sourcecode.project.gradle.splalldeps.gradle
     // at the end of <projectHome>/build.gradle
 
-    private static final String HEADER = "// SPLAllDependencies::BEGIN";
-    private static final String FOOTER = "// SPLAllDependencies::END";
-    private AllDepsCollector depsCollector;
-
-    private void updateBuildGradle() {
-        File buildGradle = new File(projectHome, BUILD_GRADLE);
-        if (!buildGradle.exists()) {
-            logger.errorf("Gradle project %s WITHOUT 'build.gradle'", getName().getFullName());
-            return;
-        }
-
-        String script = FileUtils.toString(this.getClass().getResourceAsStream(
-            "/jext/sourcecode/project/gradle/splalldeps.gradle"));
-
-        // read the file content
-        String content = FileUtils.toString(buildGradle);
-        int pos = content.indexOf(HEADER);
-        int end = content.indexOf(FOOTER);
-
-        // check the 'content' contains HEADER
-        if (pos == -1) {
-            // add the script
-            content += "\n\n" + script;
-        }
-        else if (end == -1) {
-            content = content.substring(0, pos) + script;
-        }
-        else {
-            content = content.substring(0, pos) + script + content.substring(end + FOOTER.length());
-
-        }
-        FileUtils.asFile(buildGradle, content);
-    }
-
-    private void retrieveAllDependencies() {
-        ErrorsCollector err = new ErrorsCollector(logger);
-        AllDepsCollector collector = new AllDepsCollector();
-        LoggerCollector logcoll = new LoggerCollector(logger, collector);
-        try {
-            openConnection();
-            connection.newBuild().forTasks("splAllDeps")
-                .withArguments("--continue")
-                // .setStandardOutput(collector)            // this
-                .setStandardOutput(logcoll)                 // OR this
-                .setStandardError(err)
-                .run();
-
-            this.depsCollector = collector;
-        }
-        catch (BuildException e) {
-            String message = e.getCause().getMessage();
-            if (!message.contains("not found in root project"))
-                logger.error(e);
-        }
-        finally {
-            logcoll.close();
-            collector.close();
-            err.close();
-            closeConnection();
-        }
-
-    }
-
     boolean isDependenciesResolved() {
         return depsCollector != null;
     }
+
+    // private static final String HEADER = "// SPLAllDependencies::BEGIN";
+    // private static final String FOOTER = "// SPLAllDependencies::END";
+    private AllDepsCollector depsCollector;
+
+    // private void updateBuildGradle() {
+    //     File buildGradle = new File(projectHome, BUILD_GRADLE);
+    //     if (!buildGradle.exists()) {
+    //         logger.errorf("Gradle project %s WITHOUT 'build.gradle'", getName().getFullName());
+    //         return;
+    //     }
+    //
+    //     String script = FileUtils.toString(this.getClass().getResourceAsStream(
+    //         "/jext/sourcecode/project/gradle/splalldeps.gradle"));
+    //
+    //     // read the file content
+    //     String content = FileUtils.toString(buildGradle);
+    //     int pos = content.indexOf(HEADER);
+    //     int end = content.indexOf(FOOTER);
+    //
+    //     // check the 'content' contains HEADER
+    //     if (pos == -1) {
+    //         // add the script
+    //         content += "\n\n" + script;
+    //     }
+    //     else if (end == -1) {
+    //         content = content.substring(0, pos) + script;
+    //     }
+    //     else {
+    //         content = content.substring(0, pos) + script + content.substring(end + FOOTER.length());
+    //
+    //     }
+    //     FileUtils.asFile(buildGradle, content);
+    // }
+
+    // private void retrieveAllDependencies() {
+    //     ErrorsCollector err = new ErrorsCollector(logger);
+    //     AllDepsCollector collector = new AllDepsCollector();
+    //     LoggerCollector logcoll = new LoggerCollector(logger, collector);
+    //     try {
+    //         openConnection();
+    //         connection.newBuild().forTasks("splAllDeps")
+    //             .withArguments("--continue")
+    //             // .setStandardOutput(collector)            // this
+    //             .setStandardOutput(logcoll)                 // OR this
+    //             .setStandardError(err)
+    //             .run();
+    //
+    //         this.depsCollector = collector;
+    //     }
+    //     catch (BuildException e) {
+    //         String message = e.getCause().getMessage();
+    //         if (!message.contains("not found in root project"))
+    //             logger.error(e);
+    //     }
+    //     finally {
+    //         logcoll.close();
+    //         collector.close();
+    //         err.close();
+    //         closeConnection();
+    //     }
+    //
+    // }
 
     Set<Library> getMavenLibraries(GradleModule module) {
         String moduleName = module.getName().getFullName();
@@ -317,14 +380,6 @@ public class GradleProject extends BaseProject {
 
     Set<String> getMavenRepositories(GradleModule module) {
         return depsCollector.getMavenRepositories();
-    }
-
-    private void addResolvedGradleModules() {
-        depsCollector.getGradleProjectNames().forEach(gradleProjectName -> {
-            Module module = newModule(new File(projectHome, gradleProjectName));
-            module.getProperties().setProperty(MODULE_DEFINITION, MODULE_DEFINITION_BY_CONFIGURATION);
-            addModule(module);
-        });
     }
 
     // ----------------------------------------------------------------------
@@ -491,15 +546,19 @@ public class GradleProject extends BaseProject {
         else {
             connector.useBuildDistribution();
         }
-
     }
 
     private void setOrgGradleJavaHome() {
         String ogjh = getProperties().getProperty(GRADLE_JAVA_HOME);
-        if (ogjh == null) return;
+        if (ogjh == null)
+            ogjh = getJavaHomeFromGradleVersion();
+
+        if (ogjh == null)
+            return;
 
         File javaHome = new File(ogjh);
-        if (!javaHome.isDirectory()) return;
+        if (!javaHome.isDirectory())
+            return;
 
         Properties gradleProperties;
         File gradlePropertiesFile = new File(projectHome, GRADLE_PROPERTIES);
@@ -508,11 +567,28 @@ public class GradleProject extends BaseProject {
         else
             gradleProperties = new Properties();
 
-        // if (gradleProperties.containsKey(GRADLE_JAVA_HOME))
-        //     return;
-
         gradleProperties.setProperty(GRADLE_JAVA_HOME, FileUtils.getAbsolutePath(javaHome));
         PropertiesUtils.save(gradlePropertiesFile, gradleProperties);
+    }
+
+    private String getJavaHomeFromGradleVersion() {
+        // try to retrieve the JDK from the Gradle wrapper
+        String javaVersion = getRuntimeLibraryFromGradleWrapper();
+        if (StringUtils.isEmpty(javaVersion))
+            return null;
+
+        /*
+            Properties contains:
+            ...
+            "jdk8": "jdk8-home",
+            "jdk9": "jdk9-home",
+            ...
+         */
+        RuntimeLibrary rtlib = getLibraryFinder().getRuntimeLibrary(javaVersion);
+        if (rtlib == null)
+            return null;
+        else
+            return rtlib.getFile().getAbsolutePath();
     }
 
     // ----------------------------------------------------------------------

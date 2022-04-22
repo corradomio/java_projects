@@ -45,7 +45,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     private Project project;
 
     // Maven downloader
-    private MavenDownloader md;
+    private MavenDownloader md = new MavenDownloader();
 
     // name -> directory
     private Map<String, File> namedLibraries = new HashMap<>();
@@ -78,40 +78,6 @@ public class JavaLibraryFinder implements LibraryFinder {
         return this;
     }
 
-    // /**
-    //  * Add the descriptors available in the specified directory.
-    //  * The descriptor files have extensions:
-    //  *
-    //  *      .descriptor
-    //  *      .descriptor.gz
-    //  *      .descriptor.zip
-    //  *
-    //  * @param librariesDir directory
-    //  * @return this
-    //  */
-    // public JavaLibraryFinder setLibrariesDir(File librariesDir) {
-    //     addDescriptors(librariesDir, DESCRIPTOR_GZ);
-    //     addDescriptors(librariesDir, DESCRIPTOR);
-    //     addDescriptors(librariesDir, DESCRIPTOR_ZIP);
-    //
-    //     return this;
-    // }
-
-    // private void addDescriptors(File librariesDir, String ext) {
-    //     FileUtils.listFiles(librariesDir, ext)
-    //         .forEach(libraryFile -> {
-    //             String libraryName = libraryFile.getName();
-    //             libraryName = libraryName.substring(0, libraryName.length() - ext.length());
-    //
-    //             namedLibrary(libraryName, libraryFile);
-    //         });
-    // }
-
-    // public JavaLibraryFinder addLibrariesDirs(List<File> librariesDirs) {
-    //     librariesDirs.forEach(this::setLibrariesDir);
-    //     return this;
-    // }
-
     /**
      * Add a 'named' library: it can me a file descriptor or a directory.
      * If it is a directory, the directory is scanned recursively for ".jar"
@@ -135,6 +101,10 @@ public class JavaLibraryFinder implements LibraryFinder {
             setNamedLibrary(libraryName, libraryPath);
         }
         return this;
+    }
+
+    public JavaLibraryFinder addLibrary(String libraryName, String libraryPath) {
+        return setNamedLibrary(libraryName, new File(libraryPath));
     }
 
     public JavaLibraryFinder initialize() {

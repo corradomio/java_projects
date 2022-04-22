@@ -289,32 +289,25 @@ public abstract class BaseModule extends ReferencedObject implements Module {
         String runtimeName = GuessRuntimeLibrary.guessRuntimeLibrary(this);
 
         // check if the project has a specified jdk
-        if (StringUtils.isEmpty(runtimeName)) {
-            runtimeName = project.getProperties().getProperty(Project.RUNTIME_LIBRARY, GuessRuntimeLibrary.NO_RUNTIME_LIBRARY);
-            if (runtimeName.equals("auto"))
-                runtimeName = StringUtils.empty();
-        }
-
-        // check if to use the default runtime library
         if (StringUtils.isEmpty(runtimeName))
-            runtimeName = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+            runtimeName = project.getRuntimeLibrary();
 
         return getRuntimeLibrary(runtimeName);
     }
 
     protected RuntimeLibrary getRuntimeLibrary(String runtimeName) {
-
+        String rtLibrary = project.getRuntimeLibrary();;
         LibraryFinder lfinder = getProject().getLibraryFinder();
 
         RuntimeLibrary runtimeLibrary = lfinder.getRuntimeLibrary(runtimeName);
         if (runtimeLibrary == null) {
-            logger.errorf("JDK Library %s not available. Used the default %s", runtimeName, GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY);
-            runtimeLibrary = lfinder.getRuntimeLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY);
+            logger.errorf("JDK Library %s not available. Used the default %s", runtimeName, rtLibrary);
+            runtimeLibrary = lfinder.getRuntimeLibrary(rtLibrary);
         }
 
         if (runtimeLibrary == null) {
             logger.errorf("JDK Library %s not available. Used an 'empty library'", runtimeName);
-            runtimeLibrary = new InvalidLibrary(GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY, getProject());
+            runtimeLibrary = new InvalidLibrary(runtimeName, getProject());
         }
 
         return runtimeLibrary;

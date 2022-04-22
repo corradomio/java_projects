@@ -8,6 +8,7 @@ import jext.name.Name;
 import jext.name.NamedObject;
 import jext.name.PathName;
 import jext.nio.file.FilteredFileVisitor;
+import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryRepository;
@@ -16,6 +17,7 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
+import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.maven.MavenRepository;
@@ -25,7 +27,6 @@ import jext.util.Bag;
 import jext.util.FileUtils;
 import jext.util.HashBag;
 import jext.util.PropertiesUtils;
-import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,9 +127,15 @@ public abstract class BaseProject extends NamedObject implements Project {
             getClass().getSimpleName(),
             getName().getName());
 
-        // this.setId(StringUtils.digest(getName().getFullName()));
         setIdFromName();
+        cleanupProperties();
         this.selector = (p) -> true;
+    }
+
+    private void cleanupProperties() {
+        String rtLibrary = properties.getProperty(RUNTIME_LIBRARY, null);
+        if ("auto".equals(rtLibrary) || "".equals(rtLibrary))
+            properties.remove(RUNTIME_LIBRARY);
     }
 
     // ----------------------------------------------------------------------
@@ -155,6 +162,16 @@ public abstract class BaseProject extends NamedObject implements Project {
         return projectHome;
     }
 
+    @Override
+    public String getRuntimeLibrary() {
+        String rtLibrary = properties.getProperty(RUNTIME_LIBRARY, null);
+
+        if (rtLibrary == null)
+            rtLibrary = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+
+        return rtLibrary;
+    }
+
     // ----------------------------------------------------------------------
     // Sources
     // ----------------------------------------------------------------------
@@ -169,19 +186,6 @@ public abstract class BaseProject extends NamedObject implements Project {
             sources.addAll(module.getSources());
         return sources;
     }
-
-    // @Override
-    // public Source getSource(String sourceId) {
-    //     for (Source source : getSources()) {
-    //         if (source.getId().equals(sourceId))
-    //             return source;
-    //         if (source.getName().getFullName().equals(sourceId))
-    //             return source;
-    //         if (source.getName().getName().equals(sourceId))
-    //             return source;
-    //     }
-    //     return null;
-    // }
 
     // ----------------------------------------------------------------------
     // Modules
@@ -259,8 +263,6 @@ public abstract class BaseProject extends NamedObject implements Project {
      *      [sourceRoot]/source/[package]/[class]
      *      [sourceRoot]/[parent]/[package]/[class]
      *
-     *
-     * @return
      */
     private List<File> findModulesHome() {
         HashBag<File> modulesHome = new HashBag<>();
@@ -308,6 +310,10 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         return selectedHomes;
     }
+
+    // ----------------------------------------------------------------------
+    // Analyze a "Maven layout"
+    // ----------------------------------------------------------------------
 
     private static final String MAVEN_SRC_MAIN_JAVA = "java";
     private static final String MAVEN_SRC_MAIN = "main";
@@ -566,27 +572,6 @@ public abstract class BaseProject extends NamedObject implements Project {
         return projectLibraries.resolveAll(module.getDeclaredLibraries());
     }
 
-    // @Override
-    // public Library getLibrary(String nameOrId) {
-    //     for (Library library : getLibraries()) {
-    //         if (library.getId().equals(nameOrId))
-    //             return library;
-    //         if (library.getName().getFullName().equals(nameOrId))
-    //             return library;
-    //         if (library.getName().getName().equals(nameOrId))
-    //             return library;
-    //         if (library.getPath().equals(nameOrId))
-    //             return library;
-    //     }
-    //     return null;
-    // }
-
-    // @Override
-    // public Library getLibrary(Library library) {
-    //     jext.sourcecode.project.util.LibrarySet projectLibraries = (jext.sourcecode.project.util.LibrarySet) getLibraries();
-    //     return projectLibraries.resolve(library);
-    // }
-
     @Override
     public Set<LibraryRepository> getLibraryRepositories() {
         return getMavenRepositories()
@@ -699,15 +684,6 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         return mavenRepos;
     }
-
-    // ----------------------------------------------------------------------
-    // Extras
-    // ----------------------------------------------------------------------
-
-    // @Override
-    // public double getComplexity(double threshold) {
-    //     return 0.;
-    // }
 
     // ----------------------------------------------------------------------
     // Abort
