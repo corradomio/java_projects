@@ -16,6 +16,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /*
      Commands
@@ -51,7 +53,6 @@ import java.util.List;
  */
 public class UndDatabase implements AutoCloseable {
 
-    private static final String JAVA = "java";
     private static final String NO_LANGUAGE = "";
     private static Logger logger = LogManager.getLogger(UndDatabase.class);
 
@@ -62,10 +63,6 @@ public class UndDatabase implements AutoCloseable {
      * @return
      */
     public static UndDatabase database(File undPath) {
-        // if (JAVA.equals(language))
-        //     return new UndJavaDatabase(undDatabase, version);
-        // else
-        //     return new UndDatabase(undDatabase, language, version);
         return new UndDatabase(undPath);
     }
 
@@ -77,7 +74,8 @@ public class UndDatabase implements AutoCloseable {
 
     protected File undPath;
     protected String language;
-    // protected int languageVersion;
+    protected File tempPath;
+    protected String refId;
     protected com.scitools.understand.Database database;
 
     // ----------------------------------------------------------------------
@@ -91,6 +89,11 @@ public class UndDatabase implements AutoCloseable {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    public void setTempInfo(File tempPath, String refId) {
+        this.tempPath = tempPath;
+        this.refId = refId;
+    }
 
     public File getPath() {
         return undPath;
@@ -124,9 +127,9 @@ public class UndDatabase implements AutoCloseable {
         delete(undPath);
     }
 
-    private static void delete (File f) {
+    private static void delete(File f) {
         if (f != null && !f.delete())
-            logger.warn(String.format("Unable to delete %s", f.getAbsolutePath()));
+           logger.warn(String.format("Unable to delete %s", f.getAbsolutePath()));
     }
 
     /*
@@ -142,9 +145,15 @@ public class UndDatabase implements AutoCloseable {
         if (exists())
             throw new IOException("Database '" + undPath.getAbsolutePath() + "' already existent");
 
-        SciTools.und("create",
-                "-db", undPath.getAbsolutePath(),
-                "-languages", language);
+        SciTools.und().exec("create",
+            "-languages", language,
+            "-db", undPath.getAbsolutePath()
+        );
+
+        SciTools.und().exec("settings",
+            "-JavaVersion", "10-18",
+            "-db", undPath.getAbsolutePath()
+        );
     }
 
     // ----------------------------------------------------------------------
@@ -291,34 +300,46 @@ public class UndDatabase implements AutoCloseable {
 
     private void applyOnSource(String action, File fileOrDirectory) throws IOException {
         if (fileOrDirectory.isDirectory()) {
-            SciTools.und(action, fileOrDirectory.getAbsolutePath(),
+            SciTools.und().exec(action, fileOrDirectory.getAbsolutePath(),
                     undPath.getAbsolutePath());
         }
         else {
-            SciTools.und(action, /* "-file", */ fileOrDirectory.getAbsolutePath(),
+            SciTools.und().exec(action, /* "-file", */ fileOrDirectory.getAbsolutePath(),
                     undPath.getAbsolutePath());
         }
     }
 
     private void applyOnSources(String action, List<File> files) throws IOException {
-        File tempFile = null;
-
-        try {
-            tempFile = createSourcesListFile(files);
-            SciTools.und(action, "@"+tempFile.getAbsolutePath(),
-                    undPath.getAbsolutePath());
-
-            delete(tempFile);
-        }
-        finally {
-            delete(tempFile);
-        }
+        File tempFile = createSourcesListFile(files);
+        SciTools.und().exec(action, "@"+tempFile.getAbsolutePath(),
+                undPath.getAbsolutePath());
     }
 
-    private File createSourcesListFile(List<File> files) throws IOException {
-        File tempFile = Files.createTempFile("$scitools", ".txt").toFile();
+    private File createSourcesListFile(Collection<File> files) throws IOException {
+        File tempFile = createTempFile("scitools-sources");
+        return writeListFile(tempFile, files);
+    }
+
+    private File createLibrariesListFile(Collection<File> files) throws IOException {
+        File tempFile = createTempFile("scitools-libraries");
+        return writeListFile(tempFile, files);
+    }
+
+    private File createTempFile(String prefix) throws IOException {
+        File tempFile;
+        if (tempPath == null)
+            tempFile = Files.createTempFile(prefix, ".txt").toFile();
+        else {
+            String tempName = String.format("%s-%s.txt", refId, prefix);
+            tempFile = new File(tempPath, tempName);
+        }
+        return tempFile;
+    }
+
+    private File writeListFile(File tempFile, Collection<File> files) throws IOException {
+        Set<File> ordered = new TreeSet<>(files);
         try(Writer writer = new FileWriter(tempFile)) {
-            files.forEach(file -> {
+            ordered.forEach(file -> {
                 try {
                     writer.write(file.getAbsolutePath());
                     writer.write("\n");
@@ -337,11 +358,27 @@ public class UndDatabase implements AutoCloseable {
     public void addLibraries(Collection<File> libraryFiles) throws IOException {
         if (language == null)
             retrieveLanguage();
-        if (!"java".equals(this.language))
-            throw new UnsupportedOperationException("Unsupported language");
+        // if (!"java".equals(this.language))
+        //     throw new UnsupportedOperationException("Unsupported language");
+
+
+        // save the list of files in an external file
+        File librariesFile = createLibrariesListFile(libraryFiles);
+
+        // DESN'T WORK!! WHY???
+        // {
+        //     List<String> command = new ArrayList<>();
+        //     command.add("settings");
+        //     command.add("-JavaClassPathsAdd");
+        //     command.add(String.format("@%s", librariesFile.getAbsolutePath()));
+        //     SciTools.und().exec(command);
+        // }
+
+        // configure SciTools DB with the list of libraries
+        // Note: the list is splitted in chunks of MAX_FILES_INLINE (20) files
+        // because it is not possible to pass a lot of files on the command line
 
         List<File> lfiles = new ArrayList<>(libraryFiles);
-
         int n = lfiles.size();
         int ssize = MAX_FILES_INLINE;
 
@@ -352,15 +389,13 @@ public class UndDatabase implements AutoCloseable {
             List<String> command = new ArrayList<>();
             command.add("settings");
             command.add("-JavaClassPathsAdd");
-
             subList.forEach(libraryFile -> {
                 command.add(libraryFile.getAbsolutePath());
             });
 
             command.add(undPath.getAbsolutePath());
 
-            SciTools.und(command);
-
+            SciTools.und().exec(command);
         }
     }
 
@@ -409,7 +444,7 @@ public class UndDatabase implements AutoCloseable {
         if (!exists())
             throw new IOException("Database '" + undPath.getAbsolutePath() + "' not existent");
 
-        SciTools.und("-verbose", "analyze", update ? "-changed" : "-all",
+        SciTools.und().exec("-verbose", "analyze", update ? "-changed" : "-all",
                 undPath.getAbsolutePath());
     }
 

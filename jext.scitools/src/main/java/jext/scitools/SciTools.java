@@ -1,11 +1,12 @@
 package jext.scitools;
 
 import jext.logging.Logger;
-import jext.scitools.util.OutputStreamToLogger;
+import jext.scitools.util.OutputStreamToConsumer;
 import jext.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 /**
  * Class used to check if SciTools 'un' command line application is correctly configured.
@@ -22,6 +24,10 @@ import java.util.concurrent.TimeoutException;
  * at the dependency analysis start.
  */
 public abstract class SciTools {
+
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
 
     private static final String UNDERSTAND = "com.scitools.understand.Understand";
 
@@ -32,8 +38,12 @@ public abstract class SciTools {
         MACOS
     }
 
-    private static File installationDirectory = null; // = new File("$invalid");
-    private static File pyappDirectory = null; // = new File("main.py");
+    // ----------------------------------------------------------------------
+    // Global variables
+    // ----------------------------------------------------------------------
+
+    private static File installationDirectory = null;
+    private static File pyappDirectory = null;
     private static OperatingSystem os = OperatingSystem.UNKNOWN;
 
     private static String undApp = "und";
@@ -44,12 +54,20 @@ public abstract class SciTools {
     private static Logger logger = Logger.getLogger(SciTools.class);
 
     // ----------------------------------------------------------------------
+    // Local variables
+    // ----------------------------------------------------------------------
+
+    private List<Consumer<String>> messageHandlers = new ArrayList<>();
+
+    // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
 
     public static void setInstallationDirectory(String homeDirectory) {
         if (homeDirectory != null)
             setInstallationDirectory(new File(homeDirectory));
+        else
+            guessInstallationDirectory();
     }
 
     public static void setInstallationDirectory(File homeDirectory) {
@@ -58,9 +76,25 @@ public abstract class SciTools {
         setApps();
     }
 
+    private static void guessInstallationDirectory() {
+        checkOs();
+        dumpEnvironment();
+        File undPath = locateUnd();
+        if (undPath == null)
+            return;
+
+        // Windows:  installationDirectory, "bin/pc-win64/und.exe"
+        // Linux:    installationDirectory, "bin/linux64/und"
+        // MacOS:    installationDirectory, "Contents/MacOS/und"
+        File homeDirectory = undPath.getParentFile().getParentFile().getParentFile();
+        setInstallationDirectory(homeDirectory);
+    }
+
     public static void setPythonAppDirectory(File pyappDirectory) {
         SciTools.pyappDirectory = pyappDirectory;
     }
+
+    // ----------------------------------------------------------------------
 
     public static void checkInstallation() {
         if (SciTools.os == OperatingSystem.UNKNOWN) {
@@ -125,8 +159,6 @@ public abstract class SciTools {
         }
     }
 
-    // ----------------------------------------------------------------------
-
     private static void checkOs() {
         String osname = System.getProperty("os.name");
         if (osname.contains("Windows"))
@@ -188,36 +220,119 @@ public abstract class SciTools {
                 throw new IOException("Invalid installation or pyapp directories");
 
             // check if the class 'com.scitools.understand.Understand' can be loaded
-            Class.forName(UNDERSTAND);
+            // Note: NOT NECESSARY
+            // Class.forName(UNDERSTAND);
 
             // check for 'und' application
-            p = Runtime.getRuntime().exec(undApp + " help");
-            p.waitFor();
+            // Note: NOT NECESSARY
+            // p = Runtime.getRuntime().exec(undApp + " help");
+            // p.waitFor();
 
             // check for 'upython' application
-            p = Runtime.getRuntime().exec(upythonApp + " -c 'print()'");
-            p.waitFor();
+            // Note: NOT NECESSARY
+            // p = Runtime.getRuntime().exec(upythonApp + " -c 'print()'");
+            // p.waitFor();
 
             File mainpy = new File(pyappDirectory, "main.py");
             if (!mainpy.exists())
                 throw new FileNotFoundException(FileUtils.getAbsolutePath(mainpy));
 
             return true;
-        } catch (ClassNotFoundException | IOException | InterruptedException e) {
+        } catch (/* ClassNotFoundException | */ IOException /* | InterruptedException */ e) {
             logger.error("SciTools not correctly configured", e);
             return false;
         }
     }
 
     // ----------------------------------------------------------------------
+    // Create an instance
+    // ----------------------------------------------------------------------
+
+    private static class SciToolsUnd extends SciTools {
+
+        @Override
+        public void exec(String... args) throws IOException {
+            super.und(args);
+        }
+
+        @Override
+        public void exec(Collection<String> args) throws IOException {
+            super.und(args);
+        }
+    }
+
+    private static class SciToolsUPython extends SciTools {
+
+        @Override
+        public void exec(String... args) throws IOException {
+            int n = args.length;
+            String[] rest = new String[n-1];
+            System.arraycopy(args, 1, rest, 0, n-1);
+            super.upython(args[0], rest);
+        }
+
+        @Override
+        public void exec(Collection<String> args) throws IOException {
+            int n = args.size();
+            List<String> largs = new ArrayList<>(args);
+            super.upython(largs.get(0), largs.subList(1, n));
+        }
+    }
+
+    public static SciTools und() {
+        return new SciToolsUnd();
+    }
+
+    public static SciTools upython() {
+        return new SciToolsUPython();
+    }
+
+    public static SciTools upython(Consumer<String> consumer) {
+        return upython().consume(consumer);
+    }
+
+    public SciTools consume(Consumer<String> consumer) {
+        this.messageHandlers.add(consumer);
+        return this;
+    }
+
+    public abstract void exec(String... args) throws IOException;
+
+    public abstract void exec(Collection<String> args) throws IOException;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    private SciTools() {
+        messageHandlers.add(this::log);
+    }
+
+    private void log(String message) {
+
+        if (message.startsWith("WARNING"))
+            logger.warnf(message.substring(7+1));
+        else if (message.startsWith("WARN"))
+            logger.warnf(message.substring(4+1));
+        else if (message.startsWith("ERROR"))
+            logger.error(message.substring(5+1));
+        else if (message.startsWith("INFO"))
+            logger.info(message.substring(4+1));
+        else if (message.startsWith("EVENT"))
+            logger.debug(message);
+        else
+            logger.debugt(message);
+    }
+
+    // ----------------------------------------------------------------------
     // Und execute commands
     // ----------------------------------------------------------------------
 
-    public static void und(String... uargs) throws IOException {
+    protected /* static */ void und(String... uargs) throws IOException {
         und(Arrays.asList(uargs));
     }
 
-    public static void und(Collection<String> uargs) throws IOException {
+    protected /* static */ void und(Collection<String> uargs) throws IOException {
         logger.infof("und %s", uargs.toString());
         int retry = 0;
         try {
@@ -227,7 +342,9 @@ public abstract class SciTools {
 
             ProcessExecutor pe = new ProcessExecutor();
             ProcessResult pr = pe.command(args)
-                    .redirectOutput(new OutputStreamToLogger(logger))
+                    .redirectOutput(new OutputStreamToConsumer(this::handleMessage))
+                    .environment("PATH", "")
+                    .environment("JAVA_HOME", "")
                     .executeNoTimeout();
 
             // just to be sure that the process is terminated
@@ -243,11 +360,11 @@ public abstract class SciTools {
     // Upython execute commands
     // ----------------------------------------------------------------------
 
-    public static void upython(String command, String... pargs) throws IOException {
+    protected /* static */ void upython(String command, String... pargs) throws IOException {
         upython(command, Arrays.asList(pargs));
     }
 
-    public static void upython(String command, Collection<String> uargs) throws IOException {
+    protected /* static */ void upython(String command, Collection<String> uargs) throws IOException {
         // logger.infof("upython %s", uargs.toString());
         try {
             // compose:  <scitools-dir>/upython <splpython-dir>/main.py arg1 ...
@@ -260,11 +377,102 @@ public abstract class SciTools {
             logger.infof("upython %s", args.toString());
 
             ProcessExecutor pe = new ProcessExecutor().directory(pyappDirectory);
-            pe.command(args)
-                    .redirectOutput(new OutputStreamToLogger(logger))
+            ProcessResult pr = pe.command(args)
+                    .redirectOutput(new OutputStreamToConsumer(this::handleMessage))
                     .execute();
+
+            if (pr.getExitValue() != 0)
+                throw new IOException(String.format("Python process terminated with code %d", pr.getExitValue()));
+
         } catch (InterruptedException | TimeoutException e) {
             throw new IOException(e);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Handle messages
+    // ----------------------------------------------------------------------
+
+    private void handleMessage(String message) {
+        this.messageHandlers.forEach(mh -> mh.accept(message));
+    }
+
+    // ----------------------------------------------------------------------
+    // Locate und
+    // ----------------------------------------------------------------------
+
+    private static void dumpEnvironment() {
+        ProcessExecutor pe = new ProcessExecutor();
+        ByteArrayOutputStream outs = new ByteArrayOutputStream();
+        ByteArrayOutputStream errs = new ByteArrayOutputStream();
+        ProcessResult pr = null;
+
+        try {
+            switch (SciTools.os) {
+                case WINDOWS:
+                    pr = pe.command("cmd", "/c", "set")
+                            .redirectOutput(outs)
+                            .redirectError(errs)
+                            .executeNoTimeout();
+                    break;
+                case LINUX:
+                    pr = pe.command("printenv")
+                            .redirectOutput(outs)
+                            .redirectError(errs)
+                            .executeNoTimeout();
+                    break;
+                case MACOS:
+                    throw new IOException("MacOS: unsupported operating system");
+            }
+
+            String env = (outs.toString().trim() + "\n" + errs.toString().trim()).trim();
+            logger.warn(env);
+        }
+        catch (Exception e) {
+
+        }
+    }
+
+    private static File locateUnd() {
+        ProcessExecutor pe = new ProcessExecutor();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ProcessResult pr = null;
+
+        try {
+            switch (SciTools.os) {
+                case WINDOWS:
+                    pr = pe.command("cmd", "/c", "where", "und")
+                            .redirectOutput(baos)
+                            .executeNoTimeout();
+                    break;
+                case LINUX:
+                    pr = pe.command("bash", "which", "und")
+                            .redirectOutput(baos)
+                            .executeNoTimeout();
+                    break;
+                case MACOS:
+                    throw new IOException("MacOS: unsupported operating system");
+            }
+            if (pr == null)
+                throw new IOException("Unable to start 'shell' process");
+
+            int ev = pr.getExitValue();
+            if (ev != 0)
+                throw new IOException(String.format("Shell process existed with error: %s (%d)",
+                        pr.outputString(), pr.getExitValue()));
+
+            String whereUnd = baos.toString().trim();
+            if (whereUnd.length() == 0)
+                throw new IOException("empty string");
+            File undPath = new File(whereUnd);
+            if (!undPath.exists())
+                throw new IOException("Invalid path " + undPath);
+
+            return undPath;
+        }
+        catch (Exception e) {
+            logger.errorf("Unable to find 'und' executable: %s", e);
+            return null;
         }
     }
 
