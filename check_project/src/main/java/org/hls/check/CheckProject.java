@@ -2,10 +2,12 @@ package org.hls.check;
 
 import jext.cache.CacheManager;
 import jext.logging.Logger;
+import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectAnalyzer;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectDump;
+import jext.sourcecode.resources.libraries.JavaLibraryFinder;
 import jext.util.JSONUtils;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
@@ -19,6 +21,11 @@ public class CheckProject {
         try {
             Logger.configure();
             CacheManager.configure();
+
+            LibraryFinder lfinder = new JavaLibraryFinder()
+                .addLibrary("jdk8", "D:\\Java\\Jdk8.0")
+                .addLibrary("jdk11", "D:\\Java\\Jdk11.0");
+
 
             Project project = Projects.newProject(new File(
                 //"D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\elasticsearch"
@@ -37,9 +44,10 @@ public class CheckProject {
                     "runtime.library", "auto"
                     // , "org.gradle.daemon", "false"
                     // , "org.gradle.java.home", "D:\\Java\\Jdk18.0"
-                    , "jdk8.home", "D:\\Java\\Jdk18.0"
+                    // , "jdk8", "D:\\Java\\Jdk8.0"
                 ));
 
+            project.setLibraryFinder(lfinder);
             project.getModules().getModule().getRuntimeLibrary();
 
             ProjectDump.dump(project, 0);
@@ -51,6 +59,7 @@ public class CheckProject {
         //     e.printStackTrace();
         } finally {
             Parallel.shutdown();
+            CacheManager.shutdown();
         }
     }
 }
