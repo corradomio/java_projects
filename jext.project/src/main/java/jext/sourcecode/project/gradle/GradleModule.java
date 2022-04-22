@@ -1,5 +1,6 @@
 package jext.sourcecode.project.gradle;
 
+import jext.lang.JavaUtils;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.name.Name;
@@ -15,6 +16,7 @@ import jext.sourcecode.project.gradle.util.BuildGradleFile;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
 import jext.util.FileUtils;
+import jext.util.PropertiesUtils;
 import jext.util.StringUtils;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
@@ -26,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -116,13 +119,90 @@ public class GradleModule extends BaseModule {
 
     @Override
     public RuntimeLibrary getRuntimeLibrary() {
-        // try with the current configuration
+        // try to retrieve the JDK from the current configuration file
         String javaVersion = buildGradle.getJavaVersion();
-        if (StringUtils.isEmpty(javaVersion))
-            return super.getRuntimeLibrary();
+        if (!StringUtils.isEmpty(javaVersion))
+            return super.getRuntimeLibrary(JavaUtils.toJDK(javaVersion));
 
-        String runtimeName = "jdk" + javaVersion;
-        return super.getRuntimeLibrary(runtimeName);
+        // try to retrieve the JDK from the Gradle wrapper
+        javaVersion = getJavaVersionFromGradleWrapper();
+        if (!StringUtils.isEmpty(javaVersion))
+            return super.getRuntimeLibrary(JavaUtils.toJDK(javaVersion));
+
+        // try to retrieve the Java version using other methods
+        return super.getRuntimeLibrary();
+    }
+
+    private static final String GRADLE_PREFIX = "gradle-";
+    private static final String GRADLE_SUFFIX = "-bin.zip";
+
+    /*
+        Java version    First Gradle version to support it
+        8               2.0
+        9               4.3
+        10              4.7
+        11              5.0
+        12              5.4
+        13              6.0
+        14              6.3
+        15              6.7
+        16              7.0
+        17              7.3
+     */
+
+    private static final double[] GRADLE_VERSIONS = new double[] {
+        //      JDK version
+        0.,     // 0
+        0.,     // 1
+        0.,     // 2
+        0.,     // 3
+        0.,     // 4
+        0.,     // 5
+        0.,     // 6
+        0.,     // 7
+        2.0,    // 8
+        4.3,    // 9
+        4.7,    // 10
+        5.0,    // 11
+        5.4,    // 12
+        6.0,    // 13
+        6.3,    // 14
+        6.7,    // 15
+        7.0,    // 16
+        7.3     // 17
+    };
+
+    private String getJavaVersionFromGradleWrapper() {
+        File gradleWrapperProperties = new File(getModuleHome(), "gradle/wrapper/gradle-wrapper.properties");
+        if (!gradleWrapperProperties.exists())
+            return null;
+
+        Properties gwProps = PropertiesUtils.load(gradleWrapperProperties);
+        String distributionUrl = gwProps.getProperty("distributionUrl", null);
+        if (distributionUrl == null)
+            return null;
+
+        // https://services.gradle.org/distributions/gradle-2.13-bin.zip
+        int b = distributionUrl.indexOf(GRADLE_PREFIX) + GRADLE_PREFIX.length();
+        int e = distributionUrl.indexOf(GRADLE_SUFFIX, b);
+        if (e == -1)
+            return null;
+
+        float gversion = 0;
+        String gradleVersion = distributionUrl.substring(b, e);
+        try {
+            gversion = Float.parseFloat(gradleVersion);
+        }
+        catch (NumberFormatException ex) { }
+        if (gversion == 0)
+            return null;
+
+        for(int i=9; i<GRADLE_VERSIONS.length; ++i) {
+            if (gversion < GRADLE_VERSIONS[i])
+                return String.format("jdk%d", i-1);
+        }
+
+        return String.format("jdk%d", GRADLE_VERSIONS.length-1);
     }
 
     @Override

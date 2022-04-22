@@ -1,5 +1,6 @@
 package jext.sourcecode.project.maven;
 
+import jext.lang.JavaUtils;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
@@ -56,7 +57,7 @@ public class MavenModule extends BaseModule {
         if (StringUtils.isEmpty(javaVersion))
             return super.getRuntimeLibrary();
 
-        String runtimeName = "jdk" + javaVersion;
+        String runtimeName = JavaUtils.toJDK(javaVersion);
         return super.getRuntimeLibrary(runtimeName);
     }
 

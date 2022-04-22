@@ -106,56 +106,6 @@ public class ProjectRevisions implements Revisions {
         return pcomp;
     }
 
-    // /**
-    //  * If the current content of 'project-info.json' is the SAME than
-    //  * 'project-info-[revision].json', DELETE 'project-info-[revision].json'
-    //  *
-    //  * @return true if the new revision is equals to the previous one
-    //  *         false othwrwise
-    //  */
-    // public ProjectDifferences compareRevisionsOld(int srcRevision, int dstRevision) {
-    //
-    //     File differencesInfo = getDifferenceInfoFile(srcRevision, dstRevision);
-    //     if (differencesInfo.exists())
-    //         try {
-    //             return JSONUtils.load(differencesInfo, ProjectDifferences.class);
-    //         } catch (IOException e) {
-    //             Logger.getLogger(getClass()).error(e, e);
-    //         }
-    //
-    //     ProjectDifferences pdiff = new ProjectDifferences();
-    //
-    //     File srcRevisionInfo = getProjectInfoFile(srcRevision);
-    //     File dstRevisionInfo = getProjectInfoFile(dstRevision);
-    //
-    //     // register the main information for the analyzed project
-    //     pdiff.setRevisionsInfo(
-    //             projectHome,
-    //             srcRevisionInfo, srcRevision,
-    //             dstRevisionInfo, dstRevision
-    //     );
-    //
-    //     pdiff.compareRevisions();
-    //
-    //     // if (previousRevision == NO_REVISION)
-    //     //     pdiff.compareProjects(null, currProjectInfo);
-    //     // else
-    //     //     pdiff.compareProjects(prevProjectInfo, currProjectInfo);
-    //
-    //     if (pdiff.isEmpty()) {
-    //         FileUtils.delete(dstRevisionInfo);
-    //         return pdiff;
-    //     }
-    //
-    //     try {
-    //         JSONUtils.save(differencesInfo, pdiff);
-    //     } catch (IOException e) {
-    //         Logger.getLogger(getClass()).error(e, e);
-    //     }
-    //
-    //     return pdiff;
-    // }
-
     /**
      * Delete 'project-info.json' and all 'project-info-[revision].json'
      * files

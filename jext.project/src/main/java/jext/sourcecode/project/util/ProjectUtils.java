@@ -1,6 +1,7 @@
 package jext.sourcecode.project.util;
 
 import jext.logging.Logger;
+import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.Module;
@@ -31,6 +32,20 @@ import java.util.stream.Collectors;
 public class ProjectUtils {
 
     private static Logger logger = Logger.getLogger(ProjectUtils.class);
+
+
+    public static String getHighestRuntimeName(Project project) {
+        String languageVersion = "";
+        for (Module module : project.getModules()) {
+            String rt = module.getRuntimeLibrary().getName().getName();
+            if (rt.compareTo(languageVersion) > 0)
+                languageVersion = rt;
+        }
+        if (languageVersion.isEmpty())
+            languageVersion = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+        return languageVersion;
+    }
+
 
     public static List<Module> getModules(Project project, List<String> moduleNames) {
         if (moduleNames.isEmpty())

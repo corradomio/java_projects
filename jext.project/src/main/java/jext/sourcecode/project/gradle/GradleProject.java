@@ -393,6 +393,7 @@ public class GradleProject extends BaseProject {
 
         connection = connector.connect();
         return new NoCloseableProjectConnection(connection);
+        // return connector.connect();
     }
 
     private void openConnection() {
@@ -426,7 +427,7 @@ public class GradleProject extends BaseProject {
         // check if "gradlew.*" is present in 'projectHome'
         File[] gradlews = projectHome.listFiles(file -> file.getName().startsWith("gradlew"));
         if (gradlews != null && gradlews.length > 0) {
-
+            // none to do
         }
         else if (System.getenv().containsKey(GRADLE_HOME)) {
             File gradleHome = new File(System.getenv(GRADLE_HOME));
@@ -485,6 +486,10 @@ public class GradleProject extends BaseProject {
 
             if (gradleBluild)
                 connector.useBuildDistribution();
+        }
+
+        else {
+            connector.useBuildDistribution();
         }
 
     }
