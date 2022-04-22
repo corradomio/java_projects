@@ -3,6 +3,7 @@ package jext.javaparser;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.ParserConfiguration.LanguageLevel;
 import com.github.javaparser.Problem;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
@@ -11,8 +12,11 @@ import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.lang.JavaUtils;
 import jext.logging.Logger;
 import jext.util.FileUtils;
+import jext.util.MapUtils;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -68,6 +73,8 @@ public class JavaParserPool {
     private String name;
     private String cachePrefix;
 
+    private LanguageLevel languageLevel;
+
     // source directories of the parsed files
     private Set<Path> pathRoots;
     private Set<File> sourceRoots;
@@ -105,6 +112,41 @@ public class JavaParserPool {
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
+
+    private static Map<String, ParserConfiguration.LanguageLevel> LANGUAGE_LEVELS =
+        MapUtils.asMap(
+            "1.7", LanguageLevel.JAVA_7,
+            "1.8", LanguageLevel.JAVA_8,
+            "7", LanguageLevel.JAVA_7,
+            "8", LanguageLevel.JAVA_8,
+            "9", LanguageLevel.JAVA_9,
+            "10", LanguageLevel.JAVA_10,
+            "11", LanguageLevel.JAVA_11,
+            "12", LanguageLevel.JAVA_12,
+            "13", LanguageLevel.JAVA_13,
+            "14", LanguageLevel.JAVA_14,
+            "15", LanguageLevel.JAVA_15,
+            "16", LanguageLevel.JAVA_16,
+            "17", LanguageLevel.JAVA_17
+            //"18", LanguageLevel.JAVA_18,
+        );
+
+    public JavaParserPool withLanguageVersion(String languageVersion) {
+        // languageVersion can be: 'jdk<Version>' or only '<version>'
+        if (StringUtils.isEmpty(languageVersion))
+            return this;
+
+        languageVersion = JavaUtils.languageVersionOf(languageVersion);
+
+        if (LANGUAGE_LEVELS.containsKey(languageVersion))
+            this.languageLevel = LANGUAGE_LEVELS.get(languageVersion);
+        else if ("17".compareTo(languageVersion) < 0)
+            this.languageLevel = LanguageLevel.JAVA_17;
+        else
+            this.languageLevel = LanguageLevel.JAVA_11;
+
+        return this;
+    }
 
     public JavaParserPool withCache() {
         return withCache(this.cachePrefix);
@@ -269,7 +311,10 @@ public class JavaParserPool {
     }
 
     public ParserConfiguration parserConfiguration() {
-        return new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE);
+        ParserConfiguration configuration = new ParserConfiguration().setLanguageLevel(BLEEDING_EDGE);
+        if (this.languageLevel != null)
+            configuration.setLanguageLevel(this.languageLevel);
+        return configuration;
     }
 
     /**

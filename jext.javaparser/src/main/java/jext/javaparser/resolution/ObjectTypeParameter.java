@@ -3,6 +3,8 @@ package jext.javaparser.resolution;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParametrizable;
+import com.github.javaparser.resolution.types.ResolvedReferenceType;
+import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
 import jext.lang.JavaConstants;
 
 import java.util.Collections;
@@ -12,7 +14,8 @@ import java.util.Optional;
 public class ObjectTypeParameter implements ResolvedTypeParameterDeclaration {
 
     private static final ObjectTypeParameter INSTANCE = new ObjectTypeParameter();
-    public static ResolvedTypeParameterDeclaration object() {
+
+    public static ResolvedTypeParameterDeclaration java_lang_object() {
         return INSTANCE;
     }
 
@@ -40,6 +43,11 @@ public class ObjectTypeParameter implements ResolvedTypeParameterDeclaration {
     public List<Bound> getBounds() {
         return Collections.emptyList();
     }
+
+    // @Override
+    // public ResolvedReferenceType object() {
+    //     return null;
+    // }
 
     @Override
     public Optional<ResolvedReferenceTypeDeclaration> containerType() {
