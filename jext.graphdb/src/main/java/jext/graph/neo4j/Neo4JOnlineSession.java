@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.asIds;
@@ -54,7 +55,6 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String NONE = "";
     static final int MAX_STATEMENTS = 8*1024;
     static final int MAX_DELETE_NODES = 16*1024;
-    // private static final int MAX_DELETE_EDGES = 128*1024;
     private static final String NO_ID = "-1";
 
     private static final String USES = "uses";
@@ -105,6 +105,11 @@ public class Neo4JOnlineSession implements GraphSession {
         return this;
     }
 
+    private void commitAndBegin() {
+        transaction.commit();
+        transaction = session.beginTransaction();
+    }
+
     // @Override
     // public boolean isConnected() {
     //     return session != null && session.isOpen();
@@ -117,9 +122,9 @@ public class Neo4JOnlineSession implements GraphSession {
             transaction = null;
         }
         if (session != null) {
-        session.close();
-        session = null;
-    }
+            session.close();
+            session = null;
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -241,8 +246,8 @@ public class Neo4JOnlineSession implements GraphSession {
         Parameters params = Parameters.params(
             "id", asId(nodeId));
         String s = "MATCH (n) WHERE id(n) = $id DETACH DELETE n";
-        this.delete(s, params, false);
-        return true;
+        long count = this.delete(s, params, false);
+        return count > 0;
     }
 
     @Override
@@ -276,22 +281,26 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public void deleteNodes(Collection<String> nodeIds) {
+    public long deleteNodes(Collection<String> nodeIds) {
         int maxdelete = graphdb.getMaxDelete();
 
         if (nodeIds == null || nodeIds.isEmpty())
-            return;
+            return 0;
 
         if (nodeIds.size() > maxdelete)
             nodeIds = new ArrayList<>(nodeIds);
 
         while(nodeIds.size() > maxdelete) {
             int n = nodeIds.size();
+            commitAndBegin();
+
             deleteSomeNodes(((List<String>)nodeIds).subList(0, maxdelete));
             nodeIds = ((List<String>)nodeIds).subList(maxdelete, n);
         }
         if (!nodeIds.isEmpty())
             deleteSomeNodes(nodeIds);
+
+        return nodeIds.size();
     }
 
     private void deleteSomeNodes(Collection<String> nodeIds) {
@@ -305,24 +314,27 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long deleteNodes(String nodeType, Map<String, Object> nodeProps) {
-        int maxdelete = graphdb.getMaxDelete();
-
-        // commit the transaction
-        long total = 0;
-        long deleted = 1;
-        while (deleted > 0) {
-            transaction.commit();
-            transaction = session.beginTransaction();
-
-            deleted = deleteNodes(nodeType, nodeProps, maxdelete);
-            total += deleted;
-        }
-
-        return deleted;
+        return deleteNodes(nodeType, nodeProps, (count)->{ });
     }
 
     @Override
-    public long deleteNodes(String nodeType, Map<String, Object> nodeProps, long count) {
+    public long deleteNodes(String nodeType, Map<String, Object> nodeProps, Consumer<Long> callable) {
+        int maxdelete = graphdb.getMaxDelete();
+
+        // commit the transaction
+        long count = 1, total = 0;
+        while (count > 0) {
+            commitAndBegin();
+            count = deleteNodes(nodeType, nodeProps, maxdelete);
+            total += count;
+            callable.accept(total);
+        }
+
+        return total;
+    }
+
+    // @Override
+    private long deleteNodes(String nodeType, Map<String, Object> nodeProps, long count) {
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, WhereType.WHERE, true);
         String s;
@@ -928,56 +940,76 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public void deleteEdges(String edgeType,  // can be null
+    public long deleteEdges(String edgeType,  // can be null
                      String fromType, Map<String, Object> fromProps,
                      String toType, Map<String, Object> toProps,
-                     Map<String,Object> edgeProps) {
+                     Map<String,Object> edgeProps,
+                     Consumer<Long> callback) {
         String s;
+        int maxdelete = graphdb.getMaxDelete();
 
         if (edgeType == null)
-            s = String.format("MATCH (from:%s %s) -[e %s]-> (to:%s %s) WITH e DELETE e",
+            s = String.format("MATCH (from:%s %s) -[e %s]-> (to:%s %s) WITH e LIMIT %d DELETE e",
                 fromType, pblock(FROM, fromProps),
                 /*edgeType,*/ pblock(E, edgeProps),
-                toType, pblock(TO, toProps));
+                toType, pblock(TO, toProps), maxdelete);
         else
-            s = String.format("MATCH (from:%s %s) -[e:%s %s]-> (to:%s %s) WITH e DELETE e",
+            s = String.format("MATCH (from:%s %s) -[e:%s %s]-> (to:%s %s) WITH e LIMIT %d DELETE e",
                 fromType, pblock(FROM, fromProps),
                 edgeType, pblock(E, edgeProps),
-                toType, pblock(TO, toProps));
+                toType, pblock(TO, toProps), maxdelete);
 
         Parameters params = Parameters.params()
             .add(FROM, fromProps)
             .add(E, edgeProps)
             .add(TO, toProps);
 
-        this.delete(s, params, true);
+        long count=1, total = 0;
+        while (count > 0) {
+            this.commitAndBegin();
+            count = this.delete(s, params, true);
+            total += count;
+            callback.accept(total);
+        }
+
+        return total;
     }
 
     @Override
-    public void deleteEdges(String edgeType, String fromId, List<String> toIds, Map<String,Object> edgeProps) {
+    public long deleteEdges(String edgeType, String fromId, List<String> toIds, Map<String,Object> edgeProps,
+                            Consumer<Long> callback) {
         String s;
         String pblock = pblock(E, edgeProps);
         String wblock = wblock(E, edgeProps, WhereType.AND, true);
+        int maxdelete = graphdb.getMaxDelete();
 
         if (edgeType == null && toIds == null)
-            s = String.format("MATCH (f) -[e %s]-> (t) WHERE id(f)=$from %s DELETE e",
-                pblock, wblock);
+            s = String.format("MATCH (f) -[e %s]-> (t) WHERE id(f)=$from %s WITH e LIMIT %d DELETE e",
+                pblock, wblock, maxdelete);
         else if (edgeType == null)
-            s = String.format("MATCH (f) -[e %s]-> (t) WHERE id(f)=$from AND id(t) IN $to %s DELETE e",
-                pblock, wblock);
+            s = String.format("MATCH (f) -[e %s]-> (t) WHERE id(f)=$from AND id(t) IN $to %s WITH E LIMIT %d DELETE e",
+                pblock, wblock, maxdelete);
         else if (toIds == null)
-            s = String.format("MATCH (f) -[e:%s %s]-> (t) WHERE id(f)=$from %s DELETE e",
-                edgeType, pblock, wblock);
+            s = String.format("MATCH (f) -[e:%s %s]-> (t) WHERE id(f)=$from %s WITH e LIMIT %d DELETE e",
+                edgeType, pblock, wblock, maxdelete);
         else
-            s = String.format("MATCH (f) -[e:%s %s]-> (t) WHERE id(f)=$from AND id(t) IN $to %s DELETE e",
-                edgeType, pblock, wblock);
+            s = String.format("MATCH (f) -[e:%s %s]-> (t) WHERE id(f)=$from AND id(t) IN $to %s WITH e LIMIT %d DELETE e",
+                edgeType, pblock, wblock, maxdelete);
 
         Parameters params = Parameters.params(
                 FROM, asId(fromId),
                 TO, asIds(toIds)
             ).add(E, edgeProps);
 
-        this.delete(s, params, true);
+        long count = 1, total = 0;
+        while (count > 0) {
+            this.commitAndBegin();
+            count = this.delete(s, params, true);
+            total += count;
+            callback.accept(total);
+        }
+
+        return total;
     }
 
     // ----------------------------------------------------------------------

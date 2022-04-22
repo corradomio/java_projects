@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /*
     a 'property' is a string that can be:
@@ -90,6 +91,8 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
     // Transactions
     // ----------------------------------------------------------------------
+    // Transaction is not ""necessary"": it is handled internally by the
+    // session
 
     //
     // Unsupported (for now)
@@ -178,13 +181,14 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Delete the nodes
      */
-    void deleteNodes(Collection<String> nodeIds);
+    long deleteNodes(Collection<String> nodeIds);
 
     /**
      * Delete the nodes with the specified properties
      */
-    long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
+    // long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
     long deleteNodes(String nodeType, Map<String,Object> nodeProps);
+    long deleteNodes(String nodeType, Map<String,Object> nodeProps, Consumer<Long> callback);
 
     // ----------------------------------------------------------------------
 
@@ -365,10 +369,11 @@ public interface GraphSession extends AutoCloseable {
      * @param toProps to node properties
      * @param edgeProps edge properties
      */
-    void deleteEdges(String edgeType,  // can be null
+    long deleteEdges(String edgeType,  // can be null
                      String fromNodeType, Map<String, Object> fromProps,
                      String toNodeType, Map<String, Object> toProps,
-                     Map<String,Object> edgeProps);
+                     Map<String,Object> edgeProps,
+                     Consumer<Long> callback);
 
     /**
      * Delete the edges from the specified nodes
@@ -378,15 +383,18 @@ public interface GraphSession extends AutoCloseable {
      * @param toIds target node ids (can be null)
      * @param edgeProps edge properties
      */
-    void deleteEdges(String edgeType, String fromId, List<String> toIds, Map<String,Object> edgeProps);
+    long deleteEdges(String edgeType, String fromId, List<String> toIds, Map<String,Object> edgeProps,
+                     Consumer<Long> callback);
 
     // ----------------------------------------------------------------------
 
     /**
      * Insert/update edge properties based on the source/target nodes and the edge type.
      */
-    void setEdgeProperties(String edgeType, String fromId, String toId, Map<String,Object> edgeProps, Map<String,Object> updateProps);
-    void setEdgeProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps, Map<String,Object> updateProps);
+    void setEdgeProperties(String edgeType, String fromId, String toId,
+                           Map<String,Object> edgeProps, Map<String,Object> updateProps);
+    void setEdgeProperties(String edgeType, String fromId, Collection<String> toIds,
+                           Map<String,Object> edgeProps, Map<String,Object> updateProps);
 
     /**
      * Insert/update the edge properties with 'updateProps'
