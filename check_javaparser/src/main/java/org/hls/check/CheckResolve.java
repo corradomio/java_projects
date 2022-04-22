@@ -43,7 +43,8 @@ public class CheckResolve {
                 // "D:\\Projects.github\\ml_projects\\elasticsearch-7.11.0"
                 // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\bookstore"
                 // "D:\\Temp\\etisala-project-ebtic"
-                "D:\\SPLGroup\\spl_workspaces.1\\example_repo_1\\commons_lang"
+                // "D:\\SPLGroup\\spl_workspaces.1\\example_repo_1\\commons_lang"
+                "D:\\Projects.github\\java_projects\\check_java_syntax"
             ), PropertiesUtils.empty());
 
         project.getLibraryDownloader().setDownloadDirectory(new File("C:\\Users\\Corrado Mio\\.m2\\repository"));
@@ -56,9 +57,9 @@ public class CheckResolve {
         log.infof("ClassPoolRegistry");
 
         cpr = new ClassPoolRegistry()
-            .addJdk(new File("D:\\Java\\Jdk8.0.x64"));
+            .addJdk(new File("D:\\Java\\Jdk17"));
         project.getLibraries().forEach(library -> {
-            cpr.addAll(library.getFiles(), "jdk8");
+            cpr.addAll(library.getFiles(), "jdk17");
         });
 
         css = new ContextSolvedSymbols();
