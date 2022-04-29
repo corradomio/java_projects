@@ -53,11 +53,11 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.ontotext.graphdb/graphdb-free-runtime -->
-        <dependency>
+        <!--dependency>
             <groupId>com.ontotext.graphdb</groupId>
             <artifactId>graphdb-free-runtime</artifactId>
             <version>9.9.0</version>
-        </dependency>
+        </dependency -->
 
     </dependencies>
 

@@ -22,6 +22,7 @@ import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,12 +61,17 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String USES = "uses";
     private static final String TYPE = "type";
 
+    private static final String REF_ID = "refId";
+    private static final String REVISION = "revision";
+    private static final String REVISIONS = "revisions";
+    private static final String MODEL = "model";
+
     // ----------------------------------------------------------------------
     // Special handled parameters
     // ----------------------------------------------------------------------
 
     private static final String LABELS = "labels";
-    private static final String REFIDS = "refIds";
+    private static final String REF_IDS = "refIds";
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -79,13 +85,31 @@ public class Neo4JOnlineSession implements GraphSession {
     private Transaction transaction;
     private AtomicInteger count = new AtomicInteger();
 
+    // project support
+    private String refId;
+    // revision support
+    private String model;
+    private int rev = -1;
+    private Map<String, Set<String>> metadata;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     Neo4JOnlineSession(Neo4JOnlineDatabase graphdb) {
+        this(graphdb, null, null, -1);
+    }
+
+    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb, String refId) {
+        this(graphdb, refId, null, -1);
+    }
+
+    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb, String refId, String model, int rev) {
         this.graphdb = graphdb;
         this.driver = graphdb.getDriver();
+        this.refId = refId;
+        this.model = model;
+        this.rev = rev;
     }
 
     // ----------------------------------------------------------------------
@@ -100,8 +124,10 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     public Neo4JOnlineSession connect() {
-        session = driver.session();
-        transaction = session.beginTransaction();
+        this.session = this.driver.session();
+        this.transaction = this.session.beginTransaction();
+        if (this.model != null && this.rev >= 0)
+            this.metadata = getRevisionMetadata();
         return this;
     }
 
@@ -109,11 +135,6 @@ public class Neo4JOnlineSession implements GraphSession {
         transaction.commit();
         transaction = session.beginTransaction();
     }
-
-    // @Override
-    // public boolean isConnected() {
-    //     return session != null && session.isOpen();
-    // }
 
     @Override
     public void close() {
@@ -139,10 +160,19 @@ public class Neo4JOnlineSession implements GraphSession {
     // to extend the 'namedQuery' conditions
     //
 
+    private Map<String,Object> ckparams(Map<String,Object> params) {
+        if (refId != null)
+            params.put(REF_ID, refId);
+        if (rev >= 0)
+            params.put(REVISION, rev);
+        return params;
+    }
+
     @Override
     public Query queryUsing(String queryName,  Map<String,Object> params) {
 
         String query = graphdb.getQuery(queryName);
+        params = ckparams(params);
 
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
@@ -163,6 +193,7 @@ public class Neo4JOnlineSession implements GraphSession {
     public void executeUsing(String queryName, Map<String,Object> params) {
 
         String query = graphdb.getQuery(queryName);
+        params = ckparams(params);
 
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
@@ -193,12 +224,14 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Query queryUsingFullText(String query,  Map<String,Object> queryParams) {
+        queryParams = ckparams(queryParams);
+
         // indexName
         // query
         // labels ONLY if size > 0
         // refIds ONLY if size > 0
         boolean hasLabels = queryParams.containsKey(LABELS) && !((Collection<String>)queryParams.get(LABELS)).isEmpty();
-        boolean hasRefIds = queryParams.containsKey(REFIDS) && !((Collection<String>)queryParams.get(REFIDS)).isEmpty();
+        boolean hasRefIds = queryParams.containsKey(REF_IDS) && !((Collection<String>)queryParams.get(REF_IDS)).isEmpty();
 
         String s = "CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n ";
         if (hasLabels && hasRefIds)
@@ -228,6 +261,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
+        nodeProps = ckparams(nodeProps);
+
         String pblock = pblock(N, nodeProps);
         String sblock = sblock(N, nodeProps, true);
 
@@ -262,6 +297,9 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps) {
+        findProps = ckparams(findProps);
+        updateProps = ckparams(updateProps);
+
         String nodeId = findNode(nodeType, findProps);
         if (nodeId == null)
             nodeId = createNode(nodeType, findProps);
@@ -319,6 +357,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long deleteNodes(String nodeType, Map<String, Object> nodeProps, Consumer<Long> callable) {
+        nodeProps = ckparams(nodeProps);
+
         int maxdelete = graphdb.getMaxDelete();
 
         // commit the transaction
@@ -333,7 +373,6 @@ public class Neo4JOnlineSession implements GraphSession {
         return total;
     }
 
-    // @Override
     private long deleteNodes(String nodeType, Map<String, Object> nodeProps, long count) {
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, WhereType.WHERE, true);
@@ -449,6 +488,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Query queryNodes(String nodeType, Map<String, Object> nodeProps) {
+        nodeProps = ckparams(nodeProps);
+
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, WhereType.WHERE, true);
         String s;
@@ -486,6 +527,8 @@ public class Neo4JOnlineSession implements GraphSession {
     public Query queryAdjacentNodes(
         Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps) {
+
+        nodeProps = ckparams(nodeProps);
 
         if (!recursive)
             return queryAdjacentNodesImpl(fromIds, edgeType, direction, recursive, nodeType,
@@ -560,6 +603,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String fromType, Map<String, Object> fromProps,
         String toType,   Map<String, Object> toProps,
         Map<String, Object> edgeProps) {
+
+        fromProps = ckparams(fromProps);
+        toProps   = ckparams(toProps);
 
         String fblock = pblock(FROM, fromProps);
         String eblock = eblock(E, edgeType, Direction.Output, false, Collections.emptyMap());
@@ -948,6 +994,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String s;
         int maxdelete = graphdb.getMaxDelete();
 
+        fromProps = ckparams(fromProps);
+        toProps   = ckparams(toProps);
+
         if (edgeType == null)
             s = String.format("MATCH (from:%s %s) -[e %s]-> (to:%s %s) WITH e LIMIT %d DELETE e",
                 fromType, pblock(FROM, fromProps),
@@ -1014,16 +1063,16 @@ public class Neo4JOnlineSession implements GraphSession {
 
     // ----------------------------------------------------------------------
 
-    private void setEdgeArrayProperties(String edgeId, Map<String, Object> edgeProps) {
-        Map<String, Object> arrayProps = new HashMap<>();
-
-        edgeProps.forEach((name, value) -> {
-            if (Param.isArray(name, value))
-                arrayProps.put(name, value);
-        });
-
-        setEdgeProperties(edgeId, arrayProps);
-    }
+    // private void setEdgeArrayProperties(String edgeId, Map<String, Object> edgeProps) {
+    //     Map<String, Object> arrayProps = new HashMap<>();
+    //
+    //     edgeProps.forEach((name, value) -> {
+    //         if (Param.isArray(name, value))
+    //             arrayProps.put(name, value);
+    //     });
+    //
+    //     setEdgeProperties(edgeId, arrayProps);
+    // }
 
     @Override
     public void setEdgeProperties(String edgeId, Map<String, Object> updateProps) {
@@ -1858,6 +1907,60 @@ public class Neo4JOnlineSession implements GraphSession {
         params.add(alias, aparams);
 
         return stmt;
+    }
+
+    // ----------------------------------------------------------------------
+    // Revision support
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void deleteRevisionMetadata(String model) {
+        deleteNodes(REVISION, Parameters.params(
+            REF_ID, refId,
+            MODEL, model
+        ));
+    }
+
+    @Override
+    public void createRevisionMetadata(String model, Map<String, Set<String>> metadata) {
+        createNode(REVISION, Parameters.params(metadata).add(
+            REF_ID, refId,
+            MODEL, model,
+            REVISIONS, new int[]{1,2,3,4,5}
+        ));
+    }
+
+    @Override
+    public Map<String, Set<String>> getRevisionMetadata() {
+        return getRevisionMetadata(model);
+    }
+
+    @Override
+    public Map<String, Set<String>> getRevisionMetadata(String model) {
+        Map<String, Set<String>> metadata = new HashMap<>();
+        Map<String, Object> nv = queryNodes(REVISION, Parameters.params(
+            REF_ID, refId,
+            MODEL, model
+        )).values();
+
+        if (nv == null)
+            return Collections.emptyMap();
+
+        for(String type : nv.keySet()) {
+            if (type.startsWith("$"))
+                continue;
+            if (REF_ID.equals(type))
+                continue;
+            if (MODEL.equals(type))
+                continue;
+            if (REVISIONS.equals(type))
+                continue;
+
+            List<String> values = (List<String>) nv.get(type);
+            Set<String> properties = new HashSet<>(values);
+            metadata.put(type, properties);
+        }
+        return metadata;
     }
 
     // ----------------------------------------------------------------------

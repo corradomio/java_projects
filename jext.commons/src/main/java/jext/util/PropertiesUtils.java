@@ -232,7 +232,7 @@ public class PropertiesUtils {
     public static Properties properties(String ... args) {
         Properties properties = new Properties();
         for(int i=0; i<args.length-1; i+=2)
-            properties.put(args[i], args[i+1]);
+            properties.put(args[i+0], args[i+1]);
         return properties;
     }
 

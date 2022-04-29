@@ -12,42 +12,42 @@ import java.util.Properties;
 
 public class Parameters extends HashMap<String, Object> {
 
-    private static Parameters NO_PARAMS = new Parameters() {
-        @Override
-        public Parameters put(String name, Object value ) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public void putAll(Map<? extends String, ? extends Object> params) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Parameters add(Properties props) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Parameters add(String name, Object value, Object... a) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Parameters add(Map<String, Object> params) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Parameters add(String prefix, Map<String, Object> params) {
-            throw new UnsupportedOperationException();
-        }
-        @Override
-        public Parameters setValue(String name, Object value) {
-            throw new UnsupportedOperationException();
-        }
-    };
+    // private static Parameters NO_PARAMS = new Parameters() {
+    //     @Override
+    //     public Parameters put(String name, Object value ) {
+    //         throw new UnsupportedOperationException();
+    //     }
+    //     @Override
+    //     public void putAll(Map<? extends String, ? extends Object> params) {
+    //         throw new UnsupportedOperationException();
+    //     }
+    //     @Override
+    //     public Parameters add(Properties props) {
+    //         throw new UnsupportedOperationException();
+    //     }
+    //     @Override
+    //     public Parameters add(String name, Object value, Object... a) {
+    //         throw new UnsupportedOperationException();
+    //     }
+    //     @Override
+    //     public Parameters add(Map<String, Object> params) {
+    //         throw new UnsupportedOperationException();
+    //     }
+    //     @Override
+    //     public Parameters add(String prefix, Map<String, Object> params) {
+    //         throw new UnsupportedOperationException();
+    //     }
+    //     @Override
+    //     public Parameters setValue(String name, Object value) {
+    //         throw new UnsupportedOperationException();
+    //     }
+    // };
 
     // ----------------------------------------------------------------------
     // Factory methods
     // ----------------------------------------------------------------------
 
-    public static Parameters empty() { return NO_PARAMS; }
+    public static Parameters empty() { return params(); }   // could be updated
 
     public static Parameters params() { return new Parameters(); }
 

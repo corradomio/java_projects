@@ -38,7 +38,7 @@ public class CheckCreateEdges {
                     s.createNode("T", Parameters.params("id", id));
             }
 
-            s.deleteEdges("E", sourceId, null, Parameters.empty());
+            s.deleteEdges("E", sourceId, null, Parameters.empty(), (v)->{});
 
             List<Integer> ids = new ArrayList<>();
             for (int i = 0; i < 5000; i += 2)

@@ -6,11 +6,14 @@ import jext.graph.Limit;
 import jext.graph.Query;
 import jext.util.MapUtils;
 
+import org.neo4j.driver.types.Node;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
     WARNING the alias used for nodes and edges are 'n' and 'e'
@@ -131,6 +134,20 @@ public class Neo4JQuery implements Query {
         return session.resultIter(alias, s, params, edge);
     }
 
+    private static Object asMap(Object value) {
+        if (value == null)
+            return null;
+        if (value instanceof Node) {
+            return Neo4JOnlineSession.toNodeMap((Node)value);
+        }
+        if (value instanceof List)
+            return ((List)value).stream()
+                .map(v -> asMap(v))
+                .collect(Collectors.toList());
+        else
+            return value;
+    }
+
     @Override
     public GraphIterator<Map<String, Object>> result(String alias) {
         String s = setLimit(stmt);
@@ -147,13 +164,13 @@ public class Neo4JQuery implements Query {
             @Override
             public Map<String, Object> next() {
                 Map<String, Object> tmp = git.next();
-                Map<String, Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, "n"));
+                Map<String, Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, alias));
 
                 for (String key : tmp.keySet()) {
                     if (key.equals(alias))
                         continue;
 
-                    Object value = tmp.get(key);
+                    Object value = asMap(tmp.get(key));
                     nv.put(key, value);
                 }
 

@@ -46,7 +46,6 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     private int maxDelete, maxStatements;
 
-    //private final Map<String, String> namedQueries = new HashMap<>();
     private final Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries = new HashMap<>();
 
     // ----------------------------------------------------------------------
@@ -143,6 +142,18 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     @Override
     public GraphSession connect() {
         Neo4JOnlineSession session = new Neo4JOnlineSession(this);
+        return session.connect();
+    }
+
+    @Override
+    public GraphSession connect(String refId) {
+        Neo4JOnlineSession session = new Neo4JOnlineSession(this, refId);
+        return session.connect();
+    }
+
+    @Override
+    public GraphSession connect(String refId, String model, int rev) {
+        Neo4JOnlineSession session = new Neo4JOnlineSession(this, refId, model, rev);
         return session.connect();
     }
 

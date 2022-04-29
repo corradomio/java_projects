@@ -22,7 +22,8 @@
         <Logger name="org.springframework" level="INFO" />
         <Logger name="org.springframework.web.socket.config" level="WARN" />
         <Logger name="org.apache.commons.beanutils" level="INFO" />
-        <Logger name="org.neo4j.driver" level="INFO" />
+
+        <Logger name="org.neo4j.driver" level="WARN" />
 
         <logger name="org.neo4j.ogm" level="INFO"/>
         <logger name="org.neo4j.ogm.drivers.bolt.request.BoltRequest" level="INFO"/>
@@ -31,7 +32,7 @@
         <Logger name="jext.util" level="INFO" />
         <Logger name="jext.cache" level="WARN"/>
         <Logger name="jext.graph.neo4j" level="INFO" />
-        <logger name="jext.graph.neo4j.Neo4JOnlineSession" level="INFO" />
+        <logger name="jext.graph.neo4j.Neo4JOnlineSession" level="DEBUG" />
 
         <Logger name="ae.ebtic.spl.analysis.dependencyv2" level="INFO" />
 

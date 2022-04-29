@@ -5,7 +5,6 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
-import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.gradle.collectors.DependenciesCollector;
@@ -15,8 +14,6 @@ import jext.sourcecode.project.gradle.collectors.ProjectsCollector;
 import jext.sourcecode.project.gradle.util.BuildGradleFile;
 import jext.sourcecode.project.maven.MavenLibrary;
 import jext.sourcecode.project.util.BaseModule;
-import jext.util.FileUtils;
-import jext.util.PropertiesUtils;
 import jext.util.StringUtils;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
@@ -28,12 +25,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import static jext.sourcecode.project.gradle.GradleProject.GRADLE_JAVA_HOME;
 
 public class GradleModule extends BaseModule {
 

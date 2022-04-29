@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ProjectUtils {
@@ -56,24 +57,15 @@ public class ProjectUtils {
             .collect(Collectors.toList());
     }
 
-    public static List<Source> getSources(Project project) {
-        List<Source> sources = new ArrayList<>();
-        project.getModules().forEach(module -> {
-            sources.addAll(module.getSources());
-        });
-
-        return sources;
+    public static Optional<Source> getSource(Project project, ModuleSource ms, Predicate<String> isAccepted) {
+        Source source = project.getModules().getModule(ms.module).getSources().getSource(ms.source);
+        if (isAccepted.test(source.getPath()))
+            return Optional.of(source);
+        else
+            return Optional.empty();
     }
 
-    public static List<File> getSourceFiles(Project project) {
-        List<File> sourceFiles = new ArrayList<>();
-        project.getModules().forEach(module -> {
-            sourceFiles.addAll(module.getSources().getSourceFiles());
-        });
-        return sourceFiles;
-    }
-
-    public static List<Source> getSources(Project project, List<ModuleSource> moduleSources) {
+    public static List<Source> getSources(Project project, List<ModuleSource> moduleSources, Predicate<String> isAccepted) {
         List<Source> sources = new ArrayList<>();
 
         for (ModuleSource ms : moduleSources) {
@@ -89,6 +81,9 @@ public class ProjectUtils {
                 logger.errorf("Source %s not found in module %s of project %s", ms.source, ms.module, project.getName().getFullName());
                 continue;
             }
+
+            if (!isAccepted.test(source.getPath()))
+                continue;
 
             sources.add(source);
         }
@@ -145,29 +140,21 @@ public class ProjectUtils {
     //     return null;
     // }
 
-    public static List<File> getSourceRoots(Project project) {
-        List<File> roots = new ArrayList<>();
-        project.getModules().forEach(module -> {
-            roots.addAll(module.getSources().getSourceRootDirectories());
-        });
-        return roots;
+    // public static List<File> getSourceRoots(Project project) {
+    //     List<File> roots = new ArrayList<>();
+    //     project.getModules().forEach(module -> {
+    //         roots.addAll(module.getSources().getSourceRootDirectories());
+    //     });
+    //     return roots;
+    // }
 
-        // File projectHome = project.getProjectHome();
-        // Set<File> roots = new HashSet<>();
-        // project.getSources().forEach(source -> {
-        //     Optional<String> sr = source.getSourceRoot();
-        //     sr.ifPresent(sourceRoot -> roots.add(new File(projectHome, sourceRoot)));
+    // public static Set<File> getLibraryFiles(Project project) {
+    //     Set<File> lfiles = new TreeSet<>();
+    //     project.getLibraries().forEach(library -> {
+    //         lfiles.addAll(library.getFiles());
         // });
-        // return new ArrayList<>(roots);
-    }
-
-    public static Set<File> getLibraryFiles(Project project) {
-        Set<File> lfiles = new TreeSet<>();
-        project.getLibraries().forEach(library -> {
-            lfiles.addAll(library.getFiles());
-        });
-        return lfiles;
-    }
+    //     return lfiles;
+    // }
 
     // ----------------------------------------------------------------------
 
@@ -235,26 +222,26 @@ public class ProjectUtils {
         return usedTypes;
     }
 
-    public static Optional<RefType> findType(Project project, String typeName) {
-        for (Module module : project.getModules()) {
-            for (RefType refType : module.getTypes())
-                if (refType.getName().getFullName().equals(typeName) ||
-                    refType.getName().getName().equals(typeName) ||
-                    refType.getId().equals(typeName))
-                    return Optional.of(refType);
-        }
-        return Optional.empty();
-    }
+    // public static Optional<RefType> findType(Project project, String typeName) {
+    //     for (Module module : project.getModules()) {
+    //         for (RefType refType : module.getTypes())
+    //             if (refType.getName().getFullName().equals(typeName) ||
+    //                 refType.getName().getName().equals(typeName) ||
+    //                 refType.getId().equals(typeName))
+    //                 return Optional.of(refType);
+    //     }
+    //     return Optional.empty();
+    // }
 
     // ----------------------------------------------------------------------
 
-    public static Set<Library> getAllLibraries(Project project) {
-        Set<Library> allLibraries = new HashSet<>();
-        project.getModules().forEach(module -> {
-            allLibraries.addAll(module.getDeclaredLibraries());
-        });
-        return allLibraries;
-    }
+    // public static Set<Library> getAllLibraries(Project project) {
+    //     Set<Library> allLibraries = new HashSet<>();
+    //     project.getModules().forEach(module -> {
+    //         allLibraries.addAll(module.getDeclaredLibraries());
+    //     });
+    //     return allLibraries;
+    // }
 
     // ----------------------------------------------------------------------
 

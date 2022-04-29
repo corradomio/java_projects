@@ -5,12 +5,12 @@ import java.util.Map;
 public interface GraphDatabase {
 
     /**
-     * Neo4j version as string "3.5.xx"
+     * Neo4j version as string "3.5.13"
      */
     String getVersion();
 
     /**
-     * Neo4j major version as integer (3, 4 etc
+     * Neo4j major version as integer (3, 4 ...)
      */
     int getMajorVersion();
 
@@ -27,6 +27,8 @@ public interface GraphDatabase {
      * @return a Session, a wrapper to the connection
      */
     GraphSession connect();
+    GraphSession connect(String refId);
+    GraphSession connect(String refId, String model, int rev);
 
     /**
      * Delete the content of the database
