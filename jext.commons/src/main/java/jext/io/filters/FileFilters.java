@@ -1,10 +1,13 @@
 package jext.io.filters;
 
+import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.List;
 
 public class FileFilters {
+
+    public static final FileFilter IS_DIRECTORY = File::isDirectory;
 
     public static final FileFilter IS_JAVA = file -> file.getName().endsWith(".java");
     public static final FileFilter IS_JAR = file -> (file.getName().endsWith(".jar") || file.getName().endsWith(".aar"));

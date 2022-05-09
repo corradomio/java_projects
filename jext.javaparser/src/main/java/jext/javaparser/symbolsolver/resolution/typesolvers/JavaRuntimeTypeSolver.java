@@ -1,15 +1,12 @@
 package jext.javaparser.symbolsolver.resolution.typesolvers;
 
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
-import com.github.javaparser.symbolsolver.javassistmodel.JavassistFactory;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import jext.javaparser.resolution.PrimitiveTypeDeclaration;
 import jext.javaparser.resolution.ReferencedTypeDeclaration;
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 
-import java.io.IOException;
-
-import static jext.lang.JavaConstants.OBJECT;
+import static jext.java.JavaConstants.OBJECT;
 
 /**
  * Used to assign a reasonable class name to the TypeSolver

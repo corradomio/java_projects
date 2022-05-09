@@ -12,7 +12,7 @@ import com.github.javaparser.ast.comments.CommentsCollection;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.MapUtils;

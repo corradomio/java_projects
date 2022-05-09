@@ -3,7 +3,7 @@ package jext.sourcecode.project.info.library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
-import jext.sourcecode.project.maven.MavenName;
+import jext.sourcecode.project.java.maven.MavenName;
 import jext.util.MapUtils;
 
 import java.util.List;

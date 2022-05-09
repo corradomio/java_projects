@@ -6,7 +6,7 @@ import com.github.javaparser.resolution.declarations.ResolvedParameterDeclaratio
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 
 import java.util.Collections;
 import java.util.List;

@@ -26,10 +26,8 @@ import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.cache.Cache;
 import jext.javaparser.exception.ResolveTimeoutException;
-import jext.javaparser.resolution.ReferencedTypeUse;
 import jext.javaparser.symbolsolver.resolution.typesolvers.BaseTypeSolver;
-import jext.lang.JavaConstants;
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 import jext.util.Assert;
 import jext.util.PropertiesUtils;
 

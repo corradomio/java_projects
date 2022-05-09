@@ -5,14 +5,14 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.maven.MavenLibrary;
+import jext.sourcecode.project.java.maven.MavenLibrary;
 import jext.util.HashSet;
 import jext.util.SetUtils;
 
 import java.io.File;
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -192,7 +192,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     }
 
     @Override
-    public void checkArtifacts(MavenDownloader md, boolean parallel) {
+    public void checkArtifacts(LibraryDownloader md, boolean parallel) {
         List<MavenCoords> artifacts = highestLibraries
             .values()
             .stream()

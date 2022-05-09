@@ -1,7 +1,6 @@
 package jext.sourcecode.project.util;
 
 import jext.logging.Logger;
-import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.Module;
@@ -26,27 +25,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ProjectUtils {
 
     private static Logger logger = Logger.getLogger(ProjectUtils.class);
-
-
-    public static String getHighestRuntimeName(Project project) {
-        String languageVersion = "";
-        for (Module module : project.getModules()) {
-            String rt = module.getRuntimeLibrary().getName().getName();
-            if (rt.compareTo(languageVersion) > 0)
-                languageVersion = rt;
-        }
-        if (languageVersion.isEmpty())
-            languageVersion = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
-        return languageVersion;
-    }
-
 
     public static List<Module> getModules(Project project, List<String> moduleNames) {
         if (moduleNames.isEmpty())
@@ -90,71 +74,6 @@ public class ProjectUtils {
 
         return sources;
     }
-
-    // public static List<Source> getSources(Project project, Map<String, List<String>> moduleSources) {
-    //     List<Source> sources = new ArrayList<>();
-    //
-    //     for(String moduleName : moduleSources.keySet()) {
-    //         Module module = project.getModule(moduleName);
-    //         if (module == null) {
-    //             logger.errorf("Module %s not found in project %s", moduleName, project.getName().getFullName());
-    //             continue;
-    //         }
-    //
-    //         for (String sourceName : moduleSources.get(moduleName)) {
-    //             Source source = module.getSource(sourceName);
-    //             if (source == null) {
-    //                 logger.errorf("Source %s not found in module %s of project %s", sourceName, moduleName, project.getName().getFullName());
-    //                 continue;
-    //             }
-    //
-    //             sources.add(source);
-    //         }
-    //     }
-    //     return sources;
-    // }
-
-    // public static List<Source> getSources(Project project) {
-    //     List<Source> sources = new ArrayList<>();
-    //     for (Module module : project.getModules())
-    //         sources.addAll(module.getSources());
-    //
-    //     // sort the files in decreasing order of totalLines
-    //     // in this way, the most large files are analysed as soon
-    //     // as possible
-    //     sources.sort((s1, s2) -> {
-    //         int tl1 = (int)s1.getSourceInfo().totalLines;
-    //         int tl2 = (int)s2.getSourceInfo().totalLines;
-    //         return tl2-tl1;
-    //     });
-    //
-    //     return sources;
-    // }
-
-    // public static Source getSource(Project project, String nameOrId) {
-    //     for (Module module : project.getModules()) {
-    //         Source source = module.getSource(nameOrId);
-    //         if (source != null)
-    //             return source;
-    //     }
-    //     return null;
-    // }
-
-    // public static List<File> getSourceRoots(Project project) {
-    //     List<File> roots = new ArrayList<>();
-    //     project.getModules().forEach(module -> {
-    //         roots.addAll(module.getSources().getSourceRootDirectories());
-    //     });
-    //     return roots;
-    // }
-
-    // public static Set<File> getLibraryFiles(Project project) {
-    //     Set<File> lfiles = new TreeSet<>();
-    //     project.getLibraries().forEach(library -> {
-    //         lfiles.addAll(library.getFiles());
-        // });
-    //     return lfiles;
-    // }
 
     // ----------------------------------------------------------------------
 
@@ -221,27 +140,6 @@ public class ProjectUtils {
 
         return usedTypes;
     }
-
-    // public static Optional<RefType> findType(Project project, String typeName) {
-    //     for (Module module : project.getModules()) {
-    //         for (RefType refType : module.getTypes())
-    //             if (refType.getName().getFullName().equals(typeName) ||
-    //                 refType.getName().getName().equals(typeName) ||
-    //                 refType.getId().equals(typeName))
-    //                 return Optional.of(refType);
-    //     }
-    //     return Optional.empty();
-    // }
-
-    // ----------------------------------------------------------------------
-
-    // public static Set<Library> getAllLibraries(Project project) {
-    //     Set<Library> allLibraries = new HashSet<>();
-    //     project.getModules().forEach(module -> {
-    //         allLibraries.addAll(module.getDeclaredLibraries());
-    //     });
-    //     return allLibraries;
-    // }
 
     // ----------------------------------------------------------------------
 
@@ -315,4 +213,9 @@ public class ProjectUtils {
         }
         return total[0];
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

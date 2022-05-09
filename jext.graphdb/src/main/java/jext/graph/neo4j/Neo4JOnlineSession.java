@@ -22,7 +22,6 @@ import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,9 +61,6 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String TYPE = "type";
 
     private static final String REF_ID = "refId";
-    private static final String REVISION = "revision";
-    private static final String REVISIONS = "revisions";
-    private static final String MODEL = "model";
 
     // ----------------------------------------------------------------------
     // Special handled parameters
@@ -85,31 +81,13 @@ public class Neo4JOnlineSession implements GraphSession {
     private Transaction transaction;
     private AtomicInteger count = new AtomicInteger();
 
-    // project support
-    private String refId;
-    // revision support
-    private String model;
-    private int rev = -1;
-    private Map<String, Set<String>> metadata;
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     Neo4JOnlineSession(Neo4JOnlineDatabase graphdb) {
-        this(graphdb, null, null, -1);
-    }
-
-    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb, String refId) {
-        this(graphdb, refId, null, -1);
-    }
-
-    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb, String refId, String model, int rev) {
         this.graphdb = graphdb;
         this.driver = graphdb.getDriver();
-        this.refId = refId;
-        this.model = model;
-        this.rev = rev;
     }
 
     // ----------------------------------------------------------------------
@@ -126,8 +104,6 @@ public class Neo4JOnlineSession implements GraphSession {
     public Neo4JOnlineSession connect() {
         this.session = this.driver.session();
         this.transaction = this.session.beginTransaction();
-        if (this.model != null && this.rev >= 0)
-            this.metadata = getRevisionMetadata();
         return this;
     }
 
@@ -161,10 +137,6 @@ public class Neo4JOnlineSession implements GraphSession {
     //
 
     private Map<String,Object> ckparams(Map<String,Object> params) {
-        if (refId != null)
-            params.put(REF_ID, refId);
-        if (rev >= 0)
-            params.put(REVISION, rev);
         return params;
     }
 
@@ -1907,60 +1879,6 @@ public class Neo4JOnlineSession implements GraphSession {
         params.add(alias, aparams);
 
         return stmt;
-    }
-
-    // ----------------------------------------------------------------------
-    // Revision support
-    // ----------------------------------------------------------------------
-
-    @Override
-    public void deleteRevisionMetadata(String model) {
-        deleteNodes(REVISION, Parameters.params(
-            REF_ID, refId,
-            MODEL, model
-        ));
-    }
-
-    @Override
-    public void createRevisionMetadata(String model, Map<String, Set<String>> metadata) {
-        createNode(REVISION, Parameters.params(metadata).add(
-            REF_ID, refId,
-            MODEL, model,
-            REVISIONS, new int[]{1,2,3,4,5}
-        ));
-    }
-
-    @Override
-    public Map<String, Set<String>> getRevisionMetadata() {
-        return getRevisionMetadata(model);
-    }
-
-    @Override
-    public Map<String, Set<String>> getRevisionMetadata(String model) {
-        Map<String, Set<String>> metadata = new HashMap<>();
-        Map<String, Object> nv = queryNodes(REVISION, Parameters.params(
-            REF_ID, refId,
-            MODEL, model
-        )).values();
-
-        if (nv == null)
-            return Collections.emptyMap();
-
-        for(String type : nv.keySet()) {
-            if (type.startsWith("$"))
-                continue;
-            if (REF_ID.equals(type))
-                continue;
-            if (MODEL.equals(type))
-                continue;
-            if (REVISIONS.equals(type))
-                continue;
-
-            List<String> values = (List<String>) nv.get(type);
-            Set<String> properties = new HashSet<>(values);
-            metadata.put(type, properties);
-        }
-        return metadata;
     }
 
     // ----------------------------------------------------------------------

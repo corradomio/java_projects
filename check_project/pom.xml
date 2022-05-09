@@ -19,6 +19,7 @@
         <module>../jext.collections</module>
         <module>../jext.maven</module>
         <module>../jext.java</module>
+        <module>../jext.python</module>
         <module>../jext.cache</module>
         <module>../jext.project</module>
         <module>../jext.javaparser</module>

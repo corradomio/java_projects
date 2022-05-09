@@ -11,7 +11,7 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resources;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
-import jext.sourcecode.project.maven.MavenRepository;
+import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.sourcecode.project.util.ResourcesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.MapUtils;

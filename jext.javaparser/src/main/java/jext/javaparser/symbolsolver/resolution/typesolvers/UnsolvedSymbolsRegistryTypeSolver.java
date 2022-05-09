@@ -7,7 +7,7 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import jext.javaparser.util.JPUtils;
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 import jext.util.Assert;
 
 public class UnsolvedSymbolsRegistryTypeSolver extends BaseTypeSolver {

@@ -3,8 +3,8 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
-import jext.lang.JavaConstants;
-import jext.lang.JavaUtils;
+import jext.java.JavaConstants;
+import jext.java.JavaUtils;
 import jext.logging.Logger;
 import jext.util.FileUtils;
 
@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;

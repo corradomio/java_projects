@@ -1,29 +1,30 @@
 package jext.sourcecode.project.info;
 
-import jext.maven.MavenDownloader;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.PathName;
-import jext.sourcecode.project.GuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryRepository;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.RuntimeLibrary;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.info.library.InfoInvalidLibrary;
 import jext.sourcecode.project.info.library.InfoLocalLibrary;
 import jext.sourcecode.project.info.library.InfoMavenLibrary;
 import jext.sourcecode.project.info.library.InfoRTLibrary;
 import jext.sourcecode.project.info.library.LibrarySet;
-import jext.sourcecode.project.maven.MavenRepository;
+import jext.sourcecode.project.java.JavaGuessRuntimeLibrary;
+import jext.sourcecode.project.java.maven.MavenRepository;
+import jext.sourcecode.project.python.PythonGuessRuntimeLibrary;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
+import jext.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -155,9 +155,14 @@ public class InfoProject implements Project {
     @Override
     public String getRuntimeLibrary() {
         String rtLibrary = properties.getProperty(RUNTIME_LIBRARY);
+        String projectLanguage = properties.getProperty(PROJECT_LANGUAGE);
+        if (!StringUtils.isEmpty(rtLibrary))
+            return rtLibrary;
 
-        if (rtLibrary == null)
-            rtLibrary = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+        if (Project.JAVA_PROJECT.equals(projectLanguage))
+            return JavaGuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+        if (Project.PYTHON_PROJECT.equals(projectLanguage))
+            return PythonGuessRuntimeLibrary.DEFAULT_PYTHON_RUNTIME_LIBRARY;
 
         return rtLibrary;
     }
@@ -250,8 +255,8 @@ public class InfoProject implements Project {
     }
 
     @Override
-    public MavenDownloader getLibraryDownloader() {
-        MavenDownloader md = lfinder.getLibraryDownloader();
+    public LibraryDownloader getLibraryDownloader() {
+        LibraryDownloader md = lfinder.getLibraryDownloader();
         getLibraryRepositories().forEach(librepo -> {
             md.addRepository(librepo.getUrl());
         });

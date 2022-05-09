@@ -3,9 +3,9 @@ package jext.sourcecode.resources.libraries;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.RuntimeLibrary;
 import jext.util.Parameters;
 
 public class NullLibraryFinder implements LibraryFinder {
@@ -37,12 +37,12 @@ public class NullLibraryFinder implements LibraryFinder {
     }
 
     @Override
-    public RuntimeLibrary getRuntimeLibrary(String libraryName) {
+    public Library getRuntimeLibrary(String libraryName) {
         return null;
     }
 
     @Override
-    public MavenDownloader getLibraryDownloader() {
+    public LibraryDownloader getLibraryDownloader() {
         return null;
     }
 }

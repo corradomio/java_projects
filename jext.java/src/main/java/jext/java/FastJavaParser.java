@@ -1,6 +1,5 @@
 package jext.java;
 
-import jext.lang.JavaConstants;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.ObjectName;

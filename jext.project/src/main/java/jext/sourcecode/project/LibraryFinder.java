@@ -1,7 +1,6 @@
 package jext.sourcecode.project;
 
 import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
 import jext.util.Parameters;
 
 public interface LibraryFinder {
@@ -10,12 +9,12 @@ public interface LibraryFinder {
 
     LibraryFinder configure(Parameters params);
 
+    Library getRuntimeLibrary(String libraryName);
+
     Library getLibrary(MavenCoords coords);
 
     String getLatestVersion(MavenCoords coords);
 
-    RuntimeLibrary getRuntimeLibrary(String libraryName);
-
-    MavenDownloader getLibraryDownloader();
+    LibraryDownloader getLibraryDownloader();
 
 }

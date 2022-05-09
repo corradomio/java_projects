@@ -1,11 +1,8 @@
 package jext.sourcecode.project;
 
-import jext.maven.MavenDownloader;
 import jext.name.IdNamed;
 
-import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -42,6 +39,7 @@ public interface Project extends IdNamed {
      */
     String RUNTIME_LIBRARY = "runtime.library";
     String PROJECT_TYPE = "project.type";
+    String PROJECT_LANGUAGE = "project.language";
     String PROJECT_MODULE = "project.module";
     String MODULE_SOURCES = "module.sources";
     String MODULE_RESOURCES = "module.resources";
@@ -53,6 +51,11 @@ public interface Project extends IdNamed {
     String MODULE_DEFINITION_BY_CONFIGURATION = "configuration";
     String MODULE_DEFINITION_BY_CONFIGURATION_FILE = "configurationFile";
     String MODULE_DEFINITION_BY_SOURCE_ROOTS = "sourceRoots";
+
+    String AUTO = "auto";
+
+    String JAVA_PROJECT = "java";
+    String PYTHON_PROJECT = "python";
 
     // ----------------------------------------------------------------------
 
@@ -85,7 +88,7 @@ public interface Project extends IdNamed {
     LibraryFinder   getLibraryFinder();
 
     /** Equivalent to 'getLibraryFinder().getLibraryDownloader()' */
-    MavenDownloader getLibraryDownloader();
+    LibraryDownloader getLibraryDownloader();
 
     // ----------------------------------------------------------------------
     // Module/Source

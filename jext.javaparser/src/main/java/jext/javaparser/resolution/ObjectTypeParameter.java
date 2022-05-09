@@ -3,9 +3,7 @@ package jext.javaparser.resolution;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParameterDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedTypeParametrizable;
-import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
-import jext.lang.JavaConstants;
+import jext.java.JavaConstants;
 
 import java.util.Collections;
 import java.util.List;

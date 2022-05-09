@@ -1,6 +1,6 @@
 package jext.name;
 
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 
 
 /**

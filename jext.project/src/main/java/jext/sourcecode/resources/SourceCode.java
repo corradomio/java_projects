@@ -1,9 +1,13 @@
 package jext.sourcecode.resources;
 
+import jext.java.JavaConstants;
+import jext.python.PythonConstants;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.util.SourceInfo;
 import jext.sourcecode.resources.java.JavaSourceCode;
+import jext.sourcecode.resources.python.PythonSourceCode;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -15,28 +19,22 @@ public abstract class SourceCode extends ResourceFile implements Source {
     //
     // ----------------------------------------------------------------------
 
-    private static final String EXT_JAVA = ".java";
-    private static final String EXT_SCALA = ".scala";
-    private static final String EXT_ASPECT = ".aj";
-
     public static Source newSource(File sourceFile, Module module) {
         String name = sourceFile.getName();
 
-        if (name.endsWith(EXT_JAVA))
+        if (name.endsWith(JavaConstants.JAVA_EXT))
             return new JavaSourceCode(sourceFile, module);
-        // if (name.endsWith(EXT_SCALA))
-        //     return new ScalaSourceCode(sourceFile, module);
-        // if (name.endsWith(EXT_ASPECT))
-        //     return new AspectSourceCode(sourceFile, module);
-        else
-            return null;
+        if (name.endsWith(PythonConstants.PYTHON_EXT))
+            return new PythonSourceCode(sourceFile, module);
+
+        throw new ProjectException("Unsupported source file " + sourceFile);
     }
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
-    private String language;
+    protected String language;
     private SourceInfo sinfo;
 
     // ----------------------------------------------------------------------

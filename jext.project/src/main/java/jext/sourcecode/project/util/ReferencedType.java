@@ -1,8 +1,8 @@
 package jext.sourcecode.project.util;
 
 import jext.java.TypeRole;
-import jext.lang.JavaConstants;
-import jext.lang.JavaUtils;
+import jext.java.JavaConstants;
+import jext.java.JavaUtils;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.NamedObject;
@@ -14,7 +14,6 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.project.TypeParam;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

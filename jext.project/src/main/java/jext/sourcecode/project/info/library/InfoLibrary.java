@@ -4,7 +4,6 @@ import jext.name.EmptyName;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.NamedObject;
-import jext.name.ObjectName;
 import jext.name.PathName;
 import jext.name.VersionName;
 import jext.sourcecode.project.Library;
@@ -14,7 +13,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
-import jext.sourcecode.project.maven.MavenName;
+import jext.sourcecode.project.java.maven.MavenName;
 import jext.util.FileUtils;
 import jext.util.MapUtils;
 

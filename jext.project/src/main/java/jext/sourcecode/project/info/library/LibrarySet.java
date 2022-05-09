@@ -2,15 +2,14 @@ package jext.sourcecode.project.info.library;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryType;
 import jext.util.SetUtils;
 
 import java.io.File;
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -181,7 +180,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     }
 
     @Override
-    public void checkArtifacts(MavenDownloader md, boolean parallel) {
+    public void checkArtifacts(LibraryDownloader md, boolean parallel) {
         List<MavenCoords> artifacts = mavenLibraries
             .values()
             .stream()

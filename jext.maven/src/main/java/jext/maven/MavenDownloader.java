@@ -62,22 +62,22 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
 
     /** List of repositories to try */
-    private final Set<String> repoUrls = new HashSet<>();
+    protected final Set<String> repoUrls = new HashSet<>();
 
     /**List of flatten directories where to search other missing libraries */
-    private final List<File> localDirs = new ArrayList<>();
+    protected final List<File> localDirs = new ArrayList<>();
 
     /** Directory where to download the files */
-    private File downloadDir = new File(".m2/repository");
+    protected File downloadDir = new File(".m2/repository");
 
     /** wait a little between two consecutive downloads (milliseconds) */
-    private long downloadTimeout = 500;
+    protected long downloadTimeout = 500;
 
     /** time between two checks of the same file (metadata & versions) (seconds) */
-    private long checkTimeout = 24*60*60;
+    protected long checkTimeout = 24*60*60;
 
     /** parallel downloads */
-    private int parallelDownloads = 5;
+    protected int parallelDownloads = 5;
 
     // ----------------------------------------------------------------------
 
@@ -103,20 +103,20 @@ public class MavenDownloader implements MavenConst {
         addRepository("https://repo.maven.apache.org/maven2");
     }
 
-    /**
-     * Create a clone of the current downloader, useful to add new custom repositories
-     */
-    public MavenDownloader newDownloader() {
-        return new MavenDownloader()
-            .setDownloadDirectory(downloadDir)
-            .addRepositories(repoUrls)
-            .addLocalDirectories(localDirs)
-            .setDownloadTimeout(downloadTimeout)
-            .setCheckTimeout(checkTimeout)
-            .setParallelDownloads(parallelDownloads)
-            .initialize()
-            ;
-    }
+    // /**
+    //  * Create a clone of the current downloader, useful to add new custom repositories
+    //  */
+    // public MavenDownloader newDownloader() {
+    //     return new MavenDownloader()
+    //         .setDownloadDirectory(downloadDir)
+    //         .addRepositories(repoUrls)
+    //         .addLocalDirectories(localDirs)
+    //         .setDownloadTimeout(downloadTimeout)
+    //         .setCheckTimeout(checkTimeout)
+    //         .setParallelDownloads(parallelDownloads)
+    //         .initialize()
+    //         ;
+    // }
 
     // ----------------------------------------------------------------------
     // Configuration
@@ -212,15 +212,6 @@ public class MavenDownloader implements MavenConst {
         //     downloadFile(coords, MavenType.POM);
         return pomFile;
     }
-
-    // public File getMetadataFile(MavenCoords coords) {
-    //     coords = normalize(coords);
-    //
-    //     File metadataFile = getFile(coords, MavenType.METADATA);
-    //     // if (recheck(metadataFile))
-    //     //     downloadFile(coords, MavenType.METADATA);
-    //     return metadataFile;
-    // }
 
     /**
      * Retrieve the '.jar' file from the coordinates

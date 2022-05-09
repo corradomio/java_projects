@@ -16,16 +16,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -34,6 +41,56 @@ import java.util.zip.ZipInputStream;
 public class FileUtils {
 
     private static Logger logger = Logger.getLogger(FileUtils.class);
+
+    // ----------------------------------------------------------------------
+    // Count extensions
+    // ----------------------------------------------------------------------
+
+    public static Map<String, AtomicInteger> countExtensions(File directory) {
+        // count
+        Map<String, AtomicInteger> extCounts = new HashMap<String, AtomicInteger>() {
+            public AtomicInteger get(String key) {
+                if (!containsKey(key))
+                    return new AtomicInteger();
+                else
+                    return super.get(key);
+            }
+        };
+
+        try {
+            Files.walkFileTree(directory.toPath(), new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    String ext = PathUtils.getExtension(file.toString());
+                    if (!extCounts.containsKey(ext))
+                        extCounts.put(ext, new AtomicInteger());
+
+                    extCounts.get(ext).incrementAndGet();
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // In 'theory', it never happen
+            Logger.getLogger(FileUtils.class).error(e, e);
+        }
+
+        return extCounts;
+    }
 
     // ----------------------------------------------------------------------
     // Digest

@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.ProjectFactory;
+import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.ProjectComparator;
 import jext.util.PropertiesUtils;
 
@@ -12,11 +12,11 @@ public class CompareProjects {
 
     public static void main(String[] args) throws IOException {
 
-        Project psrc = ProjectFactory.newProject(
+        Project psrc = Projects.newProject(
                 new File("D:\\Projects.github\\java_projects\\check_java_syntax\\.spl\\b9ee0f37-source-project-r00.json"),
                 PropertiesUtils.empty());
 
-        Project pdst = ProjectFactory.newProject(
+        Project pdst = Projects.newProject(
                 new File("D:\\Projects.github\\java_projects\\check_java_syntax\\.spl\\b9ee0f37-source-project-r01.json"),
                 PropertiesUtils.empty());
 

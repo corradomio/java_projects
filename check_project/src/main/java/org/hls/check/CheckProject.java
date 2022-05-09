@@ -4,16 +4,14 @@ import jext.cache.CacheManager;
 import jext.logging.Logger;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.ProjectAnalyzer;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectDump;
-import jext.sourcecode.resources.libraries.JavaLibraryFinder;
-import jext.util.JSONUtils;
+import jext.sourcecode.resources.java.JavaLibraryFinder;
+import jext.sourcecode.resources.python.PythonLibraryFinder;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
-import java.io.IOException;
 
 public class CheckProject {
 
@@ -22,14 +20,18 @@ public class CheckProject {
             Logger.configure();
             CacheManager.configure();
 
-            LibraryFinder lfinder = new JavaLibraryFinder()
-                .addLibrary("jdk8", "D:\\Java\\Jdk8.0")
-                .addLibrary("jdk11", "D:\\Java\\Jdk11.0");
+            // LibraryFinder lfinder = new JavaLibraryFinder()
+            //     .addLibrary("jdk8", "D:\\Java\\Jdk8.0")
+            //     .addLibrary("jdk11", "D:\\Java\\Jdk11.0");
+
+            LibraryFinder lfinder = new PythonLibraryFinder()
+                .addLibraries("D:\\Python\\Anaconda3-2021.11\\Lib")
+                .addLibrary("py38", "D:\\Python\\Anaconda3-2021.11");
 
 
             Project project = Projects.newProject(new File(
                 //"D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\elasticsearch"
-                // "D:\\SPLGroup\\example_repo\\cocome-maven-project"
+                // "D:\\SPLGroup\\spl-workspaces\\sample-projects\\cocome-maven-project"
                 // "D:\\Projects.github\\other_projects\\commons-lang"
                 // "D:\\Projects.github\\ml_projects\\elasticsearch-5.6.16"
                 // "D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"
@@ -38,10 +40,12 @@ public class CheckProject {
                 // "D:\\Projects.github\\java_projects\\jext.linalg\\.spl\\project-info.json"
                 // "D:\\Projects.github\\other_projects\\spark-3.2.1"
                 // "D:\\Projects.github\\other_projects\\hibernate-orm-5.2.0"
-                "D:\\SPLGroup\\spl-workspaces\\sample-projects\\ForSalwa"
+                // "D:\\SPLGroup\\spl-workspaces\\sample-projects\\ForSalwa"
+                "D:\\Projects\\Python\\django-main"
                 ),
                 PropertiesUtils.properties(
-                    "runtime.library", "auto"
+                    // "runtime.library", "auto"
+                    // "runtime.library", "jdk8"
                     // , "org.gradle.daemon", "false"
                     // , "org.gradle.java.home", "D:\\Java\\Jdk18.0"
                     // , "jdk8", "D:\\Java\\Jdk8.0"

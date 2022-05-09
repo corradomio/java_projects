@@ -1,6 +1,6 @@
 package jext.javaparser.resolution;
 
-import jext.lang.JavaUtils;
+import jext.java.JavaUtils;
 
 import java.util.HashMap;
 import java.util.Map;

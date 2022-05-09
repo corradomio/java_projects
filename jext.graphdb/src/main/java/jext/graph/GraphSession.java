@@ -4,7 +4,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /*
@@ -104,27 +103,6 @@ public interface GraphSession extends AutoCloseable {
      * Delete the content of the database (DANGEROUS)
      */
     void deleteAll();
-
-    // ----------------------------------------------------------------------
-    // Revision support
-    // ----------------------------------------------------------------------
-
-    /**
-     * Create a node "revision" containing the information about the node types
-     * defined in the model and the properties that are used in revision;
-     *
-     * @param model project model
-     * @param typePropertiesMap metadata
-     */
-    void createRevisionMetadata(String model, Map<String, Set<String>> typePropertiesMap);
-    void deleteRevisionMetadata(String model);
-
-    /**
-     * Retrieve the revision's metadata information
-     * @return
-     */
-    Map<String, Set<String>> getRevisionMetadata();
-    Map<String, Set<String>> getRevisionMetadata(String model);
 
     // ----------------------------------------------------------------------
     // Query Nodes
