@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <models>
+        <model name="source"        ref="msource"/>
+        <model name="dependency"    ref="project"/>
+        <model name="component"     ref="mcomponent"/>
+        <model name="feature"       ref="mfeature"/>
+    </models>
+    <nodes>
+        <node name='cluster'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='reason' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repository' type='string'/>
+            <property name='role' type='string'/>
+            <property name='status' type='string'/>
+            <property name='timestamp' type='long'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='comment'>
+            <property name='allComments' type='string[]'/>
+            <property name='authors' type='string[]'/>
+            <property name='comments' type='string[]'/>
+            <property name='documentation' type='string[]'/>
+            <property name='fullname' type='string'/>
+            <property name='moduleId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='projectId' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='sourceId' type='string'/>
+            <property name='type' type='string'/>
+            <property name='withCommentId' type='string'/>
+        </node>
+        <node name='component'>
+            <property name='complexity' type='double[]'/>
+            <property name='count' type='long[]'/>
+            <property name='countTypes' type='long[]'/>
+            <property name='depth' type='long'/>
+            <property name='digest' type='string[]'/>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='moduleId' type='string'/>
+            <property name='moduleName' type='string'/>
+            <property name='moduleRefId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='role' type='string'/>
+            <property name='type' type='string'/>
+            <property name='typeId' type='string'/>
+        </node>
+        <node name='core'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='reason' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repository' type='string'/>
+            <property name='revisionId' type='string'/>
+            <property name='revisions' type='long[]'/>
+            <property name='role' type='string'/>
+            <property name='status' type='string'/>
+            <property name='timestamp' type='long'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='decltype'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='rank' type='long'/>
+            <property name='refId' type='string'/>
+            <property name='signature' type='string'/>
+            <property name='type' type='string'/>
+            <property name='typeId' type='string'/>
+            <property name='typeParams' type='long'/>
+        </node>
+        <node name='feature'>
+            <property name='complexity' type='double[]'/>
+            <property name='componentId' type='string'/>
+            <property name='count' type='long[]'/>
+            <property name='countTypes' type='long[]'/>
+            <property name='digest' type='string[]'/>
+            <property name='fat' type='bool[]'/>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='moduleId' type='string'/>
+            <property name='moduleName' type='string'/>
+            <property name='moduleRefId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='role' type='string'/>
+            <property name='type' type='string'/>
+            <property name='typeId' type='string'/>
+        </node>
+        <node name='field'>
+            <property name='declaration' type='string'/>
+            <property name='digest' type='string[]'/>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='modifiers' type='string[]'/>
+            <property name='moduleId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='ownerTypeId' type='string'/>
+            <property name='projectId' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='sourceId' type='string'/>
+            <property name='type' type='string'/>
+            <property name='typeId' type='string[]'/>
+        </node>
+        <node name='library'>
+            <property name='fullname' type='string'/>
+            <property name='language' type='string'/>
+            <property name='libraryType' type='string'/>
+            <property name='name' type='string'/>
+            <property name='path' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='type' type='string'/>
+            <property name='version' type='string'/>
+        </node>
+        <node name='librepo'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repositoryType' type='string'/>
+            <property name='type' type='string'/>
+            <property name='url' type='string'/>
+        </node>
+        <node name='mcomponent'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='reason' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repository' type='string'/>
+            <property name='revisionId' type='string'/>
+            <property name='revisions' type='long[]'/>
+            <property name='role' type='string'/>
+            <property name='status' type='string'/>
+            <property name='timestamp' type='long'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='method'>
+            <property name='declaration' type='string'/>
+            <property name='digest' type='string[]'/>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='modifiers' type='string[]'/>
+            <property name='moduleId' type='string'/>
+            <property name='nParams' type='long'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='ownerTypeId' type='string'/>
+            <property name='projectId' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='signature' type='string'/>
+            <property name='sourceId' type='string'/>
+            <property name='type' type='string'/>
+            <property name='typeId' type='string[]'/>
+        </node>
+        <node name='mfeature'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='reason' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repository' type='string'/>
+            <property name='revisionId' type='string'/>
+            <property name='revisions' type='long[]'/>
+            <property name='role' type='string'/>
+            <property name='status' type='string'/>
+            <property name='timestamp' type='long'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='module'>
+            <property name='digest' type='string[]'/>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='moduleRefId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='path' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='msource'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='reason' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repository' type='string'/>
+            <property name='revisionId' type='string'/>
+            <property name='revisions' type='long[]'/>
+            <property name='role' type='string'/>
+            <property name='sourceHome' type='string'/>
+            <property name='status' type='string'/>
+            <property name='timestamp' type='long'/>
+        </node>
+        <node name='namespace'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='parameter'>
+            <property name='fullname' type='string'/>
+            <property name='moduleId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='ownerMethodId' type='string'/>
+            <property name='ownerTypeId' type='string'/>
+            <property name='projectId' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='sourceId' type='string'/>
+            <property name='type' type='string'/>
+            <property name='typeId' type='string'/>
+        </node>
+        <node name='project'>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='path' type='string'/>
+            <property name='projectHome' type='string'/>
+            <property name='projectType' type='string'/>
+            <property name='reason' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repository' type='string'/>
+            <property name='revisionId' type='string'/>
+            <property name='revisions' type='long[]'/>
+            <property name='role' type='string'/>
+            <property name='status' type='string'/>
+            <property name='timestamp' type='long'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='source'>
+            <property name='digest' type='string[]'/>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='language' type='string'/>
+            <property name='moduleId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='path' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='splproject'>
+            <property name='description' type='string'/>
+            <property name='fullname' type='string'/>
+            <property name='jparameters' type='string'/>
+            <property name='name' type='string'/>
+            <property name='reason' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='repository' type='string'/>
+            <property name='role' type='string'/>
+            <property name='status' type='string'/>
+            <property name='timestamp' type='long'/>
+            <property name='type' type='string'/>
+            <property name='url' type='string'/>
+        </node>
+        <node name='token'>
+            <property name='clusterF' type='string'/>
+            <property name='clusterF2' type='string'/>
+            <property name='clusterT' type='string'/>
+            <property name='clusterT2' type='string'/>
+            <property name='fullname' type='string'/>
+            <property name='name' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='type' type='string'/>
+        </node>
+        <node name='type'>
+            <property name='clusterF' type='string'/>
+            <property name='clusterF2' type='string'/>
+            <property name='clusterT' type='string'/>
+            <property name='clusterT2' type='string'/>
+            <property name='digest' type='string[]'/>
+            <property name='featureScore' type='double[]'/>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='kCoreScore' type='double[]'/>
+            <property name='libraryId' type='string'/>
+            <property name='modifiers' type='string[]'/>
+            <property name='moduleId' type='string'/>
+            <property name='moduleName' type='string'/>
+            <property name='moduleRefId' type='string'/>
+            <property name='name' type='string'/>
+            <property name='namespace' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='role' type='string'/>
+            <property name='source' type='string'/>
+            <property name='sourceId' type='string'/>
+            <property name='type' type='string'/>
+            <property name='typeParams' type='long'/>
+        </node>
+        <node name='typeparam'>
+            <property name='fullname' type='string'/>
+            <property name='inRevision' type='bool[]'/>
+            <property name='name' type='string'/>
+            <property name='refId' type='string'/>
+            <property name='signature' type='string'/>
+            <property name='type' type='string'/>
+        </node>
+    </nodes>
+</schema>
