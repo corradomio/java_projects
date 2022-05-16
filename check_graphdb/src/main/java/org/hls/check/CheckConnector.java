@@ -4,17 +4,12 @@ import jext.cache.CacheManager;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
-import jext.graph.Param;
 import jext.logging.Logger;
-import jext.util.MapUtils;
 import jext.util.Parameters;
 import jext.util.PropertiesUtils;
-import jext.util.SetUtils;
 import jext.util.concurrent.Parallel;
 
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 /*
     refId
@@ -33,16 +28,16 @@ public class CheckConnector {
         CacheManager.configure();
         Properties props = PropertiesUtils.load("config/neo4j.properties");
 
-        GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
+        GraphDatabase gdb = GraphDatabases.create(props);
 
         try (GraphSession s = gdb.connect("12345678")) {
-            s.deleteRevisionMetadata("component");
-            s.createRevisionMetadata("component", MapUtils.asMap(
-                "component", SetUtils.asSet("complexity", "count", "countTypes", "digest", "inRevision",
-                    "role")
-            ));
+            // s.deleteRevisionMetadata("component");
+            // s.createRevisionMetadata("component", MapUtils.asMap(
+            //     "component", SetUtils.asSet("complexity", "count", "countTypes", "digest", "inRevision",
+            //         "role")
+            // ));
 
-            Map<String, Set<String>> metadata = s.getRevisionMetadata("component");
+            // Map<String, Set<String>> metadata = s.getRevisionMetadata("component");
         }
 
         try (GraphSession s = gdb.connect(REF_ID, "dependency", 0)) {

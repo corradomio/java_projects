@@ -15,7 +15,15 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 public class App {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        int i;
+
+        for(i=0; i<10; ++i)
+            ;
+        System.out.println(i);
+    }
+
+    public static void main1(String[] args) throws Exception {
         long seed = 1;
         int outputNum = 4;
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()

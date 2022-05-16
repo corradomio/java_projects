@@ -17,7 +17,7 @@
           -->
         <!-- Indices on 'typeId' -->
         <index name="component_typeId" version="4.">
-            CREATE INDEX component_typeId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:component) ON (n.typeId)
         </index>
         <index name="feature_typeId" version="4.">
@@ -27,69 +27,69 @@
 
         <!-- Indices on 'refId' -->
         <index name="type_refId" version="4.">
-            CREATE INDEX type_refId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:type) ON (n.refId)
         </index>
         <index name="method_refId" version="4.">
-            CREATE INDEX method_typeId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:method) ON (n.refId)
         </index>
         <index name="parameter_refId" version="4.">
-            CREATE INDEX parameter_refId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:parameter) ON (n.refId)
         </index>
         <index name="field_refId" version="4.">
-            CREATE INDEX field_refId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:field) ON (n.refId)
         </index>
         <index name="comment_refId" version="4.">
-            CREATE INDEX comment_refId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:comment) ON (n.refId)
         </index>
         <index name="component_refId" version="4.">
-            CREATE INDEX component_refId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:component) ON (n.refId)
         </index>
         <index name="feature_refId" version="4.">
-            CREATE INDEX feature_refId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:feature) ON (n.refId)
         </index>
         <index name="source_refId" version="4.">
-            CREATE INDEX source_refId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:source) ON (n.refId)
         </index>
 
         <!-- indices on 'name' -->
         <index name="type_name" version="4.">
-            CREATE INDEX type_name IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:type) ON (n.name)
         </index>
         <index name="method_name" version="4.">
-            CREATE INDEX method_typeId IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:method) ON (n.name)
         </index>
         <index name="parameter_name" version="4.">
-            CREATE INDEX parameter_name IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:parameter) ON (n.name)
         </index>
         <index name="field_name" version="4.">
-            CREATE INDEX field_name IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:field) ON (n.name)
         </index>
         <index name="comment_name" version="4.">
-            CREATE INDEX comment_name IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:comment) ON (n.name)
         </index>
         <index name="component_name" version="4.">
-            CREATE INDEX component_name IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:component) ON (n.name)
         </index>
         <index name="feature_name" version="4.">
-            CREATE INDEX feature_name IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:feature) ON (n.name)
         </index>
         <index name="source_name" version="4.">
-            CREATE INDEX source_name IF NOT EXISTS
+            CREATE INDEX ${name} IF NOT EXISTS
             FOR (n:source) ON (n.name)
         </index>
 

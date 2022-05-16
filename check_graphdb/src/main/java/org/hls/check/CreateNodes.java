@@ -16,12 +16,12 @@ public class CreateNodes {
         Logger.configure();
         CacheManager.configure();
         Properties props = PropertiesUtils.load("config/neo4j.properties");
-        GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
+        GraphDatabase gdb = GraphDatabases.create(props);
 
         try(GraphSession s = gdb.connect()) {
-            s.createNode("U", Parameters.empty(), Parameters.params(
-                "revision", 3
-            ));
+            // s.createNode("U", Parameters.empty(), Parameters.params(
+            //     "revision", 3
+            // ));
         }
         finally {
             gdb.destroy();

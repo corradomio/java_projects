@@ -6,7 +6,6 @@ import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.logging.Logger;
 import jext.util.MapUtils;
-import jext.util.Parameters;
 import jext.util.PropertiesUtils;
 
 import java.util.Map;
@@ -19,9 +18,9 @@ public class CheckNeo4J {
         CacheManager.configure();
         Properties props = PropertiesUtils.load("config/neo4j.properties");
 
-        GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
+        GraphDatabase gdb = GraphDatabases.create(props);
 
-        gdb.registerQueries(MapUtils.asMap("test", "MATCH (n:splproject)"));
+        gdb.getNamedQueries().registerQueries(MapUtils.asMap("test", "MATCH (n:splproject) RETURN n"));
 
         Map<String, Object> p = MapUtils.asMap(
             "other", MapUtils.asMap(

@@ -5,8 +5,6 @@ import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.logging.Logger;
-import jext.util.HashBidiMap;
-import jext.util.HashMap;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 import org.neo4j.driver.types.Node;
@@ -17,7 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-public class CheckSchema {
+public class WriteSchema {
 
     private static String toType(Object o) {
         if (o instanceof String)
@@ -62,7 +60,7 @@ public class CheckSchema {
         CacheManager.configure();
         Properties props = PropertiesUtils.load("config/neo4j.properties");
 
-        GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
+        GraphDatabase gdb = GraphDatabases.create(props);
 
         Map<String, Map<String, String>> schema = new TreeMap<>();
 

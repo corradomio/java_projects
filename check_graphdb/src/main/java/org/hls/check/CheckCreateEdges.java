@@ -10,7 +10,6 @@ import jext.util.Parameters;
 import jext.util.PropertiesUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -21,7 +20,7 @@ public class CheckCreateEdges {
         Logger.configure();
         CacheManager.configure();
         Properties props = PropertiesUtils.load("config/neo4j.properties");
-        GraphDatabase gdb = GraphDatabases.newGraphDatabase(props);
+        GraphDatabase gdb = GraphDatabases.create(props);
 
         String sourceId;
         List<String> targetIds;
