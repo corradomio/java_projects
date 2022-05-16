@@ -97,14 +97,6 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     Neo4JOnlineSession(Neo4JOnlineDatabase graphdb) {
-        this(graphdb, null, null, -1);
-    }
-
-    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb, String refId) {
-        this(graphdb, refId, null, -1);
-    }
-
-    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb, String refId, String model, int rev) {
         this.graphdb = graphdb;
         this.driver = graphdb.getDriver();
         this.graphSchema = graphdb.getGraphSchema();
