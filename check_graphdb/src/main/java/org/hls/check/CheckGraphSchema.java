@@ -32,9 +32,19 @@ public class CheckGraphSchema {
             .setNamedQueries(namedQueries)
             .setNamedIndices(namedIndices);
 
-        try(GraphSession s = gdb.connect("test", "general", 0)) {
-            String nid = s.createNode("splserver", MapUtils.asMap(
+        try(GraphSession s = gdb.connect("123456")) {
+            String nid = s.createNode("splproject", MapUtils.asMap(
+                "name", "myName",
+                "repository", "myRepository",
+                "fullname", "myRepository/myName"
+            ));
+        }
 
+        try(GraphSession s = gdb.connect("123456", "source", 0)) {
+            String nid = s.createNode("msource", MapUtils.asMap(
+                "name", "myName",
+                "repository", "myRepository",
+                "fullname", "myRepository/myName"
             ));
         }
 

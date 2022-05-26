@@ -7,8 +7,8 @@ import jext.graph.GraphSession;
 import jext.graph.Param;
 import jext.graph.Query;
 import jext.graph.schema.GraphSchema;
+import jext.graph.schema.ModelSchema;
 import jext.graph.schema.NodeSchema;
-import jext.graph.schema.PropertySchema;
 import jext.logging.Logger;
 import jext.util.ArrayUtils;
 import jext.util.Assert;
@@ -65,6 +65,7 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String TYPE = "type";
 
     private static final String REF_ID = "refId";
+    private static final String REVISION = "revision";
 
     // ----------------------------------------------------------------------
     // Special handled parameters
@@ -87,16 +88,17 @@ public class Neo4JOnlineSession implements GraphSession {
 
     // project support
     private String refId;
+    private GraphSchema graphSchema;
+
     // revision support
     private String model;
     private int rev = -1;
-    private GraphSchema graphSchema;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb) {
+    Neo4JOnlineSession(Neo4JOnlineDatabase graphdb, String refId, String model, int rev) {
         this.graphdb = graphdb;
         this.driver = graphdb.getDriver();
         this.graphSchema = graphdb.getGraphSchema();
@@ -110,7 +112,9 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public GraphDatabase getDatabase() { return graphdb; }
+    public GraphDatabase getDatabase() {
+        return graphdb;
+    }
 
     // ----------------------------------------------------------------------
     // Connect/Disconnect
@@ -216,15 +220,15 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryUsingFullText(String query,  Map<String,Object> queryParams) {
-        queryParams = ckparams(queryParams);
+    public Query queryUsingFullText(String query,  Map<String,Object> params) {
+        params = ckparams(params);
 
         // indexName
         // query
         // labels ONLY if size > 0
         // refIds ONLY if size > 0
-        boolean hasLabels = queryParams.containsKey(LABELS ) && !((Collection<String>)queryParams.get(LABELS )).isEmpty();
-        boolean hasRefIds = queryParams.containsKey(REF_IDS) && !((Collection<String>)queryParams.get(REF_IDS)).isEmpty();
+        boolean hasLabels = params.containsKey(LABELS ) && !((Collection<String>)params.get(LABELS )).isEmpty();
+        boolean hasRefIds = params.containsKey(REF_IDS) && !((Collection<String>)params.get(REF_IDS)).isEmpty();
 
         String s = "CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n ";
         if (hasLabels && hasRefIds)
@@ -234,7 +238,7 @@ public class Neo4JOnlineSession implements GraphSession {
         else if (hasRefIds)
             s += "WHERE n.refId IN $refIds ";
 
-        return new Neo4JQuery(this, N, s, queryParams);
+        return new Neo4JQuery(this, N, s, params);
     }
 
     // ----------------------------------------------------------------------
@@ -267,20 +271,25 @@ public class Neo4JOnlineSession implements GraphSession {
      */
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
-        Map<String, Object> revProps = getRevisionedNode(nodeType, nodeProps);
+        nodeProps = ckparams(nodeProps);
+        NodeSchema nschema = graphSchema.getNodeSchema(nodeType);
+        Map<String, Object> revProps = getRevisionedNode(nschema, nodeProps);
         String nodeId;
 
+        nodeProps = nschema.normalizeCreate(nodeProps);
         if (revProps.isEmpty())
-            nodeId = _createNode(nodeType, nodeProps);
+            nodeId = _createNode(nschema, nodeProps);
         else
-            nodeId = _updateNode(nodeType, nodeProps, revProps);
+            nodeId = _updateNode(nschema, nodeProps, revProps);
 
-        // remove versioned nodes
-        // nodeProps = ckparams(nodeProps);
         return nodeId;
     }
 
-    private String/**/ _createNode(String nodeType, Map<String, Object> nodeProps) {
+    private String/**/ _createNode(NodeSchema nschema, Map<String, Object> nodeProps) {
+        String nodeType = nschema.getName();
+        ModelSchema mschema = graphSchema.getModelSchema(model);
+
+        nodeProps = nschema.normalizeCreate(nodeProps);
         String pblock = pblock(N, nodeProps);
         String sblock = sblock(N, nodeProps, true);
 
@@ -292,17 +301,17 @@ public class Neo4JOnlineSession implements GraphSession {
         return this.create(s, params);
     }
 
-    public String/**/ _updateNode(String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps) {
-        return null;
+    public String/**/ _updateNode(NodeSchema nschema, Map<String, Object> nodeProps, Map<String, Object> currProps) {
+        Map<String, Object> diffProps = MapUtils.difference(nodeProps, currProps);
+        String nodeId = (String) currProps.get("$id");
+        diffProps = nschema.normalizeUpdate(diffProps);
+        setNodeProperties(nodeId, diffProps);
+        return nodeId;
     }
 
-    private Map<String, Object> getRevisionedNode(String nodeType, Map<String, Object> nodeProps) {
-        // if (rev <= 0)
-        //     return Collections.emptyMap();
-
-        NodeSchema nschema = graphSchema.getNodeSchema(nodeType);
+    private Map<String, Object> getRevisionedNode(NodeSchema nschema, Map<String, Object> nodeProps) {
         Map<String, Object> nprops = nschema.getUnique(nodeProps);
-        return getNode(nodeType, nprops);
+        return getNode(nschema.getName(), nprops);
     }
 
     @Override

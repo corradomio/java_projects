@@ -9,8 +9,8 @@ public class ModelSchema {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private String name;
-    private NodeSchema refNode;
+    private String name = "";
+    private NodeSchema refNode = null;
     private GraphSchema gschema;
 
     private Map<String, NodeSchema> nodes = new HashMap<>();

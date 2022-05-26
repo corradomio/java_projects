@@ -21,6 +21,8 @@ public interface GraphDatabase {
      * @return a Session, a wrapper to the connection
      */
     GraphSession connect();
+    GraphSession connect(String refId);
+    GraphSession connect(String refId, String model, int rev);
 
     /**
      * Delete the content of the database

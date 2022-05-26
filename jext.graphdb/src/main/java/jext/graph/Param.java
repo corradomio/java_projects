@@ -32,7 +32,6 @@ public class Param {
     }
 
     public static String of(String name, int index, Op op) {
-        // return new Slot(name, index, op);
         if (index < 0 && isEq(op))
             return name;
         else if (isEq(op))

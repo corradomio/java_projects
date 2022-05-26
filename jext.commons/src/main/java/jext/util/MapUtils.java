@@ -68,6 +68,34 @@ public class MapUtils {
 
     // ----------------------------------------------------------------------
 
+    public static <K, V> Map<K, V> difference(Map<K, V> cmap, Map<K, V> omap) {
+        Map<K, V> dmap = new HashMap<>();
+        for (K key : cmap.keySet()) {
+            if (!omap.containsKey(key)) {
+                dmap.put(key, cmap.get(key));
+                continue;
+            }
+
+            V cvalue = cmap.get(key);
+            V ovalue = omap.get(key);
+
+            if (cvalue == null && ovalue == null)
+                continue;
+            if (cvalue == null || ovalue == null) {
+                dmap.put(key, cvalue);
+                continue;
+            }
+            if (!cvalue.equals(ovalue)) {
+                dmap.put(key, cvalue);
+                continue;
+            }
+        }
+
+        return dmap;
+    }
+
+    // ----------------------------------------------------------------------
+
     // public static <E> E getOrDefault(Map<String, Object> map, E defaultValue, String... keys) {
     //     if (keys == null || keys.length == 0)
     //         return (E)map;

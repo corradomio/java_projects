@@ -208,10 +208,6 @@ public interface GraphSession extends AutoCloseable {
         Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
-    // Query queryAdjacentNodesAlgorithm(
-    //     String fromId, String edgeType, Direction direction, boolean recursive,
-    //     String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
-
     // ----------------------------------------------------------------------
     // Edge queries
     // ----------------------------------------------------------------------
@@ -406,13 +402,6 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      */
     void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    // boolean isDAG(String nodeType, Map<String,Object> nodeProps,
-    //               String edgeType, Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Query using named queries

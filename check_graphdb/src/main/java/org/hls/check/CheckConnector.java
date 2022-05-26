@@ -30,7 +30,7 @@ public class CheckConnector {
 
         GraphDatabase gdb = GraphDatabases.create(props);
 
-        try (GraphSession s = gdb.connect("12345678")) {
+        try (GraphSession s = gdb.connect()) {
             // s.deleteRevisionMetadata("component");
             // s.createRevisionMetadata("component", MapUtils.asMap(
             //     "component", SetUtils.asSet("complexity", "count", "countTypes", "digest", "inRevision",
