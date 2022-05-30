@@ -17,7 +17,12 @@ public class NoneModule extends BaseModule {
 
     @Override
     public Sources getSources() {
-        return new SourcesImpl(this);
+        return new SourcesImpl(this) {
+            @Override
+            protected Set<String> getSourceRootsNoSync() {
+                return Collections.emptySet();
+            }
+        };
     }
 
     @Override

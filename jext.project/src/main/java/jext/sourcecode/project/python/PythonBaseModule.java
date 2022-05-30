@@ -7,6 +7,7 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
+import jext.sourcecode.project.python.util.PythonSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.util.SourcesImpl;
 import jext.sourcecode.resources.SourceCode;
@@ -39,7 +40,7 @@ public class PythonBaseModule extends BaseModule {
         if (sources != null)
             return sources;
 
-        sources = new SourcesImpl(this);
+        sources = new PythonSourcesImpl(this);
         Module self = this;
         PythonBaseProject pyproject = (PythonBaseProject) project;
 
@@ -80,9 +81,9 @@ public class PythonBaseModule extends BaseModule {
                 }
             });
         }
-        catch (IOException e) {
+        catch (IOException e) { }
 
-        }
+
 
         return sources;
     }

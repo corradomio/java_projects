@@ -11,6 +11,7 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resources;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
+import jext.sourcecode.project.info.util.InfoSourcesImpl;
 import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.sourcecode.project.util.ResourcesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
@@ -103,20 +104,16 @@ public class InfoModule implements Module, Comparable<Named> {
         if (sources != null)
             return sources;
 
-        sources = new SourcesImpl(this);
+        sources = new InfoSourcesImpl(this);
+
         Map<String, Object> sinfos = MapUtils.get(info, "sources");
         for (String fullname : sinfos.keySet()) {
             Map<String, Object> sinfo = MapUtils.get(sinfos, fullname);
             if (project.isAccepted(MapUtils.get(sinfo, "path"))) {
                 InfoSource source  = new InfoSource(this, sinfo);
                 sources.add(source);
-                // idMap.put(source.getId(), source);
-                // nameMap.put(source.getName().getFullName(), source);
-                // pathMap.put(source.getPath(), source);
             }
         }
-
-        // sources.sort(Comparable::compareTo);
 
         return sources;
     }
@@ -129,9 +126,9 @@ public class InfoModule implements Module, Comparable<Named> {
     // }
 
     // @Override
-    // public Set<String> getSourceRoots() {
-    //     return new HashSet<>(MapUtils.get(info, "sourceRoots"));
-    // }
+    public Set<String> getSourceRoots() {
+        return new HashSet<>(MapUtils.get(info, "sourceRoots"));
+    }
 
     // @Override
     // public List<File> getSourceRootDirectories() {

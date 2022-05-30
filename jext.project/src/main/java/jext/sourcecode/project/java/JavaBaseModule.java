@@ -17,6 +17,7 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.project.java.ant.util.IvyFile;
 import jext.sourcecode.project.java.eclipse.util.ClasspathFile;
 import jext.sourcecode.project.java.maven.MavenLibrary;
+import jext.sourcecode.project.java.util.JavaSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ResourcesImpl;
@@ -61,7 +62,7 @@ public class JavaBaseModule extends BaseModule {
         if (sources != null)
             return sources;
 
-        sources = new SourcesImpl(this);
+        sources = new JavaSourcesImpl(this);
         directories = getBaseProject().getDirectories(moduleHome);
         getDirectories().forEach(dir -> {
             List<Source> srclist = getBaseProject().getSources(dir, this);

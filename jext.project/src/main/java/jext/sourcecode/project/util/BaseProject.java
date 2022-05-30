@@ -55,7 +55,6 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     protected Logger logger;
     protected File projectHome;
-    // protected String projectType;
     protected Properties properties;
     protected Predicate<String> selector;
 
@@ -144,15 +143,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     // ----------------------------------------------------------------------
 
     @Override
-    public Sources getSources() {
-        if (sources != null)
-            return sources;
-
-        sources = new SourcesImpl(getProjectHome());
-        for (Module module : getModules())
-            sources.addAll(module.getSources());
-        return sources;
-    }
+    public abstract Sources getSources();
 
     // ----------------------------------------------------------------------
     // Modules

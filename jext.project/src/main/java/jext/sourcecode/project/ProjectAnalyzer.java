@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -210,13 +211,8 @@ public class ProjectAnalyzer {
     }
 
     private Map<String, Object> analyzeSource(Source s) {
-        String sourceRoot;
-        if (s.getSourceRoot().isPresent())
-            sourceRoot = s.getSourceRoot().get();
-        else
-            sourceRoot = null;
 
-        return MapUtils.asMap(
+        Map<String, Object> info = MapUtils.asMap(
             "name", s.getName().getName()
             ,"fullname", s.getName().getFullName()
             ,"id", s.getId()
@@ -225,12 +221,16 @@ public class ProjectAnalyzer {
             ,"language", s.getLanguage()
             ,"mimeType", s.getMimeType()
             ,"sourceInfo", s.getSourceInfo()
-            ,"sourceRoot", sourceRoot
             ,"types", s.getTypes().stream()
                 .map(type -> type.getName().getFullName())
                 .collect(Collectors.toList())
             ,"type", "source"
         );
+
+        Optional<String> sourceRoot = s.getSourceRoot();
+        sourceRoot.ifPresent(value -> info.put("sourceRoot", value));
+
+        return info;
     }
 
     // ----------------------------------------------------------------------

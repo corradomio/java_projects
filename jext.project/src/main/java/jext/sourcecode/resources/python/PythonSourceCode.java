@@ -21,7 +21,8 @@ public class PythonSourceCode extends SourceCode {
 
     @Override
     public Optional<String> getSourceRoot() {
-        return Optional.of(FileUtils.getAbsolutePath(module.getModuleHome()));
+        // return Optional.of(FileUtils.getAbsolutePath(module.getModuleHome()));
+        return Optional.empty();
     }
 
     @Override

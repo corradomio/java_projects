@@ -96,7 +96,8 @@ public class InfoSource implements Source {
 
     @Override
     public Optional<String> getSourceRoot() {
-        return Optional.ofNullable(MapUtils.get(info, "sourceRoot"));
+        // return Optional.ofNullable(MapUtils.get(info, "sourceRoot"));
+        return Optional.empty();
     }
 
     @Override

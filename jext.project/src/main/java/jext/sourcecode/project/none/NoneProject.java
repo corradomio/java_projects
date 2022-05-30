@@ -3,11 +3,15 @@ package jext.sourcecode.project.none;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
+import jext.sourcecode.project.util.SourcesImpl;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 
 public class NoneProject  extends BaseProject {
 
@@ -23,6 +27,16 @@ public class NoneProject  extends BaseProject {
 
     protected NoneProject() {
         super("none", new File("."), new Properties(), "none");
+    }
+
+    @Override
+    public Sources getSources() {
+        return new SourcesImpl(new File(".")) {
+            @Override
+            protected Set<String> getSourceRootsNoSync() {
+                return Collections.emptySet();
+            }
+        };
     }
 
     @Override

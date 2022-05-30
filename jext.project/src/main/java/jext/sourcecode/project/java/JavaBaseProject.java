@@ -6,8 +6,11 @@ import jext.java.JavaConstants;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.Sources;
+import jext.sourcecode.project.java.util.JavaSourcesImpl;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
+import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.Bag;
 import jext.util.FileUtils;
 import jext.util.HashBag;
@@ -70,6 +73,21 @@ public abstract class JavaBaseProject extends BaseProject {
         this.fpSources = new FilePatterns().addAll(sources);
         this.fpResources = new FilePatterns().addAll(resources);
         this.fpExcludes = new FilePatterns().addAll(excludes);
+    }
+
+    // ----------------------------------------------------------------------
+    // Sources
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Sources getSources() {
+        if (sources != null)
+            return sources;
+
+        sources = new JavaSourcesImpl(getProjectHome());
+        for (Module module : getModules())
+            sources.addAll(module.getSources());
+        return sources;
     }
 
     // ----------------------------------------------------------------------

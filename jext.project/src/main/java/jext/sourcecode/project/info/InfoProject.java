@@ -17,6 +17,7 @@ import jext.sourcecode.project.info.library.InfoLocalLibrary;
 import jext.sourcecode.project.info.library.InfoMavenLibrary;
 import jext.sourcecode.project.info.library.InfoRTLibrary;
 import jext.sourcecode.project.info.library.LibrarySet;
+import jext.sourcecode.project.info.util.InfoSourcesImpl;
 import jext.sourcecode.project.java.JavaGuessRuntimeLibrary;
 import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.sourcecode.project.python.PythonGuessRuntimeLibrary;
@@ -181,7 +182,7 @@ public class InfoProject implements Project {
         if (sources != null)
             return sources;
 
-        sources = new SourcesImpl(getProjectHome());
+        sources = new InfoSourcesImpl(getProjectHome());
         for (Module module : getModules())
             sources.addAll(module.getSources());
 

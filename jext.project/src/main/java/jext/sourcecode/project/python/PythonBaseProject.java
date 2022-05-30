@@ -2,8 +2,14 @@ package jext.sourcecode.project.python;
 
 import jext.io.file.FilePatterns;
 import jext.python.PythonConstants;
+import jext.sourcecode.project.LibrarySet;
+import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.Sources;
+import jext.sourcecode.project.python.util.PythonProjectLibrary;
+import jext.sourcecode.project.python.util.PythonSourcesImpl;
 import jext.sourcecode.project.util.BaseProject;
+import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.PropertiesUtils;
 
 import java.io.File;
@@ -53,6 +59,35 @@ public abstract class PythonBaseProject extends BaseProject {
         this.fpSources = new FilePatterns().addAll(sources);
         this.fpResources = new FilePatterns().addAll(resources);
         this.fpExcludes = new FilePatterns().addAll(excludes);
+    }
+
+    // ----------------------------------------------------------------------
+    // Sources
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Sources getSources() {
+        if (sources != null)
+            return sources;
+
+        sources = new PythonSourcesImpl(getProjectHome());
+        for (Module module : getModules())
+            sources.addAll(module.getSources());
+        return sources;
+    }
+
+    // ----------------------------------------------------------------------
+    // Libraries
+    // ----------------------------------------------------------------------
+
+    @Override
+    public LibrarySet getLibraries() {
+        if (libraries != null)
+            return libraries;
+
+        super.getLibraries();
+        libraries.add(new PythonProjectLibrary(this));
+        return libraries;
     }
 
     // ----------------------------------------------------------------------
