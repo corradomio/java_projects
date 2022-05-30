@@ -31,9 +31,6 @@ public class InfoModule implements Module, Comparable<Named> {
     private final Map<String, Object> info;
     private final Name name;
     private SourcesImpl sources;
-    // private final Map<String, Source> pathMap = new HashMap<>();
-    // private final Map<String, Source> nameMap = new HashMap<>();
-    // private final Map<String, Source> idMap = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor

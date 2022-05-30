@@ -7,6 +7,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.resources.java.JavaLibraryFinder;
 import jext.sourcecode.resources.python.libraries.PythonLibrary;
 import jext.sourcecode.resources.python.libraries.PythonRTLibrary;
 import jext.util.FileUtils;
@@ -23,15 +24,20 @@ public class PythonLibraryFinder implements LibraryFinder {
     private PythonLibraryDownloader pld = new PythonLibraryDownloader();
 
     @Override
-    public LibraryFinder setProject(Project project) {
+    public PythonLibraryFinder setProject(Project project) {
         this.project = project;
         return this;
     }
 
     @Override
-    public LibraryFinder configure(Parameters params) {
+    public PythonLibraryFinder configure(Parameters params) {
         return this;
     }
+
+    // @Override
+    // public PythonLibraryFinder initialize() {
+    //     return this;
+    // }
 
     @Override
     public Library getLibrary(MavenCoords coords) {
@@ -50,19 +56,25 @@ public class PythonLibraryFinder implements LibraryFinder {
     }
 
     @Override
-    public LibraryDownloader getLibraryDownloader() {
+    public LibraryDownloader getDownloader() {
         return pld;
     }
 
-    public PythonLibraryFinder addLibraries(String librariesPath) {
-        File librariesRoot = new File(librariesPath);
+    @Override
+    public LibraryFinder setDownloader(LibraryDownloader ld) {
+        this.pld = (PythonLibraryDownloader) ld;
+        return this;
+    }
+
+    public PythonLibraryFinder addLibraries(File librariesRoot) {
+        // File librariesRoot = new File(librariesPath);
         FileUtils.asList(librariesRoot.listFiles(File::isDirectory))
             .forEach(this::addLibrary);
         return this;
     }
 
-    public PythonLibraryFinder addLibrary(String libraryName, String libraryDirectory) {
-        Library pyLibrary = createLibrary(new File(libraryDirectory));
+    public PythonLibraryFinder setNamedLibrary(String libraryName, File libraryDirectory) {
+        Library pyLibrary = createLibrary(libraryDirectory);
         libraries.put(pyLibrary.getName(), pyLibrary);
         libraries.put(PathName.of(libraryName), pyLibrary);
         return this;
@@ -89,4 +101,13 @@ public class PythonLibraryFinder implements LibraryFinder {
             return new PythonLibrary(libraryDirectory);
         }
     }
+
+    public PythonLibraryFinder setNamedLibraries(Map<String, File> librariesMap){
+        for(String libraryName : librariesMap.keySet()) {
+            File libraryPath = librariesMap.get(libraryName);
+            setNamedLibrary(libraryName, libraryPath);
+        }
+        return this;
+    }
+
 }

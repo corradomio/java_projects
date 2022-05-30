@@ -3,9 +3,9 @@ package jext.sourcecode.project.java;
 import jext.io.file.FilePatterns;
 import jext.java.FastJavaParser;
 import jext.java.JavaConstants;
-import jext.logging.Logger;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
+import jext.sourcecode.project.Project;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.util.Bag;
@@ -43,6 +43,8 @@ public abstract class JavaBaseProject extends BaseProject {
 
     protected JavaBaseProject(String projectName, File projectHome, Properties properties, String projectType) {
         super(projectName, projectHome, properties, projectType);
+
+        this.properties.setProperty(Project.PROJECT_LANGUAGE, JavaConstants.JAVA);
 
         // Default properties:
         //

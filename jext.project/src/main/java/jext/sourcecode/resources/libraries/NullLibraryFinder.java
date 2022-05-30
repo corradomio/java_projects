@@ -1,7 +1,6 @@
 package jext.sourcecode.resources.libraries;
 
 import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
@@ -17,14 +16,19 @@ public class NullLibraryFinder implements LibraryFinder {
     }
 
     @Override
-    public LibraryFinder setProject(Project project) {
+    public NullLibraryFinder setProject(Project project) {
         return this;
     }
 
     @Override
-    public LibraryFinder configure(Parameters params) {
+    public NullLibraryFinder configure(Parameters params) {
         return this;
     }
+
+    // @Override
+    // public NullLibraryFinder initialize() {
+    //     return this;
+    // }
 
     @Override
     public Library getLibrary(MavenCoords coords) {
@@ -42,7 +46,12 @@ public class NullLibraryFinder implements LibraryFinder {
     }
 
     @Override
-    public LibraryDownloader getLibraryDownloader() {
+    public LibraryDownloader getDownloader() {
         return null;
+    }
+
+    @Override
+    public NullLibraryFinder setDownloader(LibraryDownloader ld) {
+        return this;
     }
 }

@@ -1,9 +1,14 @@
 package jext.sourcecode.project;
 
+import jext.java.JavaConstants;
 import jext.util.FileUtils;
+import jext.util.JSONUtils;
+import jext.util.MapUtils;
 import jext.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,11 +18,12 @@ import static jext.sourcecode.project.Project.PROJECT_LANGUAGE;
 
 public class GuessProjectLanguage {
 
-    public static final String JAVA_PROJECT = "java";
-    public static final String PYTHON_PROJECT = "python";
+    public static final String JAVA_LANGUAGE = "java";
+    public static final String PYTHON_LANGUAGE = "python";
+    public static final String UNKNOWN_LANGUAGE = "python";
 
     private static final String EXT_JAVA = ".java";
-    private static final String EXT_PYTHON = ".python";
+    private static final String EXT_PYTHON = ".py";
 
     /**
      * Given the directory, this method retrieve the programming language
@@ -37,28 +43,40 @@ public class GuessProjectLanguage {
         if (!StringUtils.isEmpty(projectLanguage) && !AUTO.equals(projectLanguage))
             return projectLanguage;
 
+        // if projectHome is not a file or a directory, return a default language
+        if (!projectHome.exists())
+            return JavaConstants.JAVA;
+
+        // projectHome can be a 'JSON' file
+        if (projectHome.isFile()) {
+            try {
+                Map<String, Object> data = JSONUtils.load(projectHome, HashMap.class);
+                projectLanguage = MapUtils.getString(data, "properties", PROJECT_LANGUAGE);
+                return StringUtils.isEmpty(projectLanguage) ? JavaConstants.JAVA : projectLanguage;
+            } catch (IOException e) {
+                throw new ProjectException(e);
+            }
+        }
+
+        // it supports 'default values'
         Map<String, AtomicInteger> extCounts = FileUtils.countExtensions(projectHome);
-        int javaCount = getExtCounts(extCounts, EXT_JAVA);
-        int pythonCount = getExtCounts(extCounts, EXT_PYTHON);
+
+        int javaCount   = extCounts.get(EXT_JAVA  ).get();
+        int pythonCount = extCounts.get(EXT_PYTHON).get();
 
         // if more programming languages will be used, the alternative implementation
         // is to ORDER in decreased order the source files, and to select the highest
         // programming language.
 
         if (javaCount > pythonCount)
-            projectLanguage = JAVA_PROJECT;
+            projectLanguage = JAVA_LANGUAGE;
+        else if (pythonCount > 0)
+            projectLanguage = PYTHON_LANGUAGE;
         else
-            projectLanguage = PYTHON_PROJECT;
+            throw new ProjectException("Unable to guess the programming language used for " + projectHome);
 
         props.put(PROJECT_LANGUAGE, projectLanguage);
         return projectLanguage;
-    }
-
-    private static int getExtCounts(Map<String, AtomicInteger> extCounts, String ext) {
-        if (!extCounts.containsKey(ext))
-            return 0;
-        else
-            return extCounts.get(ext).get();
     }
 
 }

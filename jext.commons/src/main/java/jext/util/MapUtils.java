@@ -124,19 +124,19 @@ public class MapUtils {
             return Integer.parseInt(value.toString());
     }
 
-    public static long getOrDefault(Map<String, Object> map, String key, long defval) {
-        if (!map.containsKey(key))
-            return defval;
-        Object value = map.get(key);
-        if (value instanceof Integer)
-            return ((Integer) value).longValue();
-        if (value instanceof Long)
-            return (Long) value;
-        if (value instanceof String)
-            return Long.parseLong((String) value);
-        else
-            return Integer.parseInt(value.toString());
-    }
+    // public static long getOrDefault(Map<String, Object> map, String key, long defval) {
+    //     if (!map.containsKey(key))
+    //         return defval;
+    //     Object value = map.get(key);
+    //     if (value instanceof Integer)
+    //         return ((Integer) value).longValue();
+    //     if (value instanceof Long)
+    //         return (Long) value;
+    //     if (value instanceof String)
+    //         return Long.parseLong((String) value);
+    //     else
+    //         return Integer.parseInt(value.toString());
+    // }
 
     public static boolean getOrDefault(Map<String, Object> map, String key, boolean defval) {
         if (!map.containsKey(key))
@@ -150,24 +150,24 @@ public class MapUtils {
             return Boolean.parseBoolean(value.toString());
     }
 
-    public static double getOrDefault(Map<String, Object> map, String key, double defval) {
-        if (!map.containsKey(key))
-            return defval;
-        Object value = map.get(key);
-        if (value instanceof Number)
-            return ((Number) value).doubleValue();
-        if (value instanceof String)
-            return Double.parseDouble((String) value);
-        else
-            return Double.parseDouble(value.toString());
-    }
-
-    public static String getOrDefault(Map<String, Object> map, String key, String defval) {
-        if (!map.containsKey(key))
-            return defval;
-        else
-            return map.get(key).toString();
-    }
+    // public static double getOrDefault(Map<String, Object> map, String key, double defval) {
+    //     if (!map.containsKey(key))
+    //         return defval;
+    //     Object value = map.get(key);
+    //     if (value instanceof Number)
+    //         return ((Number) value).doubleValue();
+    //     if (value instanceof String)
+    //         return Double.parseDouble((String) value);
+    //     else
+    //         return Double.parseDouble(value.toString());
+    // }
+    //
+    // public static String getOrDefault(Map<String, Object> map, String key, String defval) {
+    //     if (!map.containsKey(key))
+    //         return defval;
+    //     else
+    //         return map.get(key).toString();
+    // }
 
     public static int getInt(Map<String, Object> map, String... keys) {
         Object value = get(map, keys);
@@ -191,19 +191,18 @@ public class MapUtils {
             return Long.parseLong(value.toString());
     }
 
-    public static double getDouble(Map<String, Object> map, String... keys) {
-        Object value = get(map, keys);
-        if (value == null) return 0;
-        if (value instanceof Number)
-            return ((Number)value).doubleValue();
-        // if (value instanceof String)
-        //     return Long.parseLong((String)value);
-        else
-            return Long.parseLong(value.toString());
-    }
+    // public static double getDouble(Map<String, Object> map, String... keys) {
+    //     Object value = get(map, keys);
+    //     if (value == null) return 0;
+    //     if (value instanceof Number)
+    //         return ((Number)value).doubleValue();
+    //     // if (value instanceof String)
+    //     //     return Long.parseLong((String)value);
+    //     else
+    //         return Long.parseLong(value.toString());
+    // }
 
-    public static double getDoubleOrDefault(Map<String, Object> map, String key,
-                                            int index, double defaultValue){
+    public static double getDoubleOrDefault(Map<String, Object> map, String key, int index, double defaultValue){
         double[] dArray = getDoubleArray(map, key);
 
         if(dArray == null || dArray.length<=index)
@@ -212,8 +211,7 @@ public class MapUtils {
         return dArray[index];
     }
 
-    public static boolean getBooleanOrDefault(Map<String, Object> map, String key,
-                                            int index, boolean defaultValue){
+    public static boolean getBooleanOrDefault(Map<String, Object> map, String key, int index, boolean defaultValue){
         boolean[] dArray = getBooleanArray(map, key);
 
         if(dArray == null || dArray.length<=index)
@@ -232,9 +230,9 @@ public class MapUtils {
         return ArrayUtils.asIntArray(get(map, keys));
     }
 
-    public static long[] getLongArray(Map<String, Object> map, String... keys) {
-        return ArrayUtils.asLongArray(get(map, keys));
-    }
+    // public static long[] getLongArray(Map<String, Object> map, String... keys) {
+    //     return ArrayUtils.asLongArray(get(map, keys));
+    // }
 
     public static boolean[] getBooleanArray(Map<String, Object> map, String... keys) {
         return ArrayUtils.asBooleanArray(get(map, keys));
@@ -247,6 +245,7 @@ public class MapUtils {
     public static double[] getDoubleArray(Map<String, Object> map, String... keys) {
         return ArrayUtils.asDoubleArray(get(map, keys));
     }
+
     // ----------------------------------------------------------------------
 
     public static Map<String, Object> excluding(Map<String, Object> map, String ... keys) {

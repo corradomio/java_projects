@@ -108,7 +108,7 @@ public class GradleProject extends JavaBaseProject {
         // connect();
 
         // ERROR: this is not the correct place where to set the property "org.gradle.java.home"
-        // setOrgGradleJavaHome();
+        // setGradleJavaHome();
         // retrieveAllDependencies();
     }
 
@@ -462,7 +462,7 @@ public class GradleProject extends JavaBaseProject {
 
     private void connect() {
         if (connector == null) {
-            setOrgGradleJavaHome();
+            setGradleJavaHome();
             createGradleConnector();
         }
     }
@@ -545,7 +545,7 @@ public class GradleProject extends JavaBaseProject {
         }
     }
 
-    private void setOrgGradleJavaHome() {
+    private void setGradleJavaHome() {
         String ogjh = getProperties().getProperty(GRADLE_JAVA_HOME);
         if (ogjh == null)
             ogjh = getJavaHomeFromGradleVersion();

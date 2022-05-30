@@ -41,16 +41,25 @@ public class PythonBaseModule extends BaseModule {
 
         sources = new SourcesImpl(this);
         Module self = this;
+        PythonBaseProject pyproject = (PythonBaseProject) project;
 
         try {
             Files.walkFileTree(moduleHome.toPath(), new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return FileVisitResult.CONTINUE;
+                    if (pyproject.isExcluded(dir.toFile()))
+                        return FileVisitResult.SKIP_SUBTREE;
+                    else
+                        return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (pyproject.isExcluded(file.toFile()))
+                        return FileVisitResult.CONTINUE;
+                    if (!pyproject.isSourceFile(file.toFile()))
+                        return FileVisitResult.CONTINUE;
+
                     String ext = PathUtils.getExtension(file.toString());
                     if (PythonConstants.PYTHON_EXT.equals(ext)) {
                         Source source = SourceCode.newSource(file.toFile(), self);

@@ -1,7 +1,5 @@
 package jext.java;
 
-import jext.java.JavaConstants;
-
 import java.util.regex.Pattern;
 
 public class JavaUtils implements JavaConstants {

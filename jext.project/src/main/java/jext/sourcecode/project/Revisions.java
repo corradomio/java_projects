@@ -16,7 +16,6 @@ package jext.sourcecode.project;
 public interface Revisions {
 
     int CURRENT_REVISION  = -1;     // as input value
-    // int PREVIOUS_REVISION = -2;  // as input value
     int ALL_REVISIONS     = -3;     // as input values
     int NO_REVISION = -1;           // as return value
 

@@ -1032,7 +1032,10 @@ public class MavenDownloader implements MavenConst {
         try(InputStream stream = new FileInputStream(file)) {
             byte[] b = new byte[len];
             int r = stream.read(b);
-            return new String(b, 0, r, Charset.defaultCharset());
+            if (r <= 1)
+                return "";
+            else
+                return new String(b, 0, r, Charset.defaultCharset());
         }
         catch (Exception e) {
             slog.error(e, e);

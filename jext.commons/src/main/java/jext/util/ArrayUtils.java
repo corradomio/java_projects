@@ -35,6 +35,15 @@ public class ArrayUtils {
     // asList
     // ----------------------------------------------------------------------
 
+    public static <T> List<T> asList(T... args) {
+        List<T> list = new ArrayList<>();
+        if (args == null)
+            return list;
+        for (int i=0; i<args.length; ++i)
+            list.add(args[i]);
+        return list;
+    }
+
     public static List<Integer> asList(int[] a) {
         if (a == null)
             return Collections.emptyList();

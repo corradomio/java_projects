@@ -137,7 +137,12 @@ public class InfoProject implements Project {
 
     @Override
     public String getProjectType() {
-        return MapUtils.get(info, "type");
+        return MapUtils.get(info, "properties", Project.PROJECT_TYPE);
+    }
+
+    @Override
+    public String getProjectLanguage() {
+        return MapUtils.get(info, "properties", Project.PROJECT_LANGUAGE);
     }
 
     @Override
@@ -256,7 +261,7 @@ public class InfoProject implements Project {
 
     @Override
     public LibraryDownloader getLibraryDownloader() {
-        LibraryDownloader md = lfinder.getLibraryDownloader();
+        LibraryDownloader md = lfinder.getDownloader();
         getLibraryRepositories().forEach(librepo -> {
             md.addRepository(librepo.getUrl());
         });

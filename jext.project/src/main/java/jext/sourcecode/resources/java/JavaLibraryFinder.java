@@ -2,7 +2,6 @@ package jext.sourcecode.resources.java;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
@@ -74,8 +73,8 @@ public class JavaLibraryFinder implements LibraryFinder {
         return this;
     }
 
-    public JavaLibraryFinder setDownloader(JavaLibraryDownloader md) {
-        this.md = md;
+    public JavaLibraryFinder setDownloader(LibraryDownloader ld) {
+        this.md = (JavaLibraryDownloader) ld;
         return this;
     }
 
@@ -108,12 +107,13 @@ public class JavaLibraryFinder implements LibraryFinder {
         return setNamedLibrary(libraryName, new File(libraryPath));
     }
 
-    public JavaLibraryFinder initialize() {
-        return this;
-    }
+    // @Override
+    // public JavaLibraryFinder initialize() {
+    //     return this;
+    // }
 
     @Override
-    public LibraryDownloader getLibraryDownloader() {
+    public LibraryDownloader getDownloader() {
         return md.newDownloader();
     }
 

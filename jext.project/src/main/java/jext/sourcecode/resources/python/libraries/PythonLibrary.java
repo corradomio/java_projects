@@ -19,8 +19,8 @@ import java.util.Set;
 
 public class PythonLibrary extends NamedObject implements Library {
 
-    private File libraryDirectory;
-    private List<File> pythonFiles;
+    protected File libraryDirectory;
+    protected List<File> pythonFiles;
     private Module module = NoneProject.module();
 
     public PythonLibrary(File libraryDirectory) {

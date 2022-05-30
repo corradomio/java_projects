@@ -73,6 +73,9 @@ public interface Project extends IdNamed {
     /** Project type */
     String getProjectType();
 
+    /** Project language */
+    String getProjectLanguage();
+
     /** Project properties */
     Properties getProperties();
 

@@ -49,11 +49,11 @@ public class FileUtils {
     public static Map<String, AtomicInteger> countExtensions(File directory) {
         // count
         Map<String, AtomicInteger> extCounts = new HashMap<String, AtomicInteger>() {
-            public AtomicInteger get(String key) {
-                if (!containsKey(key))
-                    return new AtomicInteger();
-                else
-                    return super.get(key);
+            @Override
+            public AtomicInteger get(Object key) {
+                if (!super.containsKey(key))
+                    super.put((String)key, new AtomicInteger());
+                return super.get(key);
             }
         };
 
@@ -67,9 +67,6 @@ public class FileUtils {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     String ext = PathUtils.getExtension(file.toString());
-                    if (!extCounts.containsKey(ext))
-                        extCounts.put(ext, new AtomicInteger());
-
                     extCounts.get(ext).incrementAndGet();
                     return FileVisitResult.CONTINUE;
                 }

@@ -62,7 +62,7 @@ public class ProjectAnalyzer {
         pinfo.put("repository", project.getName().getParentName());
         pinfo.put("fullname", project.getName().getFullName());
         pinfo.put("id", project.getId());
-        pinfo.put("type", project.getProjectType());
+        // pinfo.put("type", project.getProjectType());
         pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
         pinfo.put("properties", project.getProperties());
 

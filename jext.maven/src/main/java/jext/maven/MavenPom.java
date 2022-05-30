@@ -247,16 +247,22 @@ public class MavenPom implements MavenConst {
     //  return '8.0'
 
     public String getJavaVersion() {
-        String version = XPathUtils.getValue(this.project, "/project/properties/java.version", "");
+        String version = null;
+
+        if (StringUtils.isEmpty(version))
+            version = XPathUtils.getValue(this.project, "/project/properties/java.version",
+                NONE, getProperties());
         if (StringUtils.isEmpty(version))
             version = XPathUtils.getValue(this.project, "/project/properties/maven.compiler.source",
-                "", getProperties());
-        if (StringUtils.isEmpty(version))
-            return NONE;
-        else if (version.contains("{"))
-            return NONE;
-        else
-            return version;
+                NONE, getProperties());
+
+        if (version.contains("{"))
+            version = NONE;
+            // '1.8' -> '8'
+        else if (version.startsWith("1."))
+            version = version.substring(2);
+
+        return version;
     }
 
     public String getPackaging() {

@@ -2,7 +2,6 @@ package jext.sourcecode.project.util;
 
 import jext.io.file.FilePatterns;
 import jext.logging.Logger;
-import jext.maven.MavenDownloader;
 import jext.name.Name;
 import jext.name.NamedObject;
 import jext.name.PathName;
@@ -23,7 +22,6 @@ import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.sourcecode.resources.ResourceFile;
 import jext.sourcecode.resources.SourceCode;
 import jext.util.FileUtils;
-import jext.util.PropertiesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +55,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     protected Logger logger;
     protected File projectHome;
-    protected String projectType;
+    // protected String projectType;
     protected Properties properties;
     protected Predicate<String> selector;
 
@@ -81,10 +79,11 @@ public abstract class BaseProject extends NamedObject implements Project {
     protected BaseProject(String projectName, File projectHome, Properties properties, String projectType){
         super(PathName.of(projectName));
         this.projectHome = projectHome;
-        this.projectType = projectType;
+        // this.projectType = projectType;
 
         this.properties = new Properties();
         this.properties.putAll(properties);
+        this.properties.setProperty(Project.PROJECT_TYPE, projectType);
         this.selector = (p) -> true;
 
         setIdFromName();
@@ -112,7 +111,12 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     @Override
     public String getProjectType() {
-        return projectType;
+        return properties.getProperty(Project.PROJECT_TYPE);
+    }
+
+    @Override
+    public String getProjectLanguage() {
+        return properties.getProperty(Project.PROJECT_LANGUAGE);
     }
 
     @Override
@@ -289,7 +293,7 @@ public abstract class BaseProject extends NamedObject implements Project {
             return md;
 
         // create a local copy of the downloader
-        md = lfinder.getLibraryDownloader();
+        md = lfinder.getDownloader();
 
         getLibraryRepositories().forEach(librepo -> {
             md.addRepository(librepo.getUrl());

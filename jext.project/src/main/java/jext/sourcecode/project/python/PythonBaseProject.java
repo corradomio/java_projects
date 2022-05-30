@@ -1,6 +1,8 @@
 package jext.sourcecode.project.python;
 
 import jext.io.file.FilePatterns;
+import jext.python.PythonConstants;
+import jext.sourcecode.project.Project;
 import jext.sourcecode.project.util.BaseProject;
 import jext.util.PropertiesUtils;
 
@@ -24,6 +26,8 @@ public abstract class PythonBaseProject extends BaseProject {
 
     protected PythonBaseProject(String projectName, File projectHome, Properties properties, String projectType) {
         super(projectName, projectHome, properties, projectType);
+
+        this.properties.setProperty(Project.PROJECT_LANGUAGE, PythonConstants.PYTHON);
 
         // Default properties:
         //
@@ -63,6 +67,18 @@ public abstract class PythonBaseProject extends BaseProject {
             rtLibrary = PythonGuessRuntimeLibrary.DEFAULT_PYTHON_RUNTIME_LIBRARY;
 
         return rtLibrary;
+    }
+
+    // ----------------------------------------------------------------------
+    // File & directory exclusions
+    // ----------------------------------------------------------------------
+
+    boolean isExcluded(File filePath) {
+        return fpExcludes.accept(projectHome, filePath);
+    }
+
+    boolean isSourceFile(File filePath) {
+        return fpSources.accept(projectHome, filePath);
     }
 
 }

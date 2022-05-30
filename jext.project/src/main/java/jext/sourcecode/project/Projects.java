@@ -3,8 +3,6 @@ package jext.sourcecode.project;
 import jext.exception.InvalidParameterException;
 import jext.name.Name;
 import jext.name.PathName;
-import jext.sourcecode.project.java.JavaProjectFactory;
-import jext.sourcecode.project.python.PythonProjectFactory;
 import jext.util.Parameters;
 
 import java.io.File;
@@ -16,31 +14,13 @@ public class Projects {
 
     public static Project newProject(String projectName, File projectHome, Properties properties) {
 
-        String projectLanguage;
-
         // First step: which is the programming language used to implement the project?
-        projectLanguage = guessProjectLanguage(projectHome, properties);
+        String projectLanguage = guessProjectLanguage(projectHome, properties);
 
         // Second step: which the project type?
         // Nota: this step DEPENDS on the programming language
-
-        // If the project type is not specified, we try to understand it based on
-        // presence of 'building system configuration files' (for example 'pom.xml',
-        // 'build.gradle', etc) following the SPECIFIC order:
-        //
-        //      1) Gradle
-        //      2) Maven
-        //      3) Eclipse
-        //      4) Ant
-        //      5) Simple
-        //
-
-        if (Project.JAVA_PROJECT.equals(projectLanguage))
-            return JavaProjectFactory.newProject(projectName, projectHome, properties);
-        if (Project.PYTHON_PROJECT.equals(projectLanguage))
-            return PythonProjectFactory.newProject(projectName, projectHome, properties);
-        else
-            throw new ProjectException("Unsupported project language " + projectLanguage);
+        ProjectFactory projectFactory = ProjectFactory.getFactory(projectLanguage);
+        return projectFactory.newProject(projectName, projectHome, properties);
     }
 
     public static Project newProject(Name name, File projectHome, Properties properties) {

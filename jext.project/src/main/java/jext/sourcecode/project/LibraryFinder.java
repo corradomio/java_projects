@@ -5,16 +5,17 @@ import jext.util.Parameters;
 
 public interface LibraryFinder {
 
-    LibraryFinder setProject(Project project);
+    <LF extends LibraryFinder> LF setProject(Project project);
 
-    LibraryFinder configure(Parameters params);
+    <LF extends LibraryFinder> LF setDownloader(LibraryDownloader ld);
+    LibraryDownloader getDownloader();
+
+    <LF extends LibraryFinder> LF configure(Parameters params);
 
     Library getRuntimeLibrary(String libraryName);
 
     Library getLibrary(MavenCoords coords);
 
     String getLatestVersion(MavenCoords coords);
-
-    LibraryDownloader getLibraryDownloader();
 
 }

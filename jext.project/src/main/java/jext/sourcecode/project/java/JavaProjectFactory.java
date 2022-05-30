@@ -1,8 +1,10 @@
 package jext.sourcecode.project.java;
 
 import jext.logging.Logger;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectFactory;
 import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.java.ant.AntProject;
 import jext.sourcecode.project.java.eclipse.EclipseProject;
@@ -17,9 +19,20 @@ import java.util.Properties;
 
 import static jext.sourcecode.project.java.GuessProjectType.guessProjectType;
 
-public class JavaProjectFactory {
+public class JavaProjectFactory extends ProjectFactory {
 
-    public static Project newProject(String projectName, File projectHome, Properties properties) {
+    public Project newProject(String projectName, File projectHome, Properties properties) {
+
+        // If the project type is not specified, we try to understand it based on
+        // presence of 'building system configuration files' (for example 'pom.xml',
+        // 'build.gradle', etc) following the SPECIFIC order:
+        //
+        //      1) Gradle
+        //      2) Maven
+        //      3) Eclipse
+        //      4) Ant
+        //      5) Simple
+        //
 
         String projectType = guessProjectType(projectHome, properties);
         Project project;
@@ -49,8 +62,8 @@ public class JavaProjectFactory {
         // But this can be expensive.
         //
 
-        JavaLibraryDownloader md = new JavaLibraryDownloader();
-        LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(md);
+        LibraryDownloader ld = new JavaLibraryDownloader();
+        LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(ld);
         project.setLibraryFinder(lfinder);
 
         return project;
