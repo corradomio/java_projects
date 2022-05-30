@@ -77,6 +77,19 @@ public class GraphSchema {
         return modelSchemas.get(model);
     }
 
+    public boolean isModelReference(String model, String nodeType) {
+        if (isEmpty(model) || isEmpty(nodeType))
+            return false;
+        ModelSchema modelSchema = modelSchemas.get(model);
+        if (modelSchema == null)
+            return false;
+        NodeSchema nodeSchema = modelSchema.getReferenceNode();
+        if (nodeSchema == null)
+            return false;
+        else
+            return nodeSchema.getName().equals(nodeType);
+    }
+
     // ----------------------------------------------------------------------
     // Properties/set
     // ----------------------------------------------------------------------
@@ -87,6 +100,14 @@ public class GraphSchema {
 
     public void addModelSchema(ModelSchema mschema) {
         modelSchemas.put(mschema.getName(), mschema);
+    }
+
+    // ----------------------------------------------------------------------
+    // Utilities
+    // ----------------------------------------------------------------------
+
+    private static boolean isEmpty(String s){
+        return s == null || s.length() == 0;
     }
 
     // ----------------------------------------------------------------------

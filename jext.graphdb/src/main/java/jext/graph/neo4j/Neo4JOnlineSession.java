@@ -155,6 +155,19 @@ public class Neo4JOnlineSession implements GraphSession {
     // to extend the 'namedQuery' conditions
     //
 
+    private Map<String,Object> ckparams(String nodeType, Map<String,Object> params) {
+        if (refId == null && rev <= 0)
+            return params;
+
+        params = new HashMap<>(params);
+        if (refId != null)
+            params.put(REF_ID, refId);
+        if (rev >= 0)
+            params.put(REVISION, rev);
+
+        return params;
+    }
+
     private Map<String,Object> ckparams(Map<String,Object> params) {
         if (refId == null && rev <= 0)
             return params;
@@ -271,8 +284,9 @@ public class Neo4JOnlineSession implements GraphSession {
      */
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
-        nodeProps = ckparams(nodeProps);
+        nodeProps = ckparams(nodeType, nodeProps);
         NodeSchema nschema = graphSchema.getNodeSchema(nodeType);
+
         Map<String, Object> revProps = getRevisionedNode(nschema, nodeProps);
         String nodeId;
 

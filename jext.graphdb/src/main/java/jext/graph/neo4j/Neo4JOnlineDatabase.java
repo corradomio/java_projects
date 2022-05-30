@@ -1,6 +1,7 @@
 package jext.graph.neo4j;
 
 import jext.graph.GraphDatabase;
+import jext.graph.GraphDatabaseException;
 import jext.graph.GraphSession;
 import jext.graph.GraphVersion;
 import jext.graph.named.NamedIndex;
@@ -15,7 +16,11 @@ import jext.util.MapUtils;
 import jext.util.PropertiesUtils;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -201,6 +206,16 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     public GraphDatabase setGraphSchema(GraphSchema graphSchema) {
         this.graphSchema = graphSchema;
         return this;
+    }
+
+    @Override
+    public GraphDatabase setGraphSchema(File schemaFile)  {
+        try {
+            GraphSchema graphSchema = GraphSchema.load(schemaFile);
+            return setGraphSchema(graphSchema);
+        } catch (ParserConfigurationException| IOException | SAXException e) {
+            throw new GraphDatabaseException(e);
+        }
     }
 
     // ----------------------------------------------------------------------

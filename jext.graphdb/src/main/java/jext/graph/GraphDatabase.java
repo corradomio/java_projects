@@ -3,6 +3,11 @@ package jext.graph;
 import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
 import jext.graph.schema.GraphSchema;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
 
 public interface GraphDatabase {
 
@@ -57,6 +62,7 @@ public interface GraphDatabase {
     // Database Schema
     // ----------------------------------------------------------------------
 
+    GraphDatabase setGraphSchema(File graphSchema) throws GraphDatabaseException;
     GraphDatabase setGraphSchema(GraphSchema graphSchema);
     GraphSchema   getGraphSchema();
 
