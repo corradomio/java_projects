@@ -1,5 +1,6 @@
 package jext.graph.schema;
 
+import jext.graph.GraphDatabaseException;
 import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.ObjectCreateRule;
 import org.xml.sax.SAXException;
@@ -69,37 +70,49 @@ public class GraphSchema {
     // Properties/get
     // ----------------------------------------------------------------------
 
-    public NodeSchema getNodeSchema(String node) {
-        return nodeSchemas.getOrDefault(node, NodeSchema.NO_SCHEMA);
+    public Map<String, Object> uniqueProps(String nodeType, Map<String, Object> nprops) {
+        NodeSchema nodeSchema = nodeSchema(nodeType);
+        return nodeSchema.uniqueProps(nprops);
     }
 
-    public ModelSchema getModelSchema(String model) {
-        return modelSchemas.get(model);
-    }
-
-    public boolean isModelReference(String model, String nodeType) {
-        if (isEmpty(model) || isEmpty(nodeType))
-            return false;
-        ModelSchema modelSchema = modelSchemas.get(model);
-        if (modelSchema == null)
-            return false;
-        NodeSchema nodeSchema = modelSchema.getReferenceNode();
-        if (nodeSchema == null)
-            return false;
+    public NodeSchema nodeSchema(String node) {
+        NodeSchema nschema = nodeSchemas.get(node);
+        if (nschema == null)
+            throw new GraphDatabaseException(String.format("Node '%s' not defined", node));
         else
-            return nodeSchema.getName().equals(nodeType);
+            return nschema;
     }
+
+    public ModelSchema modelSchema(String model) {
+        if (model == null)
+            return ModelSchema.NO_SCHEMA;
+        else
+            return modelSchemas.get(model);
+    }
+
+    // public boolean isModelReference(String model, String nodeType) {
+    //     if (isEmpty(model) || isEmpty(nodeType))
+    //         return false;
+    //     ModelSchema modelSchema = modelSchemas.get(model);
+    //     if (modelSchema == null)
+    //         return false;
+    //     NodeSchema nodeSchema = modelSchema.referenceNode();
+    //     if (nodeSchema == null)
+    //         return false;
+    //     else
+    //         return nodeSchema.name().equals(nodeType);
+    // }
 
     // ----------------------------------------------------------------------
     // Properties/set
     // ----------------------------------------------------------------------
 
     public void addNodeSchema(NodeSchema nschema) {
-        nodeSchemas.put(nschema.getName(), nschema);
+        nodeSchemas.put(nschema.name(), nschema);
     }
 
     public void addModelSchema(ModelSchema mschema) {
-        modelSchemas.put(mschema.getName(), mschema);
+        modelSchemas.put(mschema.name(), mschema);
     }
 
     // ----------------------------------------------------------------------

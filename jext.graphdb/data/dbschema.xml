@@ -60,7 +60,7 @@
             <node name='module' revisioned="true">
                 <property name='refId' type='string'/>
 
-                <property name='digest' type='string' revisioned="true"/>
+                <property name='digest' type='long' revisioned="true"/>
                 <property name='fullname' type='string'/>
                 <!--<property name='inRevision' type='bool[]'/>-->
                 <property name='moduleRefId' type='string'/>

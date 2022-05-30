@@ -48,5 +48,13 @@ public class CheckGraphSchema {
             ));
         }
 
+        try(GraphSession s = gdb.connect("123456", "dependency", 0)) {
+            String nid = s.createNode("module", MapUtils.asMap(
+                "name", "test",
+                "fullname", "base/test",
+                "digest", 0
+            ));
+        }
+
     }
 }

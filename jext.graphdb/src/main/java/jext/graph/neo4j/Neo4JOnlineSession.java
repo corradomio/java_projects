@@ -168,14 +168,19 @@ public class Neo4JOnlineSession implements GraphSession {
         return params;
     }
 
+
     private Map<String,Object> ckparams(Map<String,Object> params) {
+        return ckparams(params, true);
+    }
+
+    private Map<String,Object> ckparams(Map<String,Object> params, boolean ckrev) {
         if (refId == null && rev <= 0)
             return params;
 
         params = new HashMap<>(params);
         if (refId != null)
             params.put(REF_ID, refId);
-        if (rev >= 0)
+        if (ckrev && rev >= 0)
             params.put(REVISION, rev);
         return params;
     }
@@ -284,26 +289,29 @@ public class Neo4JOnlineSession implements GraphSession {
      */
     @Override
     public String createNode(String nodeType, Map<String, Object> nodeProps) {
-        nodeProps = ckparams(nodeType, nodeProps);
-        NodeSchema nschema = graphSchema.getNodeSchema(nodeType);
-
-        Map<String, Object> revProps = getRevisionedNode(nschema, nodeProps);
-        String nodeId;
-
-        nodeProps = nschema.normalizeCreate(nodeProps);
-        if (revProps.isEmpty())
-            nodeId = _createNode(nschema, nodeProps);
+        NodeSchema nschema = graphSchema.nodeSchema(nodeType);
+        Map<String, Object> currProps = this._findNode(nschema, nodeProps);
+        if (currProps.isEmpty())
+            return this._createNode(nschema, nodeProps);
         else
-            nodeId = _updateNode(nschema, nodeProps, revProps);
+            return this._updateNode(nschema, nodeProps, currProps);
+    }
 
-        return nodeId;
+    private Map<String, Object> _findNode(NodeSchema nschema, Map<String, Object> nodeProps) {
+        nodeProps = ckparams(nodeProps, false);
+        nodeProps = nschema.uniqueProps(nodeProps);
+
+        return _queryNodes(nschema.name(), nodeProps).values();
     }
 
     private String/**/ _createNode(NodeSchema nschema, Map<String, Object> nodeProps) {
-        String nodeType = nschema.getName();
-        ModelSchema mschema = graphSchema.getModelSchema(model);
+        String nodeType = nschema.name();
+        ModelSchema mschema = graphSchema.modelSchema(model);
 
+        nodeProps = ckparams(nodeProps);
         nodeProps = nschema.normalizeCreate(nodeProps);
+        nodeProps = mschema.normalizeCreate(nschema, nodeProps);
+
         String pblock = pblock(N, nodeProps);
         String sblock = sblock(N, nodeProps, true);
 
@@ -316,16 +324,24 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     public String/**/ _updateNode(NodeSchema nschema, Map<String, Object> nodeProps, Map<String, Object> currProps) {
+        String nodeType = nschema.name();
+        ModelSchema mschema = graphSchema.modelSchema(model);
+
+        nodeProps = ckparams(nodeProps);
+
         Map<String, Object> diffProps = MapUtils.difference(nodeProps, currProps);
         String nodeId = (String) currProps.get("$id");
-        diffProps = nschema.normalizeUpdate(diffProps);
-        setNodeProperties(nodeId, diffProps);
+
+        nodeProps = nschema.normalizeUpdate(currProps, diffProps);
+        nodeProps = mschema.normalizeUpdate(nschema, nodeProps);
+
+        setNodeProperties(nodeId, nodeProps);
         return nodeId;
     }
 
     private Map<String, Object> getRevisionedNode(NodeSchema nschema, Map<String, Object> nodeProps) {
-        Map<String, Object> nprops = nschema.getUnique(nodeProps);
-        return getNode(nschema.getName(), nprops);
+        Map<String, Object> nprops = nschema.uniqueProps(nodeProps);
+        return getNode(nschema.name(), nprops);
     }
 
     @Override
@@ -541,6 +557,10 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public Query queryNodes(String nodeType, Map<String, Object> nodeProps) {
         nodeProps = ckparams(nodeProps);
+        return _queryNodes(nodeType, nodeProps);
+    }
+
+    private Query _queryNodes(String nodeType, Map<String, Object> nodeProps) {
 
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, WhereType.WHERE, true);

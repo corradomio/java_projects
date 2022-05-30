@@ -4,7 +4,7 @@ public class ModelNode {
 
     private String ref;
 
-    public String getRef() {
+    public String ref() {
         return ref;
     }
 
