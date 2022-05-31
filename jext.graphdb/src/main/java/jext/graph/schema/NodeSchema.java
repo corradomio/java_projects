@@ -76,22 +76,22 @@ public class NodeSchema {
         return pschema;
     }
 
-    public Map<String, Object> uniqueProps(Map<String, Object> nprops) {
-        if (nprops.isEmpty() || unique.isEmpty())
+    public Map<String, Object> uniqueProps(Map<String, Object> props) {
+        if (props.isEmpty() || unique.isEmpty())
             return Collections.emptyMap();
 
         Map<String, Object> uprops = new HashMap<>();
         for (String uname : unique)
-            uprops.put(uname, nprops.get(uname));
+            uprops.put(uname, props.get(uname));
 
         return uprops;
     }
 
-    public Map<String, Object> normalizeCreate(Map<String, Object> props) {
-        int rev = MapUtils.getOrDefault(props, REVISION, -1);
+    public Map<String, Object> normalizeCreate(Map<String, Object> cprops) {
+        int rev = MapUtils.getOrDefault(cprops, REVISION, -1);
         Map<String, Object> nprops = new HashMap<>();
-        for (String pname : props.keySet()) {
-            Object value = props.get(pname);
+        for (String pname : cprops.keySet()) {
+            Object value = cprops.get(pname);
             if (REVISION.equals(pname))
                 continue;
 
@@ -123,6 +123,20 @@ public class NodeSchema {
         return nprops;
     }
 
+    public Map<String, Object> normalizeQuery(Map<String, Object> qprops) {
+        int rev = MapUtils.getOrDefault(qprops, REVISION, -1);
+        Map<String, Object> nprops = new HashMap<>();
+        for (String pname : qprops.keySet()) {
+            Object value = qprops.get(pname);
+            if (REVISION.equals(pname))
+                continue;
+
+            PropertySchema pschema = propertySchema(pname);
+            nprops.put(pschema.atRevision(pname, rev), value);
+        }
+        return nprops;
+    }
+
     // ----------------------------------------------------------------------
     // Debug
     // ----------------------------------------------------------------------
@@ -136,7 +150,7 @@ public class NodeSchema {
         properties.forEach((name, schema) -> {
             schema.dump();
         });
-        System.out.printf("");
+        System.out.println();
     }
 
     // ----------------------------------------------------------------------

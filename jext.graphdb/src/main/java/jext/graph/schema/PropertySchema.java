@@ -2,8 +2,6 @@ package jext.graph.schema;
 
 import jext.graph.util.PropertyUtils;
 
-import java.util.List;
-
 public class PropertySchema {
 
     // ----------------------------------------------------------------------
@@ -16,6 +14,11 @@ public class PropertySchema {
     private static final String FLOAT = "float";
     private static final String DOUBLE = "double";
     private static final String STRING = "string";
+
+    // special formats
+    private static final String BYTES = "bytes";
+    private static final String JSON = "json";
+
 
 
     private String name;
@@ -87,6 +90,13 @@ public class PropertySchema {
             return PropertyUtils.stringArray(prev, rev, (String)value);
         else
             return PropertyUtils.objectArray(prev, rev, value);
+    }
+
+    public String atRevision(String name, int rev) {
+        if (!revisioned || rev == -1)
+            return name;
+        else
+            return String.format("%s[$revision", name);
     }
 
 
