@@ -11,5 +11,6 @@ public class ReadSchema {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         GraphSchema gschema = GraphSchema.load(new File("config/dbschema.xml"));
+        gschema.dump();
     }
 }

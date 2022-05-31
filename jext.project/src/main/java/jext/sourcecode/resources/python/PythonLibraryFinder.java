@@ -7,7 +7,6 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.resources.java.JavaLibraryFinder;
 import jext.sourcecode.resources.python.libraries.PythonLibrary;
 import jext.sourcecode.resources.python.libraries.PythonRTLibrary;
 import jext.util.FileUtils;

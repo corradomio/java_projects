@@ -5,6 +5,7 @@ import jext.util.ArrayUtils;
 import jext.util.MapUtils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static jext.graph.schema.NodeSchema.REVISION;
@@ -24,10 +25,10 @@ public class ModelSchema {
     // ----------------------------------------------------------------------
 
     private String name = "";
-    private NodeSchema refNode = null;
+    private NodeSchema ref = null;
     private GraphSchema gschema;
 
-    private Map<String, NodeSchema> nodes = new HashMap<>();
+    private Map<String, NodeSchema> nodes = new LinkedHashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -46,7 +47,7 @@ public class ModelSchema {
     }
 
     public NodeSchema referenceNode() {
-        return refNode;
+        return ref;
     }
 
     // ----------------------------------------------------------------------
@@ -54,7 +55,7 @@ public class ModelSchema {
     // ----------------------------------------------------------------------
 
     public Map<String, Object> normalizeCreate(NodeSchema nschema, Map<String, Object> nprops) {
-        if (refNode == nschema) {
+        if (nschema == ref) {
             int rev = MapUtils.getInt(nprops, REVISION);
             nprops.put(REVISIONS, new int[]{rev});
         }
@@ -62,7 +63,7 @@ public class ModelSchema {
     }
 
     public Map<String, Object> normalizeUpdate(NodeSchema nschema, Map<String, Object> nprops) {
-        if (refNode == nschema) {
+        if (nschema == ref) {
             int rev = MapUtils.getInt(nprops, REVISION);
             int[] revs = MapUtils.getIntArray(nprops, REVISIONS);
             revs = PropertyUtils.appendUnique(revs, rev);
@@ -80,11 +81,28 @@ public class ModelSchema {
     }
 
     public void setRef(String ref) {
-        this.refNode = gschema.nodeSchema(ref);
+        this.ref = gschema.nodeSchema(ref);
+        nodes.put(ref, this.ref);
     }
 
     public void addNode(ModelNode mnode) {
         NodeSchema nschema = gschema.nodeSchema(mnode.ref());
         nodes.put(nschema.name(), nschema);
     }
+
+    // ----------------------------------------------------------------------
+    // Debug
+    // ----------------------------------------------------------------------
+
+    public void dump() {
+        System.out.printf("    %s (%s)\n", name, ref.name());
+        nodes.forEach((name, schema) -> {
+            System.out.printf("      %s\n", schema.name());
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

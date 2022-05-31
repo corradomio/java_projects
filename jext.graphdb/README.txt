@@ -1,3 +1,9 @@
+Revisioned edges
+----------------
+
+An edge is revisioned IF one of the node is revisioned
+
+
 Noe4J node types
 ----------------
     https://neo4j.com/docs/cypher-manual/current/syntax/values/
@@ -78,3 +84,35 @@ query
         n.prop[rev] < <= == != >= > value
         n.prop[rev] (starts|ends) with|contains value
         n.prop[rev] in value
+
+
+-----------------------------------------------------------------------------
+
+1) rimuovere la dipendenza da GraphSchema in ModelSchema
+2) supportare models & nodeType non esistenti con comportamenti ""standard""
+
+simple_type
+    int, double
+    string
+    bool
+
+
+revisioned_type
+    simple_type[revision]
+
+
+revisioned_node
+    inRevision : revisioned_bool
+
+
+Problema:
+    come supportare strutture dati piu' complesse?
+    mappe
+    tensori (array moltidimensionali)
+
+    l'unica e':
+
+    (node)-[:property]->(value {revision:rev})
+
+    invece che una property del node, una relazione con il node della property
+    e il valore della property per quella particolare revisione

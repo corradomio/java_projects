@@ -5,8 +5,9 @@ import jext.sourcecode.project.LibraryDownloader;
 
 public class JavaLibraryDownloader extends MavenDownloader implements LibraryDownloader {
 
-    public MavenDownloader addRepository(String url) {
-        return super.addRepository(url);
+    public JavaLibraryDownloader addRepository(String url) {
+        super.addRepository(url);
+        return this;
     }
 
     /**

@@ -327,9 +327,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String nodeType = nschema.name();
         ModelSchema mschema = graphSchema.modelSchema(model);
 
-        nodeProps = ckparams(nodeProps);
-
         Map<String, Object> diffProps = MapUtils.difference(nodeProps, currProps);
+        diffProps = ckparams(diffProps);
+
         String nodeId = (String) currProps.get("$id");
 
         nodeProps = nschema.normalizeUpdate(currProps, diffProps);

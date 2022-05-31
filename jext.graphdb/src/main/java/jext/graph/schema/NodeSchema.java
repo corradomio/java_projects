@@ -2,6 +2,7 @@ package jext.graph.schema;
 
 import jext.graph.GraphDatabaseException;
 import jext.graph.util.PropertyUtils;
+import jext.util.Assert;
 import jext.util.MapUtils;
 
 import java.util.ArrayList;
@@ -16,16 +17,15 @@ public class NodeSchema {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    static NodeSchema NO_SCHEMA = new NodeSchema();
     static final String REVISION = "revision";
     static final String REVISIONS = "revisions";
     static final String IN_REVISION = "inRevision";
 
     private String name = "";
-    private List<String> unique = new ArrayList<>();
     private boolean revisioned;
 
     private Map<String, PropertySchema> properties = new HashMap<>();
+    private List<String> unique = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -88,8 +88,8 @@ public class NodeSchema {
     }
 
     public Map<String, Object> normalizeCreate(Map<String, Object> props) {
+        int rev = MapUtils.getOrDefault(props, REVISION, -1);
         Map<String, Object> nprops = new HashMap<>();
-        int rev = MapUtils.getOrDefault(nprops, REVISION, -1);
         for (String pname : props.keySet()) {
             Object value = props.get(pname);
             if (REVISION.equals(pname))
@@ -105,8 +105,8 @@ public class NodeSchema {
     }
 
     public Map<String, Object> normalizeUpdate(Map<String, Object> cprops, Map<String, Object> uprops) {
+        int rev = MapUtils.getOrDefault(uprops, REVISION, -1);
         Map<String, Object> nprops = new HashMap<>();
-        int rev = MapUtils.getOrDefault(nprops, REVISION, -1);
         for (String pname : uprops.keySet()) {
             Object uvalue = uprops.get(pname);
             Object cvalue = cprops.get(pname);
@@ -118,9 +118,25 @@ public class NodeSchema {
         }
         if (isRevisioned()) {
             Object revs = cprops.get(IN_REVISION);
-            nprops.put(IN_REVISION, PropertyUtils.boolArray((boolean[])revs, rev, true));
+            nprops.put(IN_REVISION, PropertyUtils.boolArray(revs, rev, true));
         }
         return nprops;
+    }
+
+    // ----------------------------------------------------------------------
+    // Debug
+    // ----------------------------------------------------------------------
+
+    public void dump() {
+        if (revisioned)
+            System.out.printf("    %s: revisioned\n", name);
+        else
+            System.out.printf("    %s\n", name);
+
+        properties.forEach((name, schema) -> {
+            schema.dump();
+        });
+        System.out.printf("");
     }
 
     // ----------------------------------------------------------------------

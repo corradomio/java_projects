@@ -9,7 +9,7 @@ public interface LibraryDownloader {
 
     // void checkArtifacts(List<MavenCoords> artifacts, boolean b, boolean parallel);
 
-    Object addRepository(String url);
+    LibraryDownloader addRepository(String url);
 
     LibraryDownloader newDownloader();
 

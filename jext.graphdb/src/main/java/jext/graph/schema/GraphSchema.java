@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class GraphSchema {
 
@@ -24,7 +25,6 @@ public class GraphSchema {
         addRules(d, gschema);
 
         d.push(gschema);
-
         d.parse(schemaFile);
 
         return gschema;
@@ -32,22 +32,30 @@ public class GraphSchema {
 
     private static void addRules(Digester d, GraphSchema gschema) {
 
+        // property
         d.addObjectCreate("graphdb/schema/nodes/node/property", PropertySchema.class);
         d.addSetProperties("graphdb/schema/nodes/node/property");
+        // property -> node
         d.addSetNext( "graphdb/schema/nodes/node/property", "addProperty" );
+        // node
         d.addObjectCreate("graphdb/schema/nodes/node", NodeSchema.class);
         d.addSetProperties("graphdb/schema/nodes/node");
+        // node -> graph
         d.addSetNext( "graphdb/schema/nodes/node", "addNodeSchema" );
 
+        // model
         ObjectCreateRule msc = new ObjectCreateRule(ModelSchema.class);
         msc.setConstructorArgumentTypes(GraphSchema.class);
         msc.setDefaultConstructorArguments(gschema);
         d.addRule("graphdb/schema/models/model", msc);
         d.addSetProperties("graphdb/schema/models/model");
+        // model -> graph
         d.addSetNext( "graphdb/schema/models/model", "addModelSchema" );
 
+        // modelNode
         d.addObjectCreate("graphdb/schema/models/model/node", ModelNode.class);
         d.addSetProperties("graphdb/schema/models/model/node");
+        // modelNode -> model
         d.addSetNext( "graphdb/schema/models/model/node", "addNode" );
     }
 
@@ -55,8 +63,8 @@ public class GraphSchema {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private Map<String, NodeSchema>  nodeSchemas  = new HashMap<>();
-    private Map<String, ModelSchema> modelSchemas = new HashMap<>();
+    private Map<String, NodeSchema>  nodeSchemas  = new TreeMap<>();
+    private Map<String, ModelSchema> modelSchemas = new TreeMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -121,6 +129,23 @@ public class GraphSchema {
 
     private static boolean isEmpty(String s){
         return s == null || s.length() == 0;
+    }
+
+    // ----------------------------------------------------------------------
+    // Debug
+    // ----------------------------------------------------------------------
+
+    public void dump() {
+        System.out.println("Graph schema");
+        System.out.println("  Nodes:");
+        nodeSchemas.forEach((name, schema) -> {
+            schema.dump();
+        });
+        System.out.println("  Models:");
+        modelSchemas.forEach((name, schema) -> {
+            schema.dump();
+        });
+        System.out.println("done");
     }
 
     // ----------------------------------------------------------------------

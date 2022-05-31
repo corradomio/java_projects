@@ -2,6 +2,8 @@ package jext.graph.schema;
 
 import jext.graph.util.PropertyUtils;
 
+import java.util.List;
+
 public class PropertySchema {
 
     // ----------------------------------------------------------------------
@@ -50,6 +52,10 @@ public class PropertySchema {
         return revisioned;
     }
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     public Object asRevisioned(int rev, Object value) {
         if (!revisioned || rev == -1)
             return value;
@@ -65,12 +71,22 @@ public class PropertySchema {
             return PropertyUtils.objectArray(rev, value);
     }
 
-    public Object asRevisioned(Object values, int rev, Object value) {
+    public Object asRevisioned(Object prev, int rev, Object value) {
         if (!revisioned || rev == -1)
             return value;
-        if (values == null)
+        if (prev == null)
             return asRevisioned(rev, value);
-        return values;
+
+        if (BOOLEAN.equals(type))
+            return PropertyUtils.boolArray(prev, rev, (Boolean) value);
+        if (INTEGER.equals(type) || LONG.equals(type))
+            return PropertyUtils.longArray(prev, rev, ((Number)value).longValue());
+        if (FLOAT.equals(type) || DOUBLE.equals(type))
+            return PropertyUtils.doubleArray(prev, rev, ((Number)value).doubleValue());
+        if (STRING.equals(type))
+            return PropertyUtils.stringArray(prev, rev, (String)value);
+        else
+            return PropertyUtils.objectArray(prev, rev, value);
     }
 
 
@@ -97,6 +113,19 @@ public class PropertySchema {
 
     public void setUnique(boolean unique) {
         this.unique = unique;
+    }
+
+    // ----------------------------------------------------------------------
+    // Debug
+    // ----------------------------------------------------------------------
+
+    public void dump() {
+        if (revisioned)
+            System.out.printf("      %15s:\t%s, revisioned\n", name, type);
+        else if (unique)
+            System.out.printf("      %15s:\t%s, unique\n", name, type);
+        else
+            System.out.printf("      %15s:\t%s\n", name, type);
     }
 
     // ----------------------------------------------------------------------

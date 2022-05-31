@@ -7,9 +7,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectFactory;
 import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.java.JavaProjectFactory;
-import jext.sourcecode.project.python.simple.SimpleProject;
-import jext.sourcecode.resources.java.JavaLibraryDownloader;
-import jext.sourcecode.resources.java.JavaLibraryFinder;
+import jext.sourcecode.project.python.simple.PythonProject;
 import jext.sourcecode.resources.python.PythonLibraryDownloader;
 import jext.sourcecode.resources.python.PythonLibraryFinder;
 
@@ -25,13 +23,13 @@ public class PythonProjectFactory extends ProjectFactory {
         String projectType = guessProjectType(projectHome, properties);
         Project project;
 
-        if (SimpleProject.TYPE.equals(projectType))
-            project = new SimpleProject(projectName, projectHome, properties);
+        if (PythonProject.TYPE.equals(projectType))
+            project = new PythonProject(projectName, projectHome, properties);
         else if (InfoProject.TYPE.equals(projectType))
             project = new InfoProject(projectName, projectHome, properties);
         else {
-            Logger.getLogger(JavaProjectFactory.class).errorf("Project type %s unknown", projectType);
-            project = new SimpleProject(projectName, projectHome, properties);
+            Logger.getLogger(PythonProjectFactory.class).errorf("Project type %s unknown", projectType);
+            project = new PythonProject(projectName, projectHome, properties);
         }
 
         LibraryDownloader ld = new PythonLibraryDownloader();

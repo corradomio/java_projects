@@ -3,13 +3,12 @@ package jext.sourcecode.project.python.simple;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.python.PythonBaseProject;
-import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
 
 import java.io.File;
 import java.util.Properties;
 
-public class SimpleProject extends PythonBaseProject {
+public class PythonProject extends PythonBaseProject {
 
     // ----------------------------------------------------------------------
     // Constants
@@ -25,7 +24,7 @@ public class SimpleProject extends PythonBaseProject {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public SimpleProject(String projectName, File projectHome, Properties properties) {
+    public PythonProject(String projectName, File projectHome, Properties properties) {
         super(projectName, projectHome, properties, TYPE);
     }
 
@@ -43,7 +42,7 @@ public class SimpleProject extends PythonBaseProject {
 
     @Override
     protected Module newModule(File moduleHome) {
-        return new SimpleModule(moduleHome, this);
+        return new PythonModule(moduleHome, this);
     }
 
 }
