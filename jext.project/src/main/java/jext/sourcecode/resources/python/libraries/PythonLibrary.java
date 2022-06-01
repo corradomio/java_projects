@@ -3,7 +3,7 @@ package jext.sourcecode.resources.python.libraries;
 import jext.name.Name;
 import jext.name.NamedObject;
 import jext.name.PathName;
-import jext.python.PythonConstants;
+import jext.sourcecode.project.python.PythonConstants;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;

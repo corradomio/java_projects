@@ -7,7 +7,6 @@ import jext.name.NamedObject;
 import jext.name.PathName;
 import jext.nio.file.FilteredFileVisitor;
 import jext.sourcecode.project.LibraryDownloader;
-import jext.sourcecode.project.java.JavaGuessRuntimeLibrary;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryRepository;
@@ -128,15 +127,17 @@ public abstract class BaseProject extends NamedObject implements Project {
         return projectHome;
     }
 
+    // @Override
+    // public String getRuntimeLibrary() {
+    //     String rtLibrary = properties.getProperty(RUNTIME_LIBRARY, null);
+    //
+    //     if (rtLibrary == null)
+    //         rtLibrary = JavaGuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+    //
+    //     return rtLibrary;
+    // }
     @Override
-    public String getRuntimeLibrary() {
-        String rtLibrary = properties.getProperty(RUNTIME_LIBRARY, null);
-
-        if (rtLibrary == null)
-            rtLibrary = JavaGuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
-
-        return rtLibrary;
-    }
+    public abstract String getRuntimeLibrary();
 
     // ----------------------------------------------------------------------
     // Sources
@@ -398,27 +399,6 @@ public abstract class BaseProject extends NamedObject implements Project {
     // Sources
     // Resources
     // ----------------------------------------------------------------------
-
-    public List<Source> getSources(File dir, Module module) {
-        File moduleHome = module.getModuleHome();
-
-        // scan the directory to retrieve all possible 'source' files
-        List<File> sourceFiles = FileUtils.asList(dir.listFiles(resource ->
-            fpSources.accept(moduleHome, resource) && !fpExcludes.accept(moduleHome, resource))
-        );
-
-        List<Source> sources = sourceFiles
-                .stream()
-                // file -> <Type>Source
-            .map(file -> SourceCode.newSource(file, module))
-                // check if it is a ""valid"" source file
-                .filter(source -> source.getSourceRoot().isPresent())
-                // check if the path is valid
-            .filter(source -> selector.test(source.getPath()))
-            .collect(Collectors.toList());
-
-        return sources;
-    }
 
     public List<Resource> getResources(File dir, Module module) {
         File moduleHome = module.getModuleHome();

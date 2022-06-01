@@ -1,6 +1,6 @@
-package jext.sourcecode.project.python.util;
+package jext.sourcecode.project.csharp.util;
 
-import jext.sourcecode.project.python.PythonConstants;
+import jext.sourcecode.project.csharp.CSharpConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class PythonSourceRoots implements Iterable<File> {
+public class CSharpSourceRoots implements Iterable<File> {
 
     private static class SourcesCount {
         int pyCount;
@@ -25,7 +25,7 @@ public class PythonSourceRoots implements Iterable<File> {
 
         void count(File file) {
             String name = file.getName();
-            if (name.endsWith(PythonConstants.PYTHON_EXT))
+            if (name.endsWith(CSharpConstants.CSHARP_EXT))
                 pyCount++;
             else
                 extCount++;
@@ -70,8 +70,6 @@ public class PythonSourceRoots implements Iterable<File> {
         }
     }
 
-    private static final String INIT_FILE = "__init__.py";
-
     private Set<File> sourceRoots = new HierarchicalSet();
     private Map<File, SourcesCount> srcCounts = new HashMap<>();
 
@@ -92,11 +90,6 @@ public class PythonSourceRoots implements Iterable<File> {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                     File file = path.toFile();
                     File parent = file.getParentFile();
-                    String name = file.getName();
-                    if (INIT_FILE.equals(name)) {
-                        add(parent.getParentFile());
-                        return FileVisitResult.SKIP_SIBLINGS;
-                    }
 
                     srcCounts.get(parent).count(file);
                     return FileVisitResult.CONTINUE;
@@ -110,9 +103,6 @@ public class PythonSourceRoots implements Iterable<File> {
                 @Override
                 public FileVisitResult postVisitDirectory(Path pdir, IOException exc) throws IOException {
                     File fdir = pdir.toFile();
-                    File init = new File(fdir, INIT_FILE);
-                    if (init.exists())
-                        return FileVisitResult.SKIP_SUBTREE;
 
                     if (srcCounts.get(fdir).hasSources()) {
                         add(fdir);

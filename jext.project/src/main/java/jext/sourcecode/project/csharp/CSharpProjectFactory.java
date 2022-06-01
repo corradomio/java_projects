@@ -5,7 +5,6 @@ import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectFactory;
-import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.resources.csharp.CSharpLibraryDownloader;
 import jext.sourcecode.resources.csharp.CSharpLibraryFinder;
 
@@ -25,8 +24,6 @@ public class CSharpProjectFactory extends ProjectFactory {
 
         if (CSharpProject.TYPE.equals(projectType))
             project = new CSharpProject(projectName, projectHome, properties);
-        else if (InfoProject.TYPE.equals(projectType))
-            project = new InfoProject(projectName, projectHome, properties);
         else {
             Logger.getLogger(CSharpProjectFactory.class).errorf("Project type %s unknown", projectType);
             project = new CSharpProject(projectName, projectHome, properties);

@@ -30,6 +30,11 @@ public class NoneProject  extends BaseProject {
     }
 
     @Override
+    public String getRuntimeLibrary() {
+        return null;
+    }
+
+    @Override
     public Sources getSources() {
         return new SourcesImpl(new File(".")) {
             @Override

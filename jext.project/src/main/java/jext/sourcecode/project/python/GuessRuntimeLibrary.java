@@ -4,14 +4,14 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils;
 
-public class PythonGuessRuntimeLibrary {
+public class GuessRuntimeLibrary {
 
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
 
     public static final String NO_RUNTIME_LIBRARY = "";
-    public static final String DEFAULT_PYTHON_RUNTIME_LIBRARY = "py38";
+    public static final String DEFAULT_RUNTIME_LIBRARY = "py38";
 
     public static String guessRuntimeLibrary(Module module) {
         return NO_RUNTIME_LIBRARY;
@@ -27,7 +27,7 @@ public class PythonGuessRuntimeLibrary {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private PythonGuessRuntimeLibrary(Module module) {
+    private GuessRuntimeLibrary(Module module) {
         this.module = module;
     }
 

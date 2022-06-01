@@ -1,17 +1,17 @@
 package jext.sourcecode.project.python;
 
-import jext.python.PythonConstants;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
+import jext.sourcecode.project.Type;
 import jext.sourcecode.project.python.util.PythonSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.project.util.SourcesImpl;
-import jext.sourcecode.resources.SourceCode;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
+import jext.sourcecode.resources.python.PythonSourceCode;
 import jext.util.PathUtils;
 import jext.util.StringUtils;
 
@@ -25,9 +25,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.Set;
 
-public class PythonBaseModule extends BaseModule {
+public class PythonModule extends BaseModule {
 
-    protected PythonBaseModule(File moduleHome, Project project) {
+    protected PythonModule(File moduleHome, Project project) {
         super(moduleHome, project);
     }
 
@@ -42,12 +42,12 @@ public class PythonBaseModule extends BaseModule {
 
         sources = new PythonSourcesImpl(this);
         Module self = this;
-        PythonBaseProject pyproject = (PythonBaseProject) project;
+        PythonProject pyproject = (PythonProject) project;
 
         try {
             Files.walkFileTree(moduleHome.toPath(), new FileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     if (pyproject.isExcluded(dir.toFile()))
                         return FileVisitResult.SKIP_SUBTREE;
                     else
@@ -55,7 +55,7 @@ public class PythonBaseModule extends BaseModule {
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     if (pyproject.isExcluded(file.toFile()))
                         return FileVisitResult.CONTINUE;
                     if (!pyproject.isSourceFile(file.toFile()))
@@ -63,7 +63,7 @@ public class PythonBaseModule extends BaseModule {
 
                     String ext = PathUtils.getExtension(file.toString());
                     if (PythonConstants.PYTHON_EXT.equals(ext)) {
-                        Source source = SourceCode.newSource(file.toFile(), self);
+                        Source source = PythonSourceCode.newSource(file.toFile(), self);
                         sources.add(source);
                     }
 
@@ -71,19 +71,17 @@ public class PythonBaseModule extends BaseModule {
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
             });
         }
         catch (IOException e) { }
-
-
 
         return sources;
     }
@@ -95,7 +93,7 @@ public class PythonBaseModule extends BaseModule {
     @Override
     public Library getRuntimeLibrary() {
         // check if it is possible to retrieve the runtime library locally
-        String runtimeName = PythonGuessRuntimeLibrary.guessRuntimeLibrary(this);
+        String runtimeName = GuessRuntimeLibrary.guessRuntimeLibrary(this);
 
         // check if the project has a specified jdk
         if (StringUtils.isEmpty(runtimeName))
@@ -123,6 +121,20 @@ public class PythonBaseModule extends BaseModule {
     }
     @Override
     public Set<Library> getDeclaredLibraries() {
+        return Collections.emptySet();
+    }
+
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Set<Type> getTypes() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<RefType> getUsedTypes() {
         return Collections.emptySet();
     }
 

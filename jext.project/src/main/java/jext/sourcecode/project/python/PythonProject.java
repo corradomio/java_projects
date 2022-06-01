@@ -1,26 +1,28 @@
 package jext.sourcecode.project.python;
 
 import jext.io.file.FilePatterns;
-import jext.python.PythonConstants;
 import jext.sourcecode.project.LibrarySet;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.python.util.PythonProjectLibrary;
 import jext.sourcecode.project.python.util.PythonSourcesImpl;
 import jext.sourcecode.project.util.BaseProject;
-import jext.sourcecode.project.util.SourcesImpl;
+import jext.sourcecode.project.util.ModulesImpl;
 import jext.util.PropertiesUtils;
 
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
-public abstract class PythonBaseProject extends BaseProject {
+public class PythonProject extends BaseProject {
 
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
+
+    public static final String TYPE = "simple";
 
     private static final String DEFAULT_SOURCES = ".py";
     private static final String DEFAULT_RESOURCES = ".xml,.properties,.json";
@@ -30,8 +32,8 @@ public abstract class PythonBaseProject extends BaseProject {
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected PythonBaseProject(String projectName, File projectHome, Properties properties, String projectType) {
-        super(projectName, projectHome, properties, projectType);
+    public PythonProject(String projectName, File projectHome, Properties properties) {
+        super(projectName, projectHome, properties, TYPE);
 
         this.properties.setProperty(Project.PROJECT_LANGUAGE, PythonConstants.PYTHON);
 
@@ -59,6 +61,27 @@ public abstract class PythonBaseProject extends BaseProject {
         this.fpSources = new FilePatterns().addAll(sources);
         this.fpResources = new FilePatterns().addAll(resources);
         this.fpExcludes = new FilePatterns().addAll(excludes);
+    }
+
+    // ----------------------------------------------------------------------
+    // Modules
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Modules getModules() {
+        if (modules != null)
+            return modules;
+
+        modules = new ModulesImpl();
+
+        addRootModule();
+
+        return modules;
+    }
+
+    @Override
+    protected Module newModule(File moduleHome) {
+        return new PythonModule(moduleHome, this);
     }
 
     // ----------------------------------------------------------------------
@@ -99,7 +122,7 @@ public abstract class PythonBaseProject extends BaseProject {
         String rtLibrary = properties.getProperty(RUNTIME_LIBRARY, null);
 
         if (rtLibrary == null)
-            rtLibrary = PythonGuessRuntimeLibrary.DEFAULT_PYTHON_RUNTIME_LIBRARY;
+            rtLibrary = GuessRuntimeLibrary.DEFAULT_RUNTIME_LIBRARY;
 
         return rtLibrary;
     }
@@ -115,5 +138,9 @@ public abstract class PythonBaseProject extends BaseProject {
     boolean isSourceFile(File filePath) {
         return fpSources.accept(projectHome, filePath);
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

@@ -7,14 +7,15 @@ import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils;
 
 import java.util.Set;
 
-public class JavaGuessRuntimeLibrary {
+public class GuessRuntimeLibrary {
 
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final String DEFAULT_JAVA_RUNTIME_LIBRARY = "jdk11";
     public static final String NO_RUNTIME_LIBRARY = "";
+    public static final String DEFAULT_JAVA_RUNTIME_LIBRARY = "jdk11";
+
     private static final String DEFAULT_ANDROID_RUNTIME_LIBRARY = "pie";
     private static final String ANDROID_NS  ="android.";
     private static final String ANDROIDX_NS  ="androidx.";
@@ -26,7 +27,7 @@ public class JavaGuessRuntimeLibrary {
     public static String guessRuntimeLibrary(Module module) {
 
         String runtimeName;
-        JavaGuessRuntimeLibrary grtl = new JavaGuessRuntimeLibrary(module);
+        GuessRuntimeLibrary grtl = new GuessRuntimeLibrary(module);
 
         runtimeName = grtl.checkConfiguration();
         if (!StringUtils.isEmpty(runtimeName))
@@ -53,7 +54,7 @@ public class JavaGuessRuntimeLibrary {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private JavaGuessRuntimeLibrary(Module module) {
+    private GuessRuntimeLibrary(Module module) {
         this.module = module;
     }
 

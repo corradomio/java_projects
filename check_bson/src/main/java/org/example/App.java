@@ -2,7 +2,10 @@ package org.example;
 
 import jext.util.Arrays;
 import jext.util.Maps;
+import org.yuanheng.cookjson.CookJsonProvider;
 
+import javax.json.JsonObjectBuilder;
+import javax.json.spi.JsonProvider;
 import java.util.Map;
 
 /**
@@ -22,7 +25,8 @@ public class App
             "string[]", Arrays.asArray("I", "II", "III", "IV")
         );
 
-
+        JsonProvider p = new CookJsonProvider();
+        JsonObjectBuilder job = p.createObjectBuilder();
 
         System.out.println( "Hello World!" );
     }

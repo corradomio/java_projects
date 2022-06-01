@@ -47,8 +47,8 @@ public class JavaProjectFactory extends ProjectFactory {
             project = new EclipseProject(projectName, projectHome, properties);
         else if (SimpleProject.TYPE.equals(projectType))
             project = new SimpleProject(projectName, projectHome, properties);
-        else if (InfoProject.TYPE.equals(projectType))
-            project = new InfoProject(projectName, projectHome, properties);
+        // else if (InfoProject.TYPE.equals(projectType))
+        //     project = new InfoProject(projectName, projectHome, properties);
         else if (SimpleProject.UNKNOWN.equals(projectType))
             project = new SimpleProject(projectName, projectHome, properties);
         else {

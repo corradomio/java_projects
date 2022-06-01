@@ -1,5 +1,7 @@
 package jext.sourcecode.project.java;
 
+import jext.cache.Cache;
+import jext.cache.CacheManager;
 import jext.io.filters.FileFilters;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
@@ -21,7 +23,6 @@ import jext.sourcecode.project.java.util.JavaSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ResourcesImpl;
-import jext.sourcecode.project.util.SourcesImpl;
 import jext.sourcecode.resources.java.libraries.ArchiveUtils;
 import jext.sourcecode.resources.libraries.InvalidLibrary;
 import jext.util.FileUtils;
@@ -65,7 +66,7 @@ public class JavaBaseModule extends BaseModule {
         sources = new JavaSourcesImpl(this);
         directories = getBaseProject().getDirectories(moduleHome);
         getDirectories().forEach(dir -> {
-            List<Source> srclist = getBaseProject().getSources(dir, this);
+            List<Source> srclist = ((JavaBaseProject)project).getSources(dir, this);
             sources.addAll(srclist);
         });
 
@@ -210,7 +211,7 @@ public class JavaBaseModule extends BaseModule {
     @Override
     public Library getRuntimeLibrary() {
         // check if it is possible to retrieve the runtime library locally
-        String runtimeName = JavaGuessRuntimeLibrary.guessRuntimeLibrary(this);
+        String runtimeName = GuessRuntimeLibrary.guessRuntimeLibrary(this);
 
         // check if the project has a specified jdk
         if (StringUtils.isEmpty(runtimeName))
@@ -321,5 +322,57 @@ public class JavaBaseModule extends BaseModule {
             .map(coords -> new MavenLibrary(coords, md, project))
             .forEach(collectedLibraries::add);
     }
+
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Set<Type> getTypes() {
+
+        // cache names:
+        //
+        //      dependency.{project}.module.types
+        //
+
+        String cacheName = String.format("dependency.%s.module.types", project.getId());
+        Cache<String, Set<Type>> cache = CacheManager.getCache(cacheName);
+
+        return cache.get(getId(), () -> {
+            Set<Type> types = new TreeSet<>();
+
+            getSources().forEach(source ->
+                types.addAll(source.getTypes()));
+
+            return types;
+        });
+    }
+
+    @Override
+    public Set<RefType> getUsedTypes() {
+        // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
+        Set<RefType> definedTypes = new HashSet<>(getTypes());
+
+        // cache names:
+        //
+        //      dependency.{project}.module.usedTypes
+        //
+
+        String cacheName = String.format("dependency.%s.module.usedTypes", project.getId());
+        Cache<String, Set<RefType>> cache = CacheManager.getCache(cacheName);
+
+        return cache.get(getId(), () -> {
+            Set<RefType> usedTypes = new TreeSet<>();
+
+            getSources().forEach(source ->
+                usedTypes.addAll(source.getUsedTypes()));
+
+            return SetUtils.difference(usedTypes, definedTypes, true);
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

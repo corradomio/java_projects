@@ -1,7 +1,7 @@
-package jext.sourcecode.project.python.util;
+package jext.sourcecode.resources.csharp.libraries;
 
+import jext.sourcecode.project.csharp.CSharpConstants;
 import jext.name.Name;
-import jext.sourcecode.project.python.PythonConstants;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -12,12 +12,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class PythonProjectLibrary extends BaseLibrary {
+public class CSharpRuntimeLibrary  extends BaseLibrary {
 
-    public PythonProjectLibrary(Project project) {
-        super(project.getName(), project);
-        this.libraryFile = project.getProjectHome();
-        this.libraryType = LibraryType.LOCAL;
+    public CSharpRuntimeLibrary(Name libraryName, Project project) {
+        super(libraryName, project);
+        this.libraryType = LibraryType.RUNTIME;
     }
 
     @Override
@@ -27,12 +26,12 @@ public class PythonProjectLibrary extends BaseLibrary {
 
     @Override
     public String getLanguage() {
-        return PythonConstants.PYTHON;
+        return CSharpConstants.CSHARP;
     }
 
     @Override
     public List<File> getFiles() {
-        return project.getModules().getModule().getSources().getSourceRootDirectories();
+        return Collections.emptyList();
     }
 
     @Override

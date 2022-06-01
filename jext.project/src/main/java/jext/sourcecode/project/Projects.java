@@ -3,6 +3,7 @@ package jext.sourcecode.project;
 import jext.exception.InvalidParameterException;
 import jext.name.Name;
 import jext.name.PathName;
+import jext.sourcecode.project.info.InfoProject;
 import jext.util.Parameters;
 
 import java.io.File;
@@ -13,6 +14,9 @@ import static jext.sourcecode.project.GuessProjectLanguage.guessProjectLanguage;
 public class Projects {
 
     public static Project newProject(String projectName, File projectHome, Properties properties) {
+
+        if (projectHome.getName().endsWith(".json"))
+            return new InfoProject(projectName, projectHome, properties);
 
         // First step: which is the programming language used to implement the project?
         String projectLanguage = guessProjectLanguage(projectHome, properties);

@@ -20,7 +20,8 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     private Project project;
     private Map<Name, Library> libraries = new HashMap<>();
-    private PythonLibraryDownloader pld = new PythonLibraryDownloader();
+    private LibraryDownloader downloader = new PythonLibraryDownloader();
+
 
     @Override
     public PythonLibraryFinder setProject(Project project) {
@@ -56,12 +57,12 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     @Override
     public LibraryDownloader getDownloader() {
-        return pld;
+        return downloader;
     }
 
     @Override
     public LibraryFinder setDownloader(LibraryDownloader ld) {
-        this.pld = (PythonLibraryDownloader) ld;
+        this.downloader = ld;
         return this;
     }
 

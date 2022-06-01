@@ -1,10 +1,13 @@
 package jext.sourcecode.resources.java;
 
-import jext.java.FastJavaParser;
+import jext.sourcecode.project.java.util.FastJavaParser;
+import jext.java.JavaConstants;
 import jext.java.TypeRole;
 import jext.name.Name;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.util.ImplementedType;
 import jext.sourcecode.project.util.ReferencedType;
@@ -19,9 +22,26 @@ import java.util.stream.Collectors;
 
 public class JavaSourceCode extends SourceCode {
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public static Source newSource(File sourceFile, Module module) {
+        String name = sourceFile.getName();
+
+        if (name.endsWith(JavaConstants.JAVA_EXT))
+            return new JavaSourceCode(sourceFile, module);
+
+        throw new ProjectException("Unsupported source file " + sourceFile);
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
     private FastJavaParser parser;
 
-    public JavaSourceCode(File file, Module module) {
+    private JavaSourceCode(File file, Module module) {
         super(file, module);
         this.parser = new FastJavaParser(file);
     }

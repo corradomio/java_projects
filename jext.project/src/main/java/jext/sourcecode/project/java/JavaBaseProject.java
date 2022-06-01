@@ -1,16 +1,17 @@
 package jext.sourcecode.project.java;
 
 import jext.io.file.FilePatterns;
-import jext.java.FastJavaParser;
+import jext.sourcecode.project.java.util.FastJavaParser;
 import jext.java.JavaConstants;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.java.util.JavaSourcesImpl;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
-import jext.sourcecode.project.util.SourcesImpl;
+import jext.sourcecode.resources.java.JavaSourceCode;
 import jext.util.Bag;
 import jext.util.FileUtils;
 import jext.util.HashBag;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public abstract class JavaBaseProject extends BaseProject {
 
@@ -99,7 +101,7 @@ public abstract class JavaBaseProject extends BaseProject {
         String rtLibrary = properties.getProperty(RUNTIME_LIBRARY, null);
 
         if (rtLibrary == null)
-            rtLibrary = JavaGuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+            rtLibrary = GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
 
         return rtLibrary;
     }
@@ -306,4 +308,32 @@ public abstract class JavaBaseProject extends BaseProject {
             });
     }
 
+    // ----------------------------------------------------------------------
+    // Sources
+    // ----------------------------------------------------------------------
+
+    public List<Source> getSources(File dir, Module module) {
+        File moduleHome = module.getModuleHome();
+
+        // scan the directory to retrieve all possible 'source' files
+        List<File> sourceFiles = FileUtils.asList(dir.listFiles(resource ->
+            fpSources.accept(moduleHome, resource) && !fpExcludes.accept(moduleHome, resource))
+        );
+
+        List<Source> sources = sourceFiles
+            .stream()
+            // file -> <Type>Source
+            .map(file -> JavaSourceCode.newSource(file, module))
+            // check if it is a ""valid"" source file
+            .filter(source -> source.getSourceRoot().isPresent())
+            // check if the path is valid
+            .filter(source -> selector.test(source.getPath()))
+            .collect(Collectors.toList());
+
+        return sources;
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 }

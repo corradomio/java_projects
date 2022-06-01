@@ -1,4 +1,4 @@
-package jext.python;
+package jext.sourcecode.project.python;
 
 public interface PythonConstants {
 

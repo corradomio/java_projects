@@ -11,6 +11,8 @@ abstract class ImplementsMap<K, T> implements Map<List<K>, Map<K, List<T>>> { }
 
 abstract class AbstractMap<K, T> implements Map<List<K>, Map<K, List<T>>> { }
 
+abstract class Maps { }
+
 public class ExampleFields {
 
     int i;

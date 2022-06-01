@@ -18,9 +18,8 @@ import jext.sourcecode.project.info.library.InfoMavenLibrary;
 import jext.sourcecode.project.info.library.InfoRTLibrary;
 import jext.sourcecode.project.info.library.LibrarySet;
 import jext.sourcecode.project.info.util.InfoSourcesImpl;
-import jext.sourcecode.project.java.JavaGuessRuntimeLibrary;
 import jext.sourcecode.project.java.maven.MavenRepository;
-import jext.sourcecode.project.python.PythonGuessRuntimeLibrary;
+import jext.sourcecode.project.python.GuessRuntimeLibrary;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.JSONUtils;
@@ -166,9 +165,9 @@ public class InfoProject implements Project {
             return rtLibrary;
 
         if (Project.JAVA_PROJECT.equals(projectLanguage))
-            return JavaGuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
+            return jext.sourcecode.project.java.GuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
         if (Project.PYTHON_PROJECT.equals(projectLanguage))
-            return PythonGuessRuntimeLibrary.DEFAULT_PYTHON_RUNTIME_LIBRARY;
+            return GuessRuntimeLibrary.DEFAULT_RUNTIME_LIBRARY;
 
         return rtLibrary;
     }

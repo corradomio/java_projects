@@ -1,6 +1,5 @@
 package jext.sourcecode.project.java;
 
-import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.java.ant.AntProject;
 import jext.sourcecode.project.java.eclipse.EclipseProject;
 import jext.sourcecode.project.java.gradle.GradleProject;
@@ -14,9 +13,6 @@ import java.io.FileFilter;
 import java.util.List;
 import java.util.Properties;
 
-import static jext.sourcecode.project.Project.AUTO;
-import static jext.sourcecode.project.Project.PROJECT_TYPE;
-
 public class GuessProjectType {
 
     private static final FileFilter IS_VALID_DIRECTORY =
@@ -26,8 +22,6 @@ public class GuessProjectType {
         String projectType;
         List<File> directories;
 
-        if (projectHome.isFile() && projectHome.getName().endsWith(".json"))
-            return InfoProject.TYPE;
         {
             projectType = findBetterType(projectHome, props);
         }

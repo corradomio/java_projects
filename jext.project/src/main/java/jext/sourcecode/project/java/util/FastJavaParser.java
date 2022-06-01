@@ -1,5 +1,7 @@
-package jext.java;
+package jext.sourcecode.project.java.util;
 
+import jext.java.JavaConstants;
+import jext.java.TypeRole;
 import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.ObjectName;

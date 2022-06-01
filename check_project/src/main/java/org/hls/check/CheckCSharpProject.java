@@ -5,6 +5,7 @@ import jext.logging.Logger;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
+import jext.sourcecode.project.util.ProjectDump;
 import jext.sourcecode.resources.csharp.CSharpLibraryFinder;
 import jext.util.PropertiesUtils;
 
@@ -27,6 +28,13 @@ public class CheckCSharpProject {
             ));
 
         project.setLibraryFinder(lfinder);
+
+        project.getModules().forEach(m -> {
+            System.out.printf("  module %s: %s\n", m.getName().getName(), m.getModuleHome());
+        });
+
+
+        ProjectDump.dump(project, 0);
 
     }
 }

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class InvalidLibrary extends BaseLibrary implements Library {
+public class InvalidLibrary extends BaseLibrary {
 
     public InvalidLibrary(String libraryName, Project project) {
         super(PathName.of(libraryName), project);

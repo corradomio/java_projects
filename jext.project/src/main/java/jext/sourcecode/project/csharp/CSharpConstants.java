@@ -1,4 +1,4 @@
-package jext.csharp;
+package jext.sourcecode.project.csharp;
 
 public interface CSharpConstants {
 

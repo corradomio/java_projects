@@ -1,7 +1,5 @@
 package jext.sourcecode.project.util;
 
-import jext.cache.Cache;
-import jext.cache.CacheManager;
 import jext.logging.Logger;
 import jext.name.PathName;
 import jext.sourcecode.project.Library;
@@ -15,7 +13,6 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.util.FileUtils;
 import jext.util.LongHash;
-import jext.util.SetUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -24,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 
 public abstract class BaseModule extends ReferencedObject implements Module {
 
@@ -181,48 +177,10 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     }
 
     @Override
-    public Set<Type> getTypes() {
-
-        // cache names:
-        //
-        //      dependency.{project}.module.types
-        //
-
-        String cacheName = String.format("dependency.%s.module.types", project.getId());
-        Cache<String, Set<Type>> cache = CacheManager.getCache(cacheName);
-
-        return cache.get(getId(), () -> {
-            Set<Type> types = new TreeSet<>();
-
-            getSources().forEach(source ->
-                        types.addAll(source.getTypes()));
-
-            return types;
-        });
-    }
+    public abstract Set<Type> getTypes();
 
     @Override
-    public Set<RefType> getUsedTypes() {
-        // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
-        Set<RefType> definedTypes = new HashSet<>(getTypes());
-
-        // cache names:
-        //
-        //      dependency.{project}.module.usedTypes
-        //
-
-        String cacheName = String.format("dependency.%s.module.usedTypes", project.getId());
-        Cache<String, Set<RefType>> cache = CacheManager.getCache(cacheName);
-
-        return cache.get(getId(), () -> {
-            Set<RefType> usedTypes = new TreeSet<>();
-
-            getSources().forEach(source ->
-                    usedTypes.addAll(source.getUsedTypes()));
-
-            return SetUtils.difference(usedTypes, definedTypes, true);
-        });
-    }
+    public abstract Set<RefType> getUsedTypes();
 
     // ----------------------------------------------------------------------
     // modules comparator

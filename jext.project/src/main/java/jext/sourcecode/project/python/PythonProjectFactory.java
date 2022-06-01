@@ -7,7 +7,6 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectFactory;
 import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.java.JavaProjectFactory;
-import jext.sourcecode.project.python.simple.PythonProject;
 import jext.sourcecode.resources.python.PythonLibraryDownloader;
 import jext.sourcecode.resources.python.PythonLibraryFinder;
 
@@ -25,8 +24,6 @@ public class PythonProjectFactory extends ProjectFactory {
 
         if (PythonProject.TYPE.equals(projectType))
             project = new PythonProject(projectName, projectHome, properties);
-        else if (InfoProject.TYPE.equals(projectType))
-            project = new InfoProject(projectName, projectHome, properties);
         else {
             Logger.getLogger(PythonProjectFactory.class).errorf("Project type %s unknown", projectType);
             project = new PythonProject(projectName, projectHome, properties);

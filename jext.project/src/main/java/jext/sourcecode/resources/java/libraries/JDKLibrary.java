@@ -1,6 +1,6 @@
 package jext.sourcecode.resources.java.libraries;
 
-import jext.android.AndroidConstants;
+import jext.sourcecode.project.java.AndroidConstants;
 import jext.java.JavaConstants;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
