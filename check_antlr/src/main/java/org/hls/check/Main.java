@@ -2,22 +2,24 @@ package org.hls.check;
 
 import jext.antlr.v4.csharp.CSharpLexer;
 import jext.antlr.v4.csharp.CSharpParser;
+import jext.antlr.v4.csharp.SkipByteOrderMarkerInputStream;
 import jext.antlr.v4.java.Java9Lexer;
 import jext.antlr.v4.java.Java9Parser;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import jext.antlr.v4.python3.Python3Lexer;
+import jext.antlr.v4.python3.Python3Parser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Main {
 
-    static void checkjava() throws IOException {
-        File file = new File("D:\\Projects.github\\java_projects\\check_antlr\\src\\main\\java\\org\\hls\\check\\Main.java");
+    static void checkJava() throws IOException {
+        System.out.println("checkJava");
+        File file = new File("src\\main\\java\\org\\hls\\check\\Main.java");
         CharStream cs = CharStreams.fromPath(file.toPath());
         Java9Lexer lexer = new Java9Lexer(cs);
         TokenStream ts = new CommonTokenStream(lexer);
@@ -26,21 +28,34 @@ public class Main {
         Java9Parser.CompilationUnitContext cu = p.compilationUnit();
     }
 
-    static void checkcsharp() throws IOException {
-
-        File file = new File("D:\\Projects\\CSharp\\CheckCSharp\\CheckCSharp\\Program.cs");
+    static void checkCSharp() throws IOException {
+        System.out.println("checkCSharp");
+        File file = new File("data/Document.cs");
         // ANTLRInputStream cs = new ANTLRInputStream(new FileInputStream(file));
-        CharStream cs = CharStreams.fromPath(file.toPath());
+        // CharStream cs = CharStreams.fromPath(file.toPath());
+        CharStream cs = CharStreams.fromStream(new SkipByteOrderMarkerInputStream(file));
         CSharpLexer lexer = new CSharpLexer(cs);
         TokenStream ts = new CommonTokenStream(lexer);
         CSharpParser p = new CSharpParser(ts);
 
         CSharpParser.Compilation_unitContext cu = p.compilation_unit();
+    }
 
+    static void checkPython() throws IOException {
+        System.out.println("checkPython");
+        File file = new File("data/simdb.py");
+        CharStream cs = CharStreams.fromPath(file.toPath());
+        Python3Lexer lexer = new Python3Lexer(cs);
+        TokenStream ts = new CommonTokenStream(lexer);
+        Python3Parser p = new Python3Parser(ts);
+
+        Python3Parser.File_inputContext cu = p.file_input();
     }
 
     public static void main(String[] args) throws IOException {
-        checkcsharp();
-        checkjava();
+        checkCSharp();
+        checkJava();
+        checkPython();
+        System.out.println("end");
     }
 }
