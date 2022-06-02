@@ -9,7 +9,6 @@ import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.resources.csharp.CSharpSourceCode;
 import jext.util.PathUtils;
 
 import java.io.File;

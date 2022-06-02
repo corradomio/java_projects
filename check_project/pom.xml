@@ -23,6 +23,7 @@
         <module>../jext.project</module>
         <module>../jext.javaparser</module>
         <module>../jext.concurrent</module>
+        <module>../jext.antlr</module>
     </modules>
 
     <repositories>

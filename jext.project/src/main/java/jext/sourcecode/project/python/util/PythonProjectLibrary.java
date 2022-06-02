@@ -5,7 +5,7 @@ import jext.sourcecode.project.python.PythonConstants;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.resources.BaseLibrary;
+import jext.sourcecode.project.util.BaseLibrary;
 
 import java.io.File;
 import java.util.Collections;

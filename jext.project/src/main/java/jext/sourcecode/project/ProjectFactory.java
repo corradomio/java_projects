@@ -1,7 +1,7 @@
 package jext.sourcecode.project;
 
 import jext.sourcecode.project.csharp.CSharpConstants;
-import jext.java.JavaConstants;
+import jext.sourcecode.project.java.JavaConstants;
 import jext.sourcecode.project.python.PythonConstants;
 import jext.sourcecode.project.csharp.CSharpProjectFactory;
 import jext.sourcecode.project.java.JavaProjectFactory;

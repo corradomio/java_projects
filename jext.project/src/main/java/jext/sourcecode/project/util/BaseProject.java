@@ -15,11 +15,8 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Resource;
-import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.java.maven.MavenRepository;
-import jext.sourcecode.resources.ResourceFile;
-import jext.sourcecode.resources.SourceCode;
 import jext.util.FileUtils;
 
 import java.io.File;

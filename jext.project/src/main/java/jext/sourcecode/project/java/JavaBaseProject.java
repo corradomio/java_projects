@@ -2,7 +2,6 @@ package jext.sourcecode.project.java;
 
 import jext.io.file.FilePatterns;
 import jext.sourcecode.project.java.util.FastJavaParser;
-import jext.java.JavaConstants;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
@@ -11,7 +10,6 @@ import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.java.util.JavaSourcesImpl;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
-import jext.sourcecode.resources.java.JavaSourceCode;
 import jext.util.Bag;
 import jext.util.FileUtils;
 import jext.util.HashBag;

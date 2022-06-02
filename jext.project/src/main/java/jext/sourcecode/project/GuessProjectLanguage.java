@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static jext.sourcecode.project.csharp.CSharpConstants.CSHARP;
 import static jext.sourcecode.project.csharp.CSharpConstants.CSHARP_EXT;
-import static jext.java.JavaConstants.JAVA;
-import static jext.java.JavaConstants.JAVA_EXT;
+import static jext.sourcecode.project.java.JavaConstants.JAVA;
+import static jext.sourcecode.project.java.JavaConstants.JAVA_EXT;
 import static jext.sourcecode.project.python.PythonConstants.PYTHON;
 import static jext.sourcecode.project.python.PythonConstants.PYTHON_EXT;
 import static jext.sourcecode.project.Project.AUTO;

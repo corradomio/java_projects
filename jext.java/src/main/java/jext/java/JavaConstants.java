@@ -8,39 +8,39 @@ import java.util.Set;
 
 public interface JavaConstants {
 
-    String JAVA = "java";
-    String JAVA_EXT = ".java";
+    // String JAVA = "java";
+    // String JAVA_EXT = ".java";
 
-    String PACKAGE = "package ";
-    String IMPORT_STATIC = "import static ";
-    String IMPORT = "import ";
-    String PUBLIC = "public ";
-    String CLASS = "class ";
-    String INTERFACE = "interface ";
-    String RECORD = "record ";
-    String ENUM = "enum ";
-    String ANNOTATION = "@interface ";
+    // String PACKAGE = "package ";
+    // String IMPORT_STATIC = "import static ";
+    // String IMPORT = "import ";
+    // String PUBLIC = "public ";
+    // String CLASS = "class ";
+    // String INTERFACE = "interface ";
+    // String RECORD = "record ";
+    // String ENUM = "enum ";
+    // String ANNOTATION = "@interface ";
 
     String ROOT = "";
 
-    String VOID = "void";
-    String NULL = "null";
+    // String VOID = "void";
+    // String NULL = "null";
     String OBJECT = "Object";
 
     String JAVA_LANG = "java.lang";
 
-    String JAVA_LANG_NULL   = "java.lang.Null";
-    String JAVA_LANG_VOID   = "java.lang.Void";
-    String JAVA_LANG_CLASS  = "java.lang.Class";
+    // String JAVA_LANG_NULL   = "java.lang.Null";
+    // String JAVA_LANG_VOID   = "java.lang.Void";
+    // String JAVA_LANG_CLASS  = "java.lang.Class";
     String JAVA_LANG_OBJECT = "java.lang.Object";
 
-    Set<String> VISIBILITIES =
-        new HashSet<>(Arrays.asList(
-            "public",
-            "protected",
-            "private",
-            "package"
-        ));
+    // Set<String> VISIBILITIES =
+    //     new HashSet<>(Arrays.asList(
+    //         "public",
+    //         "protected",
+    //         "private",
+    //         "package"
+    //     ));
 
     Set<String> PRIMITIVE_TYPES =
         new HashSet<>(Arrays.asList(
@@ -54,18 +54,18 @@ public interface JavaConstants {
             "double",
             "void"));
 
-    Map<String, String> PRIMITIVE_BOXED = new HashMap<String, String>(){{
-        put("byte",     "java.lang.Byte");
-        put("char",     "java.lang.Character");
-        put("double",   "java.lang.Double");
-        put("float",    "java.lang.Float");
-        put("int",      "java.lang.Integer");
-        put("long",     "java.lang.Long");
-        put("short",    "java.lang.Short");
-        put("void",     "java.lang.Void");
-        put("boolean",  "java.lang.Boolean");
-        put("null",     "java.lang.Null");
-    }};
+    // Map<String, String> PRIMITIVE_BOXED = new HashMap<String, String>(){{
+    //     put("byte",     "java.lang.Byte");
+    //     put("char",     "java.lang.Character");
+    //     put("double",   "java.lang.Double");
+    //     put("float",    "java.lang.Float");
+    //     put("int",      "java.lang.Integer");
+    //     put("long",     "java.lang.Long");
+    //     put("short",    "java.lang.Short");
+    //     put("void",     "java.lang.Void");
+    //     put("boolean",  "java.lang.Boolean");
+    //     put("null",     "java.lang.Null");
+    // }};
 
 
     /*
@@ -80,17 +80,24 @@ public interface JavaConstants {
         L<className>;   class
         [       array
      */
-    Map<String, String> PRIMITIVE_SIGNATURE = new HashMap<String, String>(){{
-        put("B", "byte");
-        put("C", "char");
-        put("D", "double");
-        put("F", "float");
-        put("I", "int");
-        put("J", "long");
-        put("S", "short");
-        put("V", "void");
-        put("Z", "boolean");
-    }};
+    // Map<String, String> PRIMITIVE_SIGNATURE = new HashMap<String, String>(){{
+    //     put("B", "byte");
+    //     put("C", "char");
+    //     put("D", "double");
+    //     put("F", "float");
+    //     put("I", "int");
+    //     put("J", "long");
+    //     put("S", "short");
+    //     put("V", "void");
+    //     put("Z", "boolean");
+    // }};
+
+    // public static String signature(String type) {
+    //     if (PRIMITIVE_SIGNATURE.containsKey(type))
+    //         return PRIMITIVE_SIGNATURE.get(type);
+    //     else
+    //         return String.format("L%s;", type);
+    // }
 
     String[] JAVA_LANG_TYPES = {
         //

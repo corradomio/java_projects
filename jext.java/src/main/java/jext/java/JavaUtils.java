@@ -30,13 +30,6 @@ public class JavaUtils implements JavaConstants {
     //     return PRIMITIVE_BOXED.getOrDefault(name, name);
     // }
 
-    public static String signature(String type) {
-        if (PRIMITIVE_SIGNATURE.containsKey(type))
-            return PRIMITIVE_SIGNATURE.get(type);
-        else
-            return String.format("L%s;", type);
-    }
-
     // ----------------------------------------------------------------------
 
     public static String qualifiedName(String namespace, String name) {

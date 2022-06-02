@@ -1,15 +1,13 @@
 package jext.sourcecode.project.util;
 
 import jext.name.Name;
-import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Module;
+import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
 import jext.util.Assert;
-import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

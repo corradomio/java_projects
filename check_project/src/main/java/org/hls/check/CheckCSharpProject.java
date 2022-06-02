@@ -6,7 +6,7 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectDump;
-import jext.sourcecode.resources.csharp.CSharpLibraryFinder;
+import jext.sourcecode.project.csharp.CSharpLibraryFinder;
 import jext.util.PropertiesUtils;
 
 import java.io.File;

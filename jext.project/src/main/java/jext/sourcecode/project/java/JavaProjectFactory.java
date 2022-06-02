@@ -5,14 +5,11 @@ import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectFactory;
-import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.java.ant.AntProject;
 import jext.sourcecode.project.java.eclipse.EclipseProject;
 import jext.sourcecode.project.java.gradle.GradleProject;
 import jext.sourcecode.project.java.maven.MavenProject;
 import jext.sourcecode.project.java.simple.SimpleProject;
-import jext.sourcecode.resources.java.JavaLibraryDownloader;
-import jext.sourcecode.resources.java.JavaLibraryFinder;
 
 import java.io.File;
 import java.util.Properties;

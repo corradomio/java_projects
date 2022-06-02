@@ -10,8 +10,7 @@ import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.python.util.PythonSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.resources.libraries.InvalidLibrary;
-import jext.sourcecode.resources.python.PythonSourceCode;
+import jext.sourcecode.project.none.InvalidLibrary;
 import jext.util.PathUtils;
 import jext.util.StringUtils;
 

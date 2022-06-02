@@ -3,7 +3,6 @@ package jext.sourcecode.project.util;
 import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Resources;
-import jext.sourcecode.resources.ResourceFile;
 import jext.util.FileUtils;
 
 import java.io.File;

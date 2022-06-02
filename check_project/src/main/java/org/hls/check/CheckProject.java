@@ -6,7 +6,7 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectAnalyzer;
 import jext.sourcecode.project.Projects;
-import jext.sourcecode.resources.python.PythonLibraryFinder;
+import jext.sourcecode.project.python.PythonLibraryFinder;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 

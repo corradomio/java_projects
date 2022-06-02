@@ -4,8 +4,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.java.JavaBaseModule;
 import jext.sourcecode.project.java.eclipse.util.ClasspathFile;
-import jext.sourcecode.project.util.BaseModule;
-import jext.sourcecode.resources.java.libraries.ArchiveUtils;
+import jext.sourcecode.project.java.libraries.ArchiveUtils;
 
 import java.io.File;
 import java.util.Set;

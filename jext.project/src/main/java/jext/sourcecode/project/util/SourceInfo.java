@@ -1,11 +1,9 @@
 package jext.sourcecode.project.util;
 
 import jext.util.JSONUtils;
-import jext.util.MapUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 public class SourceInfo {
 

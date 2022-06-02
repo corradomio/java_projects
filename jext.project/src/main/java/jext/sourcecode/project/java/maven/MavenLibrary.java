@@ -2,7 +2,7 @@ package jext.sourcecode.project.java.maven;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.java.JavaConstants;
+import jext.sourcecode.project.java.JavaConstants;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.maven.MavenPom;
@@ -12,8 +12,8 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.util.ReferencedType;
-import jext.sourcecode.resources.BaseLibrary;
+import jext.sourcecode.project.java.types.ReferencedType;
+import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 
