@@ -2,20 +2,20 @@ package jext.antlr.v4.csharp;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PushbackInputStream;
 
-public class SkipByteOrderMarkerInputStream extends FileInputStream {
+public class SkipByteOrderMarkerInputStream extends PushbackInputStream {
 
     private boolean skip = true;
 
     public SkipByteOrderMarkerInputStream(String name) throws IOException {
-        super(name);
+        super(new FileInputStream(name));
         skipByteOrderMarker();
     }
 
     public SkipByteOrderMarkerInputStream(File file) throws IOException {
-        super(file);
+        super(new FileInputStream(file));
         skipByteOrderMarker();
     }
 
@@ -38,10 +38,18 @@ public class SkipByteOrderMarkerInputStream extends FileInputStream {
     // }
 
     private long skipByteOrderMarker() throws IOException {
-        if (skip) {
-            skip = false;
-            return super.skip(3);
+        int m = super.read();
+        if (m == '\u00EF') {
+            super.read();
+            super.read();
         }
+        else {
+            super.unread(m);
+        }
+        // if (skip) {
+        //     skip = false;
+        //     return super.skip(3);
+        // }
         return 0;
     }
 
