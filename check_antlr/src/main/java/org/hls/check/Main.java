@@ -7,6 +7,8 @@ import jext.antlr.v4.java.Java9Lexer;
 import jext.antlr.v4.java.Java9Parser;
 import jext.antlr.v4.python3.Python3Lexer;
 import jext.antlr.v4.python3.Python3Parser;
+import jext.antlr.v4.scala.ScalaLexer;
+import jext.antlr.v4.scala.ScalaParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -19,7 +21,7 @@ public class Main {
 
     static void checkJava() throws IOException {
         System.out.println("checkJava");
-        File file = new File("src\\main\\java\\org\\hls\\check\\Main.java");
+        File file = new File("data/Nd4jCpu.java");
         CharStream cs = CharStreams.fromPath(file.toPath());
         Java9Lexer lexer = new Java9Lexer(cs);
         TokenStream ts = new CommonTokenStream(lexer);
@@ -43,7 +45,7 @@ public class Main {
 
     static void checkPython() throws IOException {
         System.out.println("checkPython");
-        File file = new File("data/simdb.py");
+        File file = new File("data/_implementation.py");
         CharStream cs = CharStreams.fromPath(file.toPath());
         Python3Lexer lexer = new Python3Lexer(cs);
         TokenStream ts = new CommonTokenStream(lexer);
@@ -52,10 +54,32 @@ public class Main {
         Python3Parser.File_inputContext cu = p.file_input();
     }
 
+    // static void checkAspectJ() throws IOException {
+    //     System.out.println("checkPython");
+    //     File file = new File("data/AbstractTransactionAspect.aj");
+    //     CharStream cs = CharStreams.fromPath(file.toPath());
+    //     AspectJLexer lexer = new AspectJLexer(cs);
+    //     TokenStream ts = new CommonTokenStream(lexer);
+    //     AspectJ
+    // }
+
+    static void checkScala() throws IOException {
+        System.out.println("checkScala");
+        File file = new File("data/SQLConf.scala");
+        CharStream cs = CharStreams.fromPath(file.toPath());
+        ScalaLexer lexer = new ScalaLexer(cs);
+        TokenStream ts = new CommonTokenStream(lexer);
+        ScalaParser p = new ScalaParser(ts);
+
+        ScalaParser.CompilationUnitContext cu = p.compilationUnit();
+    }
+
     public static void main(String[] args) throws IOException {
         checkCSharp();
         checkJava();
         checkPython();
+        // checkAspectJ();
+        checkScala();
         System.out.println("end");
     }
 }
