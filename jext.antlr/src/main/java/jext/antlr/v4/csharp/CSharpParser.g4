@@ -307,6 +307,7 @@ generic_dimension_specifier
 
 isType
 	: base_type (rank_specifier | '*')* '?'? isTypePatternArms? identifier?
+	| NULL_
 	;
 
 isTypePatternArms

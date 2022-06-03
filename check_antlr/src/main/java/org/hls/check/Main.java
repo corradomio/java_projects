@@ -1,7 +1,10 @@
 package org.hls.check;
 
+import jext.antlr.v4.CSharpParsing;
+import jext.antlr.v4.ParseResult;
 import jext.antlr.v4.csharp.CSharpLexer;
 import jext.antlr.v4.csharp.CSharpParser;
+import jext.antlr.v4.csharp.CSharpParserBaseListener;
 import jext.antlr.v4.csharp.SkipByteOrderMarkerInputStream;
 import jext.antlr.v4.java.Java9Lexer;
 import jext.antlr.v4.java.Java9Parser;
@@ -9,18 +12,27 @@ import jext.antlr.v4.python3.Python3Lexer;
 import jext.antlr.v4.python3.Python3Parser;
 import jext.antlr.v4.scala.ScalaLexer;
 import jext.antlr.v4.scala.ScalaParser;
+import jext.logging.Logger;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class Main {
 
+    static Logger logger = Logger.getLogger("main");
+
     static void checkJava() throws IOException {
-        System.out.println("checkJava");
+        logger.println("checkJava");
         File file = new File("data/Nd4jCpu.java");
         CharStream cs = CharStreams.fromPath(file.toPath());
         Java9Lexer lexer = new Java9Lexer(cs);
@@ -31,7 +43,7 @@ public class Main {
     }
 
     static void checkCSharp() throws IOException {
-        System.out.println("checkCSharp");
+        logger.println("checkCSharp");
         File file = new File("data/Document.cs");
         // ANTLRInputStream cs = new ANTLRInputStream(new FileInputStream(file));
         // CharStream cs = CharStreams.fromPath(file.toPath());
@@ -44,7 +56,7 @@ public class Main {
     }
 
     static void checkPython() throws IOException {
-        System.out.println("checkPython");
+        logger.println("checkPython");
         File file = new File("data/_implementation.py");
         CharStream cs = CharStreams.fromPath(file.toPath());
         Python3Lexer lexer = new Python3Lexer(cs);
@@ -55,7 +67,7 @@ public class Main {
     }
 
     // static void checkAspectJ() throws IOException {
-    //     System.out.println("checkPython");
+    //     logger.println("checkPython");
     //     File file = new File("data/AbstractTransactionAspect.aj");
     //     CharStream cs = CharStreams.fromPath(file.toPath());
     //     AspectJLexer lexer = new AspectJLexer(cs);
@@ -64,7 +76,7 @@ public class Main {
     // }
 
     static void checkScala() throws IOException {
-        System.out.println("checkScala");
+        logger.println("checkScala");
         File file = new File("data/SQLConf.scala");
         CharStream cs = CharStreams.fromPath(file.toPath());
         ScalaLexer lexer = new ScalaLexer(cs);
@@ -74,12 +86,45 @@ public class Main {
         ScalaParser.CompilationUnitContext cu = p.compilationUnit();
     }
 
+    static void checkScanCSharp() throws IOException {
+        File root = new File("D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0-beta00016.src\\src");
+        Files.walkFileTree(root.toPath(), new SimpleFileVisitor<Path>(){
+
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                File file = path.toFile();
+                if (!file.getName().endsWith(".cs"))
+                    return FileVisitResult.CONTINUE;
+
+                System.out.println(file);
+
+                ParseResult<CSharpParser.Compilation_unitContext>
+                    result =  CSharpParsing.parse(file);
+
+                result.ifSuccessful(tree -> {
+                    ParseTreeWalker ptw = new ParseTreeWalker();
+                    ptw.walk(new CSharpParserBaseListener() {
+
+
+
+                    }, tree);
+                });
+
+                return super.visitFile(path, attrs);
+            }
+        });
+    }
+
     public static void main(String[] args) throws IOException {
-        checkCSharp();
-        checkJava();
-        checkPython();
-        // checkAspectJ();
-        checkScala();
-        System.out.println("end");
+        Logger.configure();
+
+        // checkCSharp();
+        // checkJava();
+        // checkPython();
+        // checkScala();
+
+        checkScanCSharp();
+
+        logger.println("end");
     }
 }

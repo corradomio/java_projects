@@ -8,10 +8,15 @@ import jext.sourcecode.project.Type;
 import jext.sourcecode.project.util.SourceCode;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class CSharpSourceCode extends SourceCode {
+
+    private Set<Type> definedTypes;
+    private Set<Type> usedTypes;
 
     // ----------------------------------------------------------------------
     //
@@ -37,11 +42,11 @@ public class CSharpSourceCode extends SourceCode {
 
     @Override
     public List<Type> getTypes() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<RefType> getUsedTypes() {
-        return null;
+        return Collections.emptyList();
     }
 }

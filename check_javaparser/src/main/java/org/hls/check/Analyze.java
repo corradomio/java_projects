@@ -105,8 +105,8 @@ public class Analyze {
 
             //SolveSymbolsVisitor ssv = new SolveSymbolsVisitor();
             //MemberDeclarations ssv = new MemberDeclarations();
-            TypeDeclarations ssv = new TypeDeclarations();
-            ssv.analyze(cu, ts);
+            // TypeDeclarations ssv = new TypeDeclarations();
+            // ssv.analyze(cu, ts);
         });
     }
 }

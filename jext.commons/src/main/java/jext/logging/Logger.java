@@ -274,6 +274,10 @@ public class Logger {
         info(message);
     }
 
+    public void println(Object object) {
+        info(object != null ? object.toString() : "null");
+    }
+
     public void printf(String message, Object ... args) {
         infof(message, args);
     }

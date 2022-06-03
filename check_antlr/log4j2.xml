@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+        <RollingFile  name="LogFile" fileName="/antlr.log" append="false"
+                      filePattern="/antlr-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="256 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile >
+    </Appenders>
+    <Loggers>
+        <!--<Logger name="Main" level="DEBUG"/>-->
+        <Root level="DEBUG">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="LogFile" />
+        </Root>
+    </Loggers>
+</Configuration>
