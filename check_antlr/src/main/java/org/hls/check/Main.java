@@ -5,6 +5,7 @@ import jext.antlr.v4.ParseResult;
 import jext.antlr.v4.csharp.CSharpLexer;
 import jext.antlr.v4.csharp.CSharpParser;
 import jext.antlr.v4.csharp.CSharpParserBaseListener;
+import jext.antlr.v4.csharp.CSharpParserListener;
 import jext.antlr.v4.csharp.SkipByteOrderMarkerInputStream;
 import jext.antlr.v4.java.Java9Lexer;
 import jext.antlr.v4.java.Java9Parser;
@@ -105,6 +106,35 @@ public class Main {
                     ParseTreeWalker ptw = new ParseTreeWalker();
                     ptw.walk(new CSharpParserBaseListener() {
 
+                        // Namespace_declaration
+                        //         NAMESPACE qi=qualified_identifier namespace_body ';'?
+                        @Override
+                        public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
+                            String qi = ctx.getChild(1).getText();
+                            System.out.printf("namespace %s\n", qi);
+                        }
+
+                        // USING identifier '=' namespace_or_type_name ';'            #usingAliasDirective
+                        @Override
+                        public void enterUsingAliasDirective(CSharpParser.UsingAliasDirectiveContext ctx) {
+                            String identifier = ctx.getChild(1).getText();
+                            String namespace_or_type_name = ctx.getChild(3).getText();
+                            System.out.printf("using %s = %s\n", identifier, namespace_or_type_name);
+                        }
+
+                        // USING namespace_or_type_name ';'                           #usingNamespaceDirective
+                        @Override
+                        public void enterUsingNamespaceDirective(CSharpParser.UsingNamespaceDirectiveContext ctx) {
+                            String namespace_or_type_name = ctx.getChild(1).getText();
+                            System.out.printf("using %s\n", namespace_or_type_name);
+                        }
+
+                        // USING STATIC namespace_or_type_name ';'                    #usingStaticDirective
+                        @Override
+                        public void enterUsingStaticDirective(CSharpParser.UsingStaticDirectiveContext ctx) {
+                            String namespace_or_type_name = ctx.getChild(2).getText();
+                            System.out.printf("using static %s\n", namespace_or_type_name);
+                        }
 
 
                     }, tree);

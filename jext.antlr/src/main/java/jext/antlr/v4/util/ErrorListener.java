@@ -25,21 +25,21 @@ public class ErrorListener<T> extends BaseErrorListener {
         result.addProblem(problem);
     }
 
-    @Override
-    public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
-        Problem problem = new ParserProblem(startIndex, stopIndex, ambigAlts, configs);
-        result.addProblem(problem);
-    }
+    // @Override
+    // public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
+    //     Problem problem = new ParserProblem(startIndex, stopIndex, ambigAlts, configs);
+    //     result.addProblem(problem);
+    // }
 
-    @Override
-    public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
-        Problem problem = new ParserProblem(startIndex, stopIndex, null, configs);
-        result.addProblem(problem);
-    }
+    // @Override
+    // public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
+    //     Problem problem = new ParserProblem(startIndex, stopIndex, null, configs);
+    //     result.addProblem(problem);
+    // }
 
-    @Override
-    public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
-        Problem problem = new ParserProblem(startIndex, stopIndex, null, configs);
-        result.addProblem(problem);
-    }
+    // @Override
+    // public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
+    //     Problem problem = new ParserProblem(startIndex, stopIndex, null, configs);
+    //     result.addProblem(problem);
+    // }
 }
