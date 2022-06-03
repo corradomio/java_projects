@@ -111,7 +111,7 @@ public class Main {
                         @Override
                         public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
                             String qi = ctx.getChild(1).getText();
-                            System.out.printf("namespace %s\n", qi);
+                            System.out.printf("    namespace %s\n", qi);
                         }
 
                         // USING identifier '=' namespace_or_type_name ';'            #usingAliasDirective
@@ -119,21 +119,21 @@ public class Main {
                         public void enterUsingAliasDirective(CSharpParser.UsingAliasDirectiveContext ctx) {
                             String identifier = ctx.getChild(1).getText();
                             String namespace_or_type_name = ctx.getChild(3).getText();
-                            System.out.printf("using %s = %s\n", identifier, namespace_or_type_name);
+                            System.out.printf("    using %s = %s\n", identifier, namespace_or_type_name);
                         }
 
                         // USING namespace_or_type_name ';'                           #usingNamespaceDirective
                         @Override
                         public void enterUsingNamespaceDirective(CSharpParser.UsingNamespaceDirectiveContext ctx) {
                             String namespace_or_type_name = ctx.getChild(1).getText();
-                            System.out.printf("using %s\n", namespace_or_type_name);
+                            System.out.printf("    using %s\n", namespace_or_type_name);
                         }
 
                         // USING STATIC namespace_or_type_name ';'                    #usingStaticDirective
                         @Override
                         public void enterUsingStaticDirective(CSharpParser.UsingStaticDirectiveContext ctx) {
                             String namespace_or_type_name = ctx.getChild(2).getText();
-                            System.out.printf("using static %s\n", namespace_or_type_name);
+                            System.out.printf("    using static %s\n", namespace_or_type_name);
                         }
 
 
