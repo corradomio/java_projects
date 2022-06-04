@@ -1,7 +1,10 @@
 package org.hls.check;
 
+import jext.antlr.v4.AspectJParsing;
 import jext.antlr.v4.CSharpParsing;
 import jext.antlr.v4.ParseResult;
+import jext.antlr.v4.aspectj.AspectJParser;
+import jext.antlr.v4.aspectj.AspectJParserBaseListener;
 import jext.antlr.v4.csharp.CSharpLexer;
 import jext.antlr.v4.csharp.CSharpParser;
 import jext.antlr.v4.csharp.CSharpParserBaseListener;
@@ -138,6 +141,35 @@ public class Main {
                             logger.printf("    using static %s", namespace_or_type_name);
                         }
 
+                    }, tree);
+                });
+
+                return super.visitFile(path, attrs);
+            }
+        });
+    }
+
+    static void checkScanAspectJ() throws IOException {
+        File root = new File(
+            "D:\\Projects.github\\spring_projects\\spring-framework\\spring-aspects"
+        );
+        Files.walkFileTree(root.toPath(), new SimpleFileVisitor<Path>(){
+
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                File file = path.toFile();
+                if (!file.getName().endsWith(".aj"))
+                    return FileVisitResult.CONTINUE;
+
+                logger.println(file);
+
+                ParseResult<AspectJParser.CompilationUnitContext>
+                    result =  AspectJParsing.parse(file);
+
+                result.ifSuccessful(tree -> {
+                    ParseTreeWalker ptw = new ParseTreeWalker();
+                    ptw.walk(new AspectJParserBaseListener() {
+
 
                     }, tree);
                 });
@@ -163,7 +195,8 @@ public class Main {
         // checkPython();
         // checkScala();
 
-        checkScanCSharp();
+        // checkScanCSharp();
+        checkScanAspectJ();
 
         logger.println("end");
     }
