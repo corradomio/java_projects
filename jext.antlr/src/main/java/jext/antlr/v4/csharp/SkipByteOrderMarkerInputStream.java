@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
+import java.nio.file.Files;
 
 public class SkipByteOrderMarkerInputStream extends PushbackInputStream {
 
@@ -15,7 +16,7 @@ public class SkipByteOrderMarkerInputStream extends PushbackInputStream {
     }
 
     public SkipByteOrderMarkerInputStream(File file) throws IOException {
-        super(new FileInputStream(file));
+        super(Files.newInputStream(file.toPath()));
         skipByteOrderMarker();
     }
 

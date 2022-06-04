@@ -32,7 +32,8 @@ public class ErrorListener<T> extends BaseErrorListener {
         Problem problem = new LexerProblem(line, charPositionInLine, msg, e);
         result.addProblem(problem);
 
-        logger.error(String.format("[%d, %d] %s\n  %s", line, charPositionInLine, msg, parser.getFile()));
+        logger.error(String.format("[%d, %d] %s", line, charPositionInLine, msg));
+        // logger.error(String.format("[%d, %d] %s\n  %s", line, charPositionInLine, msg, parser.getFile()));
     }
 
     // @Override

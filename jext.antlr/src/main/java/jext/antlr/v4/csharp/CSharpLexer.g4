@@ -24,8 +24,10 @@ DELIMITED_DOC_COMMENT:       '/**' ~'/' .*? '*/'  -> channel(COMMENTS_CHANNEL);
 SINGLE_LINE_COMMENT:     '//'  InputCharacter*    -> channel(COMMENTS_CHANNEL);
 DELIMITED_COMMENT:       '/*'  .*? '*/'           -> channel(COMMENTS_CHANNEL);
 
+PRAGMA_COMMENT: '#' InputCharacter*               -> channel(COMMENTS_CHANNEL);
+
 WHITESPACES:   (Whitespace | NewLine)+            -> channel(HIDDEN);
-SHARP:         '#'                                -> mode(DIRECTIVE_MODE);
+//SHARP:         '#'                                -> mode(DIRECTIVE_MODE);
 
 ABSTRACT:      'abstract';
 ADD:           'add';
@@ -61,6 +63,7 @@ EVENT:         'event';
 EXPLICIT:      'explicit';
 EXTERN:        'extern';
 FALSE:         'false';
+FINAL:         'final';
 FINALLY:       'finally';
 FIXED:         'fixed';
 FLOAT:         'float';
@@ -84,6 +87,7 @@ LOCK:          'lock';
 LONG:          'long';
 NAMEOF:        'nameof';
 NAMESPACE:     'namespace';
+NATIVE:        'native';
 NEW:           'new';
 NULL_:         'null';
 OBJECT:        'object';
@@ -114,6 +118,7 @@ STRUCT:        'struct';
 SWITCH:        'switch';
 THIS:          'this';
 THROW:         'throw';
+THROWS:        'throws';
 TRUE:          'true';
 TRY:           'try';
 TYPEOF:        'typeof';

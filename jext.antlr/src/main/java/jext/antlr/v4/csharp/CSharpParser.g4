@@ -419,7 +419,7 @@ local_function_header
 
 local_function_modifiers
     : (ASYNC | UNSAFE) STATIC?
-    | STATIC (ASYNC | UNSAFE)
+    | STATIC (ASYNC | UNSAFE)?
     ;
 
 local_function_body
@@ -673,6 +673,7 @@ all_member_modifier
 	| INTERNAL
 	| PRIVATE
 	| READONLY
+	| FINAL
 	| VOLATILE
 	| VIRTUAL
 	| SEALED
@@ -681,6 +682,7 @@ all_member_modifier
 	| STATIC
 	| UNSAFE
 	| EXTERN
+	| NATIVE
 	| PARTIAL
 	| ASYNC  // C# 5
 	;
@@ -1078,6 +1080,7 @@ keyword
 	| EXPLICIT
 	| EXTERN
 	| FALSE
+	| FINAL
 	| FINALLY
 	| FIXED
 	| FLOAT
@@ -1094,6 +1097,7 @@ keyword
 	| LOCK
 	| LONG
 	| NAMESPACE
+	| NATIVE
 	| NEW
 	| NULL_
 	| OBJECT
