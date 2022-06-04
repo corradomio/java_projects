@@ -117,7 +117,7 @@ classPatternList
 	
     
 aspectDeclaration
-	:	'privileged'? modifier* 'aspect' id 
+	:	'privileged'? modifier* 'aspect' id typeParameters?
 		('extends' type)? 
 		('implements' typeList)? 
 		perClause? 
@@ -125,7 +125,7 @@ aspectDeclaration
 	;
 	
 advice
-	:	'strictfp'? adviceSpec ('throws' typeList)? ':' pointcutExpression methodBody
+	:	annotation* 'strictfp'? adviceSpec ('throws' typeList)? ':' pointcutExpression methodBody
 	;
 
 adviceSpec
@@ -196,12 +196,12 @@ interTypeMemberDeclaration
 	;
 
 interTypeDeclaration
-	:	'declare' 'parents' ':' typePattern 'extends' type ';'
-	|	'declare' 'parents' ':' typePattern 'implements' typeList ';' 
-	|	'declare' 'warning' ':' pointcutExpression ':' StringLiteral ';'
-	|	'declare' 'error' ':' pointcutExpression ':' StringLiteral ';'
-	|	'declare' 'soft' ':' type ':' pointcutExpression ';'
-	|	'declare' 'precedence' ':' typePatternList ';'
+	:	'declare' 'parents' ':' annotation? typePattern 'extends' type ';'
+	|	'declare' 'parents' ':' annotation? typePattern 'implements' typeList ';'
+	|	'declare' 'warning' ':' annotation? pointcutExpression ':' StringLiteral ';'
+	|	'declare' 'error' ':'   annotation? pointcutExpression ':' StringLiteral ';'
+	|	'declare' 'soft' ':'    annotation? type ':' pointcutExpression ';'
+	|	'declare' 'precedence' ':' annotation? typePatternList ';'
 	|	'declare' '@' 'type' ':' typePattern ':' annotation ';'
 	|	'declare' '@' 'method' ':' methodPattern ':' annotation ';' 
 	|	'declare' '@' 'constructor' ':' constructorPattern ':' annotation ';' 
@@ -362,10 +362,11 @@ argsPatternList
 // all of the following rules are only necessary to change rules in the original Java grammar from 'Identifier' to 'id'
 
 id
-	:	(	ARGS 
-		|	AFTER 
-		|	AROUND 
+	:	(	ARGS
+		|	AFTER
+		|	AROUND
 		|	ASPECT
+		|   ANNOTATION
 		|	BEFORE
 		|	CALL
 		|	CFLOW
@@ -396,10 +397,11 @@ id
 		|	WARNING
 		|	WITHIN
 		|	WITHINCODE
+		|   ANNOTATION_METHOD
 		)
 	|	Identifier
 	;
-	
+
 	
 classDeclaration
     :   'class' id typeParameters?
