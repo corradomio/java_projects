@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="DEBUG">
+<Configuration monitorInterval="30">
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        <Console name="Console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
         <RollingFile  name="LogFile" fileName="/antlr.log" append="false"
                       filePattern="/antlr-%d{yyyy-MM-dd-HH}-%i.log.gz">
@@ -16,10 +16,9 @@
         </RollingFile >
     </Appenders>
     <Loggers>
-        <!--<Logger name="Main" level="DEBUG"/>-->
-        <Root level="DEBUG">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="LogFile" />
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="LogFile"/>
         </Root>
     </Loggers>
 </Configuration>

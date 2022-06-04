@@ -29,7 +29,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 public class Main {
 
-    static Logger logger = Logger.getLogger("main");
+    static Logger logger;
 
     static void checkJava() throws IOException {
         logger.println("checkJava");
@@ -99,7 +99,7 @@ public class Main {
                 if (!file.getName().endsWith(".cs"))
                     return FileVisitResult.CONTINUE;
 
-                System.out.println(file);
+                logger.println(file);
 
                 ParseResult<CSharpParser.Compilation_unitContext>
                     result =  CSharpParsing.parse(file);
@@ -113,7 +113,7 @@ public class Main {
                         @Override
                         public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
                             String qi = ctx.getChild(1).getText();
-                            System.out.printf("    namespace %s\n", qi);
+                            logger.printf("    namespace %s", qi);
                         }
 
                         // USING identifier '=' namespace_or_type_name ';'            #usingAliasDirective
@@ -121,21 +121,21 @@ public class Main {
                         public void enterUsingAliasDirective(CSharpParser.UsingAliasDirectiveContext ctx) {
                             String identifier = ctx.getChild(1).getText();
                             String namespace_or_type_name = ctx.getChild(3).getText();
-                            System.out.printf("    using %s = %s\n", identifier, namespace_or_type_name);
+                            logger.printf("    using %s = %s", identifier, namespace_or_type_name);
                         }
 
                         // USING namespace_or_type_name ';'                           #usingNamespaceDirective
                         @Override
                         public void enterUsingNamespaceDirective(CSharpParser.UsingNamespaceDirectiveContext ctx) {
                             String namespace_or_type_name = ctx.getChild(1).getText();
-                            System.out.printf("    using %s\n", namespace_or_type_name);
+                            logger.printf("    using %s", namespace_or_type_name);
                         }
 
                         // USING STATIC namespace_or_type_name ';'                    #usingStaticDirective
                         @Override
                         public void enterUsingStaticDirective(CSharpParser.UsingStaticDirectiveContext ctx) {
                             String namespace_or_type_name = ctx.getChild(2).getText();
-                            System.out.printf("    using static %s\n", namespace_or_type_name);
+                            logger.printf("    using static %s", namespace_or_type_name);
                         }
 
 
@@ -149,6 +149,14 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         Logger.configure();
+
+        logger = Logger.getLogger("main");
+        logger.debug("debug");
+        logger.info("info");
+        logger.warn("warn");
+        logger.error("error");
+        logger.fatal("fatal");
+        // logger.println( "Hello World!");
 
         // checkCSharp();
         // checkJava();

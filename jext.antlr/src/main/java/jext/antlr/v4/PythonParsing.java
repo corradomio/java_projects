@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.TokenStream;
 import java.io.File;
 import java.io.IOException;
 
-public class PythonParsing {
+public class PythonParsing implements LanguageParser {
 
     public static ParseResult<Python3Parser.File_inputContext> parse(File file) {
         PythonParsing parser = new PythonParsing(file);
@@ -33,8 +33,8 @@ public class PythonParsing {
             TokenStream ts = new CommonTokenStream(lexer);
             Python3Parser p = new Python3Parser(ts);
 
-            p.removeErrorListeners();
-            p.addErrorListener(new ErrorListener<>(result));
+            // p.removeErrorListeners();
+            p.addErrorListener(new ErrorListener<>(this, result));
 
             result.result = p.file_input();
         }
@@ -43,5 +43,10 @@ public class PythonParsing {
         }
 
         return result;
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 }

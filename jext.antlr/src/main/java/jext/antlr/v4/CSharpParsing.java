@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.TokenStream;
 import java.io.File;
 import java.io.IOException;
 
-public class CSharpParsing {
+public class CSharpParsing implements LanguageParser {
 
     public static ParseResult<CSharpParser.Compilation_unitContext>
     parse(File file) {
@@ -41,7 +41,7 @@ public class CSharpParsing {
             CSharpParser p = new CSharpParser(ts);
 
             p.removeErrorListeners();
-            p.addErrorListener(new ErrorListener<>(result));
+            p.addErrorListener(new ErrorListener<>(this, result));
 
             result.result = p.compilation_unit();
         }
@@ -51,5 +51,10 @@ public class CSharpParsing {
         }
 
         return result;
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 }

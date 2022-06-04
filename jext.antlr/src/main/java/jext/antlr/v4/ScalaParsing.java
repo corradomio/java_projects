@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.TokenStream;
 import java.io.File;
 import java.io.IOException;
 
-public class ScalaParsing {
+public class ScalaParsing implements LanguageParser {
 
     public static ParseResult<ScalaParser.CompilationUnitContext> parse(File file) {
         ScalaParsing parser = new ScalaParsing(file);
@@ -34,7 +34,7 @@ public class ScalaParsing {
             ScalaParser p = new ScalaParser(ts);
 
             p.removeErrorListeners();
-            p.addErrorListener(new ErrorListener<>(result));
+            p.addErrorListener(new ErrorListener<>(this, result));
 
             result.result = p.compilationUnit();
         }
@@ -43,5 +43,10 @@ public class ScalaParsing {
         }
 
         return result;
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 }

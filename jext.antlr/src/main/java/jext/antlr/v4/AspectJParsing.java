@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.TokenStream;
 import java.io.File;
 import java.io.IOException;
 
-public class AspectJParsing {
+public class AspectJParsing implements LanguageParser {
 
     public static ParseResult<AspectJParser.CompilationUnitContext> parse(File file) {
         AspectJParsing parser = new AspectJParsing(file);
@@ -34,7 +34,7 @@ public class AspectJParsing {
             AspectJParser p = new AspectJParser(ts);
 
             p.removeErrorListeners();
-            p.addErrorListener(new ErrorListener<>(result));
+            p.addErrorListener(new ErrorListener<>(this, result));
 
             result.result = p.compilationUnit();
         }
@@ -43,5 +43,10 @@ public class AspectJParsing {
         }
 
         return result;
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 }

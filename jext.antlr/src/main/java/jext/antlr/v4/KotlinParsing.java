@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.TokenStream;
 import java.io.File;
 import java.io.IOException;
 
-public class KotlinParsing {
+public class KotlinParsing implements LanguageParser {
 
     public static ParseResult<KotlinParser.KotlinFileContext> parse(File file) {
         KotlinParsing parser = new KotlinParsing(file);
@@ -33,8 +33,8 @@ public class KotlinParsing {
             TokenStream ts = new CommonTokenStream(lexer);
             KotlinParser p = new KotlinParser(ts);
 
-            p.removeErrorListeners();
-            p.addErrorListener(new ErrorListener<>(result));
+            // p.removeErrorListeners();
+            p.addErrorListener(new ErrorListener<>(this, result));
 
             result.result = p.kotlinFile();
         }
@@ -43,5 +43,10 @@ public class KotlinParsing {
         }
 
         return result;
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 }

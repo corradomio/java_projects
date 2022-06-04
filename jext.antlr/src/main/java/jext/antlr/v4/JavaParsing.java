@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.TokenStream;
 import java.io.File;
 import java.io.IOException;
 
-public class JavaParsing {
+public class JavaParsing implements LanguageParser {
 
     public static ParseResult<Java9Parser.CompilationUnitContext> parse(File file) {
         JavaParsing parser = new JavaParsing(file);
@@ -33,8 +33,8 @@ public class JavaParsing {
             TokenStream ts = new CommonTokenStream(lexer);
             Java9Parser p = new Java9Parser(ts);
 
-            p.removeErrorListeners();
-            p.addErrorListener(new ErrorListener<>(result));
+            // p.removeErrorListeners();
+            p.addErrorListener(new ErrorListener<>(this, result));
 
             result.result = p.compilationUnit();
         }
@@ -43,5 +43,10 @@ public class JavaParsing {
         }
 
         return result;
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 }

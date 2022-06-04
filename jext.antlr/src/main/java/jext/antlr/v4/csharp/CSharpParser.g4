@@ -795,7 +795,8 @@ accessor_modifier
 	;
 
 accessor_body
-	: block
+	: right_arrow statement
+	| block
 	| ';'
 	;
 
