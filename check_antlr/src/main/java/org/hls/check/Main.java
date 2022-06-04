@@ -5,7 +5,6 @@ import jext.antlr.v4.ParseResult;
 import jext.antlr.v4.csharp.CSharpLexer;
 import jext.antlr.v4.csharp.CSharpParser;
 import jext.antlr.v4.csharp.CSharpParserBaseListener;
-import jext.antlr.v4.csharp.CSharpParserListener;
 import jext.antlr.v4.csharp.SkipByteOrderMarkerInputStream;
 import jext.antlr.v4.java.Java9Lexer;
 import jext.antlr.v4.java.Java9Parser;
@@ -88,7 +87,10 @@ public class Main {
     }
 
     static void checkScanCSharp() throws IOException {
-        File root = new File("D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0-beta00016.src\\src");
+        File root = new File(
+            // "D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0-beta00016.src\\src"
+            "D:\\Projects\\csharp\\Apache-Lucene.Net-4.8.0-beta00016.src\\src"
+        );
         Files.walkFileTree(root.toPath(), new SimpleFileVisitor<Path>(){
 
             @Override
