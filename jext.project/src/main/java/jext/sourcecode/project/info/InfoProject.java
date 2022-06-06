@@ -1,5 +1,6 @@
 package jext.sourcecode.project.info;
 
+import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.PathName;
@@ -18,10 +19,13 @@ import jext.sourcecode.project.info.library.InfoMavenLibrary;
 import jext.sourcecode.project.info.library.InfoRTLibrary;
 import jext.sourcecode.project.info.library.LibrarySet;
 import jext.sourcecode.project.info.util.InfoSourcesImpl;
+import jext.sourcecode.project.java.JavaConstants;
 import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.sourcecode.project.python.GuessRuntimeLibrary;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
+import jext.util.Assert;
+import jext.util.FileUtils;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 import jext.util.StringUtils;
@@ -63,6 +67,8 @@ public class InfoProject implements Project {
     private ModulesImpl modules;
     private SourcesImpl sources;
 
+    private Logger logger;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -70,36 +76,44 @@ public class InfoProject implements Project {
     public InfoProject(String projectName, File infoFileOrProjectHome, Properties properties) {
         this.name = PathName.of(projectName);
         this.properties = properties;
+        this.logger = Logger.getLogger(InfoProject.class, projectName);
 
         loadInfo(infoFileOrProjectHome);
         setProjectHome();
     }
 
     private void loadInfo(File infoFileOrProjectHome) {
-        if (infoFileOrProjectHome.isFile()) {
+        if (infoFileOrProjectHome.getName().endsWith(".json"))
             this.infoFile = infoFileOrProjectHome;
-        }
         else {
-            this.infoFile = new File(infoFileOrProjectHome,"project-info.json");
-            if (!this.infoFile.exists())
-                this.infoFile = new File(infoFileOrProjectHome,".spl/project-info.json");
+            String refId = Integer.toHexString(this.name.hashCode());
+            this.infoFile = new File(infoFileOrProjectHome, String.format(".spl/%s-project-info.json", refId));
         }
+        // if (infoFileOrProjectHome.isFile()) {
+        //     this.infoFile = infoFileOrProjectHome;
+        // }
+        // else {
+        //     this.infoFile = new File(infoFileOrProjectHome,"project-info.json");
+        //     if (!this.infoFile.exists())
+        //         this.infoFile = new File(infoFileOrProjectHome,".spl/project-info.json");
+        // }
         this.selector = (p) -> true;
 
         try {
-            info = JSONUtils.load(infoFile, HashMap.class);
+            this.info = JSONUtils.load(this.infoFile, HashMap.class);
         } catch (IOException e) {
-            info = Collections.emptyMap();
+            logger.errorf("Unable lo load JSON file %s: %s", FileUtils.getAbsolutePath(infoFile), e);
+            this.info = Collections.emptyMap();
         }
 
     }
 
     private void setProjectHome() {
-        try {
-            info = JSONUtils.load(infoFile, HashMap.class);
-        } catch (IOException e) {
-            info = Collections.emptyMap();
-        }
+        // try {
+        //     info = JSONUtils.load(infoFile, HashMap.class);
+        // } catch (IOException e) {
+        //     info = Collections.emptyMap();
+        // }
 
         String projectHome = MapUtils.get(info, "projectHome");
         if (projectHome != null) {
@@ -142,7 +156,10 @@ public class InfoProject implements Project {
 
     @Override
     public String getProjectLanguage() {
-        return MapUtils.get(info, "properties", Project.PROJECT_LANGUAGE);
+        String language = MapUtils.get(info, "properties", Project.PROJECT_LANGUAGE);
+        if (language == null)
+            language = JavaConstants.JAVA;
+        return language;
     }
 
     @Override

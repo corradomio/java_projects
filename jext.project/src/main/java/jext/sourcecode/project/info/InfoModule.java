@@ -238,7 +238,7 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
-    public Set<Type> getTypes() {
+    public Set<RefType> getTypes() {
         return Collections.emptySet();
     }
 

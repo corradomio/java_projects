@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InfoSource implements Source {
@@ -106,16 +107,16 @@ public class InfoSource implements Source {
     }
 
     @Override
-    public List<Type> getTypes() {
+    public Set<RefType> getTypes() {
         List<String> types = MapUtils.get(info, "types");
         return types.stream()
             .map(typeName -> new InfoType(this, typeName))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     @Override
-    public List<RefType> getUsedTypes() {
-        return Collections.emptyList();
+    public Set<RefType> getUsedTypes() {
+        return Collections.emptySet();
     }
 
     // ----------------------------------------------------------------------

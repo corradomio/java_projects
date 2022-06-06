@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface JavaConstants {
 
-    // String JAVA = "java";
+    String JAVA = "java";
     // String JAVA_EXT = ".java";
 
     // String PACKAGE = "package ";
@@ -23,7 +23,7 @@ public interface JavaConstants {
 
     String ROOT = "";
 
-    // String VOID = "void";
+    String VOID = "void";
     // String NULL = "null";
     String OBJECT = "Object";
 
@@ -34,13 +34,13 @@ public interface JavaConstants {
     // String JAVA_LANG_CLASS  = "java.lang.Class";
     String JAVA_LANG_OBJECT = "java.lang.Object";
 
-    // Set<String> VISIBILITIES =
-    //     new HashSet<>(Arrays.asList(
-    //         "public",
-    //         "protected",
-    //         "private",
-    //         "package"
-    //     ));
+    Set<String> VISIBILITIES =
+        new HashSet<>(Arrays.asList(
+            "public",
+            "protected",
+            "private",
+            "package"
+        ));
 
     Set<String> PRIMITIVE_TYPES =
         new HashSet<>(Arrays.asList(

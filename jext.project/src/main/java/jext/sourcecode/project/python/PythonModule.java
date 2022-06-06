@@ -26,6 +26,10 @@ import java.util.Set;
 
 public class PythonModule extends BaseModule {
 
+    // ----------------------------------------------------------------------
+    //Constructor
+    // ----------------------------------------------------------------------
+
     protected PythonModule(File moduleHome, Project project) {
         super(moduleHome, project);
     }
@@ -128,7 +132,7 @@ public class PythonModule extends BaseModule {
     // ----------------------------------------------------------------------
 
     @Override
-    public Set<Type> getTypes() {
+    public Set<RefType> getTypes() {
         return Collections.emptySet();
     }
 

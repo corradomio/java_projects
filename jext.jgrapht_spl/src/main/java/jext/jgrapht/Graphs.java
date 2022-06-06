@@ -237,6 +237,10 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     //             .collect(Collectors.toMap(e -> getOppositeVertex(g, e, v), g::getEdgeWeight));
     // }
 
+    public static <V, E> boolean isInChain(Graph<V, E> g, V vertex) {
+        return g.inDegreeOf(vertex) == 1 && g.outDegreeOf(vertex) == 1;
+    }
+
     // ----------------------------------------------------------------------
     // Edges
     // ----------------------------------------------------------------------

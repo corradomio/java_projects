@@ -177,7 +177,7 @@ public class JavaBaseModule extends BaseModule {
         // Union of LOCAL DEFINED types PLUS types DEFINED inside the LOCAL libraries
         // WHY to include the external libraries??
         // It is enough to use ONLY the types defined in the current module and other modules!
-        Set<Type> definedTypes = getTypes();
+        Set<RefType> definedTypes = getTypes();
 
         // EXTERNAL USED types: LOCAL USED types MINUS LOCAL DEFINED types
         Set<RefType> usedTypes = getUsedTypes();
@@ -188,8 +188,8 @@ public class JavaBaseModule extends BaseModule {
 
             // EXTERNAL DEFINED types: all EXTERNAL DEFINED types MINUS LOCAL DEFINED types
             // to be sure to consider ONLY effective types NOT DEFINED locally
-            Set<Type> ddefinedTypes = new HashSet<>(dmodule.getTypes());
-            Set<RefType> dtypes = new HashSet<>(SetUtils.difference(ddefinedTypes, definedTypes, true));
+            Set<RefType> ddefinedTypes = dmodule.getTypes();
+            Set<RefType> dtypes = SetUtils.difference(ddefinedTypes, definedTypes, true);
 
             // LOCAL USED types available in the EXTERNAL DEFINED types
             Set<RefType> itypes = SetUtils.intersection(usedTypes, dtypes, true);
@@ -328,7 +328,7 @@ public class JavaBaseModule extends BaseModule {
     // ----------------------------------------------------------------------
 
     @Override
-    public Set<Type> getTypes() {
+    public Set<RefType> getTypes() {
 
         // cache names:
         //
@@ -336,10 +336,10 @@ public class JavaBaseModule extends BaseModule {
         //
 
         String cacheName = String.format("dependency.%s.module.types", project.getId());
-        Cache<String, Set<Type>> cache = CacheManager.getCache(cacheName);
+        Cache<String, Set<RefType>> cache = CacheManager.getCache(cacheName);
 
         return cache.get(getId(), () -> {
-            Set<Type> types = new TreeSet<>();
+            Set<RefType> types = new TreeSet<>();
 
             getSources().forEach(source ->
                 types.addAll(source.getTypes()));

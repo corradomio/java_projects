@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class PythonSourceCode extends SourceCode {
 
@@ -43,12 +44,12 @@ public class PythonSourceCode extends SourceCode {
     }
 
     @Override
-    public List<Type> getTypes() {
-        return Collections.emptyList();
+    public Set<RefType> getTypes() {
+        return Collections.emptySet();
     }
 
     @Override
-    public List<RefType> getUsedTypes() {
-        return Collections.emptyList();
+    public Set<RefType> getUsedTypes() {
+        return Collections.emptySet();
     }
 }

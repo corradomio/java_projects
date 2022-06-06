@@ -623,7 +623,7 @@ public class ClosuresGraph<V, E> {
         Set<V> inChain = new ConcurrentTreeSet<>();
 
         Parallel.forEach(closureGraph.vertexSet(), vertex -> {
-            if (isInChain(vertex))
+            if (Graphs.isInChain(closureGraph, vertex))
                 inChain.add(vertex);
         });
 
@@ -646,9 +646,9 @@ public class ClosuresGraph<V, E> {
             Set<V> chain = new HashSet<>();
             add(vertex, chain);
 
-            while(isInChain(head))
+            while(Graphs.isInChain(closureGraph, head))
                 head = add(backward(head), chain);
-            while(isInChain(tail))
+            while(Graphs.isInChain(closureGraph, tail))
                 tail = add(forward(tail), chain);
 
             logger.debugft("... chain %s", chain);
@@ -679,11 +679,6 @@ public class ClosuresGraph<V, E> {
         logger.warnf("... added     edges (%d) %s", chains.size(),   trimList(chains));
 
         return true;
-    }
-
-    private boolean isInChain(V vertex) {
-        return closureGraph.inDegreeOf(vertex) == 1
-            && closureGraph.outDegreeOf(vertex) == 1;
     }
 
     private V backward(V vertex) {

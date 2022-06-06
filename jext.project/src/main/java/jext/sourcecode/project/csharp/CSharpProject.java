@@ -6,6 +6,7 @@ import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Sources;
+import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.util.FileUtils;
@@ -117,7 +118,14 @@ public class CSharpProject extends BaseProject {
 
     @Override
     public Sources getSources() {
-        return null;
+        if (sources != null)
+            return sources;
+
+        sources = new CSharpSourcesImpl(getProjectHome());
+        for (Module module : getModules())
+            sources.addAll(module.getSources());
+
+        return sources;
     }
 
     // ----------------------------------------------------------------------

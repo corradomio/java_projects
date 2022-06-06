@@ -87,6 +87,7 @@ public abstract class JavaBaseProject extends BaseProject {
         sources = new JavaSourcesImpl(getProjectHome());
         for (Module module : getModules())
             sources.addAll(module.getSources());
+
         return sources;
     }
 

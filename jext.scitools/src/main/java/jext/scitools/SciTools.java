@@ -1,5 +1,7 @@
 package jext.scitools;
 
+import jext.lang.OperatingSystem;
+import jext.lang.OperatingSystemUtils;
 import jext.logging.Logger;
 import jext.scitools.util.OutputStreamToConsumer;
 import jext.util.FileUtils;
@@ -30,13 +32,6 @@ public abstract class SciTools {
     // ----------------------------------------------------------------------
 
     private static final String UNDERSTAND = "com.scitools.understand.Understand";
-
-    private enum OperatingSystem {
-        UNKNOWN,
-        WINDOWS,
-        LINUX,
-        MACOS
-    }
 
     // ----------------------------------------------------------------------
     // Global variables
@@ -160,17 +155,7 @@ public abstract class SciTools {
     }
 
     private static void checkOs() {
-        String osname = System.getProperty("os.name");
-        if (osname.contains("Windows"))
-            SciTools.os = OperatingSystem.WINDOWS;
-        else if (osname.contains("Mac"))
-            SciTools.os = OperatingSystem.MACOS;
-        else if (osname.contains("Linux"))
-            SciTools.os = OperatingSystem.LINUX;
-        else
-            SciTools.os = OperatingSystem.UNKNOWN;
-
-        // logger.infof("Operating system: %s", SciTools.os);
+        SciTools.os = OperatingSystemUtils.getOperatingSystem();
     }
 
     private static void setApps() {
@@ -445,13 +430,18 @@ public abstract class SciTools {
                             .redirectOutput(baos)
                             .executeNoTimeout();
                     break;
+                case MACOS:
+                    pr = pe.command("which", "und")
+                            .redirectOutput(baos)
+                            .executeNoTimeout();
+                    break;
                 case LINUX:
                     pr = pe.command("bash", "which", "und")
                             .redirectOutput(baos)
                             .executeNoTimeout();
                     break;
-                case MACOS:
-                    throw new IOException("MacOS: unsupported operating system");
+                //case MACOS:
+                  //  throw new IOException("MacOS: unsupported operating system");
             }
             if (pr == null)
                 throw new IOException("Unable to start 'shell' process");

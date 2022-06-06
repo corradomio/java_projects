@@ -4,6 +4,7 @@ import jext.sourcecode.project.util.SourceInfo;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface Source extends Resource {
 
@@ -25,11 +26,11 @@ public interface Source extends Resource {
      * List of types implemented inside the file
      * (for now just one)
      */
-    List<Type> getTypes();
+    Set<RefType> getTypes();
 
     /**
      * List of imports
      */
-    List<RefType> getUsedTypes();
+    Set<RefType> getUsedTypes();
 
 }

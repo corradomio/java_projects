@@ -13,8 +13,15 @@ import static jext.sourcecode.project.GuessProjectLanguage.guessProjectLanguage;
 
 public class Projects {
 
-    public static Project newProject(String projectName, File projectHome, Properties properties) {
+    public static Project newProject(String projectName, File projectHome, Properties properties,
+                                     LibraryFinderManager lfm) {
 
+        Project project = createProject(projectName, projectHome, properties);
+        setLibraryFinder(project, lfm);
+        return project;
+    }
+
+    private static Project createProject(String projectName, File projectHome, Properties properties) {
         if (projectHome.getName().endsWith(".json"))
             return new InfoProject(projectName, projectHome, properties);
 
@@ -27,24 +34,45 @@ public class Projects {
         return projectFactory.newProject(projectName, projectHome, properties);
     }
 
-    public static Project newProject(Name name, File projectHome, Properties properties) {
-        return newProject(name.getFullName(), projectHome, properties);
+    private static void setLibraryFinder(Project project, LibraryFinderManager lfm) {
+        if (lfm != null) {
+            String language = project.getProjectLanguage();
+            LibraryFinder lfinder = lfm.newLibraryFinder(language);
+            project.setLibraryFinder(lfinder);
+    }
     }
 
-    public static Project newProject(Name name, File projectHome, Parameters parameters) {
-        return newProject(name.getFullName(), projectHome, parameters.toProperties());
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public static Project newProject(Name name, File projectHome, Properties properties,
+                                     LibraryFinderManager lfm) {
+        return newProject(name.getFullName(), projectHome, properties, lfm);
+    }
+
+    public static Project newProject(Name name, File projectHome, Parameters parameters,
+                                     LibraryFinderManager lfm) {
+        return newProject(name.getFullName(), projectHome, parameters.toProperties(), lfm);
     }
 
     // ----------------------------------------------------------------------
     // DEBUG
     // ----------------------------------------------------------------------
 
-    public static Project newProject(File projectHome, Properties properties) {
+    public static Project newProject(File projectHome, Properties properties,
+                                     LibraryFinderManager lfm) {
         if (!projectHome.exists())
-            throw new InvalidParameterException("projectHome", String.format("Invalid project home %s", projectHome.getAbsolutePath()));
+            throw new InvalidParameterException("projectHome",
+                String.format("Invalid project home %s", projectHome.getAbsolutePath()));
 
         String projectName = projectHome.getName();
         String repositoryName = projectHome.getAbsoluteFile().getParentFile().getName();
-        return newProject(PathName.of(repositoryName, projectName), projectHome, properties);
+        return newProject(PathName.of(repositoryName, projectName), projectHome, properties, lfm);
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

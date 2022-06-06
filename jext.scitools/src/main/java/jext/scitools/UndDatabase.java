@@ -2,7 +2,9 @@ package jext.scitools;
 
 import com.scitools.understand.Understand;
 import com.scitools.understand.UnderstandException;
+import jext.exception.InvalidValueException;
 import jext.scitools.und.Ent;
+import jext.util.Assert;
 import jext.xml.XPathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -145,15 +147,37 @@ public class UndDatabase implements AutoCloseable {
         if (exists())
             throw new IOException("Database '" + undPath.getAbsolutePath() + "' already existent");
 
+        if ("csharp".equals(language))
+            language = "c#";
+        else if ("cplusplus".equals(language))
+            language = "c++'";
+
+        this.language = language;
+
         SciTools.und().exec("create",
             "-languages", language,
             "-db", undPath.getAbsolutePath()
         );
 
+        if ("java".equals(language)) {
         SciTools.und().exec("settings",
             "-JavaVersion", "10-18",
             "-db", undPath.getAbsolutePath()
         );
+    }
+        else if ("python".equals(language)) {
+            SciTools.und().exec("settings",
+                "-PythonSetVersion", "Python3",
+                "-db", undPath.getAbsolutePath()
+            );
+        }
+        else if ("csharp".equals(language) || "c#".equals(language)) {
+            Assert.nop();
+        }
+
+        else {
+            throw new InvalidValueException("language", language);
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -257,9 +281,9 @@ public class UndDatabase implements AutoCloseable {
 
          Note that both fromdb and todb must be specified, even in interactive mode.
     */
-    public void addSource(File fileOrDirectory) throws IOException {
-        applyOnSource(ADD, fileOrDirectory);
-    }
+    // public void addSource(File fileOrDirectory) throws IOException {
+    //     applyOnSource(ADD, fileOrDirectory);
+    // }
 
     /*
     Help For Remove
@@ -358,12 +382,22 @@ public class UndDatabase implements AutoCloseable {
     public void addLibraries(Collection<File> libraryFiles) throws IOException {
         if (language == null)
             retrieveLanguage();
-        // if (!"java".equals(this.language))
-        //     throw new UnsupportedOperationException("Unsupported language");
 
+        if (language.isEmpty())
+            addJavaLibraries(libraryFiles);
+        else if ("java".equals(language))
+            addJavaLibraries(libraryFiles);
+        else if ("python".equals(language))
+            addPythonLibraries(libraryFiles);
+        else if ("csharp".equals(language) || "c#".equals(language))
+            addCSharpLibraries(libraryFiles);
+        else
+            throw new IOException("Unsupported language " + language);
+    }
 
+    private void addJavaLibraries(Collection<File> libraryFiles) throws IOException {
         // save the list of files in an external file
-        File librariesFile = createLibrariesListFile(libraryFiles);
+        createLibrariesListFile(libraryFiles);
 
         // DESN'T WORK!! WHY???
         // {
@@ -397,6 +431,42 @@ public class UndDatabase implements AutoCloseable {
 
             SciTools.und().exec(command);
         }
+    }
+
+    private void addPythonLibraries(Collection<File> libraryFiles) throws IOException {
+        // save the list of files in an external file
+        createLibrariesListFile(libraryFiles);
+
+        // configure SciTools DB with the list of libraries
+        // Note: the list is splitted in chunks of MAX_FILES_INLINE (20) files
+        // because it is not possible to pass a lot of files on the command line
+
+        List<File> lfiles = new ArrayList<>(libraryFiles);
+        int n = lfiles.size();
+        int ssize = MAX_FILES_INLINE;
+
+        for (int i=0; i<n; i += ssize) {
+            int l = Math.min(i + ssize, n);
+            List<File> subList = lfiles.subList(i, l);
+
+            List<String> command = new ArrayList<>();
+            command.add("settings");
+            command.add("-PythonImportPathsAdd");
+            subList.forEach(libraryFile -> {
+                command.add(libraryFile.getAbsolutePath());
+            });
+
+            command.add(undPath.getAbsolutePath());
+
+            SciTools.und().exec(command);
+        }
+    }
+
+    private void addCSharpLibraries(Collection<File> libraryFiles) throws IOException {
+        // save the list of files in an external file
+        createLibrariesListFile(libraryFiles);
+
+        Assert.nop();
     }
 
     private void retrieveLanguage() {
@@ -455,15 +525,18 @@ public class UndDatabase implements AutoCloseable {
     public UndDatabase open() throws UnderstandException {
         String unddb = undPath.getAbsolutePath();
         database = Understand.open(unddb);
+
+        String[] languages = database.language();
+        if (languages != null && languages.length > 0)
+            this.language = languages[0];
+        else
+            this.language = NO_LANGUAGE;
+
         return this;
     }
 
     public String language() {
-        String[] languages = database.language();
-        if (languages != null && languages.length > 0)
-            return languages[0];
-        else
-            return NO_LANGUAGE;
+        return language;
     }
 
     public String name() {

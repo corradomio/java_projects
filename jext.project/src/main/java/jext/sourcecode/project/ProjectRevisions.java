@@ -84,11 +84,12 @@ public class ProjectRevisions implements Revisions {
         Project psrc = null, pdst = null;
         File srcRevisionInfo = getProjectInfoFile(srcRevision);
         File dstRevisionInfo = getProjectInfoFile(dstRevision);
+        LibraryFinderManager lfm = null;
 
         if (srcRevisionInfo.exists())
-            psrc = Projects.newProject(srcRevisionInfo, PropertiesUtils.empty());
+            psrc = Projects.newProject(srcRevisionInfo, PropertiesUtils.empty(), lfm);
         if (dstRevisionInfo.exists())
-            pdst = Projects.newProject(dstRevisionInfo, PropertiesUtils.empty());
+            pdst = Projects.newProject(dstRevisionInfo, PropertiesUtils.empty(), lfm);
 
         ProjectComparator pcomp = ProjectComparator.compare(psrc, pdst, dstRevision);
 

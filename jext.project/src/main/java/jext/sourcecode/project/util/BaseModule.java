@@ -177,7 +177,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     }
 
     @Override
-    public abstract Set<Type> getTypes();
+    public abstract Set<RefType> getTypes();
 
     @Override
     public abstract Set<RefType> getUsedTypes();

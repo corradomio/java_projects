@@ -96,6 +96,7 @@ public class PythonProject extends BaseProject {
         sources = new PythonSourcesImpl(getProjectHome());
         for (Module module : getModules())
             sources.addAll(module.getSources());
+
         return sources;
     }
 

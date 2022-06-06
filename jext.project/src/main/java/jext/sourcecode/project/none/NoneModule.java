@@ -55,7 +55,7 @@ public class NoneModule extends BaseModule {
     // ----------------------------------------------------------------------
 
     @Override
-    public Set<Type> getTypes() {
+    public Set<RefType> getTypes() {
         return Collections.emptySet();
     }
 

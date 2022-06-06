@@ -6,10 +6,10 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
-import jext.sourcecode.project.Type;
 import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
 import jext.util.PathUtils;
+import jext.util.SetUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +18,21 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CSharpModule extends BaseModule {
+
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
+    private List<Module> dependencies;
+    private Set<RefType> usedTypes;
+    private Set<RefType> definedTypes;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -29,6 +40,38 @@ public class CSharpModule extends BaseModule {
 
     public CSharpModule(File moduleHome, Project project) {
         super(moduleHome, project);
+    }
+
+    // ----------------------------------------------------------------------
+    // Module dependencies
+    // ----------------------------------------------------------------------
+
+    @Override
+    public List<Module> getDependencies() {
+        if (dependencies != null)
+            return dependencies;
+
+        // retrieve the list of extends namespaces used in the current module
+        dependencies = new ArrayList<>();
+
+        // external namespaces used by this module
+        Set<RefType> usedTypes = getUsedTypes();
+
+        project.getModules().forEach(dmodule -> {
+            // skip the comparison with itself
+            if (dmodule.getName().equals(name))
+                return;
+
+            // namespaces defined in the module
+            Set<RefType> moduleTypes = dmodule.getTypes();
+
+            // check if 'dmodule' contains the definition of some namespace
+            // used by THIS module
+            if (!SetUtils.intersection(usedTypes, moduleTypes).isEmpty())
+                dependencies.add(dmodule);
+        });
+
+        return dependencies;
     }
 
     // ----------------------------------------------------------------------
@@ -105,13 +148,29 @@ public class CSharpModule extends BaseModule {
     // ----------------------------------------------------------------------
 
     @Override
-    public Set<Type> getTypes() {
-        return Collections.emptySet();
+    public Set<RefType> getTypes() {
+        if (definedTypes == null)
+            populateTypes();
+        return definedTypes;
     }
 
     @Override
     public Set<RefType> getUsedTypes() {
-        return Collections.emptySet();
+        if (usedTypes == null)
+            populateTypes();
+        return usedTypes;
+    }
+
+    private void populateTypes() {
+        Set<RefType> allUsedTypes = new HashSet<>();
+
+        definedTypes = new HashSet<>();
+        getSources().forEach(source -> {
+            allUsedTypes.addAll(source.getUsedTypes());
+            definedTypes.addAll(source.getTypes());
+        });
+
+        usedTypes = SetUtils.difference(allUsedTypes, definedTypes);
     }
 
     // ----------------------------------------------------------------------

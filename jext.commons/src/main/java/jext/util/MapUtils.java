@@ -45,9 +45,9 @@ public class MapUtils {
 
         int l = keys.length - 1;
         Map<String, Object> cmap = map;
-        for (int i=0; i<l; ++i)
+        for (int i=0; i<l && cmap != null; ++i)
             cmap = (Map<String, Object>) cmap.get(keys[i]);
-        return (E)cmap.get(keys[l]);
+        return cmap != null ? (E)cmap.get(keys[l]) : null;
     }
 
     public static Object put(Map<String, Object> map, Object ... keysValue) {
@@ -58,12 +58,12 @@ public class MapUtils {
         int v = keysValue.length - 1;
         int l = v - 1;
         Map<String, Object> cmap = map;
-        for (int i=0; i<l; ++i) {
+        for (int i=0; i<l && cmap != null; ++i) {
             if (!cmap.containsKey((String)keys[i]))
                 cmap.put((String)keys[i], new HashMap<>());
             cmap = (Map<String, Object>) cmap.get(keys[i]);
         }
-        return cmap.put((String)keys[l], keysValue[v]);
+        return cmap != null ? cmap.put((String)keys[l], keysValue[v]) : null;
     }
 
     // ----------------------------------------------------------------------

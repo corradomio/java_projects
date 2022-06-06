@@ -40,7 +40,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     // as a single library name
     //.
 
-    private Logger logger;
+    private static Logger logger = Logger.getLogger(JavaLibraryFinder.class);
 
     private Project project;
 
@@ -61,7 +61,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     // ----------------------------------------------------------------------
 
     public JavaLibraryFinder() {
-        this.logger = Logger.getLogger(JavaLibraryFinder.class);
+
     }
 
     // ----------------------------------------------------------------------

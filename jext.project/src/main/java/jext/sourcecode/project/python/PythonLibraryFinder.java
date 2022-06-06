@@ -18,10 +18,22 @@ import java.util.Map;
 
 public class PythonLibraryFinder implements LibraryFinder {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private Project project;
     private Map<Name, Library> libraries = new HashMap<>();
     private LibraryDownloader downloader = new PythonLibraryDownloader();
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public PythonLibraryFinder setProject(Project project) {
@@ -109,5 +121,9 @@ public class PythonLibraryFinder implements LibraryFinder {
         }
         return this;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

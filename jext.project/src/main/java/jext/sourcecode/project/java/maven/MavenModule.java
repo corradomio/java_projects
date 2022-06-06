@@ -35,7 +35,6 @@ public class MavenModule extends JavaBaseModule {
     MavenModule(File moduleHome, Project project) {
         super(moduleHome, project);
         this.pom = new MavenPom(moduleHome);
-        // retrieveRuntimeLibrary();
     }
 
     // ----------------------------------------------------------------------
