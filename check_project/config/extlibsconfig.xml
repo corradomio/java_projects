@@ -3,7 +3,7 @@
     NOTE:   THIS file HAS PRIORITY on the configuration in 'splserver.xml'
   -->
 <configuration>
-    <extlibsManager>
+    <extlibsManager path=".">
 
         <language name="java">
 

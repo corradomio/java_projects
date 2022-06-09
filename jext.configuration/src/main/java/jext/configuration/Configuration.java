@@ -17,6 +17,7 @@ public interface Configuration {
 
     /** Home folder used to resolve relative paths */
     File getHomeFolder();
+    File getFile();
 
     /** The configuration is changed IF the configuration file is changed */
     boolean isChanged();

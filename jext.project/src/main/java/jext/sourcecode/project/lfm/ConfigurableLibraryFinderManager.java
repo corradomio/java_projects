@@ -4,7 +4,6 @@ import jext.configuration.Configuration;
 import jext.configuration.HierarchicalConfiguration;
 import jext.configuration.XMLConfiguration;
 import jext.logging.Logger;
-import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryFinderManager;
 import jext.sourcecode.project.Project;
@@ -12,6 +11,7 @@ import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.lfm.csharp.CSharpFinderConfiguration;
 import jext.sourcecode.project.lfm.java.JavaFinderConfiguration;
 import jext.sourcecode.project.lfm.python.PythonFinderConfiguration;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.Collection;
@@ -30,8 +30,9 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
     // ----------------------------------------------------------------------
 
     public static ConfigurableLibraryFinderManager getManager(File configurationFile) {
-        XMLConfiguration configuration = new XMLConfiguration(configurationFile);
-        Configuration lfmconfig =  configuration.configurationAt("extlibsManager");
+        Configuration lfmconfig = getConfiguration(configurationFile);
+        // XMLConfiguration configuration = new XMLConfiguration(configurationFile);
+        // Configuration lfmconfig =  configuration.configurationAt("extlibsManager");
         return getManager(lfmconfig);
     }
 
@@ -39,6 +40,11 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
         ConfigurableLibraryFinderManager lfm = new ConfigurableLibraryFinderManager();
         lfm.configure(configuration);
         return lfm;
+    }
+
+    private static Configuration getConfiguration(File configurationFile) {
+        XMLConfiguration configuration = new XMLConfiguration(configurationFile);
+        return configuration.configurationAt("extlibsManager");
     }
 
     // ----------------------------------------------------------------------
@@ -87,8 +93,34 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
     public void configure(Configuration configuration) {
         this.configuration = (HierarchicalConfiguration) configuration;
 
+        reloadConfiguration();
+
         this.configuration.configurationsAt("language")
             .forEach(this::configureLanguage);
+    }
+
+    private void reloadConfiguration() {
+        String path = configuration.getString("@path", "");
+        if (path.isEmpty())
+            return;
+
+        // compose the path of the new configuration file
+        File configurationFile = configuration.getFile();
+        // new configuration file
+        configurationFile = FileUtils.toFile(configurationFile.getParentFile(), path);
+
+        if (!configurationFile.exists()) {
+            logger.errorf("Configuration file '%s' not existent.", FileUtils.getAbsolutePath(configurationFile));
+            return;
+        }
+
+        try {
+            Configuration configuration = getConfiguration(configurationFile);
+            this.configuration = (HierarchicalConfiguration) configuration;
+        }
+        catch (Exception e) {
+            logger.errorf("Configuration file '%s' invalid.", FileUtils.getAbsolutePath(configurationFile));
+        }
     }
 
     private void configureLanguage(Configuration configuration) {

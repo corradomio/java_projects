@@ -11,6 +11,11 @@ public class AbstractConfiguration implements HierarchicalConfiguration {
     }
 
     @Override
+    public File getFile() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean isChanged() {
         throw new UnsupportedOperationException();
     }

@@ -40,6 +40,11 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     @Override
+    public File getFile() {
+        return overrideFile;
+    }
+
+    @Override
     public boolean isChanged() {
         return configuration.isChanged() || overrideConfig.isChanged();
     }

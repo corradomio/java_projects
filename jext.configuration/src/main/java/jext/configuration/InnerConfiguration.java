@@ -26,6 +26,11 @@ public class InnerConfiguration implements HierarchicalConfiguration {
     // ----------------------------------------------------------------------
 
     @Override
+    public File getFile() {
+        return root.getFile();
+    }
+
+    @Override
     public File getHomeFolder() {
         return root.getHomeFolder();
     }
