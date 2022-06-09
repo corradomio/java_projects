@@ -55,6 +55,11 @@
             <artifactId>jext.antlr</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.configuration</artifactId>
+            <version>1.0</version>
+        </dependency>
 
 
         <!-- Gradle Tooling API -->

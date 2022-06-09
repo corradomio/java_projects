@@ -3,17 +3,19 @@ package jext.sourcecode.project.csharp;
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.name.Name;
-import jext.name.PathName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.csharp.libraries.CSharpRuntimeLibrary;
-import jext.sourcecode.project.java.JavaLibraryFinder;
 import jext.util.HashMap;
 import jext.util.Parameters;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class CSharpLibraryFinder implements LibraryFinder {
@@ -26,45 +28,62 @@ public class CSharpLibraryFinder implements LibraryFinder {
 
     private Project project;
     private Map<Name, Library> libraries = new HashMap<>();
-    private LibraryDownloader downloader = new CSharpLibraryDownloader();
+    private Map<String, Library> runtimeLibraries = new HashMap<>();
+    private NuGetDownloader downloader = new NuGetDownloader();
 
     // name -> directory
-    private Map<String, File> namedLibraries = new java.util.HashMap<>();
+    // private Map<String, File> namedLibraries = new java.util.HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
+    public CSharpLibraryFinder() {
+
+    }
+
+    @Override
+    public LibraryFinder newFinder(Project project) {
+        CSharpLibraryFinder lfinder = new CSharpLibraryFinder();
+        lfinder.setProject(project);
+        lfinder.setLibraries(libraries, runtimeLibraries);
+        lfinder.setDownloader(downloader.newDownloader());
+        return lfinder;
+    }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
     @Override
-    public LibraryFinder setProject(Project project) {
-        this.project =  project;
-        return this;
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    private void setLibraries(Map<Name, Library> libraries, Map<String, Library> rtLibraries) {
+        this.libraries.putAll(libraries);
+        this.runtimeLibraries.putAll(rtLibraries);
+    }
+
+    private void setDownloader(LibraryDownloader downloader) {
+        this.downloader = (NuGetDownloader) downloader;
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Project getProject() {
+        return project;
     }
 
     @Override
-    public LibraryFinder setDownloader(LibraryDownloader ld) {
-        this.downloader = ld;
-        return this;
+    public String getLanguage() {
+        return CSharpConstants.CSHARP;
     }
 
     @Override
     public LibraryDownloader getDownloader() {
         return downloader;
-    }
-
-    @Override
-    public LibraryFinder configure(Parameters params) {
-        return this;
-    }
-
-    @Override
-    public Library getRuntimeLibrary(String libraryName) {
-        return new CSharpRuntimeLibrary(libraryName, "0.0", new File("."));
     }
 
     @Override
@@ -77,24 +96,48 @@ public class CSharpLibraryFinder implements LibraryFinder {
         throw new UnsupportedOperationException();
     }
 
-    public CSharpLibraryFinder setNamedLibraries(Map<String, File> librariesMap) {
-        for(String libraryName : librariesMap.keySet()) {
-            File libraryPath = librariesMap.get(libraryName);
-            setNamedLibrary(libraryName, libraryPath);
-        }
-        return this;
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    public void setNamedLibrary(String libraryName, String version, List<File> libraryDirectories) {
+        CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(libraryName, version, libraryDirectories);
+
+        runtimeLibraries.put(libraryName, rtLibrary);
     }
 
-    public CSharpLibraryFinder setNamedLibrary(String libraryName, File libraryPath) {
-        if (namedLibraries.containsKey(libraryName)) {
-            logger.warnf("Library %s already registered with %s (new: %s): SKIPPED",
-                libraryName, namedLibraries.get(libraryName), libraryPath);
-        }
-        else {
-            namedLibraries.put(libraryName, libraryPath);
-        }
+    // public void setNamedLibrary(String libraryName, File libraryDirectory) {
+    //     Library library = new CSharpRuntimeLibrary(libraryName, libraryDirectory);
+    //     setNamedLibrary(library);
+    // }
+    //
+    // public void setNamedLibrary(Library library) {
+    //     setNamedLibrary(library.getName().getFullName(), library);
+    // }
+    //
+    // public void setNamedLibrary(String libraryName, Library library) {
+    //     rtLibraries.put(libraryName, library);
+    // }
 
-        return this;
+    // public void setNamedLibraries(Map<String, File> librariesMap){
+    //     for(String libraryName : librariesMap.keySet()) {
+    //         File libraryPath = librariesMap.get(libraryName);
+    //         setNamedLibrary(libraryName, "1.0", Collections.singletonList(libraryPath));
+    //     }
+    // }
+
+    @Override
+    public Library getRuntimeLibrary(String libraryName) {
+        // return new CSharpRuntimeLibrary(libraryName, "0.0", new File("."));
+        Library rtLibrary = runtimeLibraries.get(libraryName);
+        if (rtLibrary == null)
+            throw new ProjectException(String.format("No runtime library with name %s for %s language", libraryName, getLanguage()));
+        return rtLibrary;
+    }
+
+    @Override
+    public Collection<Library> getRuntimeLibraries() {
+        return runtimeLibraries.values();
     }
 
     // ----------------------------------------------------------------------

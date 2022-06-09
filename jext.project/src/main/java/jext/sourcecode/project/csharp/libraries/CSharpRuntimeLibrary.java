@@ -12,64 +12,47 @@ import jext.util.FileUtils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class CSharpRuntimeLibrary  extends BaseLibrary {
-
-    private static final String NET = ".NET Core";
-    private static final String NO_VERSION = "0.0";
-
-    /**
-     * Create a runtime library based on the installation directory.
-     *
-     * Note: for now it supports .NET Core
-     *
-     *
-     * @param installDirectory
-     */
-    public static CSharpRuntimeLibrary newLibrary(File installDirectory) {
-        /*
-            filesystem layout
-
-            [install]
-                sdk
-                    [version: 6.0.300]
-                        *.dll (windows/linux)
-         */
-
-        // if in 'installDirectory' or '[installDirectory]/sdk' don't exist
-        // return an empty runtime library
-        File sdk = new File(installDirectory, "sdk");
-        if (!installDirectory.exists() || !sdk.exists())
-            return new CSharpRuntimeLibrary(NET, NO_VERSION, installDirectory);
-
-        // scan for the version
-        File[] versions = sdk.listFiles(File::isDirectory);
-        if (versions == null || versions.length == 0)
-            return new CSharpRuntimeLibrary(NET, NO_VERSION, installDirectory);
-
-        String version = versions[0].getName();
-        return new CSharpRuntimeLibrary(NET, version, installDirectory);
-    }
+public class CSharpRuntimeLibrary extends BaseLibrary {
 
     // ----------------------------------------------------------------------
-    // Private properties
+    // Constants
+    // ----------------------------------------------------------------------
+
+    private static final String NET = ".NET Core";
+    private static final String DLL = ".dll";
+
+    // ----------------------------------------------------------------------
+    // Private fields
     // ----------------------------------------------------------------------
 
     private String version;
+    private List<File> files;
+    private List<File> installationDirectories;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
+    // A runtime library is located at
+    //
+    //      <.NET Core/Framework>/<version>/sdk/<version>/*.dll
+    //
 
-    public CSharpRuntimeLibrary(String name, String version, File installationDirectory) {
+    public CSharpRuntimeLibrary(String name, String version, List<File> installationDirectories) {
         super(PathName.of(name));
-        this.libraryFile = installationDirectory;
-        this.libraryType = LibraryType.RUNTIME;
+        this.libraryFile = installationDirectories.get(0);
         this.version = version;
+        this.installationDirectories = installationDirectories;
+        this.libraryType = LibraryType.RUNTIME;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isValid() {
@@ -88,9 +71,20 @@ public class CSharpRuntimeLibrary  extends BaseLibrary {
 
     @Override
     public List<File> getFiles() {
-        File libsDir = new File(libraryFile, String.format("sdk/%s", version));
-        return FileUtils.listFiles(libsDir, ".dll");
+        if (files != null)
+            return files;
+
+        files = new ArrayList<>();
+        installationDirectories.forEach(idir -> {
+            files.addAll(FileUtils.listFiles(idir, DLL));
+        });
+
+        return files;
     }
+
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
 
     @Override
     public Set<RefType> getTypes() {
@@ -101,4 +95,9 @@ public class CSharpRuntimeLibrary  extends BaseLibrary {
     public boolean contains(Name typeName) {
         return false;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

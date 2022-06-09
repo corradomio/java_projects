@@ -1,6 +1,7 @@
 package jext.sourcecode.project.python.libraries;
 
 import jext.name.PathName;
+import jext.sourcecode.project.LibraryType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class PythonRTLibrary extends PythonLibrary {
     public PythonRTLibrary(String name, File libraryDirectory) {
         super(libraryDirectory);
         setNameWithId(PathName.of(name));
+        libraryType = LibraryType.RUNTIME;
     }
 
     @Override

@@ -13,9 +13,17 @@ import java.util.Set;
 
 public class JDKLibrary extends DirectoryLibrary implements Library, JavaConstants, AndroidConstants {
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public JDKLibrary(String libraryName, File libraryFile, Project project) {
         super(libraryName, libraryFile, project);
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean contains(Name typeName) {
@@ -46,6 +54,10 @@ public class JDKLibrary extends DirectoryLibrary implements Library, JavaConstan
             return ANDROID_VERSIONS.getOrDefault(name, "");
     }
 
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
     @Override
     protected Set<RefType> collectTypes() {
         Set<RefType> types = super.collectTypes();
@@ -59,5 +71,8 @@ public class JDKLibrary extends DirectoryLibrary implements Library, JavaConstan
         return types;
     }
 
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

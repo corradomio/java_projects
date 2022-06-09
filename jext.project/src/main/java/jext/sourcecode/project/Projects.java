@@ -4,6 +4,7 @@ import jext.exception.InvalidParameterException;
 import jext.name.Name;
 import jext.name.PathName;
 import jext.sourcecode.project.info.InfoProject;
+import jext.sourcecode.project.lfm.DefaultLibraryFinderManager;
 import jext.util.Parameters;
 
 import java.io.File;
@@ -36,10 +37,9 @@ public class Projects {
 
     private static void setLibraryFinder(Project project, LibraryFinderManager lfm) {
         if (lfm != null) {
-            String language = project.getProjectLanguage();
-            LibraryFinder lfinder = lfm.newLibraryFinder(language);
+            LibraryFinder lfinder = lfm.newLibraryFinder(project);
             project.setLibraryFinder(lfinder);
-    }
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -69,6 +69,22 @@ public class Projects {
         String projectName = projectHome.getName();
         String repositoryName = projectHome.getAbsoluteFile().getParentFile().getName();
         return newProject(PathName.of(repositoryName, projectName), projectHome, properties, lfm);
+    }
+
+    public static Project newProject(File projectHome, Properties properties) {
+        return newProject(projectHome, properties, DefaultLibraryFinderManager.instance());
+    }
+
+    public static Project newProject(String name, File projectHome, Properties properties) {
+        return newProject(PathName.of(name), projectHome, properties, DefaultLibraryFinderManager.instance());
+    }
+
+    public static Project newProject(String name, File projectHome, Parameters params) {
+        return newProject(PathName.of(name), projectHome, params, DefaultLibraryFinderManager.instance());
+    }
+
+    public static Project newProject(Name name, File projectHome, Parameters params) {
+        return newProject(name, projectHome, params, DefaultLibraryFinderManager.instance());
     }
 
     // ----------------------------------------------------------------------

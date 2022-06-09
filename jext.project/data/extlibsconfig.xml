@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    NOTE:   THIS file HAS PRIORITY on the configuration in 'splserver.xml'
+  -->
+<configuration>
+    <extlibsManager>
+
+        <language name="java">
+
+            <downloader name="maven">
+                <download timeout="500ms" path="${sys:user.home}/.spl/.maven" parallel="5" />
+                <check    timeout="24h"/>
+
+                <!-- extra local directories where to search local libraries -->
+                <local path="${sys:user.home}/.spl/.libs"/>
+                <local path=".libs"/>
+
+                <!-- repository url="http://central.maven.org/maven2/"/ -->
+                <repository name="maven1"         url="https://repo1.maven.org/maven2"/>
+                <repository name="maven2"         url="https://repo.maven.apache.org/maven2"/>
+                <repository name="mvnrepository"  url="https://mvnrepository.com/artifact/" />
+                <repository name="repo.spring.io" url="https://repo.spring.io/plugins-release/" />
+                <repository name="gradle"         url="https://plugins.gradle.org/m2/" />
+                <repository name="gradle-release" url="https://repo.gradle.org/gradle/libs-releases-local/" />
+            </downloader>
+
+            <!-- NEW syntax -->
+            <library name="jdk7,jdk1.7,jdk8,jdk1.8" path="D:/Java/Jdk8.0"/>
+            <library name="jdk9,jdk10,jdk11">
+                <path value="D:/Java/Jdk11.0"/>
+            </library>
+            <library name="jdk12,jdk13,jdk14" path="D:/Java/Jdk17.0"/>
+            <library name="jdk15,jdk16,jdk17" path="D:/Java/Jdk17.0"/>
+
+            <!-- OLD syntax -->
+            <path value="D:/Java/Jdk8.0"   name="jdk7,jdk1.7,jdk8,jdk1.8" />
+            <path value="D:/Java/Jdk11.0"  name="jdk9,jdk10,jdk11" />
+            <path value="D:/Java/Jdk17.0"  name="jdk12,jdk13,jdk14" />
+            <path value="D:/Java/Jdk17.0"  name="jdk15,jdk16,jdk17" />
+        </language>
+
+        <language name="android">
+
+            <downloader name="maven">
+                <download timeout="500ms" path="${sys:user.home}/.spl/.extlib" parallel="5" />
+                <check    timeout="24h"/>
+
+                <!-- extra local directories where to search local libraries -->
+                <local path="${sys:user.home}/.spl/.libs"/>
+                <local path=".libs"/>
+
+                <!-- repository url="http://central.maven.org/maven2/"/ -->
+                <repository url="https://repo1.maven.org/maven2"/>
+                <repository url="https://repo.maven.apache.org/maven2"/>
+                <repository url="https://mvnrepository.com/artifact/" />
+                <repository url="https://repo.spring.io/plugins-release/" />
+                <repository url="https://plugins.gradle.org/m2/" />
+                <repository url="https://repo.gradle.org/gradle/libs-releases-local/" />
+            </downloader>
+
+            <!-- Android -->
+            <!--
+                https://www.javatpoint.com/android-versions
+                Code name       Version         Api
+                no_name         1.0             1
+                no_name         1.1             2
+                Cupcake         1.5             3
+                Donut           1.6             4
+                Eclair          2.0 - 2.1       5 - 7
+                Froyo           2.2 - 2.2.3     8
+                Gingerbread     2.3 - 2.3.7     9 - 10
+                Honeycomb       3.0 - 3.2.6     11 - 13
+                Ice Cream       4.0 - 4.0.4     14 - 15
+                Jelly Bean      4.1 - 4.3.1     16 - 18
+                KitKat          4.4 - 4.4.4     19 - 20
+                Lollipop        5.0 - 5.1.1     21 - 22
+                Marshmallow     6.0 - 6.0.1     23
+                Nougat          7.0             24
+                Nougat          7.1.0 - 7.1.2   25
+                Oreo            8.0 - 8.1       26 - 27
+                Pie             9.0             28
+                Android 10      10.0            29
+                Android 11      11.0            30
+              -->
+            <path value="WEB-INF/extlibs/java/android/api30"
+                  name="marshmallow,lollipop,adk5,adk4,adk3oreo,nougart,adk8,adk6,r,q,pie,adk10,adk9"
+            />
+        </language>
+
+        <language name="python">
+
+            <downloader name="pip">
+                <download timeout="500ms" path="${sys:user.home}/.spl/.pip" parallel="5" />
+                <check    timeout="24h"/>
+
+                <!-- Configuration -->
+                <repository name="pypi" url="https://pypi.org/"/>
+            </downloader>
+
+            <path value="D:/Python/Anaconda3-2021.11" name="py38,3.8"/>
+        </language>
+
+        <language name="csharp">
+
+            <downloader name="nuget">
+                <download timeout="500ms" path="${sys:user.home}/.spl/.nuget" parallel="5" />
+                <check    timeout="24h"/>
+
+                <repository name="nuget" url="https://www.nuget.org/"/>
+            </downloader>
+
+            <!-- NEW syntax, to supports MULTIPLE paths -->
+            <library name="6.0,net60,.NET Core 6">
+                <path value="C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.5/ref/net6.0"/>
+                <path value="C:/Program Files/dotnet/packs/Microsoft.WindowsDesktop.App.Ref/6.0.5/ref/net6.0"/>
+                <path value="C:/Program Files/dotnet/packs/Microsoft.AspNetCore.App.Ref/6.0.5/ref/net6.0"/>
+            </library>
+        </language>
+
+    </extlibsManager>
+</configuration>

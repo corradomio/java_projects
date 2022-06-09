@@ -27,8 +27,7 @@ public class CSharpProjectFactory extends ProjectFactory {
             project = new CSharpProject(projectName, projectHome, properties);
         }
 
-        LibraryDownloader ld = new CSharpLibraryDownloader();
-        LibraryFinder lfinder = new CSharpLibraryFinder().setDownloader(ld);
+        LibraryFinder lfinder = new CSharpLibraryFinder();
         project.setLibraryFinder(lfinder);
 
         return project;

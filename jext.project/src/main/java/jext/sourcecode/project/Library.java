@@ -21,12 +21,12 @@ public interface Library extends IdNamed {
     /** Project owner of this library */
     Project getProject();
 
-    /**
-     * Module owner of this library.
-     * It is null for runtime libraries and maven libraries because
-     * these libraries are shared between multiple modules
-     */
-    Module getModule();
+    // /**
+    //  * Module owner of this library.
+    //  * It is null for runtime libraries and maven libraries because
+    //  * these libraries are shared between multiple modules
+    //  */
+    // Module getModule();
 
     /** Library type */
     LibraryType getLibraryType();
@@ -58,10 +58,13 @@ public interface Library extends IdNamed {
     Set<RefType> getTypes();
 
     /**
-     * Check if the type is defined in the  library
+     * Check if the type is defined in the library.
+     * This could be more efficient than
+     *
+     *      getTypes().contains('type')
      *
      * @param typeName type name to check
-     * @return
+     * @return true if the type is present in the library
      */
     boolean contains(Name typeName);
 

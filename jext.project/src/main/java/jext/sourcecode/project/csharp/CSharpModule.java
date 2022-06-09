@@ -10,6 +10,8 @@ import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
 import jext.util.PathUtils;
 import jext.util.SetUtils;
+import jext.util.concurrent.ConcurrentHashSet;
+import jext.util.concurrent.Parallel;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,6 +85,14 @@ public class CSharpModule extends BaseModule {
         if (sources != null)
             return sources;
 
+        populateSources();
+        populateTypes();
+
+        return sources;
+    }
+
+    private void populateSources() {
+
         sources = new CSharpSourcesImpl(this);
         Module self = this;
         CSharpProject csproject = (CSharpProject) project;
@@ -125,8 +135,6 @@ public class CSharpModule extends BaseModule {
             });
         }
         catch (IOException e) { }
-
-        return sources;
     }
 
     // ----------------------------------------------------------------------
@@ -162,13 +170,19 @@ public class CSharpModule extends BaseModule {
     }
 
     private void populateTypes() {
-        Set<RefType> allUsedTypes = new HashSet<>();
+        Set<RefType> allUsedTypes = new ConcurrentHashSet<>();
 
-        definedTypes = new HashSet<>();
-        getSources().forEach(source -> {
+        definedTypes = new ConcurrentHashSet<>();
+
+        Parallel.forEach(getSources(), source -> {
             allUsedTypes.addAll(source.getUsedTypes());
             definedTypes.addAll(source.getTypes());
         });
+
+        // getSources().forEach(source -> {
+        //     allUsedTypes.addAll(source.getUsedTypes());
+        //     definedTypes.addAll(source.getTypes());
+        // });
 
         usedTypes = SetUtils.difference(allUsedTypes, definedTypes);
     }

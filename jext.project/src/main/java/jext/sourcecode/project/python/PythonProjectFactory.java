@@ -25,8 +25,7 @@ public class PythonProjectFactory extends ProjectFactory {
             project = new PythonProject(projectName, projectHome, properties);
         }
 
-        LibraryDownloader ld = new PythonLibraryDownloader();
-        LibraryFinder lfinder = new PythonLibraryFinder().setDownloader(ld);
+        LibraryFinder lfinder = new PythonLibraryFinder();
         project.setLibraryFinder(lfinder);
 
         return project;

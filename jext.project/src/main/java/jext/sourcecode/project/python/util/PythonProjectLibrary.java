@@ -14,11 +14,19 @@ import java.util.Set;
 
 public class PythonProjectLibrary extends BaseLibrary {
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public PythonProjectLibrary(Project project) {
         super(project.getName(), project);
         this.libraryFile = project.getProjectHome();
         this.libraryType = LibraryType.LOCAL;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isValid() {
@@ -35,6 +43,10 @@ public class PythonProjectLibrary extends BaseLibrary {
         return project.getModules().getModule().getSources().getSourceRootDirectories();
     }
 
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
     @Override
     public Set<RefType> getTypes() {
         return Collections.emptySet();
@@ -44,4 +56,9 @@ public class PythonProjectLibrary extends BaseLibrary {
     public boolean contains(Name typeName) {
         return false;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

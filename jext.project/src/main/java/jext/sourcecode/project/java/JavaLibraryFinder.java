@@ -2,19 +2,22 @@ package jext.sourcecode.project.java;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
+import jext.name.Name;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.java.libraries.JDKLibrary;
 import jext.sourcecode.project.java.maven.MavenLibrary;
-import jext.util.Parameters;
 import jext.util.StringUtils;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static jext.sourcecode.project.java.JavaConstants.JAVA;
 
 public class JavaLibraryFinder implements LibraryFinder {
 
@@ -45,129 +48,172 @@ public class JavaLibraryFinder implements LibraryFinder {
     private Project project;
 
     // Maven downloader
-    private JavaLibraryDownloader md = new JavaLibraryDownloader();
+    private JavaLibraryDownloader downloader = new JavaLibraryDownloader();
 
     // name -> directory
-    private Map<String, File> namedLibraries = new HashMap<>();
+    // private Map<String, File> namedLibraries = new HashMap<>();
 
     // directory -> library
-    private Map<File, Library> rtLibraries = new HashMap<>();
+    // private Map<File, Library> runtimeLibraries = new HashMap<>();
 
     // maven coords -> library
+    // private Map<MavenCoords, Library> mavenLibraries = new HashMap<>();
+
+    private String language;
+
+    private Map<Name, Library> libraries = new HashMap<>();
+
+    private Map<String, Library> runtimeLibraries = new HashMap<>();
+
     private Map<MavenCoords, Library> mavenLibraries = new HashMap<>();
+
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public JavaLibraryFinder() {
+        this(JAVA);
+    }
 
+    public JavaLibraryFinder(String language) {
+        this.language = language;
+    }
+
+    @Override
+    public LibraryFinder newFinder(Project project) {
+        JavaLibraryFinder lfinder = new JavaLibraryFinder(language);
+        lfinder.setProject(project);
+        lfinder.setLibraries(libraries, runtimeLibraries, mavenLibraries);
+        lfinder.setDownloader(downloader.newDownloader());
+        return lfinder;
     }
 
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
 
-    public JavaLibraryFinder setProject(Project project) {
+    @Override
+    public void setProject(Project project) {
         this.project = project;
-        return this;
     }
 
-    public JavaLibraryFinder setDownloader(LibraryDownloader ld) {
-        this.md = (JavaLibraryDownloader) ld;
-        return this;
+    private void setLibraries(
+        Map<Name, Library> libraries,
+        Map<String, Library> runtimeLibraries,
+        Map<MavenCoords, Library> mavenLibraries) {
+        this.libraries.putAll(libraries);
+        this.runtimeLibraries.putAll(runtimeLibraries);
+        this.mavenLibraries.putAll(mavenLibraries);
     }
+
+    private void setDownloader(LibraryDownloader downloader) {
+        this.downloader = (JavaLibraryDownloader) downloader;
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Project getProject() {
+        return project;
+    }
+
+    @Override
+    public String getLanguage() {
+        return language;
+    }
+
+    @Override
+    public LibraryDownloader getDownloader() {
+        return downloader;
+    }
+
+    // /**
+    //  * Set extra configurations
+    //  */
+    // @Override
+    // public void configure(Parameters parameters) {
+    //     parameters.keySet().forEach(name -> {
+    //         if (name.startsWith("maven.repository"))
+    //             addRepositories(parameters.getString(name));
+    //     });
+    // }
+
+    // ----------------------------------------------------------------------
+    // Libraries
+    // ----------------------------------------------------------------------
 
     /**
      * Add a 'named' library: it can me a file descriptor or a directory.
      * If it is a directory, the directory is scanned recursively for ".jar"
      * and ".jmod" files
      */
-    public JavaLibraryFinder setNamedLibrary(String libraryName, File libraryPath) {
-        if (namedLibraries.containsKey(libraryName)) {
-            logger.warnf("Library %s already registered with %s (new: %s): SKIPPED",
-                libraryName, namedLibraries.get(libraryName), libraryPath);
-        }
-        else {
-            namedLibraries.put(libraryName, libraryPath);
-        }
+    public void setNamedLibrary(String libraryName, File libraryPath) {
+        // if (namedLibraries.containsKey(libraryName)) {
+        //     logger.warnf("Library %s already registered with %s (new: %s): SKIPPED",
+        //         libraryName, namedLibraries.get(libraryName), libraryPath);
+        // }
+        // else {
+        //     namedLibraries.put(libraryName, libraryPath);
+        // }
 
-        return this;
+        Library runtimeLibrary = new JDKLibrary(libraryName, libraryPath, null);
+        runtimeLibraries.put(libraryName, runtimeLibrary);
     }
 
-    public JavaLibraryFinder setNamedLibraries(Map<String, File> librariesMap){
-        for(String libraryName : librariesMap.keySet()) {
-            File libraryPath = librariesMap.get(libraryName);
-            setNamedLibrary(libraryName, libraryPath);
-        }
-        return this;
-    }
+    // public void setNamedLibraries(Map<String, File> librariesMap){
+    //     for(String libraryName : librariesMap.keySet()) {
+    //         File libraryPath = librariesMap.get(libraryName);
+    //         setNamedLibrary(libraryName, libraryPath);
+    //     }
+    // }
 
-    public JavaLibraryFinder addLibrary(String libraryName, String libraryPath) {
-        return setNamedLibrary(libraryName, new File(libraryPath));
-    }
-
-    // @Override
-    // public JavaLibraryFinder initialize() {
-    //     return this;
+    // public JavaLibraryFinder addLibrary(String libraryName, String libraryPath) {
+    //     return setNamedLibrary(libraryName, new File(libraryPath));
     // }
 
     @Override
-    public LibraryDownloader getDownloader() {
-        return md.newDownloader();
-    }
-
-    // ----------------------------------------------------------------------
-    // Library handling
-    // ----------------------------------------------------------------------
-
-    /**
-     * Set extra configurations
-     */
-    @Override
-    public LibraryFinder configure(Parameters parameters) {
-        parameters.keySet().forEach(name -> {
-            if (name.startsWith("maven.repository"))
-                addRepositories(parameters.getString(name));
-        });
-        return this;
-    }
-
-    @Override
     public Library getRuntimeLibrary(String libraryName) {
+        return runtimeLibraries.get(libraryName);
 
-        synchronized(namedLibraries) {
+        // synchronized(namedLibraries) {
+        //
+        //     // library not defined
+        //     if (!namedLibraries.containsKey(libraryName)) {
+        //         logger.errorf("Library %s not defined", libraryName);
+        //         return null;
+        //     }
+        //
+        //     // library already registered
+        //     File libraryPath = namedLibraries.get(libraryName);
+        //     if (runtimeLibraries.containsKey(libraryPath))
+        //         return runtimeLibraries.get(libraryPath);
+        //
+        //     // register the library
+        //     Library rtLibrary = new JDKLibrary(libraryName, libraryPath, project);
+        //     runtimeLibraries.put(libraryPath, rtLibrary);
+        //
+        //     return rtLibrary;
+        // }
+    }
 
-            // library not defined
-            if (!namedLibraries.containsKey(libraryName)) {
-                logger.errorf("Library %s not defined", libraryName);
-                return null;
-            }
-
-            // library already registered
-            File libraryPath = namedLibraries.get(libraryName);
-            if (rtLibraries.containsKey(libraryPath))
-                return rtLibraries.get(libraryPath);
-
-            // register the library
-            Library rtLibrary = new JDKLibrary(libraryName, libraryPath, project);
-            rtLibraries.put(libraryPath, rtLibrary);
-
-            return rtLibrary;
-        }
+    @Override
+    public Collection<Library> getRuntimeLibraries() {
+        return runtimeLibraries.values();
     }
 
     @Override
     public Library getLibrary(MavenCoords coords) {
 
         synchronized (mavenLibraries) {
-            coords = md.getVersioned(coords);
+            coords = downloader.getVersioned(coords);
 
             if (mavenLibraries.containsKey(coords))
                 return mavenLibraries.get(coords);
 
-            Library library = new MavenLibrary(coords, md, project);
+            Library library = new MavenLibrary(coords, downloader, project);
             mavenLibraries.put(coords, library);
+            libraries.put(library.getName(), library);
             return library;
         }
     }
@@ -178,16 +224,20 @@ public class JavaLibraryFinder implements LibraryFinder {
         //     return library.getVersion();
         //
         // MavenCoords coords = MavenCoords.of(library.getName().getFullName());
-        return md.getLatestVersion(coords);
+        return downloader.getLatestVersion(coords);
     }
 
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
 
-    private void addRepositories(String listUrls) {
-        List<String> repositories = StringUtils.split(listUrls,",");
-        md.addRepositories(repositories);
-    }
+    // private void addRepositories(String listUrls) {
+    //     List<String> repositories = StringUtils.split(listUrls,",");
+    //     downloader.addRepositories(repositories);
+    // }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

@@ -1,7 +1,6 @@
 package jext.sourcecode.project.java;
 
 import jext.logging.Logger;
-import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectFactory;
@@ -15,6 +14,7 @@ import java.io.File;
 import java.util.Properties;
 
 import static jext.sourcecode.project.java.GuessProjectType.guessProjectType;
+import static jext.sourcecode.project.java.JavaConstants.JAVA;
 
 public class JavaProjectFactory extends ProjectFactory {
 
@@ -59,8 +59,7 @@ public class JavaProjectFactory extends ProjectFactory {
         // But this can be expensive.
         //
 
-        LibraryDownloader ld = new JavaLibraryDownloader();
-        LibraryFinder lfinder = new JavaLibraryFinder().setDownloader(ld);
+        LibraryFinder lfinder = new JavaLibraryFinder();
         project.setLibraryFinder(lfinder);
 
         return project;

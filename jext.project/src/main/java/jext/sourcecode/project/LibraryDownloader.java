@@ -3,13 +3,13 @@ package jext.sourcecode.project;
 import jext.maven.MavenCoords;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface LibraryDownloader {
 
-    // void checkArtifacts(List<MavenCoords> artifacts, boolean b, boolean parallel);
+    String getName();
 
-    LibraryDownloader addRepository(String url);
+    /** Each project can add 'extra' repositories */
+    void addRepository(String name, String url);
 
     LibraryDownloader newDownloader();
 

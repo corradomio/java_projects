@@ -24,10 +24,9 @@ public class CheckProject {
             //     .addLibrary("jdk8", "D:\\Java\\Jdk8.0")
             //     .addLibrary("jdk11", "D:\\Java\\Jdk11.0");
 
-            LibraryFinder lfinder = new PythonLibraryFinder()
-                .addLibraries(new File("D:\\Python\\Anaconda3-2021.11\\Lib"))
-                .setNamedLibrary("py38", new File("D:\\Python\\Anaconda3-2021.11"))
-                ;
+            PythonLibraryFinder lfinder = new PythonLibraryFinder();
+            lfinder.addLibraries(new File("D:\\Python\\Anaconda3-2021.11\\Lib"));
+            lfinder.setNamedLibrary("py38", new File("D:\\Python\\Anaconda3-2021.11"));
 
             Project project = Projects.newProject(new File(
                 //"D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\elasticsearch"

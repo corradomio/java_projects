@@ -26,7 +26,7 @@ import java.util.Set;
 public abstract class InfoLibrary extends NamedObject implements Library {
 
     protected InfoProject project;
-    protected InfoModule module;
+    // protected InfoModule module;
     protected Map<String, Object> info;
     protected LibraryType libraryType;
 
@@ -36,7 +36,7 @@ public abstract class InfoLibrary extends NamedObject implements Library {
 
     public InfoLibrary(InfoModule module, LibraryType libraryType, Map<String, Object> info) {
         this((InfoProject)(module.getProject()), libraryType, info);
-        this.module = module;
+        // this.module = module;
     }
 
     public InfoLibrary(InfoProject project, LibraryType libraryType, Map<String, Object> info) {
@@ -83,10 +83,10 @@ public abstract class InfoLibrary extends NamedObject implements Library {
         return project;
     }
 
-    @Override
-    public Module getModule() {
-        return module;
-    }
+    // @Override
+    // public Module getModule() {
+    //     return module;
+    // }
 
     @Override
     public LibraryType getLibraryType() {

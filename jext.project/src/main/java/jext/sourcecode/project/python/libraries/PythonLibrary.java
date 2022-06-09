@@ -19,14 +19,27 @@ import java.util.Set;
 
 public class PythonLibrary extends NamedObject implements Library {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     protected File libraryDirectory;
     protected List<File> pythonFiles;
-    private Module module = NoneProject.module();
+    protected Project project;
+    protected LibraryType libraryType = LibraryType.LOCAL;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public PythonLibrary(File libraryDirectory) {
         super(PathName.of(libraryDirectory.getName()));
         this.libraryDirectory = libraryDirectory;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isValid() {
@@ -35,17 +48,16 @@ public class PythonLibrary extends NamedObject implements Library {
 
     @Override
     public Project getProject() {
-        return getModule().getProject();
+        return project;
     }
 
-    @Override
-    public Module getModule() {
-        return module;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     @Override
     public LibraryType getLibraryType() {
-        return LibraryType.LOCAL;
+        return libraryType;
     }
 
     @Override
@@ -89,5 +101,17 @@ public class PythonLibrary extends NamedObject implements Library {
     public String getVersion() {
         return "";
     }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
+    public void setLibraryName(String name) {
+        setNameWithId(PathName.of(name));
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

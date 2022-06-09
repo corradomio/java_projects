@@ -1,15 +1,20 @@
-package jext.sourcecode.project.csharp;
+package jext.sourcecode.project.python;
 
 import jext.maven.MavenCoords;
 import jext.sourcecode.project.LibraryDownloader;
 
 import java.util.Collection;
 
-public class CSharpLibraryDownloader implements LibraryDownloader {
+public class PyPiDownloader implements LibraryDownloader {
 
     @Override
-    public LibraryDownloader addRepository(String url) {
-        return this;
+    public String getName() {
+        return "pypi";
+    }
+
+    @Override
+    public void addRepository(String name, String url) {
+
     }
 
     @Override

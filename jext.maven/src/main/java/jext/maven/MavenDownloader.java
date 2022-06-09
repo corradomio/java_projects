@@ -123,15 +123,14 @@ public class MavenDownloader implements MavenConst {
     // ----------------------------------------------------------------------
 
     /** Directory where to download the artifacts */
-    public MavenDownloader setDownloadDirectory(File downloadDir) {
+    public void setDownloadDirectory(File downloadDir) {
         this.downloadDir = downloadDir;
-        return this;
     }
 
     // --
 
     /** Repository where to search the artifacts */
-    public MavenDownloader addRepository(String repoUrl) {
+    public void addRepository(String repoUrl) {
         // remove the last "/"
         if (repoUrl.endsWith("/"))
             repoUrl = StringUtils.substring(repoUrl,0, -1);
@@ -140,35 +139,30 @@ public class MavenDownloader implements MavenConst {
             this.repoUrls.add(repoUrl);
         else
             logger.errorf("Unsupported Maven repository %s", repoUrl);
-        return this;
     }
 
     /** Repositories where to search the artifacts */
-    public MavenDownloader addRepositories(Collection<String> repoUrls) {
+    public void addRepositories(Collection<String> repoUrls) {
         repoUrls.forEach(this::addRepository);
-        return this;
     }
 
     // --
 
     /** Directory where to search missing libraries */
-    public MavenDownloader addLocalDirectory(File localDir) {
+    public void addLocalDirectory(File localDir) {
         this.localDirs.add(localDir);
-        return this;
     }
 
     /** Directories where to search missing libraries */
-    public MavenDownloader addLocalDirectories(Collection<File> localDirs) {
+    public void addLocalDirectories(Collection<File> localDirs) {
         localDirs.forEach(this::addLocalDirectory);
-        return this;
     }
 
     // --
 
     /**  Timeout to wait before a connection starts */
-    public MavenDownloader setDownloadTimeout(long millis) {
+    public void setDownloadTimeout(long millis) {
         this.downloadTimeout = millis;
-        return this;
     }
 
     /**
@@ -176,24 +170,21 @@ public class MavenDownloader implements MavenConst {
      * to skip another check the next time. However the flag is not forever. It has a expiration time
      * (for default 24 hours). After this time, it will be deleted.
      */
-    public MavenDownloader setCheckTimeout(long seconds) {
+    public void setCheckTimeout(long seconds) {
         this.checkTimeout = seconds;
-        return this;
     }
 
     /** Parallel downloads permitted */
-    public MavenDownloader setParallelDownloads(int parallelDownloads) {
+    public void setParallelDownloads(int parallelDownloads) {
         this.parallelDownloads = parallelDownloads;
-        return this;
     }
 
     // --
 
     /** Create download directory if it doesn't exist. */
-    public MavenDownloader initialize() {
+    public void initialize() {
         if (!downloadDir.exists() && !downloadDir.mkdirs())
             logger.warnf("Unable to create directory %s", downloadDir);
-        return this;
     }
 
     // ----------------------------------------------------------------------

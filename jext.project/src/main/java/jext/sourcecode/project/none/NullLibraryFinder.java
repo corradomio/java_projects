@@ -7,28 +7,105 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.util.Parameters;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 public class NullLibraryFinder implements LibraryFinder {
 
-    private static final LibraryFinder INSTANCE = new NullLibraryFinder();
+    // ----------------------------------------------------------------------
+    // Singleton
+    // ----------------------------------------------------------------------
+
+    private static class NullDownloader implements LibraryDownloader {
+
+        @Override
+        public String getName() {
+            return "null";
+        }
+
+        @Override
+        public void addRepository(String name, String url) {
+
+        }
+
+        @Override
+        public LibraryDownloader newDownloader() {
+            return this;
+        }
+
+        @Override
+        public void checkArtifacts(Collection<MavenCoords> artifacts, boolean b, boolean parallel) {
+
+        }
+    }
+
+
+    // ----------------------------------------------------------------------
+    // Singleton
+    // ----------------------------------------------------------------------
+
+    private static final LibraryDownloader DOWNLOADER = new NullDownloader();
+    private static final LibraryFinder INSTANCE = new NullLibraryFinder() {
+        @Override
+        public void setProject(Project project) {
+
+        }
+    };
 
     public static LibraryFinder instance() {
         return INSTANCE;
     }
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
+    private Project project;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    private NullLibraryFinder() {
+
+    }
+
+    private NullLibraryFinder(Project project) {
+        this.project = project;
+    }
+
+    public LibraryFinder newFinder(Project project) {
+        return new NullLibraryFinder(project);
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
     @Override
-    public NullLibraryFinder setProject(Project project) {
-        return this;
+    public Project getProject() {
+        return project;
     }
 
     @Override
-    public NullLibraryFinder configure(Parameters params) {
-        return this;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
-    // @Override
-    // public NullLibraryFinder initialize() {
-    //     return this;
-    // }
+    @Override
+    public String getLanguage() {
+        return project != null ? project.getLanguage() : "";
+    }
+
+    @Override
+    public LibraryDownloader getDownloader() {
+        return DOWNLOADER;
+    }
+
+    // ----------------------------------------------------------------------
+    // Libraries
+    // ----------------------------------------------------------------------
 
     @Override
     public Library getLibrary(MavenCoords coords) {
@@ -46,12 +123,12 @@ public class NullLibraryFinder implements LibraryFinder {
     }
 
     @Override
-    public LibraryDownloader getDownloader() {
-        return null;
+    public List<Library> getRuntimeLibraries() {
+        return Collections.emptyList();
     }
 
-    @Override
-    public NullLibraryFinder setDownloader(LibraryDownloader ld) {
-        return this;
-    }
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

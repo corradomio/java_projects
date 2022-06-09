@@ -24,7 +24,6 @@ import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.sourcecode.project.python.GuessRuntimeLibrary;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
-import jext.util.Assert;
 import jext.util.FileUtils;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
@@ -155,7 +154,7 @@ public class InfoProject implements Project {
     }
 
     @Override
-    public String getProjectLanguage() {
+    public String getLanguage() {
         String language = MapUtils.get(info, "properties", Project.PROJECT_LANGUAGE);
         if (language == null)
             language = JavaConstants.JAVA;
@@ -280,7 +279,7 @@ public class InfoProject implements Project {
     public LibraryDownloader getLibraryDownloader() {
         LibraryDownloader md = lfinder.getDownloader();
         getLibraryRepositories().forEach(librepo -> {
-            md.addRepository(librepo.getUrl());
+            md.addRepository(librepo.getName(), librepo.getUrl());
         });
         return md;
     }

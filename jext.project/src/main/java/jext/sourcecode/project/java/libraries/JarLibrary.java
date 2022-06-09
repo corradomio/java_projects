@@ -42,7 +42,7 @@ public class JarLibrary extends BaseLibrary {
         setNameWithId(new VersionName(name, this.version));
 
         this.libraryFile = jarFile;
-        this.module = module;
+        this.project = module.getProject();
         this.libraryType = LibraryType.LOCAL;
     }
 
@@ -75,11 +75,14 @@ public class JarLibrary extends BaseLibrary {
     //     return module.getId();
     // }
 
-    @Override
-    public Module getModule() {
-        return module;
-    }
+    // @Override
+    // public Module getModule() {
+    //     return module;
+    // }
 
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
 
     @Override
     public Set<RefType> getTypes() {

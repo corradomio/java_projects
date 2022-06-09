@@ -110,7 +110,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     }
 
     @Override
-    public String getProjectLanguage() {
+    public String getLanguage() {
         return properties.getProperty(Project.PROJECT_LANGUAGE);
     }
 
@@ -285,7 +285,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         md = lfinder.getDownloader();
 
         getLibraryRepositories().forEach(librepo -> {
-            md.addRepository(librepo.getUrl());
+            md.addRepository(librepo.getName(), librepo.getUrl());
         });
 
         return md;

@@ -28,7 +28,7 @@ public abstract class BaseLibrary extends NamedObject implements Library {
 
     protected File libraryFile;
     protected LibraryType libraryType;
-    protected Module module;
+    // protected Module module;
 
     protected Set<Name> definedTypes = new HashSet<>();
     protected Set<Name> undefinedTypes = new HashSet<>();
@@ -71,11 +71,11 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return this.libraryFile;
     }
 
-    @Override
-    @Nullable
-    public Module getModule() {
-        return module;
-    }
+    // @Override
+    // @Nullable
+    // public Module getModule() {
+    //     return module;
+    // }
 
     @Override
     public LibraryType getLibraryType() {

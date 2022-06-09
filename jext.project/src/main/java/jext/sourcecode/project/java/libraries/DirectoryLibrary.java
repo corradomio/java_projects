@@ -100,7 +100,7 @@ public abstract class DirectoryLibrary extends BaseLibrary {
     }
 
     // ----------------------------------------------------------------------
-    // Operations
+    // Implementation
     // ----------------------------------------------------------------------
 
     private void checkFilesNoSync() {
