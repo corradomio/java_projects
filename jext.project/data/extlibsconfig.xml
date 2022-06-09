@@ -110,7 +110,7 @@
             </downloader>
 
             <!-- NEW syntax, to supports MULTIPLE paths -->
-            <library name="6.0,net60,.NET Core 6">
+            <library name=".NET 6.0,6.0,net60,net6.0,.NET Core 6" version="6.0">
                 <path value="C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.5/ref/net6.0"/>
                 <path value="C:/Program Files/dotnet/packs/Microsoft.WindowsDesktop.App.Ref/6.0.5/ref/net6.0"/>
                 <path value="C:/Program Files/dotnet/packs/Microsoft.AspNetCore.App.Ref/6.0.5/ref/net6.0"/>
