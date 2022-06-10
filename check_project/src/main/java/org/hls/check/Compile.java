@@ -23,7 +23,7 @@ public class Compile {
         Name name = PathName.of("test/dl4j");
         Parameters params = Parameters.params();
 
-        Project dl4j = Projects.newProject(name,
+        Project dl4j = Projects.newProject("test/dl4j",
             new File("D:\\Projects.github\\ml_projects\\deeplearning4j-deeplearning4j-1.0.0-beta7"),
             params
         );

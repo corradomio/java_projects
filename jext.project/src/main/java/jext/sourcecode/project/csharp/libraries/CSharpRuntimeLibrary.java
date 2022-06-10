@@ -4,14 +4,12 @@ import jext.name.PathName;
 import jext.sourcecode.project.csharp.CSharpConstants;
 import jext.name.Name;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.java.maven.MavenName;
+import jext.sourcecode.project.csharp.util.DotNetAssemblyUtils;
 import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +29,7 @@ public class CSharpRuntimeLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     private String version;
-    private List<File> files;
+    private List<File> assemblies;
     private List<File> installationDirectories;
 
     // ----------------------------------------------------------------------
@@ -71,15 +69,19 @@ public class CSharpRuntimeLibrary extends BaseLibrary {
 
     @Override
     public List<File> getFiles() {
-        if (files != null)
-            return files;
+        if (assemblies != null)
+            return assemblies;
 
-        files = new ArrayList<>();
+        assemblies = new ArrayList<>();
         installationDirectories.forEach(idir -> {
-            files.addAll(FileUtils.listFiles(idir, DLL));
+            FileUtils.listFiles(idir, DLL).stream()
+                .filter(DotNetAssemblyUtils::isAssembly)
+                .forEach(assembly -> {
+                    assemblies.add(assembly);
+                });
         });
 
-        return files;
+        return assemblies;
     }
 
     // ----------------------------------------------------------------------

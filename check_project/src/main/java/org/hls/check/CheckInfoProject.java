@@ -2,8 +2,10 @@ package org.hls.check;
 
 import jext.cache.CacheManager;
 import jext.logging.Logger;
+import jext.sourcecode.project.DefaultLibraryFinderManager;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
+import jext.sourcecode.project.csharp.CSharpLibraryFinder;
 import jext.sourcecode.project.util.ProjectDump;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
@@ -17,10 +19,16 @@ public class CheckInfoProject {
         CacheManager.configure();
         Parallel.setup();
 
+        DefaultLibraryFinderManager lfm = DefaultLibraryFinderManager.instance();
+
+        // Register a runtimeLibrary
+        ((CSharpLibraryFinder)lfm.getLibraryFinder("csharp"))
+            .setNamedLibrary("net60", new File("D:\\C#\\.NET Core\\6.0.300"));
+
         Project project = Projects.newProject(new File(
-                "project-info.json"
+                "D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0"
             ),
-            PropertiesUtils.empty());
+            PropertiesUtils.empty(), lfm);
 
         ProjectDump.dump(project, 0);
 
