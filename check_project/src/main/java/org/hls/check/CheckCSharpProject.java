@@ -1,12 +1,12 @@
 package org.hls.check;
 
 import jext.logging.Logger;
-import jext.sourcecode.project.DefaultLibraryFinderManager;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinderManager;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.csharp.libraries.CSharpRuntimeLibrary;
+import jext.sourcecode.project.lfm.DefaultLibraryFinderManager;
 import jext.sourcecode.project.util.ProjectDump;
 import jext.sourcecode.project.csharp.CSharpLibraryFinder;
 import jext.util.PropertiesUtils;
@@ -23,8 +23,7 @@ public class CheckCSharpProject {
 
         LibraryFinderManager lfm = DefaultLibraryFinderManager.instance();
         CSharpLibraryFinder lfinder = (CSharpLibraryFinder) lfm.getLibraryFinder("csharp");
-        lfinder.setNamedLibrary(".NET Core 6",
-            CSharpRuntimeLibrary.newLibrary(new File("D:\\C#\\.NET Core\\6.0.300")));
+        lfinder.setNamedLibrary(".NET Core 6", new File("D:\\C#\\.NET Core\\6.0.300"));
 
         Library rt = lfinder.getRuntimeLibrary(".NET Core 6");
         rt.getFiles();

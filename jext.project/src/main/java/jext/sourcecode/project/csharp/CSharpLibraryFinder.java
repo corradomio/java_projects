@@ -100,6 +100,14 @@ public class CSharpLibraryFinder implements LibraryFinder {
     // Operations
     // ----------------------------------------------------------------------
 
+    public void setNamedLibrary(String libraryName, File libraryDirectory) {
+        setNamedLibrary(libraryName, Collections.singletonList(libraryDirectory));
+    }
+
+    public void setNamedLibrary(String libraryName, List<File> libraryDirectories) {
+        setNamedLibrary(libraryName, "", libraryDirectories);
+    }
+
     public void setNamedLibrary(String libraryName, String version, List<File> libraryDirectories) {
         CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(libraryName, version, libraryDirectories);
 
