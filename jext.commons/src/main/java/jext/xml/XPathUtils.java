@@ -28,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -87,6 +88,13 @@ public class XPathUtils {
         Document doc = builder.parse(stream);
         if (close) stream.close();
         return doc;
+    }
+
+    public static Document parse(Reader reader) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(false);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new InputSource(reader));
     }
 
     public static Document parse(Class clazz, String resourcePath) throws IOException, SAXException, ParserConfigurationException {
