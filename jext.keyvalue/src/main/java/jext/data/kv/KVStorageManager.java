@@ -1,6 +1,7 @@
 package jext.data.kv;
 
 import jext.data.kv.mapdb.MapDBStorageProvider;
+import jext.logging.Logger;
 import jext.util.PropertiesUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class KVStorageManager {
+
+    private static Logger logger = Logger.getLogger(KVStorageManager.class);
 
     private static final KVStorageManager instance = new KVStorageManager();
 
@@ -79,6 +82,8 @@ public class KVStorageManager {
             configureUsing(configurations);
             return;
         }
+
+        logger.warnf("KS storage provider not defined. It will be used %s", DEFAULT_STORAGE_PROVIDER);
 
         //throw new KVStorageException("Unable to configure KVStorageManager: no 'kvstorage4j.xml' found");
     }

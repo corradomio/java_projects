@@ -14,10 +14,10 @@
     </properties>
 
     <repositories>
-        <repository>
+        <!--<repository>
             <id>HaloDB Repository</id>
             <url>https://dl.bintray.com/yahoo/maven/</url>
-        </repository>
+        </repository>-->
     </repositories>
 
     <dependencies>
@@ -43,24 +43,24 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.oath.halodb/halodb (2019) -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.oath.halodb</groupId>
             <artifactId>halodb</artifactId>
             <version>0.5.3</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava (2020) -->
         <dependency>
             <groupId>org.lmdbjava</groupId>
             <artifactId>lmdbjava</artifactId>
-            <version>0.8.1</version>
+            <version>0.8.2</version> <!-- 0.8.1 -->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava-native-windows-x86_64 -->
         <dependency>
             <groupId>org.lmdbjava</groupId>
             <artifactId>lmdbjava-native-windows-x86_64</artifactId>
-            <version>0.9.24-1</version>
+            <version>0.9.29-1</version> <!-- 0.9.24-1 -->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.iq80.leveldb/leveldb (2019) -->
@@ -74,14 +74,14 @@
         <dependency>
             <groupId>net.openhft</groupId>
             <artifactId>chronicle-map</artifactId>
-            <version>3.21ea3</version>
+            <version>3.23ea2</version> <!-- 3.21ea3 -->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.rocksdb/rocksdbjni (2021) -->
         <dependency>
             <groupId>org.rocksdb</groupId>
             <artifactId>rocksdbjni</artifactId>
-            <version>6.15.2</version>
+            <version>7.3.1</version> <!-- 6.15.2 , 7.3.1 -->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.linkedin.paldb/paldb (2016) -->
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.pcollections</groupId>
             <artifactId>pcollections</artifactId>
-            <version>2.1.2</version>
+            <version>3.1.4</version> <!-- 2.1.2 -->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/berkeleydb/je (2008) -->
@@ -112,14 +112,13 @@
             <version>3.2.76</version>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/org.agrona/Agrona (2020) -->
         <!-- NO: solo data strutture -->
-        <!-- dependency>
+        <!-- https://mvnrepository.com/artifact/org.agrona/agrona (2022) -->
+        <dependency>
             <groupId>org.agrona</groupId>
-            <artifactId>Agrona</artifactId>
-            <version>0.9.1</version>
-        </dependency -->
+            <artifactId>agrona</artifactId>
+            <version>1.15.2</version>
+        </dependency>
 
     </dependencies>
 

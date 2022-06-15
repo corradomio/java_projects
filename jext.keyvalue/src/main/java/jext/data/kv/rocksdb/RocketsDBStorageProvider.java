@@ -1,7 +1,6 @@
 package jext.data.kv.rocksdb;
 
 import jext.data.kv.KVStorage;
-import jext.data.kv.KVStorageProvider;
 import jext.data.kv.OpenMode;
 import jext.data.kv.util.AbstractStorageProvider;
 import org.rocksdb.Options;

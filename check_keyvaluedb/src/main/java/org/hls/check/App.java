@@ -15,7 +15,7 @@ public class App {
 
     private static void create() throws IOException {
 
-        new File("glove.6B.50d.db").delete();
+        new File("glove.6B.50d.db.mapdb").delete();
 
         KVStorage<String, float[]> storage = KVStorageManager.open(OpenMode.WRITE, new File("glove.6B.50d.db"), String.class, float[].class);
 
@@ -28,7 +28,7 @@ public class App {
 
                 ++count;
                 if (count % 1000 == 0)
-                    System.out.printf("  %d\n", count);
+                    System.out.printf("  %6d: %s\n", count, word);
 
                 storage.put(word, embedding);
             }
@@ -46,11 +46,11 @@ public class App {
         System.out.println("Open storage");
         KVStorage<String, float[]> storage = KVStorageManager.open(new File("glove.6B.50d.db"), String.class, float[].class);
 
-        System.out.println("read 1");
+        System.out.println("the");
         float[] embeddings = storage.get("the");
         System.out.println(Arrays.asList(embeddings[0], embeddings[1], embeddings[2], embeddings[3]));
 
-        System.out.println("read 2");
+        System.out.println("sandberger");
         embeddings = storage.get("sandberger");
         System.out.println(Arrays.asList(embeddings[0], embeddings[1], embeddings[2], embeddings[3]));
 

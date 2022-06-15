@@ -13,10 +13,11 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /*
     ODEM format used in UML diagrams
-    
+
     <ODEM>
         <context>
             <container>

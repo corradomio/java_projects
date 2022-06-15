@@ -4,10 +4,12 @@ import jext.logging.Logger;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +42,12 @@ public class Archives {
         }
     }
 
+    public static BufferedReader openText(File compressedFile, String path) throws IOException {
+        ArchiveInputStream stream = openArchive(compressedFile);
+        ArchiveEntry entry = selectFirst(stream);
+        return new BufferedReader(new InputStreamReader(stream));
+    }
+
     public static ArchiveInputStream openArchive(File compressedFile)
         throws IOException {
         String atype = extensionOf(compressedFile).toLowerCase();
@@ -65,6 +73,10 @@ public class Archives {
         else
             pos = name.lastIndexOf('.');
         return name.substring(pos+1);
+    }
+
+    public static ArchiveEntry selectFirst(ArchiveInputStream stream) throws IOException {
+        return stream.getNextEntry();
     }
 
 

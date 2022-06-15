@@ -5,7 +5,6 @@ import com.linkedin.paldb.api.StoreReader;
 import com.linkedin.paldb.api.StoreWriter;
 import jext.data.kv.KVStorage;
 import jext.data.kv.KVStorageException;
-import jext.data.kv.KVStorageProvider;
 import jext.data.kv.OpenMode;
 import jext.data.kv.util.AbstractStorageProvider;
 

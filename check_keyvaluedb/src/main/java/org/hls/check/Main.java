@@ -2,7 +2,7 @@ package org.hls.check;
 
 import com.linkedin.paldb.api.StoreReader;
 import com.linkedin.paldb.api.StoreWriter;
-import com.oath.halodb.HaloDB;
+// import com.oath.halodb.HaloDB;
 import net.openhft.chronicle.map.ChronicleMap;
 import org.iq80.leveldb.DB;
 import org.lmdbjava.Dbi;
@@ -23,9 +23,9 @@ public class Main {
         ConcurrentMap<String, String> map;
     }
 
-    static void checkHaloDB() {
-        HaloDB db;
-    }
+    // static void checkHaloDB() {
+    //     HaloDB db;
+    // }
 
     static void checkLmdn() {
         Dbi<ByteBuffer> dbi;

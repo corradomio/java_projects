@@ -1,7 +1,6 @@
 package jext.data.kv.mapdb;
 
 import jext.data.kv.KVStorage;
-import jext.data.kv.KVStorageProvider;
 import jext.data.kv.OpenMode;
 import jext.data.kv.util.AbstractStorageProvider;
 import org.mapdb.DB;
