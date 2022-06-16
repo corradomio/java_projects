@@ -18,12 +18,13 @@ public class ErrorListener<T> extends BaseErrorListener {
 
     private LanguageParser parser;
     private ParseResult<T> result;
-
+    private String name;
     private Logger logger;
 
     public ErrorListener(LanguageParser parser, ParseResult<T> result) {
         this.parser = parser;
         this.result = result;
+        this.name = parser.getFile().getName();
         this.logger = LogManager.getLogger(parser.getClass());
     }
 
@@ -32,8 +33,7 @@ public class ErrorListener<T> extends BaseErrorListener {
         Problem problem = new LexerProblem(line, charPositionInLine, msg, e);
         result.addProblem(problem);
 
-        logger.error(String.format("[%d, %d] %s", line, charPositionInLine, msg));
-        // logger.error(String.format("[%d, %d] %s\n  %s", line, charPositionInLine, msg, parser.getFile()));
+        logger.error(String.format("[%s: %d, %d] %s", name, line, charPositionInLine, msg));
     }
 
     // @Override

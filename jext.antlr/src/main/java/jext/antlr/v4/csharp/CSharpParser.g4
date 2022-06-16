@@ -211,6 +211,7 @@ primary_expression_start
 	             | rank_specifier+ array_initializer)
 	      | anonymous_object_initializer
 	      | rank_specifier array_initializer)                       #objectCreationExpression
+    | NEW OPEN_PARENS argument_list? CLOSE_PARENS                   #objectCreationExpression
 	| OPEN_PARENS argument ( ',' argument )+ CLOSE_PARENS           #tupleExpression
 	| TYPEOF OPEN_PARENS (unbound_type_name | type_ | VOID) CLOSE_PARENS   #typeofExpression
 	| CHECKED OPEN_PARENS expression CLOSE_PARENS                   #checkedExpression

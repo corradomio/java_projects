@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
+/*
+    https://www.ecma-international.org/publications-and-standards/standards/ecma-335/
+ */
+
 public class DotNetAssemblyUtils {
 
     private static final byte[] ASSEMBLY_HEADER = {
