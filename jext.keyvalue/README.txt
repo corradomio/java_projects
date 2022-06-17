@@ -6,6 +6,14 @@ JNoSQL
     https://projects.eclipse.org/projects/technology.jnosql
 
 
+BSON
+----
+
+    https://github.com/kohanyirobert/ebson (2012)
+    https://github.com/bguerout/jongo/releases (2020)
+    https://github.com/coconut2015/cookjson (2017)
+
+
 Speeds
 ------
 

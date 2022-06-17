@@ -153,6 +153,15 @@
             <version>9.11.2</version>
         </dependency>
 
+        <!-- BSON: Binary JSON -->
+        <!-- 2017 -->
+        <!-- https://mvnrepository.com/artifact/org.yuanheng.cookjson/cookjson-core -->
+        <dependency>
+            <groupId>org.yuanheng.cookjson</groupId>
+            <artifactId>cookjson-core</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>
