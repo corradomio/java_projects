@@ -1,18 +1,24 @@
 Minimo supporto:
 
-    tipi:
+    type:
         primitivi: int double string bytes
         compositi: array[T]: lista omogenea di tipi
                    list[T]:  lista di tipi diversi
                    map[K,T]: T: generico tipo, K: int, string
 
+    oppure
+
+        primitivi:  bytes
+        composity:  list[bytes | list | map]
+                    map[bytes, bytes | list | map]
+
     node: list of labels
         id
-        property: int, double, string, list, map
-        longname
-        uniquename
+        property: type
 
     edge: label
+        id
+        property: type
 
 
 Supporto alla revisione
