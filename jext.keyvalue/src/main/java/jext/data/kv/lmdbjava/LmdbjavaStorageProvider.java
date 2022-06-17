@@ -42,7 +42,7 @@ public class LmdbjavaStorageProvider  extends AbstractStorageProvider {
 
 
     @Override
-    protected String getFileExtension() {
+    public String getFileExtension() {
         return ".lmdbj";
     }
 }

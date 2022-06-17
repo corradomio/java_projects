@@ -63,7 +63,7 @@ public class BerkleyDBStorageProvider extends AbstractStorageProvider {
     }
 
     @Override
-    protected String getFileExtension() {
+    public String getFileExtension() {
         return ".berkleydb";
     }
 }

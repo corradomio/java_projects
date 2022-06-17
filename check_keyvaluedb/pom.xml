@@ -21,12 +21,12 @@
         <module>../jext.keyvalue</module>
     </modules>
 
-    <repositories>
+    <!--<repositories>
         <repository>
             <id>HaloDB Repository</id>
             <url>https://dl.bintray.com/yahoo/maven/</url>
         </repository>
-    </repositories>
+    </repositories>-->
 
     <dependencies>
 

@@ -7,7 +7,6 @@ import jext.data.kv.OpenMode;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -15,9 +14,11 @@ public class App {
 
     private static void create() throws IOException {
 
-        new File("glove.6B.50d.db.mapdb").delete();
+        new File("glove.6B.50d.db" + KVStorageManager.provider().getFileExtension()).delete();
 
-        KVStorage<String, float[]> storage = KVStorageManager.open(OpenMode.WRITE, new File("glove.6B.50d.db"), String.class, float[].class);
+        KVStorage<String, float[]> storage = KVStorageManager.open(OpenMode.WRITE,
+            new File("glove.6B.50d.db"),
+            String.class, float[].class);
 
         int count = 0;
         try(BufferedReader rdr = Archives.openText(new File("E:\\Datasets\\GloVe\\glove.6B\\glove.6B.50d.zip"), null)) {
@@ -64,6 +65,10 @@ public class App {
     }
 
     public static void main(String[] args) throws Exception {
+
+        System.out.println(String.class.isAssignableFrom(CharSequence.class));
+        System.out.println(CharSequence.class.isAssignableFrom(String.class));
+
         KVStorageManager.configure();
 
         create();

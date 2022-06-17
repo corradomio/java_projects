@@ -32,7 +32,7 @@ public class PalDBStorageProvider extends AbstractStorageProvider {
     }
 
     @Override
-    protected String getFileExtension() {
+    public String getFileExtension() {
         return ".paldb";
     }
 }

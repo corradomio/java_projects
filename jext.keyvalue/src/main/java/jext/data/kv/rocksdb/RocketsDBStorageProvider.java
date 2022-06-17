@@ -33,7 +33,7 @@ public class RocketsDBStorageProvider extends AbstractStorageProvider {
     }
 
     @Override
-    protected String getFileExtension() {
+    public String getFileExtension() {
         return ".rocksdb";
     }
 }

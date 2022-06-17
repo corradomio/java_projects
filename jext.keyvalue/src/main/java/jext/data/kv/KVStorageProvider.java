@@ -9,4 +9,5 @@ public interface KVStorageProvider {
     <K, V> KVStorage<K, V> open(OpenMode mode, File storageFile, Class<K> kclass, Class<V> vclass, Properties properties)
         throws IOException;
 
+    String getFileExtension();
 }

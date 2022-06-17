@@ -27,7 +27,7 @@ public class ChronicleMapStorageProvider extends AbstractStorageProvider {
     }
 
     @Override
-    protected String getFileExtension() {
+    public String getFileExtension() {
         return ".cmap";
     }
 }

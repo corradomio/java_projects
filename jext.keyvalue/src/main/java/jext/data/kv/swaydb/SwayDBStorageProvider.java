@@ -24,11 +24,11 @@ public class SwayDBStorageProvider extends AbstractStorageProvider {
             SwaySerializer.create(vclass));
 
 
-        return new SwayDBStorage(storageFile, pmap.get());
+        return new SwayDBStorage<>(storageFile, pmap.get());
     }
 
     @Override
-    protected String getFileExtension() {
+    public String getFileExtension() {
         return ".swaydb";
     }
 }

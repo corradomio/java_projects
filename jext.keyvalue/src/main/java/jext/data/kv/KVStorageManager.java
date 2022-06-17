@@ -36,6 +36,10 @@ public class KVStorageManager {
         instance.configureUsing(properties);
     }
 
+    public static KVStorageProvider provider() {
+        return instance.provider;
+    }
+
     public static <K, V> KVStorage<K, V> open(File storageFile, Class<K> kclass, Class<V> vclass)
         throws IOException {
         return instance.openStorage(OpenMode.READ, storageFile, kclass, vclass);

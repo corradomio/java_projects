@@ -13,12 +13,12 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-    <repositories>
-        <!--<repository>
+    <!--<repositories>
+        <repository>
             <id>HaloDB Repository</id>
             <url>https://dl.bintray.com/yahoo/maven/</url>
-        </repository>-->
-    </repositories>
+        </repository>
+    </repositories>-->
 
     <dependencies>
 
@@ -43,11 +43,13 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.oath.halodb/halodb (2019) -->
-        <!--<dependency>
+        <dependency>
             <groupId>com.oath.halodb</groupId>
             <artifactId>halodb</artifactId>
-            <version>0.5.3</version>
-        </dependency>-->
+            <version>0.5.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/halodb-0.5.6.jar</systemPath>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava (2020) -->
         <dependency>
@@ -118,6 +120,37 @@
             <groupId>org.agrona</groupId>
             <artifactId>agrona</artifactId>
             <version>1.15.2</version>
+        </dependency>
+
+        <!-- https://github.com/samokhodkin/whippet-db (2021) -->
+        <dependency>
+            <groupId>io.github.samokhodkin</groupId>
+            <artifactId>whippet-db</artifactId>
+            <version>1.0.1</version>
+            <!--<systemPath>${project.basedir}/lib/whippet-db-1.0.1.jar</systemPath>-->
+        </dependency>
+
+        <!-- ONLY IMPORTED -->
+
+        <!-- https://mvnrepository.com/artifact/org.jnosql.diana/diana-key-value -->
+        <dependency>
+            <groupId>org.jnosql.diana</groupId>
+            <artifactId>diana-key-value</artifactId>
+            <version>0.0.9</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.dizitart/nitrite -->
+        <dependency>
+            <groupId>org.dizitart</groupId>
+            <artifactId>nitrite</artifactId>
+            <version>3.4.4</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.ontotext.graphdb/graphdb-free-runtime -->
+        <dependency>
+            <groupId>com.ontotext.graphdb</groupId>
+            <artifactId>graphdb-free-runtime</artifactId>
+            <version>9.11.2</version>
         </dependency>
 
     </dependencies>

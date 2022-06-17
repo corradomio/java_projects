@@ -5,12 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import swaydb.java.Map;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class SwayDBStorage<K extends Serializable, V extends Serializable> extends AbstractStorage<K, V> {
+public class SwayDBStorage<K, V> extends AbstractStorage<K, V> {
 
     private Map<K, V, Void> pmap;
 

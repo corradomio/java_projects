@@ -14,7 +14,7 @@ public abstract class AbstractStorageProvider implements KVStorageProvider {
             storageFile.getName() + getFileExtension());
     }
 
-    protected abstract String getFileExtension();
+    public abstract String getFileExtension();
 
     protected static final String nameOf(File storageFile) {
         String name = storageFile.getName();

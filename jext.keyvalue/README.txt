@@ -1,5 +1,10 @@
 https://dbdb.io/
 
+JNoSQL
+------
+
+    https://projects.eclipse.org/projects/technology.jnosql
+
 
 Speeds
 ------
@@ -13,6 +18,7 @@ Speeds
     rocksdb:   fast
     paldb:     fast
     chronicle: fast
+    whippet-db:fast
 
 
 
@@ -46,6 +52,12 @@ Embedded key value databases
         in memory, piu' una cache che un db
         http://swaydb.io/?language=scala
 
+    whippet-db (2021)
+        https://github.com/samokhodkin/whippet-db/releases
+
+    rocksdb (go)
+        https://rocksdb.org/
+
     jdbm2 (2014)
         https://mvnrepository.com/artifact/org.apache.directory.jdbm/apacheds-jdbm2
 
@@ -60,9 +72,24 @@ Embedded key value databases
 
     infinitydb (java, commercial)
         https://dbdb.io/db/infinitydb
-
-    rocksdb (go)
-        https://rocksdb.org/
+        https://boilerbay.com/
 
     boltdb (go)
         https://github.com/boltdb/bolt
+
+-----------------------------------------------------------------
+
+    upscaledb
+        https://upscaledb.com/
+
+    unqlite
+        https://unqlite.org/
+
+    simpledb
+        ????
+
+    iboxdb
+        https://www.iboxdb.com/
+
+    nitrite
+        https://github.com/nitrite/nitrite-java

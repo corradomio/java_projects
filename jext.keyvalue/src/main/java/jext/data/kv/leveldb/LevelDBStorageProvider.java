@@ -27,7 +27,7 @@ public class LevelDBStorageProvider extends AbstractStorageProvider {
     }
 
     @Override
-    protected String getFileExtension() {
+    public String getFileExtension() {
         return ".leveldb";
     }
 }
