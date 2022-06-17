@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /*
@@ -30,19 +32,24 @@ import java.util.function.Supplier;
 public class OdemImporter <V, E> implements GraphImporter<V, E> {
 
     private Graph<V, E> graph;
-    private final boolean asInteger;
-    private final Map<String, Integer> map;
+    private boolean asInteger;
+    private boolean addMissing;
+    private Map<String, Integer> map = Collections.emptyMap();
+    private Set<String> vertices = new HashSet<>();
 
     public OdemImporter() {
-        this(false);
+
     }
 
-    public OdemImporter(boolean asInteger) {
-        this.asInteger = asInteger;
-        if (asInteger)
-            this.map = new HashMap<>();
-        else
-            this.map = Collections.emptyMap();
+    public OdemImporter<V, E> asInteger() {
+        this.asInteger = true;
+        this.map = new HashMap<>();
+        return this;
+    }
+
+    public OdemImporter<V, E> addMissing() {
+        this.addMissing = true;
+        return this;
     }
 
     @Override
@@ -51,6 +58,23 @@ public class OdemImporter <V, E> implements GraphImporter<V, E> {
         try {
             Element root = XPathUtils.parse(reader).getDocumentElement();
 
+            // add vertices
+            XPathUtils.selectElements(root, "context")
+            .forEach(context -> {
+                XPathUtils.selectElements(context, "container")
+                .forEach(container -> {
+                    XPathUtils.selectElements(container, "namespace")
+                    .forEach(namespace -> {
+                        XPathUtils.selectElements(namespace, "type")
+                        .forEach(type -> {
+                            String source = type.getAttribute("name");
+                            addVertex(source);
+                        });
+                    });
+                });
+            });
+
+            // add edges
             XPathUtils.selectElements(root, "context")
             .forEach(context -> {
                 XPathUtils.selectElements(context, "container")
@@ -64,8 +88,6 @@ public class OdemImporter <V, E> implements GraphImporter<V, E> {
                             .forEach(dependsOn ->{
                                 String target = dependsOn.getAttribute("name");
                                 addEdge(source, target);
-
-                                // System.out.printf("%s -> %s\n", source, target);
                             });
                         });
                     });
@@ -77,24 +99,35 @@ public class OdemImporter <V, E> implements GraphImporter<V, E> {
         }
     }
 
-    private void addEdge(String source, String target) {
+    private void addVertex(String vertex) {
+        if (vertices.contains(vertex))
+            return;
         if (asInteger) {
-            Integer sid = addVertex(source);
-            Integer tid = addVertex(target);
+            Integer vid = map.size();
+            graph.addVertex((V) vid);
+            graph.addVertex((V) vid);
+        }
+        else {
+            graph.addVertex((V) vertex);
+        }
+        vertices.add(vertex);
+    }
 
+    private void addEdge(String source, String target) {
+        if (!addMissing && (!vertices.contains(source) || !vertices.contains(target)))
+            return;
+
+        addVertex(source);
+        addVertex(target);
+
+        if (asInteger) {
+            Integer sid = map.get(source);
+            Integer tid = map.get(target);
             Graphs.addEdge(graph, (V) sid, (V) tid);
         }
         else {
             Graphs.addEdge(graph, (V) source, (V) target);
         }
-    }
-
-    private Integer addVertex(String vertex) {
-        if (!map.containsKey(vertex)) {
-            Integer vid = map.size();
-            graph.addVertex((V) vid);
-        }
-        return map.get(vertex);
     }
 
 }

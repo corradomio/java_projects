@@ -18,14 +18,16 @@ public class CheckOdem {
         imp.importGraph(g, new File(
             //"orientdb.odem"
             // "ant.odem"
-            "ant-only.odem"
+            //"ant-only.odem"
+            "D:\\Projects\\jianyi\\clustering\\ant-1.6.0.odem"
         ));
 
         VECSVExporter<String, DirectedEdge> exp = new VECSVExporter<>();
         exp.exportGraph(g, new File(
             //"orientdb.csv"
             // "ant.csv"
-            "ant-only.csv"
+            // "ant-only.csv"
+            "ant-1.6.0.csv"
         ));
     }
 }
