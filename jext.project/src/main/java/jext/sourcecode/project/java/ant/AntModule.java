@@ -3,7 +3,6 @@ package jext.sourcecode.project.java.ant;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.java.JavaBaseModule;
 import jext.sourcecode.project.java.ant.util.IvyFile;
-import jext.sourcecode.project.util.BaseModule;
 import jext.util.FileUtils;
 
 import java.io.File;
