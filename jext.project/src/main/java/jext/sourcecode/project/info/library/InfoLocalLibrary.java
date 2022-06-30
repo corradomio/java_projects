@@ -1,6 +1,7 @@
 package jext.sourcecode.project.info.library;
 
 import jext.name.VersionName;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
@@ -24,6 +25,11 @@ public class InfoLocalLibrary extends InfoLibrary {
         String version = MapUtils.get(info,"version");
         // this.name = PathName.of(MapUtils.get(info,"fullname"));
         setNameWithId(new VersionName(fullname, version));
+    }
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.VALID;
     }
 
 }

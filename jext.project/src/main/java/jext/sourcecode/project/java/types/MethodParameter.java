@@ -6,7 +6,6 @@ import jext.sourcecode.project.DeclType;
 import jext.sourcecode.project.Method;
 import jext.sourcecode.project.Parameter;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.java.types.ReferencedType;
 
 public class MethodParameter extends NamedObject implements Parameter {
 

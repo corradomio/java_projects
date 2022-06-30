@@ -31,6 +31,10 @@ public interface Library extends IdNamed {
     /** Library type */
     LibraryType getLibraryType();
 
+    /** Library status */
+    LibraryStatus getLibraryStatus();
+
+    /** Programming language where the library can be used */
     String getLanguage();
 
     /** File path where the library is saved */

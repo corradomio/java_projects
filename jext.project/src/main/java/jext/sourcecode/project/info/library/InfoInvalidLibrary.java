@@ -1,6 +1,7 @@
 package jext.sourcecode.project.info.library;
 
 import jext.name.PathName;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
@@ -19,4 +20,10 @@ public class InfoInvalidLibrary extends InfoLibrary {
         super(project, LibraryType.INVALID, info);
         setNameWithId(PathName.of(MapUtils.get(info,"fullname")));
     }
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.NOTEXISTENT;
+    }
+
 }

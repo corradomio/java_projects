@@ -3,13 +3,12 @@ package jext.sourcecode.project.python.libraries;
 import jext.name.Name;
 import jext.name.NamedObject;
 import jext.name.PathName;
-import jext.sourcecode.project.python.PythonConstants;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.none.NoneProject;
+import jext.sourcecode.project.python.PythonConstants;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -58,6 +57,11 @@ public class PythonLibrary extends NamedObject implements Library {
     @Override
     public LibraryType getLibraryType() {
         return libraryType;
+    }
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.VALID;
     }
 
     @Override

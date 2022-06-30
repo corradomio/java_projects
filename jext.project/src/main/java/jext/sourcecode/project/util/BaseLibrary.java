@@ -4,6 +4,7 @@ import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.NamedObject;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
@@ -80,6 +81,11 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     @Override
     public LibraryType getLibraryType() {
         return libraryType;
+    }
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.VALID;
     }
 
     @Override

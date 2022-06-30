@@ -2,6 +2,7 @@ package jext.sourcecode.project.none;
 
 import jext.name.Name;
 import jext.name.PathName;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -26,6 +27,11 @@ public class InvalidLibrary extends BaseLibrary {
     @Override
     public boolean isValid() {
         return false;
+    }
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.NOTEXISTENT;
     }
 
     @Override

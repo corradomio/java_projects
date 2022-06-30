@@ -9,6 +9,7 @@ import jext.maven.MavenPom;
 import jext.maven.Version;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -51,6 +52,37 @@ public class MavenLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+
+        if (!isValid())
+            return LibraryStatus.NOTEXISTENT;
+
+        Version currentVersion = Version.of(getVersion());
+        Version latestVersion = Version.of(md.getLatestVersion(this.coords));
+        // the latest version does't exists
+        if (latestVersion.isEmpty() && !currentVersion.isEmpty())
+            return LibraryStatus.LATEST_VERSION_NOT_AVAILABLE;
+        // current version and latest version are empty
+        if (latestVersion.isEmpty() && currentVersion.isEmpty())
+            return LibraryStatus.LATEST_VERSION_NOT_AVAILABLE;
+
+        // currentVersion & latestVersion are not empty
+        int cmp = currentVersion.compareTo(latestVersion);
+        if (cmp > 0)
+            return LibraryStatus.INCONSISTENT;
+        if (cmp == 0)
+            return LibraryStatus.VALID;
+
+        int dif = currentVersion.differOn(latestVersion);
+        if (dif > 0)
+            // they deffer on minor version number or lower
+            return LibraryStatus.UPGRADEABLE;
+        else
+            // they deffer on major version number
+            return LibraryStatus.OBSOLETE;
+    }
 
     @Override
     public String getLanguage() {

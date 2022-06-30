@@ -4,6 +4,7 @@ import jext.io.file.FilePatterns;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.java.JavaBaseProject;
@@ -358,7 +359,7 @@ public class GradleProject extends JavaBaseProject {
         if (!depsCollector.isGradleProject(moduleName))
             return Collections.emptySet();
 
-        MavenDownloader md = (MavenDownloader) getLibraryDownloader();
+        LibraryDownloader md = getLibraryDownloader();
 
         LibrarySet libraries = new LibrarySet();
         for (String configurationName : VALID_CONFIGURATIONS) {
@@ -368,7 +369,7 @@ public class GradleProject extends JavaBaseProject {
             moduleLibraries
                 .stream()
                 .map(MavenCoords::of)
-                .map(coords -> new MavenLibrary(coords, md, this))
+                .map(coords -> new MavenLibrary(coords, (MavenDownloader)md, this))
                 .forEach(libraries::add);
         }
 

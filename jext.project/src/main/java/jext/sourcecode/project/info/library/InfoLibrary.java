@@ -7,6 +7,7 @@ import jext.name.NamedObject;
 import jext.name.PathName;
 import jext.name.VersionName;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
@@ -91,6 +92,11 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     @Override
     public LibraryType getLibraryType() {
         return libraryType;
+    }
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.VALID;
     }
 
     @Override

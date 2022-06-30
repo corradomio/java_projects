@@ -2,6 +2,7 @@ package jext.sourcecode.project.java.libraries;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.java.JavaConstants;
 import jext.name.EmptyName;
 import jext.name.VersionName;
@@ -49,6 +50,11 @@ public class JarLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.LATEST_VERSION_NOT_AVAILABLE;
+    }
 
     @Override
     public String getLanguage() {

@@ -5,6 +5,7 @@ import jext.cache.CacheManager;
 import jext.name.Name;
 import jext.name.PathName;
 import jext.nio.file.FilteredFileVisitor;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -44,6 +45,11 @@ public abstract class DirectoryLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
     // Specific Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.VALID;
+    }
 
     @Override
     public boolean isValid() {

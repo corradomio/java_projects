@@ -24,8 +24,8 @@ public class ModulesInfo extends SourceInfo {
         sdmap.put(sourcePath, digest);
     }
 
-    public boolean hasValidVersion() {
-        return VERSION_NUMBER.equals(version);
-    }
+    // public boolean hasValidVersion() {
+    //     return VERSION_NUMBER.equals(version);
+    // }
 
 }

@@ -5,7 +5,6 @@ import jext.name.NamedObject;
 import jext.name.ObjectName;
 import jext.sourcecode.project.DeclType;
 import jext.sourcecode.project.TypeParam;
-import jext.sourcecode.project.java.types.DeclaredType;
 
 import java.util.ArrayList;
 import java.util.Collections;

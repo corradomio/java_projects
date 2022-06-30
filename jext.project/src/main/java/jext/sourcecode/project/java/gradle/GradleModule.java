@@ -5,6 +5,7 @@ import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.java.JavaBaseModule;
 import jext.sourcecode.project.java.gradle.collectors.DependenciesCollector;
@@ -212,7 +213,7 @@ public class GradleModule extends JavaBaseModule {
             dmods.addAll(collector.getProjects(configurationName));
         }
 
-        MavenDownloader md = (MavenDownloader) project.getLibraryDownloader();
+        LibraryDownloader md = project.getLibraryDownloader();
 
         List<MavenCoords> coords = dlibs.stream()
             .map(MavenCoords::of)
@@ -230,7 +231,7 @@ public class GradleModule extends JavaBaseModule {
         dcoords = coords
             .stream()
             .sorted()
-            .map(dcoords -> new MavenLibrary(dcoords, md, project))
+            .map(dcoords -> new MavenLibrary(dcoords, (MavenDownloader)md, project))
             .collect(Collectors.toList());
     }
 
