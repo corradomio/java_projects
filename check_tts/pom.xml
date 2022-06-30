@@ -1,0 +1,65 @@
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+        <modelVersion>4.0.0</modelVersion>
+    <groupId>org.example</groupId>
+    <artifactId>check_tts</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>check_tts</name>
+
+    <properties>
+
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    <repositories>
+        <repository>
+            <id>marytts-release</id>
+            <url>https://mvn.cit-ec.de/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>marytts-voices</id>
+            <url>https://mlt.jfrog.io/artifactory/mlt-mvn-releases-local</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>de.dfki.mary</groupId>
+            <artifactId>voice-cmu-slt-hsmm</artifactId>
+            <version>5.2.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.twmacinta</groupId>
+                    <artifactId>fast-md5</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>gov.nist.math</groupId>
+                    <artifactId>Jampack</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/marytts/marytts-common -->
+        <dependency>
+            <groupId>marytts</groupId>
+            <artifactId>marytts-common</artifactId>
+            <version>5.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/marytts-common-5.0.jar</systemPath>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/marytts/marytts-client -->
+        <dependency>
+            <groupId>marytts</groupId>
+            <artifactId>marytts-client</artifactId>
+            <version>5.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/marytts-client-5.0.jar</systemPath>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

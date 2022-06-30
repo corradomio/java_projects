@@ -19,7 +19,7 @@ public class CheckOdem {
             //"orientdb.odem"
             // "ant.odem"
             //"ant-only.odem"
-            "D:\\Projects\\jianyi\\clustering\\ant-1.6.0.odem"
+            "D:\\Projects\\jianyi\\label_propagation\\code4article\\data\\ant-1.6.5_dependencies.odem"
         ));
 
         VECSVExporter<String, DirectedEdge> exp = new VECSVExporter<>();
@@ -27,7 +27,7 @@ public class CheckOdem {
             //"orientdb.csv"
             // "ant.csv"
             // "ant-only.csv"
-            "ant-1.6.0.csv"
+            "D:\\Projects\\jianyi\\label_propagation\\code4article\\data\\ant-1.6.5.csv"
         ));
     }
 }

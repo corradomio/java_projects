@@ -91,8 +91,9 @@ public class Main {
 
     static void checkScanCSharp() throws IOException {
         File root = new File(
-            // "D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0-beta00016.src\\src"
-            "D:\\Projects\\csharp\\Apache-Lucene.Net-4.8.0-beta00016.src\\src"
+            // "D:\\Projects\\csharp\\Apache-Lucene.Net-4.8.0\\src"
+            // "D:\\Projects\\csharp\\PowerShell-7.2.5\\src"
+            "D:\\Projects\\csharp\\roslyn-4.2.0\\src"
         );
         Files.walkFileTree(root.toPath(), new SimpleFileVisitor<Path>(){
 
@@ -195,8 +196,8 @@ public class Main {
         // checkPython();
         // checkScala();
 
-        // checkScanCSharp();
-        checkScanAspectJ();
+        checkScanCSharp();
+        // checkScanAspectJ();
 
         logger.println("end");
     }
