@@ -1,20 +1,20 @@
 package jext.data.kv;
 
 import jext.data.kv.mapdb.MapDBStorageProvider;
-import jext.logging.Logger;
-import jext.util.PropertiesUtils;
-import jext.xml.XPathUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class KVStorageManager {
 
-    private static Logger logger = Logger.getLogger(KVStorageManager.class);
+    private static Logger logger = LogManager.getLogger(KVStorageManager.class);
 
     private static final KVStorageManager instance = new KVStorageManager();
 
@@ -87,7 +87,7 @@ public class KVStorageManager {
             return;
         }
 
-        logger.warnf("KS storage provider not defined. It will be used %s", DEFAULT_STORAGE_PROVIDER);
+        logger.warn("KS storage provider not defined. It will be used " + DEFAULT_STORAGE_PROVIDER);
 
         //throw new KVStorageException("Unable to configure KVStorageManager: no 'kvstorage4j.xml' found");
     }
@@ -96,10 +96,17 @@ public class KVStorageManager {
         String name = configurationsFile.getName();
         try {
             if (name.endsWith(".xml")) {
-                Element configuration = XPathUtils.parse(configurationsFile).getDocumentElement();
+                Element configuration = DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .parse(configurationsFile)
+                    .getDocumentElement();
                 configureUsing(configuration);
             } else if (name.endsWith(".properties")) {
-                Properties properties = PropertiesUtils.load(configurationsFile);
+                Properties properties = new Properties();
+                try(InputStream stream = new FileInputStream(configurationsFile)) {
+                    properties.load(stream);
+                }
                 configureUsing(properties);
             } else {
                 Properties properties = new Properties();
@@ -113,7 +120,11 @@ public class KVStorageManager {
 
     private void configureUsing(Element configuration) throws Exception {
         Properties properties = new Properties();
-        String providerClass = XPathUtils.getValue(configuration, "/configuration/provider/@value", DEFAULT_STORAGE_PROVIDER);
+        // String providerClass = XPathUtils.getValue(configuration, "/configuration/provider/@value", DEFAULT_STORAGE_PROVIDER);
+        String providerClass = ((Element)configuration.getElementsByTagName("provider").item(0))
+            .getAttribute("value");
+        if (providerClass.isEmpty())
+            providerClass = DEFAULT_STORAGE_PROVIDER;
         properties.setProperty(STORAGE_PROVIDER, providerClass);
         configureUsing(properties);
     }
