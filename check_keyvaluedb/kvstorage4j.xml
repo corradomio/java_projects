@@ -13,7 +13,8 @@
         cmap:      veloce
       -->
     <provider
-        value="jext.data.kv.whippetdb.WhippetDBStorageProvider"
+        value="jext.data.kv.unqlite.UnQLiteStorageProvider"
+        valueA="jext.data.kv.whippetdb.WhippetDBStorageProvider"
         value9="jext.data.kv.swaydb.SwayDBStorageProvider"
         value8="jext.data.kv.lmdbjava.LmdbjavaStorageProvider"
         value7="jext.data.kv.berkleydb.BerkleyDBStorageProvider"

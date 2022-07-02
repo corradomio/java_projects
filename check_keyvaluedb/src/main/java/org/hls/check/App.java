@@ -66,12 +66,12 @@ public class App {
 
     public static void main(String[] args) throws Exception {
 
-        System.out.println(String.class.isAssignableFrom(CharSequence.class));
-        System.out.println(CharSequence.class.isAssignableFrom(String.class));
+        // System.out.println(String.class.isAssignableFrom(CharSequence.class));
+        // System.out.println(CharSequence.class.isAssignableFrom(String.class));
 
         KVStorageManager.configure();
 
-        create();
+        // create();
         read();
     }
 

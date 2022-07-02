@@ -27,6 +27,10 @@ public class Main {
     //     HaloDB db;
     // }
 
+    static void checkUnQLite() {
+
+    }
+
     static void checkLmdn() {
         Dbi<ByteBuffer> dbi;
     }

@@ -35,6 +35,13 @@
             <version>3.11</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.12.1</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb (2020) -->
         <dependency>
             <groupId>org.mapdb</groupId>

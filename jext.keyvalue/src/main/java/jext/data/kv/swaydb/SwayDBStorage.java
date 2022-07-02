@@ -40,9 +40,9 @@ public class SwayDBStorage<K, V> extends AbstractStorage<K, V> {
 
     @Override
     public V put(K key, V value) {
-        Optional<V> old = pmap.get(key);
+        // Optional<V> old = pmap.get(key);
         pmap.put(key, value);
-        return old.orElse(null);
+        return null;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package jext.data.kv;
 
 public enum OpenMode {
-    DEFAULT,
+    DEFAULT,    // READ | WRITE
     READ,
-    WRITE
+    WRITE       // if it doesn't exists it is created
 }

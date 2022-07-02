@@ -7,6 +7,8 @@ public interface KVStorage<K, V> extends ConcurrentMap<K, V>, AutoCloseable {
 
     File getStorage();
 
+    void add(K key, V value);
+
     void close();
 
 }
