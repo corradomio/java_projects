@@ -152,7 +152,7 @@ public class FileUtils {
      */
     public static String getNameWithoutExt(File file) {
         String name = file.getName();
-        int pos = name.lastIndexOf(".");
+        int pos = name.lastIndexOf('.');
         if (pos != -1)
             name = name.substring(0, pos);
         return name;
@@ -163,7 +163,7 @@ public class FileUtils {
      */
     public static String getExtension(File file) {
         String name = file.getName();
-        int pos = name.lastIndexOf(".");
+        int pos = name.lastIndexOf('.');
         if (pos != -1)
             return name.substring(pos);
         return "";
@@ -336,7 +336,7 @@ public class FileUtils {
     }
 
     public static File addParentPath(File directory, String relativePath) {
-        int sep = relativePath.lastIndexOf("/");
+        int sep = relativePath.lastIndexOf('/');
         if (sep == -1)
             return directory;
 

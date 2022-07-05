@@ -32,6 +32,8 @@ public class ItemSet {
     // Private fields
     // ----------------------------------------------------------------------
 
+    public static final String NAME = "@name";
+
     private String relativeDir;
     private FilePatterns includes = new FilePatterns();
     private FilePatterns excludes = new FilePatterns();
@@ -64,7 +66,7 @@ public class ItemSet {
 
     private void configureFilename(Element elt) {
         relativeDir = "";
-        String pattern = XPathUtils.getValue(elt, "@name");
+        String pattern = XPathUtils.getValue(elt, NAME);
         addPattern(pattern, false);
     }
 
@@ -72,7 +74,7 @@ public class ItemSet {
         String inline;
         String[] patterns;
 
-        relativeDir = XPathUtils.getValue(elt, "@name", "");
+        relativeDir = XPathUtils.getValue(elt, NAME, "");
         if (".".equals(relativeDir))
             relativeDir = "";
 
@@ -87,13 +89,13 @@ public class ItemSet {
 
         XPathUtils.selectElements(elt, "include")
                 .forEach(incl -> {
-                    String pattern = XPathUtils.getValue(incl, "@name");
+                    String pattern = XPathUtils.getValue(incl, NAME);
                     addPattern(pattern, false);
                 });
 
         XPathUtils.selectElements(elt, "exclude")
                 .forEach(incl -> {
-                    String pattern = XPathUtils.getValue(incl, "@name");
+                    String pattern = XPathUtils.getValue(incl, NAME);
                     addPattern(pattern, true);
                 });
 

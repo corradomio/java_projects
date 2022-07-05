@@ -2,7 +2,6 @@ package jext.data.kv.whippetdb;
 
 import io.github.whippetdb.db.api.TypeIO;
 import io.github.whippetdb.db.api.types.BooleanIO;
-import io.github.whippetdb.db.api.types.ByteBufferIO;
 import io.github.whippetdb.db.api.types.BytesIO;
 import io.github.whippetdb.db.api.types.CharsIO;
 import io.github.whippetdb.db.api.types.IntIO;

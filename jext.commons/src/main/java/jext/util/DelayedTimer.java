@@ -43,7 +43,7 @@ public class DelayedTimer extends Thread {
         INSTANCE.deleteJob(callback);
     }
 
-    public void terminate() {
+    public static void terminate() {
         try {
             terminate = true;
             INSTANCE.join();

@@ -25,7 +25,7 @@ public class PathUtils {
         path = path.replace(BACK_SLASH, SLASH);
 
         // "/<letter>:/..."
-        if (path.startsWith("/") && path.indexOf(":") == 2)
+        if (path.startsWith("/") && path.indexOf(':') == 2)
             path = path.substring(1);
 
         // while(path.startsWith(SLASH)) path = path.substring(1);

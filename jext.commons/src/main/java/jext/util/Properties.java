@@ -79,7 +79,7 @@ public class Properties extends java.util.Properties {
         int s,e;
         while(value.contains("${")) {
             s = value.indexOf("${");
-            e = value.indexOf("}");
+            e = value.indexOf('}');
             if (e == -1) break;
 
             String name = value.substring(s+2, e);

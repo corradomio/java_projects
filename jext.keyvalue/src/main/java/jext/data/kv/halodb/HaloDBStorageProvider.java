@@ -4,7 +4,6 @@ import com.oath.halodb.HaloDB;
 import com.oath.halodb.HaloDBException;
 import com.oath.halodb.HaloDBOptions;
 import jext.data.kv.KVStorage;
-import jext.data.kv.KVStorageProvider;
 import jext.data.kv.OpenMode;
 import jext.data.kv.util.AbstractStorageProvider;
 

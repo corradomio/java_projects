@@ -8,7 +8,6 @@ import jext.data.kv.util.AbstractStorageProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
 
 public class WhippetDBStorageProvider extends AbstractStorageProvider {

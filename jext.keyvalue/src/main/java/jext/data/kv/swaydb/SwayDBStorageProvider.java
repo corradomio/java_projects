@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import static swaydb.java.serializers.Default.intSerializer;
-
 
 public class SwayDBStorageProvider extends AbstractStorageProvider {
 

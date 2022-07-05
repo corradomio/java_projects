@@ -23,7 +23,6 @@ public class SwayDBStorage<K, V> extends AbstractStorage<K, V> {
         pmap.close();
     }
 
-    @NotNull
     @Override
     public Set<K> keySet() {
         Set<K> keys = new HashSet<>();

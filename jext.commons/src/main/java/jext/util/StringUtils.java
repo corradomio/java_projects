@@ -182,7 +182,7 @@ public class StringUtils {
         String t = template;
         int pos = t.indexOf("${");
         while (pos != -1) {
-            int end = t.indexOf("}", pos);
+            int end = t.indexOf('}', pos);
             if (end == -1) {
                 logger.errorf(String.format("Missing a '}' in '%s'", template));
                 break;

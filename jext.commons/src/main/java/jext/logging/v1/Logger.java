@@ -1,6 +1,5 @@
 package jext.logging.v1;
 
-import jext.logging.ILogger;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;

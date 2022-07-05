@@ -1,9 +1,6 @@
 package org.hls.check;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
 import jext.data.kv.unqlite.UnQLiteDB;
-import jext.data.kv.unqlite.UnQLiteLibrary;
 
 import java.io.File;
 

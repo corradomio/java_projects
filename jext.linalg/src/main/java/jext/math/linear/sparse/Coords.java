@@ -210,7 +210,7 @@ public class Coords implements Iterable<Loc> {
         for (Loc l : this)
             u.add(l);
         for (Loc l : that)
-            if (-1 == this.find(l))
+            if (-1 == u.find(l))
                 u.add(l);
         return u;
     }

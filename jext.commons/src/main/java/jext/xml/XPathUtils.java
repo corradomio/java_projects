@@ -729,9 +729,9 @@ public class XPathUtils {
 
     // ename[...]
     private static String enameOf(String step) {
-        int pos = step.indexOf("[");
+        int pos = step.indexOf('[');
         if (pos == -1)
-            pos = step.indexOf("(");
+            pos = step.indexOf('(');
         return step.substring(0, pos);
     }
 

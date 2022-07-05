@@ -38,6 +38,12 @@
             <artifactId>objectbox-windows</artifactId>
             <version>3.2.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.couchbase.lite/couchbase-lite-java -->
+        <dependency>
+            <groupId>com.couchbase.lite</groupId>
+            <artifactId>couchbase-lite-java</artifactId>
+            <version>3.0.0</version>
+        </dependency>
 
     </dependencies>
     

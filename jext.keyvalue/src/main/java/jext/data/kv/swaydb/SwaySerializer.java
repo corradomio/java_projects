@@ -1,7 +1,6 @@
 package jext.data.kv.swaydb;
 
 import org.apache.commons.lang3.SerializationUtils;
-import scala.reflect.ClassTag;
 import swaydb.data.slice.Slice;
 import swaydb.java.serializers.Default;
 import swaydb.java.serializers.Serializer;

@@ -47,7 +47,7 @@ public class TestSparseVector extends Assertions {
         Vector v1 = Linalg.sparse(new float[]{ 2,0,2,0});
         Vector v2 = Linalg.sparse(new float[]{ 0,1,0,1});
         Vector r1 = v1.linear(1,0,v2);
-        assertEquals(v1, r1);
+        assertEquals(r1, v1);
         Vector r2 = v1.linear(0,1,v2);
         assertEquals(v2, r2);
     }

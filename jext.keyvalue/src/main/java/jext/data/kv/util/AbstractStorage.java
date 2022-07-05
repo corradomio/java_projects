@@ -51,10 +51,10 @@ public class AbstractStorage<K, V> extends AbstractMap<K, V> implements KVStorag
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void add(K key, V value) {
-        put(key, value);
-    }
+    // @Override
+    // public void add(K key, V value) {
+    //     put(key, value);
+    // }
 
     @Override
     public V putIfAbsent(@NotNull K key, V value) {

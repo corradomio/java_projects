@@ -1,6 +1,5 @@
 package jext.logging.v2;
 
-import jext.logging.ILogger;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;

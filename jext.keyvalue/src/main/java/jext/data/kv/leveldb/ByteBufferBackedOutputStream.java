@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 class ByteBufferBackedOutputStream extends OutputStream {
     protected final ByteBuffer _b;
 
-    public ByteBufferBackedOutputStream(ByteBuffer buf) {
+    ByteBufferBackedOutputStream(ByteBuffer buf) {
         this._b = buf;
     }
 

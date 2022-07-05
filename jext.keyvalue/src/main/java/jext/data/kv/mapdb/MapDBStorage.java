@@ -1,12 +1,10 @@
 package jext.data.kv.mapdb;
 
-import jext.data.kv.KVStorage;
 import jext.data.kv.util.AbstractStorage;
 import org.jetbrains.annotations.NotNull;
 import org.mapdb.DB;
 
 import java.io.File;
-import java.util.AbstractMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 

@@ -2,16 +2,12 @@ package jext.data.kv.paldb;
 
 import com.linkedin.paldb.api.StoreReader;
 import com.linkedin.paldb.api.StoreWriter;
-import jext.data.kv.KVStorage;
 import jext.data.kv.util.AbstractStorage;
 import org.jetbrains.annotations.NotNull;
-import org.mapdb.DB;
 
 import java.io.File;
-import java.util.AbstractMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 public class PalDBStorage<K, V> extends AbstractStorage<K, V> {
 
@@ -28,7 +24,6 @@ public class PalDBStorage<K, V> extends AbstractStorage<K, V> {
         this.writer = writer;
     }
 
-    @NotNull
     @Override
     public Set<K> keySet() {
         Set<K> kset = new HashSet<>();
