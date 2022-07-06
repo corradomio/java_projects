@@ -60,7 +60,7 @@ public class LogDigester {
         private Pattern pattern;
         private Rule consumer;
 
-        RuleMatcher(String regexp, Rule consumer) {
+        public RuleMatcher(String regexp, Rule consumer) {
             this.pattern = Pattern.compile(regexp);
             this.consumer = consumer;
         }

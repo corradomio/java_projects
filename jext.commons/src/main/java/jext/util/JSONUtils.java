@@ -22,10 +22,15 @@ public class JSONUtils {
         return parse(jsonFile, objectType);
     }
 
-    public static <T> void save(File jsonFile, T item) throws IOException {
-        ObjectMapper mapper = newObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.writeValue(jsonFile, item);
+    public static <T> void save(File jsonFile, T item) {
+        try {
+            ObjectMapper mapper = newObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            mapper.writeValue(jsonFile, item);
+        }
+        catch (IOException e) {
+            logger.errorf("Unable to write file %s: %s", jsonFile, e);
+        }
     }
 
     public static <T> void save(Writer writer, T item) throws IOException {

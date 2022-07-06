@@ -32,6 +32,7 @@ public class Timing {
 
         if (delta > mindelta) {
             logger.warnf("[%s.%s] ... partial in %d ms", header, what, delta);
+            System.out.printf("[%s.%s] ... partial in %d ms\n", header, what, delta);
         }
 
         last = current;
@@ -45,6 +46,7 @@ public class Timing {
         long delta = System.currentTimeMillis() - start;
         if (delta > mindelta) {
             logger.warnf("[%s] done in %d ms", header, delta);
+            System.out.printf("[%s] done in %d ms\n", header, delta);
         }
     }
 }
