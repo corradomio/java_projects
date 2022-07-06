@@ -81,7 +81,12 @@ public class XMLConfiguration implements HierarchicalConfiguration {
                 root = this.doc.getDocumentElement();
                 timestamp = 0;
             }
-            properties = XPathUtils.getProperties(root);
+            Properties propsRoot = XPathUtils.getProperties(root, ".");
+            Properties propsConf = XPathUtils.getProperties(root, "properties");
+
+            properties = new Properties();
+            properties.putAll(propsRoot);
+            properties.putAll(propsConf);
             updated = false;
         } catch (ParserConfigurationException | SAXException | IOException e) {
             logger.errorf("Unable to parse %s", configurationFile);

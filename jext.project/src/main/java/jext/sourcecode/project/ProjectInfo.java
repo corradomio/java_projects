@@ -23,7 +23,7 @@ public class ProjectInfo extends LinkedHashMap<String, Object> {
         return VERSION_NUMBER.equals(get(VERSION));
     }
 
-    public void save (File jsonFile) throws IOException {
+    public void save (File jsonFile) {
         JSONUtils.save(jsonFile, this);
     }
 

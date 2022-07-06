@@ -22,6 +22,7 @@ public interface LibraryFinder {
 
     Library getLibrary(MavenCoords coords);
 
+    String getLatestVersion(String libraryName);
     String getLatestVersion(MavenCoords coords);
 
 }

@@ -92,8 +92,13 @@ public class CSharpLibraryFinder implements LibraryFinder {
     }
 
     @Override
+    public String getLatestVersion(String libraryName) {
+        return "";
+    }
+
+    @Override
     public String getLatestVersion(MavenCoords coords) {
-        throw new UnsupportedOperationException();
+        return "";
     }
 
     // ----------------------------------------------------------------------
@@ -136,10 +141,9 @@ public class CSharpLibraryFinder implements LibraryFinder {
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
-        // return new CSharpRuntimeLibrary(libraryName, "0.0", new File("."));
         Library rtLibrary = runtimeLibraries.get(libraryName);
         if (rtLibrary == null)
-            throw new ProjectException(String.format("No runtime library with name %s for %s language", libraryName, getLanguage()));
+            throw new ProjectException(String.format("No runtime library with name %s for C# language", libraryName));
         return rtLibrary;
     }
 

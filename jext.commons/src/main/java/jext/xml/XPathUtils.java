@@ -349,7 +349,6 @@ public class XPathUtils {
     //
 
     public static Properties getProperties(Element elt, String xpath) {
-
         return getProperties((Element)selectNode(elt, xpath));
     }
 

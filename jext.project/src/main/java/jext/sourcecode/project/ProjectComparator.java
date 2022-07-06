@@ -334,7 +334,7 @@ public class ProjectComparator {
     // IO
     // ----------------------------------------------------------------------
 
-    public void save(File jsonFile) throws IOException {
+    public void save(File jsonFile) {
         JSONUtils.save(jsonFile, this);
     }
 

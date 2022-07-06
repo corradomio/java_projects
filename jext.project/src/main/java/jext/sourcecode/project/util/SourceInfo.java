@@ -10,6 +10,7 @@ public class SourceInfo {
     protected static final String VERSION_NUMBER = "1.1";
     public String version;
 
+    public long modules;
     public long count;
     public long bytes;
     public long totalLines;
@@ -20,16 +21,6 @@ public class SourceInfo {
         version = VERSION_NUMBER;
     }
 
-    // public Map<String, Object> getCounts() {
-    //     return MapUtils.asMap(
-    //         "count", count,
-    //         "bytes", bytes,
-    //         "totalLines", totalLines,
-    //         "blankLines", blankLines,
-    //         "codeLines", codeLines
-    //     );
-    // }
-
     // executed in parallel!
     public synchronized void add(SourceInfo info) {
         count += info.count;
@@ -39,16 +30,12 @@ public class SourceInfo {
         codeLines += info.codeLines;
     }
 
-    public void save(File jsonFile) throws IOException {
+    public void save(File jsonFile) {
         JSONUtils.save(jsonFile, this);
     }
 
     public static SourceInfo load(File jsonFile) throws IOException {
         return JSONUtils.load(jsonFile, SourceInfo.class);
-    }
-
-    public boolean hasValidVersion() {
-        return VERSION_NUMBER.equals(version);
     }
 
 }

@@ -1,6 +1,7 @@
 package jext.sourcecode.project.csharp.libraries;
 
 import jext.name.PathName;
+import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.csharp.CSharpConstants;
 import jext.name.Name;
 import jext.sourcecode.project.LibraryType;
@@ -55,6 +56,11 @@ public class CSharpRuntimeLibrary extends BaseLibrary {
     @Override
     public boolean isValid() {
         return libraryFile.exists();
+    }
+
+    @Override
+    public LibraryStatus getLibraryStatus() {
+        return LibraryStatus.VALID;
     }
 
     @Override

@@ -7,6 +7,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.java.libraries.JDKLibrary;
 import jext.sourcecode.project.java.maven.MavenLibrary;
 import jext.util.StringUtils;
@@ -174,27 +175,10 @@ public class JavaLibraryFinder implements LibraryFinder {
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
-        return runtimeLibraries.get(libraryName);
-
-        // synchronized(namedLibraries) {
-        //
-        //     // library not defined
-        //     if (!namedLibraries.containsKey(libraryName)) {
-        //         logger.errorf("Library %s not defined", libraryName);
-        //         return null;
-        //     }
-        //
-        //     // library already registered
-        //     File libraryPath = namedLibraries.get(libraryName);
-        //     if (runtimeLibraries.containsKey(libraryPath))
-        //         return runtimeLibraries.get(libraryPath);
-        //
-        //     // register the library
-        //     Library rtLibrary = new JDKLibrary(libraryName, libraryPath, project);
-        //     runtimeLibraries.put(libraryPath, rtLibrary);
-        //
-        //     return rtLibrary;
-        // }
+        Library rtLibrary = runtimeLibraries.get(libraryName);
+        if (rtLibrary == null)
+            throw new ProjectException(String.format("No runtime library with name %s for Java language", libraryName));
+        return rtLibrary;
     }
 
     @Override
@@ -219,11 +203,13 @@ public class JavaLibraryFinder implements LibraryFinder {
     }
 
     @Override
+    public String getLatestVersion(String libraryName) {
+        MavenCoords coords = MavenCoords.of(libraryName);
+        return getLatestVersion(coords);
+    }
+
+    @Override
     public String getLatestVersion(MavenCoords coords) {
-        // if (!library.getLibraryType().equals(LibraryType.MAVEN))
-        //     return library.getVersion();
-        //
-        // MavenCoords coords = MavenCoords.of(library.getName().getFullName());
         return downloader.getLatestVersion(coords);
     }
 

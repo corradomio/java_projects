@@ -8,6 +8,7 @@ import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.python.libraries.PythonLibrary;
 import jext.sourcecode.project.python.libraries.PythonRTLibrary;
 import jext.util.FileUtils;
@@ -46,6 +47,7 @@ public class PythonLibraryFinder implements LibraryFinder {
         PythonLibraryFinder lfinder = new PythonLibraryFinder();
         lfinder.setProject(project);
         lfinder.setLibraries(libraries);
+        lfinder.setRuntimeLibraries(runtimeLibraries);
         lfinder.setDownloader(downloader.newDownloader());
         return lfinder;
     }
@@ -61,6 +63,10 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     private void setLibraries(Map<Name, Library> libraries) {
         this.libraries.putAll(libraries);
+    }
+
+    private void setRuntimeLibraries(Map<String, Library> libraries) {
+        this.runtimeLibraries.putAll(libraries);
     }
 
     private void setDownloader(LibraryDownloader downloader) {
@@ -94,14 +100,21 @@ public class PythonLibraryFinder implements LibraryFinder {
     }
 
     @Override
+    public String getLatestVersion(String libraryName) {
+        return null;
+    }
+
+    @Override
     public String getLatestVersion(MavenCoords coords) {
         return null;
     }
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
-        Name name = PathName.of(libraryName);
-        return libraries.get(name);
+        Library rtLibrary = runtimeLibraries.get(libraryName);
+        if (rtLibrary == null)
+            throw new ProjectException(String.format("No runtime library with name %s for Python language", libraryName));
+        return rtLibrary;
     }
 
     @Override

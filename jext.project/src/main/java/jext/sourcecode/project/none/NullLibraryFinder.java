@@ -5,6 +5,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectException;
 import jext.util.Parameters;
 
 import java.util.Collection;
@@ -113,13 +114,18 @@ public class NullLibraryFinder implements LibraryFinder {
     }
 
     @Override
+    public String getLatestVersion(String libraryName) {
+        return "";
+    }
+
+    @Override
     public String getLatestVersion(MavenCoords coords) {
-        return coords.getVersion().get();
+        return "";
     }
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

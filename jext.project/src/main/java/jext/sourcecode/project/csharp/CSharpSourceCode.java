@@ -4,6 +4,7 @@ import jext.antlr.v4.CSharpParsing;
 import jext.antlr.v4.ParseResult;
 import jext.antlr.v4.csharp.CSharpParser;
 import jext.antlr.v4.csharp.CSharpParserBaseListener;
+import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.ObjectName;
 import jext.sourcecode.project.Module;
@@ -19,6 +20,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public class CSharpSourceCode extends SourceCode {
+
+    private static Logger logger = Logger.getLogger(CSharpSourceCode.class);
 
     private Set<RefType> definedTypes;
     private Set<RefType> usedTypes;
@@ -63,6 +66,8 @@ public class CSharpSourceCode extends SourceCode {
     private void populateTypes(){
         definedTypes = new HashSet<>();
         usedTypes = new HashSet<>();
+
+        logger.debugft("... parse %s", file.getName());
 
         ParseResult<CSharpParser.Compilation_unitContext>
             result =  CSharpParsing.parse(file);

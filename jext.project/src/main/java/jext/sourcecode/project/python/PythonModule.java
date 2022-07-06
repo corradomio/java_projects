@@ -111,12 +111,12 @@ public class PythonModule extends BaseModule {
 
         Library runtimeLibrary = lfinder.getRuntimeLibrary(runtimeName);
         if (runtimeLibrary == null) {
-            logger.errorf("Python Library %s not available. Used the default %s", runtimeName, rtLibrary);
+            logger.errorf("Python library %s not available. Used the default %s", runtimeName, rtLibrary);
             runtimeLibrary = lfinder.getRuntimeLibrary(rtLibrary);
         }
 
         if (runtimeLibrary == null) {
-            logger.errorf("Python Library %s not available. Used an 'empty library'", runtimeName);
+            logger.errorf("Python library %s not available. Used an 'empty library'", runtimeName);
             runtimeLibrary = new InvalidLibrary(runtimeName, getProject());
         }
 

@@ -1,6 +1,7 @@
 package jext.sourcecode.project;
 
 import jext.logging.Logger;
+import jext.util.Assert;
 import jext.util.FileUtils;
 import jext.util.JSONUtils;
 import jext.util.PropertiesUtils;
@@ -15,24 +16,28 @@ public class ProjectRevisions implements Revisions {
     private final File splDirectory;
     private final File projectHome;
     private final String refId;
+    private final LibraryFinderManager libraryFinderManager;
     private int srcRevision, dstRevision;
 
     private static final String PROJECT_INFO_REV  = "%s-source-project-r%02d.json";
     private static final String PROJECT_INFO_NAME = "%s-source-project";
     private static final String DIFFERENCES_INFO  = "%s-source-diff-r%02d-r%02d.json";
     private static final String DIFFERENCES_INFO_NAME = "%s-source-diff-";
+    private static final String SOURCE_MODEL_PREFIX = "%s-source-";
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ProjectRevisions(String refId, File splDirectory) {
+    public ProjectRevisions(String refId, File splDirectory, LibraryFinderManager lfm) {
         if (StringUtils.isEmpty(refId))
             this.refId = "none";
         else
             this.refId = refId;
         this.splDirectory = splDirectory;
         this.projectHome = splDirectory.getParentFile();
+        this.libraryFinderManager = lfm;
+        Assert.verify(lfm != null, "LibraryFinderManager is null");
     }
 
     // ----------------------------------------------------------------------
@@ -84,7 +89,7 @@ public class ProjectRevisions implements Revisions {
         Project psrc = null, pdst = null;
         File srcRevisionInfo = getProjectInfoFile(srcRevision);
         File dstRevisionInfo = getProjectInfoFile(dstRevision);
-        LibraryFinderManager lfm = null;
+        LibraryFinderManager lfm = this.libraryFinderManager;
 
         if (srcRevisionInfo.exists())
             psrc = Projects.newProject(srcRevisionInfo, PropertiesUtils.empty(), lfm);
@@ -98,11 +103,7 @@ public class ProjectRevisions implements Revisions {
             FileUtils.delete(dstRevisionInfo);
         }
 
-        try {
             pcomp.save(differencesInfo);
-        } catch (IOException e) {
-            Logger.getLogger(getClass()).error(e, e);
-        }
 
         return pcomp;
     }
@@ -112,12 +113,12 @@ public class ProjectRevisions implements Revisions {
      * files
      */
     public void deleteAll() {
-        String projectInfoName = String.format(PROJECT_INFO_NAME, refId);
-        String differencesInfoName = String.format(DIFFERENCES_INFO_NAME, refId);
+        String namePrefix = String.format(SOURCE_MODEL_PREFIX, refId);
+        // String projectInfoName = String.format(PROJECT_INFO_NAME, refId);
+        // String differencesInfoName = String.format(DIFFERENCES_INFO_NAME, refId);
 
         FileUtils.asList(splDirectory.listFiles((dir, name) -> (
-                name.contains(projectInfoName) ||
-                name.contains(differencesInfoName))))
+                name.startsWith(namePrefix))))
             .forEach(FileUtils::delete);
     }
 

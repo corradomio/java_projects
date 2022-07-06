@@ -2,6 +2,7 @@ package jext.sourcecode.project.info.library;
 
 import jext.maven.MavenCoords;
 import jext.maven.Version;
+import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.info.InfoModule;
@@ -18,20 +19,12 @@ public class InfoMavenLibrary extends InfoLibrary {
     protected MavenCoords coords;
     protected JavaLibraryDownloader md;
 
-    // public InfoMavenLibrary(InfoModule module, Map<String, Object> info) {
-    //     super(module, LibraryType.MAVEN, info);
-    //     String coords = MapUtils.get(info,"fullname");
-    //     this.coords = MavenCoords.of(coords);
-    //     setNameWithId(new MavenName(coords));
-    //     md = (JavaLibraryDownloader) project.getLibraryDownloader();
-    // }
-
     public InfoMavenLibrary(InfoProject project, Map<String, Object> info) {
         super(project, LibraryType.MAVEN, info);
         String coords = MapUtils.get(info,"fullname");
         this.coords = MavenCoords.of(coords);
         setNameWithId(new MavenName(coords));
-        md = (JavaLibraryDownloader) project.getLibraryDownloader();
+        this.md = (JavaLibraryDownloader) project.getLibraryDownloader();
     }
 
     @Override

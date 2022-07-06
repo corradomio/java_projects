@@ -37,7 +37,6 @@ public class DefaultLibraryFinderManager implements LibraryFinderManager {
     // ----------------------------------------------------------------------
 
     private DefaultLibraryFinderManager() {
-        register(new PythonLibraryFinder());
         register(new JavaLibraryFinder());
         register(new PythonLibraryFinder());
         register(new CSharpLibraryFinder());

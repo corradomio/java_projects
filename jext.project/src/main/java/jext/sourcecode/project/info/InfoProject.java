@@ -23,6 +23,7 @@ import jext.sourcecode.project.java.JavaConstants;
 import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.sourcecode.project.python.GuessRuntimeLibrary;
 import jext.sourcecode.project.util.ModulesImpl;
+import jext.sourcecode.project.util.SourceInfo;
 import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.FileUtils;
 import jext.util.JSONUtils;
@@ -358,13 +359,52 @@ public class InfoProject implements Project {
     }
 
     // ----------------------------------------------------------------------
-    // Extras
+    // Support for sourceInfo
     // ----------------------------------------------------------------------
 
-    // @Override
-    // public double getComplexity(double threshold) {
-    //     return 0;
-    // }
+    public void updateSourceInfo() {
+        SourceInfo sourceInfo = new SourceInfo();
+        if (!infoFile.exists())
+            return;
+
+        getModules().forEach(module -> {
+            sourceInfo.modules += 1;
+            module.getSources().forEach(source -> {
+                SourceInfo sinfo = source.getSourceInfo();
+                sourceInfo.add(sinfo);
+            });
+        });
+
+        File baseDirectory = this.infoFile.getParentFile();
+        String sourceInfoName = String.format("%s-source-source-info.json", getId());
+        File sourceInfoFile = new File(baseDirectory, sourceInfoName);
+
+        JSONUtils.save(sourceInfoFile, sourceInfo);
+    }
+
+    public SourceInfo getSourceInfo() {
+        if (!infoFile.exists())
+            return new SourceInfo();
+
+        File baseDirectory = this.infoFile.getParentFile();
+        String sourceInfoName = String.format("%s-source-source-info.json", getId());
+        File sourceInfoFile = new File(baseDirectory, sourceInfoName);
+
+        if (!sourceInfoFile.exists())
+            updateSourceInfo();
+
+        try {
+            return JSONUtils.load(sourceInfoFile, SourceInfo.class);
+        } catch (IOException e) {
+            Logger.getLogger(InfoProject.class).errorf("Unable to load info file %s: %s", sourceInfoFile, e);
+            return new SourceInfo();
+        }
+    }
+
+
+    // ----------------------------------------------------------------------
+    // Extras
+    // ----------------------------------------------------------------------
 
     @Override
     public void abort() {

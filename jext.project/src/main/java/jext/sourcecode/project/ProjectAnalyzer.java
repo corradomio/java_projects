@@ -1,5 +1,6 @@
 package jext.sourcecode.project;
 
+import jext.logging.Logger;
 import jext.sourcecode.project.util.ProjectUtils;
 import jext.util.FileUtils;
 import jext.util.MapUtils;
@@ -86,10 +87,25 @@ public class ProjectAnalyzer {
 
         ));
 
-        pinfo.put("modules", modules
+        List<Map<String, Object>> minfoList = modules
             .parallelStream()
             .map(this::analyzeModule)
-            .collect(Collectors.toMap(minfo -> minfo.get("fullname"), minfo -> minfo)));
+            .collect(Collectors.toList());
+
+        Map<String, Map<String, Object>> minfoMap = new HashMap<>();
+        minfoList.forEach(minfo -> {
+            String fullname = MapUtils.get(minfo, "fullname");
+            if (minfoMap.containsKey(fullname))
+                Logger.getLogger(ProjectAnalyzer.class).errorf("Duplicated module %s", fullname);
+
+            minfoMap.put(fullname, minfo);
+        });
+
+        // pinfo.put("modules", modules
+        //     .parallelStream()
+        //     .map(this::analyzeModule)
+        //     .collect(Collectors.toMap(minfo -> minfo.get("fullname"), minfo -> minfo)));
+        pinfo.put("modules", minfoMap);
 
         pinfo.put("libraries", usedLibraries
             .parallelStream()
