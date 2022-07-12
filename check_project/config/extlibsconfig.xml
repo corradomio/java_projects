@@ -3,6 +3,13 @@
     NOTE:   THIS file HAS PRIORITY on the configuration in 'splserver.xml'
   -->
 <configuration>
+    <properties>
+        <property name="java-home" value="D:/Java">long value</property>
+        <property name="android-home" value="D:/Android">long value</property>
+        <property name="python-home" value="D:/Python">long value</property>
+        <property name="dotnet-home" value="C:/Program Files/dotnet">long value</property>
+    </properties>
+
     <extlibsManager path=".">
 
         <language name="java">
@@ -24,20 +31,31 @@
                 <repository name="gradle-release" url="https://repo.gradle.org/gradle/libs-releases-local/" />
             </downloader>
 
-            <!-- OLD syntax -->
-            <path value="D:/Java/Jdk8.0"   name="jdk7,jdk1.7,jdk8,jdk1.8" />
-            <path value="D:/Java/Jdk11.0"  name="jdk9,jdk10,jdk11" />
-            <path value="D:/Java/Jdk17.0"  name="jdk12,jdk13,jdk14" />
-            <path value="D:/Java/Jdk17.0"  name="jdk15,jdk16,jdk17" />
-
             <!-- NEW syntax -->
-            <library name="jdk7,jdk1.7,jdk8,jdk1.8" path="D:/Java/Jdk8.0"/>
-            <library name="jdk9,jdk10,jdk11">
-                <path value="D:/Java/Jdk11.0"/>
+            <library name="jdk7,jdk1.7,jdk8,jdk1.8" path="${java-home}/jdk8.0">
+                <path value="${java-home}/jdk8.0"/>
+                <path value="${java-home}/Jdk8"/>
             </library>
-            <library name="jdk12,jdk13,jdk14" path="D:/Java/Jdk17.0"/>
-            <library name="jdk15,jdk16,jdk17" path="D:/Java/Jdk17.0"/>
+            <library name="jdk9,jdk10,jdk11">
+                <path value="${java-home}/Jdk11.0"/>
+                <path value="${java-home}/Jdk11"/>
+            </library>
+            <library name="jdk12,jdk13,jdk14" path="${java-home}/Jdk17.0">
+                <path value="${java-home}/Jdk11.0"/>
+                <path value="${java-home}/Jdk11"/>
+            </library>
+            <library name="jdk15,jdk16,jdk17" path="${java-home}/Jdk17.0">
+                <path value="${java-home}/Jdk11.0"/>
+                <path value="${java-home}/Jdk11"/>
+            </library>
 
+            <!-- OLD syntax -->
+            <!--
+            <path value="${java-home}/Jdk8.0"   name="jdk7,jdk1.7,jdk8,jdk1.8" />
+            <path value="${java-home}/Jdk11.0"  name="jdk9,jdk10,jdk11" />
+            <path value="${java-home}/Jdk17.0"  name="jdk12,jdk13,jdk14" />
+            <path value="${java-home}/Jdk17.0"  name="jdk15,jdk16,jdk17" />
+            -->
         </language>
 
         <language name="android">
@@ -84,8 +102,7 @@
                 Android 11      11.0            30
               -->
             <path value="WEB-INF/extlibs/java/android/api30"
-                  version="9.0"
-                  name="marshmallow,lollipop,adk5,adk4,adk3oreo,nougat,adk8,adk6,r,q,pie,adk10,adk9"
+                  name="marshmallow,lollipop,adk5,adk4,adk3oreo,nougart,adk8,adk6,r,q,pie,adk10,adk9"
             />
         </language>
 
@@ -99,7 +116,7 @@
                 <repository name="pypi" url="https://pypi.org/"/>
             </downloader>
 
-            <path value="D:/Python/Anaconda3-2021.11" name="py38,3.8" version="3.8"/>
+            <path value="${python-home}/anaconda3-2022.05" name="py38,3.8"/>
         </language>
 
         <language name="csharp">
@@ -112,10 +129,10 @@
             </downloader>
 
             <!-- NEW syntax, to supports MULTIPLE paths -->
-            <library name="6.0,net6.0,.NET Core 6" version="6.0">
-                <path value="C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.5/ref/net6.0"/>
-                <path value="C:/Program Files/dotnet/packs/Microsoft.WindowsDesktop.App.Ref/6.0.5/ref/net6.0"/>
-                <path value="C:/Program Files/dotnet/packs/Microsoft.AspNetCore.App.Ref/6.0.5/ref/net6.0"/>
+            <library name="6.0,net60,.NET Core 6">
+                <path value="${dotnet-home}/packs/Microsoft.NETCore.App.Ref/6.0.6/ref/net6.0"/>
+                <path value="${dotnet-home}/packs/Microsoft.WindowsDesktop.App.Ref/6.0.6/ref/net6.0"/>
+                <path value="${dotnet-home}/packs/Microsoft.AspNetCore.App.Ref/6.0.6/ref/net6.0"/>
             </library>
         </language>
 

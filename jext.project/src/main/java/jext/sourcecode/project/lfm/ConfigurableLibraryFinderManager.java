@@ -37,12 +37,16 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
     }
 
     public static ConfigurableLibraryFinderManager getManager(Configuration configuration) {
+        if (configuration == null)
+            throw new IllegalArgumentException("configuration is null");
         ConfigurableLibraryFinderManager lfm = new ConfigurableLibraryFinderManager();
         lfm.configure(configuration);
         return lfm;
     }
 
     private static Configuration getConfiguration(File configurationFile) {
+        if (!configurationFile.exists())
+            throw new IllegalArgumentException(String.format("File %s not found", configurationFile));
         XMLConfiguration configuration = new XMLConfiguration(configurationFile);
         return configuration.configurationAt("extlibsManager");
     }
@@ -109,7 +113,7 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
         // new configuration file
         configurationFile = FileUtils.toFile(configurationFile.getParentFile(), path);
 
-        if (!configurationFile.exists()) {
+        if (!configurationFile.exists() || !configurationFile.isFile()) {
             logger.errorf("Configuration file '%s' not existent.", FileUtils.getAbsolutePath(configurationFile));
             return;
         }

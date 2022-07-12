@@ -13,6 +13,7 @@ import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.java.libraries.JavaLibrary;
 import jext.sourcecode.project.java.types.ReferencedType;
 import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
@@ -23,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MavenLibrary extends BaseLibrary {
+public class MavenLibrary extends JavaLibrary {
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -47,6 +48,7 @@ public class MavenLibrary extends BaseLibrary {
         this.coords = coords;
         this.md = md;
         this.libraryFile = md.getPomFile(coords);
+        this.libraryType = LibraryType.MAVEN;
     }
 
     // ----------------------------------------------------------------------
@@ -85,11 +87,6 @@ public class MavenLibrary extends BaseLibrary {
     }
 
     @Override
-    public String getLanguage() {
-        return JavaConstants.JAVA;
-    }
-
-    @Override
     public boolean isValid() {
         return getFile().exists()
             && getFiles().stream().allMatch(File::exists);
@@ -125,11 +122,6 @@ public class MavenLibrary extends BaseLibrary {
             undefinedTypes.add(typeName);
             return false;
         }
-    }
-
-    @Override
-    public LibraryType getLibraryType() {
-        return LibraryType.MAVEN;
     }
 
     @Override

@@ -10,7 +10,7 @@ import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.java.JavaBaseProject;
 import jext.sourcecode.project.java.gradle.collectors.AllDepsCollector;
 import jext.sourcecode.project.java.maven.MavenLibrary;
-import jext.sourcecode.project.util.LibrarySet;
+import jext.sourcecode.project.util.LibrarySetImpl;
 import jext.sourcecode.project.util.ModulesImpl;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;
@@ -361,7 +361,7 @@ public class GradleProject extends JavaBaseProject {
 
         LibraryDownloader md = getLibraryDownloader();
 
-        LibrarySet libraries = new LibrarySet();
+        LibrarySetImpl libraries = new LibrarySetImpl();
         for (String configurationName : VALID_CONFIGURATIONS) {
 
             Set<String> moduleLibraries = depsCollector.getMavenLibraries(moduleName, configurationName);

@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class JarLibrary extends BaseLibrary {
+public class JarLibrary extends JavaLibrary {
 
     private String version;
 

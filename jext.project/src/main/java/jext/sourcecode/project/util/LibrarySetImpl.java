@@ -5,6 +5,7 @@ import jext.maven.MavenCoords;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
+import jext.sourcecode.project.LibrarySet;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.java.maven.MavenLibrary;
 import jext.util.HashSet;
@@ -24,9 +25,9 @@ import java.util.stream.Collectors;
 /**
  * Class used to collect all libraries but to keep ONLY the latest version
  */
-public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.project.LibrarySet {
+public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
 
-    private static Logger logger = Logger.getLogger(LibrarySet.class);
+    private static Logger logger = Logger.getLogger(LibrarySetImpl.class);
 
     private Set<Library> localLibraries = new TreeSet<>();
 
@@ -40,7 +41,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     //
     // ----------------------------------------------------------------------
 
-    public LibrarySet() {
+    public LibrarySetImpl() {
 
     }
 

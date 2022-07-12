@@ -56,7 +56,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     protected ModulesImpl modules;
     protected SourcesImpl sources;
-    protected jext.sourcecode.project.util.LibrarySet libraries;
+    protected LibrarySetImpl libraries;
 
     protected LibraryFinder lfinder;
     protected LibraryDownloader md;
@@ -305,7 +305,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         // 2) maven libraries buf for them it keep ONLY the latest version
         // 3) runtime libraries
 
-        jext.sourcecode.project.util.LibrarySet libraries = new jext.sourcecode.project.util.LibrarySet();
+        LibrarySetImpl libraries = new LibrarySetImpl();
 
         // Note: the runtime libraries are added because otherwise javaassist
         // is not able to resolve the symbols
@@ -327,7 +327,7 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     @Override
     public Set<Library> getLibraries(Module module) {
-        jext.sourcecode.project.util.LibrarySet projectLibraries = (jext.sourcecode.project.util.LibrarySet) getLibraries();
+        LibrarySetImpl projectLibraries = (LibrarySetImpl) getLibraries();
         return projectLibraries.resolveAll(module.getDeclaredLibraries());
     }
 

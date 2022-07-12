@@ -1,19 +1,24 @@
 package jext.sourcecode.project.csharp;
 
+import jext.name.Name;
+import jext.name.PathName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
+import jext.sourcecode.project.csharp.libraries.CSharpLocalLibrary;
 import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
+import jext.util.FileUtils;
 import jext.util.PathUtils;
 import jext.util.SetUtils;
 import jext.util.concurrent.ConcurrentHashSet;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -21,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +35,8 @@ public class CSharpModule extends BaseModule {
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
+
+    private static final String EXT_DLL = ".dll";
 
     private List<Module> dependencies;
     private Set<RefType> usedTypes;
@@ -148,7 +154,50 @@ public class CSharpModule extends BaseModule {
 
     @Override
     public Set<Library> getDeclaredLibraries() {
-        return Collections.emptySet();
+        if (libraries != null)
+            return libraries;
+
+        libraries = new HashSet<>();
+
+        collectLocalLibraries(libraries);
+
+        return libraries;
+    }
+
+    private void collectLocalLibraries(Set<Library> collectedLibraries) {
+        // check if there exists '[moduleHome]/lib'
+        // If it is present, collect all .dll as a single 'local library'
+        File libDirectory = new File(getModuleHome(), "lib");
+        if (!libDirectory.isDirectory())
+            return;
+
+        // scan for 'lib/*.dll'
+        List<File> dllFiles = FileUtils.asList(libDirectory.listFiles((dir, name) -> name.endsWith(EXT_DLL)));
+        if (!dllFiles.isEmpty()) {
+            Name libraryName = PathName.of(getName(), "lib");
+            Library localLibrary = new CSharpLocalLibrary(libraryName, dllFiles);
+            collectedLibraries.add(localLibrary);
+        }
+
+        // scan for subdirectories
+        List<File> subdirs = FileUtils.asList(libDirectory.listFiles(File::isDirectory));
+        subdirs.forEach(subdir -> {
+            // scan for .dll
+            List<File> libFiles = FileUtils.listFiles(subdir, new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    return pathname.getName().endsWith(EXT_DLL);
+                }
+            });
+
+            if (libFiles.isEmpty())
+                return;
+
+            Name libraryName = PathName.of(getName(), subdir.getName());
+            Library localLibrary = new CSharpLocalLibrary(libraryName, dllFiles);
+            collectedLibraries.add(localLibrary);
+        });
+
     }
 
     // ----------------------------------------------------------------------

@@ -15,16 +15,15 @@ import jext.sourcecode.project.Resource;
 import jext.sourcecode.project.Resources;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
-import jext.sourcecode.project.Type;
 import jext.sourcecode.project.java.ant.util.IvyFile;
 import jext.sourcecode.project.java.eclipse.util.ClasspathFile;
+import jext.sourcecode.project.java.libraries.ArchiveUtils;
 import jext.sourcecode.project.java.maven.MavenLibrary;
 import jext.sourcecode.project.java.util.JavaSourcesImpl;
+import jext.sourcecode.project.none.InvalidLibrary;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.util.BaseProject;
 import jext.sourcecode.project.util.ResourcesImpl;
-import jext.sourcecode.project.java.libraries.ArchiveUtils;
-import jext.sourcecode.project.none.InvalidLibrary;
 import jext.util.FileUtils;
 import jext.util.SetUtils;
 import jext.util.StringUtils;
@@ -245,17 +244,13 @@ public class JavaBaseModule extends BaseModule {
 
         libraries = new HashSet<>();
 
-        collectLibraries(libraries);
+        collectLocalLibraries(libraries);
+        collectEclipseLibraries(libraries);
+        collectIvyLibraries(libraries);
+        collectMavenLibraries(libraries);
+        collectGradleLibraries(libraries);
 
         return libraries;
-    }
-
-    protected void collectLibraries(Set<Library> collectedLibraries) {
-        collectLocalLibraries(collectedLibraries);
-        collectEclipseLibraries(collectedLibraries);
-        collectIvyLibraries(collectedLibraries);
-        collectMavenLibraries(collectedLibraries);
-        collectGradleLibraries(collectedLibraries);
     }
 
     protected void collectLocalLibraries(Set<Library> collectedLibraries) {

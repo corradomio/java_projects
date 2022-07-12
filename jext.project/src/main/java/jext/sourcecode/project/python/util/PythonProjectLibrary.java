@@ -22,6 +22,7 @@ public class PythonProjectLibrary extends BaseLibrary {
         super(project.getName(), project);
         this.libraryFile = project.getProjectHome();
         this.libraryType = LibraryType.LOCAL;
+        this.language = PythonConstants.PYTHON;
     }
 
     // ----------------------------------------------------------------------
@@ -31,11 +32,6 @@ public class PythonProjectLibrary extends BaseLibrary {
     @Override
     public boolean isValid() {
         return true;
-    }
-
-    @Override
-    public String getLanguage() {
-        return PythonConstants.PYTHON;
     }
 
     @Override

@@ -1,17 +1,17 @@
 package jext.sourcecode.project.java.libraries;
 
-import jext.sourcecode.project.java.AndroidConstants;
-import jext.sourcecode.project.java.JavaConstants;
 import jext.name.Name;
-import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.java.AndroidConstants;
 import jext.sourcecode.project.java.types.ReferencedType;
 
 import java.io.File;
 import java.util.Set;
 
-public class JDKLibrary extends DirectoryLibrary implements Library, JavaConstants, AndroidConstants {
+import static jext.sourcecode.project.java.JavaConstants.PRIMITIVE_TYPES;
+
+public class JDKLibrary extends DirectoryLibrary {
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -34,11 +34,6 @@ public class JDKLibrary extends DirectoryLibrary implements Library, JavaConstan
     }
 
     @Override
-    public String getLanguage() {
-        return JavaConstants.JAVA;
-    }
-
-    @Override
     public String getVersion() {
         String name = getName().getName().toLowerCase();
         return getVersion(name);
@@ -51,7 +46,7 @@ public class JDKLibrary extends DirectoryLibrary implements Library, JavaConstan
         if (name.startsWith("adk"))
             return name.substring(3) + ".0.0";
         else
-            return ANDROID_VERSIONS.getOrDefault(name, "");
+            return AndroidConstants.ANDROID_VERSIONS.getOrDefault(name, "");
     }
 
     // ----------------------------------------------------------------------

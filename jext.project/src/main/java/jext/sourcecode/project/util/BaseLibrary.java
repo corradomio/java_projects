@@ -8,11 +8,13 @@ import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.RefType;
 import jext.util.FileUtils;
 import jext.util.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +31,7 @@ public abstract class BaseLibrary extends NamedObject implements Library {
 
     protected File libraryFile;
     protected LibraryType libraryType;
-    // protected Module module;
+    protected String language;
 
     protected Set<Name> definedTypes = new HashSet<>();
     protected Set<Name> undefinedTypes = new HashSet<>();
@@ -81,6 +83,11 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     @Override
     public LibraryType getLibraryType() {
         return libraryType;
+    }
+
+    @Override
+    public String getLanguage() {
+        return language;
     }
 
     @Override

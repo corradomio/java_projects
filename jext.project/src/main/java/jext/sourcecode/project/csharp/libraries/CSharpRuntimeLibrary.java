@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class CSharpRuntimeLibrary extends BaseLibrary {
+public class CSharpRuntimeLibrary extends CSharpLibrary {
 
     // ----------------------------------------------------------------------
     // Constants
@@ -66,11 +66,6 @@ public class CSharpRuntimeLibrary extends BaseLibrary {
     @Override
     public String getVersion() {
         return version;
-    }
-
-    @Override
-    public String getLanguage() {
-        return CSharpConstants.CSHARP;
     }
 
     @Override

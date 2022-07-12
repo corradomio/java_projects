@@ -30,6 +30,10 @@ public enum TypeRole {
 
     TYPE_PARAMETER, // is a type parameter (used in class|interface|enum definition)
 
+    // C#
+    STRUCT,
+    DELEGATE,
+
     // JavaParser types not supported (yet)
     //INTERSECTION,
     //UNION,

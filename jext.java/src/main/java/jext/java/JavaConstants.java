@@ -245,7 +245,7 @@ public interface JavaConstants {
         "java.lang.ThreadLocal",    // ThreadLocal<T>
     };
 
-    String[] JAVA_LANG_GENERICS_TWO = {
-
-    };
+    // String[] JAVA_LANG_GENERICS_TWO = {
+    //
+    // };
 }

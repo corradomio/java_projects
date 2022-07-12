@@ -196,38 +196,38 @@ public class JavaUtils implements JavaConstants {
         return !signature.contains("<") && !signature.contains("(");
     }
 
-    public static boolean isPlainMethodSignature(String signature) {
-        return !signature.contains("<");
-    }
+    // public static boolean isPlainMethodSignature(String signature) {
+    //     return !signature.contains("<");
+    // }
 
     // ----------------------------------------------------------------------
 
-    public static String toPlainMethodSignature(String signature) {
-        int state = 0;
-        int len = signature.length();
-        StringBuilder sb = new StringBuilder();
-        for (int i=0; i<len; ++i) {
-            char ch = signature.charAt(i);
-            if (ch == '<')
-                state += 1;
-            else if (ch == '>')
-                state -= 1;
-            else if (state == 0)
-                sb.append(ch);
-            else
-                continue;
-        }
-        return sb.toString();
-    }
+    // public static String toPlainMethodSignature(String signature) {
+    //     int state = 0;
+    //     int len = signature.length();
+    //     StringBuilder sb = new StringBuilder();
+    //     for (int i=0; i<len; ++i) {
+    //         char ch = signature.charAt(i);
+    //         if (ch == '<')
+    //             state += 1;
+    //         else if (ch == '>')
+    //             state -= 1;
+    //         else if (state == 0)
+    //             sb.append(ch);
+    //         else
+    //             continue;
+    //     }
+    //     return sb.toString();
+    // }
 
-    public static String toPlainMethodSignature(String methodName, int nParams) {
-        if (nParams == 0)
-            return methodName + "()";
-
-        StringBuilder sb = new StringBuilder(methodName).append("(").append(JAVA_LANG_OBJECT);
-        for (int i=1; i<nParams; ++i)
-            sb.append(", ").append(JAVA_LANG_OBJECT);
-        sb.append(")");
-        return sb.toString();
-    }
+    // public static String toPlainMethodSignature(String methodName, int nParams) {
+    //     if (nParams == 0)
+    //         return methodName + "()";
+    //
+    //     StringBuilder sb = new StringBuilder(methodName).append("(").append(JAVA_LANG_OBJECT);
+    //     for (int i=1; i<nParams; ++i)
+    //         sb.append(", ").append(JAVA_LANG_OBJECT);
+    //     sb.append(")");
+    //     return sb.toString();
+    // }
 }

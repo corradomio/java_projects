@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 public class PythonModule extends BaseModule {
@@ -124,7 +125,14 @@ public class PythonModule extends BaseModule {
     }
     @Override
     public Set<Library> getDeclaredLibraries() {
-        return Collections.emptySet();
+        if (libraries != null)
+            return libraries;
+
+        libraries = new HashSet<>();
+
+        // collectLocalLibraries(libraries);
+
+        return libraries;
     }
 
     // ----------------------------------------------------------------------
