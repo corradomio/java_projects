@@ -124,16 +124,16 @@ public class MavenLibrary extends JavaLibrary {
         }
     }
 
-    @Override
-    public String getDigest() {
-        File digestFile;
-        MavenPom pom = md.getPom(coords);
-        if (pom != null && pom.isPomPackaging())
-            digestFile = md.getPomFile(coords);
-        else
-            digestFile = md.getArtifact(coords);
-        return FileUtils.digest(digestFile);
-    }
+    // @Override
+    // public String getDigest() {
+    //     File digestFile;
+    //     MavenPom pom = md.getPom(coords);
+    //     if (pom != null && pom.isPomPackaging())
+    //         digestFile = md.getPomFile(coords);
+    //     else
+    //         digestFile = md.getArtifact(coords);
+    //     return FileUtils.digest(digestFile);
+    // }
 
     @Override
     public String getPath() {

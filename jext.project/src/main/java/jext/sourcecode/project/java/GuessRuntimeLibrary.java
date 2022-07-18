@@ -5,6 +5,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import org.gradle.internal.impldep.org.apache.commons.lang.StringUtils;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class GuessRuntimeLibrary {
@@ -26,22 +27,22 @@ public class GuessRuntimeLibrary {
 
     public static String guessRuntimeLibrary(Module module) {
 
-        String runtimeName;
+        Optional<String> runtimeName;
         GuessRuntimeLibrary grtl = new GuessRuntimeLibrary(module);
 
         runtimeName = grtl.checkConfiguration();
-        if (!StringUtils.isEmpty(runtimeName))
-            return runtimeName;
+        if (runtimeName.isPresent())
+            return runtimeName.get();
 
         runtimeName = grtl.checkAndroidProject();
-        if (!StringUtils.isEmpty(runtimeName))
-            return runtimeName;
+        if (runtimeName.isPresent())
+            return runtimeName.get();
 
         runtimeName = grtl.checkJavaProject();
-        if (!StringUtils.isEmpty(runtimeName))
-            return runtimeName;
-
-        return NO_RUNTIME_LIBRARY;
+        if (runtimeName.isPresent())
+            return runtimeName.get();
+        else
+            return NO_RUNTIME_LIBRARY;
     }
 
     // ----------------------------------------------------------------------
@@ -58,15 +59,15 @@ public class GuessRuntimeLibrary {
         this.module = module;
     }
 
-    private String checkConfiguration() {
+    private Optional<String> checkConfiguration() {
         Project project = module.getProject();
         String runtimeLibrary = module.getProperties().getProperty(Project.RUNTIME_LIBRARY, NO_RUNTIME_LIBRARY);
         if (StringUtils.isEmpty(runtimeLibrary))
             runtimeLibrary = project.getProperties().getProperty(Project.RUNTIME_LIBRARY, NO_RUNTIME_LIBRARY);
-        return runtimeLibrary;
+        return Optional.of(runtimeLibrary);
     }
 
-    private String checkAndroidProject() {
+    private Optional<String> checkAndroidProject() {
         int androidCount = 0;
         Set<RefType> usedTypes = module.getUsedTypes();
         for (RefType refType : usedTypes) {
@@ -76,12 +77,12 @@ public class GuessRuntimeLibrary {
         }
 
         if (androidCount > 0)
-            return DEFAULT_ANDROID_RUNTIME_LIBRARY;
+            return Optional.of(DEFAULT_ANDROID_RUNTIME_LIBRARY);
         else
-            return NO_RUNTIME_LIBRARY;
+            return Optional.empty();
     }
 
-    private String checkJavaProject() {
-        return NO_RUNTIME_LIBRARY;
+    private Optional<String> checkJavaProject() {
+        return Optional.empty();
     }
 }

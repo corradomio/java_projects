@@ -51,11 +51,18 @@ public class PythonModule extends BaseModule {
         try {
             Files.walkFileTree(moduleHome.toPath(), new FileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    if (pyproject.isExcluded(dir.toFile()))
+                public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
+                    File dir = path.toFile();
+
+                    if (!pyproject.isValidDir(moduleHome, dir))
                         return FileVisitResult.SKIP_SUBTREE;
                     else
                         return FileVisitResult.CONTINUE;
+
+                    // if (pyproject.isExcluded(dir.toFile()))
+                    //     return FileVisitResult.SKIP_SUBTREE;
+                    // else
+                    //     return FileVisitResult.CONTINUE;
                 }
 
                 @Override

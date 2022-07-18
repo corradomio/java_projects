@@ -1,5 +1,6 @@
 package jext.sourcecode.project.util;
 
+import jext.logging.Logger;
 import jext.name.Name;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Module;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class ModulesImpl extends ArrayList<Module> implements Modules {
+
+    private static final Logger logger = Logger.getLogger(Modules.class);
 
     private Map<String, Module> nameMap = new HashMap<>();
     private Map<String, Module> idMap   = new HashMap<>();
@@ -27,6 +30,16 @@ public class ModulesImpl extends ArrayList<Module> implements Modules {
     // ----------------------------------------------------------------------
 
     public boolean add(Module module) {
+        String fullname = module.getName().getFullName();
+        if (nameMap.containsKey(fullname)) {
+            // In C#, it is possible to have TWO o more ".csproj" files in
+            // the SAME directory.
+            // This is not a problem: we consider only ONE module
+
+            // logger.errorf("Duplicated module %s", fullname);
+            return false;
+        }
+
         nameMap.put(module.getName().getFullName(), module);
         nameMap.put(module.getId(), module);
         return super.add(module);

@@ -74,10 +74,10 @@ public class PythonLibrary extends NamedObject implements Library {
         return FileUtils.getAbsolutePath(libraryDirectory);
     }
 
-    @Override
-    public String getDigest() {
-        return null;
-    }
+    // @Override
+    // public String getDigest() {
+    //     return "0";
+    // }
 
     @Override
     public File getFile() {

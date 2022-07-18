@@ -202,7 +202,7 @@ public class ProjectAnalyzer {
             "name", l.getName().getName(),
             "fullname", l.getName().getFullName(),
             "id", l.getId(),
-            "digest", l.getDigest(),
+            // "digest", l.getDigest(),
             "libraryType", l.getLibraryType(),
             "language", l.getLanguage(),
             "version", l.getVersion(),

@@ -99,10 +99,10 @@ public abstract class InfoLibrary extends NamedObject implements Library {
         return LibraryStatus.VALID;
     }
 
-    @Override
-    public String getDigest() {
-        return MapUtils.getString(info, "digest");
-    }
+    // @Override
+    // public String getDigest() {
+    //     return MapUtils.getString(info, "digest");
+    // }
 
     @Override
     public String getPath() {

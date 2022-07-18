@@ -49,10 +49,10 @@ public class InvalidLibrary extends BaseLibrary {
         return null;
     }
 
-    @Override
-    public String getDigest() {
-        return "0";
-    }
+    // @Override
+    // public String getDigest() {
+    //     return "0";
+    // }
 
     @Override
     public List<File> getFiles() {

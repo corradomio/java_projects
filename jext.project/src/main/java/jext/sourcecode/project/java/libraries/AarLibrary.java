@@ -32,11 +32,11 @@ public class AarLibrary extends JarLibrary {
         return new File(aarFile.getParentFile(), name + ".jar");
     }
 
-    @Override
-    public String getDigest() {
-        extractClasses();
-        return super.getDigest();
-    }
+    // @Override
+    // public String getDigest() {
+    //     extractClasses();
+    //     return super.getDigest();
+    // }
 
     @Override
     public List<File> getFiles() {

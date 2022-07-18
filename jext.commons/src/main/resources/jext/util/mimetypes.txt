@@ -82,6 +82,7 @@
 .crt 	application/pkix-cert
 .crt 	application/x-x509-ca-cert
 .crt 	application/x-x509-user-cert
+.cs 	text/x-script.csharp
 .csh 	application/x-csh
 .csh 	text/x-script.csh
 .css 	application/x-pointplus

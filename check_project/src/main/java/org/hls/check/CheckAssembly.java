@@ -7,6 +7,11 @@ import java.io.File;
 public class CheckAssembly {
 
     public static void main(String[] args) {
+
+        System.out.println(DotNetAssemblyUtils.isAssembly(new File(
+            "D:\\Donet\\Windows\\.NET Core\\6.0.300\\sdk\\6.0.300\\Newtonsoft.Json.dll"
+        )));
+
         System.out.println(DotNetAssemblyUtils.isAssembly(new File(
             "D:\\C#\\.NET Core\\6.0.300\\shared\\Microsoft.NETCore.App\\6.0.5\\Microsoft.DiaSymReader.Native.amd64.dll"
         )));
@@ -14,5 +19,6 @@ public class CheckAssembly {
         System.out.println(DotNetAssemblyUtils.isAssembly(new File(
             "C:\\Program Files (x86)\\dotnet\\shared\\Microsoft.NETCore.App\\3.1.25\\System.dll"
         )));
+
     }
 }

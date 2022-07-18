@@ -95,10 +95,10 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return LibraryStatus.VALID;
     }
 
-    @Override
-    public String getDigest() {
-        return FileUtils.digest(libraryFile);
-    }
+    // @Override
+    // public String getDigest() {
+    //     return FileUtils.digest(libraryFile);
+    // }
 
     // ----------------------------------------------------------------------
     // Version

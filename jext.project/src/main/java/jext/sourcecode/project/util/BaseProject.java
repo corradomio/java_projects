@@ -175,10 +175,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     }
 
     private boolean hasRootModule() {
-        for(Module module : modules)
-            if (module.getName().getFullName().equals(ROOT_MODULE_NAME))
-                return true;
-        return false;
+        return this.modules.getModule() != null;
     }
 
     // ----------------------------------------------------------------------
@@ -230,29 +227,6 @@ public abstract class BaseProject extends NamedObject implements Project {
     }
 
     // ----------------------------------------------------------------------
-
-    // @Override
-    // public Module getModule(String nameOrId) {
-    //     if (nameOrId.isEmpty() || nameOrId.equals("0"))
-    //         nameOrId = ROOT_MODULE_NAME;
-    //
-    //     for (Module module : getModules()) {
-    //         if (module.getId().equals(nameOrId))
-    //             return module;
-    //         if (module.getRefId().equals(nameOrId))
-    //             return module;
-    //         if (module.getName().getFullName().equals(nameOrId))
-    //             return module;
-    //         if (module.getPath().equals(nameOrId))
-    //             return module;
-    //
-    //         // DANGEROUS
-    //         if (module.getName().getName().equals(nameOrId))
-    //             return module;
-    //     }
-    //
-    //     return null;
-    // }
 
     protected Module newModule(File moduleHome) {
         throw new UnsupportedOperationException();
@@ -364,13 +338,16 @@ public abstract class BaseProject extends NamedObject implements Project {
                 public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                     File dir = path.toFile();
 
-                    if (dir.equals(baseDirectory))
-                        return FileVisitResult.CONTINUE;
+                    // if (dir.equals(baseDirectory))
+                    //     return FileVisitResult.CONTINUE;
+                    //
+                    // if (fpExcludes.accept(baseDirectory, dir))
+                    //     return FileVisitResult.SKIP_SUBTREE;
+                    //
+                    // if (isModuleDir(dir))
+                    //     return FileVisitResult.SKIP_SUBTREE;
 
-                    if (fpExcludes.accept(baseDirectory, dir))
-                        return FileVisitResult.SKIP_SUBTREE;
-
-                    if (isModuleDir(dir))
+                    if (!isValidDir(baseDirectory, dir))
                         return FileVisitResult.SKIP_SUBTREE;
 
                     moduleDirs.add(dir);
@@ -383,14 +360,32 @@ public abstract class BaseProject extends NamedObject implements Project {
         return moduleDirs;
     }
 
-    private boolean isModuleDir(File directory) {
-        if (directory.equals(projectHome))
+    public boolean isValidDir(File baseDirectory, File dir) {
+
+        if (dir.equals(baseDirectory))
+            return true;
+
+        if (fpExcludes.accept(baseDirectory, dir))
             return false;
+
+        if (dir.equals(projectHome))
+            return false;
+
         for (Module module : this.getModules())
-            if (directory.equals(module.getModuleHome()))
-                return true;
-        return false;
+            if (dir.equals(module.getModuleHome()))
+                return false;
+
+        return true;
     }
+
+    // public boolean isModuleDir(File directory) {
+    //     if (directory.equals(projectHome))
+    //         return false;
+    //     for (Module module : this.getModules())
+    //         if (directory.equals(module.getModuleHome()))
+    //             return true;
+    //     return false;
+    // }
 
     // ----------------------------------------------------------------------
     // Sources

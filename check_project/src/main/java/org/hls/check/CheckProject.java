@@ -6,6 +6,7 @@ import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectAnalyzer;
 import jext.sourcecode.project.Projects;
+import jext.sourcecode.project.csharp.CSharpLibraryFinder;
 import jext.sourcecode.project.python.PythonLibraryFinder;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
@@ -24,9 +25,12 @@ public class CheckProject {
             //     .addLibrary("jdk8", "D:\\Java\\Jdk8.0")
             //     .addLibrary("jdk11", "D:\\Java\\Jdk11.0");
 
-            PythonLibraryFinder lfinder = new PythonLibraryFinder();
-            lfinder.addLibraries(new File("D:\\Python\\Anaconda3-2021.11\\Lib"));
-            lfinder.setNamedLibrary("py38", new File("D:\\Python\\Anaconda3-2021.11"));
+            // PythonLibraryFinder lfinder = new PythonLibraryFinder();
+            // lfinder.addLibraries(new File("D:\\Python\\Anaconda3-2021.11\\Lib"));
+            // lfinder.setNamedLibrary("py38", new File("D:\\Python\\Anaconda3-2021.11"));
+
+            CSharpLibraryFinder lfinder = new CSharpLibraryFinder();
+            lfinder.setNamedLibrary(".NET Core 6", new File("D:\\Donet\\Windows\\.NET Core\\6.0.300\\packs\\Microsoft.NETCore.App.Ref\\6.0.5\\ref\\net6.0"));
 
             Project project = Projects.newProject(new File(
                 //"D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\elasticsearch"
@@ -41,7 +45,9 @@ public class CheckProject {
                 // "D:\\Projects.github\\other_projects\\hibernate-orm-5.2.0"
                 // "D:\\SPLGroup\\spl-workspaces\\sample-projects\\ForSalwa"
                 // "D:\\Projects\\Python\\django-4.0.3"
-                "D:\\Projects\\Python\\flask-2.1.2"
+                // "D:\\Projects\\Python\\flask-2.1.2"
+                // "D:\\SPLGroup\\spl-workspaces\\dev-workspace\\FastNoiseLite"
+                "D:\\Projects\\CSharp\\roslyn-4.0.1"
                 ),
                 PropertiesUtils.properties(
                     "runtime.library", "auto"
@@ -49,7 +55,7 @@ public class CheckProject {
                     // , "org.gradle.daemon", "false"
                     // , "org.gradle.java.home", "D:\\Java\\Jdk18.0"
                     // , "jdk8", "D:\\Java\\Jdk8.0"
-                    , "module.exclude", "test*,example*,__pycache__"
+                    // , "module.exclude", "test*,example*,__pycache__"
                 ));
 
             project.setLibraryFinder(lfinder);

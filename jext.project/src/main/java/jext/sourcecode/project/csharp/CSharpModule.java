@@ -5,6 +5,7 @@ import jext.name.PathName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
@@ -106,11 +107,21 @@ public class CSharpModule extends BaseModule {
         try {
             Files.walkFileTree(moduleHome.toPath(), new FileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    if (csproject.isExcluded(dir.toFile()))
+                public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
+                    File dir = path.toFile();
+
+                    if (!csproject.isValidDir(moduleHome, dir))
                         return FileVisitResult.SKIP_SUBTREE;
                     else
                         return FileVisitResult.CONTINUE;
+
+                    // check if it is a excluded directory
+                    // if (csproject.isExcluded(dir))
+                    //     return FileVisitResult.SKIP_SUBTREE;
+                    // if (((CSharpProject) project).isModuleDir(dir))
+                    //     return FileVisitResult.SKIP_SUBTREE;
+                    // else
+                    //     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
@@ -149,7 +160,19 @@ public class CSharpModule extends BaseModule {
 
     @Override
     public Library getRuntimeLibrary() {
-        return ((CSharpProject)project).getRTLibrary();
+        Library rtLibrary;
+
+        try {
+            String runtimeLibrary = GuessRuntimeLibrary.guessRuntimeLibrary(this);
+            rtLibrary = project.getLibraryFinder().getRuntimeLibrary(runtimeLibrary);
+        }
+        catch (ProjectException e) {
+            // no runtime library found
+            // return project default runtime
+            rtLibrary = ((CSharpProject)project).getRTLibrary();
+        }
+
+        return rtLibrary;
     }
 
     @Override
@@ -175,7 +198,7 @@ public class CSharpModule extends BaseModule {
         List<File> dllFiles = FileUtils.asList(libDirectory.listFiles((dir, name) -> name.endsWith(EXT_DLL)));
         if (!dllFiles.isEmpty()) {
             Name libraryName = PathName.of(getName(), "lib");
-            Library localLibrary = new CSharpLocalLibrary(libraryName, dllFiles);
+            Library localLibrary = new CSharpLocalLibrary(libraryName, libDirectory, dllFiles);
             collectedLibraries.add(localLibrary);
         }
 
@@ -194,7 +217,7 @@ public class CSharpModule extends BaseModule {
                 return;
 
             Name libraryName = PathName.of(getName(), subdir.getName());
-            Library localLibrary = new CSharpLocalLibrary(libraryName, dllFiles);
+            Library localLibrary = new CSharpLocalLibrary(libraryName, subdir, dllFiles);
             collectedLibraries.add(localLibrary);
         });
 

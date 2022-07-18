@@ -206,10 +206,9 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
     @Override
     public String toString() {
-        return String.format("%s[%s, %d]",
+        return String.format("%s[%s, s:%d]",
             getClass().getSimpleName(),
             this.getName().getFullName(),
-            // this.getSourceRoots().size()
             this.getSources().size()
         );
     }
