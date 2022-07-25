@@ -118,6 +118,15 @@ public class FileUtils {
         return LongHash.toString(digestAsLong(file));
     }
 
+    public static  String digest(List<File> files) {
+        long[] digest = new long[1];
+        files.forEach(file -> {
+            long fdigest = digestAsLong(file);
+            digest[0] = digest[0]*31 + fdigest;
+        });
+        return LongHash.toString(digest[0]);
+    }
+
     private static void update(MessageDigest md, File file) throws IOException {
         try(InputStream in = new FileInputStream(file)) {
             update(md, in);

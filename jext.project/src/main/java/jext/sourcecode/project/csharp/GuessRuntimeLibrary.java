@@ -154,7 +154,7 @@ public class GuessRuntimeLibrary {
         if (targetFrameworks == null)
             return selectedTarget;
 
-        for(String target : StringUtils.split(targetFrameworks, ",")) {
+        for(String target : StringUtils.split(targetFrameworks, "[,;]")) {
             // remove spaces
             target = target.trim();
             // check for '<framework>-<platform>'

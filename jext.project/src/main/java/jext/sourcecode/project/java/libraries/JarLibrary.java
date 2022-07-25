@@ -40,7 +40,7 @@ public class JarLibrary extends JavaLibrary {
             name = name.substring(0, sep-1);
         }
 
-        setNameWithId(new VersionName(name, this.version));
+        setNameWithId(VersionName.of(name, this.version));
 
         this.libraryFile = jarFile;
         this.project = module.getProject();

@@ -53,10 +53,10 @@ public abstract class InfoLibrary extends NamedObject implements Library {
 
         switch(libraryType) {
             case MAVEN:
-                this.name = new MavenName(fullname);
+                this.name = MavenName.of(fullname);
                 break;
             case LOCAL:
-                this.name = new VersionName(fullname, version);
+                this.name = VersionName.of(fullname, version);
                 break;
             case RUNTIME:
             case INVALID:

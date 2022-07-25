@@ -2,6 +2,14 @@ package jext.name;
 
 public class VersionName implements Name {
 
+    public static VersionName of(String name, String version) {
+        return new VersionName(name, version);
+    }
+
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private String name;
     private String fullname;
     private String version;
@@ -10,7 +18,7 @@ public class VersionName implements Name {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public VersionName(String name, String version) {
+    private VersionName(String name, String version) {
         if (version == null)
             version = "";
 

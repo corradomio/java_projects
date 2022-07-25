@@ -91,6 +91,12 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
 
         assemblies = new Assemblies();
         installationDirectories.forEach(idir -> {
+            if (!idir.exists()) {
+                logger.errorf("[%s] Directory '%s' not existent",
+                    getName().getFullName(),
+                    FileUtils.getAbsolutePath(idir));
+                return;
+            }
             // ONLY '.../ref' are scanned recursively
             if (idir.getName().equals("ref") || idir.getAbsolutePath().contains(".Ref")){
                 FileUtils.listFiles(idir, FileFilters.IS_DLL).stream()

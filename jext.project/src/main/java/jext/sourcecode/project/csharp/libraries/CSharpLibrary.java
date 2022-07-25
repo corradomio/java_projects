@@ -12,8 +12,8 @@ public abstract class CSharpLibrary extends BaseLibrary {
         this.language = CSharpConstants.CSHARP;
     }
 
-    protected CSharpLibrary(Name libraryName, Project project) {
-        super(libraryName, project);
-        this.language = CSharpConstants.CSHARP;
-    }
+    // protected CSharpLibrary(Name libraryName, Project project) {
+    //     super(libraryName, project);
+    //     this.language = CSharpConstants.CSHARP;
+    // }
 }

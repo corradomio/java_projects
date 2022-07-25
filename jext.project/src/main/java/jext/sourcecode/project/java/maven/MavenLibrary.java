@@ -43,7 +43,7 @@ public class MavenLibrary extends JavaLibrary {
     // ----------------------------------------------------------------------
 
     public MavenLibrary(MavenCoords coords, MavenDownloader md, Project project) {
-        super(new MavenName(coords), project);
+        super(MavenName.of(coords), project);
 
         this.coords = coords;
         this.md = md;

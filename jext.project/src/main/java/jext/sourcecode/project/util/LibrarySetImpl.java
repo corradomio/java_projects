@@ -142,6 +142,24 @@ public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
         }
     }
 
+    /**
+     * If the library is a Maven library, it return the latest version
+     */
+    @Override
+    public Library resolve(Library library) {
+        if (library.getLibraryType() != LibraryType.MAVEN)
+            return library;
+        else
+            return highestLibraries.get(library.getName().getName());
+    }
+
+    @Override
+    public Set<Library> resolveAll(Set<Library> libraries) {
+        return libraries.stream()
+            .map(this::resolve)
+            .collect(Collectors.toSet());
+    }
+
     @Override
     public Library get(String nameOrId) {
         if (mavenLibraries.containsKey(nameOrId))
@@ -170,25 +188,6 @@ public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
         }
 
         return null;
-    }
-
-    /**
-     * If the library is a Maven library, it return the latest version
-     */
-    @Override
-    public Library resolve(Library library) {
-        if (library.getLibraryType() != LibraryType.MAVEN)
-            return library;
-        else
-            return highestLibraries.get(library.getName().getName());
-    }
-
-    @Override
-    public Set<Library> resolveAll(Set<Library> libraries) {
-        return libraries.stream()
-            .map(this::resolve)
-            .sorted()
-            .collect(Collectors.toSet());
     }
 
     @Override

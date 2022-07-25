@@ -7,10 +7,8 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.csharp.libraries.CSharpRuntimeLibrary;
 import jext.util.HashMap;
-import jext.util.Parameters;
 
 import java.io.File;
 import java.util.Collection;
@@ -28,11 +26,9 @@ public class CSharpLibraryFinder implements LibraryFinder {
 
     private Project project;
     private Map<Name, Library> libraries = new HashMap<>();
-    private Map<String, Library> runtimeLibraries = new HashMap<>();
     private NuGetDownloader downloader = new NuGetDownloader();
-
-    // name -> directory
-    // private Map<String, File> namedLibraries = new java.util.HashMap<>();
+    private Map<String, Library> runtimeLibraries = new HashMap<>();
+    private Library rtLibraryDefault;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -46,7 +42,7 @@ public class CSharpLibraryFinder implements LibraryFinder {
     public LibraryFinder newFinder(Project project) {
         CSharpLibraryFinder lfinder = new CSharpLibraryFinder();
         lfinder.setProject(project);
-        lfinder.setLibraries(libraries, runtimeLibraries);
+        lfinder.setLibraries(libraries, runtimeLibraries, rtLibraryDefault);
         lfinder.setDownloader(downloader.newDownloader());
         return lfinder;
     }
@@ -60,9 +56,14 @@ public class CSharpLibraryFinder implements LibraryFinder {
         this.project = project;
     }
 
-    private void setLibraries(Map<Name, Library> libraries, Map<String, Library> rtLibraries) {
+    private void setLibraries(
+        Map<Name, Library> libraries,
+        Map<String, Library> rtLibraries,
+        Library rtLibraryDefault
+    ) {
         this.libraries.putAll(libraries);
         this.runtimeLibraries.putAll(rtLibraries);
+        this.rtLibraryDefault = rtLibraryDefault;
     }
 
     private void setDownloader(LibraryDownloader downloader) {
@@ -117,33 +118,18 @@ public class CSharpLibraryFinder implements LibraryFinder {
         CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(libraryName, version, libraryDirectories);
 
         runtimeLibraries.put(libraryName, rtLibrary);
+        if (rtLibraryDefault == null)
+            rtLibraryDefault = rtLibrary;
     }
-
-    // public void setNamedLibrary(String libraryName, File libraryDirectory) {
-    //     Library library = new CSharpRuntimeLibrary(libraryName, libraryDirectory);
-    //     setNamedLibrary(library);
-    // }
-    //
-    // public void setNamedLibrary(Library library) {
-    //     setNamedLibrary(library.getName().getFullName(), library);
-    // }
-    //
-    // public void setNamedLibrary(String libraryName, Library library) {
-    //     rtLibraries.put(libraryName, library);
-    // }
-
-    // public void setNamedLibraries(Map<String, File> librariesMap){
-    //     for(String libraryName : librariesMap.keySet()) {
-    //         File libraryPath = librariesMap.get(libraryName);
-    //         setNamedLibrary(libraryName, "1.0", Collections.singletonList(libraryPath));
-    //     }
-    // }
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
         Library rtLibrary = runtimeLibraries.get(libraryName);
-        if (rtLibrary == null)
-            throw new ProjectException(String.format("No runtime library with name %s for C# language", libraryName));
+        if (rtLibrary == null) {
+            rtLibrary = rtLibraryDefault;
+            logger.warnf("Unable to retrieve the runtime library %s. Used the default %s",
+                libraryName, rtLibrary.getName().getFullName());
+        }
         return rtLibrary;
     }
 

@@ -17,7 +17,10 @@ public class PythonRTLibrary extends PythonLibrary {
 
     @Override
     public List<File> getFiles() {
-        List<File> files = new ArrayList<>();
+        if (pythonFiles != null)
+            return pythonFiles;
+
+        pythonFiles = new ArrayList<>();
         // Windows
         // {
         //     addFile(files,
@@ -45,13 +48,13 @@ public class PythonRTLibrary extends PythonLibrary {
         //
         File libraryPythonDirectory = findPythonLibraryDirectory();
         {
-            addFile(files,
+            addFile(pythonFiles,
                 new File(libraryPythonDirectory, "lib"),
                 new File(libraryPythonDirectory, "lib/site-packages")
             );
         }
 
-        return files;
+        return pythonFiles;
     }
 
     private static void addFile(List<File> files, File... filesToAdd) {
@@ -72,14 +75,14 @@ public class PythonRTLibrary extends PythonLibrary {
      * @return
      */
     private File findPythonLibraryDirectory() {
-        File[] dirs = libraryDirectory.listFiles(File::isDirectory);
+        File[] dirs = libraryFile.listFiles(File::isDirectory);
         if (dirs == null)
-            return libraryDirectory;
+            return libraryFile;
 
         for (File dir : dirs)
             if (dir.getName().startsWith("python"))
                 return dir;
 
-        return libraryDirectory;
+        return libraryFile;
     }
 }

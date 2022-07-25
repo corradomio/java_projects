@@ -39,6 +39,11 @@ public class CheckCSharpProject {
             System.out.printf("  module %s: %s\n", m.getName().getName(), m.getModuleHome());
         });
 
+        project.getModules().forEach(m -> {
+            System.out.printf("  module %s: %s\n", m.getName().getName(), m.getModuleHome());
+            System.out.println(m.getDeclaredLibraries());
+        });
+
         ProjectDump.dump(project, 0);
 
         Parallel.shutdown();

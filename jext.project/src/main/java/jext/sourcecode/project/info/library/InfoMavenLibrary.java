@@ -23,7 +23,7 @@ public class InfoMavenLibrary extends InfoLibrary {
         super(project, LibraryType.MAVEN, info);
         String coords = MapUtils.get(info,"fullname");
         this.coords = MavenCoords.of(coords);
-        setNameWithId(new MavenName(coords));
+        setNameWithId(MavenName.of(coords));
         this.md = (JavaLibraryDownloader) project.getLibraryDownloader();
     }
 

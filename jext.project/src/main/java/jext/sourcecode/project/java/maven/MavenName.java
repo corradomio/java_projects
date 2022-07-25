@@ -5,17 +5,33 @@ import jext.name.Name;
 
 public class MavenName implements Name {
 
+    public static MavenName of(String name, String version) {
+        return new MavenName(MavenCoords.of(name, version));
+    }
+
+    public static MavenName of(String coords) {
+        return new MavenName(MavenCoords.of(coords));
+    }
+
+    public static MavenName of(MavenCoords coords) {
+        return new MavenName(coords);
+    }
+
+    // ----------------------------------------------------------------------
+    // Private data
+    // ----------------------------------------------------------------------
+
     private MavenCoords coords;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public MavenName(String coords) {
-        this(MavenCoords.of(coords));
-    }
+    // private MavenName(String coords) {
+    //     this(MavenCoords.of(coords));
+    // }
 
-    public MavenName(MavenCoords coords) {
+    private MavenName(MavenCoords coords) {
         this.coords = coords;
     }
 

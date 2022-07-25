@@ -70,13 +70,12 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     public Set<Library> getUnusedLibraries() {
         Set<Library> mlibs = new HashSet<>(mavenLibraries.values());
         Set<Library> hlibs = new HashSet<>(highestLibraries.values());
-
         return SetUtils.difference(mlibs, hlibs);
     }
 
     @Override
     public Set<File> getLibraryFiles() {
-        Set<File> files = new jext.util.HashSet<>();
+        Set<File> files = new HashSet<>();
         getUsedLibraries().forEach(library -> {
             files.addAll(library.getFiles());
         });

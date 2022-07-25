@@ -354,6 +354,8 @@ public class XPathUtils {
 
     public static Properties getProperties(Element elt) {
         Properties properties = new Properties();
+        if (elt == null)
+            return properties;
         for(Element pelt : selectElements(elt, "property")) {
             String name = getValue(pelt, "@name");
             String value = getValue(pelt, "@value", null);

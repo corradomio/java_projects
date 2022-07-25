@@ -7,15 +7,12 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.java.libraries.JDKLibrary;
 import jext.sourcecode.project.java.maven.MavenLibrary;
-import jext.util.StringUtils;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static jext.sourcecode.project.java.JavaConstants.JAVA;
@@ -51,22 +48,14 @@ public class JavaLibraryFinder implements LibraryFinder {
     // Maven downloader
     private JavaLibraryDownloader downloader = new JavaLibraryDownloader();
 
-    // name -> directory
-    // private Map<String, File> namedLibraries = new HashMap<>();
-
-    // directory -> library
-    // private Map<File, Library> runtimeLibraries = new HashMap<>();
-
-    // maven coords -> library
-    // private Map<MavenCoords, Library> mavenLibraries = new HashMap<>();
-
     private String language;
 
     private Map<Name, Library> libraries = new HashMap<>();
 
-    private Map<String, Library> runtimeLibraries = new HashMap<>();
-
     private Map<MavenCoords, Library> mavenLibraries = new HashMap<>();
+
+    private Map<String, Library> runtimeLibraries = new HashMap<>();
+    private Library rtLibraryDefault;
 
 
     // ----------------------------------------------------------------------
@@ -85,7 +74,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     public LibraryFinder newFinder(Project project) {
         JavaLibraryFinder lfinder = new JavaLibraryFinder(language);
         lfinder.setProject(project);
-        lfinder.setLibraries(libraries, runtimeLibraries, mavenLibraries);
+        lfinder.setLibraries(libraries, mavenLibraries, runtimeLibraries, rtLibraryDefault);
         lfinder.setDownloader(downloader.newDownloader());
         return lfinder;
     }
@@ -101,11 +90,14 @@ public class JavaLibraryFinder implements LibraryFinder {
 
     private void setLibraries(
         Map<Name, Library> libraries,
+        Map<MavenCoords, Library> mavenLibraries,
         Map<String, Library> runtimeLibraries,
-        Map<MavenCoords, Library> mavenLibraries) {
+        Library rtLibraryDefault
+    ) {
         this.libraries.putAll(libraries);
-        this.runtimeLibraries.putAll(runtimeLibraries);
         this.mavenLibraries.putAll(mavenLibraries);
+        this.runtimeLibraries.putAll(runtimeLibraries);
+        this.rtLibraryDefault = rtLibraryDefault;
     }
 
     private void setDownloader(LibraryDownloader downloader) {
@@ -150,34 +142,21 @@ public class JavaLibraryFinder implements LibraryFinder {
      * and ".jmod" files
      */
     public void setNamedLibrary(String libraryName, File libraryPath) {
-        // if (namedLibraries.containsKey(libraryName)) {
-        //     logger.warnf("Library %s already registered with %s (new: %s): SKIPPED",
-        //         libraryName, namedLibraries.get(libraryName), libraryPath);
-        // }
-        // else {
-        //     namedLibraries.put(libraryName, libraryPath);
-        // }
-
         Library runtimeLibrary = new JDKLibrary(libraryName, libraryPath, null);
         runtimeLibraries.put(libraryName, runtimeLibrary);
+
+        if (rtLibraryDefault == null)
+            rtLibraryDefault = runtimeLibrary;
     }
-
-    // public void setNamedLibraries(Map<String, File> librariesMap){
-    //     for(String libraryName : librariesMap.keySet()) {
-    //         File libraryPath = librariesMap.get(libraryName);
-    //         setNamedLibrary(libraryName, libraryPath);
-    //     }
-    // }
-
-    // public JavaLibraryFinder addLibrary(String libraryName, String libraryPath) {
-    //     return setNamedLibrary(libraryName, new File(libraryPath));
-    // }
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
         Library rtLibrary = runtimeLibraries.get(libraryName);
-        if (rtLibrary == null)
-            throw new ProjectException(String.format("No runtime library with name %s for Java language", libraryName));
+        if (rtLibrary == null) {
+            rtLibrary = this.rtLibraryDefault;
+            logger.warnf("Unable to retrieve the runtime library %s. Used the default %s",
+                libraryName, rtLibrary.getName().getFullName());
+        }
         return rtLibrary;
     }
 

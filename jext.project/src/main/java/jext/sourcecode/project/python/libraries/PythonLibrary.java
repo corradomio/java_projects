@@ -9,6 +9,7 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.python.PythonConstants;
+import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -16,16 +17,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class PythonLibrary extends NamedObject implements Library {
+public class PythonLibrary extends BaseLibrary {
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
-    protected File libraryDirectory;
+    // protected File libraryDirectory;
     protected List<File> pythonFiles;
-    protected Project project;
-    protected LibraryType libraryType = LibraryType.LOCAL;
+    // protected Project project;
+    // protected LibraryType libraryType = LibraryType.LOCAL;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -33,7 +34,9 @@ public class PythonLibrary extends NamedObject implements Library {
 
     public PythonLibrary(File libraryDirectory) {
         super(PathName.of(libraryDirectory.getName()));
-        this.libraryDirectory = libraryDirectory;
+        this.libraryFile = libraryDirectory;
+        this.language = PythonConstants.PYTHON;
+        this.libraryType = LibraryType.LOCAL;
     }
 
     // ----------------------------------------------------------------------
@@ -42,52 +45,52 @@ public class PythonLibrary extends NamedObject implements Library {
 
     @Override
     public boolean isValid() {
-        return libraryDirectory.isDirectory();
+        return libraryFile.isDirectory();
     }
 
-    @Override
-    public Project getProject() {
-        return project;
-    }
+    // @Override
+    // public Project getProject() {
+    //     return project;
+    // }
 
     public void setProject(Project project) {
         this.project = project;
     }
 
-    @Override
-    public LibraryType getLibraryType() {
-        return libraryType;
-    }
+    // @Override
+    // public LibraryType getLibraryType() {
+    //     return libraryType;
+    // }
 
-    @Override
-    public LibraryStatus getLibraryStatus() {
-        return LibraryStatus.VALID;
-    }
+    // @Override
+    // public LibraryStatus getLibraryStatus() {
+    //     return LibraryStatus.VALID;
+    // }
 
-    @Override
-    public String getLanguage() {
-        return PythonConstants.PYTHON;
-    }
+    // @Override
+    // public String getLanguage() {
+    //     return PythonConstants.PYTHON;
+    // }
 
-    @Override
-    public String getPath() {
-        return FileUtils.getAbsolutePath(libraryDirectory);
-    }
+    // @Override
+    // public String getPath() {
+    //     return FileUtils.getAbsolutePath(libraryDirectory);
+    // }
 
     // @Override
     // public String getDigest() {
     //     return "0";
     // }
 
-    @Override
-    public File getFile() {
-        return libraryDirectory;
-    }
+    // @Override
+    // public File getFile() {
+    //     return libraryDirectory;
+    // }
 
     @Override
     public List<File> getFiles() {
         if (pythonFiles == null)
-            pythonFiles = FileUtils.listFiles(libraryDirectory, PythonConstants.PYTHON_EXT);
+            pythonFiles = FileUtils.listFiles(libraryFile, PythonConstants.PYTHON_EXT);
         return pythonFiles;
     }
 
@@ -101,10 +104,10 @@ public class PythonLibrary extends NamedObject implements Library {
         return false;
     }
 
-    @Override
-    public String getVersion() {
-        return "";
-    }
+    // @Override
+    // public String getVersion() {
+    //     return "";
+    // }
 
     // ----------------------------------------------------------------------
     // Implementation

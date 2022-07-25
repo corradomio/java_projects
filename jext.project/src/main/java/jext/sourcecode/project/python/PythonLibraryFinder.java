@@ -1,5 +1,6 @@
 package jext.sourcecode.project.python;
 
+import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.name.Name;
 import jext.name.PathName;
@@ -8,16 +9,13 @@ import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.ProjectException;
 import jext.sourcecode.project.python.libraries.PythonLibrary;
 import jext.sourcecode.project.python.libraries.PythonRTLibrary;
 import jext.util.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PythonLibraryFinder implements LibraryFinder {
@@ -26,13 +24,16 @@ public class PythonLibraryFinder implements LibraryFinder {
     // Private fields
     // ----------------------------------------------------------------------
 
+    private static Logger logger = Logger.getLogger(PythonLibraryFinder.class);
+
     // project owner of this
     private Project project;
 
+    private PyPiDownloader downloader = new PyPiDownloader();
+
     private Map<Name, Library> libraries = new HashMap<>();
     private Map<String, Library> runtimeLibraries = new HashMap<>();
-
-    private PyPiDownloader downloader = new PyPiDownloader();
+    private Library rtLibraryDefault;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -46,8 +47,7 @@ public class PythonLibraryFinder implements LibraryFinder {
     public LibraryFinder newFinder(Project project) {
         PythonLibraryFinder lfinder = new PythonLibraryFinder();
         lfinder.setProject(project);
-        lfinder.setLibraries(libraries);
-        lfinder.setRuntimeLibraries(runtimeLibraries);
+        lfinder.setLibraries(libraries, runtimeLibraries, rtLibraryDefault);
         lfinder.setDownloader(downloader.newDownloader());
         return lfinder;
     }
@@ -61,12 +61,14 @@ public class PythonLibraryFinder implements LibraryFinder {
         this.project = project;
     }
 
-    private void setLibraries(Map<Name, Library> libraries) {
+    private void setLibraries(
+        Map<Name, Library> libraries,
+        Map<String, Library> runtimeLibraries,
+        Library rtLibraryDefault
+    ) {
         this.libraries.putAll(libraries);
-    }
-
-    private void setRuntimeLibraries(Map<String, Library> libraries) {
-        this.runtimeLibraries.putAll(libraries);
+        this.runtimeLibraries.putAll(runtimeLibraries);
+        this.rtLibraryDefault = rtLibraryDefault;
     }
 
     private void setDownloader(LibraryDownloader downloader) {
@@ -112,8 +114,11 @@ public class PythonLibraryFinder implements LibraryFinder {
     @Override
     public Library getRuntimeLibrary(String libraryName) {
         Library rtLibrary = runtimeLibraries.get(libraryName);
-        if (rtLibrary == null)
-            throw new ProjectException(String.format("No runtime library with name %s for Python language", libraryName));
+        if (rtLibrary == null) {
+            rtLibrary = rtLibraryDefault;
+            logger.warnf("Unable to retrieve the runtime library %s. Used the default %s",
+                libraryName, rtLibrary.getName().getFullName());
+        }
         return rtLibrary;
     }
 
