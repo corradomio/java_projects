@@ -13,8 +13,6 @@ import java.util.Set;
 
 public class CSharpLocalLibrary extends CSharpLibrary {
 
-    private List<File> libraryFiles;
-
     public CSharpLocalLibrary(
         Name libraryName,
         File libraryDirectory,

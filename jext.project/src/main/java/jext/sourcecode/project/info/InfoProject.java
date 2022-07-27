@@ -15,8 +15,8 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.info.library.InfoInvalidLibrary;
 import jext.sourcecode.project.info.library.InfoLocalLibrary;
-import jext.sourcecode.project.info.library.InfoMavenLibrary;
-import jext.sourcecode.project.info.library.InfoRTLibrary;
+import jext.sourcecode.project.info.library.InfoRemoteLibrary;
+import jext.sourcecode.project.info.library.InfoRuntimeLibrary;
 import jext.sourcecode.project.info.library.LibrarySet;
 import jext.sourcecode.project.info.util.InfoSourcesImpl;
 import jext.sourcecode.project.java.JavaConstants;
@@ -318,12 +318,12 @@ public class InfoProject implements Project {
 
     private Library composeLibrary(Map<String, Object> linfo) {
         LibraryType libraryType = LibraryType.valueOf(MapUtils.get(linfo, "libraryType"));
-        if (LibraryType.MAVEN.equals(libraryType))
-            return new InfoMavenLibrary(this, linfo);
+        if (LibraryType.REMOTE.equals(libraryType))
+            return new InfoRemoteLibrary(this, linfo);
         if (LibraryType.LOCAL.equals(libraryType))
             return new InfoLocalLibrary(this, linfo);
         if (LibraryType.RUNTIME.equals(libraryType))
-            return new InfoRTLibrary(this, linfo);
+            return new InfoRuntimeLibrary(this, linfo);
         else
             return new InfoInvalidLibrary(this, linfo);
     }

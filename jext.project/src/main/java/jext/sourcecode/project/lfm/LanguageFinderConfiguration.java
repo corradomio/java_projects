@@ -5,6 +5,7 @@ import jext.configuration.HierarchicalConfiguration;
 import jext.sourcecode.project.LibraryFinder;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,8 @@ public abstract class LanguageFinderConfiguration implements LibraryFinderConfig
 
     protected HierarchicalConfiguration configuration;
     protected DownloaderConfiguration downloaderConfiguration;
-    protected Map<String, LibraryConfiguration> libraries = new HashMap<>();
+    // keep the order of insertion
+    protected Map<String, LibraryConfiguration> libraries = new LinkedHashMap<>();
     protected String language;
 
     // ----------------------------------------------------------------------

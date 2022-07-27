@@ -8,6 +8,7 @@ import jext.name.Name;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.csharp.util.DotNetAssemblyUtils;
+import jext.sourcecode.project.java.maven.MavenName;
 import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
 
@@ -46,7 +47,6 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     // ----------------------------------------------------------------------
 
     private String version;
-    private List<File> assemblies;
     private List<File> installationDirectories;
 
     // ----------------------------------------------------------------------
@@ -58,7 +58,7 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     //
 
     public CSharpRuntimeLibrary(String name, String version, List<File> installationDirectories) {
-        super(PathName.of(name));
+        super(MavenName.of(name, version));
         this.libraryFile = installationDirectories.get(0);
         this.version = version;
         this.installationDirectories = installationDirectories;
@@ -86,10 +86,10 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
 
     @Override
     public List<File> getFiles() {
-        if (assemblies != null)
-            return assemblies;
+        if (libraryFiles != null)
+            return libraryFiles;
 
-        assemblies = new Assemblies();
+        libraryFiles = new Assemblies();
         installationDirectories.forEach(idir -> {
             if (!idir.exists()) {
                 logger.errorf("[%s] Directory '%s' not existent",
@@ -102,7 +102,7 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
                 FileUtils.listFiles(idir, FileFilters.IS_DLL).stream()
                     .filter(DotNetAssemblyUtils::isAssembly)
                     .forEach(assembly -> {
-                        assemblies.add(assembly);
+                        libraryFiles.add(assembly);
                     });
             }
             //
@@ -110,19 +110,19 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
                 FileUtils.listFiles(idir, DLL).stream()
                     .filter(DotNetAssemblyUtils::isAssembly)
                     .forEach(assembly -> {
-                        assemblies.add(assembly);
+                        libraryFiles.add(assembly);
                     });
             }
             else {
                 FileUtils.listFiles(idir, DLL).stream()
                     .filter(DotNetAssemblyUtils::isAssembly)
                     .forEach(assembly -> {
-                        assemblies.add(assembly);
+                        libraryFiles.add(assembly);
                     });
             }
         });
 
-        return assemblies;
+        return libraryFiles;
     }
 
     // ----------------------------------------------------------------------

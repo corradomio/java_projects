@@ -1,6 +1,7 @@
 package jext.sourcecode.project.java.maven;
 
 import jext.sourcecode.project.LibraryRepository;
+import jext.sourcecode.project.LibraryType;
 
 public class MavenRepository implements LibraryRepository {
 
@@ -24,7 +25,7 @@ public class MavenRepository implements LibraryRepository {
 
     @Override
     public String getRepositoryType() {
-        return "MAVEN";
+        return LibraryType.REMOTE.name();
     }
 
     @Override

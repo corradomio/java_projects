@@ -5,7 +5,6 @@ import jext.maven.Version;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.info.InfoModule;
 import jext.sourcecode.project.info.InfoProject;
 import jext.sourcecode.project.java.JavaLibraryDownloader;
 import jext.sourcecode.project.java.maven.MavenName;
@@ -14,17 +13,17 @@ import jext.util.MapUtils;
 import java.util.List;
 import java.util.Map;
 
-public class InfoMavenLibrary extends InfoLibrary {
+public class InfoRemoteLibrary extends InfoLibrary {
 
     protected MavenCoords coords;
-    protected JavaLibraryDownloader md;
+    protected LibraryDownloader md;
 
-    public InfoMavenLibrary(InfoProject project, Map<String, Object> info) {
-        super(project, LibraryType.MAVEN, info);
+    public InfoRemoteLibrary(InfoProject project, Map<String, Object> info) {
+        super(project, LibraryType.REMOTE, info);
         String coords = MapUtils.get(info,"fullname");
         this.coords = MavenCoords.of(coords);
         setNameWithId(MavenName.of(coords));
-        this.md = (JavaLibraryDownloader) project.getLibraryDownloader();
+        this.md = (LibraryDownloader) project.getLibraryDownloader();
     }
 
     @Override

@@ -50,7 +50,7 @@ public class IvyFile {
                     String groupId = XPathUtils.getValue(dep, "@org");
                     String artifactId = XPathUtils.getValue(dep, "@name");
                     String version = XPathUtils.getValue(dep, "@version");
-                    dependencies.add(new MavenCoords(groupId, artifactId, version));
+                    dependencies.add(MavenCoords.of(groupId, artifactId, version));
                 });
         return dependencies;
     }

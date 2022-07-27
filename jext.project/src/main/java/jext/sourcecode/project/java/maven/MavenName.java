@@ -5,6 +5,10 @@ import jext.name.Name;
 
 public class MavenName implements Name {
 
+    public static MavenName of(String aid, String gid, String v) {
+        return new MavenName(MavenCoords.of(gid, aid, v));
+    }
+
     public static MavenName of(String name, String version) {
         return new MavenName(MavenCoords.of(name, version));
     }

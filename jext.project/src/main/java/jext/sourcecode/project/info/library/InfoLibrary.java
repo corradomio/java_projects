@@ -9,7 +9,6 @@ import jext.name.VersionName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.info.InfoModule;
@@ -27,7 +26,6 @@ import java.util.Set;
 public abstract class InfoLibrary extends NamedObject implements Library {
 
     protected InfoProject project;
-    // protected InfoModule module;
     protected Map<String, Object> info;
     protected LibraryType libraryType;
 
@@ -53,6 +51,10 @@ public abstract class InfoLibrary extends NamedObject implements Library {
 
         switch(libraryType) {
             case MAVEN:
+                this.name = MavenName.of(fullname);
+                this.libraryType = LibraryType.REMOTE;
+                break;
+            case REMOTE:
                 this.name = MavenName.of(fullname);
                 break;
             case LOCAL:
@@ -111,7 +113,7 @@ public abstract class InfoLibrary extends NamedObject implements Library {
                 return FileUtils.getAbsolutePath(getFile());
             case LOCAL:
                 return FileUtils.relativePath(project.getProjectHome(), getFile());
-            case MAVEN:
+            case REMOTE:
                 List<File> files = getFiles();
                 if (files.size() == 1)
                     return FileUtils.getAbsolutePath(files.get(0));
@@ -134,7 +136,8 @@ public abstract class InfoLibrary extends NamedObject implements Library {
 
     @Override
     public boolean isValid() {
-        return getFile().exists()
+        File file = getFile();
+        return file != null && file.exists()
             && getFiles().stream().allMatch(File::exists);
     }
 

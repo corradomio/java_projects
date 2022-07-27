@@ -2,10 +2,8 @@ package jext.sourcecode.project.java.maven;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.sourcecode.project.java.JavaConstants;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
-import jext.maven.MavenPom;
 import jext.maven.Version;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
@@ -15,8 +13,6 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.java.libraries.JavaLibrary;
 import jext.sourcecode.project.java.types.ReferencedType;
-import jext.sourcecode.project.util.BaseLibrary;
-import jext.util.FileUtils;
 import jext.util.JarUtils;
 
 import java.io.File;
@@ -48,7 +44,7 @@ public class MavenLibrary extends JavaLibrary {
         this.coords = coords;
         this.md = md;
         this.libraryFile = md.getPomFile(coords);
-        this.libraryType = LibraryType.MAVEN;
+        this.libraryType = LibraryType.REMOTE;
     }
 
     // ----------------------------------------------------------------------
@@ -92,17 +88,17 @@ public class MavenLibrary extends JavaLibrary {
             && getFiles().stream().allMatch(File::exists);
     }
 
-    public MavenDownloader getMavenDownloader() {
-        return this.md;
-    }
+    // public MavenDownloader getMavenDownloader() {
+    //     return this.md;
+    // }
 
-    public Version getMavenVersion() {
-        return coords.getVersion();
-    }
+    // public Version getMavenVersion() {
+    //     return coords.getVersion();
+    // }
 
-    public MavenCoords getCoords() {
-        return this.coords;
-    }
+    // public MavenCoords getCoords() {
+    //     return this.coords;
+    // }
 
     @Override
     public synchronized boolean contains(Name typeName) {

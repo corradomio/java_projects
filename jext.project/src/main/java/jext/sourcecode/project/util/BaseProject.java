@@ -175,7 +175,7 @@ public abstract class BaseProject extends NamedObject implements Project {
     }
 
     private boolean hasRootModule() {
-        return this.modules.getModule() != null;
+        return this.modules.hasModule(Project.ROOT_MODULE_NAME);
     }
 
     // ----------------------------------------------------------------------

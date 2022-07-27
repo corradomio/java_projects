@@ -29,6 +29,10 @@ public class ModulesImpl extends ArrayList<Module> implements Modules {
     // Operations
     // ----------------------------------------------------------------------
 
+    public boolean hasModule(String nameOrId) {
+        return idMap.containsKey(nameOrId) || nameMap.containsKey(nameOrId);
+    }
+
     public boolean add(Module module) {
         String fullname = module.getName().getFullName();
         if (nameMap.containsKey(fullname)) {

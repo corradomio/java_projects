@@ -7,13 +7,13 @@ import jext.sourcecode.project.info.InfoProject;
 
 import java.util.Map;
 
-public class InfoRTLibrary extends InfoLibrary {
+public class InfoRuntimeLibrary extends InfoLibrary {
 
-    public InfoRTLibrary(InfoModule module, Map<String, Object> info) {
+    public InfoRuntimeLibrary(InfoModule module, Map<String, Object> info) {
         super(module, LibraryType.RUNTIME, info);
     }
 
-    public InfoRTLibrary(InfoProject project, Map<String, Object> info) {
+    public InfoRuntimeLibrary(InfoProject project, Map<String, Object> info) {
         super(project, LibraryType.RUNTIME, info);
     }
 

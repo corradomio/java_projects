@@ -349,7 +349,7 @@ public class BuildGradleFile extends GradleFile {
                 artifactId = matcher.group(1);
 
                 if (groupId != null && version != null)
-                    libraries.add(new MavenCoords(groupId, artifactId, version));
+                    libraries.add(MavenCoords.of(groupId, artifactId, version));
 
                 continue;
             }
@@ -386,7 +386,7 @@ public class BuildGradleFile extends GradleFile {
         String version = StringUtils.replace(matcher.group(4), properties);
         if (artifactId.length() == 0 || "none".equals(artifactId)) // tric
             return;
-        libraries.add(new MavenCoords(groupId, artifactId, version));
+        libraries.add(MavenCoords.of(groupId, artifactId, version));
     }
 
     private void addLibraryNoVersion(Set<MavenCoords> libraries, Matcher matcher) {
@@ -399,7 +399,7 @@ public class BuildGradleFile extends GradleFile {
         String version = StringUtils.empty();
         if (artifactId.length() == 0 || "none".equals(artifactId))
             return;
-        libraries.add(new MavenCoords(groupId, artifactId, version));
+        libraries.add(MavenCoords.of(groupId, artifactId, version));
     }
 
     private static List<String> SKIP_PREFIXES = new ArrayList<String>() {{

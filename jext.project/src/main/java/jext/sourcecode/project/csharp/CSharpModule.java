@@ -319,11 +319,21 @@ public class CSharpModule extends BaseModule {
                         //  or
                         //
                         //  <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.3">
+                        //
+                        //  Note: skip
+                        //
+                        //  <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
                         String include = XPathUtils.getValue(packageReference, "@Include");
 
-                        String version = XPathUtils.getValue(packageReference, "@Version", null);
-                        if (version == null)
+                        String version = XPathUtils.getValue(packageReference, "@Version");
+                        if (version.isEmpty())
                             version = XPathUtils.getValue(packageReference, "Version");
+
+                        // skip 'PackageReference' that doesn't refer to external libraries
+                        if (include.isEmpty())
+                            return;
+
+                        // if version contains '$', in theroy it is necessary to resolve the macro.
 
                         Library library = NuGetLibrary.of(include, version);
 

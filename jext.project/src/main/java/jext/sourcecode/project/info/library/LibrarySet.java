@@ -86,7 +86,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
     public Set<Library> getLibraries(LibraryType libraryType) {
         if (libraryType == LibraryType.LOCAL)
             return localLibraries;
-        if (libraryType == LibraryType.MAVEN)
+        if (libraryType == LibraryType.REMOTE)
             return SetUtils.asSet(mavenLibraries.values());
         else
             return Collections.emptySet();
@@ -99,7 +99,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
 
     @Override
     public boolean add(Library library) {
-        if (library.getLibraryType() != LibraryType.MAVEN)
+        if (library.getLibraryType() != LibraryType.REMOTE)
             return localLibraries.add(library);
 
         String gaName = library.getName().getName();        // groupId:artifactId
@@ -134,7 +134,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
      */
     @Override
     public Library resolve(Library library) {
-        if (library.getLibraryType() != LibraryType.MAVEN)
+        if (library.getLibraryType() != LibraryType.REMOTE)
             return library;
         else
             return highestLibraries.get(library.getName().getName());
@@ -183,7 +183,7 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
         List<MavenCoords> artifacts = mavenLibraries
             .values()
             .stream()
-            .filter(library -> library.getLibraryType() == LibraryType.MAVEN)
+            .filter(library -> library.getLibraryType() == LibraryType.REMOTE)
             // Library is a 'LibraryNode' NOT a 'MavenLibrary'
             .map(library -> MavenCoords.of(library.getName().getName(), library.getVersion()))
             .collect(Collectors.toList());
