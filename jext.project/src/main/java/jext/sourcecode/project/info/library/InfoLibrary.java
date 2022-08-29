@@ -55,7 +55,7 @@ public abstract class InfoLibrary extends NamedObject implements Library {
                 this.libraryType = LibraryType.REMOTE;
                 break;
             case REMOTE:
-                this.name = MavenName.of(fullname);
+                this.name = MavenName.of(fullname, version);
                 break;
             case LOCAL:
                 this.name = VersionName.of(fullname, version);

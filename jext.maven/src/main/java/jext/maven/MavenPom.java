@@ -311,7 +311,7 @@ public class MavenPom implements MavenConst {
         aid = XPathUtils.getValue(project, ARTIFACT_ID, aid);
         v = XPathUtils.getValue(project, VERSION, v, mavenprops);
 
-        return new MavenCoords(gid, aid, v);
+        return MavenCoords.of(gid, aid, v);
     }
 
     /*
@@ -352,7 +352,7 @@ public class MavenPom implements MavenConst {
             return null;
         }
 
-        return new MavenCoords(gid, aid, v);
+        return MavenCoords.of(gid, aid, v);
     }
 
     /**
@@ -581,7 +581,7 @@ public class MavenPom implements MavenConst {
                 if (isPattern(v))
                     logger.warnc(category,"Pattern version in %s:%s:%s - %s", gid, aid, v, pomFile);
 
-                MavenCoords dcoords = new MavenCoords(gid, aid, v);
+                MavenCoords dcoords = MavenCoords.of(gid, aid, v);
                 if (md != null && !dcoords.hasVersion())
                     dcoords = md.getVersioned(dcoords);
 

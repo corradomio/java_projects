@@ -31,10 +31,6 @@ public class MavenName implements Name {
     // Constructor
     // ----------------------------------------------------------------------
 
-    // private MavenName(String coords) {
-    //     this(MavenCoords.of(coords));
-    // }
-
     private MavenName(MavenCoords coords) {
         this.coords = coords;
     }

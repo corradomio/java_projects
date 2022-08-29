@@ -88,18 +88,6 @@ public class MavenLibrary extends JavaLibrary {
             && getFiles().stream().allMatch(File::exists);
     }
 
-    // public MavenDownloader getMavenDownloader() {
-    //     return this.md;
-    // }
-
-    // public Version getMavenVersion() {
-    //     return coords.getVersion();
-    // }
-
-    // public MavenCoords getCoords() {
-    //     return this.coords;
-    // }
-
     @Override
     public synchronized boolean contains(Name typeName) {
         if (definedTypes.contains(typeName))
@@ -119,17 +107,6 @@ public class MavenLibrary extends JavaLibrary {
             return false;
         }
     }
-
-    // @Override
-    // public String getDigest() {
-    //     File digestFile;
-    //     MavenPom pom = md.getPom(coords);
-    //     if (pom != null && pom.isPomPackaging())
-    //         digestFile = md.getPomFile(coords);
-    //     else
-    //         digestFile = md.getArtifact(coords);
-    //     return FileUtils.digest(digestFile);
-    // }
 
     @Override
     public String getPath() {

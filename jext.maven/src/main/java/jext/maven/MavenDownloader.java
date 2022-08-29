@@ -55,9 +55,9 @@ public class MavenDownloader implements MavenConst {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    static Logger slog = Logger.getLogger(MavenDownloader.class);
+    private static Logger slog = Logger.getLogger(MavenDownloader.class);
 
-    Logger logger = Logger.getLogger(MavenDownloader.class);
+    private Logger logger = Logger.getLogger(MavenDownloader.class);
 
     // ----------------------------------------------------------------------
 
@@ -184,7 +184,7 @@ public class MavenDownloader implements MavenConst {
     /** Create download directory if it doesn't exist. */
     public void initialize() {
         if (!downloadDir.exists() && !downloadDir.mkdirs())
-            logger.warnf("Unable to create directory %s", downloadDir);
+            logger.warnf("Unable to create the directory %s", downloadDir);
     }
 
     // ----------------------------------------------------------------------
@@ -442,7 +442,7 @@ public class MavenDownloader implements MavenConst {
     public MavenCoords getLatest(MavenCoords coords) {
         String latestVersion =  getLatestVersion(coords);
         if (!latestVersion.isEmpty())
-            return new MavenCoords(coords, latestVersion);
+            return MavenCoords.of(coords, latestVersion);
         else
             return coords;
     }

@@ -224,8 +224,8 @@ public class ProjectComparator {
     }
 
     @JsonIgnore
-    public List<File> getAddedLibraryFiles() {
-        List<File> files = new ArrayList<>();
+    public Set<File> getAddedLibraryFiles() {
+        Set<File> files = new HashSet<>();
 
         for (LibraryInfo li : this.libraries.values()) {
             if (li.status == RevisionStatus.ADDED)
