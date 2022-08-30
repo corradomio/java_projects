@@ -87,25 +87,15 @@ public class PyPiRepository extends BaseLibraryRepository {
         }
 
         Optional<String> getUrl(String version) {
+            Optional<String> url;
             // the version can not exist
             if (!versionsFile.exists())
                 return Optional.empty();
 
             try {
                 Document html = Jsoup.parse(versionsFile);
-                Elements elts = html.body().children();
 
-                for(Element elt : elts) {
-                    if (elt.nodeName().equals("a")) {
-                        String versioned = elt.ownText();
-                        String ver = extractVersion(versioned);
-                        if (!ver.equals(version))
-                            continue;
-
-                        String href = elt.attr("href");
-                        return Optional.of(href);
-                    }
-                }
+                return findUrl(html, version, ".tar.gz");
 
             } catch (Exception e) {
                 // already checked
@@ -113,6 +103,25 @@ public class PyPiRepository extends BaseLibraryRepository {
 
             return Optional.empty();
         }
+    }
+
+    private static Optional<String> findUrl(Document html, String version, String ext) {
+        Elements elts = html.body().children();
+        for(Element elt : elts) {
+            if (elt.nodeName().equals("a")) {
+                String versioned = elt.ownText();
+                String ver = extractVersion(versioned);
+                if (!ver.equals(version))
+                    continue;
+                if (!versioned.endsWith(ext))
+                    continue;
+
+                String href = elt.attr("href");
+                return Optional.of(href);
+            }
+        }
+
+        return Optional.empty();
     }
 
     // ----------------------------------------------------------------------
