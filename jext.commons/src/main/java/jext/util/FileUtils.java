@@ -756,4 +756,41 @@ public class FileUtils {
         for (File sdir : sdirs)
             delete(new File(sourceFile, sdir.getName()), sdir, exclude);
     }
+
+    // ----------------------------------------------------------------------
+
+    public static void unzip(File zipFilePath, File dir) throws IOException {
+        // create output directory if it doesn't exist
+        if(!dir.exists())
+            mkdirs(dir);
+
+        String destDir = dir.getAbsolutePath();
+        //buffer for read and write data to file
+        byte[] buffer = new byte[1024];
+        try(FileInputStream fis = new FileInputStream(zipFilePath)) {
+            ZipInputStream zis = new ZipInputStream(fis);
+            ZipEntry ze = zis.getNextEntry();
+            while(ze != null){
+                String fileName = ze.getName();
+                File newFile = new File(destDir + File.separator + fileName);
+                //create directories for sub directories in zip
+                mkdirs(newFile.getParentFile());
+
+                try(FileOutputStream fos = new FileOutputStream(newFile)) {
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+                //close this ZipEntry
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+            //close last ZipEntry
+            zis.closeEntry();
+            zis.close();
+            //fis.close();
+        }
+    }
 }
+

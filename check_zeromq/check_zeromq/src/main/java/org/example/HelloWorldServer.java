@@ -19,10 +19,6 @@ public class HelloWorldServer
                 System.out.println(
                     "Received: [" + new String(reply, ZMQ.CHARSET) + "]"
                 );
-
-                // Send a response
-                String response = "Hello, world!";
-                socket.send(response.getBytes(ZMQ.CHARSET), 0);
             }
         }
     }

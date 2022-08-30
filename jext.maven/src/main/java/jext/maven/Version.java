@@ -4,20 +4,23 @@ package jext.maven;
     https://books.sonatype.com/mvnref-book/reference/pom-relationships-sect-pom-syntax.html
     https://www.mojohaus.org/versions-maven-plugin/version-rules.html
     https://docs.oracle.com/middleware/1212/core/MAVEN/maven_version.htm#MAVEN400
+    https://semver.org/
 
     Version schemes
 
-        MajorVersion: 1.2.1
-        MinorVersion: 2.0
+        MajorVersion:       1.2.1
+        MinorVersion:       2.0
         IncrementalVersion: 1.2-SNAPSHOT
-        BuildNumber: 1.4.2-12
-        PatchNumber: 1.4.2-12-1
-        Qualifier: 1.2-beta-2
+        BuildNumber:        1.4.2-12
+        PatchNumber:        1.4.2-12-1
+        Qualifier:          1.2-beta-2
 
         Extras:
-        MajorDotQualifier:   5.3.5.RELEASE
-        MajorQualifier:      3.27.0-GA
-        DotQualifier:        1.2.LABEL
+        MajorDotQualifier:  5.3.5.RELEASE
+        MajorQualifier:     3.27.0-GA
+        DotQualifier:       1.2.LABEL
+
+        SemVer:
 
 
     All versions with a qualifier are older than the same version without a qualifier (release version).
@@ -48,7 +51,12 @@ package jext.maven;
 
     The SNAPSHOT qualifier
     ----------------------
+    todo
 
+
+     Semantic Versioning
+     -------------------
+     todo
 
  */
 
@@ -88,6 +96,11 @@ public class Version implements Comparable<Version> {
         // MajorDotQualifier,      // 5.3.5.RELEASE     QualifiedVersion
         // MajorQualifier:         // 3.27.0-GA         QualifiedVersion
         // DotQualifier:           // 1.2.LABEL         QualifiedVersion
+
+        // PythonQualifier:        // 1.2a1   1.2.1a1
+                                   // 1.2b1   1.2.1b1
+                                   // 1.2rc1  1.2.1rc1
+
     }
 
     private static final Pattern MajorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)");
@@ -97,6 +110,11 @@ public class Version implements Comparable<Version> {
     private static final Pattern PatchNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-([0-9]+)");
     private static final Pattern MajorQualifierPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)[-.]([a-zA-Z0-9-.]+)");
     private static final Pattern QualifierPattern = Pattern.compile("([0-9]+)\\.([0-9]+)[-.]([a-zA-Z0-9-.]+)");
+
+    private static final Pattern PythonMajorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)((a|b|rc)([0-9]+))");
+    private static final Pattern PythonMinorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)((a|b|rc)([0-9]+))");
+
+    private static final Pattern SemVerPattern = Pattern.compile("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?");
 
     private final String version;
     private Scheme scheme = Scheme.StringVersion;
@@ -123,6 +141,25 @@ public class Version implements Comparable<Version> {
 
     private void parse() {
         Matcher matcher;
+
+        matcher = PythonMajorVersionPattern.matcher(version);
+        if (matcher.matches()) {
+            this.scheme = Scheme.QualifiedVersion;
+            major = Integer.parseInt(matcher.group(1));
+            minor = Integer.parseInt(matcher.group(2));
+            subver= Integer.parseInt(matcher.group(3));
+            qualifier = matcher.group(4);
+            return;
+        }
+
+        matcher = PythonMinorVersionPattern.matcher(version);
+        if (matcher.matches()) {
+            this.scheme = Scheme.QualifiedVersion;
+            major = Integer.parseInt(matcher.group(1));
+            minor = Integer.parseInt(matcher.group(2));
+            qualifier = matcher.group(3);
+            return;
+        }
 
         matcher = MajorVersionPattern.matcher(version);
         if (matcher.matches()) {
@@ -178,8 +215,19 @@ public class Version implements Comparable<Version> {
             major = Integer.parseInt(matcher.group(1));
             minor = Integer.parseInt(matcher.group(2));
             qualifier = matcher.group(3);
+            return;
         }
-        else
+
+        matcher = SemVerPattern.matcher(version);
+        if (matcher.matches()) {
+            this.scheme = Scheme.QualifiedVersion;
+            major = Integer.parseInt(matcher.group(1));
+            minor = Integer.parseInt(matcher.group(2));
+            subver = Integer.parseInt(matcher.group(3));
+            qualifier = matcher.group(4);
+            return;
+        }
+
         {
             this.scheme = Scheme.StringVersion;
         }
