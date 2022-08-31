@@ -73,9 +73,9 @@ public class JavaLibraryFinder implements LibraryFinder {
     @Override
     public LibraryFinder newFinder(Project project) {
         JavaLibraryFinder lfinder = new JavaLibraryFinder(language);
-        lfinder.setProject(project);
         lfinder.setLibraries(libraries, mavenLibraries, runtimeLibraries, rtLibraryDefault);
         lfinder.setDownloader(downloader.newDownloader());
+        lfinder.setProject(project);
         return lfinder;
     }
 

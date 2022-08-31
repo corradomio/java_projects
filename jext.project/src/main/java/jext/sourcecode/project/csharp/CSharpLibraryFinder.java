@@ -7,7 +7,6 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.csharp.libraries.CSharpLocalLibrary;
 import jext.sourcecode.project.csharp.libraries.CSharpRuntimeLibrary;
 import jext.sourcecode.project.csharp.libraries.NuGetLibrary;
 import jext.util.HashMap;
@@ -43,9 +42,9 @@ public class CSharpLibraryFinder implements LibraryFinder {
     @Override
     public LibraryFinder newFinder(Project project) {
         CSharpLibraryFinder lfinder = new CSharpLibraryFinder();
-        lfinder.setProject(project);
         lfinder.setLibraries(libraries, runtimeLibraries, rtLibraryDefault);
         lfinder.setDownloader(downloader.newDownloader());
+        lfinder.setProject(project);
         return lfinder;
     }
 

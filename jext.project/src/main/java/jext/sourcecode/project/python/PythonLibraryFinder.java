@@ -47,9 +47,9 @@ public class PythonLibraryFinder implements LibraryFinder {
     @Override
     public LibraryFinder newFinder(Project project) {
         PythonLibraryFinder lfinder = new PythonLibraryFinder();
-        lfinder.setProject(project);
         lfinder.setLibraries(libraries, runtimeLibraries, rtLibraryDefault);
         lfinder.setDownloader(downloader.newDownloader());
+        lfinder.setProject(project);
         return lfinder;
     }
 
