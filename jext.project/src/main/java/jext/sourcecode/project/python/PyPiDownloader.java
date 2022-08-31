@@ -182,7 +182,14 @@ public class PyPiDownloader implements LibraryDownloader {
 
     @Override
     public LibraryDownloader newDownloader() {
-        return this;
+        PyPiDownloader downloader = new PyPiDownloader();
+        downloader.setDownloadTimeout(downloadTimeout);
+        downloader.setCheckTimeout(checkTimeout);
+        downloader.setParallelDownloads(parallelDownloads);
+        downloader.setDownloadDirectory(downloadDirectory);
+        downloader.addRepository(name, pypiUrl);
+        downloader.initialize();
+        return downloader;
     }
 
     // ----------------------------------------------------------------------

@@ -5,11 +5,9 @@ import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.Versions;
 import jext.sourcecode.project.LibraryDownloader;
-import jext.sourcecode.project.lfm.csharp.NuGetRepository;
 import jext.sourcecode.project.util.FileValidator;
 import jext.util.FileUtils;
 import jext.util.JSONUtils;
-import jext.util.StringUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -141,7 +139,14 @@ public class NuGetDownloader implements LibraryDownloader {
 
     @Override
     public LibraryDownloader newDownloader() {
-        return this;
+        NuGetDownloader downloader = new NuGetDownloader();
+        downloader.setDownloadTimeout(downloadTimeout);
+        downloader.setCheckTimeout(checkTimeout);
+        downloader.setParallelDownloads(parallelDownloads);
+        downloader.setDownloadDirectory(downloadDirectory);
+        downloader.addRepository(name, nugetUrl);
+        downloader.initialize();
+        return downloader;
     }
 
     // ----------------------------------------------------------------------
