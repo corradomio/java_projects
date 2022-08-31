@@ -27,9 +27,10 @@ public class CheckLFM {
 
         LibraryFinder lf = lfm.getLibraryFinder("python");
 
-        artifact = MavenCoords.pypi("networkx", "2.8.6");
-        //artifact = MavenCoords.pypi("autograd", "1.4");
-        //artifact = MavenCoords.pypi("neo4j", "4.4.6");
+        // artifact = MavenCoords.pypi("networkx", "2.8.6");
+        // artifact = MavenCoords.pypi("autograd", "1.4");
+        // artifact = MavenCoords.pypi("neo4j", "4.4.6");
+        artifact = MavenCoords.pypi("gurobipy", "9.5.2");
 
         lf.getDownloader().checkArtifacts(Arrays.asList(artifact), false);
 
