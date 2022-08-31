@@ -29,6 +29,8 @@ public class NuGetLibrary extends CSharpLibrary {
     // Private fields
     // ----------------------------------------------------------------------
 
+    private MavenCoords coords;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -38,6 +40,7 @@ public class NuGetLibrary extends CSharpLibrary {
         this.version = version;
         this.libraryType = LibraryType.REMOTE;
         this.libraryFiles = Collections.emptyList();
+        this.coords = MavenCoords.of(name, version);
     }
 
     public NuGetLibrary(MavenCoords coords, File libraryDirectory) {
@@ -45,6 +48,7 @@ public class NuGetLibrary extends CSharpLibrary {
         this.libraryFile = libraryDirectory;
         this.version = coords.version;
         this.libraryType = LibraryType.REMOTE;
+        this.coords = coords;
     }
 
     // ----------------------------------------------------------------------

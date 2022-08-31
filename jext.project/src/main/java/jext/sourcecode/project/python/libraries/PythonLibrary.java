@@ -4,15 +4,12 @@ import jext.name.Name;
 import jext.name.PathName;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.python.PythonConstants;
 import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class PythonLibrary extends BaseLibrary {
 
@@ -35,16 +32,6 @@ public class PythonLibrary extends BaseLibrary {
         super(name);
         this.language = PythonConstants.PYTHON;
     }
-
-    //public PythonLibrary(MavenCoords coords, File libraryDirectory) {
-    //    super(MavenName.of(coords));
-    //    this.version = coords.version;
-    //    this.libraryFile = libraryDirectory;
-    //    this.language = PythonConstants.PYTHON;
-    //    this.libraryType = LibraryType.REMOTE;
-    //
-    //    this.pythonFiles = Arrays.asList(libraryDirectory);
-    //}
 
     // ----------------------------------------------------------------------
     // Properties

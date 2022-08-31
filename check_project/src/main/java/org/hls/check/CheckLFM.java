@@ -18,13 +18,18 @@ public class CheckLFM {
         LibraryFinderManager lfm = ConfigurableLibraryFinderManager.getManager(configurationFile);
 
         //dumprtlibs(lfm);
-        //checkPython(lfm);
-        checkCSharp(lfm);
+        checkPython(lfm);
+        //checkCSharp(lfm);
     }
 
     private static void checkPython(LibraryFinderManager lfm) {
-        MavenCoords artifact = MavenCoords.of("networkx", "2.8.6");
+        MavenCoords artifact;
+
         LibraryFinder lf = lfm.getLibraryFinder("python");
+
+        artifact = MavenCoords.pypi("networkx", "2.8.6");
+        //artifact = MavenCoords.pypi("autograd", "1.4");
+        //artifact = MavenCoords.pypi("neo4j", "4.4.6");
 
         lf.getDownloader().checkArtifacts(Arrays.asList(artifact), false);
 

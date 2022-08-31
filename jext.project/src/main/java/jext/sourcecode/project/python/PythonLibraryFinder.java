@@ -98,9 +98,9 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     @Override
     public Library getLibrary(MavenCoords coords) {
-        // [downloadDir]/<artifactId>/<version>/<artifactId>-<version>/<artifactId>
+        // [downloadDir]/<artifactId>/<version>
         String relativePath = String.format(
-                "%1$s/%2$s/%1$s-%2$s/%1$s",
+                "%1$s/%2$s",
                 coords.artifactId,
                 coords.version);
 
