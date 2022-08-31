@@ -30,8 +30,6 @@ public abstract class DirectoryLibrary extends JavaLibrary {
     // Private Fields
     // ----------------------------------------------------------------------
 
-    private List<File> libraryFiles;
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------

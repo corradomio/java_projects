@@ -34,6 +34,7 @@ public class JavaFinderConfiguration extends LanguageFinderConfiguration {
     private void configureDownloader(LibraryDownloader ld) {
         JavaLibraryDownloader downloader = (JavaLibraryDownloader) ld;
         DownloaderConfiguration dconfig = getDownloaderConfiguration(ld.getName());
+
         downloader.setDownloadDirectory(dconfig.getDownloadDirectory());
         downloader.setDownloadTimeout(dconfig.getDownloadTimeout());
         downloader.setCheckTimeout(dconfig.getCheckTimeout());

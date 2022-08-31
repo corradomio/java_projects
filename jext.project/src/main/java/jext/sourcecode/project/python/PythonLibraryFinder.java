@@ -9,6 +9,7 @@ import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.python.libraries.PyPiLibrary;
 import jext.sourcecode.project.python.libraries.PythonLibrary;
 import jext.sourcecode.project.python.libraries.PythonRTLibrary;
 import jext.util.FileUtils;
@@ -26,13 +27,12 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     private static Logger logger = Logger.getLogger(PythonLibraryFinder.class);
 
-    // project owner of this
+    // project owner of this finder
     private Project project;
 
+    private final Map<Name, Library> libraries = new HashMap<>();
+    private final Map<String, Library> runtimeLibraries = new HashMap<>();
     private PyPiDownloader downloader = new PyPiDownloader();
-
-    private Map<Name, Library> libraries = new HashMap<>();
-    private Map<String, Library> runtimeLibraries = new HashMap<>();
     private Library rtLibraryDefault;
 
     // ----------------------------------------------------------------------
@@ -98,17 +98,24 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     @Override
     public Library getLibrary(MavenCoords coords) {
-        return null;
+        // [downloadDir]/<artifactId>/<version>/<artifactId>-<version>/<artifactId>
+        String relativePath = String.format(
+                "%1$s/%2$s/%1$s-%2$s/%1$s",
+                coords.artifactId,
+                coords.version);
+
+        File libraryDirectory = new File(downloader.getDownloadDirectory(), relativePath);
+        return new PyPiLibrary(coords, libraryDirectory);
     }
 
     @Override
     public String getLatestVersion(String libraryName) {
-        return null;
+        return getLatestVersion(MavenCoords.of(libraryName, ""));
     }
 
     @Override
     public String getLatestVersion(MavenCoords coords) {
-        return null;
+        return downloader.getLatestVersion(coords);
     }
 
     @Override

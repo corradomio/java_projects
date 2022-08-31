@@ -32,6 +32,11 @@
         </dependency>
         <dependency>
             <groupId>org.hls</groupId>
+            <artifactId>jext.compress</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
             <artifactId>jext.maven</artifactId>
             <version>1.0</version>
         </dependency>

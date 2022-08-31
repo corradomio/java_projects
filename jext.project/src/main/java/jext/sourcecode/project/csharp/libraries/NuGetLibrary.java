@@ -1,11 +1,13 @@
 package jext.sourcecode.project.csharp.libraries;
 
+import jext.maven.MavenCoords;
 import jext.name.Name;
-import jext.name.PathName;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.csharp.util.DotNetImplementations;
 import jext.sourcecode.project.java.maven.MavenName;
 import jext.util.Assert;
+import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -27,8 +29,6 @@ public class NuGetLibrary extends CSharpLibrary {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private String version;
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -38,6 +38,13 @@ public class NuGetLibrary extends CSharpLibrary {
         this.version = version;
         this.libraryType = LibraryType.REMOTE;
         this.libraryFiles = Collections.emptyList();
+    }
+
+    public NuGetLibrary(MavenCoords coords, File libraryDirectory) {
+        super(MavenName.of(coords));
+        this.libraryFile = libraryDirectory;
+        this.version = coords.version;
+        this.libraryType = LibraryType.REMOTE;
     }
 
     // ----------------------------------------------------------------------
@@ -50,22 +57,44 @@ public class NuGetLibrary extends CSharpLibrary {
     }
 
     @Override
-    public String getVersion() {
-        return this.version;
-    }
-
-    @Override
     public List<File> getFiles() {
-        return Collections.emptyList();
+        if (libraryFiles == null)
+            populateFiles();
+        return libraryFiles;
     }
 
-    @Override
-    public Set<RefType> getTypes() {
-        return Collections.emptySet();
+    /*
+        Problem:
+        the directory lib contains a list of subdirectories as, for example:
+
+        lib/
+            net20
+            net35
+            net45
+            net472
+            netstandard1.0
+            netstandard1.3
+            netstandard2.0
+            netcoreapp3.0
+            netcoreapp3.1
+            net6.0
+
+        In theory, it is necessary to select the correct implementation.
+        This depends on the project, however
+     */
+    private void populateFiles() {
+        File lib = new File(libraryFile, "lib");
+
+        // select the .NET implementation
+        DotNetImplementations dnv = new DotNetImplementations(lib);
+        String impl = dnv.select();
+
+        File selectedImpl = new File(lib, impl);
+        this.libraryFiles = FileUtils.listFiles(selectedImpl, ".dll");
     }
 
-    @Override
-    public boolean contains(Name typeName) {
-        return false;
-    }
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

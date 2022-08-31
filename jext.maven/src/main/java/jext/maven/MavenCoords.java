@@ -14,32 +14,96 @@ package jext.maven;
 
 public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 
+    // ----------------------------------------------------------------------
+    // NuGet
+    // ----------------------------------------------------------------------
+    // <name>/<version>     'Lucene.Net/4.8.0-beta00016'
+
+    public static MavenCoords nuget(String nameVersion) {
+        int pos = nameVersion.indexOf('/');
+        String name = nameVersion.substring(0, pos);
+        String version = nameVersion.substring(pos + 1);
+        return nuget(name, version);
+    }
+
+    public static MavenCoords nuget(String name, String version) {
+        return of(name, version);
+    }
+
+    // ----------------------------------------------------------------------
+    // PyPi
+    // ----------------------------------------------------------------------
+    // <name> <version>     'neo4j 4.4.5'
+
+    public static MavenCoords pypi(String nameVersion) {
+        int pos = nameVersion.indexOf(' ');
+        String name = nameVersion.substring(0, pos);
+        String version = nameVersion.substring(pos + 1);
+        return pypi(name, version);
+    }
+
+    public static MavenCoords pypi(String name, String version) {
+        return of(name, version);
+    }
+
+    // ----------------------------------------------------------------------
+    // Maven
+    // ----------------------------------------------------------------------
+    // <groupId>:<artifactId>:<version>
+    //
+
+    public static MavenCoords of(String name, String v) {
+        if (v == null) v = NONE;
+
+        String[] parts = name.split(":");
+        if (parts.length == 1)
+            return of(NONE, name, v);
+        if (parts.length == 2) {
+            if (name.endsWith(v))
+                return of(parts[0], parts[1]);
+            else
+                return of(parts[0], parts[1], v);
+        }
+        else {
+            if (name.endsWith(v))
+                return of(parts[0], parts[1]);
+            else
+                return of(parts[0], parts[1], v);
+        }
+    }
+
+    public static MavenCoords of(String gid, String aid, String v) {
+        if (gid == null) gid = NONE;
+        if (v == null) v = NONE;
+
+        gid = gid.trim();
+        aid = aid.trim();
+        v = v.trim();
+
+        return new MavenCoords(gid, aid, v);
+    }
+
+    // ----------------------------------------------------------------------
+    // Utilities
+    // ----------------------------------------------------------------------
+
+    /**
+     * Change the Maven coordinates version
+     *
+     * @param coords original Maven coordinates
+     * @param version new version value
+     * @return new Maven coordinates
+     */
     public static MavenCoords of(MavenCoords coords, String version) {
         return of(coords.groupId, coords.artifactId, version);
     }
 
-    public static MavenCoords of(String gid, String aid, String v) {
-        return new MavenCoords(gid, aid, v);
-    }
-
-    public static MavenCoords of(String name, String version) {
-        String[] parts = name.split(":");
-        if (parts.length == 1)
-            return of("", name, version);
-        if (parts.length == 2) {
-            if (name.endsWith(version))
-                return of(parts[0], parts[1]);
-            else
-                return of(parts[0], parts[1], version);
-        }
-        else {
-            if (name.endsWith(version))
-                return of(parts[0], parts[1]);
-            else
-                return of(parts[0], parts[1], version);
-        }
-    }
-
+    /**
+     * Maven coordinates based on a path or maven coordinates
+     *
+     * @param pathOrCoords
+     * @return new Maven coordinates
+     */
     public static MavenCoords of(String pathOrCoords) {
         if (pathOrCoords.contains("/") || pathOrCoords.contains("\\"))
             return fromPath(pathOrCoords);
@@ -93,7 +157,6 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     public String groupId;
     public String artifactId;
     public String version;
-    // private String name;
 
     // ----------------------------------------------------------------------
     //
@@ -103,22 +166,9 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         this.groupId = gid;
         this.artifactId = aid;
         this.version = v;
-        // init();
         if (version.endsWith(SNAPSHOT))
             version = version.substring(0, version.length()-SNAPSHOT.length());
     }
-
-    // private MavenCoords(MavenCoords coords, String v) {
-    //     this.groupId = coords.groupId;
-    //     this.artifactId = coords.artifactId;
-    //     this.version = v;
-    //     init();
-    // }
-
-    // private void init() {
-    //     if (version.endsWith(SNAPSHOT))
-    //         version = version.substring(0, version.length()-SNAPSHOT.length());
-    // }
 
     // ----------------------------------------------------------------------
     //
@@ -215,5 +265,9 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     public static boolean isPattern(String s) {
         return s != null && s.contains("${");
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

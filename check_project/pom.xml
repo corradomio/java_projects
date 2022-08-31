@@ -16,6 +16,7 @@
 
     <modules>
         <module>../jext.commons</module>
+        <module>../jext.compress</module>
         <module>../jext.collections</module>
         <module>../jext.configuration</module>
         <module>../jext.maven</module>

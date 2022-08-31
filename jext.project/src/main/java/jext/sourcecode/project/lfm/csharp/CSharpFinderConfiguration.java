@@ -47,7 +47,7 @@ public class CSharpFinderConfiguration extends LanguageFinderConfiguration {
         downloader.setParallelDownloads(dconfig.getParallelDownloads());
 
         dconfig.getRepositories().forEach(drepo -> {
-            downloader.addRepository(drepo.getUrl());
+            downloader.addRepository(drepo.getName(), drepo.getUrl());
         });
 
         dconfig.getLocalDirectories().forEach(localDir -> {

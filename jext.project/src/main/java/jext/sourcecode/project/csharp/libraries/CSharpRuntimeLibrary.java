@@ -25,7 +25,6 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     // Constants
     // ----------------------------------------------------------------------
 
-    private static final String NET = ".NET Core";
     private static final String DLL = ".dll";
 
     private static class Assemblies extends ArrayList<File> {
@@ -46,8 +45,7 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private String version;
-    private List<File> installationDirectories;
+    private final List<File> installationDirectories;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -80,63 +78,45 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     }
 
     @Override
-    public String getVersion() {
-        return version;
+    public List<File> getFiles() {
+        if (libraryFiles == null)
+            populate();
+        return libraryFiles;
     }
 
-    @Override
-    public List<File> getFiles() {
-        if (libraryFiles != null)
-            return libraryFiles;
-
+    private void populate() {
         libraryFiles = new Assemblies();
         installationDirectories.forEach(idir -> {
             if (!idir.exists()) {
                 logger.errorf("[%s] Directory '%s' not existent",
-                    getName().getFullName(),
-                    FileUtils.getAbsolutePath(idir));
+                        getName().getFullName(),
+                        FileUtils.getAbsolutePath(idir));
                 return;
             }
             // ONLY '.../ref' are scanned recursively
             if (idir.getName().equals("ref") || idir.getAbsolutePath().contains(".Ref")){
                 FileUtils.listFiles(idir, FileFilters.IS_DLL).stream()
-                    .filter(DotNetAssemblyUtils::isAssembly)
-                    .forEach(assembly -> {
-                        libraryFiles.add(assembly);
-                    });
+                        .filter(DotNetAssemblyUtils::isAssembly)
+                        .forEach(assembly -> {
+                            libraryFiles.add(assembly);
+                        });
             }
             //
             else if (idir.getName().equals("sdk")){
                 FileUtils.listFiles(idir, DLL).stream()
-                    .filter(DotNetAssemblyUtils::isAssembly)
-                    .forEach(assembly -> {
-                        libraryFiles.add(assembly);
-                    });
+                        .filter(DotNetAssemblyUtils::isAssembly)
+                        .forEach(assembly -> {
+                            libraryFiles.add(assembly);
+                        });
             }
             else {
                 FileUtils.listFiles(idir, DLL).stream()
-                    .filter(DotNetAssemblyUtils::isAssembly)
-                    .forEach(assembly -> {
-                        libraryFiles.add(assembly);
-                    });
+                        .filter(DotNetAssemblyUtils::isAssembly)
+                        .forEach(assembly -> {
+                            libraryFiles.add(assembly);
+                        });
             }
         });
-
-        return libraryFiles;
-    }
-
-    // ----------------------------------------------------------------------
-    // Types
-    // ----------------------------------------------------------------------
-
-    @Override
-    public Set<RefType> getTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public boolean contains(Name typeName) {
-        return false;
     }
 
     // ----------------------------------------------------------------------

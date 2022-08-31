@@ -11,11 +11,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 public class Archives {
+
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
 
     private static Logger logger = Logger.getLogger(Archives.class);
 
@@ -42,16 +48,39 @@ public class Archives {
         }
     }
 
+    // ----------------------------------------------------------------------
+    // Factory methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Read the compressed stream as a text stream
+     * @param compressedFile compressed file
+     * @param path internal entry's path as 'key1/key2/...'
+     * @return a buffered reader
+     * @throws IOException
+     */
     public static BufferedReader openText(File compressedFile, String path) throws IOException {
         ArchiveInputStream stream = openArchive(compressedFile);
         ArchiveEntry entry = selectFirst(stream);
         return new BufferedReader(new InputStreamReader(stream));
     }
 
+    /**
+     * Open the archive in the readonly mode. The compressed streams can be selected using
+     * ArchiveInputStream.getNextEntry()
+     *
+     * @param compressedFile compressed file
+     * @return a viewer to the internal streams
+     * @throws IOException
+     */
     public static ArchiveInputStream openArchive(File compressedFile)
         throws IOException {
         String atype = extensionOf(compressedFile).toLowerCase();
         Class aclass = archivers.getOrDefault(atype, null);
+        if (aclass == null) {
+            atype = guessType(compressedFile);
+            aclass = archivers.getOrDefault(atype, null);
+        }
         if (aclass == null)
             throw new IOException(String.format("Unsupported archiver for file %s", compressedFile.getAbsolutePath()));
 
@@ -61,6 +90,86 @@ public class Archives {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException  | NoSuchMethodException e) {
             throw new IOException(e);
         }
+    }
+
+    /**
+     * Select the first compressed stream
+     * @param stream stream to the compressed file
+     * @return the first compressed stream
+     * @throws IOException
+     */
+    public static ArchiveEntry selectFirst(ArchiveInputStream stream) throws IOException {
+        return stream.getNextEntry();
+    }
+
+
+    /**
+     * Sele the compressed stream with the specified path or the first stream if path is null
+     * or the empty string
+     * @param stream stream to the compressed file
+     * @param path path of the selected stream or null or the empty string
+     * @return the selected compressed stream
+     * @throws IOException
+     */
+    public static ArchiveEntry select(ArchiveInputStream stream, String path) throws IOException {
+        if (path == null || path.length() == 0)
+            return selectFirst(stream);
+
+        ArchiveEntry entry;
+        while ((entry = stream.getNextEntry()) != null) {
+            if (entry.getName().equals(path))
+                return entry;
+        }
+        return null;
+    }
+
+    /**
+     * Uncompress the content of the compressed file into the specified directory
+     *
+     * @param compressedFile compressed file
+     * @param outputDirectory where to write the compressed streams
+     * @throws IOException
+     */
+    public static void uncompress(File compressedFile, File outputDirectory) throws IOException {
+        ArchiveEntry entry;
+        try (ArchiveInputStream ais = openArchive(compressedFile)) {
+            while ((entry = ais.getNextEntry()) != null) {
+                if (entry.isDirectory())
+                    continue;
+                File file = new File(outputDirectory, entry.getName());
+                file.getParentFile().mkdirs();
+                Files.copy(ais, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    //
+
+    private static String guessType(File file) throws IOException {
+        byte[] header = new byte[8];
+
+        try(FileInputStream fis = new FileInputStream(file)) {
+            fis.read(header);
+        }
+
+        // https://en.wikipedia.org/wiki/List_of_file_signatures
+
+        if (header[0] == 'P' && header[1] == 'K')
+            return "zip";
+        if (header[0] == 0x1F && header[1] == 0x8B)
+            return "tgz";
+        if (header[0] == 'R' && header[1] == 'a' && header[2] == 'r')
+            return "rar";
+        if (header[0] == '7' && header[1] == 'z')
+            return "7z";
+        if (header[0] == 0xFD && header[1] == 0x37 && header[2] == 0x7A)
+            return "txz";
+
+        throw new IOException("Unsupported file format");
     }
 
     private static String extensionOf(File file) {
@@ -75,17 +184,4 @@ public class Archives {
         return name.substring(pos+1);
     }
 
-    public static ArchiveEntry selectFirst(ArchiveInputStream stream) throws IOException {
-        return stream.getNextEntry();
-    }
-
-
-    public static ArchiveEntry select(ArchiveInputStream stream, String path) throws IOException {
-        ArchiveEntry entry;
-        while ((entry = stream.getNextEntry()) != null) {
-            if (entry.getName().equals(path))
-                return entry;
-        }
-        return null;
-    }
 }

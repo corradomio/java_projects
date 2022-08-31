@@ -13,7 +13,7 @@ public interface LibraryDownloader {
 
     LibraryDownloader newDownloader();
 
-    void checkArtifacts(Collection<MavenCoords> artifacts, boolean b, boolean parallel);
+    void checkArtifacts(Collection<MavenCoords> artifacts, boolean parallel);
 
     String getLatestVersion(MavenCoords coords);
 }

@@ -1,10 +1,7 @@
 package jext.sourcecode.project.python.libraries;
 
 import jext.name.Name;
-import jext.name.NamedObject;
 import jext.name.PathName;
-import jext.sourcecode.project.Library;
-import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
@@ -23,11 +20,6 @@ public class PythonLibrary extends BaseLibrary {
     // Private fields
     // ----------------------------------------------------------------------
 
-    // protected File libraryDirectory;
-    protected List<File> pythonFiles;
-    // protected Project project;
-    // protected LibraryType libraryType = LibraryType.LOCAL;
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -39,6 +31,21 @@ public class PythonLibrary extends BaseLibrary {
         this.libraryType = LibraryType.LOCAL;
     }
 
+    public PythonLibrary(Name name) {
+        super(name);
+        this.language = PythonConstants.PYTHON;
+    }
+
+    //public PythonLibrary(MavenCoords coords, File libraryDirectory) {
+    //    super(MavenName.of(coords));
+    //    this.version = coords.version;
+    //    this.libraryFile = libraryDirectory;
+    //    this.language = PythonConstants.PYTHON;
+    //    this.libraryType = LibraryType.REMOTE;
+    //
+    //    this.pythonFiles = Arrays.asList(libraryDirectory);
+    //}
+
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
@@ -48,66 +55,20 @@ public class PythonLibrary extends BaseLibrary {
         return libraryFile.isDirectory();
     }
 
-    // @Override
-    // public Project getProject() {
-    //     return project;
-    // }
-
     public void setProject(Project project) {
         this.project = project;
     }
 
-    // @Override
-    // public LibraryType getLibraryType() {
-    //     return libraryType;
-    // }
-
-    // @Override
-    // public LibraryStatus getLibraryStatus() {
-    //     return LibraryStatus.VALID;
-    // }
-
-    // @Override
-    // public String getLanguage() {
-    //     return PythonConstants.PYTHON;
-    // }
-
-    // @Override
-    // public String getPath() {
-    //     return FileUtils.getAbsolutePath(libraryDirectory);
-    // }
-
-    // @Override
-    // public String getDigest() {
-    //     return "0";
-    // }
-
-    // @Override
-    // public File getFile() {
-    //     return libraryDirectory;
-    // }
-
     @Override
     public List<File> getFiles() {
-        if (pythonFiles == null)
-            pythonFiles = FileUtils.listFiles(libraryFile, PythonConstants.PYTHON_EXT);
-        return pythonFiles;
+        if (libraryFiles == null)
+            populate();
+        return libraryFiles;
     }
 
-    @Override
-    public Set<RefType> getTypes() {
-        return Collections.emptySet();
+    private void populate() {
+        libraryFiles = FileUtils.listFiles(libraryFile, PythonConstants.PYTHON_EXT);
     }
-
-    @Override
-    public boolean contains(Name typeName) {
-        return false;
-    }
-
-    // @Override
-    // public String getVersion() {
-    //     return "";
-    // }
 
     // ----------------------------------------------------------------------
     // Implementation

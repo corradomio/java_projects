@@ -36,7 +36,7 @@ public class NullLibraryFinder implements LibraryFinder {
         }
 
         @Override
-        public void checkArtifacts(Collection<MavenCoords> artifacts, boolean b, boolean parallel) {
+        public void checkArtifacts(Collection<MavenCoords> artifacts, boolean parallel) {
 
         }
 

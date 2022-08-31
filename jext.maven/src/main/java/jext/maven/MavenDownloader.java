@@ -1061,18 +1061,17 @@ public class MavenDownloader implements MavenConst {
      *      [artifact].jar  if it exists
      *
      * @param coordsList list of coordinates to check
-     * @param artifacts if to download the artifacts
      */
-    public void checkArtifacts(Collection<MavenCoords> coordsList, boolean artifacts, boolean parallel) {
+    public void checkArtifacts(Collection<MavenCoords> coordsList, boolean parallel) {
         logger.infof("Checking %d artifacts ...", coordsList.size());
         if (parallel)
-            Parallel.forEach(coordsList, coords -> checkArtifact(coords, artifacts));
+            Parallel.forEach(coordsList, coords -> checkArtifact(coords));
         else
-            Serial.forEach(coordsList, coords -> checkArtifact(coords, artifacts));
+            Serial.forEach(coordsList, coords -> checkArtifact(coords));
         logger.infof("Checked %d artifacts", coordsList.size());
     }
 
-    private void checkArtifact(MavenCoords coords, boolean artifact) {
+    private void checkArtifact(MavenCoords coords) {
 
         MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
 

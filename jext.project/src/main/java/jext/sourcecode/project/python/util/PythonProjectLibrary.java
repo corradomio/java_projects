@@ -40,20 +40,6 @@ public class PythonProjectLibrary extends BaseLibrary {
     }
 
     // ----------------------------------------------------------------------
-    // Types
-    // ----------------------------------------------------------------------
-
-    @Override
-    public Set<RefType> getTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public boolean contains(Name typeName) {
-        return false;
-    }
-
-    // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------
 

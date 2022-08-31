@@ -40,7 +40,6 @@ public class JDKLibrary extends DirectoryLibrary {
     }
 
     public static String getVersion(String name) {
-
         if (name.startsWith("jdk"))
             return name.substring(3) + ".0.0";
         if (name.startsWith("adk"))

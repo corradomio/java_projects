@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -30,8 +31,10 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     protected Project project;
 
     protected File libraryFile;
+    protected List<File> libraryFiles;
     protected LibraryType libraryType;
     protected String language;
+    protected String version = "";
 
     protected Set<Name> definedTypes = new HashSet<>();
     protected Set<Name> undefinedTypes = new HashSet<>();
@@ -55,6 +58,15 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     }
 
     // ----------------------------------------------------------------------
+    // Version
+    // ----------------------------------------------------------------------
+
+    @Override
+    public String getVersion() {
+        return version;
+    }
+
+    // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
@@ -74,12 +86,6 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return this.libraryFile;
     }
 
-    // @Override
-    // @Nullable
-    // public Module getModule() {
-    //     return module;
-    // }
-
     @Override
     public LibraryType getLibraryType() {
         return libraryType;
@@ -95,17 +101,19 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         return LibraryStatus.VALID;
     }
 
-    // @Override
-    // public String getDigest() {
-    //     return FileUtils.digest(libraryFile);
-    // }
-
     // ----------------------------------------------------------------------
-    // Version
+    // Types
     // ----------------------------------------------------------------------
 
     @Override
-    public String getVersion() { return StringUtils.empty(); }
+    public Set<RefType> getTypes() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public boolean contains(Name typeName) {
+        return false;
+    }
 
     // ----------------------------------------------------------------------
     // End

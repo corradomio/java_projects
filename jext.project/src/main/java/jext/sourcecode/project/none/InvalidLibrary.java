@@ -16,6 +16,10 @@ import java.util.Set;
 
 public class InvalidLibrary extends BaseLibrary {
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public InvalidLibrary(String libraryName, Project project) {
         super(PathName.of(libraryName), project);
     }
@@ -23,6 +27,10 @@ public class InvalidLibrary extends BaseLibrary {
     public InvalidLibrary(Name libraryName, Project project) {
         super(libraryName, project);
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isValid() {
@@ -49,24 +57,9 @@ public class InvalidLibrary extends BaseLibrary {
         return null;
     }
 
-    // @Override
-    // public String getDigest() {
-    //     return "0";
-    // }
-
     @Override
     public List<File> getFiles() {
         return Collections.emptyList();
-    }
-
-    @Override
-    public Set<RefType> getTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public boolean contains(Name typeName) {
-        return false;
     }
 
     @Override
@@ -74,9 +67,8 @@ public class InvalidLibrary extends BaseLibrary {
         return JavaConstants.JAVA;
     }
 
-    @Override
-    public String getVersion() {
-        return "";
-    }
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

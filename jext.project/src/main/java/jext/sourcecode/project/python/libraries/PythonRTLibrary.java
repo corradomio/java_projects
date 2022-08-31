@@ -9,18 +9,30 @@ import java.util.List;
 
 public class PythonRTLibrary extends PythonLibrary {
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public PythonRTLibrary(String name, File libraryDirectory) {
         super(libraryDirectory);
         setNameWithId(PathName.of(name));
         libraryType = LibraryType.RUNTIME;
     }
 
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
     @Override
     public List<File> getFiles() {
-        if (pythonFiles != null)
-            return pythonFiles;
+        if (libraryFiles == null)
+            populate();
+        return libraryFiles;
+    }
 
-        pythonFiles = new ArrayList<>();
+    private void populate() {
+
+        libraryFiles = new ArrayList<>();
         // Windows
         // {
         //     addFile(files,
@@ -48,13 +60,12 @@ public class PythonRTLibrary extends PythonLibrary {
         //
         File libraryPythonDirectory = findPythonLibraryDirectory();
         {
-            addFile(pythonFiles,
-                new File(libraryPythonDirectory, "lib"),
-                new File(libraryPythonDirectory, "lib/site-packages")
+            addFile(libraryFiles,
+                    new File(libraryPythonDirectory, "lib"),
+                    new File(libraryPythonDirectory, "lib/site-packages")
             );
         }
 
-        return pythonFiles;
     }
 
     private static void addFile(List<File> files, File... filesToAdd) {
@@ -85,4 +96,9 @@ public class PythonRTLibrary extends PythonLibrary {
 
         return libraryFile;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

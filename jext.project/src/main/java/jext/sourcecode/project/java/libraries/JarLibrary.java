@@ -24,8 +24,6 @@ import java.util.Set;
 
 public class JarLibrary extends JavaLibrary {
 
-    private String version;
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -62,11 +60,6 @@ public class JarLibrary extends JavaLibrary {
     }
 
     @Override
-    public String getVersion() {
-        return version;
-    }
-
-    @Override
     public boolean isValid() {
         return libraryFile.exists();
     }
@@ -75,16 +68,6 @@ public class JarLibrary extends JavaLibrary {
     public List<File> getFiles() {
         return Collections.singletonList(libraryFile);
     }
-
-    // @Override
-    // public String getModuleId() {
-    //     return module.getId();
-    // }
-
-    // @Override
-    // public Module getModule() {
-    //     return module;
-    // }
 
     // ----------------------------------------------------------------------
     // Types

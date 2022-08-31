@@ -10,10 +10,17 @@ import java.util.List;
 
 public abstract class CSharpLibrary extends BaseLibrary {
 
-    protected List<File> libraryFiles;
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     protected CSharpLibrary(Name libraryName) {
         super(libraryName);
         this.language = CSharpConstants.CSHARP;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

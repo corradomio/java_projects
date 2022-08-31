@@ -30,7 +30,6 @@ public class MavenLibrary extends JavaLibrary {
     protected MavenDownloader md;
 
     protected List<Library> dependencies;
-    private List<File> jarFiles;
 
     private static final int MAX_DEPTH = 3;
 
@@ -45,6 +44,7 @@ public class MavenLibrary extends JavaLibrary {
         this.md = md;
         this.libraryFile = md.getPomFile(coords);
         this.libraryType = LibraryType.REMOTE;
+        this.version = coords.version;
     }
 
     // ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ public class MavenLibrary extends JavaLibrary {
             return false;
 
         checkFilesNoSync();
-        for (File jarFile : jarFiles) {
+        for (File jarFile : libraryFiles) {
             if (JarUtils.containsClass(jarFile, typeName.toString())) {
                 definedTypes.add(typeName);
                 return true;
@@ -150,16 +150,7 @@ public class MavenLibrary extends JavaLibrary {
     @Override
     public synchronized List<File> getFiles() {
         checkFilesNoSync();
-        return jarFiles;
-    }
-
-    // ----------------------------------------------------------------------
-    // Version
-    // ----------------------------------------------------------------------
-
-    @Override
-    public String getVersion() {
-        return coords.version;
+        return libraryFiles;
     }
 
     // ----------------------------------------------------------------------
@@ -167,10 +158,10 @@ public class MavenLibrary extends JavaLibrary {
     // ----------------------------------------------------------------------
 
     private void checkFilesNoSync() {
-        if (jarFiles != null)
+        if (libraryFiles != null)
             return;
 
-        jarFiles = md.getArtifacts(coords);
+        libraryFiles = md.getArtifacts(coords);
     }
 
     // ----------------------------------------------------------------------

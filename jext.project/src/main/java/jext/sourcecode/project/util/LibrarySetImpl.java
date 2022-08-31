@@ -198,11 +198,12 @@ public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
             .map(library -> MavenCoords.of(library.getName().getFullName()))
             .collect(Collectors.toList());
 
-        if (parallel) {
-            (new Thread(() -> md.checkArtifacts(artifacts, false, parallel))).start();
-        }
-        else {
-            md.checkArtifacts(artifacts, true, parallel);
+        //if (parallel) {
+        //    (new Thread(() -> md.checkArtifacts(artifacts, parallel))).start();
+        //}
+        //else
+        {
+            md.checkArtifacts(artifacts, parallel);
         }
     }
 

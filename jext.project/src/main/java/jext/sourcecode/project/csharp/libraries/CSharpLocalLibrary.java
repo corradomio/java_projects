@@ -13,6 +13,10 @@ import java.util.Set;
 
 public class CSharpLocalLibrary extends CSharpLibrary {
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public CSharpLocalLibrary(
         Name libraryName,
         File libraryDirectory,
@@ -22,6 +26,10 @@ public class CSharpLocalLibrary extends CSharpLibrary {
         this.libraryFiles = libraryFiles;
         this.libraryType = LibraryType.LOCAL;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isValid() {
@@ -33,14 +41,8 @@ public class CSharpLocalLibrary extends CSharpLibrary {
         return libraryFiles;
     }
 
-    @Override
-    public Set<RefType> getTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public boolean contains(Name typeName) {
-        return false;
-    }
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

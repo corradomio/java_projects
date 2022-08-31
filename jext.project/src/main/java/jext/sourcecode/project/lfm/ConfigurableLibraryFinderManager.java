@@ -114,7 +114,8 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
         configurationFile = FileUtils.toFile(configurationFile.getParentFile(), path);
 
         if (!configurationFile.exists() || !configurationFile.isFile()) {
-            logger.errorf("Configuration file '%s' not existent.", FileUtils.getAbsolutePath(configurationFile));
+            if (!path.equals("") && !path.equals("."))
+                logger.errorf("Configuration file '%s' not existent.", FileUtils.getAbsolutePath(configurationFile));
             return;
         }
 

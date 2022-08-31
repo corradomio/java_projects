@@ -112,8 +112,11 @@
                 <download timeout="500ms" path="${sys:user.home}/.spl/.pip" parallel="5" />
                 <check    timeout="24h"/>
 
-                <!-- Configuration -->
-                <repository name="pypi" url="https://pypi.org/"/>
+                <!--
+                    PyPi server API
+                    ttps://stackoverflow.com/questions/21419009/json-api-for-pypi-how-to-list-packages
+                -->
+                <repository name="pypi" url="https://pypi.org/simple"/>
             </downloader>
 
             <path value="${python-home}/anaconda3-2022.05" name="py38,3.8"/>
@@ -125,7 +128,11 @@
                 <download timeout="500ms" path="${sys:user.home}/.spl/.nuget" parallel="5" />
                 <check    timeout="24h"/>
 
-                <repository name="nuget" url="https://www.nuget.org/"/>
+                <!--
+                    NuGet server API
+                    https://docs.microsoft.com/en-us/nuget/api/overview
+                -->
+                <repository name="nuget" url="https://api.nuget.org/v3/index.json"/>
             </downloader>
 
             <!-- NEW syntax, to supports MULTIPLE paths -->

@@ -37,6 +37,22 @@ public class PythonFinderConfiguration extends LanguageFinderConfiguration {
     }
 
     private void configureDownloader(LibraryDownloader ld) {
+        PyPiDownloader downloader = (PyPiDownloader) ld;
+        DownloaderConfiguration dconfig = getDownloaderConfiguration(ld.getName());
 
+        downloader.setDownloadDirectory(dconfig.getDownloadDirectory());
+        downloader.setDownloadTimeout(dconfig.getDownloadTimeout());
+        downloader.setCheckTimeout(dconfig.getCheckTimeout());
+        downloader.setParallelDownloads(dconfig.getParallelDownloads());
+
+        dconfig.getRepositories().forEach(drepo -> {
+            downloader.addRepository(drepo.getName(), drepo.getUrl());
+        });
+
+        dconfig.getLocalDirectories().forEach(localDir -> {
+            downloader.addLocalDirectory(localDir);
+        });
+
+        downloader.initialize();
     }
 }

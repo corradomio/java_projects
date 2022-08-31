@@ -7,7 +7,9 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.csharp.libraries.CSharpLocalLibrary;
 import jext.sourcecode.project.csharp.libraries.CSharpRuntimeLibrary;
+import jext.sourcecode.project.csharp.libraries.NuGetLibrary;
 import jext.util.HashMap;
 
 import java.io.File;
@@ -89,7 +91,14 @@ public class CSharpLibraryFinder implements LibraryFinder {
 
     @Override
     public Library getLibrary(MavenCoords coords) {
-        throw new UnsupportedOperationException();
+        // [downloadDir]/<artifactId>/<version>
+        String relativePath = String.format(
+                "%1$s/%2$s",
+                coords.artifactId,
+                coords.version);
+
+        File libraryDirectory = new File(downloader.getDownloadDirectory(), relativePath);
+        return new NuGetLibrary(coords, libraryDirectory);
     }
 
     @Override

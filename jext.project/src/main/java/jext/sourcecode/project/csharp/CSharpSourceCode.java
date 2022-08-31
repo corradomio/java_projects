@@ -53,7 +53,6 @@ public class CSharpSourceCode extends SourceCode {
         if (definedTypes == null)
             populateTypes();
         return definedTypes;
-
     }
 
     @Override
