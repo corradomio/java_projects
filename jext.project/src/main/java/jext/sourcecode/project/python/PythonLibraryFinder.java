@@ -11,6 +11,7 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.python.libraries.PyPiLibrary;
 import jext.sourcecode.project.python.libraries.PythonLibrary;
+import jext.sourcecode.project.python.libraries.PythonLocalLibrary;
 import jext.sourcecode.project.python.libraries.PythonRTLibrary;
 import jext.util.FileUtils;
 
@@ -174,7 +175,7 @@ public class PythonLibraryFinder implements LibraryFinder {
             return new PythonRTLibrary(libraryDirectory.getName(), libraryDirectory);
         }
         else {
-            return new PythonLibrary(libraryDirectory);
+            return new PythonLocalLibrary(libraryDirectory);
         }
     }
 

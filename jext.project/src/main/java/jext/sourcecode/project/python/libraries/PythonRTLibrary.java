@@ -14,9 +14,10 @@ public class PythonRTLibrary extends PythonLibrary {
     // ----------------------------------------------------------------------
 
     public PythonRTLibrary(String name, File libraryDirectory) {
-        super(libraryDirectory);
-        setNameWithId(PathName.of(name));
-        libraryType = LibraryType.RUNTIME;
+        super(PathName.of(name));
+        //setNameWithId(PathName.of(name));
+        this.libraryType = LibraryType.RUNTIME;
+        this.libraryFile = libraryDirectory;
     }
 
     // ----------------------------------------------------------------------

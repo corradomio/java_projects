@@ -11,7 +11,7 @@ import jext.util.FileUtils;
 import java.io.File;
 import java.util.List;
 
-public class PythonLibrary extends BaseLibrary {
+public abstract class PythonLibrary extends BaseLibrary {
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -21,12 +21,12 @@ public class PythonLibrary extends BaseLibrary {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public PythonLibrary(File libraryDirectory) {
-        super(PathName.of(libraryDirectory.getName()));
-        this.libraryFile = libraryDirectory;
-        this.language = PythonConstants.PYTHON;
-        this.libraryType = LibraryType.LOCAL;
-    }
+    //public PythonLibrary(File libraryDirectory) {
+    //    super(PathName.of(libraryDirectory.getName()));
+    //    this.libraryFile = libraryDirectory;
+    //    this.language = PythonConstants.PYTHON;
+    //    this.libraryType = LibraryType.LOCAL;
+    //}
 
     public PythonLibrary(Name name) {
         super(name);
@@ -46,16 +46,16 @@ public class PythonLibrary extends BaseLibrary {
         this.project = project;
     }
 
-    @Override
-    public List<File> getFiles() {
-        if (libraryFiles == null)
-            populate();
-        return libraryFiles;
-    }
+    //@Override
+    //public List<File> getFiles() {
+    //    if (libraryFiles == null)
+    //        populate();
+    //    return libraryFiles;
+    //}
 
-    private void populate() {
-        libraryFiles = FileUtils.listFiles(libraryFile, PythonConstants.PYTHON_EXT);
-    }
+    //private void populate() {
+    //    libraryFiles = FileUtils.listFiles(libraryFile, PythonConstants.PYTHON_EXT);
+    //}
 
     // ----------------------------------------------------------------------
     // Implementation
