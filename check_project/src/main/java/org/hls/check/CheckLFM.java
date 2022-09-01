@@ -30,7 +30,8 @@ public class CheckLFM {
         // artifact = MavenCoords.pypi("networkx", "2.8.6");
         // artifact = MavenCoords.pypi("autograd", "1.4");
         // artifact = MavenCoords.pypi("neo4j", "4.4.6");
-        artifact = MavenCoords.pypi("gurobipy", "9.5.2");
+        // artifact = MavenCoords.pypi("gurobipy", "9.5.2");
+        artifact = MavenCoords.pypi("flask", "2.2.2");
 
         lf.getDownloader().checkArtifacts(Arrays.asList(artifact), false);
 

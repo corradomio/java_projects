@@ -5,12 +5,9 @@ import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.Versions;
 import jext.sourcecode.project.LibraryDownloader;
+import jext.sourcecode.project.python.util.PyPiResolver;
 import jext.sourcecode.project.util.FileValidator;
 import jext.util.FileUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -43,90 +40,90 @@ public class PyPiDownloader implements LibraryDownloader {
         INVALID
     }
 
-    private static class ArtifactList {
-
-        private File versionsFile;
-
-        ArtifactList(File versionsFile) {
-            this.versionsFile = versionsFile;
-        }
-
-        Versions getVersions() {
-            Versions versions = new Versions();
-
-            /*
-                <!DOCTYPE html>
-                <html>
-                  ...
-                  <body>
-                    <h1>Links for networkx</h1>
-                    <a href="..." >networkx-0.34-py2.4.egg</a><br />
-                    ...
-
-                    </body>
-                </html>
-                <!--SERIAL 14836743-->
-             */
-
-            if (!versionsFile.exists())
-                return versions;
-
-            try {
-                Document html = Jsoup.parse(versionsFile);
-                Elements elts = html.body().children();
-
-                for(Element elt : elts) {
-                    if (elt.nodeName().equals("a")) {
-                        String versioned = elt.ownText();
-                        String version = extractVersion(versioned);
-                        versions.add(version);
-                    }
-                }
-
-            } catch (Exception e) {
-                // already checked
-            }
-
-            return versions;
-        }
-
-        Optional<String> getUrl(String version) {
-            Optional<String> url;
-            // the version can not exist
-            if (!versionsFile.exists())
-                return Optional.empty();
-
-            try {
-                Document html = Jsoup.parse(versionsFile);
-
-                return findUrl(html, version, ".tar.gz");
-
-            } catch (Exception e) {
-                // already checked
-            }
-
-            return Optional.empty();
-        }
-
-        private static Optional<String> findUrl(Document html, String version, String ext) {
-            Elements elts = html.body().children();
-            for(Element elt : elts) {
-                if (elt.nodeName().equals("a")) {
-                    String versioned = elt.ownText();
-                    String ver = extractVersion(versioned);
-                    if (!ver.equals(version))
-                        continue;
-                    if (!versioned.endsWith(ext))
-                        continue;
-
-                    String href = elt.attr("href");
-                    return Optional.of(href);
-                }
-            }
-
-            return Optional.empty();
-        }
-    }
+    //private static class ArtifactList {
+    //
+    //    private File versionsFile;
+    //
+    //    ArtifactList(File versionsFile) {
+    //        this.versionsFile = versionsFile;
+    //    }
+    //
+    //    //Versions getVersions() {
+    //    //    Versions versions = new Versions();
+    //    //
+    //    //    /*
+    //    //        <!DOCTYPE html>
+    //    //        <html>
+    //    //          ...
+    //    //          <body>
+    //    //            <h1>Links for networkx</h1>
+    //    //            <a href="..." >networkx-0.34-py2.4.egg</a><br />
+    //    //            ...
+    //    //
+    //    //            </body>
+    //    //        </html>
+    //    //        <!--SERIAL 14836743-->
+    //    //     */
+    //    //
+    //    //    if (!versionsFile.exists())
+    //    //        return versions;
+    //    //
+    //    //    try {
+    //    //        Document html = Jsoup.parse(versionsFile);
+    //    //        Elements elts = html.body().children();
+    //    //
+    //    //        for(Element elt : elts) {
+    //    //            if (elt.nodeName().equals("a")) {
+    //    //                String versioned = elt.ownText();
+    //    //                String version = extractVersion(versioned);
+    //    //                versions.add(version);
+    //    //            }
+    //    //        }
+    //    //
+    //    //    } catch (Exception e) {
+    //    //        // already checked
+    //    //    }
+    //    //
+    //    //    return versions;
+    //    //}
+    //
+    //    Optional<String> getUrl(String version) {
+    //        Optional<String> url;
+    //        // the version can not exist
+    //        if (!versionsFile.exists())
+    //            return Optional.empty();
+    //
+    //        try {
+    //            Document html = Jsoup.parse(versionsFile);
+    //
+    //            return findUrl(html, version, ".tar.gz");
+    //
+    //        } catch (Exception e) {
+    //            // already checked
+    //        }
+    //
+    //        return Optional.empty();
+    //    }
+    //
+    //    private static Optional<String> findUrl(Document html, String version, String ext) {
+    //        Elements elts = html.body().children();
+    //        for(Element elt : elts) {
+    //            if (elt.nodeName().equals("a")) {
+    //                String versioned = elt.ownText();
+    //                String ver = extractVersion(versioned);
+    //                if (!ver.equals(version))
+    //                    continue;
+    //                if (!versioned.endsWith(ext))
+    //                    continue;
+    //
+    //                String href = elt.attr("href");
+    //                return Optional.of(href);
+    //            }
+    //        }
+    //
+    //        return Optional.empty();
+    //    }
+    //}
 
     // ----------------------------------------------------------------------
     // Properties
@@ -222,8 +219,6 @@ public class PyPiDownloader implements LibraryDownloader {
     public Versions getArtifactVersions(MavenCoords coords) {
         // https://pypi.org/simple/pylibmc/
 
-        Versions versions = new Versions();
-
         File versionsFile  = composeFile(coords, ArtifactType.VERSIONS);
         String versionsUrl = composeUrl(coords, ArtifactType.VERSIONS);
 
@@ -232,8 +227,11 @@ public class PyPiDownloader implements LibraryDownloader {
             validateFile(versionsFile, ArtifactType.VERSIONS);
         }
 
-        ArtifactList artifactList = new ArtifactList(versionsFile);
-        return artifactList.getVersions();
+        //ArtifactList artifactList = new ArtifactList(versionsFile);
+        //return artifactList.getVersions();
+
+        PyPiResolver resolver = new PyPiResolver(versionsFile);
+        return resolver.getVersions();
     }
 
     private boolean isObsolete(File file) {
@@ -245,23 +243,24 @@ public class PyPiDownloader implements LibraryDownloader {
     // ----------------------------------------------------------------------
 
     public Optional<File> downloadArtifact(MavenCoords coords) {
-        File artifactFile  = composeFile(coords, ArtifactType.ARTIFACT);
+        File versionsFile  = composeFile(coords, ArtifactType.VERSIONS);
+        String versionsUrl = composeUrl(coords, ArtifactType.VERSIONS);
+
+        if (!versionsFile.exists() || isObsolete(versionsFile)) {
+            downloadFile(versionsUrl, versionsFile);
+            validateFile(versionsFile, ArtifactType.VERSIONS);
+        }
+
+        PyPiResolver resolver = new PyPiResolver(versionsFile);
+        Optional<PyPiResolver.Info> artifactInfo = resolver.selectDistribution(coords.version);
+        if (!artifactInfo.isPresent())
+            return Optional.empty();
+
+        File artifactFile = composeFile(coords, artifactInfo.get());
         if (artifactFile.exists())
             return Optional.of(artifactFile);
 
-        // the correct url is available in the HTML used to retrieve the artifact versions
-        Versions versions = getArtifactVersions(coords);
-        if (versions.isEmpty())
-            return Optional.empty();
-
-        File versionsFile  = composeFile(coords, ArtifactType.VERSIONS);
-        ArtifactList artifactList = new ArtifactList(versionsFile);
-
-        Optional<String> artifactUrl = artifactList.getUrl(coords.version);
-        if (!artifactUrl.isPresent())
-            return Optional.empty();
-
-        downloadFile(artifactUrl.get(), artifactFile);
+        downloadFile(artifactInfo.get().url, artifactFile);
         validateFile(artifactFile, ArtifactType.ARTIFACT);
         uncompressArtifact(artifactFile);
 
@@ -332,6 +331,15 @@ public class PyPiDownloader implements LibraryDownloader {
         return new File(downloadDirectory, relativePath);
     }
 
+    private File composeFile(MavenCoords coords, PyPiResolver.Info info) {
+        String relativePath = String.format("%1$s/%2$s/%3$s",
+                coords.artifactId.toLowerCase(),
+                coords.version.toLowerCase(),
+                info.name);
+
+        return new File(downloadDirectory, relativePath);
+    }
+
     private void downloadFile(String fileUrl, File filePath) {
         FileUtils.mkdirs(filePath.getParentFile());
 
@@ -377,41 +385,41 @@ public class PyPiDownloader implements LibraryDownloader {
         return url;
     }
 
-    private static String extractVersion(String versioned) {
-        String version = versioned;
-        int p;
-        // networkx-0.34-py2.4.egg
-        // networkx-0.34.tar.gz
-        // networkx-0.34.win32.exe
-        // networkx-1.0rc1-py2.4.egg
-        // neo4j-4.0.0a1.tar.gz             alpha
-        // neo4j-4.0.0b1.tar.gz             beta
-        // neo4j-4.0.0rc1.tar.gz            release candidate
+    //private static String extractVersion(String versioned) {
+    //    String version = versioned;
+    //    int p;
+    //    // networkx-0.34-py2.4.egg
+    //    // networkx-0.34.tar.gz
+    //    // networkx-0.34.win32.exe
+    //    // networkx-1.0rc1-py2.4.egg
+    //    // neo4j-4.0.0a1.tar.gz             alpha
+    //    // neo4j-4.0.0b1.tar.gz             beta
+    //    // neo4j-4.0.0rc1.tar.gz            release candidate
+    //
+    //    // remove prefix
+    //    p = version.indexOf('-');
+    //    version = version.substring(p+1);
+    //
+    //    // remove "-py2" | "-py3"
+    //    version = sremove(version, "-py2");
+    //    version = sremove(version, "-py3");
+    //
+    //    // remove "-cp2" | "-cp3"
+    //    version = sremove(version, "-cp2");
+    //    version = sremove(version, "-cp3");
+    //
+    //    // remove '.zip', '.tar.gz'
+    //    version = sremove(version, ".zip");
+    //    version = sremove(version, ".tar.gz");
+    //    version = sremove(version, ".win32");
+    //
+    //    return version;
+    //}
 
-        // remove prefix
-        p = version.indexOf('-');
-        version = version.substring(p+1);
-
-        // remove "-py2" | "-py3"
-        version = sremove(version, "-py2");
-        version = sremove(version, "-py3");
-
-        // remove "-cp2" | "-cp3"
-        version = sremove(version, "-cp2");
-        version = sremove(version, "-cp3");
-
-        // remove '.zip', '.tar.gz'
-        version = sremove(version, ".zip");
-        version = sremove(version, ".tar.gz");
-        version = sremove(version, ".win32");
-
-        return version;
-    }
-
-    private static String sremove(String s, String t) {
-        int p = s.indexOf(t);
-        return p != -1 ? s.substring(0, p) : s;
-    }
+    //private static String sremove(String s, String t) {
+    //    int p = s.indexOf(t);
+    //    return p != -1 ? s.substring(0, p) : s;
+    //}
 
     // ----------------------------------------------------------------------
     // End

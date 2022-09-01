@@ -1,10 +1,8 @@
 package jext.sourcecode.project.csharp.libraries;
 
 import jext.maven.MavenCoords;
-import jext.name.Name;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.csharp.util.DotNetImplementations;
+import jext.sourcecode.project.csharp.util.DotNetResolved;
 import jext.sourcecode.project.java.maven.MavenName;
 import jext.util.Assert;
 import jext.util.FileUtils;
@@ -12,7 +10,6 @@ import jext.util.FileUtils;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class NuGetLibrary extends CSharpLibrary {
 
@@ -90,7 +87,7 @@ public class NuGetLibrary extends CSharpLibrary {
         File lib = new File(libraryFile, "lib");
 
         // select the .NET implementation
-        DotNetImplementations dnv = new DotNetImplementations(lib);
+        DotNetResolved dnv = new DotNetResolved(lib);
         String impl = dnv.select();
 
         File selectedImpl = new File(lib, impl);

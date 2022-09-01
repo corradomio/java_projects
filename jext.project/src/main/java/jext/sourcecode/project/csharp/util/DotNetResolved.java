@@ -23,26 +23,55 @@ import java.util.TreeSet;
  *  .NET version used by the project/module
  *
  */
-public class DotNetImplementations {
+public class DotNetResolved {
 
     private static final String DEFAULT = "net6.0";
 
-    private File libDirectory;
+    private final File libDirectory;
     // net20 ... net472
-    private TreeSet<String> frameworks = new TreeSet<>();
+    private final TreeSet<String> frameworks = new TreeSet<>();
     // netstandard2.0
-    private TreeSet<String> standards = new TreeSet<>();
+    private final TreeSet<String> standards = new TreeSet<>();
     // netcoreapp
-    private TreeSet<String> coreapps = new TreeSet<>();
+    private final TreeSet<String> coreapps = new TreeSet<>();
     // net6.0...
-    private TreeSet<String> cores = new TreeSet<>();
+    private final TreeSet<String> cores = new TreeSet<>();
 
-    public DotNetImplementations(File libDirectory) {
+    private boolean initialized;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    public DotNetResolved(File libDirectory) {
         this.libDirectory = libDirectory;
+    }
+
+    /**
+     * Select the latest version
+     * @return the selected version
+     */
+    public String select() {
         populate();
+
+        if (!cores.isEmpty())
+            return cores.last();
+        if (!coreapps.isEmpty())
+            return coreapps.last();
+        if (!standards.isEmpty())
+            return standards.last();
+        if (!frameworks.isEmpty())
+            return frameworks.last();
+        else
+            return DEFAULT;
     }
 
     private void populate() {
+        if (initialized)
+            return;
+        else
+            initialized = true;
+
         File[] versions = libDirectory.listFiles();
         if (versions == null)
             return;
@@ -59,20 +88,4 @@ public class DotNetImplementations {
         }
     }
 
-    /**
-     * Select the latest version
-     * @return the selected version
-     */
-    public String select() {
-        if (!cores.isEmpty())
-            return cores.last();
-        if (!coreapps.isEmpty())
-            return coreapps.last();
-        if (!standards.isEmpty())
-            return standards.last();
-        if (!frameworks.isEmpty())
-            return frameworks.last();
-        else
-            return DEFAULT;
-    }
 }
