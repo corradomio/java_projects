@@ -12,7 +12,12 @@ package jext.maven;
     <packagingType> ::= jar (default), pom, maven-plugin, ejb, war, ear, rar
  */
 
+import jext.logging.Logger;
+import jext.util.Assert;
+
 public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
+
+    private static Logger logger = Logger.getLogger(MavenCoords.class);
 
     // ----------------------------------------------------------------------
     // NuGet
@@ -54,6 +59,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 
     public static MavenCoords of(String name, String v) {
         if (v == null) v = NONE;
+
+        if (name.contains(":")) {
+            logger.warnf("%s, %s", name, v);
+        }
 
         String[] parts = name.split(":");
         if (parts.length == 1)
@@ -113,21 +122,31 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 
     private static MavenCoords fromCoords(String coords) {
         // <artifactId>
+        // <artifactId>:<version>
+        //
         // <groupId>:<artifactId>
         // <groupId>:<artifactId>:<packaging>
         // <groupId>:<artifactId>:<version>
+        //
         // <groupId>:<artifactId>:<packaging>:<version>
+        //
         String[] parts = coords.split(":");
         if (parts.length == 1)
             return of("", parts[0], "");
+        else if (parts.length == 2 && isVersion(parts[1]))
+            return of(NONE, parts[0], parts[1]);
         else if (parts.length == 2)
-            return of(parts[1], parts[0], "");
+            return of(parts[0], parts[1], NONE);
         else if (parts.length == 3 && PACKAGING_TYPES.contains(parts[2]))
-            return of(parts[0], parts[1], "");
+            return of(parts[0], parts[1], NONE);
         else if (parts.length == 3)
             return of(parts[0], parts[1], parts[2]);
         else
             return of(parts[0], parts[1], parts[3]);
+    }
+
+    private static boolean isVersion(String s) {
+        return s.length() > 0 && '0' <= s.charAt(0) && s.charAt(0) <= '9';
     }
 
     private static MavenCoords fromPath(String path) {
@@ -163,6 +182,10 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     // ----------------------------------------------------------------------
 
     private MavenCoords(String gid, String aid, String v) {
+
+        if (v.isEmpty())
+            Assert.nop();
+
         this.groupId = gid;
         this.artifactId = aid;
         this.version = v;

@@ -25,8 +25,7 @@ public class CSharpProjectFile {
     // ----------------------------------------------------------------------
 
     private static final String EMPTY_POM = "<Project/>";
-    private static final String DIRECTORY_BUILD_PROPS = "Directory.Build.props";
-    private static Logger logger = Logger.getLogger(MavenDownloader.class);
+    private static Logger logger = Logger.getLogger(CSharpProjectFile.class);
 
     private final File projectFile;
     private final File currentHome;
@@ -36,7 +35,7 @@ public class CSharpProjectFile {
 
     // used jext.util.Properties because this class is able to resolve automatically
     // ${...} (Java) and $(...) (C#) references
-    private jext.util.Properties properties = new jext.util.Properties();
+    private final jext.util.Properties properties = new jext.util.Properties();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -88,10 +87,14 @@ public class CSharpProjectFile {
                         return;
 
                     // resolve the package version
-                    version = properties.resolve(version);
+                    String resolvedVersion = properties.resolve(version);
+
+                    if (resolvedVersion.contains("$")) {
+                        logger.warnf("Unable to resolve %s:%s (%s)", include, version, resolvedVersion);
+                    }
 
                     // if version contains '$', in theroy it is necessary to resolve the macro.
-                    references.add(new DotNetPackageReference(include, version));
+                    references.add(new DotNetPackageReference(include, resolvedVersion));
                 });
             });
         }
@@ -124,6 +127,15 @@ public class CSharpProjectFile {
     }
 
     private void parseFile() {
+        if (!projectFile.exists()) {
+            try {
+                this.project = XPathUtils.parse(EMPTY_POM).getDocumentElement();
+                return;
+            }
+            catch (Exception e) {
+                // never raised
+            }
+        }
         try {
             this.project = XPathUtils.parse(projectFile).getDocumentElement();
         }
