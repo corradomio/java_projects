@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This extends 'java.util.Properties' to put_ some useful features:
@@ -23,7 +25,7 @@ import java.io.OutputStream;
  *          it is possible to select a isSubset of properties with the specified
  *          prefix
  *
- *
+ * Note: added a check for recursive definitions
  *
  */
 public class Properties extends java.util.Properties {
@@ -32,8 +34,8 @@ public class Properties extends java.util.Properties {
     // Constants
     // ----------------------------------------------------------------------
 
-    private static final Properties NO_PROPERTIES = new Properties();
-    public static final String NO_VALUE = "";
+    // simple trick to avoid infinite recursion
+    private static final int MAX_DEPTH = 7;
 
     // ----------------------------------------------------------------------
     // Constructors
@@ -53,12 +55,12 @@ public class Properties extends java.util.Properties {
 
     public String getProperty(String name) {
         String value = super.getProperty(name);
-        return resolveValue(value);
+        return resolveValue(value, 0);
     }
 
     public String getProperty(String name, String defaultValue) {
         String value = super.getProperty(name, defaultValue);
-        return resolveValue(value);
+        return resolveValue(value, 0);
     }
 
     /**
@@ -69,33 +71,46 @@ public class Properties extends java.util.Properties {
      *      ${env:name}     System.getenv(name)
      *      ${name}
      *
+     * Added
+     *
+     *      $(name)         for C#
+     *
      * @param value string value
      * @return resolved value
      */
-    private String resolveValue(String value) {
-        if (value == null)
+    private String resolveValue(String value, int depth) {
+        if (value == null || value.length() < 3 || depth > MAX_DEPTH || value.indexOf("${") == 0 && value.indexOf("$(") == 0)
             return value;
+        value = resolveRefs(value, "${", '}', depth);
+        value = resolveRefs(value, "$(", ')', depth);
+        return value;
+    }
 
-        int s,e;
-        while(value.contains("${")) {
-            s = value.indexOf("${");
-            e = value.indexOf('}');
+    private String resolveRefs(String value, String begin, char end, int depth) {
+        int s = 0,e = -1;
+        while(true) {
+            s = value.indexOf(begin, e+1);
+            if (s == -1) break;
+            e = value.indexOf(end, s+1);
             if (e == -1) break;
 
             String name = value.substring(s+2, e);
-            String repl = valueOf(name);
+            String repl = valueOf(name, depth);
             value = value.substring(0, s) + repl + value.substring(e+1);
+
+            e = s + repl.length();
         }
         return value;
     }
 
-    private String valueOf(String key) {
-        if (key.startsWith("sys:"))
-            return System.getProperty(key.substring(4));
-        if (key.startsWith("env:"))
-            return System.getenv(key.substring(4));
-        else
-            return super.getProperty(key);
+    private String valueOf(String name, int depth) {
+        if (name.startsWith("sys:"))
+            return System.getProperty(name.substring(4));
+        if (name.startsWith("env:"))
+            return System.getenv(name.substring(4));
+
+        String value = super.getProperty(name);
+        return resolveValue(value, depth+1);
     }
 
     /**

@@ -2,6 +2,7 @@ package jext.sourcecode.project.csharp;
 
 import jext.io.file.FilePatterns;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.LibrarySet;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Modules;
 import jext.sourcecode.project.Project;
@@ -92,6 +93,15 @@ public class CSharpProject extends BaseProject {
             Module module = newModule(moduleHome);
             modules.add(module);
         });
+    }
+
+    // ----------------------------------------------------------------------
+    // Libraries
+    // ----------------------------------------------------------------------
+
+    @Override
+    public LibrarySet getLibraries() {
+        return super.getLibraries();
     }
 
     // ----------------------------------------------------------------------

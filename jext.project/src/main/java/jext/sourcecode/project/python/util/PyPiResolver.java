@@ -2,13 +2,11 @@ package jext.sourcecode.project.python.util;
 
 import jext.logging.Logger;
 import jext.maven.Versions;
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -57,7 +55,7 @@ public class PyPiResolver {
         // ----------------------------------------------------------------------
 
         @Override
-        public int compareTo(@NotNull Info o) {
+        public int compareTo(Info o) {
             return name.compareTo(o.name);
         }
     }

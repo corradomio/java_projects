@@ -13,6 +13,7 @@ import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 
 import java.io.File;
+import java.util.Collection;
 
 public class CheckCSharpProject {
 
@@ -35,16 +36,22 @@ public class CheckCSharpProject {
 
             ), lfm);
 
-        project.getModules().forEach(m -> {
-            System.out.printf("  module %s: %s\n", m.getName().getName(), m.getModuleHome());
+        Collection<Library> libs = project.getLibraries();
+        libs.forEach(l -> {
+            System.out.printf("%s:%s", l.getName(), l.getVersion());
         });
 
-        project.getModules().forEach(m -> {
-            System.out.printf("  module %s: %s\n", m.getName().getName(), m.getModuleHome());
-            System.out.println(m.getDeclaredLibraries());
-        });
 
-        ProjectDump.dump(project, 0);
+        // project.getModules().forEach(m -> {
+        //     System.out.printf("  module %s: %s\n", m.getName().getName(), m.getModuleHome());
+        // });
+        //
+        // project.getModules().forEach(m -> {
+        //     System.out.printf("  module %s: %s\n", m.getName().getName(), m.getModuleHome());
+        //     System.out.println(m.getDeclaredLibraries());
+        // });
+        //
+        // ProjectDump.dump(project, 0);
 
         Parallel.shutdown();
 

@@ -11,7 +11,9 @@ import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.csharp.libraries.CSharpLocalLibrary;
 import jext.sourcecode.project.csharp.libraries.NuGetLibrary;
+import jext.sourcecode.project.csharp.util.CSharpProjectFile;
 import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
+import jext.sourcecode.project.csharp.util.PackageReference;
 import jext.sourcecode.project.util.BaseModule;
 import jext.util.FileUtils;
 import jext.util.PathUtils;
@@ -301,52 +303,17 @@ public class CSharpModule extends BaseModule {
 
     private void collectLibrariesFromPackageReference() {
         // the directory can contains MULTIPLE ".csproj" files
+        File projectHome = project.getProjectHome();
 
-        List<File> projFiles = FileUtils.listFiles(moduleHome, pathname -> pathname.getName().endsWith(".csproj"));
-        projFiles.forEach(projFile -> {
-            try {
-                // <Project>
-                Element project = XPathUtils.parse(projFile).getDocumentElement();
+        List<File> csprojFiles = FileUtils.listFiles(moduleHome, pathname -> pathname.getName().endsWith(".csproj"));
+        csprojFiles.forEach(csprojFile -> {
 
-                // list of <ItemGroup>
-                XPathUtils.selectElements(project, "ItemGroup").forEach(itemGroup -> {
-                    // list of <PackageReference>
-                    XPathUtils.selectElements(itemGroup, "PackageReference").forEach(packageReference -> {
-                        // <PackageReference Include="Microsoft.Data.Sqlite">
-                        //     <Version>3.1.3</Version>
-                        // </PackageReference>
-                        //
-                        //  or
-                        //
-                        //  <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.3">
-                        //
-                        //  Note: skip
-                        //
-                        //  <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
-                        String include = XPathUtils.getValue(packageReference, "@Include");
-
-                        String version = XPathUtils.getValue(packageReference, "@Version");
-                        if (version.isEmpty())
-                            version = XPathUtils.getValue(packageReference, "Version");
-
-                        // skip 'PackageReference' that doesn't refer to external libraries
-                        if (include.isEmpty())
-                            return;
-
-                        // if version contains '$', in theroy it is necessary to resolve the macro.
-
-                        Library library = NuGetLibrary.of(include, version);
-
-                        this.libraries.add(library);
-                    });
-                });
-
-            }
-            catch (Exception e) {
-                logger.warnf("Unable to parse %s", FileUtils.getAbsolutePath(projFile));
-            }
+            CSharpProjectFile cspjf = new CSharpProjectFile(projectHome, csprojFile);
+            List<PackageReference> packageReferences = cspjf.getPackageReferences();
+            packageReferences.forEach(pr -> {
+                this.libraries.add(NuGetLibrary.of(pr.name, pr.version));
+            });
         });
-
     }
 
     // ----------------------------------------------------------------------
