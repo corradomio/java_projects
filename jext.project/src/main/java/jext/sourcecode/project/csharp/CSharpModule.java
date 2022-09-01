@@ -13,7 +13,8 @@ import jext.sourcecode.project.csharp.libraries.CSharpLocalLibrary;
 import jext.sourcecode.project.csharp.libraries.NuGetLibrary;
 import jext.sourcecode.project.csharp.util.CSharpProjectFile;
 import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
-import jext.sourcecode.project.csharp.util.PackageReference;
+import jext.sourcecode.project.csharp.util.DirectoryBuildPropsFile;
+import jext.sourcecode.project.csharp.util.DotNetPackageReference;
 import jext.sourcecode.project.util.BaseModule;
 import jext.util.FileUtils;
 import jext.util.PathUtils;
@@ -34,6 +35,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 public class CSharpModule extends BaseModule {
@@ -42,6 +44,7 @@ public class CSharpModule extends BaseModule {
     // Private fields
     // ----------------------------------------------------------------------
 
+    private static final String CSPROJ = ".csproj";
     private static final String EXT_DLL = ".dll";
 
     private List<Module> dependencies;
@@ -302,14 +305,25 @@ public class CSharpModule extends BaseModule {
      */
 
     private void collectLibrariesFromPackageReference() {
-        // the directory can contains MULTIPLE ".csproj" files
         File projectHome = project.getProjectHome();
 
-        List<File> csprojFiles = FileUtils.listFiles(moduleHome, pathname -> pathname.getName().endsWith(".csproj"));
+        // global properties
+        //      [projectHome]/Directory.Build.(props|targets)
+        //       [moduleHome]/Directory.Build.(props|targets)
+        Properties globalProperties = new Properties();
+
+        globalProperties.putAll(DirectoryBuildPropsFile.props(  projectHome).getProperties());
+        globalProperties.putAll(DirectoryBuildPropsFile.targets(projectHome).getProperties());
+        globalProperties.putAll(DirectoryBuildPropsFile.props(  projectHome, moduleHome).getProperties());
+        globalProperties.putAll(DirectoryBuildPropsFile.targets(projectHome, moduleHome).getProperties());
+
+        List<File> csprojFiles = FileUtils.listFiles(moduleHome, pathname -> pathname.getName().endsWith(CSPROJ));
         csprojFiles.forEach(csprojFile -> {
 
             CSharpProjectFile cspjf = new CSharpProjectFile(projectHome, csprojFile);
-            List<PackageReference> packageReferences = cspjf.getPackageReferences();
+            cspjf.addProperties(globalProperties);
+
+            List<DotNetPackageReference> packageReferences = cspjf.getPackageReferences();
             packageReferences.forEach(pr -> {
                 this.libraries.add(NuGetLibrary.of(pr.name, pr.version));
             });

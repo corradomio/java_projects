@@ -63,6 +63,14 @@ public class Properties extends java.util.Properties {
         return resolveValue(value, 0);
     }
 
+    // ----------------------------------------------------------------------
+    // Add/get properties
+    // ----------------------------------------------------------------------
+
+    public String resolve(String value) {
+        return resolveValue(value, 0);
+    }
+
     /**
      * Resolve the variable references (${name}) in the string
      * Supported:
