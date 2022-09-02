@@ -50,6 +50,11 @@ public class NoneModule extends BaseModule {
         return Collections.emptySet();
     }
 
+    @Override
+    public Set<Library> getLocalLibraries() {
+        return Collections.emptySet();
+    }
+
     // ----------------------------------------------------------------------
     // Types
     // ----------------------------------------------------------------------

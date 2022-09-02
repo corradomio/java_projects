@@ -1,6 +1,7 @@
 package jext.sourcecode.project.csharp.util;
 
 import jext.logging.Logger;
+import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -13,11 +14,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * ".csproj" file
- *
- * XML file
+/*
+    <?xml version="1.0" encoding="utf-8"?>
+    <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="...">
+        <PropertyGroup ...> ... </>
+        ...
+        <ItemGroup>
+            <Reference Include="PresentationCore" />
+            <Reference Include="PresentationFramework" />
+            <Reference Include="System.Core" />
+            <Reference Include="System.Drawing" />
+            ...
+            <PackageReference Include="Microsoft.Data.Sqlite">
+                <Version>3.1.3</Version>
+            </PackageReference>
+            <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.3">
+        </ItemGroup>
+    </Project>
  */
+
 public class CSharpProjectFile {
 
     // ----------------------------------------------------------------------
@@ -52,10 +67,10 @@ public class CSharpProjectFile {
     // Properties
     // ----------------------------------------------------------------------
 
-    public List<DotNetPackageReference> getPackageReferences() {
+    public List<MavenCoords> getPackageReferences() {
         populate();
 
-        List<DotNetPackageReference> references = new ArrayList<>();
+        List<MavenCoords> references = new ArrayList<>();
 
         try {
             // <Project>
@@ -94,7 +109,7 @@ public class CSharpProjectFile {
                     }
 
                     // if version contains '$', in theroy it is necessary to resolve the macro.
-                    references.add(new DotNetPackageReference(include, resolvedVersion));
+                    references.add(MavenCoords.of(include, resolvedVersion));
                 });
             });
         }

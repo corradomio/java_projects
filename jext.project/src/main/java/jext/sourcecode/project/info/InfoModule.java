@@ -13,6 +13,7 @@ import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.Type;
 import jext.sourcecode.project.info.util.InfoSourcesImpl;
 import jext.sourcecode.project.java.maven.MavenRepository;
+import jext.sourcecode.project.none.InvalidLibrary;
 import jext.sourcecode.project.util.ResourcesImpl;
 import jext.sourcecode.project.util.SourcesImpl;
 import jext.util.MapUtils;
@@ -46,7 +47,7 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Properties
     // ----------------------------------------------------------------------
 
     @Override
@@ -99,6 +100,10 @@ public class InfoModule implements Module, Comparable<Named> {
             .collect(Collectors.toList());
     }
 
+    // ----------------------------------------------------------------------
+    // Structure
+    // ----------------------------------------------------------------------
+
     @Override
     public Sources getSources() {
         if (sources != null)
@@ -119,43 +124,13 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     // @Override
-    // public List<File> getSourceFiles() {
-    //     return getSources().stream()
-    //         .map(Resource::getFile)
-    //         .collect(Collectors.toList());
-    // }
-
-    // @Override
     public Set<String> getSourceRoots() {
         return new HashSet<>(MapUtils.get(info, "sourceRoots"));
     }
 
-    // @Override
-    // public List<File> getSourceRootDirectories() {
-    //     File moduleHome = getModuleHome();
-    //     return getSourceRoots().stream()
-    //         .map(sourceRoot -> new File(moduleHome, sourceRoot))
-    //         .collect(Collectors.toList());
-    // }
-
-    // @Override
-    // public Source getSource(String nameOrPathOrId) {
-    //     if (pathMap.containsKey(nameOrPathOrId))
-    //         return pathMap.get(nameOrPathOrId);
-    //     if (nameMap.containsKey(nameOrPathOrId))
-    //         return nameMap.get(nameOrPathOrId);
-    //     if (idMap.containsKey(nameOrPathOrId))
-    //         return nameMap.get(nameOrPathOrId);
-    //
-    //     List<Source> sources = getSources();
-    //     for (Source source : sources) {
-    //         if (source.getName().getFullName().equals(nameOrPathOrId))
-    //             return source;
-    //         if (source.getId().equals(nameOrPathOrId))
-    //             return source;
-    //     }
-    //     return null;
-    // }
+    // ----------------------------------------------------------------------
+    // Repositories
+    // ----------------------------------------------------------------------
 
     @Override
     public Set<String> getMavenRepositories() {
@@ -170,6 +145,10 @@ public class InfoModule implements Module, Comparable<Named> {
             librepos.add(new MavenRepository(mavenUrl));
         return librepos;
     }
+
+    // ----------------------------------------------------------------------
+    // Libraries
+    // ----------------------------------------------------------------------
 
     @Override
     public Library getRuntimeLibrary() {
@@ -190,6 +169,11 @@ public class InfoModule implements Module, Comparable<Named> {
     }
 
     @Override
+    public Set<Library> getLocalLibraries() {
+        return Collections.emptySet();
+    }
+
+    @Override
     public Library getLibrary(String nameOrId) {
         Set<Library> libraries = getDeclaredLibraries();
         for (Library library : libraries) {
@@ -198,7 +182,8 @@ public class InfoModule implements Module, Comparable<Named> {
             if (library.getId().equals(nameOrId))
                 return library;
         }
-        return null;
+
+        return new InvalidLibrary(nameOrId, project);
     }
 
     // ----------------------------------------------------------------------
@@ -209,24 +194,6 @@ public class InfoModule implements Module, Comparable<Named> {
     public Resources getResources() {
         return new ResourcesImpl(this);
     }
-
-    // @Override
-    // public Resource getResource(String nameOrId) {
-    //     File directory = FileUtils.addParentPath(getModuleHome(), nameOrId);
-    //
-    //     List<File> resources = FileUtils.listFiles(directory);
-    //     for (File resourceFile : resources) {
-    //         Resource resource = new ResourceFile(resourceFile, this);
-    //         if (resource.getName().getFullName().equals(nameOrId))
-    //             return resource;
-    //         if (resource.getId().equals(nameOrId))
-    //             return resource;
-    //         if (resource.getName().getName().equals(nameOrId))
-    //             return resource;
-    //     }
-    //
-    //     return null;
-    // }
 
     // ----------------------------------------------------------------------
     // Types

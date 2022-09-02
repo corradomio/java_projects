@@ -35,6 +35,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
     protected List<File> directories;
     protected Set<Library> libraries;
+    protected Set<Library> localLibraries;
     protected SourcesImpl sources;
     protected ResourcesImpl resources;
 
@@ -118,6 +119,9 @@ public abstract class BaseModule extends ReferencedObject implements Module {
 
     @Override
     public abstract Set<Library> getDeclaredLibraries();
+
+    @Override
+    public abstract Set<Library> getLocalLibraries();
 
     @Override
     public Library getLibrary(String nameOrId) {

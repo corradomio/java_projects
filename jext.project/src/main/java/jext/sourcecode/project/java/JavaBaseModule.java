@@ -244,13 +244,24 @@ public class JavaBaseModule extends BaseModule {
 
         libraries = new HashSet<>();
 
-        collectLocalLibraries(libraries);
         collectEclipseLibraries(libraries);
         collectIvyLibraries(libraries);
         collectMavenLibraries(libraries);
         collectGradleLibraries(libraries);
 
         return libraries;
+    }
+
+    @Override
+    public Set<Library> getLocalLibraries() {
+        if (localLibraries != null)
+            return localLibraries;
+
+        localLibraries = new HashSet<>();
+
+        collectLocalLibraries(localLibraries);
+
+        return localLibraries;
     }
 
     protected void collectLocalLibraries(Set<Library> collectedLibraries) {

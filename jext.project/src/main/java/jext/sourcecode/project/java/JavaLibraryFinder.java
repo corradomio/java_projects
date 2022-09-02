@@ -121,32 +121,29 @@ public class JavaLibraryFinder implements LibraryFinder {
         return downloader;
     }
 
-    // /**
-    //  * Set extra configurations
-    //  */
-    // @Override
-    // public void configure(Parameters parameters) {
-    //     parameters.keySet().forEach(name -> {
-    //         if (name.startsWith("maven.repository"))
-    //             addRepositories(parameters.getString(name));
-    //     });
-    // }
-
     // ----------------------------------------------------------------------
     // Libraries
     // ----------------------------------------------------------------------
 
     /**
-     * Add a 'named' library: it can me a file descriptor or a directory.
+     * Add a 'named' library: it can be a file descriptor or a directory.
      * If it is a directory, the directory is scanned recursively for ".jar"
      * and ".jmod" files
+     *
+     * @param libraryName library name or name list comma separated
+     * @param libraryDirectory library home directory
      */
-    public void setNamedLibrary(String libraryName, File libraryPath) {
-        Library runtimeLibrary = new JDKLibrary(libraryName, libraryPath, null);
-        runtimeLibraries.put(libraryName, runtimeLibrary);
+    public void setNamedLibrary(String libraryName, File libraryDirectory) {
+        String[] names = libraryName.split(",");
+        for (String name : names) {
+            name = name.trim();
 
-        if (rtLibraryDefault == null)
-            rtLibraryDefault = runtimeLibrary;
+            Library runtimeLibrary = new JDKLibrary(name, libraryDirectory, null);
+            runtimeLibraries.put(name, runtimeLibrary);
+
+            if (rtLibraryDefault == null)
+                rtLibraryDefault = runtimeLibrary;
+        }
     }
 
     @Override
@@ -181,11 +178,11 @@ public class JavaLibraryFinder implements LibraryFinder {
         }
     }
 
-    @Override
-    public String getLatestVersion(String libraryName) {
-        MavenCoords coords = MavenCoords.of(libraryName);
-        return getLatestVersion(coords);
-    }
+    // @Override
+    // public String getLatestVersion(String libraryName) {
+    //     MavenCoords coords = MavenCoords.of(libraryName);
+    //     return getLatestVersion(coords);
+    // }
 
     @Override
     public String getLatestVersion(MavenCoords coords) {
@@ -193,13 +190,25 @@ public class JavaLibraryFinder implements LibraryFinder {
     }
 
     // ----------------------------------------------------------------------
-    // Implementation
+    // Check maven coordinates
     // ----------------------------------------------------------------------
 
-    // private void addRepositories(String listUrls) {
-    //     List<String> repositories = StringUtils.split(listUrls,",");
-    //     downloader.addRepositories(repositories);
-    // }
+    public MavenCoords normalize(MavenCoords coords) {
+        String version = coords.version;
+
+        // if version contains some strange character, replace it with ""
+        if (version.contains("$") || version.contains("(") || version.contains(","))
+            version = "";
+
+        // no version -> latest
+        if (version.isEmpty())
+            version = getLatestVersion(coords);
+
+        if (!version.isEmpty())
+            return MavenCoords.of(coords, version);
+        else
+            return coords;
+    }
 
     // ----------------------------------------------------------------------
     // End

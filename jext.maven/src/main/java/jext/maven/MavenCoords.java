@@ -182,10 +182,6 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     // ----------------------------------------------------------------------
 
     private MavenCoords(String gid, String aid, String v) {
-
-        if (v.isEmpty())
-            Assert.nop();
-
         this.groupId = gid;
         this.artifactId = aid;
         this.version = v;

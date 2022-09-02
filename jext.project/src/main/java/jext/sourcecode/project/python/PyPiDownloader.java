@@ -29,7 +29,7 @@ public class PyPiDownloader implements LibraryDownloader {
     private String name = "pypi";
     private String pypiUrl = "https://pypi.org/simple/";
     
-    private File downloadDirectory;
+    private File downloadDirectory = new File(".pip");
     private long downloadTimeout = 500;
     private long checkTimeout = 24L*60*60*1000L;   // 1 day in milliseconds
     private int  parallelDownloads = 5;
@@ -209,7 +209,7 @@ public class PyPiDownloader implements LibraryDownloader {
     @Override
     public String getLatestVersion(MavenCoords coords) {
         Versions versions = getArtifactVersions(coords);
-        return versions.isEmpty() ? coords.version : versions.getLatestVersion().toString();
+        return versions.isEmpty() ? "" : versions.getLatestVersion().get();
     }
 
     // ----------------------------------------------------------------------

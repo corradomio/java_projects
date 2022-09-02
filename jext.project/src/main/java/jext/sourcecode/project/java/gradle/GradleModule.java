@@ -144,15 +144,6 @@ public class GradleModule extends JavaBaseModule {
         collectedLibraries.addAll(dcoords);
     }
 
-    // @Override
-    // protected List<Library> getMavenLibraries() {
-    //     if (getGradleProject().isDependenciesResolved())
-    //         return getGradleProject().getMavenLibraries(this);
-    //     if (dcoords == null)
-    //         retrieveDependencies();
-    //     return dcoords;
-    // }
-
     private List<Name> getGradleDependencies() {
         if (dmodules == null)
             retrieveDependencies();

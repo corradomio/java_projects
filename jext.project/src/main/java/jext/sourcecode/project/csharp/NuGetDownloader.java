@@ -168,14 +168,15 @@ public class NuGetDownloader implements LibraryDownloader {
 
     @Override
     public String getLatestVersion(MavenCoords coords) {
-        return coords.version;
+        Versions versions = getArtifactVersions(coords);
+        return versions.isEmpty() ? "" : versions.getLatestVersion().get();
     }
 
     // ----------------------------------------------------------------------
     // Operations/2
     // ----------------------------------------------------------------------
 
-    public Versions getArtifactVersions(MavenCoords coords) throws IOException {
+    public Versions getArtifactVersions(MavenCoords coords) {
         // the package can not exist
         // the file can be corrupted
         Versions versions = new Versions();
@@ -210,10 +211,15 @@ public class NuGetDownloader implements LibraryDownloader {
         if (!versionsFile.exists())
             return versions;
 
-        Map<String, Object> jversions = JSONUtils.load(versionsFile, HashMap.class);
-        List<String> vlist = (List<String>) jversions.get("versions");
-        for(String version : vlist)
-            versions.add(version);
+        try {
+            Map<String, Object> jversions = JSONUtils.load(versionsFile, HashMap.class);
+            List<String> vlist = (List<String>) jversions.get("versions");
+            for (String version : vlist)
+                versions.add(version);
+        }
+        catch (IOException e) {
+            logger.error(e, e);
+        }
 
         return versions;
     }

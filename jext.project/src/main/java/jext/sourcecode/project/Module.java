@@ -56,6 +56,7 @@ public interface Module extends RefIdNamed {
      * this function return the library with v1 !
      */
     Set<Library> getDeclaredLibraries();
+    Set<Library> getLocalLibraries();
 
     /** Retrieve the library by id/fullname/name */
     Library getLibrary(String nameOrId);

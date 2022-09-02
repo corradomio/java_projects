@@ -118,10 +118,10 @@ public class NullLibraryFinder implements LibraryFinder {
         return null;
     }
 
-    @Override
-    public String getLatestVersion(String libraryName) {
-        return "";
-    }
+    // @Override
+    // public String getLatestVersion(String libraryName) {
+    //     return "";
+    // }
 
     @Override
     public String getLatestVersion(MavenCoords coords) {

@@ -100,14 +100,35 @@ public class CSharpLibraryFinder implements LibraryFinder {
         return new NuGetLibrary(coords, libraryDirectory);
     }
 
-    @Override
-    public String getLatestVersion(String libraryName) {
-        return "";
-    }
+    // @Override
+    // public String getLatestVersion(String libraryName) {
+    //     return "";
+    // }
 
     @Override
     public String getLatestVersion(MavenCoords coords) {
-        return "";
+        return downloader.getLatestVersion(coords);
+    }
+
+    // ----------------------------------------------------------------------
+    // Check maven coordinates
+    // ----------------------------------------------------------------------
+
+    public MavenCoords normalize(MavenCoords coords) {
+        String version = coords.version;
+
+        // if version contains some strange character, replace it with ""
+        if (version.contains("$") || version.contains("(") || version.contains(","))
+            version = "";
+
+        // no version -> latest
+        if (version.isEmpty())
+            version = getLatestVersion(coords);
+
+        if (!version.isEmpty())
+            return MavenCoords.of(coords, version);
+        else
+            return coords;
     }
 
     // ----------------------------------------------------------------------
@@ -123,11 +144,17 @@ public class CSharpLibraryFinder implements LibraryFinder {
     }
 
     public void setNamedLibrary(String libraryName, String version, List<File> libraryDirectories) {
-        CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(libraryName, version, libraryDirectories);
+        String[] names = libraryName.split(",");
+        for (String name : names) {
+            name = name.trim();
 
-        runtimeLibraries.put(libraryName, rtLibrary);
-        if (rtLibraryDefault == null)
-            rtLibraryDefault = rtLibrary;
+            CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(name, version, libraryDirectories);
+
+            runtimeLibraries.put(name, rtLibrary);
+            if (rtLibraryDefault == null)
+                rtLibraryDefault = rtLibrary;
+        }
+
     }
 
     @Override

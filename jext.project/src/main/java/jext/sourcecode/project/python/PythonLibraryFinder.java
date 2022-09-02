@@ -109,10 +109,10 @@ public class PythonLibraryFinder implements LibraryFinder {
         return new PyPiLibrary(coords, libraryDirectory);
     }
 
-    @Override
-    public String getLatestVersion(String libraryName) {
-        return getLatestVersion(MavenCoords.of(libraryName, ""));
-    }
+    // @Override
+    // public String getLatestVersion(String libraryName) {
+    //     return getLatestVersion(MavenCoords.of(libraryName, ""));
+    // }
 
     @Override
     public String getLatestVersion(MavenCoords coords) {
@@ -136,20 +136,58 @@ public class PythonLibraryFinder implements LibraryFinder {
     }
 
     // ----------------------------------------------------------------------
+    // Check maven coordinates
+    // ----------------------------------------------------------------------
+
+    public MavenCoords normalize(MavenCoords coords) {
+        String version = coords.version;
+
+        // if version contains some strange character, replace it with ""
+        if (version.contains("$") || version.contains("(") || version.contains(","))
+            version = "";
+
+        // no version -> latest
+        if (version.isEmpty())
+            version = getLatestVersion(coords);
+
+        if (!version.isEmpty())
+            return MavenCoords.of(coords, version);
+        else
+            return coords;
+    }
+
+    // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
 
+    /**
+     * Add a 'named' library
+     *
+     * @param libraryName library name or name list comma separated
+     * @param libraryDirectory library home directory
+     */
     public void setNamedLibrary(String libraryName, File libraryDirectory) {
-        PythonLibrary library = createLibrary(libraryDirectory);
-        library.setLibraryName(libraryName);
-        if (library.getLibraryType() == LibraryType.RUNTIME) {
-            runtimeLibraries.put(library.getName().getFullName(), library);
-            runtimeLibraries.put(libraryName, library);
+        String[] names = libraryName.split(",");
+        PythonLibrary runtimeLibrary = createLibrary(libraryDirectory);
+
+        for (String name : names) {
+            name = name.trim();
+
+            runtimeLibrary.setLibraryName(name);
+
+            if (runtimeLibrary.getLibraryType() == LibraryType.RUNTIME) {
+                runtimeLibraries.put(runtimeLibrary.getName().getFullName(), runtimeLibrary);
+                runtimeLibraries.put(name, runtimeLibrary);
+            }
+            else {
+                libraries.put(runtimeLibrary.getName(), runtimeLibrary);
+                libraries.put(PathName.of(name), runtimeLibrary);
+            }
+
+            if (rtLibraryDefault == null)
+                rtLibraryDefault = runtimeLibrary;
         }
-        else {
-            libraries.put(library.getName(), library);
-            libraries.put(PathName.of(libraryName), library);
-        }
+
     }
 
     public void addLibraries(File librariesRoot) {
@@ -178,13 +216,6 @@ public class PythonLibraryFinder implements LibraryFinder {
             return new PythonLocalLibrary(libraryDirectory);
         }
     }
-
-    // public void setNamedLibraries(Map<String, File> librariesMap){
-    //     for(String libraryName : librariesMap.keySet()) {
-    //         File libraryPath = librariesMap.get(libraryName);
-    //         setNamedLibrary(libraryName, libraryPath);
-    //     }
-    // }
 
     // ----------------------------------------------------------------------
     // End

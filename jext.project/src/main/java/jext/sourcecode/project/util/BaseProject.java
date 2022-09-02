@@ -279,13 +279,14 @@ public abstract class BaseProject extends NamedObject implements Project {
         // 2) maven libraries buf for them it keep ONLY the latest version
         // 3) runtime libraries
 
-        LibrarySetImpl libraries = new LibrarySetImpl();
+        libraries = new LibrarySetImpl();
 
         // Note: the runtime libraries are added because otherwise javaassist
         // is not able to resolve the symbols
 
         getModules().forEach(module -> {
             libraries.addAll(module.getDeclaredLibraries());
+            libraries.addAll(module.getLocalLibraries());
             libraries.add(module.getRuntimeLibrary());
         });
 
@@ -293,8 +294,6 @@ public abstract class BaseProject extends NamedObject implements Project {
 
         logger.debugf("check %d libraries", libraries.size());
         libraries.checkArtifacts(md, true);
-
-        this.libraries = libraries;
 
         return libraries;
     }

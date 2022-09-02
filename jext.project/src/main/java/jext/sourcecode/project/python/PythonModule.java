@@ -1,5 +1,6 @@
 package jext.sourcecode.project.python;
 
+import jext.maven.MavenCoords;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Module;
@@ -7,7 +8,7 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
-import jext.sourcecode.project.Type;
+import jext.sourcecode.project.python.util.Requirements;
 import jext.sourcecode.project.python.util.PythonSourcesImpl;
 import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.none.InvalidLibrary;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PythonModule extends BaseModule {
@@ -130,6 +132,14 @@ public class PythonModule extends BaseModule {
 
         return runtimeLibrary;
     }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Set<Library> getLocalLibraries() {
+        return Collections.emptySet();
+    }
+
     @Override
     public Set<Library> getDeclaredLibraries() {
         if (libraries != null)
@@ -137,9 +147,22 @@ public class PythonModule extends BaseModule {
 
         libraries = new HashSet<>();
 
-        // collectLocalLibraries(libraries);
+        collectLibrariesFromRequirement();
 
         return libraries;
+    }
+
+    private void collectLibrariesFromRequirement() {
+        Requirements requirements = new Requirements(moduleHome);
+        PythonLibraryFinder lfinder = (PythonLibraryFinder) project.getLibraryFinder();
+
+        List<MavenCoords> reqlibs = requirements.getLibraries();
+        reqlibs.forEach(coords -> {
+            coords = lfinder.normalize(coords);
+
+            Library library = lfinder.getLibrary(coords);
+            libraries.add(library);
+        });
     }
 
     // ----------------------------------------------------------------------

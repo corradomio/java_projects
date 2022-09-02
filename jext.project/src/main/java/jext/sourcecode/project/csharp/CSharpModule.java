@@ -1,5 +1,6 @@
 package jext.sourcecode.project.csharp;
 
+import jext.maven.MavenCoords;
 import jext.name.Name;
 import jext.name.PathName;
 import jext.sourcecode.project.Library;
@@ -10,19 +11,16 @@ import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
 import jext.sourcecode.project.csharp.libraries.CSharpLocalLibrary;
-import jext.sourcecode.project.csharp.libraries.NuGetLibrary;
 import jext.sourcecode.project.csharp.util.CSharpProjectFile;
 import jext.sourcecode.project.csharp.util.CSharpSourcesImpl;
 import jext.sourcecode.project.csharp.util.DirectoryBuildPropsFile;
-import jext.sourcecode.project.csharp.util.DotNetPackageReference;
+import jext.sourcecode.project.csharp.util.PackagesConfig;
 import jext.sourcecode.project.util.BaseModule;
 import jext.util.FileUtils;
 import jext.util.PathUtils;
 import jext.util.SetUtils;
 import jext.util.concurrent.ConcurrentHashSet;
 import jext.util.concurrent.Parallel;
-import jext.xml.XPathUtils;
-import org.w3c.dom.Element;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -190,11 +188,21 @@ public class CSharpModule extends BaseModule {
 
         libraries = new HashSet<>();
 
-        collectLocalLibraries();
         collectLibrariesFromPackagesConfig();
         collectLibrariesFromPackageReference();
 
         return libraries;
+    }
+
+    public Set<Library> getLocalLibraries() {
+        if (localLibraries != null)
+            return localLibraries;
+
+        localLibraries = new HashSet<>();
+
+        collectLocalLibraries();
+
+        return localLibraries;
     }
 
     // ----------------------------------------------------------------------
@@ -213,7 +221,7 @@ public class CSharpModule extends BaseModule {
         if (!dllFiles.isEmpty()) {
             Name libraryName = PathName.of(getName(), "lib");
             Library localLibrary = new CSharpLocalLibrary(libraryName, libDirectory, dllFiles);
-            libraries.add(localLibrary);
+            localLibraries.add(localLibrary);
         }
 
         // scan for subdirectories
@@ -232,79 +240,37 @@ public class CSharpModule extends BaseModule {
 
             Name libraryName = PathName.of(getName(), subdir.getName());
             Library localLibrary = new CSharpLocalLibrary(libraryName, subdir, dllFiles);
-            libraries.add(localLibrary);
+            localLibraries.add(localLibrary);
         });
-
     }
 
     // ----------------------------------------------------------------------
     // collectLibrariesFromPackagesConfig
-    /*
-        <?xml version="1.0" encoding="utf-8"?>
-        <packages>
-            <package id="CNTK.CPUOnly" version="2.7.0" targetFramework="net45" />
-            <package id="CNTK.Deps.MKL" version="2.7.0" targetFramework="net45" />
-            <package id="CNTK.Deps.OpenCV.Zip" version="2.7.0" targetFramework="net45" />
-            <package id="Microsoft.AspNet.WebApi" version="5.2.3" targetFramework="net45" />
-            <package id="Microsoft.AspNet.WebApi.Client" version="5.2.3" targetFramework="net45" />
-            <package id="Microsoft.AspNet.WebApi.Core" version="5.2.3" targetFramework="net45" />
-            <package id="Microsoft.AspNet.WebApi.WebHost" version="5.2.3" targetFramework="net45" />
-            <package id="Microsoft.Web.Infrastructure" version="1.0.0.0" targetFramework="net45" />
-            <package id="Newtonsoft.Json" version="6.0.8" targetFramework="net45" />
-            <package id="Swashbuckle" version="5.3.1" targetFramework="net45" />
-            <package id="Swashbuckle.Core" version="5.3.1" targetFramework="net45" />
-            <package id="System.IdentityModel.Tokens.Jwt" version="4.0.0" targetFramework="net45" />
-            <package id="WebActivatorEx" version="2.0.6" targetFramework="net45" />
-        </packages>
-     */
 
     private void collectLibrariesFromPackagesConfig() {
+        CSharpLibraryFinder lfinder = (CSharpLibraryFinder) project.getLibraryFinder();
+
         // check libraries in 'package.config' file (.NET Framework)
-        File packagesConfigFile = new File(this.moduleHome, "packages.config");
-        if (!packagesConfigFile.exists())
-            return;
+        PackagesConfig packageConfig = new PackagesConfig(moduleHome);
 
-        try {
-            Element packages = XPathUtils.parse(packagesConfigFile).getDocumentElement();
-            XPathUtils.selectElements(packages, "package")
-                .forEach(pkg -> {
-                    String name = XPathUtils.getValue(pkg, "@id");
-                    String version = XPathUtils.getValue(pkg, "@version");
+        List<MavenCoords> dotnetlibs = packageConfig.getLibraries();
+        dotnetlibs.forEach(coords -> {
+            coords = lfinder.normalize(coords);
 
-                    Library library = NuGetLibrary.of(name, version);
+            Library library = lfinder.getLibrary(coords);
 
-                    this.libraries.add(library);
-            });
-        }
-        catch(Exception e) {
-            logger.warnf("Unable to parse %s", FileUtils.getAbsolutePath(packagesConfigFile));
-        }
+            libraries.add(library);
+        });
     }
 
     // ----------------------------------------------------------------------
     // collectLibrariesFromPackageReference
     //
     //  Note: the directory can contains MULTIPLE ".csproj" files!!!!
-    /*
-        <?xml version="1.0" encoding="utf-8"?>
-        <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="...">
-            <PropertyGroup ...> ... </>
-            ...
-            <ItemGroup>
-                <Reference Include="PresentationCore" />
-                <Reference Include="PresentationFramework" />
-                <Reference Include="System.Core" />
-                <Reference Include="System.Drawing" />
-                ...
-                <PackageReference Include="Microsoft.Data.Sqlite">
-                    <Version>3.1.3</Version>
-                </PackageReference>
-                <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.3">
-            </ItemGroup>
-        </Project>
-     */
 
     private void collectLibrariesFromPackageReference() {
+        CSharpLibraryFinder lfinder = (CSharpLibraryFinder) project.getLibraryFinder();
+
         File projectHome = project.getProjectHome();
 
         // global properties
@@ -323,9 +289,13 @@ public class CSharpModule extends BaseModule {
             CSharpProjectFile cspjf = new CSharpProjectFile(projectHome, csprojFile);
             cspjf.addProperties(globalProperties);
 
-            List<DotNetPackageReference> packageReferences = cspjf.getPackageReferences();
-            packageReferences.forEach(pr -> {
-                this.libraries.add(NuGetLibrary.of(pr.name, pr.version));
+            List<MavenCoords> packageReferences = cspjf.getPackageReferences();
+            packageReferences.forEach(coords -> {
+                coords = lfinder.normalize(coords);
+
+                Library library = lfinder.getLibrary(coords);
+
+                this.libraries.add(library);
             });
         });
     }
@@ -357,11 +327,6 @@ public class CSharpModule extends BaseModule {
             allUsedTypes.addAll(source.getUsedTypes());
             definedTypes.addAll(source.getTypes());
         });
-
-        // getSources().forEach(source -> {
-        //     allUsedTypes.addAll(source.getUsedTypes());
-        //     definedTypes.addAll(source.getTypes());
-        // });
 
         usedTypes = SetUtils.difference(allUsedTypes, definedTypes);
     }

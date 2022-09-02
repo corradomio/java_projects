@@ -16,6 +16,9 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+/*
+    A Python project is composed by a single module
+ */
 public class PythonProject extends BaseProject {
 
     // ----------------------------------------------------------------------
@@ -106,12 +109,17 @@ public class PythonProject extends BaseProject {
 
     @Override
     public LibrarySet getLibraries() {
-        if (libraries != null)
-            return libraries;
+        return super.getLibraries();
 
-        super.getLibraries();
-        libraries.add(new PythonProjectLibrary(this));
-        return libraries;
+        // Note: WHY to add the current module as library?
+        // It has no sense.
+        //
+        // if (libraries != null)
+        //     return libraries;
+        //
+        // super.getLibraries();
+        // libraries.add(new PythonProjectLibrary(this));
+        // return libraries;
     }
 
     // ----------------------------------------------------------------------
