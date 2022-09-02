@@ -4,9 +4,10 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
-        <RollingFile  name="LogFile" fileName="/antlr.log" append="false">
+        <RollingFile  name="LogFile" fileName="/app.log" append="false" filePattern="/app-%d{MM-dd-yyyy}.log.gz">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} %m%n</Pattern>
+                <!--<Pattern>%d %p %c{1.} %m%n</Pattern>-->
+                <Pattern>%d %p %c %m%n</Pattern>
             </PatternLayout>
             <Policies>
                 <SizeBasedTriggeringPolicy size="256 MB"/>
@@ -14,6 +15,7 @@
             <DefaultRolloverStrategy max="20"/>
         </RollingFile>
     </Appenders>
+
     <Loggers>
         <Logger name="main" level="WARN"/>
         <Logger name="org.gradle.tooling" level="WARN"/>
