@@ -258,6 +258,7 @@ public abstract class BaseProject extends NamedObject implements Project {
         // create a local copy of the downloader
         md = lfinder.getDownloader();
 
+        // add local defined library repositories
         getLibraryRepositories().forEach(librepo -> {
             md.addRepository(librepo.getName(), librepo.getUrl());
         });

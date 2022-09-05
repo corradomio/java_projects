@@ -8,10 +8,11 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Source;
 import jext.sourcecode.project.Sources;
-import jext.sourcecode.project.python.util.Requirements;
-import jext.sourcecode.project.python.util.PythonSourcesImpl;
-import jext.sourcecode.project.util.BaseModule;
 import jext.sourcecode.project.none.InvalidLibrary;
+import jext.sourcecode.project.python.util.PythonSourcesImpl;
+import jext.sourcecode.project.python.util.Requirements;
+import jext.sourcecode.project.util.BaseModule;
+import jext.util.FileUtils;
 import jext.util.PathUtils;
 import jext.util.StringUtils;
 
@@ -147,13 +148,23 @@ public class PythonModule extends BaseModule {
 
         libraries = new HashSet<>();
 
-        collectLibrariesFromRequirement();
+        // sometime a project can contains multiple "requirement.txt".
+        // We collect all of them
+        List<File> requirementFiles = collectRequirementsFiles();
+        for(File requirementFile : requirementFiles)
+            collectLibrariesFromRequirement(requirementFile);
 
         return libraries;
     }
 
-    private void collectLibrariesFromRequirement() {
-        Requirements requirements = new Requirements(moduleHome);
+    private List<File> collectRequirementsFiles() {
+        File[] files = moduleHome.listFiles(file -> file.getName().endsWith("requirements.txt"));
+        return FileUtils.asList(files);
+    }
+
+    private void collectLibrariesFromRequirement(File requirementsFile) {
+        // Requirements requirements = new Requirements(moduleHome);
+        Requirements requirements = new Requirements(requirementsFile);
         PythonLibraryFinder lfinder = (PythonLibraryFinder) project.getLibraryFinder();
 
         List<MavenCoords> reqlibs = requirements.getLibraries();

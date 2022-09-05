@@ -1,7 +1,9 @@
 package jext.sourcecode.project.python.util;
 
 import jext.logging.Logger;
+import jext.maven.Version;
 import jext.maven.Versions;
+import jext.util.Assert;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,15 +42,18 @@ public class PyPiResolver {
     private static final Logger logger = Logger.getLogger(PyPiResolver.class);
 
     private final File versionsFile;
+    private final String name;
     private Elements elts;
-    private boolean initialized;
+    private Versions versions;
 
     public static class Info implements Comparable<Info> {
         public final String name;
+        public final String version;
         public final String url;
 
-        private Info(String name, String url) {
+        private Info(String name, String version, String url) {
             this.name = name;
+            this.version = version;
             this.url = url;
         }
 
@@ -56,7 +61,15 @@ public class PyPiResolver {
 
         @Override
         public int compareTo(Info o) {
-            return name.compareTo(o.name);
+            int cmp = name.compareTo(o.name);
+            if (cmp == 0)
+                cmp = version.compareTo(o.version);
+            return cmp;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s:%s", name, version);
         }
     }
 
@@ -65,7 +78,10 @@ public class PyPiResolver {
     // ----------------------------------------------------------------------
 
     public PyPiResolver(File versionsFile) {
+        if (versionsFile.isDirectory())
+            versionsFile = new File(versionsFile, "versions.html");
         this.versionsFile = versionsFile;
+        this.name = versionsFile.getParentFile().getName();
     }
 
     // ----------------------------------------------------------------------
@@ -73,49 +89,62 @@ public class PyPiResolver {
     // ----------------------------------------------------------------------
 
     /**
+     * Return the list of available versions
      *
-     * @return
+     * @return an object handling the list of available versions
      */
     public Versions getVersions() {
         populate();
 
-        Versions versions = new Versions();
-
-        for(Element elt : elts) {
-            if (elt.nodeName().equals("a")) {
-                String versioned = elt.ownText();
-                String version = extractVersion(versioned);
-                versions.add(version);
-            }
-        }
-
         return versions;
     }
 
-    public Optional<Info> selectDistribution(String version) {
+    /**
+     * Check for the exact version
+     * @param version
+     * @return
+     */
+    public Optional<Info> selectVersion(String version) {
         populate();
 
+        if (version.isEmpty() && !versions.isEmpty())
+            version = versions.getLatestVersion().get();
+
         // scan for the .tar.gz
-        // if available available, scan for the first ".whl"
+        // if not available, scan for '.zip'
+        // if not available, scan for '.whl' for python3
         Optional<Info> info = findUrl(version, ".tar.gz");
+        if (!info.isPresent())
+            info = findUrl(version, ".zip");
         if (!info.isPresent())
             info = findUrl(version, ".whl");
 
         return info;
     }
 
+    public Optional<Info> selectNearest(String version) {
+        populate();
 
+        Version selver = versions.select(version, "~");
+        if (selver.isEmpty())
+            return Optional.empty();
+        else
+            return selectVersion(selver.get());
+    }
 
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
 
     private void populate() {
-        if (initialized)
+        if (versions != null)
             return;
-        else
-            initialized = true;
 
+        populateElts();
+        populateVersions();
+    }
+
+    private void populateElts() {
         if (!versionsFile.exists()) {
             elts = new Elements();
             return;
@@ -130,7 +159,19 @@ public class PyPiResolver {
         }
     }
 
-    private static String extractVersion(String versioned) {
+    private void populateVersions() {
+        versions = new Versions();
+
+        for(Element elt : elts) {
+            if (elt.nodeName().equals("a")) {
+                String versioned = elt.ownText();
+                String version = extractVersion(versioned);
+                versions.add(version);
+            }
+        }
+    }
+
+    private String extractVersion(String versioned) {
         String version = versioned;
         int p;
         // networkx-0.34-py2.4.egg
@@ -140,6 +181,12 @@ public class PyPiResolver {
         // neo4j-4.0.0a1.tar.gz             alpha
         // neo4j-4.0.0b1.tar.gz             beta
         // neo4j-4.0.0rc1.tar.gz            release candidate
+
+        if (name.contains("-"))
+            Assert.nop();
+
+        if (version.startsWith(name))
+            version = version.substring(name.length());
 
         // remove prefix
         p = version.indexOf('-');
@@ -168,23 +215,36 @@ public class PyPiResolver {
 
     private Optional<Info> findUrl(String version, String ext) {
 
+        Version thisver = Version.of(version);
         TreeSet<Info> available = new TreeSet<>();
+        int n = elts.size();
 
-        for(Element elt : elts) {
+        for(int i=0; i<n; ++i) {
+            Element elt = elts.get(i);
             if (elt.nodeName().equals("a")) {
                 String versioned = elt.ownText();
                 String ver = extractVersion(versioned);
-                if (!ver.equals(version))
+                Version thatver = Version.of(ver);
+
+                if (!thisver.equals(thatver))
                     continue;
                 if (!versioned.endsWith(ext))
                     continue;
 
+                // skip for Python2 libraries
+                // Note: NOT NECESSARY!
+                // 'Python3' is selected by 'available.last()'
+                //
+
                 String href = elt.attr("href");
-                available.add(new Info(versioned, href));
+                available.add(new Info(name, ver, href));
             }
         }
 
-        return available.isEmpty() ? Optional.empty() : Optional.of(available.last());
+        if (available.isEmpty())
+            return Optional.empty();
+        else
+            return Optional.of(available.last());
     }
 
     // ----------------------------------------------------------------------

@@ -101,10 +101,13 @@ public class Version implements Comparable<Version> {
                                    // 1.2b1   1.2.1b1
                                    // 1.2rc1  1.2.1rc1
 
+        // MainVersionPattern      // 1                 NumericVersion
+        // Version4Number          // 1.2.3.4           NumericVersion
     }
 
     private static final Pattern MajorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)");
     private static final Pattern MinorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)");
+    private static final Pattern MainVersionPattern  = Pattern.compile("([0-9]+)");
     // private static final Pattern IncrementalVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)-SNAPSHOT");
     private static final Pattern BuildNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)");
     private static final Pattern PatchNumberPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-([0-9]+)");
@@ -114,6 +117,7 @@ public class Version implements Comparable<Version> {
     private static final Pattern PythonMajorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)((a|b|rc)([0-9]+))");
     private static final Pattern PythonMinorVersionPattern = Pattern.compile("([0-9]+)\\.([0-9]+)((a|b|rc)([0-9]+))");
 
+    private static final Pattern Version4Pattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)");
     private static final Pattern SemVerPattern = Pattern.compile("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?");
 
     private final String version;
@@ -142,6 +146,16 @@ public class Version implements Comparable<Version> {
     private void parse() {
         Matcher matcher;
 
+        matcher = Version4Pattern.matcher(version);
+        if (matcher.matches()) {
+            this.scheme = Scheme.NumericVersion;
+            major = Integer.parseInt(matcher.group(1));
+            minor = Integer.parseInt(matcher.group(2));
+            subver= Integer.parseInt(matcher.group(3));
+            patch = Integer.parseInt(matcher.group(4));
+            return;
+        }
+
         matcher = PythonMajorVersionPattern.matcher(version);
         if (matcher.matches()) {
             this.scheme = Scheme.QualifiedVersion;
@@ -149,6 +163,13 @@ public class Version implements Comparable<Version> {
             minor = Integer.parseInt(matcher.group(2));
             subver= Integer.parseInt(matcher.group(3));
             qualifier = matcher.group(4);
+            return;
+        }
+
+        matcher = MainVersionPattern.matcher(version);
+        if (matcher.matches()) {
+            this.scheme = Scheme.NumericVersion;
+            major = Integer.parseInt(matcher.group(1));
             return;
         }
 
@@ -301,6 +322,31 @@ public class Version implements Comparable<Version> {
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
+
+    @Override
+    public int hashCode() {
+        return ((((this.major*31 + this.minor)*31 + this.subver)*31 + this.patch)*31 + this.build)
+                *31 + this.qualifier.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Version that = (Version) obj;
+
+        // private int major = 0;
+        // private int minor = 0;
+        // private int subver = 0;
+        // private int patch = 0;
+        // private int build = 0;
+        // private String qualifier = EMPTY;
+
+        return this.major == that.major
+            && this.minor == that.minor
+            && this.subver == that.subver
+            && this.patch == that.patch
+            && this.build == that.build
+            && this.qualifier.equals(that.qualifier);
+    }
 
     @Override
     public int compareTo(Version that) {

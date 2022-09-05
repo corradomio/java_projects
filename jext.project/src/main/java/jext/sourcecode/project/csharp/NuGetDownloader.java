@@ -100,6 +100,13 @@ public class NuGetDownloader implements LibraryDownloader {
     public void addRepository(String name, String url) {
         this.name = name;
         this.nugetUrl = url;
+
+        if (nugetUrl.endsWith("v3/index.json"))
+            return;
+        if (!nugetUrl.endsWith("/"))
+            nugetUrl += "/v3/index.json";
+        else
+            nugetUrl += "v3/index.json";
     }
 
     // ----------------------------------------------------------------------

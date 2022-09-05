@@ -13,7 +13,6 @@ package jext.maven;
  */
 
 import jext.logging.Logger;
-import jext.util.Assert;
 
 public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 
@@ -60,8 +59,8 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     public static MavenCoords of(String name, String v) {
         if (v == null) v = NONE;
 
-        if (name.contains(":")) {
-            logger.warnf("%s, %s", name, v);
+        if (name.contains(":") && !name.endsWith(v)) {
+            logger.warnf("Invalid name,version pair: %s, %s", name, v);
         }
 
         String[] parts = name.split(":");

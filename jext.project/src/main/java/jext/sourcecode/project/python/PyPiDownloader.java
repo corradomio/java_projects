@@ -40,91 +40,6 @@ public class PyPiDownloader implements LibraryDownloader {
         INVALID
     }
 
-    //private static class ArtifactList {
-    //
-    //    private File versionsFile;
-    //
-    //    ArtifactList(File versionsFile) {
-    //        this.versionsFile = versionsFile;
-    //    }
-    //
-    //    //Versions getVersions() {
-    //    //    Versions versions = new Versions();
-    //    //
-    //    //    /*
-    //    //        <!DOCTYPE html>
-    //    //        <html>
-    //    //          ...
-    //    //          <body>
-    //    //            <h1>Links for networkx</h1>
-    //    //            <a href="..." >networkx-0.34-py2.4.egg</a><br />
-    //    //            ...
-    //    //
-    //    //            </body>
-    //    //        </html>
-    //    //        <!--SERIAL 14836743-->
-    //    //     */
-    //    //
-    //    //    if (!versionsFile.exists())
-    //    //        return versions;
-    //    //
-    //    //    try {
-    //    //        Document html = Jsoup.parse(versionsFile);
-    //    //        Elements elts = html.body().children();
-    //    //
-    //    //        for(Element elt : elts) {
-    //    //            if (elt.nodeName().equals("a")) {
-    //    //                String versioned = elt.ownText();
-    //    //                String version = extractVersion(versioned);
-    //    //                versions.add(version);
-    //    //            }
-    //    //        }
-    //    //
-    //    //    } catch (Exception e) {
-    //    //        // already checked
-    //    //    }
-    //    //
-    //    //    return versions;
-    //    //}
-    //
-    //    Optional<String> getUrl(String version) {
-    //        Optional<String> url;
-    //        // the version can not exist
-    //        if (!versionsFile.exists())
-    //            return Optional.empty();
-    //
-    //        try {
-    //            Document html = Jsoup.parse(versionsFile);
-    //
-    //            return findUrl(html, version, ".tar.gz");
-    //
-    //        } catch (Exception e) {
-    //            // already checked
-    //        }
-    //
-    //        return Optional.empty();
-    //    }
-    //
-    //    private static Optional<String> findUrl(Document html, String version, String ext) {
-    //        Elements elts = html.body().children();
-    //        for(Element elt : elts) {
-    //            if (elt.nodeName().equals("a")) {
-    //                String versioned = elt.ownText();
-    //                String ver = extractVersion(versioned);
-    //                if (!ver.equals(version))
-    //                    continue;
-    //                if (!versioned.endsWith(ext))
-    //                    continue;
-    //
-    //                String href = elt.attr("href");
-    //                return Optional.of(href);
-    //            }
-    //        }
-    //
-    //        return Optional.empty();
-    //    }
-    //}
-
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
@@ -153,6 +68,11 @@ public class PyPiDownloader implements LibraryDownloader {
     public void addRepository(String name, String url) {
         this.name = name;
         this.pypiUrl = url;
+
+        if (!this.pypiUrl.endsWith("/"))
+            this.pypiUrl += "/";
+        if (!this.pypiUrl.endsWith("simple/"))
+            this.pypiUrl += "simple/";
     }
     
     public void addLocalDirectory(File localdir) {
@@ -227,9 +147,6 @@ public class PyPiDownloader implements LibraryDownloader {
             validateFile(versionsFile, ArtifactType.VERSIONS);
         }
 
-        //ArtifactList artifactList = new ArtifactList(versionsFile);
-        //return artifactList.getVersions();
-
         PyPiResolver resolver = new PyPiResolver(versionsFile);
         return resolver.getVersions();
     }
@@ -251,8 +168,25 @@ public class PyPiDownloader implements LibraryDownloader {
             validateFile(versionsFile, ArtifactType.VERSIONS);
         }
 
+        // If the exact artifact version is not available, we search for an
+        // artifact with a version grater or smaller than the requested version
+        // This because very often, in Python, it is specified a version that
+        // is
+        //
+        //      <= version
+        //      >= version
+        //
+        // and at the moment it seems not very useful to support a comparator
+        // in the Maven coordinates.
+
         PyPiResolver resolver = new PyPiResolver(versionsFile);
-        Optional<PyPiResolver.Info> artifactInfo = resolver.selectDistribution(coords.version);
+        Optional<PyPiResolver.Info> artifactInfo = resolver.selectVersion(coords.version);
+
+        if (!artifactInfo.isPresent()) {
+            artifactInfo = resolver.selectNearest(coords.version);
+            coords = MavenCoords.of(artifactInfo.get().name, artifactInfo.get().version);
+        }
+
         if (!artifactInfo.isPresent())
             return Optional.empty();
 
@@ -264,7 +198,10 @@ public class PyPiDownloader implements LibraryDownloader {
         validateFile(artifactFile, ArtifactType.ARTIFACT);
         uncompressArtifact(artifactFile);
 
-        return artifactFile.exists() ? Optional.of(artifactFile) : Optional.empty();
+        if (!artifactFile.exists())
+            return Optional.empty();
+        else
+            return Optional.of(artifactFile);
     }
 
     private static void uncompressArtifact(File artifactFile) {

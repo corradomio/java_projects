@@ -44,7 +44,16 @@ import static java.lang.Math.min;
 
 public class Requirements {
 
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
     private File requirementsFile;
+    private List<MavenCoords> libraries;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public Requirements(File requirementsFile) {
         if (requirementsFile.isDirectory())
@@ -52,12 +61,22 @@ public class Requirements {
         this.requirementsFile = requirementsFile;
     }
 
+    public MavenCoords getLibrary(String name) {
+        for(MavenCoords coords : libraries)
+            if (coords.artifactId.equals(name))
+                return coords;
+        return MavenCoords.of(MavenCoords.NONE, name, MavenCoords.NONE);
+    }
+
     public List<MavenCoords> getLibraries() {
+        if (libraries != null)
+            return libraries;
+
         if (!requirementsFile.exists())
             return Collections.emptyList();
 
         List<String> lines = parseFile();
-        List<MavenCoords> libraries = new ArrayList<>();
+        libraries = new ArrayList<>();
 
         for (String line : lines) {
             MavenCoords coords = parseLine(line);
@@ -67,6 +86,10 @@ public class Requirements {
 
         return libraries;
     }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
 
     private List<String> parseFile() {
         List<String> lines = new ArrayList<>();
@@ -239,5 +262,9 @@ public class Requirements {
         }
         return false;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }
