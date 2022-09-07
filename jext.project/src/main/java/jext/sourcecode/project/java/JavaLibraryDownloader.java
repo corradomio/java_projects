@@ -1,7 +1,10 @@
 package jext.sourcecode.project.java;
 
+import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 import jext.sourcecode.project.LibraryDownloader;
+
+import java.util.Collection;
 
 public class JavaLibraryDownloader extends MavenDownloader implements LibraryDownloader {
 
@@ -31,4 +34,13 @@ public class JavaLibraryDownloader extends MavenDownloader implements LibraryDow
         super.addRepository(repoUrl);
     }
 
+    @Override
+    public void checkArtifacts(Collection<MavenCoords> artifacts, boolean parallel) {
+        super.checkArtifacts(artifacts, parallel);
+    }
+
+    @Override
+    public String getLatestVersion(MavenCoords coords) {
+        return super.getLatestVersion(coords);
+    }
 }

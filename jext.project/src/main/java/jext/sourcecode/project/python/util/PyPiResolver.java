@@ -3,7 +3,6 @@ package jext.sourcecode.project.python.util;
 import jext.logging.Logger;
 import jext.maven.Version;
 import jext.maven.Versions;
-import jext.util.Assert;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -50,11 +49,13 @@ public class PyPiResolver {
         public final String name;
         public final String version;
         public final String url;
+        public final String versioned;
 
-        private Info(String name, String version, String url) {
+        private Info(String name, String version, String url, String versioned) {
             this.name = name;
             this.version = version;
             this.url = url;
+            this.versioned = versioned;
         }
 
         // ----------------------------------------------------------------------
@@ -172,8 +173,10 @@ public class PyPiResolver {
     }
 
     private String extractVersion(String versioned) {
-        String version = versioned;
+        String name = this.name.toLowerCase();
+        String version = versioned.toLowerCase();
         int p;
+
         // networkx-0.34-py2.4.egg
         // networkx-0.34.tar.gz
         // networkx-0.34.win32.exe
@@ -181,9 +184,6 @@ public class PyPiResolver {
         // neo4j-4.0.0a1.tar.gz             alpha
         // neo4j-4.0.0b1.tar.gz             beta
         // neo4j-4.0.0rc1.tar.gz            release candidate
-
-        if (name.contains("-"))
-            Assert.nop();
 
         if (version.startsWith(name))
             version = version.substring(name.length());
@@ -199,6 +199,10 @@ public class PyPiResolver {
         // remove "-cp2" | "-cp3"
         version = sremove(version, "-cp2");
         version = sremove(version, "-cp3");
+
+        // remove "-pp3" | "-pypy"
+        version = sremove(version, "-pp3");
+        version = sremove(version, "-pypy");
 
         // remove '.zip', '.tar.gz'
         version = sremove(version, ".zip");
@@ -237,7 +241,7 @@ public class PyPiResolver {
                 //
 
                 String href = elt.attr("href");
-                available.add(new Info(name, ver, href));
+                available.add(new Info(name, ver, href, versioned));
             }
         }
 

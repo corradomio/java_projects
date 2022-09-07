@@ -311,7 +311,15 @@ public class MavenPom implements MavenConst {
         aid = XPathUtils.getValue(project, ARTIFACT_ID, aid);
         v = XPathUtils.getValue(project, VERSION, v, mavenprops);
 
+        v = parseVersionRange(v);
+
         return MavenCoords.of(gid, aid, v);
+    }
+
+    private static String parseVersionRange(String v) {
+        if (MavenCoords.isRange(v))
+            logger.warnf("Maven version range in pom: %s", v);
+        return v;
     }
 
     /*

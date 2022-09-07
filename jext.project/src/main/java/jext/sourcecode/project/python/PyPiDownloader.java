@@ -232,11 +232,12 @@ public class PyPiDownloader implements LibraryDownloader {
                         pypiUrl,
                         coords.artifactId.toLowerCase());
                 break;
-            case ARTIFACT:
-                url = String.format("%1$s/%2$s/%2$s-%3$s.tar.gz",
-                        pypiUrl,
-                        coords.artifactId.toLowerCase(),
-                        coords.version.toLowerCase());
+            // case ARTIFACT:
+            //     url = String.format("%1$s/%2$s/%2$s-%3$s.tar.gz",
+            //             pypiUrl,
+            //             coords.artifactId.toLowerCase(),
+            //             coords.version.toLowerCase());
+            //  break;
             default:
                 throw new UnsupportedOperationException(type.toString());
         }
@@ -251,11 +252,11 @@ public class PyPiDownloader implements LibraryDownloader {
                 relativePath = String.format("%1$s/versions.html",
                         coords.artifactId.toLowerCase());
                 break;
-            case ARTIFACT:
-                relativePath = String.format("%1$s/%2$s/%1$s.%2$s.tar.gz",
-                        coords.artifactId.toLowerCase(),
-                        coords.version.toLowerCase());
-                break;
+            // case ARTIFACT:
+            //     relativePath = String.format("%1$s/%2$s/%1$s.%2$s.tar.gz",
+            //             coords.artifactId.toLowerCase(),
+            //             coords.version.toLowerCase());
+            //     break;
             case INVALID:
                 relativePath = String.format("%1$s/%2$s/%1$s.%2$s.invalid",
                         coords.artifactId.toLowerCase(),
@@ -272,7 +273,7 @@ public class PyPiDownloader implements LibraryDownloader {
         String relativePath = String.format("%1$s/%2$s/%3$s",
                 coords.artifactId.toLowerCase(),
                 coords.version.toLowerCase(),
-                info.name);
+                info.versioned);
 
         return new File(downloadDirectory, relativePath);
     }

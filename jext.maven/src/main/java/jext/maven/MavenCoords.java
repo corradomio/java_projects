@@ -276,12 +276,18 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
     }
 
     public static boolean isRange(String s){
-        if (s == null) return false;
-        return s.contains("[") || s.contains("(") || s.contains(",");
+        // [1.2,1.3]
+        // [1.0,2.0)
+        // [1.5,)
+        // (,1.0],[1.2,)
+        // a version range contains AT MINIMUM a ','
+        return s != null && s.contains(",");
     }
 
     public static boolean isPattern(String s) {
-        return s != null && s.contains("${");
+        // "...${...}..."   Java
+        // "...$(...)..."   C#
+        return s != null && (s.contains("${") || s.contains("$("));
     }
 
     // ----------------------------------------------------------------------

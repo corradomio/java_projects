@@ -31,6 +31,13 @@ import static java.lang.Math.min;
 
     <library> ; <platform> == '...'
 
+    Some extensions
+    ---------------
+
+    -r other-requirements.txt       (import)
+    library @ url                   (skipped)
+
+
     ~= meaning
     ----------
 
@@ -48,8 +55,11 @@ public class Requirements {
     // Private fields
     // ----------------------------------------------------------------------
 
+    private static final int MAX_DEPTH = 8;
+
     private File requirementsFile;
     private List<MavenCoords> libraries;
+    private int depth;  // used to avoid infinite recursions
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -59,7 +69,16 @@ public class Requirements {
         if (requirementsFile.isDirectory())
             requirementsFile = new File(requirementsFile, "requirements.txt");
         this.requirementsFile = requirementsFile;
+        this.depth = 0;
     }
+
+    private Requirements(File requirementsFile, int depth) {
+        if (requirementsFile.isDirectory())
+            requirementsFile = new File(requirementsFile, "requirements.txt");
+        this.requirementsFile = requirementsFile;
+        this.depth = depth;
+    }
+
 
     public MavenCoords getLibrary(String name) {
         for(MavenCoords coords : libraries)
@@ -72,19 +91,36 @@ public class Requirements {
         if (libraries != null)
             return libraries;
 
-        if (!requirementsFile.exists())
+        if (!requirementsFile.exists() || depth > MAX_DEPTH)
             return Collections.emptyList();
 
         List<String> lines = parseFile();
         libraries = new ArrayList<>();
 
         for (String line : lines) {
-            MavenCoords coords = parseLine(line);
-            if (coords != null)
-                libraries.add(coords);
+            if (line.startsWith("-r"))
+                parseImport(line);
+            else
+                parseLibrary(line);
         }
 
         return libraries;
+    }
+
+    private void parseLibrary(String line) {
+        MavenCoords coords = parseLine(line);
+        if (coords != null)
+            libraries.add(coords);
+    }
+
+    private void parseImport(String line) {
+        String importedPath = line.substring(2).trim();
+        File currentDirectory = this.requirementsFile.getParentFile();
+        File importedFile = new File(currentDirectory, importedPath);
+
+        // depth used to avoid infinite recursion
+        Requirements importedRequirements = new Requirements(importedFile, depth+1);
+        libraries.addAll(importedRequirements.getLibraries());
     }
 
     // ----------------------------------------------------------------------
@@ -119,6 +155,14 @@ public class Requirements {
                 if (previous.length() > 0) {
                     line = previous + " " + line;
                     previous = "";
+                }
+
+                // support      -r filepath
+                // unsupported  -r http://...
+
+                if (line.startsWith("-r ") && !lines.contains("://")) {
+                    lines.add(line);
+                    continue;
                 }
 
                 // supported options: to handle (in the future!)
@@ -160,6 +204,7 @@ public class Requirements {
 
         requirement ::=
             library [; system]
+            library [@ url]
 
         library
             name support?
@@ -181,6 +226,11 @@ public class Requirements {
 
         // remove '; ...' if present
         pos = line.indexOf(';');
+        if (pos != -1)
+            line = line.substring(0, pos);
+
+        // remove '@ ...' if present
+        pos = line.indexOf('@');
         if (pos != -1)
             line = line.substring(0, pos);
 
