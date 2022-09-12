@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CSharpLibraryFinder implements LibraryFinder {
 
@@ -93,8 +95,8 @@ public class CSharpLibraryFinder implements LibraryFinder {
         // [downloadDir]/<artifactId>/<version>
         String relativePath = String.format(
                 "%1$s/%2$s",
-                coords.artifactId,
-                coords.version);
+                coords.artifactId.toLowerCase(),
+                coords.version.toLowerCase());
 
         File libraryDirectory = new File(downloader.getDownloadDirectory(), relativePath);
         return new NuGetLibrary(coords, libraryDirectory);
@@ -136,8 +138,21 @@ public class CSharpLibraryFinder implements LibraryFinder {
     // ----------------------------------------------------------------------
 
     public void setNamedLibrary(String libraryName, File libraryDirectory) {
-        setNamedLibrary(libraryName, Collections.singletonList(libraryDirectory));
+        String version = versionFromName(libraryDirectory.getName());
+        setNamedLibrary(libraryName, version, Collections.singletonList(libraryDirectory));
     }
+
+
+    private static Pattern DOTNET_VERSION  = Pattern.compile("([0-9]+\\.[0-9]+)\\.[0-9]+");
+
+    private static String versionFromName(String name) {
+        Matcher mather = DOTNET_VERSION.matcher(name);
+        if (mather.matches())
+            return mather.group(1);
+        else
+            return "";
+    }
+
 
     public void setNamedLibrary(String libraryName, List<File> libraryDirectories) {
         setNamedLibrary(libraryName, "", libraryDirectories);

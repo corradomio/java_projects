@@ -93,7 +93,11 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
                         FileUtils.getAbsolutePath(idir));
                 return;
             }
-            // ONLY '.../ref' are scanned recursively
+
+            // In 'theory', the only directory to consider is the directory containing
+            // 'dotnet.dll' assembli
+
+            // '.../ref' are scanned recursively
             if (idir.getName().equals("ref") || idir.getAbsolutePath().contains(".Ref")){
                 FileUtils.listFiles(idir, FileFilters.IS_DLL).stream()
                         .filter(DotNetAssemblyUtils::isAssembly)
@@ -101,8 +105,8 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
                             libraryFiles.add(assembly);
                         });
             }
-            //
-            else if (idir.getName().equals("sdk")){
+            // '.../sdk' are NOT scanned recursively
+            else if (idir.getName().contains("sdk")){
                 FileUtils.listFiles(idir, DLL).stream()
                         .filter(DotNetAssemblyUtils::isAssembly)
                         .forEach(assembly -> {

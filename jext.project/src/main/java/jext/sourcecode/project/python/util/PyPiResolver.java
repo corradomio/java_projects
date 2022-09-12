@@ -41,9 +41,9 @@ public class PyPiResolver {
     private static final Logger logger = Logger.getLogger(PyPiResolver.class);
 
     private final File versionsFile;
+    private final Versions versions;
     private final String name;
     private Elements elts;
-    private Versions versions;
 
     public static class Info implements Comparable<Info> {
         public final String name;
@@ -78,11 +78,12 @@ public class PyPiResolver {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public PyPiResolver(File versionsFile) {
+    public PyPiResolver(Versions versions, File versionsFile) {
         if (versionsFile.isDirectory())
             versionsFile = new File(versionsFile, "versions.html");
         this.versionsFile = versionsFile;
         this.name = versionsFile.getParentFile().getName();
+        this.versions = versions;
     }
 
     // ----------------------------------------------------------------------
@@ -161,8 +162,6 @@ public class PyPiResolver {
     }
 
     private void populateVersions() {
-        versions = new Versions();
-
         for(Element elt : elts) {
             if (elt.nodeName().equals("a")) {
                 String versioned = elt.ownText();
@@ -204,10 +203,11 @@ public class PyPiResolver {
         version = sremove(version, "-pp3");
         version = sremove(version, "-pypy");
 
-        // remove '.zip', '.tar.gz'
+        // remove '.zip', '.tar.gz', '.whl', ...
         version = sremove(version, ".zip");
         version = sremove(version, ".tar.gz");
         version = sremove(version, ".win32");
+        version = sremove(version, ".whl");
 
         return version;
     }

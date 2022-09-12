@@ -13,15 +13,6 @@ import java.util.List;
 
 public class NuGetLibrary extends CSharpLibrary {
 
-    // public static NuGetLibrary of(String name, String version) {
-    //     if (name == null || name.isEmpty() || version == null)
-    //         throw new IllegalArgumentException();
-    //
-    //     if ("6.0.8".equals(version))
-    //         Assert.nop();
-    //     return new NuGetLibrary(name, version);
-    // }
-
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
@@ -31,14 +22,6 @@ public class NuGetLibrary extends CSharpLibrary {
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
-
-    // private NuGetLibrary(String name, String version) {
-    //     super(MavenName.of(name, version));
-    //     this.version = version;
-    //     this.libraryType = LibraryType.REMOTE;
-    //     this.libraryFiles = Collections.emptyList();
-    //     this.coords = MavenCoords.of(name, version);
-    // }
 
     public NuGetLibrary(MavenCoords coords, File libraryDirectory) {
         super(MavenName.of(coords));

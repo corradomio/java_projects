@@ -200,7 +200,12 @@ public class CSharpModule extends BaseModule {
 
         localLibraries = new HashSet<>();
 
-        collectLocalLibraries();
+        // Note: linux is case sensitive
+
+        collectLocalLibraries("lib");
+        collectLocalLibraries("Lib");
+        collectLocalLibraries("library");
+        collectLocalLibraries("Library");
 
         return localLibraries;
     }
@@ -208,18 +213,18 @@ public class CSharpModule extends BaseModule {
     // ----------------------------------------------------------------------
     // collectLocalLibraries
 
-    private void collectLocalLibraries() {
+    private void collectLocalLibraries(String libdir) {
 
         // check if there exists '[moduleHome]/lib'
         // If it is present, collect all .dll as a single 'local library'
-        File libDirectory = new File(getModuleHome(), "lib");
+        File libDirectory = new File(getModuleHome(), libdir);
         if (!libDirectory.isDirectory())
             return;
 
         // scan for 'lib/*.dll'
         List<File> dllFiles = FileUtils.asList(libDirectory.listFiles((dir, name) -> name.endsWith(EXT_DLL)));
         if (!dllFiles.isEmpty()) {
-            Name libraryName = PathName.of(getName(), "lib");
+            Name libraryName = PathName.of(getName(), libdir);
             Library localLibrary = new CSharpLocalLibrary(libraryName, libDirectory, dllFiles);
             localLibraries.add(localLibrary);
         }

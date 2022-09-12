@@ -3,6 +3,7 @@ package jext.sourcecode.project.csharp;
 import jext.compress.Archives;
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
+import jext.maven.MavenType;
 import jext.maven.Versions;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.util.FileValidator;
@@ -13,9 +14,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +34,12 @@ public class NuGetDownloader implements LibraryDownloader {
     private static Logger logger = Logger.getLogger(NuGetDownloader.class);
     private static final int BUFFER_SIZE = 1024;
     private static final String PACKAGE_ADDRESS_BASE = "PackageBaseAddress/3.0.0";
+    private static final String NUGET_SERVER_API = "https://api.nuget.org/v3/index.json";
+    private static final String NUGET_WEB_SITE = "https://www.nuget.org";
+    private static final String DOT_INVALID = ".invalid";
 
     private String name = "nuget";
-    private String nugetUrl = "https://api.nuget.org/v3/index.json";
+    private String nugetUrl = NUGET_SERVER_API;
     private String packageAddressBase;
 
     private File downloadDirectory = new File(".nuget");
@@ -101,12 +108,18 @@ public class NuGetDownloader implements LibraryDownloader {
         this.name = name;
         this.nugetUrl = url;
 
+        if (url.toLowerCase().contains(NUGET_WEB_SITE)) {
+            logger.warnf("Specified Web site (www.nuget.org) instead than RESFul server (api.nuget.org)");
+            this.nugetUrl = NUGET_SERVER_API;
+        }
+
+        // https://api.nuget.org/v3/index.json
+
         if (nugetUrl.endsWith("v3/index.json"))
             return;
         if (!nugetUrl.endsWith("/"))
-            nugetUrl += "/v3/index.json";
-        else
-            nugetUrl += "v3/index.json";
+            nugetUrl += "/";
+        nugetUrl += "v3/index.json";
     }
 
     // ----------------------------------------------------------------------
@@ -191,6 +204,9 @@ public class NuGetDownloader implements LibraryDownloader {
         File versionsFile  = composeFile(coords, ArtifactType.VERSIONS);
         String versionsUrl = composeUrl(coords, ArtifactType.VERSIONS);
 
+        if (isInvalid(versionsFile))
+            return versions;
+
         if (!versionsFile.exists() || isObsolete(versionsFile)) {
             downloadFile(versionsUrl, versionsFile);
             validateFile(versionsFile, ArtifactType.VERSIONS);
@@ -215,8 +231,10 @@ public class NuGetDownloader implements LibraryDownloader {
          */
 
         // check if the file exists -> return the empty list of versions
-        if (!versionsFile.exists())
+        if (!versionsFile.exists()) {
+            markAsInvalid(versionsFile);
             return versions;
+        }
 
         try {
             Map<String, Object> jversions = JSONUtils.load(versionsFile, HashMap.class);
@@ -243,13 +261,22 @@ public class NuGetDownloader implements LibraryDownloader {
         File  artifactFile = composeFile(coords, ArtifactType.ARTIFACT);
         String artifactUrl = composeUrl(coords, ArtifactType.ARTIFACT);
 
+        if (isInvalid(artifactFile))
+            return Optional.empty();
+
         if (!artifactFile.exists()) {
             downloadFile(artifactUrl, artifactFile);
             validateFile(artifactFile, ArtifactType.ARTIFACT);
         }
         uncompressArtifact(artifactFile);
 
-        return artifactFile.exists() ? Optional.of(artifactFile) : Optional.empty();
+        if (!artifactFile.exists()) {
+            markAsInvalid(artifactFile);
+            return Optional.empty();
+        }
+        else {
+            return Optional.of(artifactFile);
+        }
     }
 
     private static void uncompressArtifact(File artifactFile) {
@@ -263,6 +290,37 @@ public class NuGetDownloader implements LibraryDownloader {
         } catch (IOException e) {
             logger.error("Unable to uncompress " + artifactFile);
         }
+    }
+
+    // ----------------------------------------------------------------------
+    // Invalid flag
+    // ----------------------------------------------------------------------
+
+    private boolean isInvalid(File file) {
+        File invalidFile = new File(file.getParent(), file.getName() + DOT_INVALID);
+        if (!invalidFile.exists())
+            return false;
+
+        long checkTimeoutMillis = this.checkTimeout*1000;
+        long delta = System.currentTimeMillis() - invalidFile.lastModified();
+        if (delta < checkTimeoutMillis)
+            return true;
+
+        delete(invalidFile);
+        return false;
+    }
+
+    private void markAsInvalid(File file) {
+        File invalidFile = new File(file.getParent(), file.getName() + DOT_INVALID);
+        try(Writer wrt = new FileWriter(invalidFile)) {
+            wrt.write("invalid " + new Date());
+        }
+        catch (Exception e) { }
+    }
+
+    private static void delete(File file) {
+        if (file != null)
+            file.delete();
     }
 
     // ----------------------------------------------------------------------

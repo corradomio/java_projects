@@ -24,13 +24,14 @@ public class CheckCSharpProject {
 
         LibraryFinderManager lfm = DefaultLibraryFinderManager.instance();
         CSharpLibraryFinder lfinder = (CSharpLibraryFinder) lfm.getLibraryFinder("csharp");
-        lfinder.setNamedLibrary(".NET Core 6", new File("D:\\C#\\.NET Core\\6.0.300"));
+        lfinder.setNamedLibrary(".NET Core 6", new File("D:\\Dotnet\\Windows\\.NET Core\\6.0.300\\sdk\\6.0.300"));
 
         Library rt = lfinder.getRuntimeLibrary(".NET Core 6");
         rt.getFiles();
 
         Project project = Projects.newProject(new File(
-            "D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0"
+            // "D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0"
+                "D:\\Projects\\CSharp\\CheckCSharp"
             ),
             PropertiesUtils.properties(
 
@@ -38,7 +39,9 @@ public class CheckCSharpProject {
 
         Collection<Library> libs = project.getLibraries();
         libs.forEach(l -> {
-            System.out.printf("%s:%s", l.getName(), l.getVersion());
+            System.out.println("-----------");
+            System.out.println(l.getName());
+            System.out.println(l.getFiles());
         });
 
 

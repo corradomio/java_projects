@@ -41,7 +41,7 @@ public class CSharpParsing implements LanguageParser {
             CSharpParser p = new CSharpParser(ts);
 
             p.removeErrorListeners();
-            p.addErrorListener(new ErrorListener<>(this, result));
+            // p.addErrorListener(new ErrorListener<>(this, result));
 
             result.result = p.compilation_unit();
         }

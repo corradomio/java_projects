@@ -373,6 +373,7 @@ let_clause
 
 where_clause
 	: WHERE expression
+	| WHERE NOTNULL
 	;
 
 combined_join_clause
@@ -557,7 +558,8 @@ resource_acquisition
 
 //B.2.6 Namespaces;
 namespace_declaration
-	: NAMESPACE qi=qualified_identifier namespace_body ';'?
+	: NAMESPACE qi=qualified_identifier ';'
+	| NAMESPACE qi=qualified_identifier namespace_body ';'?
 	;
 
 qualified_identifier

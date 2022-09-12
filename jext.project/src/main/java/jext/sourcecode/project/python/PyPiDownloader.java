@@ -12,9 +12,12 @@ import jext.util.FileUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 public class PyPiDownloader implements LibraryDownloader {
@@ -25,6 +28,7 @@ public class PyPiDownloader implements LibraryDownloader {
 
     private static final Logger logger = Logger.getLogger(PyPiDownloader.class);
     private static final int BUFFER_SIZE = 1024;
+    private static final String DOT_INVALID = ".invalid";
 
     private String name = "pypi";
     private String pypiUrl = "https://pypi.org/simple/";
@@ -138,16 +142,25 @@ public class PyPiDownloader implements LibraryDownloader {
 
     public Versions getArtifactVersions(MavenCoords coords) {
         // https://pypi.org/simple/pylibmc/
+        Versions versions = new Versions();
 
         File versionsFile  = composeFile(coords, ArtifactType.VERSIONS);
         String versionsUrl = composeUrl(coords, ArtifactType.VERSIONS);
+
+        if (isInvalid(versionsFile))
+            return versions;
 
         if (!versionsFile.exists() || isObsolete(versionsFile)) {
             downloadFile(versionsUrl, versionsFile);
             validateFile(versionsFile, ArtifactType.VERSIONS);
         }
 
-        PyPiResolver resolver = new PyPiResolver(versionsFile);
+        if (!versionsFile.exists()) {
+            markAsInvalid(versionsFile);
+            return versions;
+        }
+
+        PyPiResolver resolver = new PyPiResolver(versions, versionsFile);
         return resolver.getVersions();
     }
 
@@ -160,13 +173,11 @@ public class PyPiDownloader implements LibraryDownloader {
     // ----------------------------------------------------------------------
 
     public Optional<File> downloadArtifact(MavenCoords coords) {
+        Versions versions = new Versions();
         File versionsFile  = composeFile(coords, ArtifactType.VERSIONS);
-        String versionsUrl = composeUrl(coords, ArtifactType.VERSIONS);
 
-        if (!versionsFile.exists() || isObsolete(versionsFile)) {
-            downloadFile(versionsUrl, versionsFile);
-            validateFile(versionsFile, ArtifactType.VERSIONS);
-        }
+        // force the existence of artifact versions
+        getArtifactVersions(coords);
 
         // If the exact artifact version is not available, we search for an
         // artifact with a version grater or smaller than the requested version
@@ -179,7 +190,7 @@ public class PyPiDownloader implements LibraryDownloader {
         // and at the moment it seems not very useful to support a comparator
         // in the Maven coordinates.
 
-        PyPiResolver resolver = new PyPiResolver(versionsFile);
+        PyPiResolver resolver = new PyPiResolver(versions, versionsFile);
         Optional<PyPiResolver.Info> artifactInfo = resolver.selectVersion(coords.version);
 
         if (!artifactInfo.isPresent()) {
@@ -218,6 +229,37 @@ public class PyPiDownloader implements LibraryDownloader {
         } catch (IOException e) {
             logger.error("Unable to uncompress " + artifactFile);
         }
+    }
+
+    // ----------------------------------------------------------------------
+    // Invalid flag
+    // ----------------------------------------------------------------------
+
+    private boolean isInvalid(File file) {
+        File invalidFile = new File(file.getParent(), file.getName() + DOT_INVALID);
+        if (!invalidFile.exists())
+            return false;
+
+        long checkTimeoutMillis = this.checkTimeout*1000;
+        long delta = System.currentTimeMillis() - invalidFile.lastModified();
+        if (delta < checkTimeoutMillis)
+            return true;
+
+        delete(invalidFile);
+        return false;
+    }
+
+    private void markAsInvalid(File file) {
+        File invalidFile = new File(file.getParent(), file.getName() + DOT_INVALID);
+        try(Writer wrt = new FileWriter(invalidFile)) {
+            wrt.write("invalid " + new Date());
+        }
+        catch (Exception e) { }
+    }
+
+    private static void delete(File file) {
+        if (file != null)
+            file.delete();
     }
 
     // ----------------------------------------------------------------------

@@ -89,6 +89,7 @@ NAMEOF:        'nameof';
 NAMESPACE:     'namespace';
 NATIVE:        'native';
 NEW:           'new';
+NOTNULL:       'notnull';
 NULL_:         'null';
 OBJECT:        'object';
 ON:            'on';

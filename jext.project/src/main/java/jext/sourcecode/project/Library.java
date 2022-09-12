@@ -40,7 +40,7 @@ public interface Library extends IdNamed {
     /** File path where the library is saved */
     String getPath();
 
-    /** An hash code of the file */
+    ///** An hash code of the file */
     // String getDigest();
 
     /** Local library file. For MAVEN libraries, it is the ".pom" file */
