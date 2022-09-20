@@ -1,6 +1,5 @@
 package jext.jgrapht;
 
-import jext.jgrapht.util.VertexInfo;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
 import org.jgrapht.graph.AsSubgraph;
@@ -15,7 +14,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -66,7 +64,14 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
         Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
 
-        return newGraph(directed, false,false, false, edgeSupplier, vertexSupplier);
+        return newGraph(directed, false,false, false, vertexSupplier, edgeSupplier);
+    }
+
+    public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted, Class<V> vertexClass, Class<E> edgeClass) {
+        Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
+        Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
+
+        return newGraph(directed, false, false, weighted, vertexSupplier, edgeSupplier);
     }
 
 
@@ -77,8 +82,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * @param loop     if can have loops
      * @param multiple if can have multiple edges
      * @param weighted if is weighted
-     * @param edgeSupplier edge factory
      * @param vertexSupplier vertex factory
+     * @param edgeSupplier edge factory
      * @param <V> vertices type
      * @param <E> edges type
      * @return a new Graph object
@@ -88,8 +93,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
             boolean loop,
             boolean multiple,
             boolean weighted,
-            Supplier<E> edgeSupplier,
-            Supplier<V> vertexSupplier) {
+            Supplier<V> vertexSupplier,
+            Supplier<E> edgeSupplier) {
 
         GraphTypeBuilder<V, E> gtb = directed
                 ? GraphTypeBuilder.directed()
@@ -103,8 +108,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return gtb.allowingSelfLoops(loop)
                 .allowingMultipleEdges(multiple)
                 .weighted(weighted)
-                .edgeSupplier(edgeSupplier)
                 .vertexSupplier(vertexSupplier)
+                .edgeSupplier(edgeSupplier)
                 .buildGraph();
     }
 
@@ -112,7 +117,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         boolean directed,
         Supplier<V> vertexSupplier,
         Supplier<E> edgeSupplier) {
-        return newGraph(directed, false, false, false, edgeSupplier, vertexSupplier);
+        return newGraph(directed, false, false, false, vertexSupplier, edgeSupplier);
     }
 
     /**
@@ -130,8 +135,8 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 gtype.isAllowingSelfLoops(),
                 gtype.isAllowingMultipleEdges(),
                 gtype.isWeighted(),
-                template.getEdgeSupplier(),
-                template.getVertexSupplier()
+                template.getVertexSupplier(),
+                template.getEdgeSupplier()
         );
     }
 
