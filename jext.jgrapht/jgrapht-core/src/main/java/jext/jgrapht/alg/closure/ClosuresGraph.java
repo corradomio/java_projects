@@ -29,21 +29,17 @@ import java.util.stream.Collectors;
 
 public class ClosuresGraph<V, E> {
 
-    private static Logger logger = Logger.getLogger(ClosuresGraph.class);
+    private static final Logger logger = Logger.getLogger(ClosuresGraph.class);
 
     // ----------------------------------------------------------------------
     // Closure
-    // ----------------------------------------------------------------------
-
-    // ----------------------------------------------------------------------
-    //
     // ----------------------------------------------------------------------
 
     // current graph
     private final Graph<V, E> graph;
     // vertex -> closure map
     private final Map<V, Closure<V>> closures;
-    // size -> {closures with the same size}
+    // size : closures with the same size
     private final Map<Integer, List<V>> bySize;
 
     // 'virtual closure' collecting all nodes  with in/out degree == 0
@@ -55,28 +51,14 @@ public class ClosuresGraph<V, E> {
     private Graph<V, E> closureGraph;
 
     // ----------------------------------------------------------------------
-
-    // private final Set<V> singletonVertices;
-    // private final Set<V> duplicatedVertices;
-    // private final List<V> leavesRemoved;
-    // private final Set<V> inChainRemoved;
-    // private final Set<V> rootsRemoved;
-
-    // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
 
     public ClosuresGraph(Graph<V, E> graph) {
-        this.graph = graph; //new AsSynchronizedGraph<>(graph);
+        this.graph = graph;
 
         closures = new HashMap<>();
         bySize = new HashMap<>();
-
-        // singletonVertices = new HashSet<>();
-        // duplicatedVertices = new HashSet<>();
-        // leavesRemoved = new ArrayList<>();
-        // inChainRemoved = new HashSet<>();
-        // rootsRemoved = new HashSet<>();
     }
 
     // ----------------------------------------------------------------------
@@ -135,7 +117,7 @@ public class ClosuresGraph<V, E> {
         Closure<V> closure = closures.get(vertex);
         Set<V> mappedMembers = closure.members()
             .stream()
-            .map(v -> remap.get(v))
+            .map(remap::get)
             .collect(Collectors.toSet());
 
         return new Closure<>(closure.vertex(), mappedMembers, closure.inDegree(), closure.outDegree());
@@ -175,22 +157,6 @@ public class ClosuresGraph<V, E> {
         return singletonClosure.members();
     }
 
-    // public Set<V> getDuplicateRemoved() {
-    //     return duplicatedVertices;
-    // }
-
-    // public List<V> getLeavesRemove() {
-    //     return leavesRemoved;
-    // }
-
-    // public Set<V> getInChainRemoved() {
-    //     return inChainRemoved;
-    // }
-
-    // public Set<V> getRootsRemoved() {
-    //     return rootsRemoved;
-    // }
-
     /**
      * Retrieve the 'root' vertices.
      * A 'root' vertex is a vertex with inDegree = 0
@@ -219,13 +185,9 @@ public class ClosuresGraph<V, E> {
 
     public ClosuresGraph<V,E> compose() {
         computeClosures();
-        // collectSingletons();
-        // removeDuplicates();
         createClosureGraph();
         computeClosureDependencies();
         transitiveReduction();
-        // removeLeaves();
-        // removeRoots();
         return this;
     }
 
@@ -242,11 +204,6 @@ public class ClosuresGraph<V, E> {
             int outDegree = graph.outDegreeOf(vertex);
 
             Set<V> closure = computeClosure(vertex);
-
-            // if (slow)
-            //     closure = Graphs.closureOf(graph, vertex);
-            // else
-            //     closure = computeClosure(vertex);
 
             add(new Closure<>(vertex, closure, inDegree, outDegree));
         });
@@ -435,11 +392,12 @@ public class ClosuresGraph<V, E> {
     public ClosuresGraph<V,E>  createClosureGraph() {
         logger.info("createClosureGraph");
 
-        Graph<V, E> cgraph = (Graph<V, E>) Graphs.newGraph(
+        Graph<V, E> cgraph = Graphs.newGraph(
             true,
             false,
             false,
             false,
+            true,
             graph.getVertexSupplier(),
             graph.getEdgeSupplier());
 
@@ -763,9 +721,9 @@ public class ClosuresGraph<V, E> {
     // ----------------------------------------------------------------------
 
     static class Edge<V> {
-        public V source;
-        public V target;
-        public boolean directed;
+        public final V source;
+        public final V target;
+        public final boolean directed;
 
         public Edge(V s, V t, boolean d) {
             source = s;

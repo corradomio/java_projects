@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.jgrapht.Edge;
+import jext.jgrapht.edges.Edge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
 import jext.jgrapht.util.GraphDump;

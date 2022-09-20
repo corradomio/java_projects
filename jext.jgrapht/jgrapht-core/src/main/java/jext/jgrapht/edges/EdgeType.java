@@ -1,4 +1,4 @@
-package jext.jgrapht;
+package jext.jgrapht.edges;
 
 public enum EdgeType {
     UNDIRECTED,

@@ -1,10 +1,10 @@
-package jext.jgrapht;
+package jext.jgrapht.edges;
 
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.Objects;
 
-public class Edge extends DefaultEdge {
+public class DirectedEdge extends DefaultEdge implements Directed {
 
     public Object getSource() {
         return super.getSource();
@@ -24,18 +24,14 @@ public class Edge extends DefaultEdge {
 
     @Override
     public int hashCode() {
-        int h1 = Objects.hash(getSource(), getTarget());
-        int h2 = Objects.hash(getTarget(), getSource());
-        return Math.min(h1, h2);
+        return Objects.hash(getSource(), getTarget());
     }
 
     @Override
     public boolean equals(Object obj) {
         DirectedEdge that = (DirectedEdge) obj;
         return this.getSource().equals(that.getSource())
-                && this.getTarget().equals(that.getTarget())
-                || this.getSource().equals(that.getTarget())
-                && this.getTarget().equals(that.getSource());
+            && this.getTarget().equals(that.getTarget());
     }
 
 }

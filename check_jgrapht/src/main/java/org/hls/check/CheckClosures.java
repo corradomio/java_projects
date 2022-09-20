@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.jgrapht.DirectedEdge;
+import jext.jgrapht.edges.DirectedEdge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.closure.ClosuresGraph;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;

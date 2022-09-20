@@ -10,6 +10,11 @@ import java.util.Set;
 
 public class Utils {
 
+    public static double sq(double x){ return x*x; }
+    public static long   sq(long x)  { return x*x; }
+
+    // ----------------------------------------------------------------------
+
     public static <T> T[] toArray(Collection<T> coll) {
         T[] array = (T[]) new Object[coll.size()];
         coll.toArray(array);
@@ -19,6 +24,8 @@ public class Utils {
     public static <T> Set<T> asSet(T ... elements) {
         return new HashSet<>(Arrays.asList(elements));
     }
+
+    // ----------------------------------------------------------------------
 
     public static <T> boolean isSuperset(Set<T> s1, Set<T> s2) {
         return s1.containsAll(s2);
@@ -54,26 +61,5 @@ public class Utils {
     //     r.removeAll(s2);
     //     return r;
     // }
-
-    // ----------------------------------------------------------------------
-
-    public static <V, E> void describe(Graph<V, E> g) {
-        System.out.printf("Graph: |V|=%d, |E|=%d\n", g.vertexSet().size(), g.edgeSet().size());
-        if (!g.vertexSet().isEmpty()) {
-            V v = g.vertexSet().iterator().next();
-            System.out.println("  v: " + v.getClass());
-        }
-        if (!g.edgeSet().isEmpty()) {
-            E e = g.edgeSet().iterator().next();
-            System.out.println("  e: " + e.getClass());
-        }
-
-        GraphType gt = g.getType();
-        if(gt.isDirected())              System.out.println("  directed");
-        if(gt.isWeighted())              System.out.println("  weighted");
-        if(gt.isAllowingSelfLoops())     System.out.println("  loop");
-        if(gt.isAllowingMultipleEdges()) System.out.println("  multiple");
-        if(gt.isAllowingCycles())        System.out.println("  cycles");
-    }
 
 }

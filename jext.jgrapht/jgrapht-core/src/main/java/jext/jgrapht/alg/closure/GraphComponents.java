@@ -1,6 +1,6 @@
 package jext.jgrapht.alg.closure;
 
-import jext.jgrapht.EdgeType;
+import jext.jgrapht.edges.EdgeType;
 import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.AsSubgraph;

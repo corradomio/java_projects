@@ -1,4 +1,6 @@
-package jext.jgrapht.util;
+package jext.jgrapht.edges;
+
+import jext.jgrapht.vertices.VertexInfo;
 
 public class EdgeInfo<V> {
 

@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.jgrapht.Edge;
+import jext.jgrapht.edges.Edge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.util.GraphDump;
 import jext.logging.Logger;

@@ -3,6 +3,7 @@ package jext.jgrapht.util;
 import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphType;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,12 +18,26 @@ public class GraphDump {
         System.out.printf("Graph: |V|=%d, |E|=%d\n", g.vertexSet().size(), g.edgeSet().size());
         if (!g.vertexSet().isEmpty()) {
             V v = g.vertexSet().iterator().next();
-            System.out.println(" v: " + v.getClass());
+            System.out.println("  v: " + v.getClass());
         }
         if (!g.edgeSet().isEmpty()) {
             E e = g.edgeSet().iterator().next();
-            System.out.println(" e: " + e.getClass());
+            System.out.println("  e: " + e.getClass());
         }
+
+        GraphType gt = g.getType();
+        System.out.println("properties:");
+        if(gt.isSimple())                System.out.println("  simple");
+        if(gt.isPseudograph())           System.out.println("  pseudograph");
+        if(gt.isMultigraph())            System.out.println("  multigraph");
+        if(gt.isDirected())              System.out.println("  directed");
+        if(gt.isUndirected())            System.out.println("  undirected");
+        if(gt.isMixed())                 System.out.println("  mixed");
+        if(gt.isWeighted())              System.out.println("  weighted");
+        if(gt.isAllowingSelfLoops())     System.out.println("  loop");
+        if(gt.isAllowingMultipleEdges()) System.out.println("  multiple");
+        if(gt.isAllowingCycles())        System.out.println("  cycles");
+        System.out.println("end");
     }
 
     public static <V, E> void printGraphInfo(Graph<V, E> graph) {
@@ -54,4 +69,5 @@ public class GraphDump {
             System.out.printf("  c[%d]:%d\n", sz, nc);
         });
     }
+
 }

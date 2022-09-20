@@ -1,4 +1,6 @@
-package jext.jgrapht.util;
+package jext.jgrapht.vertices;
+
+import jext.jgrapht.edges.EdgeInfo;
 
 import java.util.BitSet;
 import java.util.List;

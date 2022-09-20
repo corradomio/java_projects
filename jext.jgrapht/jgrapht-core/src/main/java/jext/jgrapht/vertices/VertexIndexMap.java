@@ -1,4 +1,4 @@
-package jext.jgrapht.util;
+package jext.jgrapht.vertices;
 
 import org.jgrapht.util.VertexToIntegerMapping;
 

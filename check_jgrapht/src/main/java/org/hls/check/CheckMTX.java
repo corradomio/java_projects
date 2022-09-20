@@ -13,7 +13,7 @@ public class CheckMTX {
     public static void main(String[] args) {
         System.out.println((int)'\n');
         System.out.println((int)'\r');
-        Graph<Integer, DefaultEdge> g = Graphs.newGraph(Integer.class, DefaultEdge.class, true);
+        Graph<Integer, DefaultEdge> g = Graphs.newGraph(Integer.class, DefaultEdge.class);
 
         MTXImporter<Integer, DefaultEdge> imp = new MTXImporter<>();
         imp.importGraph(g, new File("lesmis.mtx"));

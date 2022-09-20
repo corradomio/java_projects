@@ -1,5 +1,7 @@
 package jext.jgrapht.util;
 
+import static jext.jgrapht.util.MathUtil.sq;
+
 public class Statistics {
 
     public int count;
@@ -11,8 +13,6 @@ public class Statistics {
 
     private double sum1 = 0.;
     private double sum2 = 0.;
-
-    private static double sq(double x){ return x*x; }
 
     public Statistics() { }
 

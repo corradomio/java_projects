@@ -8,6 +8,7 @@ import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.internal.value.IntegerValue;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Supplier;
 
 
 public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
@@ -31,14 +33,19 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     private String vertices;
     /** Query to retrieve all edges */
     private String edges;
+    /** Parameters used in the queries */
     private Map<String, Object> params = new HashMap<>();
-    private String slabel = "s", tlabel = "t";
+    /** Label used for the source node */
+    private String slabel = "s";
+    /** Label used for the target node */
+    private String tlabel = "t";
 
     // ----------------------------------------------------------------------
-    //
+    // Constructor
     // ----------------------------------------------------------------------
 
     public Neo4JGraphImporter() {
+
     }
 
     // ----------------------------------------------------------------------
@@ -62,6 +69,15 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
 
     public Neo4JGraphImporter<V, E> parameters(Map<String, Object> params) {
         this.params.putAll(params);
+        return this;
+    }
+
+    public Neo4JGraphImporter<V, E> parameters(Object... params) {
+        for(int i=0; i<params.length; i+=2) {
+            String name  = params[i+0].toString();
+            Object value = params[i+1];
+            this.params.put(name, value);
+        }
         return this;
     }
 
@@ -133,6 +149,11 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         edges(graph, vertices);
     }
 
+    private V get(Record rec, String vlablel) {
+        IntegerValue v = (IntegerValue) rec.get(vlablel);
+        return (V)Long.valueOf(v.asLong());
+    }
+
     private Set<V> vertices(Graph<V, E> graph) {
         Set<V> vset = new HashSet<>();
         if (vertices == null)
@@ -141,7 +162,8 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         Result r = session.run(vertices, params);
         while (r.hasNext()) {
             Record rec = r.next();
-            V vertex = (V)rec.get(slabel);
+            V vertex = get(rec, slabel);
+
             if (!vset.contains(vertex)) {
                 vset.add(vertex);
                 graph.addVertex(vertex);
@@ -155,8 +177,8 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         Result r = session.run(edges, params);
         while (r.hasNext()) {
             Record rec = r.next();
-            V sourceVertex = (V)rec.get(slabel);
-            V targetVertex = (V)rec.get(tlabel);
+            V sourceVertex = get(rec, slabel);
+            V targetVertex = get(rec, tlabel);
 
             if (!vertices.contains(sourceVertex)) {
                 vertices.add(sourceVertex);

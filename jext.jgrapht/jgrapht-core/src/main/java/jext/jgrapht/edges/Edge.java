@@ -1,10 +1,10 @@
-package jext.jgrapht;
+package jext.jgrapht.edges;
 
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.Objects;
 
-public class UndirectedEdge extends DefaultEdge {
+public class Edge extends DefaultEdge {
 
     public Object getSource() {
         return super.getSource();
@@ -33,9 +33,9 @@ public class UndirectedEdge extends DefaultEdge {
     public boolean equals(Object obj) {
         DirectedEdge that = (DirectedEdge) obj;
         return this.getSource().equals(that.getSource())
-            && this.getTarget().equals(that.getTarget())
-            || this.getSource().equals(that.getTarget())
-            && this.getTarget().equals(that.getSource());
+                && this.getTarget().equals(that.getTarget())
+                || this.getSource().equals(that.getTarget())
+                && this.getTarget().equals(that.getSource());
     }
 
 }

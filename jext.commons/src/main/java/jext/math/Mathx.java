@@ -2,9 +2,9 @@ package jext.math;
 
 public class Mathx {
 
-    public static long sq(long x) { return x*x; }
-    public static double sq(double x) { return x*x; }
-    public static double div(double x, double y) { return y != 0. ? x/y : 0.; }
+    public static long   sq(  long   x) { return x*x; }
+    public static double sq(  double x) { return x*x; }
+    public static double div( double x, double y) { return y != 0. ? x/y : 0.; }
     public static double sqrt(double x) { return Math.sqrt(x); }
     public static double log2(double x) { return x == 0? 0. : Math.log(x)/Math.log(2); }
     public static double chop(double x) { return x < 0 ? 0. : x; }

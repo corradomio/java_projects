@@ -20,7 +20,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <jgrapht.version>1.4.0</jgrapht.version>
+        <jgrapht.version>1.5.1</jgrapht.version>
     </properties>
 
     <dependencies>

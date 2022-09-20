@@ -1,5 +1,9 @@
 package jext.jgrapht;
 
+import jext.jgrapht.edges.Directed;
+import jext.jgrapht.edges.DirectedEdge;
+import jext.jgrapht.edges.EdgeType;
+import jext.jgrapht.edges.Weighted;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
 import org.jgrapht.graph.AsSubgraph;
@@ -55,23 +59,17 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // ----------------------------------------------------------------------
 
     public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass) {
-        boolean directed = edgeClass.isAssignableFrom(DirectedEdge.class);
+        boolean directed = Directed.class.isAssignableFrom(edgeClass);
+        boolean weighed  = Weighted.class.isAssignableFrom(edgeClass);
 
-        return newGraph(vertexClass, edgeClass, directed);
-    }
-
-    public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass, boolean directed) {
-        Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
-        Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
-
-        return newGraph(directed, false,false, false, vertexSupplier, edgeSupplier);
+        return newGraph(directed, weighed, vertexClass, edgeClass);
     }
 
     public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted, Class<V> vertexClass, Class<E> edgeClass) {
-        Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
         Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
+        Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
 
-        return newGraph(directed, false, false, weighted, vertexSupplier, edgeSupplier);
+        return newGraph(directed, false, false, weighted, true, vertexSupplier, edgeSupplier);
     }
 
 
@@ -82,6 +80,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * @param loop     if can have loops
      * @param multiple if can have multiple edges
      * @param weighted if is weighted
+     * @param cycles   if cycles are permitted
      * @param vertexSupplier vertex factory
      * @param edgeSupplier edge factory
      * @param <V> vertices type
@@ -93,6 +92,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
             boolean loop,
             boolean multiple,
             boolean weighted,
+            boolean cycles,
             Supplier<V> vertexSupplier,
             Supplier<E> edgeSupplier) {
 
@@ -117,7 +117,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         boolean directed,
         Supplier<V> vertexSupplier,
         Supplier<E> edgeSupplier) {
-        return newGraph(directed, false, false, false, vertexSupplier, edgeSupplier);
+        return newGraph(directed, false, false, false, true, vertexSupplier, edgeSupplier);
     }
 
     /**
@@ -135,6 +135,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                 gtype.isAllowingSelfLoops(),
                 gtype.isAllowingMultipleEdges(),
                 gtype.isWeighted(),
+                gtype.isAllowingCycles(),
                 template.getVertexSupplier(),
                 template.getEdgeSupplier()
         );

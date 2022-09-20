@@ -1,4 +1,4 @@
-package jext.jgrapht.util;
+package jext.jgrapht.edges;
 
 import org.jgrapht.util.CollectionUtil;
 
