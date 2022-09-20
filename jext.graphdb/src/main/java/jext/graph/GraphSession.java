@@ -84,6 +84,19 @@ public interface GraphSession extends AutoCloseable {
     void close();
 
     // ----------------------------------------------------------------------
+    // Transactions
+    // ----------------------------------------------------------------------
+    // Transaction is not ""necessary"": it is handled internally by the
+    // session
+
+    //
+    // Unsupported (for now)
+    //
+    // void beginTransaction();
+    // void commit();
+    // void rollback();
+
+    // ----------------------------------------------------------------------
     // DeleteAll (DANGEROUS)
     // ----------------------------------------------------------------------
 

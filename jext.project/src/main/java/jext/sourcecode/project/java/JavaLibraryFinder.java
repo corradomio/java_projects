@@ -157,6 +157,11 @@ public class JavaLibraryFinder implements LibraryFinder {
         return rtLibrary;
     }
 
+    // used locally
+    public Library getRTLibrary(String libraryName) {
+        return runtimeLibraries.get(libraryName);
+    }
+
     @Override
     public Collection<Library> getRuntimeLibraries() {
         return runtimeLibraries.values();

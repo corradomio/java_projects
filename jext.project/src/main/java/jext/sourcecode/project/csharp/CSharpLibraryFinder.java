@@ -183,6 +183,11 @@ public class CSharpLibraryFinder implements LibraryFinder {
         return rtLibrary;
     }
 
+    // used internally
+    public Library getRTLibrary(String libraryName) {
+        return runtimeLibraries.get(libraryName);
+    }
+
     @Override
     public Collection<Library> getRuntimeLibraries() {
         return runtimeLibraries.values();

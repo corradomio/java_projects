@@ -38,13 +38,25 @@ public class Versions {
         return versions.isEmpty();
     }
 
+    public boolean contains(String version) {
+        return contains(Version.of(version));
+    }
+
+    public void add(String version) {
+        add(Version.of(version));
+    }
+
+    public boolean contains(Version version) {
+        return versions.contains(version);
+    }
+
+    public void add(Version version) {
+        versions.add(version);
+    }
+
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
-
-    public void add(String version) {
-        versions.add(Version.of(version));
-    }
 
     public Version select(String version, String sel) {
         if ("=".equals(sel) || "==".equals(sel))
@@ -72,7 +84,8 @@ public class Versions {
             return versions.last();
 
         // if ==ver or >=ver or <=ver and ver is present, return ver
-        if ((sel == Selector.EQUALS || sel == Selector.GREATER_EQUAL || sel == Selector.LESS_EQUAL) && versions.contains(ver))
+        if ((sel == Selector.EQUALS || sel == Selector.GREATER_EQUAL || sel == Selector.LESS_EQUAL)
+                && versions.contains(ver))
             return ver;
 
         // if ==ver but ver is not present, return nover
@@ -101,5 +114,9 @@ public class Versions {
         else
             return versions.last();
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

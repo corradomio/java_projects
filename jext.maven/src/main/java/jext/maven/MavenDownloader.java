@@ -103,21 +103,6 @@ public class MavenDownloader implements MavenConst {
         addRepository("https://repo.maven.apache.org/maven2");
     }
 
-    // /**
-    //  * Create a clone of the current downloader, useful to add new custom repositories
-    //  */
-    // public MavenDownloader newDownloader() {
-    //     return new MavenDownloader()
-    //         .setDownloadDirectory(downloadDir)
-    //         .addRepositories(repoUrls)
-    //         .addLocalDirectories(localDirs)
-    //         .setDownloadTimeout(downloadTimeout)
-    //         .setCheckTimeout(checkTimeout)
-    //         .setParallelDownloads(parallelDownloads)
-    //         .initialize()
-    //         ;
-    // }
-
     // ----------------------------------------------------------------------
     // Configuration
     // ----------------------------------------------------------------------
@@ -198,10 +183,7 @@ public class MavenDownloader implements MavenConst {
         coords = normalize(coords);
 
         // compose the local file
-        File pomFile = getFile(coords, MavenType.POM);
-        // if (!pomFile.exists())
-        //     downloadFile(coords, MavenType.POM);
-        return pomFile;
+        return getFile(coords, MavenType.POM);
     }
 
     /**
@@ -216,8 +198,6 @@ public class MavenDownloader implements MavenConst {
 
         // compose the local file
         File artifactFile = getFile(coords, MavenType.ARTIFACT);
-        // if (!artifactFile.exists())
-        //     downloadFile(coords, MavenType.ARTIFACT);
 
         // if the file is an '.aar' file, extract all '.jar's
         if (artifactFile.getName().endsWith(".aar"))
@@ -436,16 +416,16 @@ public class MavenDownloader implements MavenConst {
         return pom; // pom == MavenPom.invalid() ? null : pom;
     }
 
-    /**
-     * Maven coordinates for the latest version of the library
-     */
-    public MavenCoords getLatest(MavenCoords coords) {
-        String latestVersion =  getLatestVersion(coords);
-        if (!latestVersion.isEmpty())
-            return MavenCoords.of(coords, latestVersion);
-        else
-            return coords;
-    }
+    // /**
+    //  * Maven coordinates for the latest version of the library
+    //  */
+    // public MavenCoords getLatest(MavenCoords coords) {
+    //     String latestVersion =  getLatestVersion(coords);
+    //     if (!latestVersion.isEmpty())
+    //         return MavenCoords.of(coords, latestVersion);
+    //     else
+    //         return coords;
+    // }
 
     /**
      * Latest version or "" if it is not possible to retrieve a value
@@ -453,13 +433,9 @@ public class MavenDownloader implements MavenConst {
     public String getLatestVersion(MavenCoords coords) {
         File versionsFile = getFile(coords, MavenType.VERSIONS);
         Version latestVersions = findVersionsVersion(versionsFile);
-        // if (versionsFile.exists())
-        //     return findVersionsVersion(versionsFile);
 
         File metadataFile = getFile(coords, MavenType.METADATA);
         Version latestMetadata = findMetadataVersion(metadataFile);
-        // if (metadataFile.exists())
-        //     return findMetadataVersion(metadataFile);
 
         int cmp = latestMetadata.compareTo(latestVersions);
         if (cmp < 0 )
@@ -578,61 +554,6 @@ public class MavenDownloader implements MavenConst {
             v = v.substring(0, v.length()-1);
         return v;
     }
-
-    // /**
-    //  * List of available versions and publishing date
-    //  * @param coords maven coordinates
-    //  */
-    // private Versions getVersions(MavenCoords coords) {
-    //     /*
-    //         <html>
-    //             ...
-    //
-    //         <a href="../">../</a>
-    //         <a href="0.1/" title="0.1/">0.1/</a>   2005-09-20 05:46         -
-    //         <a href="1.0/" title="1.0/">1.0/</a>   2005-09-20 05:46         -
-    //         <a href="1.1/" title="1.1/">1.1/</a>   2005-10-11 00:02         -
-    //         <a href="1.2/" title="1.2/">1.2/</a>   2006-03-20 01:31         -
-    //             ...
-    //         <a href="20030203.000550/" title="20030203.000550/">20030203.000550/</a>            -         -
-    //         <a href="maven-metadata.xml" title="maven-metadata.xml">maven-metadata.xml</a>      2020-09-09 14:28       847
-    //
-    //             ...
-    //         </html>
-    //      */
-    //     Versions versions = new Versions();
-    //
-    //     File versionsFile = getFile(coords, MavenType.VERSIONS);
-    //     // if (recheck(versionsFile))
-    //     //     downloadFile(coords, MavenType.VERSIONS);
-    //     if (!versionsFile.exists())
-    //         return versions;
-    //
-    //     FileUtils.toStrings(versionsFile)
-    //         .forEach(href -> {
-    //             String version = null;
-    //             String year = null;
-    //             Matcher m = HREF_VERSION.matcher(href);
-    //
-    //             // check for
-    //             //  <a href="0.1/" title="0.1/">0.1/</a>    2005-09-20 05:46         -
-    //             if (m.matches()) {
-    //                 version = m.group(1);
-    //                 year = m.group(2);
-    //             }
-    //
-    //             // skip if year is "-"
-    //             if (MavenCoords.isValid(version) && MavenCoords.isValid(year))
-    //                 versions.add(version, year);
-    //         });
-    //
-    //     return versions;
-    // }
-
-    // private Versions readVersions(File versionsFile) {
-    //     if (!versionsFile.exists())
-    //         return Versions.noVersions;
-    // }
 
     // ----------------------------------------------------------------------
     // MavenCoords -> File & Url
@@ -1075,12 +996,6 @@ public class MavenDownloader implements MavenConst {
 
         MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
 
-        // .invalid'
-        // deleteInvalidFile(coords, MavenType.METADATA);
-        // deleteInvalidFile(coords, MavenType.VERSIONS);
-        // deleteInvalidFile(coords, MavenType.POM);
-        // deleteInvalidFile(coords, MavenType.ARTIFACT);
-
         // 'maven-metadata.xml'
         File metadataFile = getFile(coords, MavenType.METADATA);
         if (recheck(metadataFile))
@@ -1132,9 +1047,8 @@ public class MavenDownloader implements MavenConst {
             return true;
     }
 
-    // private void deleteInvalidFile(MavenCoords coords, MavenType type) {
-    //     File invalidFile = getInvalidFlagFile(coords, type);
-    //     invalidFile.delete();
-    // }
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

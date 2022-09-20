@@ -12,11 +12,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -62,38 +64,71 @@ public class XPathUtils {
     // Parse
     // ----------------------------------------------------------------------
 
-    public static Document parse(File file) throws ParserConfigurationException, IOException, SAXException {
+    private static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         factory.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
+
+        // security issues
+
+        // to be compliant, completely disable DOCTYPE declaration:
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        // or completely disable external entities declarations:
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        // or prohibit the use of all protocols by external entities:
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        // or disable entity expansion but keep in mind that this doesn't prevent fetching external entities
+        // and this solution is not correct for OpenJDK < 13 due to a bug: https://bugs.openjdk.java.net/browse/JDK-8206132
+        factory.setExpandEntityReferences(false);
+
+        // create the builder
+
         DocumentBuilder builder = factory.newDocumentBuilder();
         builder.setEntityResolver(SKIP_ENTITY_RESOLVER);
         builder.setErrorHandler(SKIP_ERROR_HANDLER);
+        return builder;
+    }
+
+    public static Document parse(File file) throws ParserConfigurationException, IOException, SAXException {
+        // DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // factory.setNamespaceAware(false);
+        // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        // factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        // factory.setFeature("http://apache.org/xml/features/continue-after-fatal-error", true);
+        // DocumentBuilder builder = factory.newDocumentBuilder();
+        // builder.setEntityResolver(SKIP_ENTITY_RESOLVER);
+        // builder.setErrorHandler(SKIP_ERROR_HANDLER);
+        DocumentBuilder builder = newDocumentBuilder();
         return builder.parse(file);
     }
 
     public static Document parse(InputStream stream) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(false);
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        // DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // factory.setNamespaceAware(false);
+        // DocumentBuilder builder = factory.newDocumentBuilder();
+        DocumentBuilder builder = newDocumentBuilder();
         return builder.parse(stream);
     }
 
     public static Document parse(InputStream stream, boolean close) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(false);
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        // DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // factory.setNamespaceAware(false);
+        // DocumentBuilder builder = factory.newDocumentBuilder();
+        DocumentBuilder builder = newDocumentBuilder();
         Document doc = builder.parse(stream);
         if (close) stream.close();
         return doc;
     }
 
     public static Document parse(Reader reader) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(false);
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        // DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // factory.setNamespaceAware(false);
+        // DocumentBuilder builder = factory.newDocumentBuilder();
+        DocumentBuilder builder = newDocumentBuilder();
         return builder.parse(new InputSource(reader));
     }
 
@@ -116,10 +151,29 @@ public class XPathUtils {
     // Serialize
     // ----------------------------------------------------------------------
 
-    public static void serialize(Document doc, Writer out) throws TransformerException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    public static Transformer newTransformer() throws TransformerConfigurationException {
+
+        // security issues
+
+        TransformerFactory factory = javax.xml.transform.TransformerFactory.newInstance();
+        // to be compliant, prohibit the use of all protocols by external entities:
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+
+        // create the transformer
+
+        Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+        return transformer;
+    }
+
+    public static void serialize(Document doc, Writer out) throws TransformerException {
+        // Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        // transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        // transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        Transformer transformer = newTransformer();
         transformer.transform(new DOMSource(doc), new StreamResult(out));
     }
 
@@ -129,9 +183,10 @@ public class XPathUtils {
     }
 
     public static void serialize(Document doc, OutputStream out) throws TransformerException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        // Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        // transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        // transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        Transformer transformer = newTransformer();
         transformer.transform(new DOMSource(doc), new StreamResult(out));
     }
 

@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import jext.maven.MavenCoords;
+import jext.maven.Versions;
 import jext.sourcecode.project.python.util.PyPiResolver;
 import jext.sourcecode.project.python.util.Requirements;
 
@@ -20,7 +21,8 @@ public class CheckPyPiResolver {
 
         MavenCoords flask = req.getLibrary("flask");
 
-        PyPiResolver res = new PyPiResolver(new File("C:\\Users\\Corrado Mio\\.spl\\.pip\\flask\\versions.html"));
+        Versions versions = new Versions();
+        PyPiResolver res = new PyPiResolver(versions, new File("C:\\Users\\Corrado Mio\\.spl\\.pip\\flask\\versions.html"));
         Optional<PyPiResolver.Info> r = res.selectVersion(flask.version);
         System.out.println();
     }

@@ -4,10 +4,11 @@
   -->
 <configuration>
     <properties>
-        <property name="java-home" value="D:/Java">long value</property>
-        <property name="android-home" value="D:/Android">long value</property>
-        <property name="python-home" value="D:/Python">long value</property>
-        <property name="dotnet-home" value="C:/Program Files/dotnet">long value</property>
+        <property name="extlibs-home" value="D:/SPLGroup/repos"/>
+        <property name="java-home" value="D:/Java"/>
+        <property name="android-home" value="D:/Android"/>
+        <property name="python-home" value="D:/Python"/>
+        <property name="dotnet-home" value="D:/Dotnet/Windows/.NET Core"/>
     </properties>
 
     <extlibsManager path=".">
@@ -15,7 +16,7 @@
         <language name="java">
 
             <downloader name="maven">
-                <download timeout="500ms" path="${sys:user.home}/.spl/.maven" parallel="5" />
+                <download timeout="500ms" path="${extlibs-home}/.maven/.m2" parallel="5" />
                 <check    timeout="24h"/>
 
                 <!-- extra local directories where to search local libraries -->
@@ -32,8 +33,9 @@
             </downloader>
 
             <!-- NEW syntax -->
-            <library name="jdk7,jdk1.7,jdk8,jdk1.8" path="${java-home}/jdk8.0">
-                <path value="${java-home}/jdk8.0"/>
+            <library name="jdk4,jdk1.4,jdk5,jdk1.5, jdk6, jdk1.6" path="${java-home}/Jdk8.0"/>
+            <library name="jdk7,jdk1.7,jdk8,jdk1.8" path="${java-home}/Jdk8.0">
+                <path value="${java-home}/Jdk8.0"/>
                 <path value="${java-home}/Jdk8"/>
             </library>
             <library name="jdk9,jdk10,jdk11">
@@ -61,7 +63,7 @@
         <language name="android">
 
             <downloader name="maven">
-                <download timeout="500ms" path="${sys:user.home}/.spl/.extlib" parallel="5" />
+                <download timeout="500ms" path="${extlibs-home}/.extlib/.m2" parallel="5" />
                 <check    timeout="24h"/>
 
                 <!-- extra local directories where to search local libraries -->
@@ -109,37 +111,115 @@
         <language name="python">
 
             <downloader name="pip">
-                <download timeout="500ms" path="${sys:user.home}/.spl/.pip" parallel="5" />
+                <download timeout="500ms" path="${extlibs-home}/.pip" parallel="5" />
                 <check    timeout="24h"/>
 
-                <!--
-                    PyPi server API
-                    ttps://stackoverflow.com/questions/21419009/json-api-for-pypi-how-to-list-packages
-                -->
-                <repository name="pypi" url="https://pypi.org/simple"/>
+                <!-- Configuration -->
+                <repository name="pypi" url="https://pypi.org/"/>
             </downloader>
 
-            <path value="${python-home}/anaconda3-2022.05" name="py38,3.8"/>
+            <path value="${python-home}/anaconda3-2022.05-plain" name="py38,3.8"/>
         </language>
 
         <language name="csharp">
 
             <downloader name="nuget">
-                <download timeout="500ms" path="${sys:user.home}/.spl/.nuget" parallel="5" />
+                <download timeout="500ms" path="${extlibs-home}/.nuget" parallel="5" />
                 <check    timeout="24h"/>
 
-                <!--
-                    NuGet server API
-                    https://docs.microsoft.com/en-us/nuget/api/overview
-                -->
-                <repository name="nuget" url="https://api.nuget.org/v3/index.json"/>
+                <repository name="nuget" url="https://www.nuget.org/"/>
             </downloader>
 
+            <!--
+                C# 1.0          .NET Framework 1.0
+                C# 1.1          .NET Framework 1.1
+                C# 1.2          .NET Framework 1.1
+                C# 2.0          .NET Framework 2.0 / 3.0
+                C# 3.0          .NET Framework 2.0 / 3.0 / 3.5
+                C# 4.0          .NET Framework 4
+                C# 5.0          .NET Framework 4.5
+                C# 6.0          .NET Framework 4.6 /
+                                .NET Core 1.0 / 1.1
+                C# 7.0          .NET Framework 4.7
+                C# 7.1          .NET Core 2.0
+                C# 7.2          .NET Core 2.0
+                C# 7.3          .NET Framework 4.8     (use .NET Core 2.2)
+                                .NET Core 2.1 / 2.2
+                C# 8.0          .NET Core 3.0 / 3.1    (use .NET Core 3.1)
+                C# 9.0          .NET 5.0
+                C# 10.0         .NET 6.0
+            -->
+
+            <!--
+                net40
+                net45
+                net451
+                net461
+                net472
+                net5
+                net5.0
+                net6
+                net6.0
+                net6.0-android
+                net6.0-ios
+                net6.0-maccatalyst
+                net6.0-tizen
+                net6.0-windows
+                net6.0-windows10.0.19041
+                net6.0-windows7.0
+                net7.0
+                netcoreapp2.0
+                netcoreapp2.1
+                netcoreapp3.1
+                netcoreapp6.0
+                netstandard1.3
+                netstandard2.0
+                netstandard2.1
+              -->
+
+            <!-- NEW syntax, to support libraries with other names/versions but based on the same
+                 list of assemblies -->
+            <library name=".NET Core 2.0,netstandard2.0" version="2.0" ref=".NET Core 2.2"/>
+            <library name=".NET Core 2.1,netstandard2.1" version="2.1" ref=".NET Core 2.2"/>
+
             <!-- NEW syntax, to supports MULTIPLE paths -->
-            <library name="6.0,net60,.NET Core 6">
-                <path value="${dotnet-home}/packs/Microsoft.NETCore.App.Ref/6.0.6/ref/net6.0"/>
-                <path value="${dotnet-home}/packs/Microsoft.WindowsDesktop.App.Ref/6.0.6/ref/net6.0"/>
-                <path value="${dotnet-home}/packs/Microsoft.AspNetCore.App.Ref/6.0.6/ref/net6.0"/>
+            <library name=".NET Core 2.2,netstandard2.2" version="2.2">
+                <path value="${dotnet-home}/2.2.207/shared/Microsoft.AspNetCore.All/2.2.8"/>
+                <path value="${dotnet-home}/2.2.207/shared/Microsoft.AspNetCore.App/2.2.8"/>
+                <path value="${dotnet-home}/2.2.207/shared/Microsoft.NETCore.App/2.2.8"/>
+                <path value="${dotnet-home}/2.2.207/sdk"/>
+            </library>
+
+            <library name=".NET Core 3.1,netcoreapp3.1" version="3.1">
+                <path value="${dotnet-home}/3.1.419/packs/Microsoft.NETCore.App.Ref/3.1.10/ref"/>
+                <path value="${dotnet-home}/3.1.419/packs/Microsoft.WindowsDesktop.App.Ref/3.1.10/ref"/>
+                <path value="${dotnet-home}/3.1.419/packs/Microsoft.AspNetCore.App.Ref/3.1.10/ref"/>
+                <path value="${dotnet-home}/3.1.419/packs/NETStandard.Library.Ref/2.1.0/ref" />
+                <path value="${dotnet-home}/3.1.419/sdk"/>
+            </library>
+
+            <library name=".NET 5.0,net5,net5.0" version="5.0">
+                <path value="${dotnet-home}/5.0.17/packs/Microsoft.NETCore.App.Ref/5.0.0/ref"/>
+                <path value="${dotnet-home}/5.0.17/packs/Microsoft.WindowsDesktop.App.Ref/5.0.0/ref"/>
+                <path value="${dotnet-home}/5.0.17/packs/Microsoft.AspNetCore.App.Ref/5.0.0/ref"/>
+                <path value="${dotnet-home}/5.0.17/packs/NETStandard.Library.Ref/2.1.0/ref" />
+                <path value="${dotnet-home}/5.0.17/sdk"/>
+            </library>
+
+            <library name=".NET 6.0,net6,net6.0,netstandard2.1" version="6.0">
+                <path value="${dotnet-home}/6.0.300/packs/Microsoft.NETCore.App.Ref/6.0.5/ref"/>
+                <path value="${dotnet-home}/6.0.300/packs/Microsoft.WindowsDesktop.App.Ref/6.0.5/ref"/>
+                <path value="${dotnet-home}/6.0.300/packs/Microsoft.AspNetCore.App.Ref/6.0.5/ref"/>
+                <path value="${dotnet-home}/6.0.300/packs/NETStandard.Library.Ref/2.1.0/ref" />
+                <path value="${dotnet-home}/6.0.300/sdk"/>
+            </library>
+
+            <library name=".NET 7.0,net7,net7.0" version="7.0">
+                <path value="${dotnet-home}/7.0.100/packs/Microsoft.NETCore.App.Ref/7.0.0-preview.5.22301.12/ref"/>
+                <path value="${dotnet-home}/7.0.100/packs/Microsoft.WindowsDesktop.App.Ref/7.0.0-preview.5.22301.12/ref"/>
+                <path value="${dotnet-home}/7.0.100/packs/Microsoft.AspNetCore.App.Ref/7.0.0-preview.5.22301.12/ref"/>
+                <path value="${dotnet-home}/7.0.100/packs/NETStandard.Library.Ref/2.1.0/ref" />
+                <path value="${dotnet-home}/7.0.100/sdk"/>
             </library>
         </language>
 

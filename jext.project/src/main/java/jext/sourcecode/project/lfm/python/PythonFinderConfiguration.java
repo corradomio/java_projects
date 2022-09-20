@@ -1,6 +1,7 @@
 package jext.sourcecode.project.lfm.python;
 
 import jext.configuration.Configuration;
+import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.lfm.DownloaderConfiguration;
@@ -28,8 +29,31 @@ public class PythonFinderConfiguration extends LanguageFinderConfiguration {
 
         libraries.forEach((lname, lconfig) -> {
             File file = lconfig.getFile();
+            String version = lconfig.getVersion();
+            String ref = lconfig.getRef();
+
+            if (!ref.isEmpty())
+                return;
+
             lfinder.setNamedLibrary(lname, file);
         });
+
+        libraries.forEach((lname, lconfig) -> {
+            File file = lconfig.getFile();
+            String version = lconfig.getVersion();
+            String ref = lconfig.getRef();
+
+            if (ref.isEmpty())
+                return;
+
+            Library refLibrary = lfinder.getRTLibrary(ref);
+            if (refLibrary == null)
+                return;
+
+            lfinder.setNamedLibrary(lname, refLibrary.getFile());
+        });
+
+
 
         configureDownloader(lfinder.getDownloader());
 

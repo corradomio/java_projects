@@ -18,6 +18,15 @@ public class CSharpLocalLibrary extends CSharpLibrary {
     // ----------------------------------------------------------------------
 
     public CSharpLocalLibrary(
+            Name libraryName,
+            File libraryFile) {
+        super(libraryName);
+        this.libraryFile = libraryFile.getParentFile();
+        this.libraryFiles = Collections.singletonList(libraryFile);
+        this.libraryType = LibraryType.LOCAL;
+    }
+
+    public CSharpLocalLibrary(
         Name libraryName,
         File libraryDirectory,
         List<File> libraryFiles) {

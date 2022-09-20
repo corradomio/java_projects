@@ -200,12 +200,13 @@ public class CSharpModule extends BaseModule {
 
         localLibraries = new HashSet<>();
 
-        // Note: linux is case sensitive
+        // Note: linux is CASE SENSITIVE
 
         collectLocalLibraries("lib");
         collectLocalLibraries("Lib");
         collectLocalLibraries("library");
         collectLocalLibraries("Library");
+        collectLocalLibrariesFromReference();
 
         return localLibraries;
     }
@@ -265,6 +266,34 @@ public class CSharpModule extends BaseModule {
             Library library = lfinder.getLibrary(coords);
 
             libraries.add(library);
+        });
+    }
+    private void collectLocalLibrariesFromReference() {
+        File projectHome = project.getProjectHome();
+
+        // global properties
+        //      [projectHome]/Directory.Build.(props|targets)
+        //       [moduleHome]/Directory.Build.(props|targets)
+        Properties globalProperties = new Properties();
+
+        globalProperties.putAll(DirectoryBuildPropsFile.props(  projectHome).getProperties());
+        globalProperties.putAll(DirectoryBuildPropsFile.targets(projectHome).getProperties());
+        globalProperties.putAll(DirectoryBuildPropsFile.props(  projectHome, moduleHome).getProperties());
+        globalProperties.putAll(DirectoryBuildPropsFile.targets(projectHome, moduleHome).getProperties());
+
+        List<File> csprojFiles = FileUtils.listFiles(moduleHome, pathname -> pathname.getName().endsWith(CSPROJ));
+        csprojFiles.forEach(csprojFile -> {
+
+            CSharpProjectFile cspjf = new CSharpProjectFile(projectHome, csprojFile);
+            cspjf.addProperties(globalProperties);
+
+            List<CSharpProjectFile.LocalReference> localReferences = cspjf.getLocalReferences();
+            localReferences.forEach(lr -> {
+
+                Library library = new CSharpLocalLibrary(PathName.of(lr.name), lr.file);
+
+                this.localLibraries.add(library);
+            });
         });
     }
 

@@ -15,7 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -72,7 +72,7 @@ public class UndDatabase implements AutoCloseable {
     // Private fields
     // ----------------------------------------------------------------------
 
-    protected static final int MAX_FILES_INLINE = 20;
+    private static final String SETTINGS = "settings";
 
     protected File undPath;
     protected String language;
@@ -160,15 +160,23 @@ public class UndDatabase implements AutoCloseable {
         );
 
         if ("java".equals(language)) {
-        SciTools.und().exec("settings",
-            "-JavaVersion", "10-18",
-            "-db", undPath.getAbsolutePath()
-        );
-    }
+            SciTools.und().exec(SETTINGS,
+                "-JavaVersion", "10-18",
+                "-db", undPath.getAbsolutePath()
+            );
+        }
         else if ("python".equals(language)) {
-            SciTools.und().exec("settings",
+            SciTools.und().exec(SETTINGS,
                 "-PythonSetVersion", "Python3",
                 "-db", undPath.getAbsolutePath()
+            );
+            SciTools.und().exec(SETTINGS,
+                    "-PythonExe", SciTools.upythonApp ,
+                    "-db", undPath.getAbsolutePath()
+            );
+            SciTools.und().exec(SETTINGS,
+                    "-UseInstalledStanderd", "ON",
+                    "-db", undPath.getAbsolutePath()
             );
         }
         else if ("csharp".equals(language) || "c#".equals(language)) {
@@ -281,9 +289,6 @@ public class UndDatabase implements AutoCloseable {
 
          Note that both fromdb and todb must be specified, even in interactive mode.
     */
-    // public void addSource(File fileOrDirectory) throws IOException {
-    //     applyOnSource(ADD, fileOrDirectory);
-    // }
 
     /*
     Help For Remove
@@ -324,18 +329,27 @@ public class UndDatabase implements AutoCloseable {
 
     private void applyOnSource(String action, File fileOrDirectory) throws IOException {
         if (fileOrDirectory.isDirectory()) {
-            SciTools.und().exec(action, fileOrDirectory.getAbsolutePath(),
+            SciTools.und().exec(
+                action,
+                    fileOrDirectory.getAbsolutePath(),
+                    "-db",
                     undPath.getAbsolutePath());
         }
         else {
-            SciTools.und().exec(action, /* "-file", */ fileOrDirectory.getAbsolutePath(),
+            SciTools.und().exec(
+                action, /* "-file", */
+                    fileOrDirectory.getAbsolutePath(),
+                    "-db",
                     undPath.getAbsolutePath());
         }
     }
 
     private void applyOnSources(String action, List<File> files) throws IOException {
-        File tempFile = createSourcesListFile(files);
-        SciTools.und().exec(action, "@"+tempFile.getAbsolutePath(),
+        File sourcesFile = createSourcesListFile(files);
+        SciTools.und().exec(
+            action,
+                "@" + sourcesFile.getAbsolutePath(),
+                "-db",
                 undPath.getAbsolutePath());
     }
 
@@ -397,76 +411,52 @@ public class UndDatabase implements AutoCloseable {
 
     private void addJavaLibraries(Collection<File> libraryFiles) throws IOException {
         // save the list of files in an external file
-        createLibrariesListFile(libraryFiles);
+        File librariesFile = createLibrariesListFile(libraryFiles);
 
-        // DESN'T WORK!! WHY???
-        // {
-        //     List<String> command = new ArrayList<>();
-        //     command.add("settings");
-        //     command.add("-JavaClassPathsAdd");
-        //     command.add(String.format("@%s", librariesFile.getAbsolutePath()));
-        //     SciTools.und().exec(command);
-        // }
+        List<String> command = Arrays.asList(
+            SETTINGS,
+            "-JavaClassPathsAdd",
+            "@" + librariesFile.getAbsolutePath(),
+            "-db",
+            undPath.getAbsolutePath());
 
-        // configure SciTools DB with the list of libraries
-        // Note: the list is splitted in chunks of MAX_FILES_INLINE (20) files
-        // because it is not possible to pass a lot of files on the command line
-
-        List<File> lfiles = new ArrayList<>(libraryFiles);
-        int n = lfiles.size();
-        int ssize = MAX_FILES_INLINE;
-
-        for (int i=0; i<n; i += ssize) {
-            int l = Math.min(i + ssize, n);
-            List<File> subList = lfiles.subList(i, l);
-
-            List<String> command = new ArrayList<>();
-            command.add("settings");
-            command.add("-JavaClassPathsAdd");
-            subList.forEach(libraryFile -> {
-                command.add(libraryFile.getAbsolutePath());
-            });
-
-            command.add(undPath.getAbsolutePath());
-
-            SciTools.und().exec(command);
-        }
+        SciTools.und().exec(command);
     }
 
     private void addPythonLibraries(Collection<File> libraryFiles) throws IOException {
         // save the list of files in an external file
-        createLibrariesListFile(libraryFiles);
+        File librariesFile = createLibrariesListFile(libraryFiles);
 
         // configure SciTools DB with the list of libraries
         // Note: the list is splitted in chunks of MAX_FILES_INLINE (20) files
         // because it is not possible to pass a lot of files on the command line
 
-        List<File> lfiles = new ArrayList<>(libraryFiles);
-        int n = lfiles.size();
-        int ssize = MAX_FILES_INLINE;
+        List<String> command = Arrays.asList(
+            SETTINGS,
+            "-PythonImportPathsAdd",
+            "@" + librariesFile.getAbsolutePath(),
+            "-db",
+            undPath.getAbsolutePath());
 
-        for (int i=0; i<n; i += ssize) {
-            int l = Math.min(i + ssize, n);
-            List<File> subList = lfiles.subList(i, l);
-
-            List<String> command = new ArrayList<>();
-            command.add("settings");
-            command.add("-PythonImportPathsAdd");
-            subList.forEach(libraryFile -> {
-                command.add(libraryFile.getAbsolutePath());
-            });
-
-            command.add(undPath.getAbsolutePath());
-
-            SciTools.und().exec(command);
-        }
+        SciTools.und().exec(command);
     }
 
     private void addCSharpLibraries(Collection<File> libraryFiles) throws IOException {
         // save the list of files in an external file
-        createLibrariesListFile(libraryFiles);
+        File librariesFile = createLibrariesListFile(libraryFiles);
 
-        Assert.nop();
+        // configure SciTools DB with the list of libraries
+        // Note: the list is splitted in chunks of MAX_FILES_INLINE (20) files
+        // because it is not possible to pass a lot of files on the command line
+
+        List<String> command = Arrays.asList(
+            SETTINGS,
+            "-C#ReferenceFileAliasListAdd",
+            "@" + librariesFile.getAbsolutePath(),
+            "-db",
+            undPath.getAbsolutePath());
+
+        SciTools.und().exec(command);
     }
 
     private void retrieveLanguage() {
@@ -514,7 +504,10 @@ public class UndDatabase implements AutoCloseable {
         if (!exists())
             throw new IOException("Database '" + undPath.getAbsolutePath() + "' not existent");
 
-        SciTools.und().exec("-verbose", "analyze", update ? "-changed" : "-all",
+        SciTools.und().exec(
+            "-verbose",
+                "analyze", update ? "-changed" : "-all",
+                "-db",
                 undPath.getAbsolutePath());
     }
 
@@ -545,10 +538,6 @@ public class UndDatabase implements AutoCloseable {
 
     public Ent[] ents(String s) {
         return Ent.of(database.ents(s));
-    }
-
-    public Ent lookup_uniquename(String s) {
-        return Ent.of(database.lookup_uniquename(s));
     }
 
     @Override

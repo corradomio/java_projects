@@ -17,9 +17,19 @@ public class CheckLFM {
 
         LibraryFinderManager lfm = ConfigurableLibraryFinderManager.getManager(configurationFile);
 
-        //dumprtlibs(lfm);
-        checkPython(lfm);
-        //checkCSharp(lfm);
+        dumprtlibs(lfm);
+        // checkPython(lfm);
+        // checkCSharp(lfm);
+        checkCSharpRTLibs(lfm);
+    }
+
+    private static void checkCSharpRTLibs(LibraryFinderManager lfm) {
+
+        LibraryFinder lf = lfm.getLibraryFinder("csharp");
+        lf.getRuntimeLibraries().forEach(rtl -> {
+            System.out.println(rtl.getName());
+        });
+
     }
 
     private static void checkPython(LibraryFinderManager lfm) {
@@ -56,7 +66,6 @@ public class CheckLFM {
         List<File> files = l.getFiles();
         System.out.println(files);
     }
-
 
     private static void dumprtlibs(LibraryFinderManager lfm) {
 

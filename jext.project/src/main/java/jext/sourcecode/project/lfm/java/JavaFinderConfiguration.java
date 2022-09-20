@@ -1,6 +1,7 @@
 package jext.sourcecode.project.lfm.java;
 
 import jext.configuration.Configuration;
+import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.java.JavaLibraryDownloader;
@@ -21,9 +22,32 @@ public class JavaFinderConfiguration extends LanguageFinderConfiguration {
     public LibraryFinder createFinder() {
         JavaLibraryFinder lfinder = new JavaLibraryFinder(language);
 
+        // register 'not ref' libraries
         libraries.forEach((lname, lconfig) -> {
             File file = lconfig.getFile();
+            String version = lconfig.getVersion();
+            String ref = lconfig.getRef();
+
+            if (!ref.isEmpty())
+                return;
+
             lfinder.setNamedLibrary(lname, file);
+        });
+
+        // register 'ref' libraries
+        libraries.forEach((lname, lconfig) -> {
+            String version = lconfig.getVersion();
+            String ref = lconfig.getRef();
+
+            // if is a 'ref' library, skip it
+            if (ref.isEmpty())
+                return;
+
+            Library refLibrary = lfinder.getRTLibrary(ref);
+            if (refLibrary == null)
+                return;
+
+            lfinder.setNamedLibrary(lname, refLibrary.getFile());
         });
 
         configureDownloader(lfinder.getDownloader());

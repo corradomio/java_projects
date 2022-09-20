@@ -2,7 +2,7 @@ package jext.sourcecode.project.csharp.util;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
-import jext.maven.MavenDownloader;
+import jext.util.FileUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -29,11 +29,25 @@ import java.util.Properties;
                 <Version>3.1.3</Version>
             </PackageReference>
             <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.3">
+
+            <Reference Include="FastColoredTextBox">
+                <HintPath>..\DLL\FastColoredTextBox.dll</HintPath>
+            </Reference>
         </ItemGroup>
     </Project>
  */
 
 public class CSharpProjectFile {
+
+    public static class LocalReference {
+        public final String name;
+        public final File file;
+
+        private LocalReference(String name, File file) {
+            this.name = name;
+            this.file = file;
+        }
+    }
 
     // ----------------------------------------------------------------------
     // Private properties
@@ -101,15 +115,69 @@ public class CSharpProjectFile {
                     if (include.isEmpty())
                         return;
 
-                    // resolve the package version
+                    // resolve the macros
                     String resolvedVersion = properties.resolve(version);
 
                     if (resolvedVersion.contains("$")) {
                         logger.warnf("Unable to resolve %s:%s (%s)", include, version, resolvedVersion);
+                        return;
                     }
 
-                    // if version contains '$', in theroy it is necessary to resolve the macro.
                     references.add(MavenCoords.of(include, resolvedVersion));
+                });
+            });
+        }
+        catch (Exception e) {
+            // never raised
+        }
+        return references;
+    }
+
+    public List<LocalReference> getLocalReferences() {
+        populate();
+
+        List<LocalReference> references = new ArrayList<>();
+
+        try {
+            // <Project>
+            Element project = XPathUtils.parse(projectFile).getDocumentElement();
+
+            // list of <ItemGroup>
+            XPathUtils.selectElements(project, "ItemGroup").forEach(itemGroup -> {
+                // list of <PackageReference>
+                XPathUtils.selectElements(itemGroup, "Reference").forEach(packageReference -> {
+                    // <Reference Include="FastColoredTextBox">
+                    //     <HintPath>..\DLL\FastColoredTextBox.dll</HintPath>
+                    // </Reference>
+                    String include = XPathUtils.getValue(packageReference, "@Include");
+                    // skip 'PackageReference' that doesn't refer to external libraries
+                    if (include.isEmpty())
+                        return;
+
+                    String path = XPathUtils.getValue(packageReference, "HintPath");
+                    if (path.isEmpty())
+                        return;
+
+                    // resolve the macros
+                    String resolvedPath = properties.resolve(path);
+                    File file;
+
+                    if (resolvedPath.contains("$")) {
+                        logger.warnf("Unable to resolve %s:%s (%s)", include, path, resolvedPath);
+                        return;
+                    }
+
+                    if (FileUtils.isAbsolute(resolvedPath))
+                        file = new File(resolvedPath);
+                    else
+                        file = new File(this.projectFile.getParentFile(), resolvedPath).getAbsoluteFile();
+
+                    if (!file.exists()) {
+                        logger.warnf("Unable to find %s:%s (%s)", include, path, file);
+                        return;
+                    }
+
+                    references.add(new LocalReference(include, file));
                 });
             });
         }
@@ -218,17 +286,6 @@ public class CSharpProjectFile {
         solutionHome/Directory.Build.props
 
      */
-    // private void scanForDefaultProperties() {
-    //     if (projectFile.getName().equals(DIRECTORY_BUILD_PROPS))
-    //         return;
-    //
-    //     File directoryBuildPropsFile = new File(solutionHome, DIRECTORY_BUILD_PROPS);
-    //     CSharpProjectFile importedFile = new CSharpProjectFile(solutionHome, directoryBuildPropsFile);
-    //     Properties importedProperties = importedFile.getProperties();
-    //
-    //     this.properties.putAll(importedProperties);
-    // }
-
     private void scanForImports() {
         try {
             // <Project>

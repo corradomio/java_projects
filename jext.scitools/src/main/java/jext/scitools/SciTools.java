@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 /**
- * Class used to check if SciTools 'un' command line application is correctly configured.
+ * Class used to check if SciTools 'und' command line application is correctly configured.
  * It is not necessary to check if the application is configured every time, but only
  * at the dependency analysis start.
  */
@@ -41,8 +41,8 @@ public abstract class SciTools {
     private static File pyappDirectory = null;
     private static OperatingSystem os = OperatingSystem.UNKNOWN;
 
-    private static String undApp = "und";
-    private static String upythonApp = "upython";
+    public static String undApp = "und";
+    public static String upythonApp = "upython";
 
     private static boolean isInstallationValid;
 
@@ -59,30 +59,32 @@ public abstract class SciTools {
     // ----------------------------------------------------------------------
 
     public static void setInstallationDirectory(String homeDirectory) {
+        File installationDirectory = null;
+        checkOs();
+        dumpEnvironment();
+
         if (homeDirectory != null)
-            setInstallationDirectory(new File(homeDirectory));
+            installationDirectory = new File(homeDirectory);
         else
-            guessInstallationDirectory();
+            installationDirectory = guessInstallationDirectory();
+
+        setInstallationDirectory(installationDirectory);
     }
 
     public static void setInstallationDirectory(File homeDirectory) {
         SciTools.installationDirectory = homeDirectory;
-        checkOs();
         setApps();
     }
 
-    private static void guessInstallationDirectory() {
-        checkOs();
-        dumpEnvironment();
+    private static File guessInstallationDirectory() {
         File undPath = locateUnd();
         if (undPath == null)
-            return;
+            return null;
 
         // Windows:  installationDirectory, "bin/pc-win64/und.exe"
         // Linux:    installationDirectory, "bin/linux64/und"
         // MacOS:    installationDirectory, "Contents/MacOS/und"
-        File homeDirectory = undPath.getParentFile().getParentFile().getParentFile();
-        setInstallationDirectory(homeDirectory);
+        return undPath.getParentFile().getParentFile().getParentFile();
     }
 
     public static void setPythonAppDirectory(File pyappDirectory) {
@@ -159,6 +161,9 @@ public abstract class SciTools {
     }
 
     private static void setApps() {
+        if (installationDirectory == null)
+            return;
+
         switch (os) {
             case WINDOWS:
                 undApp = FileUtils.getAbsolutePath(new File(installationDirectory,"bin/pc-win64/und.exe"));
@@ -176,9 +181,6 @@ public abstract class SciTools {
                 undApp = "app";
                 upythonApp = "upython";
         }
-
-        // logger.infof("und app    : %s", undApp);
-        // logger.infof("upython app: %s", upythonApp);
     }
 
     // ----------------------------------------------------------------------
@@ -203,20 +205,6 @@ public abstract class SciTools {
             if (installationDirectory == null || !installationDirectory.exists() ||
                 pyappDirectory == null || !pyappDirectory.exists())
                 throw new IOException("Invalid installation or pyapp directories");
-
-            // check if the class 'com.scitools.understand.Understand' can be loaded
-            // Note: NOT NECESSARY
-            // Class.forName(UNDERSTAND);
-
-            // check for 'und' application
-            // Note: NOT NECESSARY
-            // p = Runtime.getRuntime().exec(undApp + " help");
-            // p.waitFor();
-
-            // check for 'upython' application
-            // Note: NOT NECESSARY
-            // p = Runtime.getRuntime().exec(upythonApp + " -c 'print()'");
-            // p.waitFor();
 
             File mainpy = new File(pyappDirectory, "main.py");
             if (!mainpy.exists())
@@ -296,17 +284,23 @@ public abstract class SciTools {
     private void log(String message) {
 
         if (message.startsWith("WARNING"))
-            logger.warnf(message.substring(7+1));
+            logger.warn(message.substring(7+1));
         else if (message.startsWith("WARN"))
-            logger.warnf(message.substring(4+1));
+            logger.warn(message.substring(4+1));
         else if (message.startsWith("ERROR"))
             logger.error(message.substring(5+1));
         else if (message.startsWith("INFO"))
             logger.info(message.substring(4+1));
         else if (message.startsWith("EVENT"))
             logger.debug(message);
+        else if (message.contains("Warning:")) {
+            logger.warn(message);
+        }
+        else if (message.contains("Error:")) {
+            logger.error(message);
+        }
         else
-            logger.debugt(message);
+            logger.debug(message);
     }
 
     // ----------------------------------------------------------------------
@@ -319,7 +313,6 @@ public abstract class SciTools {
 
     protected /* static */ void und(Collection<String> uargs) throws IOException {
         logger.infof("und %s", uargs.toString());
-        int retry = 0;
         try {
             List<String> args = new ArrayList<>();
             args.add(undApp);
@@ -335,7 +328,6 @@ public abstract class SciTools {
             // just to be sure that the process is terminated
             pe.closeTimeout(3, TimeUnit.SECONDS);
             // just to be sure that the process is terminated
-            // Sleep.sleep(10, TimeUnit.SECONDS);
         } catch (InterruptedException /* | TimeoutException */ e) {
             throw new IOException(e);
         }
@@ -350,7 +342,6 @@ public abstract class SciTools {
     }
 
     protected /* static */ void upython(String command, Collection<String> uargs) throws IOException {
-        // logger.infof("upython %s", uargs.toString());
         try {
             // compose:  <scitools-dir>/upython <splpython-dir>/main.py arg1 ...
             List<String> args = new ArrayList<>();
@@ -408,13 +399,15 @@ public abstract class SciTools {
                     break;
                 case MACOS:
                     throw new IOException("MacOS: unsupported operating system");
+                default:
+                    throw new IOException("Unsupported operating system");
             }
 
             String env = (outs.toString().trim() + "\n" + errs.toString().trim()).trim();
             logger.warn(env);
         }
         catch (Exception e) {
-
+            // none to do
         }
     }
 
@@ -426,7 +419,7 @@ public abstract class SciTools {
         try {
             switch (SciTools.os) {
                 case WINDOWS:
-                    pr = pe.command("cmd", "/c", "where", "und")
+                    pr = pe.command("cmd", "/c", "where", "und.exe")
                             .redirectOutput(baos)
                             .executeNoTimeout();
                     break;
@@ -440,8 +433,8 @@ public abstract class SciTools {
                             .redirectOutput(baos)
                             .executeNoTimeout();
                     break;
-                //case MACOS:
-                  //  throw new IOException("MacOS: unsupported operating system");
+                default:
+                   throw new IOException("Unsupported operating system");
             }
             if (pr == null)
                 throw new IOException("Unable to start 'shell' process");

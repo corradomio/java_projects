@@ -13,6 +13,7 @@ public class LibraryConfiguration {
     private HierarchicalConfiguration configuration;
     private List<String> names;
     private String version;
+    private String ref;
     private List<File> files = new ArrayList<>();
 
     public void configure(Configuration configuration) {
@@ -26,6 +27,9 @@ public class LibraryConfiguration {
         // <library ... version='...' />
         // <path    ... version='...' />
         this.version = configuration.getString("@version", "1.0");
+
+        // <library ... ref='...' />
+        this.ref = configuration.getString("@ref", "");
 
         // <path    ... value='...'/>
         // <library ... path="..."/>
@@ -48,6 +52,10 @@ public class LibraryConfiguration {
 
     public String getVersion() {
         return version;
+    }
+
+    public String getRef() {
+        return ref;
     }
 
     public File getFile() {
