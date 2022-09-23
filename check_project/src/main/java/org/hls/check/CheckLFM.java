@@ -71,12 +71,6 @@ public class CheckLFM {
 
         lfm.getLibraryFinders().forEach(CheckLFM::dump);
 
-        // LibraryFinder jlf = lfm.getLibraryFinder("java");
-        // LibraryFinder cslf = lfm.getLibraryFinder("csharp");
-        //
-        // Library rtlib = cslf.getRuntimeLibrary("net6.0");
-        // rtlib.getFiles().forEach(System.out::println);
-
         System.out.println("done");
     }
 

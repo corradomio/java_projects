@@ -4,11 +4,11 @@
   -->
 <configuration>
     <properties>
-        <property name="extlibs-home" value="D:/SPLGroup/repos"/>
-        <property name="java-home" value="D:/Java"/>
-        <property name="android-home" value="D:/Android"/>
-        <property name="python-home" value="D:/Python"/>
-        <property name="dotnet-home" value="D:/Dotnet/Windows/.NET Core"/>
+        <property name="extlibs-home" value="/home/ubuntu/Projects/repos"/>
+        <property name="java-home"    value="/home/ubuntu/devkits/java"/>
+        <property name="android-home" value="D/home/ubuntu/devkits/android"/>
+        <property name="python-home"  value="D/home/ubuntu/devkits/python"/>
+        <property name="dotnet-home"  value="/home/ubuntu/devkits/dotnet"/>
     </properties>
 
     <extlibsManager path=".">
@@ -118,7 +118,7 @@
                 <repository name="pypi" url="https://pypi.org/"/>
             </downloader>
 
-            <path value="${python-home}/anaconda3-2022.05-plain" name="py38,3.8"/>
+            <path value="${python-home}/anaconda3" name="py38,3.8"/>
         </language>
 
         <language name="csharp">
@@ -182,45 +182,37 @@
             <library name=".NET Core 2.0,netstandard2.0" version="2.0" ref=".NET Core 2.2"/>
             <library name=".NET Core 2.1,netstandard2.1" version="2.1" ref=".NET Core 2.2"/>
 
-            <!-- NEW syntax, to supports MULTIPLE paths -->
-            <library name=".NET Core 2.2,netstandard2.2" version="2.2">
-                <path value="${dotnet-home}/2.2.207/shared/Microsoft.AspNetCore.All/2.2.8"/>
-                <path value="${dotnet-home}/2.2.207/shared/Microsoft.AspNetCore.App/2.2.8"/>
-                <path value="${dotnet-home}/2.2.207/shared/Microsoft.NETCore.App/2.2.8"/>
-                <path value="${dotnet-home}/2.2.207/sdk"/>
+            <library name=".NET Core 2.2,net2.2,netstandard2.2" version="2.2">
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.All/2.2.8"/>
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/2.2.8"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/2.2.8"/>
+                <path value="${dotnet-home}/sdk/2.2.207"/>
             </library>
 
-            <library name=".NET Core 3.1,netcoreapp3.1" version="3.1">
-                <path value="${dotnet-home}/3.1.419/packs/Microsoft.NETCore.App.Ref/3.1.10/ref"/>
-                <path value="${dotnet-home}/3.1.419/packs/Microsoft.WindowsDesktop.App.Ref/3.1.10/ref"/>
-                <path value="${dotnet-home}/3.1.419/packs/Microsoft.AspNetCore.App.Ref/3.1.10/ref"/>
-                <path value="${dotnet-home}/3.1.419/packs/NETStandard.Library.Ref/2.1.0/ref" />
-                <path value="${dotnet-home}/3.1.419/sdk"/>
+            <library name=".NET Core 3.1,net3.1,netcore3.1,netcoreapp3.1" version="3.1">
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/3.1.29"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/3.1.29"/>
+                <path value="${dotnet-home}/sdk/3.1.423"/>
             </library>
 
             <library name=".NET 5.0,net5,net5.0" version="5.0">
-                <path value="${dotnet-home}/5.0.17/packs/Microsoft.NETCore.App.Ref/5.0.0/ref"/>
-                <path value="${dotnet-home}/5.0.17/packs/Microsoft.WindowsDesktop.App.Ref/5.0.0/ref"/>
-                <path value="${dotnet-home}/5.0.17/packs/Microsoft.AspNetCore.App.Ref/5.0.0/ref"/>
-                <path value="${dotnet-home}/5.0.17/packs/NETStandard.Library.Ref/2.1.0/ref" />
-                <path value="${dotnet-home}/5.0.17/sdk"/>
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/5.0.17"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/5.0.17"/>
+                <path value="${dotnet-home}/sdk/5.0.408"/>
             </library>
 
             <library name=".NET 6.0,net6,net6.0,netstandard2.1" version="6.0">
-                <path value="${dotnet-home}/6.0.300/packs/Microsoft.NETCore.App.Ref/6.0.5/ref"/>
-                <path value="${dotnet-home}/6.0.300/packs/Microsoft.WindowsDesktop.App.Ref/6.0.5/ref"/>
-                <path value="${dotnet-home}/6.0.300/packs/Microsoft.AspNetCore.App.Ref/6.0.5/ref"/>
-                <path value="${dotnet-home}/6.0.300/packs/NETStandard.Library.Ref/2.1.0/ref" />
-                <path value="${dotnet-home}/6.0.300/sdk"/>
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/6.0.8"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/6.0.8"/>
+                <path value="${dotnet-home}/sdk/6.0.400"/>
             </library>
 
             <library name=".NET 7.0,net7,net7.0" version="7.0">
-                <path value="${dotnet-home}/7.0.100/packs/Microsoft.NETCore.App.Ref/7.0.0-preview.5.22301.12/ref"/>
-                <path value="${dotnet-home}/7.0.100/packs/Microsoft.WindowsDesktop.App.Ref/7.0.0-preview.5.22301.12/ref"/>
-                <path value="${dotnet-home}/7.0.100/packs/Microsoft.AspNetCore.App.Ref/7.0.0-preview.5.22301.12/ref"/>
-                <path value="${dotnet-home}/7.0.100/packs/NETStandard.Library.Ref/2.1.0/ref" />
-                <path value="${dotnet-home}/7.0.100/sdk"/>
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/7.0.0-preview.7.22375.6"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/7.0.0-preview.7.22375.6"/>
+                <path value="${dotnet-home}/sdk/7.0.100-preview.7.22377.5"/>
             </library>
+
         </language>
 
     </extlibsManager>
