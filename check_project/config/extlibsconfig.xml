@@ -33,31 +33,34 @@
             </downloader>
 
             <!-- NEW syntax -->
-            <library name="jdk4,jdk1.4,jdk5,jdk1.5, jdk6, jdk1.6" path="${java-home}/Jdk8.0"/>
-            <library name="jdk7,jdk1.7,jdk8,jdk1.8" path="${java-home}/Jdk8.0">
+            <library name="jdk6,jdk1.6" version="6.0" ref="jdk8"/>
+            <library name="jdk7,jdk1.7" version="7.0" ref="jdk8"/>
+
+            <library name="jdk8,jdk1.8" path="${java-home}/Jdk8.0">
                 <path value="${java-home}/Jdk8.0"/>
                 <path value="${java-home}/Jdk8"/>
             </library>
-            <library name="jdk9,jdk10,jdk11">
-                <path value="${java-home}/Jdk11.0"/>
-                <path value="${java-home}/Jdk11"/>
-            </library>
-            <library name="jdk12,jdk13,jdk14" path="${java-home}/Jdk17.0">
-                <path value="${java-home}/Jdk11.0"/>
-                <path value="${java-home}/Jdk11"/>
-            </library>
-            <library name="jdk15,jdk16,jdk17" path="${java-home}/Jdk17.0">
+
+            <library name="jdk9,jdk9.0" version="9.0" ref="jdk11"/>
+            <library name="jdk10,jdk10.0" version="10.0" ref="jdk11"/>
+
+            <library name="jdk11,jdk11.0" version="11.0">
                 <path value="${java-home}/Jdk11.0"/>
                 <path value="${java-home}/Jdk11"/>
             </library>
 
-            <!-- OLD syntax -->
-            <!--
-            <path value="${java-home}/Jdk8.0"   name="jdk7,jdk1.7,jdk8,jdk1.8" />
-            <path value="${java-home}/Jdk11.0"  name="jdk9,jdk10,jdk11" />
-            <path value="${java-home}/Jdk17.0"  name="jdk12,jdk13,jdk14" />
-            <path value="${java-home}/Jdk17.0"  name="jdk15,jdk16,jdk17" />
-            -->
+
+            <library name="jdk12,jdk12.0" version="12.0" ref="jdk17"/>
+            <library name="jdk13,jdk13.0" version="13.0" ref="jdk17"/>
+            <library name="jdk14,jdk14.0" version="14.0" ref="jdk17"/>
+            <library name="jdk15,jdk15.0" version="15.0" ref="jdk17"/>
+            <library name="jdk16,jdk16.0" version="16.0" ref="jdk17"/>
+
+            <library name="jdk17,jdk17.0" path="${java-home}/Jdk17.0">
+                <path value="${java-home}/Jdk11.0"/>
+                <path value="${java-home}/Jdk11"/>
+            </library>
+
         </language>
 
         <language name="android">

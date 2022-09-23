@@ -21,11 +21,13 @@ public class InvalidLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     public InvalidLibrary(String libraryName, Project project) {
-        super(PathName.of(libraryName), project);
+        super(PathName.of(libraryName));
+        this.project = project;
     }
 
     public InvalidLibrary(Name libraryName, Project project) {
-        super(libraryName, project);
+        super(libraryName);
+        this.project = project;
     }
 
     // ----------------------------------------------------------------------

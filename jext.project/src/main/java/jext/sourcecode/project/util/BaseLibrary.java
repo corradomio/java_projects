@@ -49,13 +49,13 @@ public abstract class BaseLibrary extends NamedObject implements Library {
         this.logger = Logger.getLogger(getClass(), libraryName.toString());
     }
 
-    protected BaseLibrary(Name libraryName, Project project) {
-        super(libraryName);
-
-        this.project = project;
-
-        this.logger = Logger.getLogger(getClass(), libraryName.toString());
-    }
+    // protected BaseLibrary(Name libraryName, Project project) {
+    //     super(libraryName);
+    //
+    //     this.project = project;
+    //
+    //     this.logger = Logger.getLogger(getClass(), libraryName.toString());
+    // }
 
     // ----------------------------------------------------------------------
     // Version

@@ -17,9 +17,13 @@ public class JDKLibrary extends DirectoryLibrary {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public JDKLibrary(String libraryName, File libraryFile, Project project) {
-        super(libraryName, libraryFile, project);
+    public JDKLibrary(String libraryName, String version, File libraryFile) {
+        super(libraryName, version, libraryFile);
     }
+
+    // public JDKLibrary(String libraryName, File libraryFile, Project project) {
+    //     super(libraryName, libraryFile, project);
+    // }
 
     // ----------------------------------------------------------------------
     // Properties

@@ -59,7 +59,10 @@ public class LibraryConfiguration {
     }
 
     public File getFile() {
-        return files.get(0);
+        if (files.isEmpty())
+            return new File("/unknown");
+        else
+            return files.get(0);
     }
 
     public List<File> getFiles() {

@@ -133,12 +133,16 @@ public class JavaLibraryFinder implements LibraryFinder {
      * @param libraryName library name or name list comma separated
      * @param libraryDirectory library home directory
      */
-    public void setNamedLibrary(String libraryName, File libraryDirectory) {
+    public void setNamedLibrary(String libraryName, String version, File libraryDirectory) {
         String[] names = libraryName.split(",");
+
+        if (!libraryDirectory.exists())
+            logger.errorf("Runtime library %s:%s: Invalid directory %s", libraryName, version, libraryDirectory);
+
         for (String name : names) {
             name = name.trim();
 
-            Library runtimeLibrary = new JDKLibrary(name, libraryDirectory, null);
+            Library runtimeLibrary = new JDKLibrary(name, version, libraryDirectory);
             runtimeLibraries.put(name, runtimeLibrary);
 
             if (rtLibraryDefault == null)

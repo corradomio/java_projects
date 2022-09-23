@@ -7,8 +7,8 @@ import jext.sourcecode.project.util.BaseLibrary;
 
 public abstract class JavaLibrary extends BaseLibrary {
 
-    protected JavaLibrary(Name libraryName, Project project) {
-        super(libraryName, project);
+    protected JavaLibrary(Name libraryName) {
+        super(libraryName);
         this.language = JavaConstants.JAVA;
     }
 

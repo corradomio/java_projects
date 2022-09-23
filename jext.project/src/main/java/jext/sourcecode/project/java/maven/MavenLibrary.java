@@ -38,13 +38,15 @@ public class MavenLibrary extends JavaLibrary {
     // ----------------------------------------------------------------------
 
     public MavenLibrary(MavenCoords coords, MavenDownloader md, Project project) {
-        super(MavenName.of(coords), project);
+        super(MavenName.of(coords));
 
         this.coords = coords;
         this.md = md;
         this.libraryFile = md.getPomFile(coords);
         this.libraryType = LibraryType.REMOTE;
         this.version = coords.version;
+
+        this.project = project;
     }
 
     // ----------------------------------------------------------------------

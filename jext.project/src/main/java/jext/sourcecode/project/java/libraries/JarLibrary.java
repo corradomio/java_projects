@@ -29,7 +29,7 @@ public class JarLibrary extends JavaLibrary {
     // ----------------------------------------------------------------------
 
     public JarLibrary(File jarFile, Module module) {
-        super(EmptyName.empty(), module.getProject());
+        super(EmptyName.empty());
 
         String name = FileUtils.getNameWithoutExt(jarFile);
         this.version = LibraryVersion.versionOf(name);
@@ -43,6 +43,8 @@ public class JarLibrary extends JavaLibrary {
         this.libraryFile = jarFile;
         this.project = module.getProject();
         this.libraryType = LibraryType.LOCAL;
+
+        this.project = module.getProject();
     }
 
     // ----------------------------------------------------------------------

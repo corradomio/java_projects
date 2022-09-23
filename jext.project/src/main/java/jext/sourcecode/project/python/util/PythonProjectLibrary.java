@@ -19,10 +19,12 @@ public class PythonProjectLibrary extends BaseLibrary {
     // ----------------------------------------------------------------------
 
     public PythonProjectLibrary(Project project) {
-        super(project.getName(), project);
+        super(project.getName());
         this.libraryFile = project.getProjectHome();
         this.libraryType = LibraryType.LOCAL;
         this.language = PythonConstants.PYTHON;
+
+        this.project = project;
     }
 
     // ----------------------------------------------------------------------
