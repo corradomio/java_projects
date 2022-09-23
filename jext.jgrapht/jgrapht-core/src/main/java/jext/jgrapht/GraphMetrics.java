@@ -120,8 +120,8 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
         }
 
         Assortativity(int degreeSource, int degreeTarget){
-            degreeMultiply = degreeSource*degreeTarget;
-            degreeSum = degreeSource + degreeTarget;
+            degreeMultiply = (long)degreeSource*degreeTarget;
+            degreeSum = (long)degreeSource + degreeTarget;
             degreeSquared = sq(degreeSource) + sq(degreeTarget);
         }
 
