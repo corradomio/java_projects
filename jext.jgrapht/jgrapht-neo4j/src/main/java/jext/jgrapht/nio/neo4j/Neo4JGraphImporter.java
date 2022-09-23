@@ -12,8 +12,12 @@ import org.neo4j.driver.internal.value.IntegerValue;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -39,6 +43,8 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     private String slabel = "s";
     /** Label used for the target node */
     private String tlabel = "t";
+    /** vertex properties */
+    private final List<String> vprops = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -54,6 +60,11 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
 
     public Neo4JGraphImporter<V, E> vertices(String cypher) {
         this.vertices = cypher;
+        return this;
+    }
+
+    public Neo4JGraphImporter<V, E> vertexProperties(String... names) {
+        this.vprops.addAll(Arrays.asList(names));
         return this;
     }
 
@@ -145,8 +156,8 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     }
 
     private void query(Graph<V, E> graph) {
-        Set<V> vertices = vertices(graph);
-        edges(graph, vertices);
+        vertices(graph);
+        edges(graph);
     }
 
     private V get(Record rec, String vlablel) {
@@ -155,22 +166,18 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     }
 
     private Set<V> vertices(Graph<V, E> graph) {
-        Set<V> vset = new HashSet<>();
         if (vertices == null)
-            return vset;
+            return Collections.emptySet();
 
         Result r = session.run(vertices, params);
         while (r.hasNext()) {
             Record rec = r.next();
             V vertex = get(rec, slabel);
 
-            if (!vset.contains(vertex)) {
-                vset.add(vertex);
-                graph.addVertex(vertex);
-            }
+            graph.addVertex(vertex);
         }
 
-        return vset;
+        return graph.vertexSet();
     }
 
     private void edges(Graph<V, E> graph, Set<V> vertices) {

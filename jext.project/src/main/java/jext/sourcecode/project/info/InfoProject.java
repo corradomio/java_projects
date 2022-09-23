@@ -48,7 +48,7 @@ public class InfoProject implements Project {
     // ----------------------------------------------------------------------
 
     public static final String TYPE = "info";
-    public static final String INFO_FILE = "project-info.json";
+    private static final String PROPERTIES = "properties";
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -89,32 +89,19 @@ public class InfoProject implements Project {
             String refId = Integer.toHexString(this.name.hashCode());
             this.infoFile = new File(infoFileOrProjectHome, String.format(".spl/%s-project-info.json", refId));
         }
-        // if (infoFileOrProjectHome.isFile()) {
-        //     this.infoFile = infoFileOrProjectHome;
-        // }
-        // else {
-        //     this.infoFile = new File(infoFileOrProjectHome,"project-info.json");
-        //     if (!this.infoFile.exists())
-        //         this.infoFile = new File(infoFileOrProjectHome,".spl/project-info.json");
-        // }
+
         this.selector = (p) -> true;
 
         try {
             this.info = JSONUtils.load(this.infoFile, HashMap.class);
         } catch (IOException e) {
-            logger.errorf("Unable lo load JSON file %s: %s", FileUtils.getAbsolutePath(infoFile), e);
+            logger.errorf("Unable to load JSON file %s: %s", FileUtils.getAbsolutePath(infoFile), e);
             this.info = Collections.emptyMap();
         }
 
     }
 
     private void setProjectHome() {
-        // try {
-        //     info = JSONUtils.load(infoFile, HashMap.class);
-        // } catch (IOException e) {
-        //     info = Collections.emptyMap();
-        // }
-
         String projectHome = MapUtils.get(info, "projectHome");
         if (projectHome != null) {
             this.projectHome = new File(projectHome);
@@ -151,12 +138,12 @@ public class InfoProject implements Project {
 
     @Override
     public String getProjectType() {
-        return MapUtils.get(info, "properties", Project.PROJECT_TYPE);
+        return MapUtils.get(info, PROPERTIES, Project.PROJECT_TYPE);
     }
 
     @Override
     public String getLanguage() {
-        String language = MapUtils.get(info, "properties", Project.PROJECT_LANGUAGE);
+        String language = MapUtils.get(info, PROPERTIES, Project.PROJECT_LANGUAGE);
         if (language == null)
             language = JavaConstants.JAVA;
         return language;
@@ -165,7 +152,7 @@ public class InfoProject implements Project {
     @Override
     public Properties getProperties() {
         Properties properties = new Properties();
-        properties.putAll(MapUtils.get(info, "properties"));
+        properties.putAll(MapUtils.get(info, PROPERTIES));
         return properties;
     }
 
@@ -205,16 +192,6 @@ public class InfoProject implements Project {
         return sources;
     }
 
-    // @Override
-    // public Source getSource(String sourceId) {
-    //     if (sourceMap == null) {
-    //         sourceMap = new HashMap<>();
-    //         for (Source source : getSources())
-    //             sourceMap.put(source.getId(), source);
-    //     }
-    //     return sourceMap.get(sourceId);
-    // }
-
     // ----------------------------------------------------------------------
     // Modules
     // ----------------------------------------------------------------------
@@ -233,32 +210,6 @@ public class InfoProject implements Project {
 
         return modules;
     }
-
-    // @Override
-    // public Module getModule(String nameOrId) {
-    //     if (moduleMap == null) {
-    //         moduleMap = new java.util.TreeMap<>();
-    //         getModules().forEach(m -> {
-    //             moduleMap.put(m.getId(), m);
-    //             moduleMap.put(m.getName().getFullName(), m);
-    //         });
-    //     }
-    //
-    //     if (moduleMap.containsKey(nameOrId))
-    //         return moduleMap.get(nameOrId);
-    //
-    //     // List<Module> modules = getModules();
-    //     // for (Module m : modules) {
-    //     //     if (m.getName().getFullName().equals(nameOrId))
-    //     //         return m;
-    //     //     if (m.getId().equals(nameOrId))
-    //     //         return m;
-    //     //     if (m.getName().getName().equals(nameOrId))
-    //     //         return m;
-    //     // }
-    //
-    //     return null;
-    // }
 
     // ----------------------------------------------------------------------
     // Libraries
@@ -327,18 +278,6 @@ public class InfoProject implements Project {
         else
             return new InfoInvalidLibrary(this, linfo);
     }
-
-    // @Override
-    // public Library getLibrary(String nameOrId) {
-    //     LibrarySet libraries = getLibraries();
-    //     return libraries.get(nameOrId);
-    // }
-
-    // @Override
-    // public Library getLibrary(Library library) {
-    //     LibrarySet projectLibraries = (LibrarySet) getLibraries();
-    //     return projectLibraries.resolve(library);
-    // }
 
     @Override
     public Set<LibraryRepository> getLibraryRepositories() {

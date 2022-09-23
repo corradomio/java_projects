@@ -10,8 +10,9 @@ import java.util.List;
 
 public class PythonLocalLibrary extends PythonLibrary {
 
-    public PythonLocalLibrary(File libraryDirectory) {
-        super(PathName.of(libraryDirectory.getName()));
+    public PythonLocalLibrary(String name, String version, File libraryDirectory) {
+        super(PathName.of(name));
+        this.version = version;
         this.libraryFile = libraryDirectory;
         this.libraryType = LibraryType.LOCAL;
     }

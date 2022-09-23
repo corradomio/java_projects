@@ -31,8 +31,6 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
 
     public static ConfigurableLibraryFinderManager getManager(File configurationFile) {
         Configuration lfmconfig = getConfiguration(configurationFile);
-        // XMLConfiguration configuration = new XMLConfiguration(configurationFile);
-        // Configuration lfmconfig =  configuration.configurationAt("extlibsManager");
         return getManager(lfmconfig);
     }
 

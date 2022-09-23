@@ -16,7 +16,7 @@ public class JavaLibraryDownloader extends MavenDownloader implements LibraryDow
     /**
      * Create a clone of the current downloader, useful to add new custom repositories
      */
-    public JavaLibraryDownloader newDownloader() {
+    public LibraryDownloader newDownloader() {
         JavaLibraryDownloader md = new JavaLibraryDownloader();
         md.setDownloadDirectory(downloadDir);
         md.addRepositories(repoUrls);

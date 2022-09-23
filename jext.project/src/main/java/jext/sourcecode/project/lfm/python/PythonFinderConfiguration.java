@@ -35,7 +35,7 @@ public class PythonFinderConfiguration extends LanguageFinderConfiguration {
             if (!ref.isEmpty())
                 return;
 
-            lfinder.setNamedLibrary(lname, file);
+            lfinder.setNamedLibrary(lname, version, file);
         });
 
         libraries.forEach((lname, lconfig) -> {
@@ -50,10 +50,8 @@ public class PythonFinderConfiguration extends LanguageFinderConfiguration {
             if (refLibrary == null)
                 return;
 
-            lfinder.setNamedLibrary(lname, refLibrary.getFile());
+            lfinder.setNamedLibrary(lname, version, refLibrary.getFile());
         });
-
-
 
         configureDownloader(lfinder.getDownloader());
 

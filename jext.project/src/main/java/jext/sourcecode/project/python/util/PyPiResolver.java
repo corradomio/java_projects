@@ -139,7 +139,7 @@ public class PyPiResolver {
     // ----------------------------------------------------------------------
 
     private void populate() {
-        if (versions != null)
+        if (elts != null)
             return;
 
         populateElts();

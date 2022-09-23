@@ -6,7 +6,6 @@ import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.info.InfoProject;
-import jext.sourcecode.project.java.JavaLibraryDownloader;
 import jext.sourcecode.project.java.maven.MavenName;
 import jext.util.MapUtils;
 
@@ -23,7 +22,7 @@ public class InfoRemoteLibrary extends InfoLibrary {
         String coords = MapUtils.get(info,"fullname");
         this.coords = MavenCoords.of(coords);
         setNameWithId(MavenName.of(coords));
-        this.md = (LibraryDownloader) project.getLibraryDownloader();
+        this.md = project.getLibraryDownloader();
     }
 
     @Override

@@ -109,11 +109,6 @@ public class PythonLibraryFinder implements LibraryFinder {
         return new PyPiLibrary(coords, libraryDirectory);
     }
 
-    // @Override
-    // public String getLatestVersion(String libraryName) {
-    //     return getLatestVersion(MavenCoords.of(libraryName, ""));
-    // }
-
     @Override
     public String getLatestVersion(MavenCoords coords) {
         return downloader.getLatestVersion(coords);
@@ -171,9 +166,9 @@ public class PythonLibraryFinder implements LibraryFinder {
      * @param libraryName library name or name list comma separated
      * @param libraryDirectory library home directory
      */
-    public void setNamedLibrary(String libraryName, File libraryDirectory) {
+    public void setNamedLibrary(String libraryName, String version, File libraryDirectory) {
         String[] names = libraryName.split(",");
-        PythonLibrary runtimeLibrary = createLibrary(libraryDirectory);
+        PythonLibrary runtimeLibrary = createLibrary(libraryName, version, libraryDirectory);
 
         for (String name : names) {
             name = name.trim();
@@ -195,30 +190,15 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     }
 
-    public void addLibraries(File librariesRoot) {
-        // File librariesRoot = new File(librariesPath);
-        FileUtils.asList(librariesRoot.listFiles(File::isDirectory))
-            .forEach(this::addLibrary);
-    }
-
-    public void addLibrary(File libraryDirectory) {
-        // skip "__pycache__" directory
-        if (libraryDirectory.getName().startsWith("__"))
-            return;
-
-        Library pyLibrary = createLibrary(libraryDirectory);
-        libraries.put(pyLibrary.getName(), pyLibrary);
-    }
-
-    private PythonLibrary createLibrary(File libraryDirectory) {
+    private PythonLibrary createLibrary(String name, String version, File libraryDirectory) {
         // IF the directory contains "python.exe", it is the ""runtime library""
         File winPython = new File(libraryDirectory, "python.exe");
         File linPython = new File(libraryDirectory, "bin/python");
         if (winPython.exists() || linPython.exists()) {
-            return new PythonRTLibrary(libraryDirectory.getName(), libraryDirectory);
+            return new PythonRTLibrary(name, version, libraryDirectory);
         }
         else {
-            return new PythonLocalLibrary(libraryDirectory);
+            return new PythonLocalLibrary(name, version, libraryDirectory);
         }
     }
 

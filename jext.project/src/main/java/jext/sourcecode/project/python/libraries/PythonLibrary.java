@@ -14,19 +14,8 @@ import java.util.List;
 public abstract class PythonLibrary extends BaseLibrary {
 
     // ----------------------------------------------------------------------
-    // Private fields
-    // ----------------------------------------------------------------------
-
-    // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
-
-    //public PythonLibrary(File libraryDirectory) {
-    //    super(PathName.of(libraryDirectory.getName()));
-    //    this.libraryFile = libraryDirectory;
-    //    this.language = PythonConstants.PYTHON;
-    //    this.libraryType = LibraryType.LOCAL;
-    //}
 
     public PythonLibrary(Name name) {
         super(name);
@@ -45,17 +34,6 @@ public abstract class PythonLibrary extends BaseLibrary {
     public void setProject(Project project) {
         this.project = project;
     }
-
-    //@Override
-    //public List<File> getFiles() {
-    //    if (libraryFiles == null)
-    //        populate();
-    //    return libraryFiles;
-    //}
-
-    //private void populate() {
-    //    libraryFiles = FileUtils.listFiles(libraryFile, PythonConstants.PYTHON_EXT);
-    //}
 
     // ----------------------------------------------------------------------
     // Implementation

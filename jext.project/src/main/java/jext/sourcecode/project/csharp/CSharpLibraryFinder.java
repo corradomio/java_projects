@@ -102,11 +102,6 @@ public class CSharpLibraryFinder implements LibraryFinder {
         return new NuGetLibrary(coords, libraryDirectory);
     }
 
-    // @Override
-    // public String getLatestVersion(String libraryName) {
-    //     return "";
-    // }
-
     @Override
     public String getLatestVersion(MavenCoords coords) {
         return downloader.getLatestVersion(coords);
@@ -137,26 +132,15 @@ public class CSharpLibraryFinder implements LibraryFinder {
     // Operations
     // ----------------------------------------------------------------------
 
-    public void setNamedLibrary(String libraryName, File libraryDirectory) {
-        String version = versionFromName(libraryDirectory.getName());
-        setNamedLibrary(libraryName, version, Collections.singletonList(libraryDirectory));
-    }
-
-
     private static Pattern DOTNET_VERSION  = Pattern.compile("([0-9]+\\.[0-9]+)\\.[0-9]+");
 
-    private static String versionFromName(String name) {
-        Matcher mather = DOTNET_VERSION.matcher(name);
-        if (mather.matches())
-            return mather.group(1);
-        else
-            return "";
-    }
-
-
-    public void setNamedLibrary(String libraryName, List<File> libraryDirectories) {
-        setNamedLibrary(libraryName, "", libraryDirectories);
-    }
+    // private static String versionFromName(String name) {
+    //     Matcher mather = DOTNET_VERSION.matcher(name);
+    //     if (mather.matches())
+    //         return mather.group(1);
+    //     else
+    //         return "";
+    // }
 
     public void setNamedLibrary(String libraryName, String version, List<File> libraryDirectories) {
         String[] names = libraryName.split(",");
@@ -169,7 +153,6 @@ public class CSharpLibraryFinder implements LibraryFinder {
             if (rtLibraryDefault == null)
                 rtLibraryDefault = rtLibrary;
         }
-
     }
 
     @Override
