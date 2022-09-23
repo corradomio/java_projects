@@ -101,7 +101,7 @@ public class PythonLibraryFinder implements LibraryFinder {
     public Library getLibrary(MavenCoords coords) {
         // [downloadDir]/<artifactId>/<version>
         String relativePath = String.format(
-                "%1$s/%2$s",
+                "%s/%s",
                 coords.artifactId,
                 coords.version);
 
@@ -190,15 +190,18 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     }
 
-    private PythonLibrary createLibrary(String name, String version, File libraryDirectory) {
+    private PythonLibrary createLibrary(String libraryName, String version, File libraryDirectory) {
         // IF the directory contains "python.exe", it is the ""runtime library""
+        if (!libraryDirectory.exists() || libraryDirectory.isFile())
+            logger.errorf("Runtime library %s:%s: Invalid directory %s", libraryName, version, libraryDirectory);
+
         File winPython = new File(libraryDirectory, "python.exe");
         File linPython = new File(libraryDirectory, "bin/python");
         if (winPython.exists() || linPython.exists()) {
-            return new PythonRTLibrary(name, version, libraryDirectory);
+            return new PythonRTLibrary(libraryName, version, libraryDirectory);
         }
         else {
-            return new PythonLocalLibrary(name, version, libraryDirectory);
+            return new PythonLocalLibrary(libraryName, version, libraryDirectory);
         }
     }
 

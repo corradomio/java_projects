@@ -7,6 +7,7 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
+import jext.sourcecode.project.csharp.libraries.CSharpLibrary;
 import jext.sourcecode.project.csharp.libraries.CSharpRuntimeLibrary;
 import jext.sourcecode.project.csharp.libraries.NuGetLibrary;
 import jext.util.HashMap;
@@ -94,7 +95,7 @@ public class CSharpLibraryFinder implements LibraryFinder {
     public Library getLibrary(MavenCoords coords) {
         // [downloadDir]/<artifactId>/<version>
         String relativePath = String.format(
-                "%1$s/%2$s",
+                "%s/%s",
                 coords.artifactId.toLowerCase(),
                 coords.version.toLowerCase());
 
@@ -134,20 +135,19 @@ public class CSharpLibraryFinder implements LibraryFinder {
 
     private static Pattern DOTNET_VERSION  = Pattern.compile("([0-9]+\\.[0-9]+)\\.[0-9]+");
 
-    // private static String versionFromName(String name) {
-    //     Matcher mather = DOTNET_VERSION.matcher(name);
-    //     if (mather.matches())
-    //         return mather.group(1);
-    //     else
-    //         return "";
-    // }
-
     public void setNamedLibrary(String libraryName, String version, File libraryDirectory) {
         setNamedLibrary(libraryName, version, Collections.singletonList(libraryDirectory));
     }
 
     public void setNamedLibrary(String libraryName, String version, List<File> libraryDirectories) {
         String[] names = libraryName.split(",");
+
+        // check directories
+        libraryDirectories.forEach(libraryDirectory -> {
+            if (!libraryDirectory.exists())
+                logger.errorf("Runtime library %s:%s: Invalid directory %s", libraryName, version, libraryDirectory);
+        });
+
         for (String name : names) {
             name = name.trim();
 
