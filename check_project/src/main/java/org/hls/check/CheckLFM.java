@@ -18,8 +18,8 @@ public class CheckLFM {
         LibraryFinderManager lfm = ConfigurableLibraryFinderManager.getManager(configurationFile);
 
         dumprtlibs(lfm);
-        // checkPython(lfm);
-        // checkCSharp(lfm);
+        checkPython(lfm);
+        checkCSharp(lfm);
         checkCSharpRTLibs(lfm);
     }
 
