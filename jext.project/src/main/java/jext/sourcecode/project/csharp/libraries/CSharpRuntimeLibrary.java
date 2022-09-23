@@ -57,7 +57,10 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
 
     public CSharpRuntimeLibrary(String name, String version, List<File> installationDirectories) {
         super(MavenName.of(name, version));
-        this.libraryFile = installationDirectories.get(0);
+        if (installationDirectories.isEmpty())
+            this.libraryFile = new File("/unknown");
+        else
+            this.libraryFile = installationDirectories.get(0);
         this.version = version;
         this.installationDirectories = installationDirectories;
         this.libraryType = LibraryType.RUNTIME;

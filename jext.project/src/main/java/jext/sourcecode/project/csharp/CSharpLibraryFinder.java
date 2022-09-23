@@ -142,6 +142,10 @@ public class CSharpLibraryFinder implements LibraryFinder {
     //         return "";
     // }
 
+    public void setNamedLibrary(String libraryName, String version, File libraryDirectory) {
+        setNamedLibrary(libraryName, version, Collections.singletonList(libraryDirectory));
+    }
+
     public void setNamedLibrary(String libraryName, String version, List<File> libraryDirectories) {
         String[] names = libraryName.split(",");
         for (String name : names) {

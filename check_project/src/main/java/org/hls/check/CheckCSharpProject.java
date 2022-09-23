@@ -24,7 +24,7 @@ public class CheckCSharpProject {
 
         LibraryFinderManager lfm = DefaultLibraryFinderManager.instance();
         CSharpLibraryFinder lfinder = (CSharpLibraryFinder) lfm.getLibraryFinder("csharp");
-        lfinder.setNamedLibrary(".NET Core 6", new File("D:\\Dotnet\\Windows\\.NET Core\\6.0.300\\sdk\\6.0.300"));
+        lfinder.setNamedLibrary(".NET Core 6", "6.0", new File("D:\\Dotnet\\Windows\\.NET Core\\6.0.300\\sdk\\6.0.300"));
 
         Library rt = lfinder.getRuntimeLibrary(".NET Core 6");
         rt.getFiles();

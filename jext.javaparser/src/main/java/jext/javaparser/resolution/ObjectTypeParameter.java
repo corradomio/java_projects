@@ -43,7 +43,7 @@ public class ObjectTypeParameter implements ResolvedTypeParameterDeclaration {
         return Collections.emptyList();
     }
 
-    @Override
+    // @Override
     public ResolvedReferenceType object() {
         return null;
     }

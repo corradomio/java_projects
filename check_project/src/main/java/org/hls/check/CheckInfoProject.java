@@ -23,7 +23,7 @@ public class CheckInfoProject {
 
         // Register a runtimeLibrary
         ((CSharpLibraryFinder)lfm.getLibraryFinder("csharp"))
-            .setNamedLibrary("net60", new File("D:\\C#\\.NET Core\\6.0.300"));
+            .setNamedLibrary("net60", "6.0", new File("D:\\C#\\.NET Core\\6.0.300"));
 
         Project project = Projects.newProject(new File(
                 "D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0"

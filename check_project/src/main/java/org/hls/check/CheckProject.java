@@ -30,7 +30,7 @@ public class CheckProject {
             // lfinder.setNamedLibrary("py38", new File("D:\\Python\\Anaconda3-2021.11"));
 
             CSharpLibraryFinder lfinder = new CSharpLibraryFinder();
-            lfinder.setNamedLibrary(".NET Core 6", new File("D:\\Donet\\Windows\\.NET Core\\6.0.300\\packs\\Microsoft.NETCore.App.Ref\\6.0.5\\ref\\net6.0"));
+            lfinder.setNamedLibrary(".NET Core 6", "6.0", new File("D:\\Donet\\Windows\\.NET Core\\6.0.300\\packs\\Microsoft.NETCore.App.Ref\\6.0.5\\ref\\net6.0"));
 
             Project project = Projects.newProject(new File(
                 //"D:\\SPLGroup\\spl-workspaces\\dev-workspace\\workspace\\example_repo\\elasticsearch"

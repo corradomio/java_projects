@@ -24,7 +24,7 @@ public class CheckPythonProject {
 
         LibraryFinderManager lfm = DefaultLibraryFinderManager.instance();
         PythonLibraryFinder lfinder = (PythonLibraryFinder) lfm.getLibraryFinder("python");
-        lfinder.setNamedLibrary("3.8,py38", new File("D:\\Python\\Anaconda3-2022.05"));
+        lfinder.setNamedLibrary("3.8,py38", "3.8", new File("D:\\Python\\Anaconda3-2022.05"));
 
         Library rt = lfinder.getRuntimeLibrary("py38");
         System.out.println(rt.getFiles());
