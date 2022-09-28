@@ -288,7 +288,7 @@ public class NuGetDownloader implements LibraryDownloader {
         try {
             Archives.uncompress(artifactFile, artifactDirectory);
         } catch (IOException e) {
-            logger.error("Unable to uncompress " + artifactFile);
+            logger.errorf("Unable to uncompress %s: %s", artifactFile, e);
         }
     }
 

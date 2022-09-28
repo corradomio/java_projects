@@ -2,6 +2,7 @@ package jext.sourcecode.project.lfm;
 
 import jext.configuration.Configuration;
 import jext.configuration.HierarchicalConfiguration;
+import jext.logging.Logger;
 import jext.util.StringUtils;
 
 import java.io.File;
@@ -12,9 +13,10 @@ public class LibraryConfiguration {
 
     private HierarchicalConfiguration configuration;
     private List<String> names;
+    private String name;
     private String version;
     private String ref;
-    private List<File> files = new ArrayList<>();
+    private final List<File> files = new ArrayList<>();
 
     public void configure(Configuration configuration) {
         this.configuration = (HierarchicalConfiguration) configuration;
@@ -23,6 +25,7 @@ public class LibraryConfiguration {
         // <path    name='...' .../>
         String names = configuration.getString("@name");
         this.names = StringUtils.split(names, ",");
+        this.name = this.names.get(0);
 
         // <library ... version='...' />
         // <path    ... version='...' />
@@ -44,6 +47,9 @@ public class LibraryConfiguration {
             .forEach(pathConfiguration -> {
                 addPath(pathConfiguration.getString("@value"));
             });
+
+        if (ref.isEmpty() && files.isEmpty())
+            Logger.getLogger("library." + this.name).errorf("No library files configured");
     }
 
     public List<String> getNames() {
@@ -60,7 +66,7 @@ public class LibraryConfiguration {
 
     public File getFile() {
         if (files.isEmpty())
-            return new File("/unknown");
+            return new File("/nofiles");
         else
             return files.get(0);
     }

@@ -34,8 +34,12 @@ public abstract class DirectoryLibrary extends JavaLibrary {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public DirectoryLibrary(String libraryName, String version, File libraryFile) {
-        super(PathName.of(libraryName));
+    public DirectoryLibrary(String libraryName, File libraryFile) {
+        this(libraryName, libraryFile, null);
+    }
+
+    public DirectoryLibrary(String libraryName, File libraryFile, Project project) {
+        super(PathName.of(libraryName), project);
         this.libraryFile = libraryFile;
         this.libraryType = LibraryType.RUNTIME; //LibraryType.LOCAL_COLLECTION;
     }

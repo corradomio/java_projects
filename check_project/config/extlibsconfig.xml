@@ -36,17 +36,15 @@
             <library name="jdk6,jdk1.6" version="6.0" ref="jdk8"/>
             <library name="jdk7,jdk1.7" version="7.0" ref="jdk8"/>
 
-            <library name="jdk8,jdk1.8" path="${java-home}/Jdk8.0">
-                <path value="${java-home}/Jdk8.0"/>
-                <path value="${java-home}/Jdk8"/>
+            <library name="jdk8,jdk1.8" version="8.0">
+                <path value="${java-home}/jdk8"/>
             </library>
 
-            <library name="jdk9,jdk9.0" version="9.0" ref="jdk11"/>
+            <library name="jdk9,jdk9.0" version="9.0"    ref="jdk11"/>
             <library name="jdk10,jdk10.0" version="10.0" ref="jdk11"/>
 
             <library name="jdk11,jdk11.0" version="11.0">
-                <path value="${java-home}/Jdk11.0"/>
-                <path value="${java-home}/Jdk11"/>
+                <path value="${java-home}/jdk11"/>
             </library>
 
 
@@ -56,9 +54,8 @@
             <library name="jdk15,jdk15.0" version="15.0" ref="jdk17"/>
             <library name="jdk16,jdk16.0" version="16.0" ref="jdk17"/>
 
-            <library name="jdk17,jdk17.0" path="${java-home}/Jdk17.0">
-                <path value="${java-home}/Jdk11.0"/>
-                <path value="${java-home}/Jdk11"/>
+            <library name="jdk17,jdk17.0" version="17.0">
+                <path value="${java-home}/jdk11"/>
             </library>
 
         </language>
@@ -106,8 +103,8 @@
                 Android 10      10.0            29
                 Android 11      11.0            30
               -->
-            <path value="WEB-INF/extlibs/java/android/api30"
-                  name="marshmallow,lollipop,adk5,adk4,adk3oreo,nougart,adk8,adk6,r,q,pie,adk10,adk9"
+            <path value="${android-home}/api30"
+                  name="marshmallow,lollipop,adk5,adk4,adk3,oreo,nougart,adk8,adk6,r,q,pie,adk10,adk9"
             />
         </language>
 

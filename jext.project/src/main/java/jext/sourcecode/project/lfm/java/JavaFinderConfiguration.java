@@ -24,13 +24,13 @@ public class JavaFinderConfiguration extends LanguageFinderConfiguration {
 
         // register 'not ref' libraries
         libraries.forEach((lname, lconfig) -> {
-            File file = lconfig.getFile();
-            String version = lconfig.getVersion();
             String ref = lconfig.getRef();
 
             if (!ref.isEmpty())
                 return;
 
+            String version = lconfig.getVersion();
+            File file = lconfig.getFile();
             lfinder.setNamedLibrary(lname, version, file);
         });
 

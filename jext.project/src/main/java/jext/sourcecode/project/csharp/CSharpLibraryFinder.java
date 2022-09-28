@@ -7,7 +7,6 @@ import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
-import jext.sourcecode.project.csharp.libraries.CSharpLibrary;
 import jext.sourcecode.project.csharp.libraries.CSharpRuntimeLibrary;
 import jext.sourcecode.project.csharp.libraries.NuGetLibrary;
 import jext.util.HashMap;
