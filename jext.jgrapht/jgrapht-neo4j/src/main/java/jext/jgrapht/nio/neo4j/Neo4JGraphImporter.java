@@ -196,7 +196,8 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
                 graph.addVertex(targetVertex);
             }
 
-            graph.addEdge(sourceVertex, targetVertex);
+            if (!sourceVertex.equals(targetVertex))
+                graph.addEdge(sourceVertex, targetVertex);
         }
     }
 

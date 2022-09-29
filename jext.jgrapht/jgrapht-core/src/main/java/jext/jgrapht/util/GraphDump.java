@@ -4,9 +4,12 @@ import jext.jgrapht.GraphMetrics;
 import jext.jgrapht.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class GraphDump {
 
@@ -24,6 +27,13 @@ public class GraphDump {
             E e = g.edgeSet().iterator().next();
             System.out.println("  e: " + e.getClass());
         }
+
+        System.out.printf("components:%n  %s%n",
+            new ConnectivityInspector<>(g)
+                .connectedSets()
+                .stream()
+                .map(Set::size)
+                .collect(Collectors.toList()));
 
         GraphType gt = g.getType();
         System.out.println("properties:");

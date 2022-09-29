@@ -11,7 +11,7 @@ import org.jgrapht.nio.dot.DOTExporter;
 
 import java.io.File;
 
-public class CheckModulesGraph {
+public class CheckGraph {
 
     static void checkModules() {
         System.out.println("checkModules");
@@ -58,8 +58,29 @@ public class CheckModulesGraph {
         System.out.println();
     }
 
+    static void checkGraph() {
+        System.out.println("checkModules");
+        GraphImporter<Long, DirectedEdge> imp = new Neo4JGraphImporter<Long, DirectedEdge>()
+            .vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s")
+            .edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t")
+            .parameters(
+                "refId", "2b32f1fe"
+                // "refId", "c77f6865"
+                // "refId", "c5b55d07"
+            )
+            .labels("s", "t")
+            ;
+
+        Graph<Long, DirectedEdge> g = Graphs.newGraph(Long.class, DirectedEdge.class);
+        imp.importGraph(g, new File("config/neo4j.properties"));
+
+        GraphDump.describe(g);
+        System.out.println();
+    }
+
     public static void main(String[] args) {
-        checkModules();
-        checkSources();
+        // checkModules();
+        // checkSources();
+        checkGraph();
     }
 }

@@ -168,8 +168,6 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
     public int degreeOf(V vertex, EdgeType edgeType) {
         switch(edgeType){
-            // case UNDIRECTED:
-            //     return graph.degreeOf(vertex);
             case IN_EDGE:
                 return graph.inDegreeOf(vertex);
             case OUT_EDGE:
@@ -203,18 +201,13 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
         Map<V, Integer> degrees = new HashMap<>();
         switch (edgeType) {
             case IN_EDGE:
-                graph.vertexSet().forEach(v -> {
-                    degrees.put(v, graph.inDegreeOf(v));
-                });
+                graph.vertexSet().forEach(v -> degrees.put(v, graph.inDegreeOf(v)));
+                break;
             case OUT_EDGE:
-                graph.vertexSet().forEach(v -> {
-                    degrees.put(v, graph.outDegreeOf(v));
-                });
+                graph.vertexSet().forEach(v -> degrees.put(v, graph.outDegreeOf(v)));
                 break;
             default:
-                graph.vertexSet().forEach(v -> {
-                    degrees.put(v, graph.degreeOf(v));
-                });
+                graph.vertexSet().forEach(v -> degrees.put(v, graph.degreeOf(v)));
                 break;
         }
         return degrees;
@@ -226,9 +219,7 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
         int[] i = new int[1];
         graph.vertexSet()
-                .forEach(v -> {
-                    degrees[i[0]++] = degreeOf(v, edgeType);
-                });
+                .forEach(v -> degrees[i[0]++] = degreeOf(v, edgeType));
         return degrees;
     }
 
@@ -241,13 +232,15 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
         VertexStatistics() { }
 
+        @SuppressWarnings({"java:S106"})
+        @Override
         public void print() {
-            System.out.printf("Vertices statistics\n");
-            System.out.printf("  Order (n vertices): %d\n", order);
-            System.out.printf("  Min degree: %.4f\n", min);
-            System.out.printf("  Max degree: %.4f\n", max);
-            System.out.printf("  Mean degree: %.4f, %.4f\n", mean, standardDeviation);
-            System.out.printf("End\n");
+            System.out.printf("Vertices statistics%n");
+            System.out.printf("  Order (n vertices): %d%n", order);
+            System.out.printf("  Min degree: %.4f%n", min);
+            System.out.printf("  Max degree: %.4f%n", max);
+            System.out.printf("  Mean degree: %.4f, %.4f%n", mean, standardDeviation);
+            System.out.printf("End%n");
         }
     }
 
@@ -267,21 +260,6 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
     // Edge weight
     // ----------------------------------------------------------------------
 
-    // public double[] getEdgeWeights() {
-    //     int n = graph.edgeSet().size();
-    //     double[] weights = new double[n];
-    //     int[] i = new int[1];
-    //
-    //     graph.edgeSet()
-    //             .stream()
-    //             .map(graph::getEdgeWeight)
-    //             .collect(Collectors.toList())
-    //             .forEach(w -> {
-    //                 weights[i[0]++] = w;
-    //             });
-    //     return weights;
-    // }
-
     public double weightOf(E e) {
         return graph.getEdgeWeight(e);
     }
@@ -292,9 +270,7 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
         int[] i=new int[1];
 
         graph.edgeSet()
-                .forEach(e -> {
-                    weights[i[0]++] = weightOf(e);
-                });
+                .forEach(e -> weights[i[0]++] = weightOf(e));
         return weights;
     }
 
@@ -310,16 +286,18 @@ public class GraphMetrics<V, E> /*extends org.jgrapht.GraphMetrics*/ {
 
         EdgeStatistics() { }
 
+        @SuppressWarnings({"java:S106"})
+        @Override
         public void print() {
-            System.out.printf("Edges statistics\n");
-            System.out.printf("  Size       : %d\n", size);
-            System.out.printf("  Components : %d\n", components);
-            System.out.printf("  Density    : %.4f\n", density);
-            System.out.printf("  Weight     : %.4f\n", count*mean);
-            System.out.printf("  Min weight : %.4f\n", min);
-            System.out.printf("  Max weight : %.4f\n", max);
-            System.out.printf("  Mean weight: %.4f, %.4f\n", mean, standardDeviation);
-            System.out.printf("End\n");        }
+            System.out.printf("Edges statistics%n");
+            System.out.printf("  Size       : %d%n", size);
+            System.out.printf("  Components : %d%n", components);
+            System.out.printf("  Density    : %.4f%n", density);
+            System.out.printf("  Weight     : %.4f%n", count*mean);
+            System.out.printf("  Min weight : %.4f%n", min);
+            System.out.printf("  Max weight : %.4f%n", max);
+            System.out.printf("  Mean weight: %.4f, %.4f%n", mean, standardDeviation);
+            System.out.printf("End%n");        }
     }
 
     public EdgeStatistics getEdgeStatistics() {

@@ -24,12 +24,13 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"java:S125"})
 public abstract class Graphs extends org.jgrapht.Graphs {
 
     // public static <V, E> boolean addGraph(Graph<? super V, ? super E> destination, Graph<V, E> source)
     // public static <V, E> void    addGraphReversed(Graph<? super V, ? super E> destination, Graph<V, E> source)
     // public static <V, E> Graph<V, E> undirectedGraph(Graph<V, E> g)
-
+    //
     // public static <V, E> E       addEdge(Graph<V, E> g, V sourceVertex, V targetVertex, double weight)
     // public static <V, E> E       addEdgeWithVertices(Graph<V, E> g, V sourceVertex, V targetVertex)
     // public static <V, E> boolean addEdgeWithVertices(Graph<V, E> targetGraph, Graph<V, E> sourceGraph, E edge)
@@ -37,17 +38,17 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // public static <V, E> boolean addAllEdges(Graph<? super V, ? super E> destination, Graph<V, E> source, Collection<? extends E> edges)
     // public static <V, E> void    addOutgoingEdges(Graph<V, E> graph, V source, Iterable<V> targets)
     // public static <V, E> void    addIncomingEdges(Graph<V, E> graph, V target, Iterable<V> sources)
-
+    //
     // public static <V, E> V getOppositeVertex(Graph<V, E> g, E e, V v)
     // public static <V, E> VertexToIntegerMapping<V> getVertexToIntegerMapping(Graph<V, E> graph)
-
+    //
     // public static <V, E> boolean addAllVertices(Graph<? super V, ? super E> destination, Collection<? extends V> vertices)
     // public static <V, E> List<V> neighborListOf(Graph<V, E> g, V vertex)
     // public static <V, E> Set<V>  neighborSetOf(Graph<V, E> g, V vertex)
     // public static <V, E> List<V> predecessorListOf(Graph<V, E> g, V vertex)
     // public static <V, E> List<V> successorListOf(Graph<V, E> g, V vertex)
     // public static <V, E> boolean testIncidence(Graph<V, E> g, E e, V v)
-
+    //
     // public static <V, E> boolean removeVertexAndPreserveConnectivity(Graph<V, E> graph, V vertex)
     // public static <V, E> boolean removeVerticesAndPreserveConnectivity(Graph<V, E> graph, Predicate<V> predicate)
     // public static <V, E> boolean removeVertexAndPreserveConnectivity(Graph<V, E> graph, Iterable<V> vertices)
@@ -268,9 +269,9 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * @param <E> edges type
      */
     public static <V, E> void addEdges(Graph<V, E> g,V ... edges) {
-        for (int i=0; i<edges.length; ) {
-            V sourceVertex = edges[i++];
-            V targetVertex = edges[i++];
+        for (int i=0; i<edges.length; i+=2) {
+            V sourceVertex = edges[i  ];
+            V targetVertex = edges[i+1];
             addEdge(g, sourceVertex, targetVertex);
         }
     }
@@ -341,22 +342,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
 
         return visited;
     }
-
-    // public static <V> Set<V> closureOf(Map<V, VertexInfo<V>> vinfoMap, V startVertex) {
-    //     Set<V> visited = new HashSet<>();
-    //     Queue<V> toVisit = new LinkedList<>();
-    //
-    //     toVisit.add(startVertex);
-    //
-    //     while (!toVisit.isEmpty()) {
-    //         V v = toVisit.remove();
-    //         if (visited.contains(v))
-    //             continue;
-    //         visited.add(v);
-    //         toVisit.addAll(vinfoMap.get(v).neighbor);
-    //     }
-    //     return visited;
-    // }
 
     // ----------------------------------------------------------------------
     // Graph properties
