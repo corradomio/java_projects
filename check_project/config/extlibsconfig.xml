@@ -38,7 +38,7 @@
             <!--<library name="jdk6,jdk1.6" version="6.0" ref="jdk8"/>
             <library name="jdk7,jdk1.7" version="7.0" ref="jdk8"/>-->
 
-            <library name="jdk8,jdk1.8" version="8.0">
+            <library name="jdk8,jdk8.0,jdk1.8" version="8.0">
                 <path value="${java-home}/jdk8"/>
             </library>
 
@@ -207,7 +207,7 @@
                 <path value="${dotnet-home}/sdk/5.0.408"/>
             </library>
 
-            <library name=".NET 6.0,net6,net6.0,netstandard2.1" version="6.0">
+            <library name=".NET 6.0,net6,net6.0" version="6.0">
                 <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/6.0.8"/>
                 <path value="${dotnet-home}/shared/Microsoft.NETCore.App/6.0.8"/>
                 <path value="${dotnet-home}/sdk/6.0.400"/>
