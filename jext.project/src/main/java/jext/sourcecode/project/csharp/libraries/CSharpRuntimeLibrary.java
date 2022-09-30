@@ -1,20 +1,14 @@
 package jext.sourcecode.project.csharp.libraries;
 
 import jext.io.filters.FileFilters;
-import jext.name.PathName;
 import jext.sourcecode.project.LibraryStatus;
-import jext.sourcecode.project.csharp.CSharpConstants;
-import jext.name.Name;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.csharp.util.DotNetAssemblyUtils;
 import jext.sourcecode.project.java.maven.MavenName;
-import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,6 +82,7 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     }
 
     private void populate() {
+        // Warning:  listFiles ALREADY skip duplicated assembly names!
         libraryFiles = new Assemblies();
         installationDirectories.forEach(idir -> {
             if (!idir.exists()) {

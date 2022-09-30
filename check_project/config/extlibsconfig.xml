@@ -4,11 +4,13 @@
   -->
 <configuration>
     <properties>
-        <property name="extlibs-home" value="/home/ubuntu/Projects/repos"/>
-        <property name="java-home"    value="/home/ubuntu/devkits/java"/>
-        <property name="android-home" value="/home/ubuntu/devkits/android"/>
-        <property name="python-home"  value="/home/ubuntu/devkits/python"/>
-        <property name="dotnet-home"  value="/home/ubuntu/devkits/dotnet"/>
+        <property name="rtlibs" value="D:/SPLGroup/runtime-windows/devkits"/>
+
+        <property name="extlibs-home" value="D:/SPLGroup/repos"/>
+        <property name="java-home"    value="${rtlibs}/java"/>
+        <property name="android-home" value="${rtlibs}/android"/>
+        <property name="python-home"  value="${rtlibs}/python"/>
+        <property name="dotnet-home"  value="${rtlibs}/dotnet"/>
     </properties>
 
     <extlibsManager path=".">
@@ -16,7 +18,7 @@
         <language name="java">
 
             <downloader name="maven">
-                <download timeout="500ms" path="${extlibs-home}/.maven/.m2" parallel="5" />
+                <download timeout="500ms" path="${extlibs-home}/.m2/repository" parallel="5" />
                 <check    timeout="24h"/>
 
                 <!-- extra local directories where to search local libraries -->
@@ -33,29 +35,29 @@
             </downloader>
 
             <!-- NEW syntax -->
-            <library name="jdk6,jdk1.6" version="6.0" ref="jdk8"/>
-            <library name="jdk7,jdk1.7" version="7.0" ref="jdk8"/>
+            <!--<library name="jdk6,jdk1.6" version="6.0" ref="jdk8"/>
+            <library name="jdk7,jdk1.7" version="7.0" ref="jdk8"/>-->
 
             <library name="jdk8,jdk1.8" version="8.0">
                 <path value="${java-home}/jdk8"/>
             </library>
 
-            <library name="jdk9,jdk9.0" version="9.0"    ref="jdk11"/>
-            <library name="jdk10,jdk10.0" version="10.0" ref="jdk11"/>
+            <!--<library name="jdk9,jdk9.0" version="9.0"    ref="jdk11"/>
+            <library name="jdk10,jdk10.0" version="10.0" ref="jdk11"/>-->
 
             <library name="jdk11,jdk11.0" version="11.0">
                 <path value="${java-home}/jdk11"/>
             </library>
 
 
-            <library name="jdk12,jdk12.0" version="12.0" ref="jdk17"/>
+            <!--<library name="jdk12,jdk12.0" version="12.0" ref="jdk17"/>
             <library name="jdk13,jdk13.0" version="13.0" ref="jdk17"/>
             <library name="jdk14,jdk14.0" version="14.0" ref="jdk17"/>
             <library name="jdk15,jdk15.0" version="15.0" ref="jdk17"/>
-            <library name="jdk16,jdk16.0" version="16.0" ref="jdk17"/>
+            <library name="jdk16,jdk16.0" version="16.0" ref="jdk17"/>-->
 
             <library name="jdk17,jdk17.0" version="17.0">
-                <path value="${java-home}/jdk11"/>
+                <path value="${java-home}/jdk17"/>
             </library>
 
         </language>
@@ -63,7 +65,7 @@
         <language name="android">
 
             <downloader name="maven">
-                <download timeout="500ms" path="${extlibs-home}/.extlib/.m2" parallel="5" />
+                <download timeout="500ms" path="${extlibs-home}/.m2/android" parallel="5" />
                 <check    timeout="24h"/>
 
                 <!-- extra local directories where to search local libraries -->
@@ -118,7 +120,11 @@
                 <repository name="pypi" url="https://pypi.org/"/>
             </downloader>
 
-            <path value="${python-home}/anaconda3" version="3.9" name="py39"/>
+            <!--<library name="python3.9,py39" version="3.9" ref="py310"/>-->
+
+            <library name="python3.10,py310"  version="3.10">
+                <path value="${python-home}/python-3.10.7"/>
+            </library>
         </language>
 
         <language name="csharp">
@@ -179,8 +185,8 @@
 
             <!-- NEW syntax, to support libraries with other names/versions but based on the same
                  list of assemblies -->
-            <library name=".NET Core 2.0,netstandard2.0" version="2.0" ref=".NET Core 2.2"/>
-            <library name=".NET Core 2.1,netstandard2.1" version="2.1" ref=".NET Core 2.2"/>
+            <!--<library name=".NET Core 2.0,netstandard2.0" version="2.0" ref=".NET Core 2.2"/>
+            <library name=".NET Core 2.1,netstandard2.1" version="2.1" ref=".NET Core 2.2"/>-->
 
             <library name=".NET Core 2.2,net2.2,netstandard2.2" version="2.2">
                 <path value="${dotnet-home}/shared/Microsoft.AspNetCore.All/2.2.8"/>

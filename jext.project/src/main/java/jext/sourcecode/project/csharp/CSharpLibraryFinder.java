@@ -2,6 +2,7 @@ package jext.sourcecode.project.csharp;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
+import jext.maven.Version;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
@@ -16,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CSharpLibraryFinder implements LibraryFinder {
@@ -31,7 +31,7 @@ public class CSharpLibraryFinder implements LibraryFinder {
     private Map<Name, Library> libraries = new HashMap<>();
     private NuGetDownloader downloader = new NuGetDownloader();
     private Map<String, Library> runtimeLibraries = new HashMap<>();
-    private Library rtLibraryDefault;
+    private Library defaultRuntimeLibrary;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -44,7 +44,7 @@ public class CSharpLibraryFinder implements LibraryFinder {
     @Override
     public LibraryFinder newFinder(Project project) {
         CSharpLibraryFinder lfinder = new CSharpLibraryFinder();
-        lfinder.setLibraries(libraries, runtimeLibraries, rtLibraryDefault);
+        lfinder.setLibraries(libraries, runtimeLibraries, defaultRuntimeLibrary);
         lfinder.setDownloader(downloader.newDownloader());
         lfinder.setProject(project);
         return lfinder;
@@ -66,7 +66,7 @@ public class CSharpLibraryFinder implements LibraryFinder {
     ) {
         this.libraries.putAll(libraries);
         this.runtimeLibraries.putAll(rtLibraries);
-        this.rtLibraryDefault = rtLibraryDefault;
+        this.defaultRuntimeLibrary = rtLibraryDefault;
     }
 
     private void setDownloader(LibraryDownloader downloader) {
@@ -153,20 +153,49 @@ public class CSharpLibraryFinder implements LibraryFinder {
             CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(name, version, libraryDirectories);
 
             runtimeLibraries.put(name, rtLibrary);
-            if (rtLibraryDefault == null)
-                rtLibraryDefault = rtLibrary;
+            if (defaultRuntimeLibrary == null)
+                defaultRuntimeLibrary = rtLibrary;
         }
     }
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
         Library rtLibrary = runtimeLibraries.get(libraryName);
-        if (rtLibrary == null) {
-            rtLibrary = rtLibraryDefault;
-            logger.warnf("Unable to retrieve the runtime library %s. Used the default %s",
-                libraryName, rtLibrary.getName().getFullName());
-        }
+        if (rtLibrary == null)
+            rtLibrary = findBestRuntimeLibrary(libraryName);
+        if (rtLibrary == null)
+            rtLibrary = selectDefaultRuntimeLibrary(libraryName);
+
         return rtLibrary;
+    }
+
+    private Library findBestRuntimeLibrary(String libraryName) {
+        String version = libraryVersion(libraryName);
+        if (version.isEmpty())
+            return null;
+
+        Version libVersion = Version.of(version);
+        Version selectedVersion = Version.of("10000.0");
+        Library selectedLibrary = null;
+
+        for(Library rtlib : getRuntimeLibraries()) {
+            Version thisVersion = Version.of(rtlib.getVersion());
+
+            // this version must be greater than library version and lower than the current
+            // selected version
+            if (thisVersion.compareTo(libVersion) > 0 && thisVersion.compareTo(selectedVersion) < 0) {
+                selectedVersion = thisVersion;
+                selectedLibrary = rtlib;
+            }
+        }
+
+        return selectedLibrary;
+    }
+
+    private Library selectDefaultRuntimeLibrary(String libraryName) {
+        logger.warnf("Unable to retrieve the runtime library %s. Used the default %s",
+                libraryName, defaultRuntimeLibrary.getName().getFullName());
+        return defaultRuntimeLibrary;
     }
 
     // used internally
@@ -177,6 +206,74 @@ public class CSharpLibraryFinder implements LibraryFinder {
     @Override
     public Collection<Library> getRuntimeLibraries() {
         return runtimeLibraries.values();
+    }
+
+    // ----------------------------------------------------------------------
+    // Utilities
+    // ----------------------------------------------------------------------
+    /*
+                net40
+                net45
+                net451
+                net461
+                net472
+                net5
+                net5.0
+                net6
+                net6.0
+                net6.0-android
+                net6.0-ios
+                net6.0-maccatalyst
+                net6.0-tizen
+                net6.0-windows
+                net6.0-windows10.0.19041
+                net6.0-windows7.0
+                net7.0
+                netcoreapp2.0
+                netcoreapp2.1
+                netcoreapp3.1
+                netcoreapp6.0
+                netstandard1.3
+                netstandard2.0
+                netstandard2.1
+     */
+
+    private static String libraryVersion(String libraryName) {
+        String version = libraryName;
+        // netstandard2.1
+        if (version.startsWith("netstandard"))
+            version = version.substring("netstandard".length());
+        // netcoreapp6.0
+        else if (version.startsWith("netcoreapp"))
+            version = version.substring("netcoreapp".length());
+        // net6.0
+        // net6.0-android
+        // net472
+        else if (version.startsWith("net"))
+            version = version.substring("net".length());
+        // net6.0-maccatalyst
+        int p = version.indexOf('-');
+        version = p > 0 ? version.substring(0, p) : version;
+
+        // check for version containing '$' or '(',')'
+        if (version.contains("$") || version.contains("("))
+            return "";
+
+        // net6.0
+        // net472
+        if (version.contains(".") || version.length() == 1)
+            return version;
+
+        // 47
+        // 471
+        if (version.startsWith("1") || version.startsWith("2") || version.startsWith("3") || version.startsWith("4")) {
+            if (version.length() == 2)
+                return version.charAt(0) + "." + version.charAt(1);
+            else
+                return version.charAt(0) + "." + version.charAt(1) + "." + version.charAt(2);
+        }
+
+        return version;
     }
 
     // ----------------------------------------------------------------------

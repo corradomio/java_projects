@@ -2,6 +2,7 @@ package jext.sourcecode.project.java;
 
 import jext.logging.Logger;
 import jext.maven.MavenCoords;
+import jext.maven.Version;
 import jext.name.Name;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
@@ -55,7 +56,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     private Map<MavenCoords, Library> mavenLibraries = new HashMap<>();
 
     private Map<String, Library> runtimeLibraries = new HashMap<>();
-    private Library rtLibraryDefault;
+    private Library defaultRuntimeLibrary;
 
 
     // ----------------------------------------------------------------------
@@ -73,7 +74,7 @@ public class JavaLibraryFinder implements LibraryFinder {
     @Override
     public LibraryFinder newFinder(Project project) {
         JavaLibraryFinder lfinder = new JavaLibraryFinder(language);
-        lfinder.setLibraries(libraries, mavenLibraries, runtimeLibraries, rtLibraryDefault);
+        lfinder.setLibraries(libraries, mavenLibraries, runtimeLibraries, defaultRuntimeLibrary);
         lfinder.setDownloader(downloader.newDownloader());
         lfinder.setProject(project);
         return lfinder;
@@ -97,7 +98,7 @@ public class JavaLibraryFinder implements LibraryFinder {
         this.libraries.putAll(libraries);
         this.mavenLibraries.putAll(mavenLibraries);
         this.runtimeLibraries.putAll(runtimeLibraries);
-        this.rtLibraryDefault = rtLibraryDefault;
+        this.defaultRuntimeLibrary = rtLibraryDefault;
     }
 
     private void setDownloader(LibraryDownloader downloader) {
@@ -145,20 +146,61 @@ public class JavaLibraryFinder implements LibraryFinder {
             Library runtimeLibrary = new JDKLibrary(name, version, libraryDirectory);
             runtimeLibraries.put(name, runtimeLibrary);
 
-            if (rtLibraryDefault == null)
-                rtLibraryDefault = runtimeLibrary;
+            if (defaultRuntimeLibrary == null)
+                defaultRuntimeLibrary = runtimeLibrary;
         }
     }
 
     @Override
     public Library getRuntimeLibrary(String libraryName) {
         Library rtLibrary = runtimeLibraries.get(libraryName);
-        if (rtLibrary == null) {
-            rtLibrary = this.rtLibraryDefault;
-            logger.warnf("Unable to retrieve the runtime library %s. Used the default %s",
-                libraryName, rtLibrary.getName().getFullName());
-        }
+        if (rtLibrary == null)
+            rtLibrary = findBestRuntimeLibrary(libraryName);
+        if (rtLibrary == null)
+            rtLibrary = selectDefaultRuntimeLibrary(libraryName);
         return rtLibrary;
+    }
+
+    private Library findBestRuntimeLibrary(String libraryName) {
+        String version = libraryVersion(libraryName);
+        if (version.isEmpty())
+            return null;
+
+        Version libVersion = Version.of(version);
+        Version selectedVersion = Version.of("10000.0");
+        Library selectedLibrary = null;
+
+        for(Library rtlib : getRuntimeLibraries()) {
+            Version thisVersion = Version.of(rtlib.getVersion());
+
+            // this version must be greater than library version and lower than the current
+            // selected version
+            if (thisVersion.compareTo(libVersion) > 0 && thisVersion.compareTo(selectedVersion) < 0) {
+                selectedVersion = thisVersion;
+                selectedLibrary = rtlib;
+            }
+        }
+
+        return selectedLibrary;
+    }
+
+    private static String libraryVersion(String libraryName) {
+        String version = libraryName;
+        if (!version.startsWith("jdk"))
+            return "";
+        // jdk1.8
+        // jdk8
+        version = version.substring("jdk".length());
+        // jdk1.8
+        if (version.startsWith("1."))
+            version = version.substring("1.".length());
+        return version;
+    }
+
+    private Library selectDefaultRuntimeLibrary(String libraryName) {
+        logger.warnf("Unable to retrieve the runtime library %s. Used the default %s",
+                libraryName, defaultRuntimeLibrary.getName().getFullName());
+        return defaultRuntimeLibrary;
     }
 
     // used locally
@@ -186,12 +228,6 @@ public class JavaLibraryFinder implements LibraryFinder {
             return library;
         }
     }
-
-    // @Override
-    // public String getLatestVersion(String libraryName) {
-    //     MavenCoords coords = MavenCoords.of(libraryName);
-    //     return getLatestVersion(coords);
-    // }
 
     @Override
     public String getLatestVersion(MavenCoords coords) {

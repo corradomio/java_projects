@@ -60,6 +60,8 @@ package jext.maven;
 
  */
 
+import jext.util.Assert;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,10 +72,15 @@ public class Version implements Comparable<Version> {
     // ----------------------------------------------------------------------
 
     public static final Version NO_VERSION = new Version();
+
     public static Version empty() { return NO_VERSION; }
 
     public static Version of(String version) {
-        return (version != null && version.length() > 0) ? new Version(version) : NO_VERSION;
+        if (version == null || version.isEmpty())
+            return NO_VERSION;
+        Version v = new Version(version);
+        v.parse();
+        return v;
     }
 
     // ----------------------------------------------------------------------
@@ -120,7 +127,7 @@ public class Version implements Comparable<Version> {
     private static final Pattern Version4Pattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)");
     private static final Pattern SemVerPattern = Pattern.compile("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?");
 
-    private final String version;
+    private String version;
     private Scheme scheme = Scheme.StringVersion;
 
     private int major = 0;
@@ -138,9 +145,8 @@ public class Version implements Comparable<Version> {
         this.version = EMPTY;
     }
 
-    public Version(String version) {
+    private Version(String version) {
         this.version = version;
-        parse();
     }
 
     private void parse() {

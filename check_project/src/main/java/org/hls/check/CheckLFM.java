@@ -17,10 +17,41 @@ public class CheckLFM {
 
         LibraryFinderManager lfm = ConfigurableLibraryFinderManager.getManager(configurationFile);
 
-        dumprtlibs(lfm);
-        checkPython(lfm);
-        checkCSharp(lfm);
-        checkCSharpRTLibs(lfm);
+        checkRTLibrary(lfm);
+
+        // dumpfiles(lfm);
+        // dumprtlibs(lfm);
+        // checkPython(lfm);
+        // checkCSharp(lfm);
+        // checkCSharpRTLibs(lfm);
+    }
+
+    private static void checkRTLibrary(LibraryFinderManager lfm) {
+        LibraryFinder lf;
+        Library l;
+
+        // lf = lfm.getLibraryFinder("csharp");
+        // l = lf.getRuntimeLibrary("net3.0");
+        // System.out.println(l);
+
+        // lf = lfm.getLibraryFinder("java");
+        // l = lf.getRuntimeLibrary("jdk10");
+        // System.out.println(l);
+
+        lf = lfm.getLibraryFinder("python");
+        l = lf.getRuntimeLibrary("python3.6");
+        System.out.println(l);
+    }
+
+    private static void dumpfiles(LibraryFinderManager lfm) {
+        LibraryFinder lf = lfm.getLibraryFinder("csharp");
+        lf.getRuntimeLibraries().forEach(rtl -> {
+            System.out.println(rtl.getName());
+            rtl.getFiles().forEach(file -> {
+                System.out.printf("  %s\n", file.getName());
+            });
+        });
+        System.out.printf("end");
     }
 
     private static void checkCSharpRTLibs(LibraryFinderManager lfm) {
