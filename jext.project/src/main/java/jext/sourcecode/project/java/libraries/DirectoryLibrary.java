@@ -10,7 +10,6 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.java.types.ReferencedType;
-import jext.sourcecode.project.util.BaseLibrary;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 
@@ -39,9 +38,10 @@ public abstract class DirectoryLibrary extends JavaLibrary {
     }
 
     public DirectoryLibrary(String libraryName, File libraryFile, Project project) {
-        super(PathName.of(libraryName), project);
+        super(PathName.of(libraryName));
         this.libraryFile = libraryFile;
         this.libraryType = LibraryType.RUNTIME; //LibraryType.LOCAL_COLLECTION;
+        this.project = project;
     }
 
     // ----------------------------------------------------------------------

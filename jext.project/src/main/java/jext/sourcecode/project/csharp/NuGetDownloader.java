@@ -280,11 +280,18 @@ public class NuGetDownloader implements LibraryDownloader {
     }
 
     private static void uncompressArtifact(File artifactFile) {
-        File libDirectory = new File(artifactFile.getParentFile(), "lib");
-        if (!artifactFile.exists() ||  libDirectory.exists())
+        if (!artifactFile.exists())
             return;
 
         File artifactDirectory = artifactFile.getParentFile();
+        File libDirectory = new File(artifactDirectory, "lib");
+        // Note: 'lib' can be not present
+        if (!artifactFile.exists() || libDirectory.exists())
+            return;
+        File[] dircontent = artifactDirectory.listFiles();
+        if (dircontent == null || dircontent.length > 1)
+            return;
+
         try {
             Archives.uncompress(artifactFile, artifactDirectory);
         } catch (IOException e) {

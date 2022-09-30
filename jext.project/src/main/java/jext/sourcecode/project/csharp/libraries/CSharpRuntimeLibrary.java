@@ -98,7 +98,7 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
             }
 
             // In 'theory', the only directory to consider is the directory containing
-            // 'dotnet.dll' assembli
+            // 'dotnet.dll' assembly
 
             // '.../ref' are scanned recursively
             if (idir.getName().equals("ref") || idir.getAbsolutePath().contains(".Ref")){

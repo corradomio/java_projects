@@ -95,10 +95,14 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
     public void configure(Configuration configuration) {
         this.configuration = (HierarchicalConfiguration) configuration;
 
+        logger.info("configure");
+
         reloadConfiguration();
 
         this.configuration.configurationsAt("language")
             .forEach(this::configureLanguage);
+
+        logger.info("done");
     }
 
     private void reloadConfiguration() {
@@ -148,6 +152,18 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
         LibraryFinder lfinder = lconfig.createFinder();
 
         lfinders.put(lfinder.getLanguage(), lfinder);
+
+        configured(lfinder);
+    }
+
+    private void configured(LibraryFinder lfinder) {
+        logger.infof("    %s", lfinder.getLanguage());
+        lfinder.getRuntimeLibraries().forEach(rtlib -> {
+            logger.infof("        %s[%s]", rtlib.getName().getName(), rtlib.getVersion());
+            // rtlib.getFiles().forEach(file -> {
+            //     logger.infof("        %s", file);
+            // });
+        });
     }
 
     // ----------------------------------------------------------------------
