@@ -144,10 +144,13 @@ public class PythonLibraryFinder implements LibraryFinder {
             }
         }
 
+        if (selectedLibrary != null)
+            logger.warnf("Requested %s, selected %s", libraryName, selectedLibrary.getName().getName());
+
         return selectedLibrary;
     }
 
-    private static String libraryVersion(String libraryName) {
+    public static String libraryVersion(String libraryName) {
         String version = libraryName;
         if (!version.startsWith("py"))
             return "";

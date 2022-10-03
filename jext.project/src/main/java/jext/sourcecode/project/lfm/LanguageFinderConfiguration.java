@@ -2,6 +2,7 @@ package jext.sourcecode.project.lfm;
 
 import jext.configuration.Configuration;
 import jext.configuration.HierarchicalConfiguration;
+import jext.lang.OperatingSystemUtils;
 import jext.sourcecode.project.LibraryFinder;
 
 import java.util.HashMap;
@@ -62,12 +63,29 @@ public abstract class LanguageFinderConfiguration implements LibraryFinderConfig
     }
 
     protected void configureLibrary(Configuration configuration) {
+        String os = OperatingSystemUtils.getPlatform();
         LibraryConfiguration libraryConfiguration = new LibraryConfiguration();
         libraryConfiguration.configure(configuration);
 
         List<String> names = libraryConfiguration.getNames();
-        for(String name : names)
-            this.libraries.put(name, libraryConfiguration);
+        if (names.isEmpty())
+            return;
+
+        // retrieve the first name & version
+        String name = names.get(0);
+        String version = libraryConfiguration.getVersion();
+        String platform = libraryConfiguration.getPlatform();
+
+        // library configured for a different Operating System
+        if (!platform.isEmpty() && !platform.equals(os))
+            return;
+
+        // register the library using the first name
+        this.libraries.put(name, libraryConfiguration);
+
+        // register the remaining names as references to the first name
+        for(int i=1; i<names.size(); ++i)
+            this.libraries.put(names.get(i), LibraryConfiguration.ref(names.get(i), version, name));
     }
 
     public DownloaderConfiguration getDownloaderConfiguration(String name) {

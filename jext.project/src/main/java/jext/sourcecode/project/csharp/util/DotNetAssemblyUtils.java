@@ -7,6 +7,9 @@ import java.nio.file.Files;
 
 /*
     https://www.ecma-international.org/publications-and-standards/standards/ecma-335/
+
+    'MZ/0/0'    0x4D 0x5A 0x00 0x00
+    'PE/0/0'    0x50 0x45 0x00 0x00
  */
 
 public class DotNetAssemblyUtils {
@@ -52,34 +55,44 @@ public class DotNetAssemblyUtils {
         (short) 0x9041,
         (short) 0xC0EE,
         (short) 0xAA64,
+        (short) 0xFD1D,
     };
 
     private static boolean checkHeader(byte[] data) {
+        // check for 'PE/0/0'
         for(int i=0; i<ASSEMBLY_HEADER.length; ++i)
             if (ASSEMBLY_HEADER[i] != data[i])
                 return false;
         return true;
     }
 
-    private static boolean checkTarget(byte[] data) {
-        short target = (short) (data[4] | (data[5]<<8));
-        for (int i=0; i<TARGET_HEADER.length; ++i)
-            if (TARGET_HEADER[i] == target)
-                return true;
-        return false;
-    }
+    // private static boolean checkTarget(byte[] data) {
+    //     // it seems not necessary
+    //     // it is enough to check if it starts with 'PE/0/0'
+    //     return true;
+    //
+    //     // short target = (short) (data[4] | (data[5]<<8));
+    //     // for (int i=0; i<TARGET_HEADER.length; ++i)
+    //     //     if (TARGET_HEADER[i] == target)
+    //     //         return true;
+    //     // return false;
+    // }
 
     public static boolean isAssembly(File file) {
         byte[] data = new byte[32];
         try (InputStream stream = Files.newInputStream(file.toPath())) {
+            // skip to PE header at byte 128
             stream.skip(128);
             stream.read(data);
 
+            // PE header at byte 128: 'PE/0/0'
             if (!checkHeader(data))
                 return false;
 
-            if (!checkTarget(data))
-                return false;
+            // check for the assembly type
+            // Note: it seems not necessary
+            // if (!checkTarget(data))
+            //     return false;
 
             return true;
         }

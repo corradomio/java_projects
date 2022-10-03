@@ -1,9 +1,11 @@
 package jext.sourcecode.project.lfm.python;
 
 import jext.configuration.Configuration;
+import jext.lang.OperatingSystemUtils;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
+import jext.sourcecode.project.csharp.CSharpLibraryFinder;
 import jext.sourcecode.project.lfm.DownloaderConfiguration;
 import jext.sourcecode.project.lfm.LanguageFinderConfiguration;
 import jext.sourcecode.project.python.PyPiDownloader;
@@ -28,13 +30,18 @@ public class PythonFinderConfiguration extends LanguageFinderConfiguration {
         PythonLibraryFinder lfinder = new PythonLibraryFinder();
 
         libraries.forEach((lname, lconfig) -> {
-            File file = lconfig.getFile();
-            String version = lconfig.getVersion();
             String ref = lconfig.getRef();
+            String version = lconfig.getVersion();
 
             if (!ref.isEmpty())
                 return;
 
+            if (version.isEmpty())
+                version = CSharpLibraryFinder.libraryVersion(lname);
+            if (version.isEmpty())
+                version = "1.0";
+
+            File file = lconfig.getFile();
             lfinder.setNamedLibrary(lname, version, file);
         });
 

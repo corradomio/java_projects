@@ -132,25 +132,25 @@ public class CSharpLibraryFinder implements LibraryFinder {
     // Operations
     // ----------------------------------------------------------------------
 
-    private static Pattern DOTNET_VERSION  = Pattern.compile("([0-9]+\\.[0-9]+)\\.[0-9]+");
+    // private static Pattern DOTNET_VERSION  = Pattern.compile("([0-9]+\\.[0-9]+)\\.[0-9]+");
 
     public void setNamedLibrary(String libraryName, String version, File libraryDirectory) {
         setNamedLibrary(libraryName, version, Collections.singletonList(libraryDirectory));
     }
 
-    public void setNamedLibrary(String libraryName, String version, List<File> libraryDirectories) {
+    public void setNamedLibrary(String libraryName, String version, List<File> libraryFiles) {
         String[] names = libraryName.split(",");
 
         // check directories
-        libraryDirectories.forEach(libraryDirectory -> {
-            if (!libraryDirectory.exists())
-                logger.errorf("Runtime library %s:%s: Invalid directory %s", libraryName, version, libraryDirectory);
+        libraryFiles.forEach(libraryFile -> {
+            if (!libraryFile.exists())
+                logger.errorf("Runtime library %s:%s: Invalid directory %s", libraryName, version, libraryFile);
         });
 
         for (String name : names) {
             name = name.trim();
 
-            CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(name, version, libraryDirectories);
+            CSharpRuntimeLibrary rtLibrary = new CSharpRuntimeLibrary(name, version, libraryFiles);
 
             runtimeLibraries.put(name, rtLibrary);
             if (defaultRuntimeLibrary == null)
@@ -188,6 +188,9 @@ public class CSharpLibraryFinder implements LibraryFinder {
                 selectedLibrary = rtlib;
             }
         }
+
+        if (selectedLibrary != null)
+            logger.warnf("Requested %s, selected %s", libraryName, selectedLibrary.getName().getName());
 
         return selectedLibrary;
     }
@@ -238,8 +241,10 @@ public class CSharpLibraryFinder implements LibraryFinder {
                 netstandard2.1
      */
 
-    private static String libraryVersion(String libraryName) {
-        String version = libraryName;
+    public static String libraryVersion(String libraryName) {
+        int p;
+        String version = libraryName.toLowerCase();
+
         // netstandard2.1
         if (version.startsWith("netstandard"))
             version = version.substring("netstandard".length());
@@ -251,13 +256,30 @@ public class CSharpLibraryFinder implements LibraryFinder {
         // net472
         else if (version.startsWith("net"))
             version = version.substring("net".length());
+
+        // .NET Framework
+        p = version.indexOf("net framework");
+        if (p != -1)
+            version = version.substring(p+"net framework".length());
+        // .NET Standard
+        p = version.indexOf("net standard");
+        if (p != -1)
+            version = version.substring(p+"net standard".length());
+        // .NET Core
+        p = version.indexOf("net core");
+        if (p != -1)
+            version = version.substring(p+"net core".length());
+
         // net6.0-maccatalyst
-        int p = version.indexOf('-');
+        p = version.indexOf('-');
         version = p > 0 ? version.substring(0, p) : version;
 
         // check for version containing '$' or '(',')'
         if (version.contains("$") || version.contains("("))
             return "";
+
+        // remove extra spaces
+        version = version.trim();
 
         // net6.0
         // net472

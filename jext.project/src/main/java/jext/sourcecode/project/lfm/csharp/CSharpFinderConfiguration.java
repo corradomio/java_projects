@@ -1,6 +1,7 @@
 package jext.sourcecode.project.lfm.csharp;
 
 import jext.configuration.Configuration;
+import jext.lang.OperatingSystemUtils;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
@@ -30,7 +31,6 @@ public class CSharpFinderConfiguration extends LanguageFinderConfiguration {
 
         // register 'not ref' libraries
         libraries.forEach((lname, lconfig) -> {
-            List<File> files = lconfig.getFiles();
             String version = lconfig.getVersion();
             String ref = lconfig.getRef();
 
@@ -38,6 +38,12 @@ public class CSharpFinderConfiguration extends LanguageFinderConfiguration {
             if (!ref.isEmpty())
                 return;
 
+            if (version.isEmpty())
+                version = CSharpLibraryFinder.libraryVersion(lname);
+            if (version.isEmpty())
+                version = "1.0";
+
+            List<File> files = lconfig.getFiles();
             lfinder.setNamedLibrary(lname, version, files);
         });
 

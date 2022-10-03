@@ -1,9 +1,11 @@
 package jext.sourcecode.project.lfm.java;
 
 import jext.configuration.Configuration;
+import jext.lang.OperatingSystemUtils;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
+import jext.sourcecode.project.csharp.CSharpLibraryFinder;
 import jext.sourcecode.project.java.JavaLibraryDownloader;
 import jext.sourcecode.project.java.JavaLibraryFinder;
 import jext.sourcecode.project.lfm.DownloaderConfiguration;
@@ -25,11 +27,16 @@ public class JavaFinderConfiguration extends LanguageFinderConfiguration {
         // register 'not ref' libraries
         libraries.forEach((lname, lconfig) -> {
             String ref = lconfig.getRef();
+            String version = lconfig.getVersion();
 
             if (!ref.isEmpty())
                 return;
 
-            String version = lconfig.getVersion();
+            if (version.isEmpty())
+                version = CSharpLibraryFinder.libraryVersion(lname);
+            if (version.isEmpty())
+                version = "1.0";
+
             File file = lconfig.getFile();
             lfinder.setNamedLibrary(lname, version, file);
         });

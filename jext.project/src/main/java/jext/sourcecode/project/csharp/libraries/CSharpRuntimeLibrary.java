@@ -49,14 +49,17 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     //      <.NET Core/Framework>/<version>/sdk/<version>/*.dll
     //
 
-    public CSharpRuntimeLibrary(String name, String version, List<File> installationDirectories) {
+    public CSharpRuntimeLibrary(String name, String version, List<File> libraryFiles) {
         super(MavenName.of(name, version));
-        if (installationDirectories.isEmpty())
+        if (libraryFiles.isEmpty())
             this.libraryFile = new File("/unknown");
-        else
-            this.libraryFile = installationDirectories.get(0);
+        else {
+            this.libraryFile = libraryFiles.get(0);
+            if (this.libraryFile.isFile())
+                this.libraryFile = this.libraryFile.getParentFile();
+        }
         this.version = version;
-        this.installationDirectories = installationDirectories;
+        this.installationDirectories = libraryFiles;
         this.libraryType = LibraryType.RUNTIME;
     }
 
@@ -84,11 +87,15 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
     private void populate() {
         // Warning:  listFiles ALREADY skip duplicated assembly names!
         libraryFiles = new Assemblies();
-        installationDirectories.forEach(idir -> {
-            if (!idir.exists()) {
+        installationDirectories.forEach(dirOrFile -> {
+            if (dirOrFile.isFile()) {
+                libraryFiles.add(dirOrFile);
+                return;
+            }
+            else if (!dirOrFile.exists()) {
                 logger.errorf("[%s] Directory '%s' not existent",
                         getName().getFullName(),
-                        FileUtils.getAbsolutePath(idir));
+                        FileUtils.getAbsolutePath(dirOrFile));
                 return;
             }
 
@@ -96,23 +103,24 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
             // 'dotnet.dll' assembly
 
             // '.../ref' are scanned recursively
-            if (idir.getName().equals("ref") || idir.getAbsolutePath().contains(".Ref")){
-                FileUtils.listFiles(idir, FileFilters.IS_DLL).stream()
+            if (dirOrFile.getName().equals("ref") || dirOrFile.getAbsolutePath().contains(".Ref")){
+                FileUtils.listFiles(dirOrFile, FileFilters.IS_DLL).stream()
                         .filter(DotNetAssemblyUtils::isAssembly)
                         .forEach(assembly -> {
                             libraryFiles.add(assembly);
                         });
             }
             // '.../sdk' are NOT scanned recursively
-            else if (idir.getName().contains("sdk")){
-                FileUtils.listFiles(idir, DLL).stream()
+            else if (dirOrFile.getName().contains("sdk")){
+                FileUtils.listFiles(dirOrFile, DLL).stream()
                         .filter(DotNetAssemblyUtils::isAssembly)
                         .forEach(assembly -> {
                             libraryFiles.add(assembly);
                         });
             }
+            // other directories are scanned recursively
             else {
-                FileUtils.listFiles(idir, DLL).stream()
+                FileUtils.listFiles(dirOrFile, DLL).stream()
                         .filter(DotNetAssemblyUtils::isAssembly)
                         .forEach(assembly -> {
                             libraryFiles.add(assembly);

@@ -41,17 +41,19 @@ public class GuessRuntimeLibrary {
     */
 
     public static final Map<String, String> LANGUAGE_RUNTIMES = new HashMap<String, String>(){{
-        put( "3.0", ".NET Framework 3.5");
-        put( "4.0", ".NET Framework 4");
-        put( "5.0", ".NET Framework 4.5");
-        put( "6.0", ".NET Framework 4.6");
-        put( "7.0", ".NET Framework 4.7");
-        put( "7.1", ".NET Core 2.0");
-        put( "7.2", ".NET Core 2.0");
-        put( "7.3", ".NET Core 2.2");
-        put( "8.0", ".NET Core 3.1");
-        put( "9.0", ".NET 5.0");
-        put("10.0", ".NET 6.0");
+        put( "3.0", "net35");
+        put( "4.0", "net4");
+        put( "5.0", "net45");
+        put( "6.0", "net46");
+        put( "7.0", "net47");
+        put( "7.1", "netstandard2.0");
+        put( "7.2", "netstandard2.0");
+        put( "7.3", "netstandard2.2");
+        put( "8.0", "netcore3.1");
+        put( "9.0", "net5.0");
+        put("10.0", "net6.0");
+        put("11.0", "net7.0");
+        put("default", "net472");
     }};
 
     public static String guessRuntimeLibrary(Module module) {
@@ -127,10 +129,10 @@ public class GuessRuntimeLibrary {
     }
 
     private static String selectRuntime(String languageVersion, String targetFrameworks) {
-        String runtimeName = null;
+        String runtimeName;
 
         if (languageVersion == null && targetFrameworks == null)
-            return runtimeName;
+            return null;
 
         // clean 'targetFrameworks' if contain '${...}'
         if (targetFrameworks != null)
@@ -140,11 +142,13 @@ public class GuessRuntimeLibrary {
             targetFrameworks = targetFrameworks.substring(0, b) + targetFrameworks.substring(e+1);
         }
 
+        // select runtime based on target frameworks
         runtimeName = selectRuntimeFromTargets(targetFrameworks);
-
+        // select runtime based on language version
         if (runtimeName == null)
             runtimeName = selectRuntimeFromLanguage(languageVersion);
 
+        // note: can be null
         return runtimeName;
     }
 

@@ -3,6 +3,8 @@ package jext.sourcecode.project.lfm;
 import jext.configuration.Configuration;
 import jext.configuration.HierarchicalConfiguration;
 import jext.configuration.XMLConfiguration;
+import jext.lang.OperatingSystem;
+import jext.lang.OperatingSystemUtils;
 import jext.logging.Logger;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryFinderManager;
@@ -55,8 +57,10 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
 
     protected Logger logger = Logger.getLogger(getClass());
 
+    protected HierarchicalConfiguration mainconfig;
     protected HierarchicalConfiguration configuration;
     protected Map<String, LibraryFinder> lfinders = new HashMap<>();
+    private long lastModified = 0;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -77,6 +81,8 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
 
     @Override
     public LibraryFinder getLibraryFinder(String language) {
+        reloadConfiguration();
+
         LibraryFinder lfinder = lfinders.get(language);
         if (lfinder == null)
             throw new ProjectException("Unsupported language " + language);
@@ -93,37 +99,46 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
     // ----------------------------------------------------------------------
 
     public void configure(Configuration configuration) {
-        this.configuration = (HierarchicalConfiguration) configuration;
+        this.mainconfig = (HierarchicalConfiguration) configuration;
+        this.configuration = mainconfig;
 
         logger.info("configure");
 
         reloadConfiguration();
 
-        this.configuration.configurationsAt("language")
-            .forEach(this::configureLanguage);
-
         logger.info("done");
     }
 
     private void reloadConfiguration() {
-        String path = configuration.getString("@path", "");
+        String path = this.mainconfig.getString("@path", "");
         if (path.isEmpty())
             return;
 
         // compose the path of the new configuration file
-        File configurationFile = configuration.getFile();
+        File configurationFile = mainconfig.getFile();
         // new configuration file
         configurationFile = FileUtils.toFile(configurationFile.getParentFile(), path);
 
+        // if the fole doesn't exist -> exit
         if (!configurationFile.exists() || !configurationFile.isFile()) {
-            if (!path.equals("") && !path.equals("."))
+            if (!path.equals("."))
                 logger.errorf("Configuration file '%s' not existent.", FileUtils.getAbsolutePath(configurationFile));
             return;
         }
 
+        // if the file timestamp is the same -> exit
+        if (lastModified == configurationFile.lastModified())
+            return;
+
         try {
-            Configuration configuration = getConfiguration(configurationFile);
-            this.configuration = (HierarchicalConfiguration) configuration;
+            Configuration currentConfiguration = getConfiguration(configurationFile);
+            this.configuration = (HierarchicalConfiguration) currentConfiguration;
+            this.lastModified = configurationFile.lastModified();
+            this.lfinders = new HashMap<>();
+
+            // configure library finders by language
+            this.configuration.configurationsAt("language")
+                    .forEach(this::configureLanguage);
         }
         catch (Exception e) {
             logger.errorf("Configuration file '%s' invalid.", FileUtils.getAbsolutePath(configurationFile));
@@ -159,7 +174,7 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
     private void configured(LibraryFinder lfinder) {
         logger.infof("    %s", lfinder.getLanguage());
         lfinder.getRuntimeLibraries().forEach(rtlib -> {
-            logger.infof("        %s[%s]", rtlib.getName().getName(), rtlib.getVersion());
+            logger.infof("        %s: version=%s", rtlib.getName().getName(), rtlib.getVersion());
             // rtlib.getFiles().forEach(file -> {
             //     logger.infof("        %s", file);
             // });
