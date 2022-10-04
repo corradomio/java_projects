@@ -1,15 +1,15 @@
 package jext.sourcecode.project;
 
 public enum LibraryType {
+    /** the library is invalid for some reason
+     * (for example doesn't exists in the remote repository) */
     INVALID,
+    /** is a local library, present in the local filesystem */
     LOCAL,
-    MAVEN,          // to replace with 'REMOTE'
-    RUNTIME,
+    /** used ONLY for back-compatibility, replaced by 'REMOTE' */
+    MAVEN,
+    /** is a library downloaded from an external library manager */
     REMOTE,
-
-    // LOCAL_JAR,
-    // LOCAL_COLLECTION,
-    // MAVEN_COLLECTION,
-    // MODULE
-    // DESCRIPTOR,
+    /** is a configured runtime library */
+    RUNTIME,
 }
