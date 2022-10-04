@@ -104,9 +104,11 @@ public class Properties extends java.util.Properties {
 
             String name = value.substring(s+2, e);
             String repl = valueOf(name, depth);
+            if (repl != null) {
             value = value.substring(0, s) + repl + value.substring(e+1);
 
             e = s + repl.length();
+        }
         }
         return value;
     }

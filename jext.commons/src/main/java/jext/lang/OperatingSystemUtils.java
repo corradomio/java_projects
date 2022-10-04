@@ -13,4 +13,8 @@ public class OperatingSystemUtils {
         else
             return OperatingSystem.UNKNOWN;
     }
+
+    public static String getPlatform() {
+        return getOperatingSystem().toString().toLowerCase();
+    }
 }
