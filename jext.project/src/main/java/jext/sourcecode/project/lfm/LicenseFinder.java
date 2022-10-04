@@ -12,60 +12,11 @@ import java.util.List;
 
 public class LicenseFinder {
 
-    // ----------------------------------------------------------------------
-    // Factory method
-    // ----------------------------------------------------------------------
-
     public static String findLicense(File libraryDirectory) {
         return new LicenseFinder(libraryDirectory).find();
     }
 
-    // ----------------------------------------------------------------------
-    // Private fields
-    // ----------------------------------------------------------------------
-
-    private static final String LICENSE = "license";
-
-    private static final String[][] LICENSES = {
-        {"Please see ",   "Delegate license"},
-        {"Please refer ", "Delegate license"},
-        {"BSD license", "BSD License"},
-        {"ISC license", "ISC license"},
-        {"SOFTWARE IS PROVIDED 'AS IS'", "BSD License"},
-        {"Mozilla ", "Mozilla License"},
-        {"GNU GENERAL PUBLIC LICENSE", "GNU GPL License"},
-        {"GNU LESSER GENERAL PUBLIC LICENSE", "GNU LGPL License"},
-        {"GNU GPL", "GNU GPL License"},
-        {"GNU LGPL", "GNU LGPL License"},
-        {"MIT License", "MIT License"},
-        {"Terence Parr and Sam Harwell", "BSD License"},
-        {"Version 2.0, January 2004", "Apache License"},
-        {"Apache License", "Apache License"},
-        {"Redistributions of source code must retain", "BSD License"},
-        {"Creative Commons", "Creative Commons License"},
-        {"creativecommons", "Creative Commons License"},
-        {"Python Software Foundation License", "Python License"},
-        {" MIT ", "MIT License"},
-        {" Oracle ", "Oracle License"},
-        {"Artistic License", "Artistic License"},
-        {"HPND License", "HPND License"},
-        {"LICENSE.APACHE", "Apache License"},
-        {"Zope Public License", "Zope Public License"},
-        {"www.apache.org/licenses", "Apache License"}
-    };
-
-    static {
-        for(int i=0; i<LICENSES.length; ++i)
-            LICENSES[i][0] = LICENSES[i][0].toLowerCase();
-    }
-
-    private static final int MAX_LINES = 100;
-
-    private final File directory;
-
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
+    private File directory;
 
     private LicenseFinder(File directory) {
         if (directory.isFile())
@@ -73,12 +24,10 @@ public class LicenseFinder {
         this.directory = directory;
     }
 
-    // ----------------------------------------------------------------------
-    // Operations
-    // ----------------------------------------------------------------------
-
     private String find() {
-        String license = findUsingMavenPom();
+        String license = null;
+        if (license == null)
+            license = findUsingMavenPom();
         if (license == null)
             license = findUsingLicenseFile();
         if (license == null)
@@ -90,7 +39,6 @@ public class LicenseFinder {
     }
 
     private String findUsingMavenPom() {
-        // file "blabla.pom"
         File pomFile = findPomFile();
         if (pomFile == null)
             return null;
@@ -122,10 +70,43 @@ public class LicenseFinder {
             return files[0];
     }
 
-    private String findUsingLicenseFile() {
-        // file "...LICENSE", with of without extension
+    private static String[][] LICENSES = {
+            {"Please see ",   "Delegate license"},
+            {"Please refer ", "Delegate license"},
+            {"BSD license", "BSD License"},
+            {"ISC license", "ISC license"},
+            {"SOFTWARE IS PROVIDED 'AS IS'", "BSD License"},
+            {"Mozilla ", "Mozilla License"},
+            {"GNU GENERAL PUBLIC LICENSE", "GNU GPL License"},
+            {"GNU LESSER GENERAL PUBLIC LICENSE", "GNU LGPL License"},
+            {"GNU GPL", "GNU GPL License"},
+            {"GNU LGPL", "GNU LGPL License"},
+            {"MIT License", "MIT License"},
+            {"Terence Parr and Sam Harwell", "BSD License"},
+            {"Version 2.0, January 2004", "Apache License"},
+            {"Apache License", "Apache License"},
+            {"Redistributions of source code must retain", "BSD License"},
+            {"Creative Commons", "Creative Commons License"},
+            {"creativecommons", "Creative Commons License"},
+            {"Python Software Foundation License", "Python License"},
+            {" MIT ", "MIT License"},
+            {" Oracle ", "Oracle License"},
+            {"Artistic License", "Artistic License"},
+            {"HPND License", "HPND License"},
+            {"LICENSE.APACHE", "Apache License"},
+            {"Zope Public License", "Zope Public License"},
+            {"www.apache.org/licenses", "Apache License"}
+    };
 
-        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().contains(LICENSE));
+    static {
+        for(int i=0; i<LICENSES.length; ++i)
+            LICENSES[i][0] = LICENSES[i][0].toLowerCase();
+    }
+
+    private static final int MAX_LINES = 100;
+
+    private String findUsingLicenseFile() {
+        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().contains("license"));
         if (files == null || files.length == 0)
             return null;
 
@@ -164,8 +145,7 @@ public class LicenseFinder {
     }
 
     private String findUsingLastWord() {
-        //  "bla bla bla license"
-        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().contains(LICENSE));
+        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().contains("license"));
         if (files == null || files.length == 0)
             return null;
 
@@ -177,7 +157,7 @@ public class LicenseFinder {
                     break;
 
                 String lcline = line.trim().toLowerCase();
-                if (lcline.endsWith(LICENSE))
+                if (lcline.endsWith("license"))
                     return line;
 
                 iline += 1;
@@ -186,9 +166,4 @@ public class LicenseFinder {
 
         return null;
     }
-
-    // ----------------------------------------------------------------------
-    // End
-    // ----------------------------------------------------------------------
-
 }

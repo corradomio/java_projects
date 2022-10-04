@@ -1,19 +1,17 @@
 package jext.sourcecode.project.util;
 
-import jext.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibrarySet;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.java.maven.MavenLibrary;
-import jext.util.HashSet;
 import jext.util.SetUtils;
 
 import java.io.File;
 import java.util.AbstractSet;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +25,9 @@ import java.util.stream.Collectors;
  */
 public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
 
-    private static Logger logger = Logger.getLogger(LibrarySetImpl.class);
+    // private static Logger logger = Logger.getLogger(LibrarySetImpl.class);
+
+    private boolean uniqueNames;
 
     private Set<Library> localLibraries = new TreeSet<>();
 
@@ -41,8 +41,8 @@ public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
     //
     // ----------------------------------------------------------------------
 
-    public LibrarySetImpl() {
-
+    public LibrarySetImpl(String language) {
+        this.uniqueNames = language.equals("c#") || language.equals("csharp");
     }
 
     // ----------------------------------------------------------------------
@@ -82,9 +82,24 @@ public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
     @Override
     public Set<File> getLibraryFiles() {
         Set<File> files = new HashSet<>();
-        getUsedLibraries().forEach(library -> {
-            files.addAll(library.getFiles());
-        });
+        if (uniqueNames) {
+            Set<String> names = new java.util.HashSet<>();
+            getUsedLibraries().forEach(library -> {
+                library.getFiles().forEach(file -> {
+                    String name = file.getName();
+                    if (names.contains(name))
+                        return;
+
+                    names.add(name);
+                    files.add(file);
+                });
+            });
+        }
+        else {
+            getUsedLibraries().forEach(library -> {
+                files.addAll(library.getFiles());
+            });
+        }
         return files;
     }
 
@@ -191,20 +206,14 @@ public class LibrarySetImpl extends AbstractSet<Library> implements LibrarySet {
     }
 
     @Override
-    public void checkArtifacts(LibraryDownloader md, boolean parallel) {
+    public void checkArtifacts(LibraryDownloader downloader, boolean parallel) {
         List<MavenCoords> artifacts = highestLibraries
             .values()
             .stream()
             .map(library -> MavenCoords.of(library.getName().getFullName()))
             .collect(Collectors.toList());
 
-        //if (parallel) {
-        //    (new Thread(() -> md.checkArtifacts(artifacts, parallel))).start();
-        //}
-        //else
-        {
-            md.checkArtifacts(artifacts, parallel);
-        }
+        downloader.checkArtifacts(artifacts, parallel);
     }
 
 }

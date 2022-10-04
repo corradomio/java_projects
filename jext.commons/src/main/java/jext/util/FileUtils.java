@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -93,10 +94,6 @@ public class FileUtils {
     // Digest
     // ----------------------------------------------------------------------
 
-    private static MessageDigest algorithm() throws NoSuchAlgorithmException {
-        return MessageDigest.getInstance("MD5");
-    }
-
     public static long digestAsLong(File file) {
         if (!file.exists() || !file.isFile())
             return 0;
@@ -112,19 +109,23 @@ public class FileUtils {
         }
     }
 
-    private static final String NO_DIGEST = "0";
-
     public static String digest(File file) {
         return LongHash.toString(digestAsLong(file));
     }
 
-    public static  String digest(List<File> files) {
+    public static String digest(List<File> files) {
         long[] digest = new long[1];
         files.forEach(file -> {
             long fdigest = digestAsLong(file);
             digest[0] = digest[0]*31 + fdigest;
         });
         return LongHash.toString(digest[0]);
+    }
+
+    // ----------------------------------------------------------------------
+
+    private static MessageDigest algorithm() throws NoSuchAlgorithmException {
+        return MessageDigest.getInstance("MD5");
     }
 
     private static void update(MessageDigest md, File file) throws IOException {
@@ -168,7 +169,7 @@ public class FileUtils {
     }
 
     /**
-     * File extension
+     * File extension (with '.')
      */
     public static String getExtension(File file) {
         String name = file.getName();
@@ -198,7 +199,7 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // File/directory empty
     // ----------------------------------------------------------------------
 
     /**
@@ -218,7 +219,7 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Absolute path
     // ----------------------------------------------------------------------
 
     /**
@@ -253,6 +254,10 @@ public class FileUtils {
             .collect(Collectors.toList());
     }
 
+    // ----------------------------------------------------------------------
+    // Safe toFile
+    // ----------------------------------------------------------------------
+
     public static File toFile(String path) {
         if (path == null)
             return null;
@@ -265,12 +270,11 @@ public class FileUtils {
             return Collections.emptyList();
         else
             return paths.stream()
+                .filter(Objects::nonNull)
                 .map(File::new)
                 .collect(Collectors.toList());
     }
 
-    // ----------------------------------------------------------------------
-    //
     // ----------------------------------------------------------------------
 
     /**
@@ -299,7 +303,7 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
-    //
+    // Relative path
     // ----------------------------------------------------------------------
 
     /**
@@ -354,7 +358,7 @@ public class FileUtils {
     }
 
     // ----------------------------------------------------------------------
-    // addAll/deleteAll
+    // Delete files
     // ----------------------------------------------------------------------
 
     public static void delete(File file) {
@@ -382,13 +386,15 @@ public class FileUtils {
         if (file.isDirectory()) {
             // delete the files
             File[] children = file.listFiles(File::isFile);
-            if (children != null) for(File child : children)
-                deleteAll(child);
+            if (children != null)
+                for(File child : children)
+                    deleteAll(child);
 
             // delete the subdirectories
             File[] subdirs = file.listFiles(File::isDirectory);
-            if (subdirs != null) for (File subd : subdirs)
-                deleteAll(subd);
+            if (subdirs != null)
+                for (File subd : subdirs)
+                    deleteAll(subd);
         }
 
         if (file.isDirectory() && !isEmpty(file))
@@ -483,7 +489,7 @@ public class FileUtils {
     // ----------------------------------------------------------------------
 
     public static boolean isParent(File parent, File path) {
-        return getAbsolutePath(parent).startsWith(getAbsolutePath(parent));
+        return getAbsolutePath(parent).startsWith(getAbsolutePath(path));
     }
 
     // ----------------------------------------------------------------------
@@ -756,4 +762,25 @@ public class FileUtils {
         for (File sdir : sdirs)
             delete(new File(sourceFile, sdir.getName()), sdir, exclude);
     }
+
+    // ----------------------------------------------------------------------
+    // findFile
+    // ----------------------------------------------------------------------
+
+    public static File findFile(File directory, String ext) {
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(ext));
+        if (files == null || files.length == 0)
+            return null;
+        if (files.length > 1)
+            // in theory it is necessary to log
+            return files[0];
+        else
+            return files[0];
+    }
+
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

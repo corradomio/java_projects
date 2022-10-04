@@ -71,6 +71,15 @@ public abstract class InfoLibrary extends NamedObject implements Library {
             setNameWithId(this.name);
     }
 
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Project getProject() {
+        return project;
+    }
+
     @Override
     public String getLanguage() {
         return MapUtils.get(info, "language");
@@ -82,16 +91,6 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     }
 
     @Override
-    public Project getProject() {
-        return project;
-    }
-
-    // @Override
-    // public Module getModule() {
-    //     return module;
-    // }
-
-    @Override
     public LibraryType getLibraryType() {
         return libraryType;
     }
@@ -101,10 +100,16 @@ public abstract class InfoLibrary extends NamedObject implements Library {
         return LibraryStatus.VALID;
     }
 
-    // @Override
-    // public String getDigest() {
-    //     return MapUtils.getString(info, "digest");
-    // }
+    @Override
+    public boolean isValid() {
+        File file = getFile();
+        return file != null && file.exists()
+                && getFiles().stream().allMatch(File::exists);
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties: files & path
+    // ----------------------------------------------------------------------
 
     @Override
     public String getPath() {
@@ -134,12 +139,19 @@ public abstract class InfoLibrary extends NamedObject implements Library {
         return FileUtils.toFiles(MapUtils.get(info, "files"));
     }
 
-    @Override
-    public boolean isValid() {
-        File file = getFile();
-        return file != null && file.exists()
-            && getFiles().stream().allMatch(File::exists);
+    // ----------------------------------------------------------------------
+    // Dependencies
+    // ----------------------------------------------------------------------
+
+    public Set<Library> getDependencies() {
+        // all dependencies are already resolved when the libraries
+        // are collected during the project structure analysis
+        return Collections.emptySet();
     }
+
+    // ----------------------------------------------------------------------
+    // Type support
+    // ----------------------------------------------------------------------
 
     @Override
     public Set<RefType> getTypes() {
@@ -151,8 +163,16 @@ public abstract class InfoLibrary extends NamedObject implements Library {
         return false;
     }
 
+    // ----------------------------------------------------------------------
+    // Comparator
+    // ----------------------------------------------------------------------
+
     @Override
     public int compareTo(Named o) {
         return getName().compareTo(o.getName());
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 }

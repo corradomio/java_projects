@@ -289,7 +289,7 @@ public class JavaBaseModule extends BaseModule {
 
         coordList
             .stream()
-            .map(coords -> new MavenLibrary(coords, md, project))
+            .map(coords -> new MavenLibrary(coords, md).project(project))
             .forEach(collectedLibraries::add);
     }
 
@@ -310,7 +310,7 @@ public class JavaBaseModule extends BaseModule {
         MavenDownloader md = (MavenDownloader) project.getLibraryDownloader();
 
         coordList.stream()
-            .map(lcoords -> new MavenLibrary(lcoords, md, project))
+            .map(lcoords -> new MavenLibrary(lcoords, md).project(project))
             .forEach(collectedLibraries::add);
     }
 
@@ -325,7 +325,7 @@ public class JavaBaseModule extends BaseModule {
             return;
 
         mavenPom.getDependencyCoords().stream()
-            .map(coords -> new MavenLibrary(coords, md, project))
+            .map(coords -> new MavenLibrary(coords, md).project(project))
             .forEach(collectedLibraries::add);
     }
 

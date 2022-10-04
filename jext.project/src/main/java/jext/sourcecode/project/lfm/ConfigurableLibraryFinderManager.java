@@ -57,9 +57,9 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
 
     protected Logger logger = Logger.getLogger(getClass());
 
-    protected HierarchicalConfiguration mainconfig;
-    protected HierarchicalConfiguration configuration;
-    protected Map<String, LibraryFinder> lfinders = new HashMap<>();
+    private File configurationFile;
+    private HierarchicalConfiguration configuration;
+    private Map<String, LibraryFinder> lfinders = new HashMap<>();
     private long lastModified = 0;
 
     // ----------------------------------------------------------------------
@@ -99,8 +99,10 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
     // ----------------------------------------------------------------------
 
     public void configure(Configuration configuration) {
-        this.mainconfig = (HierarchicalConfiguration) configuration;
-        this.configuration = mainconfig;
+        this.configurationFile = configuration.getFile();
+        this.configuration = (HierarchicalConfiguration) configuration;
+
+        replaceConfiguration();
 
         logger.info("configure");
 
@@ -109,22 +111,26 @@ public class ConfigurableLibraryFinderManager implements LibraryFinderManager {
         logger.info("done");
     }
 
-    private void reloadConfiguration() {
-        String path = this.mainconfig.getString("@path", "");
-        if (path.isEmpty())
+
+    private void replaceConfiguration() {
+        String path = this.configuration.getString("@path", "");
+        if (path.isEmpty()  || path.equals("."))
             return;
 
         // compose the path of the new configuration file
-        File configurationFile = mainconfig.getFile();
-        // new configuration file
-        configurationFile = FileUtils.toFile(configurationFile.getParentFile(), path);
+        File newConfigurationFile = FileUtils.toFile(configuration.getFile().getParentFile(), path);
 
         // if the fole doesn't exist -> exit
-        if (!configurationFile.exists() || !configurationFile.isFile()) {
-            if (!path.equals("."))
+        if (!newConfigurationFile.exists() || !newConfigurationFile.isFile()) {
                 logger.errorf("Configuration file '%s' not existent.", FileUtils.getAbsolutePath(configurationFile));
             return;
         }
+
+        this.configurationFile = newConfigurationFile;
+    }
+
+
+    private void reloadConfiguration() {
 
         // if the file timestamp is the same -> exit
         if (lastModified == configurationFile.lastModified())

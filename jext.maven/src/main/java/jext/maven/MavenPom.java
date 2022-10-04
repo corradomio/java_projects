@@ -22,21 +22,6 @@ import static jext.maven.MavenCoords.isPattern;
 import static jext.maven.MavenCoords.isRange;
 import static jext.maven.MavenCoords.isValid;
 
-/*
-    <project>
-      <modelVersion>4.0.0</modelVersion>
-      <groupId>com.bea.wlplatform</groupId>
-      <artifactId>commonj-twm</artifactId>
-      <version>1.1</version>
-      <name>Timer and Work Manager for Application Servers</name>
-      <url>http://dev2dev.bea.com/wlplatform/commonj/twm.html</url>
-      <distributionManagement>
-        <downloadUrl>http://ftpna2.bea.com/pub/downloads/commonj/commonj-twm.jar</downloadUrl>
-      </distributionManagement>
-    </project>
-
- */
-
 public class MavenPom implements MavenConst {
 
     // ----------------------------------------------------------------------
@@ -71,7 +56,7 @@ public class MavenPom implements MavenConst {
 
     private MavenDownloader md;
 
-    private static Logger logger = Logger.getLogger(MavenDownloader.class);
+    private static final Logger logger = Logger.getLogger(MavenDownloader.class);
     private File pomFile;
     private Element project;
 
@@ -174,13 +159,6 @@ public class MavenPom implements MavenConst {
     }
 
     // ----------------------------------------------------------------------
-
-    // public MavenPom setDownloader(MavenDownloader downloader) {
-    //     this.downloader = downloader;
-    //     return this;
-    // }
-
-    // ----------------------------------------------------------------------
     // Predicates
     // ----------------------------------------------------------------------
 
@@ -197,14 +175,9 @@ public class MavenPom implements MavenConst {
         // root XML node is not <project>
         if (!PROJECT.equals(project.getNodeName()))
             return false;
-
-        return true;
+        else
+            return true;
     }
-
-    // /** Check if '.pom' file exists */
-    // public boolean exists() {
-    //     return pomFile.exists();
-    // }
 
     /** Check if '[relocation]' exists */
     public boolean isRelocated() {
@@ -519,19 +492,13 @@ public class MavenPom implements MavenConst {
         </project>
      */
     public List<MavenCoords> getDependencyCoords() {
-        // try {
-            return getDependencies()
-                .stream()
-                .map(dep -> dep.coords)
-                .collect(Collectors.toList());
-        // }
-        // catch (Throwable t) {
-        //     logger.error(pomFile.toString() + ": " + t, t);
-        //     return Collections.emptyList();
-        // }
+        return getDependencies()
+            .stream()
+            .map(dep -> dep.coords)
+            .collect(Collectors.toList());
     }
 
-    public List<MavenDependency> getDependencies() {
+    public Set<MavenDependency> getDependencies() {
         return getDependencies(DEPENDENCIES);
     }
 
@@ -552,27 +519,28 @@ public class MavenPom implements MavenConst {
 
         </project>
      */
-    public List<MavenDependency> getComponents() {
+    public Set<MavenDependency> getComponents() {
         return getDependencies(DM_DEPENDENCIES);
     }
 
-    private List<MavenDependency> getDependencies(String xpath) {
+    private Set<MavenDependency> getDependencies(String xpath) {
 
-        List<MavenDependency> depList = new ArrayList<>();
+        Set<MavenDependency> depList = new HashSet<>();
         Properties props = getProperties();
         MavenCoords coords = getCoords();
+        MavenCoords parentCoords = getParentCoords();
         XPathUtils.selectElements(project, xpath)
             .forEach(dep -> {
-                boolean optional = XPathUtils.getValue(dep, OPTIONAL, false, props);
-                String scope = XPathUtils.getValue(dep, SCOPE, SCOPE_COMPILE);
-                boolean scoped = !SCOPE_COMPILE.equals(scope) && !SCOPE_PROVIDED.equals(scope) && !SCOPE_TEST.equals(scope);
-
-                if (optional || scoped)
-                    return;
-
                 String gid = XPathUtils.getValue(dep, GROUP_ID, coords.groupId, props);
                 String aid = XPathUtils.getValue(dep, ARTIFACT_ID, coords.artifactId, props);
                 String v = XPathUtils.getValue(dep, VERSION, NONE, props);
+
+                boolean optional = XPathUtils.getValue(dep, OPTIONAL, false, props);
+                String scope = XPathUtils.getValue(dep, SCOPE, SCOPE_COMPILE);
+                boolean unused = !SCOPE_COMPILE.equals(scope) && !SCOPE_PROVIDED.equals(scope) && !SCOPE_TEST.equals(scope);
+
+                if (optional || unused)
+                    return;
 
                 String category = String.format("%s:%s", gid, aid);
 

@@ -9,8 +9,14 @@ import java.util.Set;
 
 public interface Library extends IdNamed {
 
-    String getId();
-    Name getName();
+    // String getId();
+    // Name   getName();
+
+    /** Library version defined in module configuration */
+    String getVersion();
+
+    /** Project owner of this library */
+    Project getProject();
 
     /**
      * Check if the library is valid, that is the list of files
@@ -18,20 +24,34 @@ public interface Library extends IdNamed {
      */
     boolean isValid();
 
-    /** Project owner of this library */
-    Project getProject();
-
-    // /**
-    //  * Module owner of this library.
-    //  * It is null for runtime libraries and maven libraries because
-    //  * these libraries are shared between multiple modules
-    //  */
-    // Module getModule();
-
-    /** Library type */
+    /**
+     * Library type:
+     *
+     *      INVALID     the library is invalid for some reason
+     *      RUNTIME     is a configured runtime library
+     *      LOCAL       is a local library, present in the local filesystem
+     *      REMOTE      is a library downloaded from an external library manager
+     *
+     */
     LibraryType getLibraryType();
 
-    /** Library status */
+    /**
+     * Library status
+     *
+     *      UNUSED      library declared but not used because the same library is
+     *                  present with a higher version number
+     *      VALID       library with the latest version number
+     *      UPGRADEABLE library with version A.B.C but there exists a new library with
+     *                  version A.B.D or A.C
+     *      OBSOLETE    library with version A.B.C but there exists a new library with
+     *                  version B.X.Y
+     *      INCONSISTENT  the latest library version has a version number lower than the
+     *                  current library
+     *      NOTEXISTENT the library doesn't exist in the external repository
+     *
+     *      LATEST_VERSION_NOT_AVAILABLE
+     *                  it is not possible to retrieve the library latest version
+     */
     LibraryStatus getLibraryStatus();
 
     /** Programming language where the library can be used */
@@ -40,20 +60,36 @@ public interface Library extends IdNamed {
     /** File path where the library is saved */
     String getPath();
 
-    ///** An hash code of the file */
-    // String getDigest();
-
-    /** Local library file. For MAVEN libraries, it is the ".pom" file */
+    /**
+     * Local library file.
+     * For MAVEN libraries, it is the ".pom" file
+     * For other libraries, it is the directory containing the compressed &
+     * expanded version of the library file
+     */
     File getFile();
 
     /**
      * List of file composing this library.
-     * MAVEN libraries with "pom" packaging and "runtime" libraries
+     * In general it is composed by a single file but for
+     * MAVEN libraries with "pom" packaging or C#/Python libraries
+     * it can be a list of files
      * are composed by 1+ files
      */
     List<File> getFiles();
 
-    // -- type
+    // -----------------------------------------------------------
+    // Library dependencies
+    // -----------------------------------------------------------
+
+    /**
+     * Retrieve the list of dependencies
+     * @return list of other libraries necessary to use this library
+     */
+    Set<Library> getDependencies();
+
+    // -----------------------------------------------------------
+    // Type support for library dependency resolution
+    // -----------------------------------------------------------
 
     /**
      * List of types defined in the library
@@ -71,11 +107,5 @@ public interface Library extends IdNamed {
      * @return true if the type is present in the library
      */
     boolean contains(Name typeName);
-
-    // -----------------------------------------------------------
-    // Versions
-
-    /** Library version defined in module configuration */
-    String getVersion();
 
 }

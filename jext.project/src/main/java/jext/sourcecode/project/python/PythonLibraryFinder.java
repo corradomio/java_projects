@@ -99,14 +99,7 @@ public class PythonLibraryFinder implements LibraryFinder {
 
     @Override
     public Library getLibrary(MavenCoords coords) {
-        // [downloadDir]/<artifactId>/<version>
-        String relativePath = String.format(
-                "%s/%s",
-                coords.artifactId,
-                coords.version);
-
-        File libraryDirectory = new File(downloader.getDownloadDirectory(), relativePath);
-        return new PyPiLibrary(coords, libraryDirectory);
+        return new PyPiLibrary(coords, downloader);
     }
 
     @Override
@@ -150,23 +143,27 @@ public class PythonLibraryFinder implements LibraryFinder {
         return selectedLibrary;
     }
 
+    private static final String PY = "py";
+    private static final String PYTHON = "python";
+    private static final String DOT = ".";
+
     public static String libraryVersion(String libraryName) {
         String version = libraryName;
-        if (!version.startsWith("py"))
+        if (!version.startsWith(PY))
             return "";
         // python3.8
-        if (version.startsWith("python"))
-            version = version.substring("python".length());
-        if (version.startsWith("py"))
-            version = version.substring("py".length());
+        if (version.startsWith(PYTHON))
+            version = version.substring(PYTHON.length());
+        if (version.startsWith(PY))
+            version = version.substring(PY.length());
         // 38
         // 3.8
-        if (version.contains(".") || version.length() == 1)
+        if (version.contains(DOT) || version.length() == 1)
             return version;
-        if (version.startsWith("3"))
-            return version.charAt(0) + "." + version.substring(1);
+        if (version.length() == 2)
+            return version.charAt(0) + DOT + version.substring(1);
         else
-            return version;
+            return version.charAt(0) + DOT + version.charAt(1) + DOT + version.substring(2);
     }
 
     private Library selectDefaultRuntimeLibrary(String libraryName) {

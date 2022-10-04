@@ -361,7 +361,7 @@ public class GradleProject extends JavaBaseProject {
 
         LibraryDownloader md = getLibraryDownloader();
 
-        LibrarySetImpl libraries = new LibrarySetImpl();
+        LibrarySetImpl libraries = new LibrarySetImpl(getLanguage());
         for (String configurationName : VALID_CONFIGURATIONS) {
 
             Set<String> moduleLibraries = depsCollector.getMavenLibraries(moduleName, configurationName);
@@ -369,7 +369,7 @@ public class GradleProject extends JavaBaseProject {
             moduleLibraries
                 .stream()
                 .map(MavenCoords::of)
-                .map(coords -> new MavenLibrary(coords, (MavenDownloader)md, this))
+                .map(coords -> new MavenLibrary(coords, (MavenDownloader)md).project(this))
                 .forEach(libraries::add);
         }
 

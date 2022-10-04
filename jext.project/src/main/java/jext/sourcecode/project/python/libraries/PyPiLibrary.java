@@ -3,6 +3,7 @@ package jext.sourcecode.project.python.libraries;
 import jext.maven.MavenCoords;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.java.maven.MavenName;
+import jext.sourcecode.project.python.PyPiDownloader;
 
 import java.io.File;
 import java.util.Arrays;
@@ -18,24 +19,33 @@ public class PyPiLibrary extends PythonLibrary {
     // ----------------------------------------------------------------------
 
     private MavenCoords coords;
+    private PyPiDownloader downloader;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public PyPiLibrary(MavenCoords coords, File libraryDirectory) {
+    public PyPiLibrary(MavenCoords coords, PyPiDownloader downloader) {
         super(MavenName.of(coords));
         this.version = coords.version;
-        this.libraryFile = libraryDirectory;
+        this.libraryFile = downloader.getLibraryFile(coords);
         this.libraryType = LibraryType.REMOTE;
         this.coords = coords;
+        this.downloader = downloader;
     }
 
     @Override
     public List<File> getFiles() {
-        if (libraryFiles == null)
+        if (libraryFiles == null) {
+            download();
             populate();
+        }
         return libraryFiles;
+    }
+
+    private void download() {
+        if (!libraryFile.exists())
+            downloader.checkArtifact(coords);
     }
 
     private void populate() {

@@ -9,6 +9,7 @@ import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
+import jext.sourcecode.project.java.maven.MavenLibrary;
 import jext.util.FileUtils;
 import jext.util.StringUtils;
 
@@ -48,14 +49,6 @@ public abstract class BaseLibrary extends NamedObject implements Library {
 
         this.logger = Logger.getLogger(getClass(), libraryName.toString());
     }
-
-    // protected BaseLibrary(Name libraryName, Project project) {
-    //     super(libraryName);
-    //
-    //     this.project = project;
-    //
-    //     this.logger = Logger.getLogger(getClass(), libraryName.toString());
-    // }
 
     // ----------------------------------------------------------------------
     // Version
@@ -99,6 +92,20 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     @Override
     public LibraryStatus getLibraryStatus() {
         return LibraryStatus.VALID;
+    }
+
+    @Override
+    public Set<Library> getDependencies() {
+        return Collections.emptySet();
+    }
+
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    public Library project(Project project) {
+        this.project = project;
+        return this;
     }
 
     // ----------------------------------------------------------------------

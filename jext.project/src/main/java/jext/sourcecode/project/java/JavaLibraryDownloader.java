@@ -40,6 +40,11 @@ public class JavaLibraryDownloader extends MavenDownloader implements LibraryDow
     }
 
     @Override
+    public void checkArtifact(MavenCoords artifact) {
+        super.checkArtifact(artifact);
+    }
+
+    @Override
     public String getLatestVersion(MavenCoords coords) {
         return super.getLatestVersion(coords);
     }

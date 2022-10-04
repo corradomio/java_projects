@@ -173,6 +173,22 @@ public class NuGetDownloader implements LibraryDownloader {
     // Operations
     // ----------------------------------------------------------------------
 
+    public File getDownloadDirectory(MavenCoords coords) {
+        // [downloadDir]/<artifactId>/<version>
+        String relativePath = String.format(
+                "%s/%s",
+                coords.artifactId.toLowerCase(),
+                coords.version.toLowerCase());
+
+        File libraryDirectory = new File(downloadDirectory, relativePath);
+        return libraryDirectory;
+    }
+
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
     @Override
     public void checkArtifacts(Collection<MavenCoords> artifacts, boolean parallel) {
 
@@ -184,6 +200,11 @@ public class NuGetDownloader implements LibraryDownloader {
                 artifacts.forEach(this::downloadArtifact);
             })).start();
         }
+    }
+
+    @Override
+    public void checkArtifact(MavenCoords artifact) {
+        downloadArtifact(artifact);
     }
 
     @Override

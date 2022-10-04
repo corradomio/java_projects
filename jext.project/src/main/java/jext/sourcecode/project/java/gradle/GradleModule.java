@@ -222,7 +222,7 @@ public class GradleModule extends JavaBaseModule {
         dcoords = coords
             .stream()
             .sorted()
-            .map(dcoords -> new MavenLibrary(dcoords, (MavenDownloader)md, project))
+            .map(dcoords -> new MavenLibrary(dcoords, (MavenDownloader)md).project(project))
             .collect(Collectors.toList());
     }
 

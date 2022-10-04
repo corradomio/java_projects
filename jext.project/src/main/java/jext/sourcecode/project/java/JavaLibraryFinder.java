@@ -225,7 +225,7 @@ public class JavaLibraryFinder implements LibraryFinder {
             if (mavenLibraries.containsKey(coords))
                 return mavenLibraries.get(coords);
 
-            Library library = new MavenLibrary(coords, downloader, project);
+            Library library = new MavenLibrary(coords, downloader).project(project);
             mavenLibraries.put(coords, library);
             libraries.put(library.getName(), library);
             return library;

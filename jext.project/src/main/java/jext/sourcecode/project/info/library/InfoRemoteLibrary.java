@@ -17,6 +17,10 @@ public class InfoRemoteLibrary extends InfoLibrary {
     protected MavenCoords coords;
     protected LibraryDownloader md;
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     public InfoRemoteLibrary(InfoProject project, Map<String, Object> info) {
         super(project, LibraryType.REMOTE, info);
         String coords = MapUtils.get(info,"fullname");
@@ -24,6 +28,10 @@ public class InfoRemoteLibrary extends InfoLibrary {
         setNameWithId(MavenName.of(coords));
         this.md = project.getLibraryDownloader();
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public LibraryStatus getLibraryStatus() {
@@ -65,5 +73,9 @@ public class InfoRemoteLibrary extends InfoLibrary {
         else
             return pomFile;
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

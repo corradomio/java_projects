@@ -79,8 +79,9 @@ public class CSharpRuntimeLibrary extends CSharpLibrary {
 
     @Override
     public List<File> getFiles() {
-        if (libraryFiles == null)
+        if (libraryFiles == null) {
             populate();
+        }
         return libraryFiles;
     }
 

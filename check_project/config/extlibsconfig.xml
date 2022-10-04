@@ -13,7 +13,7 @@
         <property name="dotnet-home"  value="${rtlibs}/dotnet"/>
     </properties>
 
-    <extlibsManager path=".">
+    <extlibsManager path="">
 
         <language name="java">
 

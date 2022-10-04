@@ -21,7 +21,7 @@ public class NamedObject implements IdNamed {
 
     public void setNameWithId(Name name) {
         this.name = name;
-        this.id = Integer.toHexString(this.name.hashCode());
+        setIdFromName();
     }
 
     public void setIdFromName() {

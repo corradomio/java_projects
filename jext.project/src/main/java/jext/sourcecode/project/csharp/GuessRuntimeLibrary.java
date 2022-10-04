@@ -18,7 +18,7 @@ import java.util.Optional;
 public class GuessRuntimeLibrary {
 
     public static final String NO_RUNTIME_LIBRARY = "";
-    public static final String DEFAULT_RUNTIME_LIBRARY = ".NET 6.0";
+    public static final String DEFAULT_RUNTIME_LIBRARY = "net6.0";
 
     /*
         C# 1.0          .NET Framework 1.0
@@ -113,7 +113,21 @@ public class GuessRuntimeLibrary {
                 List<Element> propertyGroups = XPathUtils.selectElements(project, "PropertyGroup");
                 for (Element propertyGroup : propertyGroups) {
                     String languageVersion = XPathUtils.getValue(propertyGroup, "LangVersion", null);
-                    String targetFrameworks = XPathUtils.getValue(propertyGroup, "TargetFrameworks", null);
+
+                    // there are 2 possibilities:
+                    //
+                    //  <TargetFramework>tf1</>
+                    //
+                    // OR
+                    //
+                    //  <TargetFrameworks>tf1;tf2;...</>
+                    //
+
+                    // single framework
+                    String targetFrameworks = XPathUtils.getValue(propertyGroup, "TargetFramework", null);
+                    // multiple frameworks
+                    if (targetFrameworks == null)
+                        targetFrameworks = XPathUtils.getValue(propertyGroup, "TargetFrameworks", null);
 
                     String runtimeName = selectRuntime(languageVersion, targetFrameworks);
                     if (runtimeName != null)

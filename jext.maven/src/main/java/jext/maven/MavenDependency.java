@@ -16,7 +16,6 @@ public class MavenDependency implements Comparable<MavenDependency>, MavenConst 
 
     public MavenCoords coords;
     public final String scope;
-    public final String noVersion;
 
     // ----------------------------------------------------------------------
     // Constructors
@@ -29,21 +28,14 @@ public class MavenDependency implements Comparable<MavenDependency>, MavenConst 
     public MavenDependency(MavenCoords coords, String scope) {
         this.coords = coords;
         this.scope = scope;
-        this.noVersion = String.format("%s:%s", coords.groupId, coords.artifactId);
     }
-
-    // public MavenDependency(String gid, String aid, String v, String scope) {
-    //     this.coords = new MavenCoords(gid, aid, v);
-    //     this.scope = scope;
-    //     this.noVersion = String.format("%s:%s", gid, aid);
-    // }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
     /** Check if the scope is 'compile' */
-    public boolean scopeCompile() {
+    public boolean isCompile() {
         return SCOPE_COMPILE.equals(scope);
     }
 
@@ -58,17 +50,26 @@ public class MavenDependency implements Comparable<MavenDependency>, MavenConst 
 
     @Override
     public int compareTo(MavenDependency that) {
-        return noVersion.compareTo(that.noVersion);
+        int cmp = this.coords.groupId.compareTo(that.coords.groupId);
+        if (cmp == 0)
+            cmp = this.coords.artifactId.compareTo(that.coords.artifactId);
+        return cmp;
     }
 
     @Override
     public int hashCode() {
-        return noVersion.hashCode();
+        return this.coords.groupId.hashCode()*31 + this.coords.artifactId.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         MavenDependency that = (MavenDependency) obj;
-        return noVersion.equals(that.noVersion);
+        return this.coords.groupId.equals(that.coords.groupId)
+            && this.coords.artifactId.equals(that.coords.artifactId);
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

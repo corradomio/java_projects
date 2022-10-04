@@ -25,14 +25,10 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
     // Constants
     // ----------------------------------------------------------------------
 
-    public static ReferencedType VOID;
-    public static ReferencedType NULL;
-    public static ReferencedType JAVA_LANG_VOID;
-    public static ReferencedType JAVA_LANG_OBJECT;
-
-    //private static List<TypeParam> NO_TYPE_PARAMS = Collections.emptyList();;
-    //private static List<TypeParam> ONE_TYPE_PARAM = Arrays.asList(new TypeParamImpl("T"));
-    //private static List<TypeParam> TWO_TYPE_PARAMS = Arrays.asList(new TypeParamImpl("T1"), new TypeParamImpl("T2"));
+    public static final ReferencedType VOID;
+    public static final ReferencedType NULL;
+    public static final ReferencedType JAVA_LANG_VOID;
+    public static final ReferencedType JAVA_LANG_OBJECT;
 
     // ----------------------------------------------------------------------
     // Static fields
@@ -223,52 +219,10 @@ public class ReferencedType extends NamedObject implements RefType, JavaConstant
         return library;
     }
 
-    // @Override
-    // public String getLibraryId() {
-    //     if (library != null)
-    //         return library.getId();
-    //     else
-    //         return null;
-    // }
-
     @Override
     public Project getProject() {
         return library.getProject();
     }
-
-    // @Override
-    // public boolean isTemplateType() {
-    //     return nTypeParams > 0;
-    // }
-
-    // @Override
-    // public List<RefType> getTypeParameters() {
-    //     switch (nTypeParams) {
-    //         case 0:
-    //             return NO_TYPE_PARAMS;
-    //         case 1:
-    //             return ONE_TYPE_PARAM;
-    //         case 2:
-    //             return TWO_TYPE_PARAMS;
-    //         default:
-    //             List<RefType> typeParams = new ArrayList<>();
-    //             for (int i=0; i<nTypeParams; ++i)
-    //                 typeParams.add(JAVA_LANG_OBJECT);
-    //             return typeParams;
-    //     }
-    // }
-
-    // --
-
-    // @Override
-    // public boolean isArrayType() {
-    //     return false;
-    // }
-
-    // @Override
-    // public int getRank() {
-    //     return 0;
-    // }
 
     // ----------------------------------------------------------------------
     // Implementation

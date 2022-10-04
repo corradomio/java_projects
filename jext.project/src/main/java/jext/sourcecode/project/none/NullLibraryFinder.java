@@ -41,6 +41,12 @@ public class NullLibraryFinder implements LibraryFinder {
         }
 
         @Override
+        public void checkArtifact(MavenCoords artifact) {
+
+        }
+
+
+        @Override
         public String getLatestVersion(MavenCoords coords) {
             return coords.version;
         }

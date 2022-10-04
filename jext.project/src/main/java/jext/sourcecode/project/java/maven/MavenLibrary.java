@@ -16,9 +16,11 @@ import jext.sourcecode.project.java.types.ReferencedType;
 import jext.util.JarUtils;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MavenLibrary extends JavaLibrary {
 
@@ -27,26 +29,20 @@ public class MavenLibrary extends JavaLibrary {
     // ----------------------------------------------------------------------
 
     protected MavenCoords coords;
-    protected MavenDownloader md;
-
-    protected List<Library> dependencies;
-
-    private static final int MAX_DEPTH = 3;
+    protected MavenDownloader downloader;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public MavenLibrary(MavenCoords coords, MavenDownloader md, Project project) {
+    public MavenLibrary(MavenCoords coords, MavenDownloader downloader) {
         super(MavenName.of(coords));
 
         this.coords = coords;
-        this.md = md;
-        this.libraryFile = md.getPomFile(coords);
+        this.downloader = downloader;
+        this.libraryFile = downloader.getPomFile(coords);
         this.libraryType = LibraryType.REMOTE;
         this.version = coords.version;
-
-        this.project = project;
     }
 
     // ----------------------------------------------------------------------
@@ -60,7 +56,7 @@ public class MavenLibrary extends JavaLibrary {
             return LibraryStatus.NOTEXISTENT;
 
         Version currentVersion = Version.of(getVersion());
-        Version latestVersion = Version.of(md.getLatestVersion(this.coords));
+        Version latestVersion  = Version.of(downloader.getLatestVersion(this.coords));
         // the latest version does't exists
         if (latestVersion.isEmpty() && !currentVersion.isEmpty())
             return LibraryStatus.LATEST_VERSION_NOT_AVAILABLE;
@@ -91,13 +87,37 @@ public class MavenLibrary extends JavaLibrary {
     }
 
     @Override
+    public String getPath() {
+        return coords.toString();
+    }
+
+    // ----------------------------------------------------------------------
+    // Dependencies
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Set<Library> getDependencies() {
+        Set<MavenCoords> deplibs = downloader.getDependencies(coords, 0);
+        downloader.checkArtifacts(deplibs, true);
+
+        return deplibs.stream()
+                .map(dcoords -> new MavenLibrary(dcoords, downloader).project(project))
+                .collect(Collectors.toSet());
+    }
+
+    // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    @Override
     public synchronized boolean contains(Name typeName) {
         if (definedTypes.contains(typeName))
             return true;
         if (undefinedTypes.contains(typeName))
             return false;
 
-        checkFilesNoSync();
+        populate();
+
         for (File jarFile : libraryFiles) {
             if (JarUtils.containsClass(jarFile, typeName.toString())) {
                 definedTypes.add(typeName);
@@ -109,23 +129,6 @@ public class MavenLibrary extends JavaLibrary {
             return false;
         }
     }
-
-    @Override
-    public String getPath() {
-        return coords.toString();
-    }
-
-    // ----------------------------------------------------------------------
-    // Dependencies
-    // ----------------------------------------------------------------------
-
-    private List<MavenCoords> getDependencies(MavenCoords coords) {
-        return md.getDependencies(coords, MAX_DEPTH);
-    }
-
-    // ----------------------------------------------------------------------
-    // Types
-    // ----------------------------------------------------------------------
 
     @Override
     public Set<RefType> getTypes() {
@@ -151,19 +154,20 @@ public class MavenLibrary extends JavaLibrary {
 
     @Override
     public synchronized List<File> getFiles() {
-        checkFilesNoSync();
+        if (libraryFiles == null) {
+            download();
+            populate();
+        }
         return libraryFiles;
     }
 
-    // ----------------------------------------------------------------------
-    // Implementation
-    // ----------------------------------------------------------------------
+    private void download() {
+        if (!libraryFile.exists())
+            downloader.checkArtifact(coords);
+    }
 
-    private void checkFilesNoSync() {
-        if (libraryFiles != null)
-            return;
-
-        libraryFiles = md.getArtifacts(coords);
+    private void populate() {
+        libraryFiles = downloader.getArtifacts(coords);
     }
 
     // ----------------------------------------------------------------------

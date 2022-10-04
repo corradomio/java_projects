@@ -278,24 +278,24 @@ public class MavenDownloader implements MavenConst {
     /**
      * List of 'dependencies'
      */
-    public List<MavenCoords> getDependencies(MavenCoords coords, int maxDepth) {
+    public Set<MavenCoords> getDependencies(MavenCoords coords, int maxDepth) {
         coords = getVersioned(coords);
 
         if (!coords.hasVersion()) {
             logger.warnf("Missing version in %s", coords);
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
         // 1) not recursive
         final MavenPom pom = getPom(coords);
         if (MavenPom.isInvalid(pom))
-            return Collections.emptyList();
+            return Collections.emptySet();
 
         if (maxDepth == 0)
             return pom.getDependencies()
                 .stream()
                 .map(dcoords -> dcoords.coords)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         // 2) recursive
         Queue<Entry> toVisit = new LinkedList<>();
@@ -316,7 +316,7 @@ public class MavenDownloader implements MavenConst {
                 continue;
 
             // if scope is NOT compile and depth > 0, skip
-            if (edepth > 0 && !dcoords.scopeCompile())
+            if (edepth > 0 && !dcoords.isCompile())
                 continue;
 
             final MavenPom dpom = getPom(dcoords.coords);
@@ -342,7 +342,7 @@ public class MavenDownloader implements MavenConst {
         return visited
             .stream()
             .map(dcoords -> dcoords.coords)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     // ----------------------------------------------------------------------
@@ -992,29 +992,29 @@ public class MavenDownloader implements MavenConst {
         logger.infof("Checked %d artifacts", coordsList.size());
     }
 
-    private void checkArtifact(MavenCoords coords) {
+    public void checkArtifact(MavenCoords artifact) {
 
-        MultipleException me = new MultipleException(String.format("Unable to download %s", coords));
+        MultipleException me = new MultipleException(String.format("Unable to download %s", artifact));
 
         // 'maven-metadata.xml'
-        File metadataFile = getFile(coords, MavenType.METADATA);
+        File metadataFile = getFile(artifact, MavenType.METADATA);
         if (recheck(metadataFile))
-            me.add(downloadFile(coords, MavenType.METADATA));
+            me.add(downloadFile(artifact, MavenType.METADATA));
 
         // version file
-        File versionsFile = getFile(coords, MavenType.VERSIONS);
+        File versionsFile = getFile(artifact, MavenType.VERSIONS);
         if (recheck(versionsFile))
-            me.add(downloadFile(coords, MavenType.VERSIONS));
+            me.add(downloadFile(artifact, MavenType.VERSIONS));
 
         // pom file
-        File pomFile = getPomFile(coords);
+        File pomFile = getPomFile(artifact);
         if (!isInvalid(pomFile) && !pomFile.exists())
-            me.add(downloadFile(coords, MavenType.POM));
+            me.add(downloadFile(artifact, MavenType.POM));
 
         // artifact
-        File artifactFile = getArtifact(coords);
+        File artifactFile = getArtifact(artifact);
         if (!isInvalid(pomFile) && !artifactFile.exists())
-            me.add(downloadFile(coords, MavenType.ARTIFACT));
+            me.add(downloadFile(artifact, MavenType.ARTIFACT));
     }
 
     private boolean isInvalid(File file) {

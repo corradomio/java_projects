@@ -113,6 +113,17 @@ public class PyPiDownloader implements LibraryDownloader {
         return downloader;
     }
 
+    public File getLibraryFile(MavenCoords coords) {
+        // [downloadDir]/<artifactId>/<version>
+        String relativePath = String.format(
+                "%s/%s",
+                coords.artifactId,
+                coords.version);
+
+        File libraryFile = new File(downloadDirectory, relativePath);
+        return libraryFile;
+    }
+
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
@@ -128,6 +139,11 @@ public class PyPiDownloader implements LibraryDownloader {
                 artifacts.forEach(this::downloadArtifact);
             })).start();
         }
+    }
+
+    @Override
+    public void checkArtifact(MavenCoords artifact) {
+        downloadArtifact(artifact);
     }
 
     @Override

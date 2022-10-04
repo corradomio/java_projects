@@ -75,9 +75,18 @@ public class LibrarySet extends AbstractSet<Library> implements jext.sourcecode.
 
     @Override
     public Set<File> getLibraryFiles() {
+        Set<String> names = new HashSet<>();
         Set<File> files = new HashSet<>();
         getUsedLibraries().forEach(library -> {
-            files.addAll(library.getFiles());
+            library.getFiles().forEach(file -> {
+                String name = file.getName();
+                if (names.contains(name))
+                    return;
+
+                names.add(name);
+                files.add(file);
+            });
+            // files.addAll(library.getFiles());
         });
         return files;
     }

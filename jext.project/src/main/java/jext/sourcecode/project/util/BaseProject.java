@@ -280,23 +280,39 @@ public abstract class BaseProject extends NamedObject implements Project {
         // 2) maven libraries buf for them it keep ONLY the latest version
         // 3) runtime libraries
 
-        libraries = new LibrarySetImpl();
+        LibraryDownloader downloader = getLibraryDownloader();
+
+        libraries = new LibrarySetImpl(getLanguage());
+
+        // collect remote libraries
+        LibrarySet remoteLibraries = new LibrarySetImpl(getLanguage());
 
         // Note: the runtime libraries are added because otherwise javaassist
         // is not able to resolve the symbols
-
         getModules().forEach(module -> {
             libraries.addAll(module.getDeclaredLibraries());
+            remoteLibraries.addAll(module.getDeclaredLibraries());
+
             libraries.addAll(module.getLocalLibraries());
             libraries.add(module.getRuntimeLibrary());
         });
 
-        LibraryDownloader md = getLibraryDownloader();
+        // download the missing libraries, if necessary
+        libraries.checkArtifacts(downloader, true);
+
+        // add the missing libraries used
+        resolveRecursiveDependencies(libraries, remoteLibraries, 1);
 
         logger.debugf("check %d libraries", libraries.size());
-        libraries.checkArtifacts(md, true);
 
         return libraries;
+    }
+
+    private void resolveRecursiveDependencies(Set<Library> allLibraries, Set<Library> remoteLibraries, int depth) {
+        // for now it retrieve ONLY the first level of recursive dependencies
+        remoteLibraries.forEach(remoteLibrary -> {
+            allLibraries.addAll(remoteLibrary.getDependencies());
+        });
     }
 
     @Override

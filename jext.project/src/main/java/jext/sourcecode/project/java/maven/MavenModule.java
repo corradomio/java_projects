@@ -13,11 +13,9 @@ import jext.util.StringUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MavenModule extends JavaBaseModule {
 
@@ -25,8 +23,7 @@ public class MavenModule extends JavaBaseModule {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private MavenPom pom;
-    private int maxDepth = 3;
+    private final MavenPom pom;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -58,6 +55,7 @@ public class MavenModule extends JavaBaseModule {
         return super.getRuntimeLibrary(runtimeName);
     }
 
+    // ----------------------------------------------------------------------
 
     @Override
     public List<Module> getDependencies() {
@@ -77,15 +75,15 @@ public class MavenModule extends JavaBaseModule {
 
     private List<Module> getMavenDependencies() {
         List<Module> dmodules = new ArrayList<>();
-        pom.getDependencies()
-            .stream()
+        pom.getDependencies().stream()
             .map(coords -> project.getModules().getModule(coords.toString()))
             .filter(Objects::nonNull)
-            .forEach(dmodule -> {
-                dmodules.add(dmodule);
-            });
+            .forEach(dmodules::add)
+        ;
         return dmodules;
     }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public Set<String> getMavenRepositories() {
@@ -97,32 +95,45 @@ public class MavenModule extends JavaBaseModule {
     @Override
     protected void collectMavenLibraries(Set<Library> collectedLibraries) {
 
-        MavenDownloader md = (MavenDownloader) project.getLibraryDownloader();
+        MavenDownloader downloader = (MavenDownloader) project.getLibraryDownloader();
 
-        List<MavenCoords> coordList = getDirectCoordsDependencies();
+        pom.getDependencyCoords()
+                .stream()
+                .filter(this::isLibrary)        // skip maven coords that are Maven modules
+                .map(downloader::getVersioned)  // force the library version
+                .map(coords -> new MavenLibrary(coords, downloader).project(project))
+                .forEach(collectedLibraries::add);
 
-        Set<MavenCoords> setCoords = new HashSet<>(coordList);
-
-        coordList.forEach(dcoords -> {
-            List<MavenCoords> ddcoords = md.getDependencies(dcoords, maxDepth);
-            setCoords.addAll(ddcoords);
-        });
-
-        setCoords.stream()
-            .map(coords -> new MavenLibrary(coords, md, project))
-            .forEach(collectedLibraries::add);
+        // List<MavenCoords> coordList = getDirectCoordsDependencies();
+        //
+        // Set<MavenCoords> setCoords = new HashSet<>(coordList);
+        //
+        // Note: it is not responsibility of the module to resolve
+        // the library dependencies.
+        // It is better to delegate this part to
+        //
+        //      Project.getLibraries() -> resolved list of libraries
+        //
+        // coordList.forEach(dcoords -> {
+        //     Set<MavenCoords> ddcoords = md.getDependencies(dcoords, maxDepth);
+        //     setCoords.addAll(ddcoords);
+        // });
+        //
+        // coordList.stream()
+        //     .map(coords -> new MavenLibrary(coords, md).project(project))
+        //     .forEach(collectedLibraries::add);
     }
 
-    private List<MavenCoords> getDirectCoordsDependencies() {
-
-        MavenDownloader md = (MavenDownloader) project.getLibraryDownloader();
-
-        return pom.getDependencyCoords()
-            .stream()
-            .filter(this::isLibrary)
-            .map(md::getVersioned)
-            .collect(Collectors.toList());
-    }
+    // private List<MavenCoords> getDirectCoordsDependencies() {
+    //
+    //     MavenDownloader downloader = (MavenDownloader) project.getLibraryDownloader();
+    //
+    //     return pom.getDependencyCoords()
+    //         .stream()
+    //         .filter(this::isLibrary)        // skip maven coords related to modules
+    //         .map(downloader::getVersioned)  // force the library version
+    //         .collect(Collectors.toList());
+    // }
 
     private boolean isLibrary(MavenCoords coords) {
         return project.getModules().getModule(coords.toString()) == null;

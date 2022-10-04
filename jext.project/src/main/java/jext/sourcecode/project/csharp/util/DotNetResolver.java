@@ -23,7 +23,7 @@ import java.util.TreeSet;
  *  .NET version used by the project/module
  *
  */
-public class DotNetResolved {
+public class DotNetResolver {
 
     private static final String DEFAULT = "net6.0";
 
@@ -43,9 +43,13 @@ public class DotNetResolved {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public DotNetResolved(File libDirectory) {
+    public DotNetResolver(File libDirectory) {
         this.libDirectory = libDirectory;
     }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
 
     /**
      * Select the latest version
@@ -65,6 +69,10 @@ public class DotNetResolved {
         else
             return DEFAULT;
     }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
 
     private void populate() {
         if (initialized)
