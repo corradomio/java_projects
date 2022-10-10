@@ -198,7 +198,7 @@ public class ProjectAnalyzer {
     }
 
     private Map<String, Object> analyzeLibrary(Library l) {
-        Map<String, Object> linfo = MapUtils.asTreeMap(
+        return MapUtils.asTreeMap(
             "name", l.getName().getName(),
             "fullname", l.getName().getFullName(),
             "id", l.getId(),
@@ -209,21 +209,20 @@ public class ProjectAnalyzer {
             "valid", l.isValid(),
             "file", FileUtils.getAbsolutePath(l.getFile()),
             "files", FileUtils.getAbsolutePaths(l.getFiles()),
+            "licenseType", l.getLibraryLicense().getType(),
+            "licenseUrl", l.getLibraryLicense().getUrl(),
             "type", "library"
         );
-
-        return linfo;
     }
 
     private Map<String, Object> analyzeLibrepo(LibraryRepository lr) {
-        Map<String, Object> lrinfo = MapUtils.asTreeMap(
+        return MapUtils.asTreeMap(
             "id", lr.getId(),
             "name", lr.getName(),
             "repositoryType", lr.getRepositoryType(),
             "url", lr.getUrl(),
             "type", "librepo"
         );
-        return lrinfo;
     }
 
     private Map<String, Object> analyzeSource(Source s) {

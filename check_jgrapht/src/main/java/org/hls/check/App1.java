@@ -3,7 +3,7 @@ package org.hls.check;
 import jext.jgrapht.edges.Edge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
-import jext.jgrapht.util.GraphDump;
+import jext.jgrapht.util.GraphDescribe;
 import jext.logging.Logger;
 import jext.util.Parameters;
 import org.jgrapht.Graph;
@@ -21,7 +21,7 @@ public class App1 {
         // new ScaleFreeGraphGenerator<Long, Edge>(50000)
         //     .generateGraph(g);
 
-        GraphDump.printGraphInfo(g);
+        GraphDescribe.printGraphInfo(g);
 
         GraphImporter<Long, Edge> imp = new Neo4JGraphImporter<Long, Edge>()
             .vertices("MATCH (s:type {refId:$refId}) RETURN id(s) AS s")
@@ -40,6 +40,6 @@ public class App1 {
         ;
         exp.exportGraph(g, new File("graph.dot"));
 
-        GraphDump.describe(g);
+        GraphDescribe.describe(g);
     }
 }

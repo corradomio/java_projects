@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class GraphDump {
+public class GraphDescribe {
 
     // ----------------------------------------------------------------------
     // Dump graph

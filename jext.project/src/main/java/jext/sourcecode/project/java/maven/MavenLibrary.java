@@ -9,14 +9,14 @@ import jext.name.Name;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.java.libraries.JavaLibrary;
 import jext.sourcecode.project.java.types.ReferencedType;
+import jext.sourcecode.project.lfm.LibraryLicense;
+import jext.sourcecode.project.lfm.LicenseFinder;
 import jext.util.JarUtils;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,8 +28,9 @@ public class MavenLibrary extends JavaLibrary {
     // Private fields
     // ----------------------------------------------------------------------
 
-    protected MavenCoords coords;
-    protected MavenDownloader downloader;
+    private final MavenCoords coords;
+    private final MavenDownloader downloader;
+    private LibraryLicense license;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -48,6 +49,13 @@ public class MavenLibrary extends JavaLibrary {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public LibraryLicense getLibraryLicense() {
+        if (license == null)
+            license = LicenseFinder.findLicense(libraryFile);
+        return license;
+    }
 
     @Override
     public LibraryStatus getLibraryStatus() {

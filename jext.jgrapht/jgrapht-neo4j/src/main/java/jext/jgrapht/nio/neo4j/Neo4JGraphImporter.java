@@ -26,9 +26,10 @@ import java.util.function.Supplier;
 
 public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
 
-    private static final String NEO4J_URI      = "neo4j.uri";
-    private static final String NEO4J_USERNAME = "neo4j.username";
-    private static final String NEO4J_PASSWORD = "neo4j.password";
+    static final String NEO4J_URI      = "neo4j.uri";
+    static final String NEO4J_USERNAME = "neo4j.username";
+    static final String NEO4J_PASSWORD = "neo4j.password";
+    static final String REF_ID = "refId";
 
     private Driver driver;
     private Session session;
@@ -38,7 +39,7 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     /** Query to retrieve all edges */
     private String edges;
     /** Parameters used in the queries */
-    private Map<String, Object> params = new HashMap<>();
+    private final Map<String, Object> params = new HashMap<>();
     /** Label used for the source node */
     private String slabel = "s";
     /** Label used for the target node */
@@ -121,15 +122,15 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         try {
             Properties properties = new Properties();
             properties.load(reader);
-            properties.stringPropertyNames().forEach(key -> {
-                params.put(key, properties.get(key));
-            });
+
+            // params.putAll(properties); // doesn't work cast problems
+            properties.stringPropertyNames().forEach(key -> params.put(key, properties.get(key)));
+
+            importGraph(graph);
         }
         catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
-
-        importGraph(graph);
     }
 
     public void importGraph(Graph<V, E> graph) {
@@ -156,8 +157,8 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     }
 
     private void query(Graph<V, E> graph) {
-        vertices(graph);
-        edges(graph);
+        Set<V> vertices = vertices(graph);
+        edges(graph, vertices);
     }
 
     private V get(Record rec, String vlablel) {

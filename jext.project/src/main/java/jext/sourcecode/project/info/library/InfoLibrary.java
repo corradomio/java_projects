@@ -7,6 +7,7 @@ import jext.name.NamedObject;
 import jext.name.PathName;
 import jext.name.VersionName;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.lfm.LibraryLicense;
 import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.Project;
@@ -35,7 +36,6 @@ public abstract class InfoLibrary extends NamedObject implements Library {
 
     public InfoLibrary(InfoModule module, LibraryType libraryType, Map<String, Object> info) {
         this((InfoProject)(module.getProject()), libraryType, info);
-        // this.module = module;
     }
 
     public InfoLibrary(InfoProject project, LibraryType libraryType, Map<String, Object> info) {
@@ -93,6 +93,13 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     @Override
     public LibraryType getLibraryType() {
         return libraryType;
+    }
+
+    @Override
+    public LibraryLicense getLibraryLicense() {
+        String type = MapUtils.getOrDefault(info, "licenseType", "");
+        String url  = MapUtils.getOrDefault(info, "licenseUrl", "");
+        return LibraryLicense.of(type, url);
     }
 
     @Override

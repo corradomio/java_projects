@@ -4,16 +4,13 @@ import jext.logging.Logger;
 import jext.name.Name;
 import jext.name.NamedObject;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.lfm.LibraryLicense;
 import jext.sourcecode.project.LibraryStatus;
 import jext.sourcecode.project.LibraryType;
-import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
-import jext.sourcecode.project.java.maven.MavenLibrary;
 import jext.util.FileUtils;
-import jext.util.StringUtils;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
@@ -82,6 +79,11 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     @Override
     public LibraryType getLibraryType() {
         return libraryType;
+    }
+
+    @Override
+    public LibraryLicense getLibraryLicense() {
+        return LibraryLicense.none();
     }
 
     @Override

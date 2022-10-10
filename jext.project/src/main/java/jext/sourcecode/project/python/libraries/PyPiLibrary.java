@@ -3,6 +3,8 @@ package jext.sourcecode.project.python.libraries;
 import jext.maven.MavenCoords;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.java.maven.MavenName;
+import jext.sourcecode.project.lfm.LibraryLicense;
+import jext.sourcecode.project.lfm.LicenseFinder;
 import jext.sourcecode.project.python.PyPiDownloader;
 
 import java.io.File;
@@ -18,8 +20,9 @@ public class PyPiLibrary extends PythonLibrary {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private MavenCoords coords;
-    private PyPiDownloader downloader;
+    private final MavenCoords coords;
+    private final PyPiDownloader downloader;
+    private LibraryLicense license;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -33,6 +36,20 @@ public class PyPiLibrary extends PythonLibrary {
         this.coords = coords;
         this.downloader = downloader;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    @Override
+    public LibraryLicense getLibraryLicense() {
+        if (license == null)
+            license = LicenseFinder.findLicense(libraryFile);
+        return license;
+    }
+
+    // ----------------------------------------------------------------------
+    // getFiles
 
     @Override
     public List<File> getFiles() {
@@ -111,5 +128,9 @@ public class PyPiLibrary extends PythonLibrary {
         if (selected != null)
             libraryFiles = Collections.singletonList(selected.getParentFile());
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

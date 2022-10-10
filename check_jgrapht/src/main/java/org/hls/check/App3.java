@@ -3,7 +3,7 @@ package org.hls.check;
 import jext.jgrapht.edges.Edge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.generate.RandomGraphGenerator;
-import jext.jgrapht.util.GraphDump;
+import jext.jgrapht.util.GraphDescribe;
 import jext.logging.Logger;
 import org.jgrapht.Graph;
 
@@ -16,7 +16,7 @@ public class App3 {
         new RandomGraphGenerator<Long, Edge>(50000, 50000)
             .generateGraph(g);
 
-        GraphDump.printGraphInfo(g);
-        GraphDump.describe(g);
+        GraphDescribe.printGraphInfo(g);
+        GraphDescribe.describe(g);
     }
 }

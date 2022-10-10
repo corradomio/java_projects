@@ -32,6 +32,7 @@ import java.util.zip.ZipInputStream;
 public class FileValidator {
 
     public enum Type {
+        UNKNOWN,
         TEXT,
         HTML,
         XML,
@@ -48,6 +49,8 @@ public class FileValidator {
     }
 
     public static boolean validate(File file, Type type) {
+        if (!file.isFile())
+            return false;
         return new FileValidator(file, type).checkValidity();
     }
 
@@ -76,7 +79,8 @@ public class FileValidator {
         if (name.endsWith(".whl"))
             return Type.ZIP;
 
-        throw new UnsupportedOperationException("Unsupported file " + file);
+        return Type.UNKNOWN;
+        // throw new UnsupportedOperationException("Unsupported file " + file);
     }
 
 

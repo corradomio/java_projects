@@ -2,7 +2,7 @@ package org.hls.check;
 
 import jext.jgrapht.edges.Edge;
 import jext.jgrapht.Graphs;
-import jext.jgrapht.util.GraphDump;
+import jext.jgrapht.util.GraphDescribe;
 import jext.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.ScaleFreeGraphGenerator;
@@ -16,7 +16,7 @@ public class App2 {
         new ScaleFreeGraphGenerator<Long, Edge>(50000)
             .generateGraph(g);
 
-        GraphDump.printGraphInfo(g);
-        GraphDump.describe(g);
+        GraphDescribe.printGraphInfo(g);
+        GraphDescribe.describe(g);
     }
 }

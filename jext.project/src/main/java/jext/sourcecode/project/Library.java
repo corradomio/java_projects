@@ -2,6 +2,7 @@ package jext.sourcecode.project;
 
 import jext.name.IdNamed;
 import jext.name.Name;
+import jext.sourcecode.project.lfm.LibraryLicense;
 
 import java.io.File;
 import java.util.List;
@@ -34,6 +35,12 @@ public interface Library extends IdNamed {
      *
      */
     LibraryType getLibraryType();
+
+    /**
+     * Retrieve the library license
+     * @return a string describing the license
+     */
+    LibraryLicense getLibraryLicense();
 
     /**
      * Library status

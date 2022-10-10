@@ -1,5 +1,6 @@
 package org.hls.check;
 
+import jext.sourcecode.project.lfm.LibraryLicense;
 import jext.sourcecode.project.lfm.LicenseFinder;
 
 import java.io.File;
@@ -48,7 +49,7 @@ public class CheckLicenses {
     }
 
     private static void printLicense(File licenseFile) {
-        String license = LicenseFinder.findLicense(licenseFile);
+        LibraryLicense license = LicenseFinder.findLicense(licenseFile);
         if (license.equals("Undefined"))
             System.out.printf("%s:  %s\n", licenseFile, LicenseFinder.findLicense(licenseFile));
     }

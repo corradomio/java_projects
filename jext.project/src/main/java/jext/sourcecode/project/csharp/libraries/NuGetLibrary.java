@@ -2,10 +2,12 @@ package jext.sourcecode.project.csharp.libraries;
 
 import jext.maven.MavenCoords;
 import jext.sourcecode.project.Library;
+import jext.sourcecode.project.lfm.LibraryLicense;
 import jext.sourcecode.project.LibraryType;
 import jext.sourcecode.project.csharp.NuGetDownloader;
 import jext.sourcecode.project.csharp.util.DotNetResolver;
 import jext.sourcecode.project.java.maven.MavenName;
+import jext.sourcecode.project.lfm.LicenseFinder;
 import jext.util.FileUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -22,8 +24,11 @@ public class NuGetLibrary extends CSharpLibrary {
     // Private fields
     // ----------------------------------------------------------------------
 
+    private static final String NUSPEC = ".nuspec";
+
     private MavenCoords coords;
     private NuGetDownloader downloader;
+    private LibraryLicense license;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -93,6 +98,17 @@ public class NuGetLibrary extends CSharpLibrary {
     }
 
     // ----------------------------------------------------------------------
+    // License
+    // ----------------------------------------------------------------------
+
+    @Override
+    public LibraryLicense getLibraryLicense() {
+        if (license == null)
+            license = LicenseFinder.findLicense(libraryFile);
+        return license;
+    }
+
+    // ----------------------------------------------------------------------
     // Dependencies
     // ----------------------------------------------------------------------
     /*
@@ -126,7 +142,7 @@ public class NuGetLibrary extends CSharpLibrary {
     public Set<Library> getDependencies() {
 
         // select the unique file the selected extension
-        File nuspecFile = FileUtils.findFile(libraryFile, ".nuspec");
+        File nuspecFile = FileUtils.findFile(libraryFile, NUSPEC);
         if (nuspecFile == null)
             return Collections.emptySet();
 

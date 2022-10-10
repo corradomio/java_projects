@@ -3,7 +3,7 @@ package org.hls.check.neo4j;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.edges.DirectedEdge;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
-import jext.jgrapht.util.GraphDump;
+import jext.jgrapht.util.GraphDescribe;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphExporter;
 import org.jgrapht.nio.GraphImporter;
@@ -28,7 +28,7 @@ public class CheckGraph {
         Graph<Long, DirectedEdge> g = Graphs.newGraph(Long.class, DirectedEdge.class);
         imp.importGraph(g, new File("config/neo4j.properties"));
 
-        GraphDump.describe(g);
+        GraphDescribe.describe(g);
 
         GraphExporter<Long, DirectedEdge> exp = new DOTExporter<>();
         exp.exportGraph(g, new File("lucene-modules.dot"));
@@ -50,7 +50,7 @@ public class CheckGraph {
         Graph<Long, DirectedEdge> g = Graphs.newGraph(Long.class, DirectedEdge.class);
         imp.importGraph(g, new File("config/neo4j.properties"));
 
-        GraphDump.describe(g);
+        GraphDescribe.describe(g);
 
         GraphExporter<Long, DirectedEdge> exp = new DOTExporter<>();
         exp.exportGraph(g, new File("lucene-sources.dot"));
@@ -74,7 +74,7 @@ public class CheckGraph {
         Graph<Long, DirectedEdge> g = Graphs.newGraph(Long.class, DirectedEdge.class);
         imp.importGraph(g, new File("config/neo4j.properties"));
 
-        GraphDump.describe(g);
+        GraphDescribe.describe(g);
         System.out.println();
     }
 

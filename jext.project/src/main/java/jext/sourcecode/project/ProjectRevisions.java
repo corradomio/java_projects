@@ -17,13 +17,15 @@ public class ProjectRevisions implements Revisions {
     private final File projectHome;
     private final String refId;
     private final LibraryFinderManager libraryFinderManager;
-    private int srcRevision, dstRevision;
+    private int srcRevision;
+    private int dstRevision;
 
     private static final String PROJECT_INFO_REV  = "%s-source-project-r%02d.json";
-    private static final String PROJECT_INFO_NAME = "%s-source-project";
     private static final String DIFFERENCES_INFO  = "%s-source-diff-r%02d-r%02d.json";
-    private static final String DIFFERENCES_INFO_NAME = "%s-source-diff-";
     private static final String SOURCE_MODEL_PREFIX = "%s-source-";
+
+    // private static final String PROJECT_INFO_NAME = "%s-source-project";
+    // private static final String DIFFERENCES_INFO_NAME = "%s-source-diff-";
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -103,7 +105,7 @@ public class ProjectRevisions implements Revisions {
             FileUtils.delete(dstRevisionInfo);
         }
 
-            pcomp.save(differencesInfo);
+        pcomp.save(differencesInfo);
 
         return pcomp;
     }
@@ -114,8 +116,6 @@ public class ProjectRevisions implements Revisions {
      */
     public void deleteAll() {
         String namePrefix = String.format(SOURCE_MODEL_PREFIX, refId);
-        // String projectInfoName = String.format(PROJECT_INFO_NAME, refId);
-        // String differencesInfoName = String.format(DIFFERENCES_INFO_NAME, refId);
 
         FileUtils.asList(splDirectory.listFiles((dir, name) -> (
                 name.startsWith(namePrefix))))

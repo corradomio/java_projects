@@ -423,12 +423,15 @@ public class NuGetDownloader implements LibraryDownloader {
             }
         }
         catch (IOException e) {
-            logger.error(e, e);
+            logger.error(e.getMessage());
         }
     }
 
     public static void validateFile(File file, ArtifactType type) {
         boolean valid = true;
+        if (!file.exists())
+            return;
+
         switch (type) {
             case VERSIONS:
                 valid = FileValidator.validate(file, FileValidator.Type.JSON);
