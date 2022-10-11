@@ -4,33 +4,17 @@ import jext.metrics.Metric;
 
 public class SciToolsMetric implements Metric {
 
-    public static SciToolsMetric of(String name, String kname, String key, float value) {
-        return new SciToolsMetric(name, kname, key, value);
+    public static SciToolsMetric of(String name) {
+        return new SciToolsMetric(name);
     }
-
-    // ----------------------------------------------------------------------
-    // Private fields
-    // ----------------------------------------------------------------------
 
     private final String name;
-    private final String kname;
-    private final String key;
-    private final float value;
+    private String description;
 
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
-
-    private SciToolsMetric(String name, String kname, String key, float value) {
+    private SciToolsMetric(String name) {
         this.name = name;
-        this.kname = kname;
-        this.key = key;
-        this.value = value;
+        this.description = name;
     }
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
 
     @Override
     public String getName() {
@@ -39,16 +23,16 @@ public class SciToolsMetric implements Metric {
 
     @Override
     public String getDescription() {
-        return String.format("%s:%s:%s", name, kname, key);
+        return description;
     }
 
     @Override
-    public float getValue() {
-        return 0.0f;
+    public String toString() {
+        return description;
     }
 
-    // ----------------------------------------------------------------------
-    // Done
-    // ----------------------------------------------------------------------
-
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

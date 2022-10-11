@@ -2,18 +2,21 @@ package jext.metrics.providers;
 
 import jext.logging.Logger;
 import jext.metrics.AllMetrics;
-import jext.metrics.Metric;
 import jext.metrics.MetricsProvider;
+import jext.metrics.MetricsProviders;
+import jext.util.StringUtils;
+import jext.xml.XPathUtils;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.LineNumberReader;
-import java.io.Reader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SciToolsMetricsProvider implements MetricsProvider {
 
@@ -56,8 +59,11 @@ public class SciToolsMetricsProvider implements MetricsProvider {
 
     @Override
     public AllMetrics loadMetrics() {
-        if (allMetrics == null)
+        if (allMetrics == null) {
+            allMetrics = new SciToolsAllMetrics();
+            loadCategories();
             loadFromFile();
+        }
         return allMetrics;
     }
 
@@ -74,9 +80,23 @@ public class SciToolsMetricsProvider implements MetricsProvider {
     // Implementation
     // ----------------------------------------------------------------------
 
-    private void loadFromFile() {
-        allMetrics = new SciToolsAllMetrics();
+    private void loadCategories() {
+        try(InputStream stream = MetricsProviders.class.getResourceAsStream("scitoolscategories.xml")) {
+            Element root = XPathUtils.parse(stream).getDocumentElement();
+            XPathUtils.selectElements(root, "category").forEach(cat -> {
+                String category = XPathUtils.getValue(cat, "@name");
+                List<String> metrics = StringUtils.split(cat.getTextContent(), ",");
 
+                allMetrics.addCategory(category, metrics);
+            });
+        }
+        catch(IOException | SAXException | ParserConfigurationException e) {
+            // in theory never happen
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void loadFromFile() {
         try(LineNumberReader rdr = new LineNumberReader(new FileReader(this.metricsFile))) {
             // skip header
             String line = rdr.readLine();
@@ -88,10 +108,12 @@ public class SciToolsMetricsProvider implements MetricsProvider {
                 // id,name,kname,key,value
                 String[] parts = line.split(",");
                 try {
-                    int id = Integer.parseInt(parts[0]);
+                    String id = parts[0];
                     float value = Float.parseFloat(parts[4]);
-                    SciToolsMetric metric = SciToolsMetric.of(parts[1], parts[2], parts[3], value);
-                    allMetrics.addMetric(id, metric);
+                    String name = parts[1];
+                    String kname = parts[2];
+                    SciToolsMetric metric = (SciToolsMetric) allMetrics.addMetric(parts[3]);
+                    allMetrics.addMetricValue(id, metric, name, kname, value);
 
                     if (count % 1000 == 0)
                         logger.debugft("... %d metrics", count);
