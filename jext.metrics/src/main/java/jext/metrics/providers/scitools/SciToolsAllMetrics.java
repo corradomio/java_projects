@@ -1,8 +1,9 @@
-package jext.metrics.providers;
+package jext.metrics.providers.scitools;
 
-import jext.metrics.AllMetrics;
+import jext.logging.Logger;
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
+import jext.metrics.MetricsException;
 import jext.util.Assert;
 
 import java.util.ArrayList;
@@ -17,15 +18,18 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class SciToolsAllMetrics implements AllMetrics {
+public class SciToolsAllMetrics {
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
+    private static final Logger logger = Logger.getLogger(SciToolsMetric.class);
+
     private static final String ROOT = "";
 
-    private final Map<String, Metric> metrics = new TreeMap<>();
+    private final Map<String, Metric> metricsById = new TreeMap<>();
+    private final Map<String, Metric> metricsByName = new TreeMap<>();
     private final Map<String, List<MetricValue>> metricValues = new TreeMap<>();
     private final Map<String, Set<String>> categories = new TreeMap<>();
     private final Map<String, SciToolsObject> objects = new HashMap<>();
@@ -42,17 +46,14 @@ public class SciToolsAllMetrics implements AllMetrics {
     // Metric Properties
     // ----------------------------------------------------------------------
 
-    @Override
     public Collection<String> getCategories() {
         return categories.keySet();
     }
 
-    @Override
     public Collection<Metric> getMetrics() {
         return getMetrics(ROOT);
     }
 
-    @Override
     public Collection<Metric> getMetrics(String category) {
         Assert.verify(category != null, "category is null");
         // if (ROOT.equals(category))
@@ -67,18 +68,22 @@ public class SciToolsAllMetrics implements AllMetrics {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public Metric getMetric(String name) {
-        if (!metrics.containsKey(name))
-            Assert.nop();
-        return metrics.get(name);
+        if (metricsById.containsKey(name))
+            return metricsById.get(name);
+        if (metricsByName.containsKey(name))
+            return metricsByName.get(name);
+
+        logger.errorf("Unknown metric '%s'", name);
+        Metric metric = SciToolsMetric.of(name, name, "", "");
+        addMetric(metric);
+        return metric;
     }
 
     // ----------------------------------------------------------------------
     // Metric Values
     // ----------------------------------------------------------------------
 
-    @Override
     public Collection<MetricValue> getMetricValues(String id) {
         if (!metricValues.containsKey(id))
             return Collections.emptyList();
@@ -86,7 +91,6 @@ public class SciToolsAllMetrics implements AllMetrics {
             return metricValues.get(id);
     }
 
-    @Override
     public Collection<MetricValue> getMetricValues(String id, String category) {
         if (!metricValues.containsKey(id))
             return Collections.emptyList();
@@ -102,19 +106,14 @@ public class SciToolsAllMetrics implements AllMetrics {
     // Operations/configuration
     // ----------------------------------------------------------------------
 
-    public Metric addMetric(String name) {
-        metrics.computeIfAbsent(name, par -> SciToolsMetric.of(name));
-        categories.get(ROOT).add(name);
-        SciToolsMetric metric = (SciToolsMetric) metrics.get(name);
-        return metric;
+    public void addMetric(Metric metric) {
+        metricsById.put(metric.getId(), metric);
+        metricsByName.put(metric.getName(), metric);
     }
 
     public void addCategory(String name, Collection<String> metrics) {
         if (!ROOT.equals(name))
             categories.put(name, new TreeSet<>(metrics));
-        metrics.forEach(metric -> {
-            this.metrics.computeIfAbsent(metric, par -> SciToolsMetric.of(metric));
-        });
     }
 
     public void addMetricValue(String id, SciToolsMetric metric, String name, String kname, float value) {

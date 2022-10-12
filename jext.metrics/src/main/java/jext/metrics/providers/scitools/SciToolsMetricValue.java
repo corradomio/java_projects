@@ -1,4 +1,4 @@
-package jext.metrics.providers;
+package jext.metrics.providers.scitools;
 
 import jext.metrics.MetricValue;
 
@@ -27,6 +27,11 @@ public class SciToolsMetricValue implements MetricValue {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public String getId() {
+        return metric.getId();
+    }
 
     @Override
     public String getName() {

@@ -35,10 +35,19 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.codehaus.sonar/sonar-ws-client -->
+        <!-- very old 02/05/2015 -->
         <dependency>
             <groupId>org.codehaus.sonar</groupId>
             <artifactId>sonar-ws-client</artifactId>
             <version>5.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-jdbc-driver -->
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-jdbc-driver</artifactId>
+            <version>4.0.5</version>
+            <scope>runtime</scope>
         </dependency>
 
     </dependencies>

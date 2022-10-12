@@ -2,6 +2,7 @@ package jext.metrics;
 
 import jext.exception.InvalidValueException;
 import jext.logging.Logger;
+import jext.util.PropertiesUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,15 +48,21 @@ public class MetricsProviders {
     }
 
     public static <T extends MetricsProvider> T getProvider(String name) {
+        return getProvider(name, PropertiesUtils.empty());
+    }
+
+    public static <T extends MetricsProvider> T getProvider(String name, Properties properties) {
         if (!providers.containsKey(name))
             throw new InvalidValueException("provider name", name);
 
         Class<MetricsProvider> providerClass = providers.get(name);
         try {
-            return (T) providerClass.getConstructor().newInstance();
+            T provider = (T) providerClass.getConstructor().newInstance();
+            provider.initialize(properties);
+            return provider;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // in theory never happen, only in development
-            throw new RuntimeException(e);
+            throw new NoSuchProviderException(name, e);
         }
     }
 }

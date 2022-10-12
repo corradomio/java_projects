@@ -1,4 +1,4 @@
-package jext.metrics.providers;
+package jext.metrics.providers.scitools;
 
 public class SciToolsObject {
 

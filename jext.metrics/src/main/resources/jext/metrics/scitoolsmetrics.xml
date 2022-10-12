@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="utf-8"?>
+<categories>
+    <!-- the root category contains all metrics -->
+    <!--
+        Metric types: int float
+      -->
+    <metrics>
+        <metric id="CountDeclPropertyAuto" name="Auto Implemented Properties" type="count">
+        Number of auto-implemented properties.
+        </metric>
+        <metric id="AvgCyclomatic" name="Average Cyclomatic Complexity" type="complexity">
+        Average cyclomatic complexity for all nested functions or methods.
+        </metric>
+        <metric id="AvgEssential" name="Average Essential Cyclomatic Complexity" type="complexity">
+        Average Essential complexity for all nested functions or methods.
+        </metric>
+        <metric id="AvgEssentialStrictModified" name="Average Essential Strict Modified Complexity" type="complexity">
+        Average Essential complexity for all nested functions or methods.
+        </metric>
+        <metric id="AvgCyclomaticModified" name="Average Modified Cyclomatic Complexity" type="complexity">
+        Average modified cyclomatic complexity for all nested functions or methods.
+        </metric>
+        <metric id="AltAvgLineBlank" name="Average Number of Blank Lines" type="count">
+         (Include Inactive) Average number of blank lines for all nested functions or methods, including inactive regions
+        </metric>
+        <metric id="AvgLineBlank" name="Average Number of Blank Lines" type="count">
+         Average number of blank for all nested functions or methods.
+        </metric>
+        <metric id="AvgLine" name="Average Number of Lines" type="count">
+        Average number of lines for all nested functions or methods.
+        </metric>
+        <metric id="AltAvgLineCode" name="Average Number of Lines of Code" type="count">
+         (Include Inactive) Average number of lines containing source code for all nested functions or methods, including inactive regions.
+        </metric>
+        <metric id="AvgLineCode" name="Average Number of Lines with Comments" type="count">
+        Lorenz & Kidd - Average Method Size (AMS) 
+        Average number of lines containing source code for all nested functions or methods.
+        </metric>
+        <metric id="AvgLineComment" name="Average Number of Lines with Comments" type="count">
+        Average number of lines containing comment for all nested functions or methods.
+        </metric>
+        <metric id="AvgCyclomaticStrict" name="Average Strict Cyclomatic Complexity" type="complexity">
+        Average modified cyclomatic complexity for all nested functions or methods.
+        </metric>
+        <metric id="CountClassBase" name="Base Classes" type="oop">
+        IFANIN
+        Number of immediate base classes.
+        </metric>
+        <metric id="AltCountLineBlank" name="Blank Lines of Code" type="count">
+        (Include Inactive) Number of blank lines, including inactive regions.
+        </metric>
+        <metric id="CountLineBlank" name="Blank Lines of Code" type="count">
+        BLOC
+        Number of blank lines.
+        </metric>
+        <metric id="CountLineBlank_Html" name="Blank html lines" type="count">
+        Number of blank html lines.
+        </metric>
+        <metric id="CountLineBlank_Javascript" name="Blank javascript lines" type="count">
+        Number of blank javascript lines.
+        </metric>
+        <metric id="CountLineBlank_Php" name="Blank php lines" type="count">
+        Number of blank php lines.
+        </metric>
+        <metric id="CountDeclClassMethod" name="Class Methods" type="oop">
+        Number of class methods.
+        </metric>
+        <metric id="CountDeclClassVariable" name="Class Variables" type="oop">
+         Lorenz & Kidd - Number of Variables (NV)
+         Number of class variables
+        </metric>
+        <metric id="CountDeclClass" name="Classes" type="oop">
+        Number of classes.
+        </metric>
+        <metric id="RatioCommentToCode" name="Comment to Code Ratio" type="count">
+        Ratio of number of comment lines to number of code lines. Note that because some lines are
+both code and comment, this could easily yield percentages higher than 100
+        </metric>
+        <metric id="CountPackageCoupled" name="Coupled Packages" type="oop">
+        Number of other packages coupled to.
+        </metric>
+        <metric id="CountClassCoupled" name="Coupling Between Objects" type="oop">
+        Chidamber & Kemerer - Coupling Between Objects (CBO)
+        Number of other classes coupled to. [aka CBO (coupling between object classes)]
+The Coupling Between Object Classes (CBO) measure for a class is a count of the number of other classes
+to which it is coupled. Class A is coupled to class B if class A uses a type, data, or member from class B.
+This metric is also referred to as Efferent Coupling (Ce). Any number of couplings to a given class counts as
+1 towards the metric total Chidamber & Kemerer suggest that: 1) Excessive coupling between object classes
+is detrimental to modular design and prevents reuse. 2) Inter-object class couples should be kept to a
+minimum. 3) The higher the inter-object class coupling, the more rigorous testing needs to be.
+        </metric>
+        <metric id="CountClassCoupledModified" name="Coupling Between Objects Modified" type="oop">
+            Chidamber & Kemerer - Coupling Between Objects (CBO)
+            Number of other classes coupled to. [aka CBO (coupling between object classes)]
+            The Coupling Between Object Classes (CBO) measure for a class is a count of the number of other classes
+            to which it is coupled. Class A is coupled to class B if class A uses a type, data, or member from class B.
+            This metric is also referred to as Efferent Coupling (Ce). Any number of couplings to a given class counts as
+            1 towards the metric total Chidamber & Kemerer suggest that: 1) Excessive coupling between object classes
+            is detrimental to modular design and prevents reuse. 2) Inter-object class couples should be kept to a
+            minimum. 3) The higher the inter-object class coupling, the more rigorous testing needs to be.
+        </metric>
+        <metric id="Cyclomatic" name="Cyclomatic Complexity" type="complexity">
+        McCabe Complexity (v(G))
+         Cyclomatic complexity.McCabe Cyclomatic complexity as per the original NIST paper on the
+subject. The cyclomatic complexity of any structured program with only one entrance point and one exit
+point is equal to the number of decision points contained in that program plus one. Understand counts the
+keywords for decision points (FOR, WHILE, etc) and then adds 1. For a switch statement, each 'case' is
+counted as 1. For languages with Macros, the expanded Macro text is also included in the calculation.
+        </metric>
+        <metric id="CountLineCodeDecl" name="Declarative Lines of Code" type="count">
+         Number of lines containing declarative source code. Note that a line can be declarative and executable - int i =0; for instance.
+        </metric>
+        <metric id="CountStmtDecl" name="Declarative Statements" type="count">
+        Number of declarative statements.
+        </metric>
+        <metric id="MaxInheritanceTree" name="Depth of Inheritance Tree" type="complexity">
+        Chidamber & Kemerer - Depth of Inheritance Tree (DIT)
+        Maximum depth of class in inheritance tree. [aka DIT]. The depth of a class within the inheritance
+hierarchy is the maximum number of nodes from the class node to the root of the inheritance tree. The root
+node has a DIT of 0. The deeper within the hierarchy, the more methods the class can inherit, increasing its
+complexity.
+        </metric>
+        <metric id="CountStmtEmpty" name="Empty Statements" type="count">
+        Number of empty statements.
+        </metric>
+        <metric id="Essential" name="Essential Complexity" type="compelxity">
+        ev(G)
+        Essential complexity. [aka Ev(G)] Essential complexity is the Cyclomatic complexity after
+iteratively replacing all well structured control structures with a single statement. Structures such as if-thenelse and while loops are considered well structured. Understand calculate the essential complexity by
+removing all the structured subgraphs from the control graph and then calculating the complexity. A graph
+that has only the regular single entry/single exit loops or branches will be reducible to a graph with
+complexity one. Any branches into or out of a loop or decision will make the graph non-reducible and will
+have essentialcomplexity > 2. (You never get 2 since a graph with complexity 2 is always reducible to a
+graph with complexity 1).
+        </metric>
+        <metric id="EssentialStrictModified" name="Essential Strict Modified Complexity" type="complexity">
+        Strict Modified Essential complexity. The Cyclomatic complexity with short circuit operators
+(and then/or else) as unstructured but only adds one for all structured paths through case statements after
+graph reduction.
+        </metric>
+        <metric id="CountLineCodeExe" name="Executable Lines of Code" type="count">
+        Number of lines containing executable source code.
+        </metric>
+        <metric id="CountStmtExe" name="Executable Statements" type="count">
+        Number of executable statements
+        </metric>
+        <metric id="CountDeclExecutableUnit" name="Executable Unit" type="count">
+        Number of program units with executable code
+        </metric>
+        <metric id="CountDeclMethodFriend" name="Friend Methods" type="oop">
+        Lorenz & Kidd - Number of Friends (NF), Number of Friend Methods (NFM)
+        Number of local (not inherited) friend methods.
+        </metric>
+        <metric id="CountDeclFunction" name="Function" type="count">
+        Number of functions
+        </metric>
+        <metric id=" CountLineComment_Html" name="HTML Comment Lines" type="count">
+        Number of html lines containing comment.
+        </metric>
+        <metric id="CountLine_Html" name="HTML Lines" type="count">
+        Number of all html lines.
+        </metric>
+        <metric id="CountLineInactive" name="Inactive Lines" type="count">
+        This is the number of lines that are inactive from the view of the preprocessor. In other words,
+they are on the FALSE side of a #if or #ifdef preprocessor directive.
+        </metric>
+        <metric id="CountInput" name="Inputs" type="count">
+        Number of calling subprograms plus global variables read. [aka FANIN]
+FANIN The number of inputs a function uses plus the number of unique subprograms calling the function.
+Inputs include parameters and global variables that are used in the function, so Functions calledby 
+Parameters read + Global Variables read. Of the two general approaches to calculating FANIN (informational
+versus structural) ours is the informational approach.
+        </metric>
+        <metric id="CountDeclInstanceMethod" name="Instance Methods" type="oop">
+        NIM
+        Number of instance methods - methods defined in a class that are only accessable through an object of that class
+        </metric>
+        <metric id="CountDeclInstanceVariable" name="Instance Variables" type="oop">
+        Number of instance variables - variables defined in a class that are only accessable through an object of that class
+        </metric>
+        <metric id="CountDeclInstanceVariableInternal" name="Internal Instance Variables" type="count">
+        Number of local protected internal methods.
+        </metric>
+        <metric id="CountLineComment_Javascript" name="Javascript Comment Lines" type="count">
+        Number of javascript lines containing comment.
+        </metric>
+        <metric id="CountStmtDecl_Javascript" name="Javascript Declarative Statements" type="count">
+        Number of javascript declarative statements.
+        </metric>
+        <metric id="CountStmtExe_Javascript" name="Javascript Executable Statements" type="count">
+        Number of javascript executable statements.
+        </metric>
+        <metric id="CountLine_Javascript" name="Javascript Lines" type="count">
+        Number of all javascript lines.
+        </metric>
+        <metric id="CountLineCode_Javascript" name="Javascript source code lines" type="count">
+        Number of javascript lines containing source code.
+        </metric>
+        <metric id="Knots" name="Knots" type="complexity">
+        Measure of overlapping jumps. If a piece of code has arrowed lines indicating where every jump
+in the flow of control occurs, a knot is defined as where two such lines cross each other. The number of
+knots is proportional to the complexity of the control flow.
+        </metric>
+        <metric id="PercentLackOfCohesion" name="Lack of Cohesion in Methods" type="oop">
+        Chidamber & Kemerer - Lack of Cohesion in Methods (LCOM/LOCM)
+        100% minus average cohesion for class data members. Calculates what percentage of class
+methods use a given class instance variable. To calculate, average percentages for all of that class'es
+instance variables and subtract from 100%. A lower percentage means higher cohesion between class data
+and methods.
+        </metric>
+        <metric id="PercentLackOfCohesionModified" name="Lack of Cohesion in Methods Modified" type="oop">
+            Chidamber & Kemerer - Lack of Cohesion in Methods (LCOM/LOCM)
+            100% minus average cohesion for class data members. Calculates what percentage of class
+            methods use a given class instance variable. To calculate, average percentages for all of that class'es
+            instance variables and subtract from 100%. A lower percentage means higher cohesion between class data
+            and methods.
+        </metric>
+        <metric id="AltCountLineCode" name="Lines of Code" type="count">
+         (Include Inactive) Number of lines containing source code, including inactive regions.
+        </metric>
+        <metric id="AltCountLineComment" name="Lines of Comments" type="count">
+        Number of lines containing comments, including comments within inactive regions.
+        </metric>
+        <metric id="AltCountLineComment" name="Lines with Comments" type="count">
+         (Include Inactive) Number of lines containing comment, including inactive regions.
+        </metric>
+        <metric id="CountLineComment" name="Lines with Comments" type="count">
+        CLOC
+        Number of lines containing comment. This can overlap with other code counting metrics. For
+instance, int j = 1; // comment has a comment, is a source line, is an executable source line, and a
+declarative source line.
+        </metric>
+        <metric id="CountDeclMethodConst" name="Local Const Methods" type="oop">
+        Number of local const methods.
+        </metric>
+        <metric id="CountDeclMethodDefault" name="Local Default Visibility Methods" type="oop">
+        Number of local default visibility methods.
+        </metric>
+        <metric id="CountDeclMethodInternal" name="Local Internal Methods" type="count">
+        Number of local internal methods.
+        </metric>
+        <metric id="CountDeclMethod" name="Local Methods" type="oop">
+        Chidamber & Kemerer - Weighted Methods per Class (WMC)
+        Number of local (not inherited) methods.
+        </metric>
+        <metric id="CountDeclMethodProtectedInternal" name="Local Protected Internal Methods" type="count">
+         Number of local protected internal methods.
+        </metric>
+        <metric id="CountDeclMethodStrictPrivate" name="Local strict private methods" type="oop">
+        Number of local strict private methods.
+        </metric>
+        <metric id="CountDeclMethodStrictPublished" name="Local strict published methods" type="oop">
+        Number of local strict published methods.
+        </metric>
+        <metric id="MaxCyclomatic" name="Max Cyclomatic Complexity" type="complexity">
+        Maximum cyclomatic complexity of all nested functions or methods.
+        </metric>
+        <metric id="MaxEssential" name="Max Essential Complexity" type="complexity">
+        Maximum essential complexity of all nested functions or methods.
+        </metric>
+        <metric id="MaxEssentialStrictModified" name="Max Essential Strict Modified Complexity" type="complexity">
+        Maximum strict modified essential complexity of all nested functions or methods.
+        </metric>
+        <metric id="MaxEssentialKnots" name="Max Knots" type="complexity">
+        Maximum Knots after structured programming constructs have been removed.
+        </metric>
+        <metric id="MaxCyclomaticModified" name="Max Modified Cyclomatic Complexity" type="complexity">
+        Maximum modified cyclomatic complexity of all nested functions or methods.
+        </metric>
+        <metric id="MaxCyclomaticStrict" name="Max Strict Cyclomatic Complexity" type="complexity">
+        Maximum strict cyclomatic complexity of all nested functions or methods.
+        </metric>
+        <metric id="CountDeclMethodAll" name="Methods" type="oop">
+        Lorenz & Kidd - Number of Methods (NM)
+        Number of methods, including inherited ones.
+        </metric>
+        <metric id="MinEssentialKnots" name="Minimum Knots" type="complexity">
+        Minimum Knots after structured programming constructs have been removed.
+        </metric>
+        <metric id="CyclomaticModified" name="Modified Cyclomatic Complexity" type="complexity">
+        Modified cyclomatic complexity.
+Modified McCabe Cyclomatic complexity. The Cyclomatic Complexity except that each decision in a multidecision structure (switch in C/Java, Case in Ada, computed Goto and arithmetic if in FORTRAN) statement
+is not counted and instead the entire multi-way decision structure counts as 1
+        </metric>
+        <metric id="CountDeclModule" name="Modules" type="oop">
+        Number of modules.
+        </metric>
+        <metric id="MaxNesting" name="Nesting" type="complexity">
+        Maximum nesting level of control constructs (if, while, for, switch, etc.) in the function.
+        </metric>
+        <metric id="CountClassDerived" name="Number of Children" type="oop">
+        Chidamber & Kemerer - Number of Children (NOC)
+        Number of immediate subclasses. (i.e. the number of classes one level down the inheritance tree from this class).
+        </metric>
+        <metric id="CountDeclFile" name="Number of Files" type="count">
+        Number of files.
+        </metric>
+        <metric id="CountOutput" name="Outputs" type="oop">
+        FANOUT
+        Number of called subprograms plus global variables set. [aka FANOUT]. The number of outputs
+that are SET. This can be parameters or global variables. So Functions calls + Parameters set/modify +
+Global Variables set/modify. Of the two general approaches to calculating FANOUT (informational versus
+structural) ours is the informational approach.
+        </metric>
+        <metric id="CountLineComment_Php" name="PHP Comment Lines" type="count">
+        Number of php lines containing comment.
+        </metric>
+        <metric id="CountStmtDecl_Php" name="PHP Declarative Statements" type="count">
+        Number of php declarative statements.
+        </metric>
+        <metric id="CountStmtExe_Php" name="PHP Executable Statements" type="count">
+        Number of php executable statements.
+        </metric>
+        <metric id="CountLine_Php" name="PHP Lines" type="count">
+        Number of all php lines.
+        </metric>
+        <metric id="CountLineCode_Php" name="PHP Source Code Lines" type="count">
+        Number of php lines containing source code.
+        </metric>
+        <metric id="CountPath" name="Paths" type="complexity">
+        NPATH
+        Number of unique paths though a body of code, not counting abnormal exits or gotos.
+        </metric>
+        <metric id="CountPathLog" name="Paths Log(x)" type="count">
+        The base 10 logarithm Log(x) of the number of unique paths though a body of code, not
+counting abnormal exits or go tos through the code, truncated to an integer value.
+        </metric>
+        <metric id="CountLine" name="Physical Lines" type="count">
+        NL
+        Number of physical lines.
+        </metric>
+        <metric id="CountLinePreprocessor" name="Preprocessor Lines" type="count">
+        Number of preprocessor lines.
+        </metric>
+        <metric id="CountDeclInstanceVariablePrivate" name="Private Instance Variables" type="oop">
+        Number of private instance variables.
+        </metric>
+        <metric id="CountDeclMethodPrivate" name="Private Methods" type="oop">
+        Number Private Methods (NPRM)
+        Number of local (not inherited) private methods.
+        </metric>
+        <metric id="CountDeclProgUnit" name="Program Units" type="oop">
+        Number of program units.
+        </metric>
+        <metric id="CountDeclProperty" name="Properties" type="count">
+        Number of properties.
+        </metric>
+        <metric id="CountDeclInstanceVariableProtected" name="Protected Instance Variables" type="oop">
+        Number of protected instance variables
+        </metric>
+        <metric id="CountDeclInstanceVariableProtectedInternal" name="Protected Internal Instance Variables" type="count">
+        Number of protected internal instance variables.
+        </metric>
+        <metric id="CountDeclMethodProtected" name="Protected Methods" type="oop">
+        Number of local protected methods.
+        </metric>
+        <metric id="CountDeclInstanceVariablePublic" name="Public Instance Variables" type="oop">
+        CountDeclInstanceVariablePublic
+        </metric>
+        <metric id="CountDeclMethodPublic" name="Public Methods" type="oop">
+        Lorenz & Kidd - Number of Public Methods (PM),NPM
+        Number of public methods. Only counts local (not inherited) methods.
+        </metric>
+        <metric id="CountSemicolon" name="Semicolons" type="count">
+        Number of semicolons.
+        </metric>
+        <metric id="CountLineCode" name="Source Lines of Code" type="count">
+        LOC, SLOC
+        Number of lines containing source code. [aka LOC] The number of lines that contain source
+code. Note that a line can contain source and a comment and thus count towards multiple metrics. For
+Classes this is the sum of the CountLineCode for the member functions of the class.
+        </metric>
+        <metric id="CountStmt" name="Statements" type="count">
+        Number of declarative plus executable statements.
+        </metric>
+        <metric id="CyclomaticStrict" name="Strict Cyclomatic Complexity" type="complexity">
+        Strict cyclomatic complexity. The Cyclomatic Complexity with logical conjunction and logical
+and in conditional expressions also adding 1 to the complexity for each of their occurrences. i.e. The
+statement 'if (a && b || c)' would have a cyclomatic of 1 but a strict cycolmatic of 3
+        </metric>
+        <metric id="CountDeclSubprogram" name="Subprograms" type="oop">
+        Number of subprograms.
+        </metric>
+        <metric id="SumCyclomatic" name="Sum Cyclomatic Complexity" type="complexity">
+        Chidamber & Kemerer - Weighted Methods per Class (WCM)
+        Sum of cyclomatic complexity of all nested functions or methods. [aka WMC]
+        </metric>
+        <metric id="SumEssential" name="Sum Essential Complexity" type="complexity">
+        Sum of essential complexity of all nested functions or methods.
+        </metric>
+        <metric id="SumEssentialStrictModified" name="Sum Essential Strict Modified Complexity" type="complexity">
+         Sum of strict modified essential complexity of all nested functions or methods.
+        </metric>
+        <metric id="SumCyclomaticModified" name="Sum Modified Cyclomatic Complexity" type="complexity">
+        Sum of modified cyclomatic complexity of all nested functions or methods.
+        </metric>
+        <metric id="SumCyclomaticStrict" name="Sum Strict Cyclomatic Complexity" type="complexity">
+        Sum of strict cyclomatic complexity of all nested functions or methods.
+        </metric>
+    </metrics>
+    <category name="default">
+        Auto Implemented Properties,
+        Average Cyclomatic Complexity,
+        Average Essential Cyclomatic Complexity,
+        Average Essential Strict Modified Complexity,
+        Average Modified Cyclomatic Complexity,
+        Average Number of Blank Lines,
+        Average Number of Lines,
+        Average Number of Lines of Code,
+        Average Number of Lines with Comments,
+        Average Strict Cyclomatic Complexity,
+        Base Classes,
+        Blank Lines of Code,
+        Blank html lines,
+        Blank javascript lines,
+        Blank php lines,
+        Class Methods,
+        Class Variables,
+        Classes,
+        Comment to Code Ratio,
+        Coupled Packages,
+        Coupling Between Objects,
+        Cyclomatic Complexity,
+        Declarative Lines of Code,
+        Declarative Statements,
+        Depth of Inheritance Tree,
+        Empty Statements,
+        Essential Complexity,
+        Essential Strict Modified Complexity,
+        Executable Lines of Code,
+        Executable Unit,
+        Friend Methods,
+        Function,
+        HTML Comment Lines,
+        HTML Lines,
+        Inactive Lines,
+        Inputs,
+        Instance Methods,
+        Instance Variables,
+        Internal Instance Variables,
+        Javascript Comment Lines,
+        Javascript Declarative Statements,
+        Javascript Executable Statements,
+        Javascript Lines,
+        Javascript source code lines,
+        Knots,
+        Lack of Cohesion in Methods,
+        Lines of Code,
+        Lines of Comments,
+        Lines with Comments,
+        Local Const Methods,
+        Local Default Visibility Methods,
+        Local Internal Methods,
+        Local Methods,
+        Local Protected Internal Methods,
+        Local strict private methods,
+        Local strict published methods,
+        Max Cyclomatic Complexity,
+        Max Essential Complexity,
+        Max Essential Strict Modified Complexity,
+        Max Knots,
+        Max Modified Cyclomatic Complexity,
+        Max Strict Cyclomatic Complexity,
+        Methods,
+        Minimum Knots,
+        Modified Cyclomatic Complexity,
+        Modules,
+        Nesting,
+        Number of Children,
+        Number of Files,
+        Outputs,
+        PHP Comment Lines,
+        PHP Declarative Statements,
+        PHP Lines,
+        PHP Source Code Lines,
+        Paths,
+        Paths Log(x),
+        Physical Lines,
+        Preprocessor Lines,
+        Private Instance Variables,
+        Private Methods,
+        Program Units,
+        Properties,
+        Protected Instance Variables,
+        Protected Internal Instance Variables,
+        Protected Methods,
+        Public Instance Variables,
+        Public Methods,
+        Semicolons,
+        Source Lines of Code,
+        Statements,
+        Strict Cyclomatic Complexity,
+        Subprograms,
+        Sum Cyclomatic Complexity,
+        Sum Essential Complexity,
+        Sum Essential Strict Modified Complexity,
+        Sum Modified Cyclomatic Complexity,
+        Sum Strict Cyclomatic Complexity,
+    </category>
+    <category name="Complexity">
+        Average Cyclomatic Complexity,
+        Average Essential Cyclomatic Complexity,
+        Average Essential Strict Modified Complexity,
+        Average Modified Cyclomatic Complexity,
+        Average Strict Cyclomatic Complexity,
+
+        Cyclomatic Complexity,
+
+        Essential Complexity,
+        Essential Strict Modified Complexity,
+
+        Max Cyclomatic Complexity,
+        Max Essential Complexity,
+        Max Essential Strict Modified Complexity,
+        Max Modified Cyclomatic Complexity,
+        Max Strict Cyclomatic Complexity,
+
+        Strict Cyclomatic Complexity,
+        Sum Cyclomatic Complexity,
+        Sum Essential Complexity,
+        Sum Essential Strict Modified Complexity,
+        Sum Modified Cyclomatic Complexity,
+        Sum Strict Cyclomatic Complexity,
+    </category>
+    <category name="Code">
+        <metric name=""></metric>
+    </category>
+</categories>

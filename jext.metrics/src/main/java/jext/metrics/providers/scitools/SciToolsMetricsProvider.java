@@ -1,7 +1,9 @@
-package jext.metrics.providers;
+package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
-import jext.metrics.AllMetrics;
+import jext.metrics.Metric;
+import jext.metrics.MetricValue;
+import jext.metrics.MetricsException;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
 import jext.util.StringUtils;
@@ -10,17 +12,19 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 public class SciToolsMetricsProvider implements MetricsProvider {
 
     private static final String NAME = "scitools";
+    private static final String PROPERTY_FILE = "file";
 
     // ----------------------------------------------------------------------
     // Private properties
@@ -28,8 +32,10 @@ public class SciToolsMetricsProvider implements MetricsProvider {
 
     private static final Logger logger = Logger.getLogger(SciToolsMetricsProvider.class);
 
+    private Properties properties;
     private File metricsFile;
     private SciToolsAllMetrics allMetrics;
+
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -43,9 +49,18 @@ public class SciToolsMetricsProvider implements MetricsProvider {
     // Configuration
     // ----------------------------------------------------------------------
 
-    public void setMetricsFile(File metricsFile) {
-        this.metricsFile = metricsFile;
-        this.allMetrics = null;
+    @Override
+    public void initialize(Properties properties) {
+        this.properties = properties;
+        String metricsFile = properties.getProperty(PROPERTY_FILE);
+        if (metricsFile == null)
+            throw new MetricsException("Missing 'file' property");
+
+        this.allMetrics = new SciToolsAllMetrics();
+        this.metricsFile = new File(metricsFile);
+        loadMetrics();
+        loadCategories();
+        loadFromFile();
     }
 
     // ----------------------------------------------------------------------
@@ -58,30 +73,69 @@ public class SciToolsMetricsProvider implements MetricsProvider {
     }
 
     @Override
-    public AllMetrics loadMetrics() {
-        if (allMetrics == null) {
-            allMetrics = new SciToolsAllMetrics();
-            loadCategories();
-            loadFromFile();
-        }
-        return allMetrics;
+    public Properties getProperties() {
+        return properties;
     }
 
-    // ----------------------------------------------------------------------
-    // Operations
-    // ----------------------------------------------------------------------
+    @Override
+    public Collection<String> getCategories() {
+        return allMetrics.getCategories();
+    }
 
-    public AllMetrics loadMetrics(File metricsFile) {
-        setMetricsFile(metricsFile);
-        return loadMetrics();
+    @Override
+    public Collection<Metric> getMetrics() {
+        return allMetrics.getMetrics();
+    }
+
+    @Override
+    public Collection<Metric> getMetrics(String category) {
+        return allMetrics.getMetrics(category);
+    }
+
+    @Override
+    public Metric getMetric(String name) {
+        return allMetrics.getMetric(name);
+    }
+
+    @Override
+    public Collection<MetricValue> getMetricValues(String id) {
+        return allMetrics.getMetricValues(id);
+    }
+
+    @Override
+    public Collection<MetricValue> getMetricValues(String id, String category) {
+        return allMetrics.getMetricValues(id, category);
     }
 
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+    /*
+            <metric id="CountDeclPropertyAuto" name="Auto Implemented Properties" type="count">
+            Number of auto-implemented properties.
+            </metric>
+     */
+    private void loadMetrics() {
+        try(InputStream stream = MetricsProviders.class.getResourceAsStream("scitoolsmetrics.xml")) {
+            Element root = XPathUtils.parse(stream).getDocumentElement();
+            XPathUtils.selectElements(root, "metrics/metric").forEach(elt -> {
+                String id = XPathUtils.getValue(elt, "@id");
+                String name = XPathUtils.getValue(elt, "@name");
+                String type = XPathUtils.getValue(elt, "@type", "count");
+                String description = XPathUtils.getValue(elt, "#text");
+
+                Metric metric = SciToolsMetric.of(id, name, type, description);
+                allMetrics.addMetric(metric);
+            });
+        }
+        catch(IOException | SAXException | ParserConfigurationException e) {
+            // in theory never happen
+            logger.error(e.getMessage());
+        }
+    }
 
     private void loadCategories() {
-        try(InputStream stream = MetricsProviders.class.getResourceAsStream("scitoolscategories.xml")) {
+        try(InputStream stream = MetricsProviders.class.getResourceAsStream("scitoolsmetrics.xml")) {
             Element root = XPathUtils.parse(stream).getDocumentElement();
             XPathUtils.selectElements(root, "category").forEach(cat -> {
                 String category = XPathUtils.getValue(cat, "@name");
@@ -112,7 +166,7 @@ public class SciToolsMetricsProvider implements MetricsProvider {
                     float value = Float.parseFloat(parts[4]);
                     String name = parts[1];
                     String kname = parts[2];
-                    SciToolsMetric metric = (SciToolsMetric) allMetrics.addMetric(parts[3]);
+                    SciToolsMetric metric = (SciToolsMetric) allMetrics.getMetric(parts[3]);
                     allMetrics.addMetricValue(id, metric, name, kname, value);
 
                     if (count % 1000 == 0)
