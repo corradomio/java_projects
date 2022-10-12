@@ -6,6 +6,7 @@ import jext.metrics.MetricValue;
 import jext.metrics.MetricsException;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
+import jext.util.Assert;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -17,12 +18,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class SciToolsMetricsProvider implements MetricsProvider {
 
+    private static final String ROOT = "";
     private static final String NAME = "scitools";
     private static final String PROPERTY_FILE = "file";
 
@@ -34,7 +45,12 @@ public class SciToolsMetricsProvider implements MetricsProvider {
 
     private Properties properties;
     private File metricsFile;
-    private SciToolsAllMetrics allMetrics;
+
+    private final Map<String, Metric> metricsById = new TreeMap<>();
+    private final Map<String, Metric> metricsByName = new TreeMap<>();
+    private final Map<String, List<MetricValue>> metricValues = new TreeMap<>();
+    private final Map<String, Set<String>> categories = new TreeMap<>();
+    private final Map<String, SciToolsObject> objects = new HashMap<>();
 
 
     // ----------------------------------------------------------------------
@@ -42,7 +58,7 @@ public class SciToolsMetricsProvider implements MetricsProvider {
     // ----------------------------------------------------------------------
 
     public SciToolsMetricsProvider() {
-
+        // none to do
     }
 
     // ----------------------------------------------------------------------
@@ -56,7 +72,6 @@ public class SciToolsMetricsProvider implements MetricsProvider {
         if (metricsFile == null)
             throw new MetricsException("Missing 'file' property");
 
-        this.allMetrics = new SciToolsAllMetrics();
         this.metricsFile = new File(metricsFile);
         loadMetrics();
         loadCategories();
@@ -79,32 +94,56 @@ public class SciToolsMetricsProvider implements MetricsProvider {
 
     @Override
     public Collection<String> getCategories() {
-        return allMetrics.getCategories();
+        return categories.keySet();
     }
 
     @Override
     public Collection<Metric> getMetrics() {
-        return allMetrics.getMetrics();
+        return metricsById.values();
     }
 
     @Override
     public Collection<Metric> getMetrics(String category) {
-        return allMetrics.getMetrics(category);
+        Assert.verify(category != null, "category is null");
+
+        if (!categories.containsKey(category))
+            return Collections.emptyList();
+
+        return categories.get(category).stream()
+                .map(this::getMetric)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Metric getMetric(String name) {
-        return allMetrics.getMetric(name);
+        if (metricsById.containsKey(name))
+            return metricsById.get(name);
+        if (metricsByName.containsKey(name))
+            return metricsByName.get(name);
+
+        logger.errorf("Unknown metric '%s'", name);
+        Metric metric = SciToolsMetric.of(name, name, "", "");
+        addMetric(metric);
+        return metric;
     }
 
     @Override
     public Collection<MetricValue> getMetricValues(String id) {
-        return allMetrics.getMetricValues(id);
+        return metricValues.getOrDefault(id, Collections.emptyList());
     }
 
     @Override
     public Collection<MetricValue> getMetricValues(String id, String category) {
-        return allMetrics.getMetricValues(id, category);
+        if (!metricValues.containsKey(id))
+            return Collections.emptyList();
+        if (!categories.containsKey(category))
+            return Collections.emptyList();
+
+        Set<String> categoryMetrics = categories.get(category);
+        return metricValues.get(id).stream()
+                .filter(v -> categoryMetrics.contains(v.getName()))
+                .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------
@@ -125,7 +164,7 @@ public class SciToolsMetricsProvider implements MetricsProvider {
                 String description = XPathUtils.getValue(elt, "#text");
 
                 Metric metric = SciToolsMetric.of(id, name, type, description);
-                allMetrics.addMetric(metric);
+                addMetric(metric);
             });
         }
         catch(IOException | SAXException | ParserConfigurationException e) {
@@ -141,7 +180,7 @@ public class SciToolsMetricsProvider implements MetricsProvider {
                 String category = XPathUtils.getValue(cat, "@name");
                 List<String> metrics = StringUtils.split(cat.getTextContent(), ",");
 
-                allMetrics.addCategory(category, metrics);
+                addCategory(category, metrics);
             });
         }
         catch(IOException | SAXException | ParserConfigurationException e) {
@@ -166,8 +205,8 @@ public class SciToolsMetricsProvider implements MetricsProvider {
                     float value = Float.parseFloat(parts[4]);
                     String name = parts[1];
                     String kname = parts[2];
-                    SciToolsMetric metric = (SciToolsMetric) allMetrics.getMetric(parts[3]);
-                    allMetrics.addMetricValue(id, metric, name, kname, value);
+                    SciToolsMetric metric = (SciToolsMetric) getMetric(parts[3]);
+                    addMetricValue(id, metric, name, kname, value);
 
                     if (count % 1000 == 0)
                         logger.debugft("... %d metrics", count);
@@ -178,8 +217,29 @@ public class SciToolsMetricsProvider implements MetricsProvider {
             }
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new MetricsException(e);
         }
+    }
+
+    // ----------------------------------------------------------------------
+    // Operations/configuration
+    // ----------------------------------------------------------------------
+
+    public void addMetric(Metric metric) {
+        metricsById.put(metric.getId(), metric);
+        metricsByName.put(metric.getName(), metric);
+    }
+
+    public void addCategory(String name, Collection<String> metrics) {
+        if (!ROOT.equals(name))
+            categories.put(name, new TreeSet<>(metrics));
+    }
+
+    public void addMetricValue(String id, SciToolsMetric metric, String name, String kname, float value) {
+        SciToolsMetricValue metricValue = SciToolsMetricValue.of(metric, value);
+        objects.computeIfAbsent(id, par -> SciToolsObject.of(id, name, kname));
+        metricValues.computeIfAbsent(id, par -> new ArrayList<>());
+        metricValues.get(id).add(metricValue);
     }
 
     // ----------------------------------------------------------------------

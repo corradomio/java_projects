@@ -5,7 +5,7 @@ import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
-import jext.metrics.providers.scitools.SciToolsMetric;
+import jext.util.Assert;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 
@@ -26,6 +26,7 @@ public class SonarQubeProvider implements MetricsProvider {
 
     private static final Logger logger = Logger.getLogger(SonarQubeProvider.class);
 
+    private static final String ROOT = "";
     private static final String NAME = "scitools";
     // used also for token
     private static final String PROPERTY_USERNAME = "username";
@@ -57,7 +58,12 @@ public class SonarQubeProvider implements MetricsProvider {
     public void initialize(Properties properties) {
         this.properties = properties;
 
+        loadCategories();
         loadMetrics();
+    }
+
+    private void loadCategories() {
+
     }
 
     private void loadMetrics() {
@@ -96,14 +102,15 @@ public class SonarQubeProvider implements MetricsProvider {
             String domain = MapUtils.get(data,"domain");
             Metric metric = SonarQubeMetric.of(data);
             addMetric(metric);
-            addMetricToCategory(domain, id);
+            addMetricToCategory(ROOT, metric);
+            addMetricToCategory(domain, metric);
         });
 
     }
 
-    private void addMetricToCategory(String category, String metric) {
+    private void addMetricToCategory(String category, Metric metric) {
         categories.computeIfAbsent(category, par -> new TreeSet<>());
-        categories.get(category).add(metric);
+        categories.get(category).add(metric.getId());
     }
 
     private void addMetric(Metric metric) {
@@ -137,6 +144,7 @@ public class SonarQubeProvider implements MetricsProvider {
 
     @Override
     public Collection<Metric> getMetrics(String category) {
+        Assert.verify(category != null, "category is null");
         if (!categories.containsKey(category))
             return Collections.emptyList();
         return categories.get(category).stream()
