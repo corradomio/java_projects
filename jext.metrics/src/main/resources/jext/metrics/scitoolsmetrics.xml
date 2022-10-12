@@ -33,7 +33,7 @@
          (Include Inactive) Average number of lines containing source code for all nested functions or methods, including inactive regions.
         </metric>
         <metric id="AvgLineCode" name="Average Number of Lines with Comments" type="count">
-        Lorenz & Kidd - Average Method Size (AMS) 
+        Lorenz &amp; Kidd - Average Method Size (AMS) 
         Average number of lines containing source code for all nested functions or methods.
         </metric>
         <metric id="AvgLineComment" name="Average Number of Lines with Comments" type="count">
@@ -66,7 +66,7 @@
         Number of class methods.
         </metric>
         <metric id="CountDeclClassVariable" name="Class Variables" type="oop">
-         Lorenz & Kidd - Number of Variables (NV)
+         Lorenz &amp; Kidd - Number of Variables (NV)
          Number of class variables
         </metric>
         <metric id="CountDeclClass" name="Classes" type="oop">
@@ -80,22 +80,22 @@ both code and comment, this could easily yield percentages higher than 100
         Number of other packages coupled to.
         </metric>
         <metric id="CountClassCoupled" name="Coupling Between Objects" type="oop">
-        Chidamber & Kemerer - Coupling Between Objects (CBO)
+        Chidamber &amp; Kemerer - Coupling Between Objects (CBO)
         Number of other classes coupled to. [aka CBO (coupling between object classes)]
 The Coupling Between Object Classes (CBO) measure for a class is a count of the number of other classes
 to which it is coupled. Class A is coupled to class B if class A uses a type, data, or member from class B.
 This metric is also referred to as Efferent Coupling (Ce). Any number of couplings to a given class counts as
-1 towards the metric total Chidamber & Kemerer suggest that: 1) Excessive coupling between object classes
+1 towards the metric total Chidamber &amp; Kemerer suggest that: 1) Excessive coupling between object classes
 is detrimental to modular design and prevents reuse. 2) Inter-object class couples should be kept to a
 minimum. 3) The higher the inter-object class coupling, the more rigorous testing needs to be.
         </metric>
         <metric id="CountClassCoupledModified" name="Coupling Between Objects Modified" type="oop">
-            Chidamber & Kemerer - Coupling Between Objects (CBO)
+            Chidamber &amp; Kemerer - Coupling Between Objects (CBO)
             Number of other classes coupled to. [aka CBO (coupling between object classes)]
             The Coupling Between Object Classes (CBO) measure for a class is a count of the number of other classes
             to which it is coupled. Class A is coupled to class B if class A uses a type, data, or member from class B.
             This metric is also referred to as Efferent Coupling (Ce). Any number of couplings to a given class counts as
-            1 towards the metric total Chidamber & Kemerer suggest that: 1) Excessive coupling between object classes
+            1 towards the metric total Chidamber &amp; Kemerer suggest that: 1) Excessive coupling between object classes
             is detrimental to modular design and prevents reuse. 2) Inter-object class couples should be kept to a
             minimum. 3) The higher the inter-object class coupling, the more rigorous testing needs to be.
         </metric>
@@ -114,7 +114,7 @@ counted as 1. For languages with Macros, the expanded Macro text is also include
         Number of declarative statements.
         </metric>
         <metric id="MaxInheritanceTree" name="Depth of Inheritance Tree" type="complexity">
-        Chidamber & Kemerer - Depth of Inheritance Tree (DIT)
+        Chidamber &amp; Kemerer - Depth of Inheritance Tree (DIT)
         Maximum depth of class in inheritance tree. [aka DIT]. The depth of a class within the inheritance
 hierarchy is the maximum number of nodes from the class node to the root of the inheritance tree. The root
 node has a DIT of 0. The deeper within the hierarchy, the more methods the class can inherit, increasing its
@@ -148,7 +148,7 @@ graph reduction.
         Number of program units with executable code
         </metric>
         <metric id="CountDeclMethodFriend" name="Friend Methods" type="oop">
-        Lorenz & Kidd - Number of Friends (NF), Number of Friend Methods (NFM)
+        Lorenz &amp; Kidd - Number of Friends (NF), Number of Friend Methods (NFM)
         Number of local (not inherited) friend methods.
         </metric>
         <metric id="CountDeclFunction" name="Function" type="count">
@@ -202,14 +202,14 @@ in the flow of control occurs, a knot is defined as where two such lines cross e
 knots is proportional to the complexity of the control flow.
         </metric>
         <metric id="PercentLackOfCohesion" name="Lack of Cohesion in Methods" type="oop">
-        Chidamber & Kemerer - Lack of Cohesion in Methods (LCOM/LOCM)
+        Chidamber &amp; Kemerer - Lack of Cohesion in Methods (LCOM/LOCM)
         100% minus average cohesion for class data members. Calculates what percentage of class
 methods use a given class instance variable. To calculate, average percentages for all of that class'es
 instance variables and subtract from 100%. A lower percentage means higher cohesion between class data
 and methods.
         </metric>
         <metric id="PercentLackOfCohesionModified" name="Lack of Cohesion in Methods Modified" type="oop">
-            Chidamber & Kemerer - Lack of Cohesion in Methods (LCOM/LOCM)
+            Chidamber &amp; Kemerer - Lack of Cohesion in Methods (LCOM/LOCM)
             100% minus average cohesion for class data members. Calculates what percentage of class
             methods use a given class instance variable. To calculate, average percentages for all of that class'es
             instance variables and subtract from 100%. A lower percentage means higher cohesion between class data
@@ -240,7 +240,7 @@ declarative source line.
         Number of local internal methods.
         </metric>
         <metric id="CountDeclMethod" name="Local Methods" type="oop">
-        Chidamber & Kemerer - Weighted Methods per Class (WMC)
+        Chidamber &amp; Kemerer - Weighted Methods per Class (WMC)
         Number of local (not inherited) methods.
         </metric>
         <metric id="CountDeclMethodProtectedInternal" name="Local Protected Internal Methods" type="count">
@@ -271,7 +271,7 @@ declarative source line.
         Maximum strict cyclomatic complexity of all nested functions or methods.
         </metric>
         <metric id="CountDeclMethodAll" name="Methods" type="oop">
-        Lorenz & Kidd - Number of Methods (NM)
+        Lorenz &amp; Kidd - Number of Methods (NM)
         Number of methods, including inherited ones.
         </metric>
         <metric id="MinEssentialKnots" name="Minimum Knots" type="complexity">
@@ -289,7 +289,7 @@ is not counted and instead the entire multi-way decision structure counts as 1
         Maximum nesting level of control constructs (if, while, for, switch, etc.) in the function.
         </metric>
         <metric id="CountClassDerived" name="Number of Children" type="oop">
-        Chidamber & Kemerer - Number of Children (NOC)
+        Chidamber &amp; Kemerer - Number of Children (NOC)
         Number of immediate subclasses. (i.e. the number of classes one level down the inheritance tree from this class).
         </metric>
         <metric id="CountDeclFile" name="Number of Files" type="count">
@@ -358,7 +358,7 @@ counting abnormal exits or go tos through the code, truncated to an integer valu
         CountDeclInstanceVariablePublic
         </metric>
         <metric id="CountDeclMethodPublic" name="Public Methods" type="oop">
-        Lorenz & Kidd - Number of Public Methods (PM),NPM
+        Lorenz &amp; Kidd - Number of Public Methods (PM),NPM
         Number of public methods. Only counts local (not inherited) methods.
         </metric>
         <metric id="CountSemicolon" name="Semicolons" type="count">
@@ -376,13 +376,13 @@ Classes this is the sum of the CountLineCode for the member functions of the cla
         <metric id="CyclomaticStrict" name="Strict Cyclomatic Complexity" type="complexity">
         Strict cyclomatic complexity. The Cyclomatic Complexity with logical conjunction and logical
 and in conditional expressions also adding 1 to the complexity for each of their occurrences. i.e. The
-statement 'if (a && b || c)' would have a cyclomatic of 1 but a strict cycolmatic of 3
+statement 'if (a &amp;&amp; b || c)' would have a cyclomatic of 1 but a strict cycolmatic of 3
         </metric>
         <metric id="CountDeclSubprogram" name="Subprograms" type="oop">
         Number of subprograms.
         </metric>
         <metric id="SumCyclomatic" name="Sum Cyclomatic Complexity" type="complexity">
-        Chidamber & Kemerer - Weighted Methods per Class (WCM)
+        Chidamber &amp; Kemerer - Weighted Methods per Class (WCM)
         Sum of cyclomatic complexity of all nested functions or methods. [aka WMC]
         </metric>
         <metric id="SumEssential" name="Sum Essential Complexity" type="complexity">
