@@ -1,6 +1,7 @@
 package jext.sourcecode.project.util;
 
 import jext.logging.Logger;
+import jext.name.EmptyName;
 import jext.name.PathName;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryRepository;
@@ -46,7 +47,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     // ----------------------------------------------------------------------
 
     protected BaseModule(File moduleHome, Project project) {
-        super(null);
+        super(EmptyName.noName());
         this.moduleHome = moduleHome;
         this.project = project;
         this.properties = new Properties();

@@ -13,7 +13,7 @@ public class MethodParameter extends NamedObject implements Parameter {
     private DeclType parameterType;
 
     public MethodParameter(Method method, DeclType parameterType, String parameterName) {
-        super(new ObjectName(method.getName(), parameterName));
+        super(ObjectName.of(method.getName(), parameterName));
         this.ownerMethod = method;
         this.parameterType = parameterType;
     }

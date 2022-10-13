@@ -19,6 +19,18 @@ public class ObjectName implements Name {
         return new ObjectName(qualifiedName);
     }
 
+    public static ObjectName of(String namespace, String name) {
+        return of(JavaUtils.qualifiedName(namespace, name));
+    }
+
+    public static ObjectName of(Name name) {
+        return of(name.getFullName());
+    }
+
+    public static ObjectName of(Name parent, String name) {
+        return of(JavaUtils.qualifiedName(parent.getFullName(), name));
+    }
+
     // public static ObjectName NO_NAME = new ObjectName("");
 
     // public static ObjectName empty() {
@@ -35,21 +47,21 @@ public class ObjectName implements Name {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public ObjectName(Name name) {
-        this.name = name.getFullName();
-    }
+    // public ObjectName(Name name) {
+    //     this.name = name.getFullName();
+    // }
 
     public ObjectName(String name) {
         this.name = name;
     }
 
-    public ObjectName(String namespace, String name) {
-        this.name = JavaUtils.qualifiedName(namespace, name);
-    }
+    // public ObjectName(String namespace, String name) {
+    //     this.name = JavaUtils.qualifiedName(namespace, name);
+    // }
 
-    public ObjectName(Name parent, String name) {
-        this.name = JavaUtils.qualifiedName(parent.getFullName(), name);
-    }
+    // public ObjectName(Name parent, String name) {
+    //     this.name = JavaUtils.qualifiedName(parent.getFullName(), name);
+    // }
 
     // ----------------------------------------------------------------------
     // Properties

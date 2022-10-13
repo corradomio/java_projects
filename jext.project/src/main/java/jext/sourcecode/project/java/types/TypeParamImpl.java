@@ -17,7 +17,7 @@ public class TypeParamImpl extends NamedObject implements TypeParam {
     private String signature;
 
     public TypeParamImpl(Name typeName, String name, String signature) {
-        super(new ObjectName(typeName, name));
+        super(ObjectName.of(typeName, name));
         // this.signature = String.format("%s::%s", getName().getFullName(), signature);
         this.signature = getName().getFullName();
     }

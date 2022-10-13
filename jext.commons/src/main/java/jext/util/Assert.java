@@ -21,6 +21,11 @@ public class Assert {
             throw new AssertionError(String.format(message, args));
     }
 
+    public static void notNull(Object value, String name) {
+        if (value == null)
+            throw new AssertionError(String.format("%s is null", name));
+    }
+
     public static void nop() {
 
     }

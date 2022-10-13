@@ -63,7 +63,7 @@ public class DefinedMethod extends NamedObject implements Method {
         String methodName,
         String signature)
     {
-        super(new MethodNameObject(ownerType.getName(), methodName, signature));
+        super(MethodNameObject.of(ownerType.getName(), methodName, signature));
 
         this.ownerType = ownerType;
         this.callIndex = new AtomicInteger();

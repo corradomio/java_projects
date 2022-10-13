@@ -2,8 +2,16 @@ package jext.name;
 
 public class EmptyName implements Name {
 
-    private static final String EMPTY = "";
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    public static final String EMPTY = "";
     public static final EmptyName NO_NAME = new EmptyName();
+
+    // ----------------------------------------------------------------------
+    // Static methods
+    // ----------------------------------------------------------------------
 
     public static EmptyName noName() {
         return NO_NAME;
@@ -13,7 +21,15 @@ public class EmptyName implements Name {
         return NO_NAME;
     }
 
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
     private EmptyName() { }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean isRoot() {
@@ -40,8 +56,17 @@ public class EmptyName implements Name {
         return EMPTY;
     }
 
+    // ----------------------------------------------------------------------
+    // Overrides
+    // ----------------------------------------------------------------------
+
     @Override
     public int compareTo(Name o) {
         return EMPTY.compareTo(o.getFullName());
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

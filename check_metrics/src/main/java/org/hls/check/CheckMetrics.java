@@ -2,7 +2,6 @@ package org.hls.check;
 
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
-import jext.metrics.providers.scitools.SciToolsMetricsProvider;
 import jext.util.PropertiesUtils;
 
 import java.sql.DriverManager;
@@ -40,10 +39,10 @@ public class CheckMetrics {
     static void sonarqube() {
         MetricsProvider provider = MetricsProviders.getProvider("sonarqube",
                 PropertiesUtils.properties(
-                        "url", "localhost:9000",
-                        "username", "sonaruser",
-                        "password", "sonaruser",
-                        "project", "Lucene"
+                        "sonar.url", "localhost:9000",
+                        "sonar.username", "sonaruser",
+                        "sonar.password", "sonaruser",
+                        "sonar.project", "Lucene"
                 ));
 
         System.out.println(provider.getName());

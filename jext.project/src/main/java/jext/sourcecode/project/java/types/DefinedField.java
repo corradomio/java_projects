@@ -35,7 +35,7 @@ public class DefinedField extends NamedObject implements Field {
     // ----------------------------------------------------------------------
 
     private DefinedField(RefType ownerType, DeclType fieldType, String fieldName) {
-        super(new FieldNameObject(ownerType.getName(), fieldName));
+        super(FieldNameObject.of(ownerType.getName(), fieldName));
         this.ownerType = ownerType;
         this.fieldType = fieldType;
         this.digest = LongHash.asString(fieldType.getSignature());

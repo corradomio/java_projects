@@ -17,6 +17,7 @@ public interface MetricsProvider {
      * containing all metrics
      */
     Collection<String> getCategories();
+    boolean hasCategory(String category);
 
     /**
      * List of all metrics. It is the content of category ''
@@ -36,18 +37,7 @@ public interface MetricsProvider {
      */
     Metric getMetric(String name);
 
-    /**
-     * Retrieve all metrics fo the specified object
-     * @param id object's id
-     * @return sonarcube-list.json of metrics
-     */
-    Collection<MetricValue> getMetricValues(String id);
 
-    /**
-     * Retrieve all metrics of the specified object under the specified category
-     * @param id object's id
-     * @param category metrics category
-     * @return sonarcube-list.json of metrics
-     */
-    Collection<MetricValue> getMetricValues(String id, String category);
+    MetricsProject getProject();
+
 }

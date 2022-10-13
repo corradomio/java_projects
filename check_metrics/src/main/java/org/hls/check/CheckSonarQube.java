@@ -1,11 +1,21 @@
 package org.hls.check;
 
-import org.sonar.wsclient.SonarClient;
+import jext.metrics.MetricsProvider;
+import jext.metrics.MetricsProviders;
+import jext.util.PropertiesUtils;
 
-public class CheckSonarQube {
+public class CheckSonarQube extends CheckBase {
 
     public static void main(String[] args) {
-        SonarClient sonarClient = SonarClient.create("http://localhost:9000");
-        String sonarEndpoint = "";
+
+        MetricsProvider provider = MetricsProviders.getProvider("sonarqube",
+                PropertiesUtils.properties(
+                        "sonar.url", "http://localhost:9000",
+                        "sonar.username", "sonaruser",
+                        "sonar.password", "sonaruser",
+                        "sonar.name", "Lucene"
+                ));
+
+        dump(provider.getProject(), 0);
     }
 }

@@ -3,6 +3,7 @@ package jext.metrics.providers.sonarqube;
 import jext.logging.Logger;
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
+import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
 import jext.util.Assert;
@@ -27,11 +28,13 @@ public class SonarQubeProvider implements MetricsProvider {
     private static final Logger logger = Logger.getLogger(SonarQubeProvider.class);
 
     private static final String ROOT = "";
-    private static final String NAME = "scitools";
+    private static final String NAME = "sonarqube";
+    private static final String SONAR_NAME = "sonar.name";
+    private static final String SONAR_URL = "sonar.url";
     // used also for token
-    private static final String PROPERTY_USERNAME = "username";
+    private static final String SONAR_USERNAME = "sonar.username";
     // with token, password must be the empty string
-    private static final String PROPERTY_PASSWORD = "password";
+    private static final String SONAR_PASSWORD = "sonar.password";
 
     // ----------------------------------------------------------------------
     // Private properties
@@ -58,8 +61,16 @@ public class SonarQubeProvider implements MetricsProvider {
     public void initialize(Properties properties) {
         this.properties = properties;
 
+        validate();
         loadCategories();
         loadMetrics();
+    }
+
+    private void validate() {
+        Assert.notNull(properties.getProperty(SONAR_URL), SONAR_URL);
+        Assert.notNull(properties.getProperty(SONAR_USERNAME), SONAR_USERNAME);
+        Assert.notNull(properties.getProperty(SONAR_PASSWORD), SONAR_PASSWORD);
+        Assert.notNull(properties.getProperty(SONAR_NAME), SONAR_NAME);
     }
 
     private void loadCategories() {
@@ -94,6 +105,8 @@ public class SonarQubeProvider implements MetricsProvider {
 
         List<Map<String, Object>> metrics = MapUtils.get(sonarmetrics, "metrics");
         metrics.forEach(data -> {
+
+            // skip hidden metrics
             boolean hidden = MapUtils.get(data,"hidden");
             if (hidden)
                 return;
@@ -138,13 +151,18 @@ public class SonarQubeProvider implements MetricsProvider {
     }
 
     @Override
+    public boolean hasCategory(String category) {
+        return categories.containsKey(category);
+    }
+
+    @Override
     public Collection<Metric> getMetrics() {
         return metricsById.values();
     }
 
     @Override
     public Collection<Metric> getMetrics(String category) {
-        Assert.verify(category != null, "category is null");
+        Assert.notNull(category, "category");
         if (!categories.containsKey(category))
             return Collections.emptyList();
         return categories.get(category).stream()
@@ -169,13 +187,36 @@ public class SonarQubeProvider implements MetricsProvider {
         return metric;
     }
 
-    @Override
-    public Collection<MetricValue> getMetricValues(String id) {
-        return Collections.emptyList();
-    }
+    // ----------------------------------------------------------------------
+    // Project
+    // ----------------------------------------------------------------------
 
     @Override
-    public Collection<MetricValue> getMetricValues(String id, String category) {
-        return Collections.emptyList();
+    public MetricsProject getProject() {
+        String name = properties.getProperty(SONAR_NAME);
+        SonarQubeProject project = new SonarQubeProject(name, this);
+        project.connect();
+        return project;
     }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
+    String getUrl() {
+        return properties.getProperty(SONAR_URL);
+    }
+
+    String getUsername() {
+        return properties.getProperty(SONAR_USERNAME);
+    }
+
+    String getPassword() {
+        return properties.getProperty(SONAR_PASSWORD);
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

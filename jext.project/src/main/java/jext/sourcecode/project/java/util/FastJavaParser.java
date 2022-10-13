@@ -183,7 +183,7 @@ public class FastJavaParser implements JavaConstants {
         if (className.contains("-"))
             return null;
         else
-            return new ObjectName(namespace, className);
+            return ObjectName.of(namespace, className);
     }
 
     private static File parseRoot(String namespace, File sourceFile) {

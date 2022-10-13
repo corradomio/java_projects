@@ -18,10 +18,10 @@
     <modules>
         <module>../jext.commons</module>
         <module>../jext.metrics</module>
+        <module>../sonar-ws-client</module>
     </modules>
 
     <dependencies>
-
         <dependency>
             <groupId>org.hls</groupId>
             <artifactId>jext.commons</artifactId>
@@ -36,11 +36,11 @@
 
         <!-- https://mvnrepository.com/artifact/org.codehaus.sonar/sonar-ws-client -->
         <!-- very old 02/05/2015 -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.codehaus.sonar</groupId>
             <artifactId>sonar-ws-client</artifactId>
             <version>5.1</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.neo4j/neo4j-jdbc-driver -->
         <dependency>
@@ -48,6 +48,13 @@
             <artifactId>neo4j-jdbc-driver</artifactId>
             <version>4.0.5</version>
             <scope>runtime</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.23.1</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

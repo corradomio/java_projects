@@ -1,5 +1,6 @@
 package jext.sourcecode.project.util;
 
+import jext.lang.LanguageUtils;
 import jext.sourcecode.project.Module;
 import jext.sourcecode.project.Source;
 import jext.util.FileUtils;
@@ -22,14 +23,17 @@ public abstract class SourceCode extends ResourceFile implements Source {
 
     protected SourceCode(File file, Module module) {
         super(file, module);
-
-        String name = file.getName();
-        this.language = name.substring(name.lastIndexOf(".")+1);
+        this.language = LanguageUtils.guessLanguage(file);
     }
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
+
+    @Override
+    public String getId() {
+        return super.getId();
+    }
 
     @Override
     public String getLanguage() {

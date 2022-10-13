@@ -4,6 +4,7 @@ import jext.logging.Logger;
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsException;
+import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
 import jext.util.Assert;
@@ -14,14 +15,10 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +28,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class SciToolsMetricsProvider implements MetricsProvider {
+public class SciToolsProvider implements MetricsProvider {
 
     private static final String ROOT = "";
     private static final String NAME = "scitools";
@@ -41,23 +38,23 @@ public class SciToolsMetricsProvider implements MetricsProvider {
     // Private properties
     // ----------------------------------------------------------------------
 
-    private static final Logger logger = Logger.getLogger(SciToolsMetricsProvider.class);
+    private static final Logger logger = Logger.getLogger(SciToolsProvider.class);
 
     private Properties properties;
     private File metricsFile;
 
     private final Map<String, Metric> metricsById = new TreeMap<>();
     private final Map<String, Metric> metricsByName = new TreeMap<>();
-    private final Map<String, List<MetricValue>> metricValues = new TreeMap<>();
     private final Map<String, Set<String>> categories = new TreeMap<>();
-    private final Map<String, SciToolsObject> objects = new HashMap<>();
+    // private final Map<String, List<MetricValue>> metricValues = new TreeMap<>();
+    // private final Map<String, SciToolsObject> objects = new HashMap<>();
 
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    public SciToolsMetricsProvider() {
+    public SciToolsProvider() {
         // none to do
     }
 
@@ -68,14 +65,15 @@ public class SciToolsMetricsProvider implements MetricsProvider {
     @Override
     public void initialize(Properties properties) {
         this.properties = properties;
-        String metricsFile = properties.getProperty(PROPERTY_FILE);
-        if (metricsFile == null)
-            throw new MetricsException("Missing 'file' property");
 
-        this.metricsFile = new File(metricsFile);
+        validate();
         loadMetrics();
         loadCategories();
-        loadFromFile();
+    }
+
+    private void validate() {
+        Assert.notNull(properties.getProperty(PROPERTY_FILE), PROPERTY_FILE);
+        this.metricsFile = new File(properties.getProperty(PROPERTY_FILE));
     }
 
     // ----------------------------------------------------------------------
@@ -98,13 +96,18 @@ public class SciToolsMetricsProvider implements MetricsProvider {
     }
 
     @Override
+    public boolean hasCategory(String category) {
+        return categories.containsKey(category);
+    }
+
+    @Override
     public Collection<Metric> getMetrics() {
         return metricsById.values();
     }
 
     @Override
     public Collection<Metric> getMetrics(String category) {
-        Assert.verify(category != null, "category is null");
+        Assert.notNull(category, "category");
 
         if (!categories.containsKey(category))
             return Collections.emptyList();
@@ -128,27 +131,47 @@ public class SciToolsMetricsProvider implements MetricsProvider {
         return metric;
     }
 
-    @Override
-    public Collection<MetricValue> getMetricValues(String id) {
-        return metricValues.getOrDefault(id, Collections.emptyList());
-    }
+    // ----------------------------------------------------------------------
+    // Project
+    // ----------------------------------------------------------------------
 
     @Override
-    public Collection<MetricValue> getMetricValues(String id, String category) {
-        if (!metricValues.containsKey(id))
-            return Collections.emptyList();
-        if (!categories.containsKey(category))
-            return Collections.emptyList();
-
-        Set<String> categoryMetrics = categories.get(category);
-        return metricValues.get(id).stream()
-                .filter(v -> categoryMetrics.contains(v.getName()))
-                .collect(Collectors.toList());
+    public MetricsProject getProject() {
+        SciToolsProject project = new SciToolsProject(metricsFile,this);
+        project.loadData();
+        return project;
     }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    // @Override
+    // public Collection<MetricValue> getMetricValues(String id) {
+    //     return metricValues.getOrDefault(id, Collections.emptyList());
+    // }
+    //
+    // @Override
+    // public Collection<MetricValue> getMetricValues(String id, String category) {
+    //     if (!metricValues.containsKey(id))
+    //         return Collections.emptyList();
+    //     if (!categories.containsKey(category))
+    //         return Collections.emptyList();
+    //
+    //     Set<String> categoryMetrics = categories.get(category);
+    //     return metricValues.get(id).stream()
+    //             .filter(v -> categoryMetrics.contains(v.getName()))
+    //             .collect(Collectors.toList());
+    // }
 
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+
+    Set<String> getMetricNames(String category) {
+        return categories.get(category);
+    }
+
     /*
             <metric id="CountDeclPropertyAuto" name="Auto Implemented Properties" type="count">
             Number of auto-implemented properties.
@@ -189,37 +212,37 @@ public class SciToolsMetricsProvider implements MetricsProvider {
         }
     }
 
-    private void loadFromFile() {
-        try(LineNumberReader rdr = new LineNumberReader(new FileReader(this.metricsFile))) {
-            // skip header
-            String line = rdr.readLine();
-            int count = 1;
-            while((line = rdr.readLine()) != null) {
-                count += 1;
-
-                // 0  1    2     3   4
-                // id,name,kname,key,value
-                String[] parts = line.split(",");
-                try {
-                    String id = parts[0];
-                    float value = Float.parseFloat(parts[4]);
-                    String name = parts[1];
-                    String kname = parts[2];
-                    SciToolsMetric metric = (SciToolsMetric) getMetric(parts[3]);
-                    addMetricValue(id, metric, name, kname, value);
-
-                    if (count % 1000 == 0)
-                        logger.debugft("... %d metrics", count);
-                }
-                catch (NumberFormatException e) {
-                    logger.errorf("Number format exception on line %d on value %s", count, parts[4]);
-                }
-            }
-        }
-        catch (IOException e) {
-            throw new MetricsException(e);
-        }
-    }
+    // private void loadFromFile() {
+    //     try(LineNumberReader rdr = new LineNumberReader(new FileReader(this.metricsFile))) {
+    //         // skip header
+    //         String line = rdr.readLine();
+    //         int count = 1;
+    //         while((line = rdr.readLine()) != null) {
+    //             count += 1;
+    //
+    //             // 0  1    2     3   4
+    //             // id,name,kname,key,value
+    //             String[] parts = line.split(",");
+    //             try {
+    //                 String id = parts[0];
+    //                 float value = Float.parseFloat(parts[4]);
+    //                 String name = parts[1];
+    //                 String kname = parts[2];
+    //                 SciToolsMetric metric = (SciToolsMetric) getMetric(parts[3]);
+    //                 addMetricValue(id, metric, name, kname, value);
+    //
+    //                 if (count % 1000 == 0)
+    //                     logger.debugft("... %d metrics", count);
+    //             }
+    //             catch (NumberFormatException e) {
+    //                 logger.errorf("Number format exception on line %d on value %s", count, parts[4]);
+    //             }
+    //         }
+    //     }
+    //     catch (IOException e) {
+    //         throw new MetricsException(e);
+    //     }
+    // }
 
     // ----------------------------------------------------------------------
     // Operations/configuration
@@ -235,12 +258,12 @@ public class SciToolsMetricsProvider implements MetricsProvider {
             categories.put(name, new TreeSet<>(metrics));
     }
 
-    public void addMetricValue(String id, SciToolsMetric metric, String name, String kname, float value) {
-        SciToolsMetricValue metricValue = SciToolsMetricValue.of(metric, value);
-        objects.computeIfAbsent(id, par -> SciToolsObject.of(id, name, kname));
-        metricValues.computeIfAbsent(id, par -> new ArrayList<>());
-        metricValues.get(id).add(metricValue);
-    }
+    // public void addMetricValue(String id, SciToolsMetric metric, String name, String kname, float value) {
+    //     SciToolsMetricValue metricValue = SciToolsMetricValue.of(metric, value);
+    //     objects.computeIfAbsent(id, par -> SciToolsObject.of(id, name, kname));
+    //     metricValues.computeIfAbsent(id, par -> new ArrayList<>());
+    //     metricValues.get(id).add(metricValue);
+    // }
 
     // ----------------------------------------------------------------------
     // End

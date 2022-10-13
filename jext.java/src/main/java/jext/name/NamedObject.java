@@ -1,5 +1,7 @@
 package jext.name;
 
+import jext.util.Assert;
+
 public class NamedObject implements IdNamed {
 
     protected Name name;
@@ -10,9 +12,11 @@ public class NamedObject implements IdNamed {
     // ----------------------------------------------------------------------
 
     protected NamedObject(Name name) {
+        Assert.notNull(name, "name");
         this.name = name;
-        if (name != null)
-            setIdFromName();
+        setIdFromName();
+        // if (name != null)
+        //     setIdFromName();
     }
 
     // ----------------------------------------------------------------------
