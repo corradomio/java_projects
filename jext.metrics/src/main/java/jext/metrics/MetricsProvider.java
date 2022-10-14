@@ -37,7 +37,11 @@ public interface MetricsProvider {
      */
     Metric getMetric(String name);
 
-
+    /**
+     * Navigate the hierarchical structure
+     *
+     * @return root
+     */
     MetricsProject getProject();
 
 }

@@ -4,7 +4,11 @@ import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SciToolsObject implements MetricsComponent {
 
@@ -20,18 +24,16 @@ public class SciToolsObject implements MetricsComponent {
     private final String name;
     private final String kname;
 
+    protected SciToolsProvider provider;
     private SciToolsObject parent;
     private final List<MetricsComponent> children = new ArrayList<>();
-    private final List<MetricValue> metrics = new ArrayList<>();
+    private final List<MetricValue> metricValues = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     protected SciToolsObject(String id, String name, String kname) {
-        if (parent != null)
-            parent.children.add(this);
-
         this.id = id;
         this.name = name;
         this.kname = kname;
@@ -39,8 +41,8 @@ public class SciToolsObject implements MetricsComponent {
 
     void setParent(SciToolsObject parent) {
         this.parent = parent;
-        if (parent != null)
-            this.parent.children.add(this);
+        this.provider = parent.provider;
+        this.parent.children.add(this);
     }
 
     // ----------------------------------------------------------------------
@@ -65,6 +67,30 @@ public class SciToolsObject implements MetricsComponent {
     @Override
     public List<MetricsComponent> getChildren() {
         return children;
+    }
+
+    // ----------------------------------------------------------------------
+    // MetricValues
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Collection<MetricValue> getMetricValues() {
+        return metricValues;
+    }
+
+    @Override
+    public Collection<MetricValue> getMetricValues(String category) {
+        if (!provider.hasCategory(category))
+            return Collections.emptyList();
+
+        Set<String> categoryMetrics = provider.getMetricNames(category);
+        return metricValues.stream()
+                .filter(v -> categoryMetrics.contains(v.getName()))
+                .collect(Collectors.toList());
+    }
+
+    void addMetricValue(MetricValue metricValue) {
+        this.metricValues.add(metricValue);
     }
 
     // ----------------------------------------------------------------------

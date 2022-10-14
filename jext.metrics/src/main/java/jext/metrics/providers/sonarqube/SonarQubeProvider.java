@@ -3,12 +3,14 @@ package jext.metrics.providers.sonarqube;
 import jext.logging.Logger;
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
+import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
 import jext.util.Assert;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
+import org.sonar.wsclient.SonarClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -194,9 +196,22 @@ public class SonarQubeProvider implements MetricsProvider {
     @Override
     public MetricsProject getProject() {
         String name = properties.getProperty(SONAR_NAME);
-        SonarQubeProject project = new SonarQubeProject(name, this);
-        project.connect();
+        SonarClient client = connect();
+        SonarQubeProject project = new SonarQubeProject(name, this, client);
+        project.initialize();
         return project;
+    }
+
+    private SonarClient connect() {
+        String url = this.getUrl();
+        String username = this.getUsername();
+        String password = this.getPassword();
+
+        return SonarClient.builder()
+                .url(url)
+                .login(username)
+                .password(password)
+                .build();
     }
 
     // ----------------------------------------------------------------------

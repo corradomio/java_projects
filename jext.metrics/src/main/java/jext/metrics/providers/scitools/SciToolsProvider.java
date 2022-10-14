@@ -34,11 +34,11 @@ public class SciToolsProvider implements MetricsProvider {
     static final String METRICS_ROOT = "scitools.metrics.root";
     static final String METRICS_REVISION = "scitools.metrics.revision";
     static final String METRICS_VALUES = "scitools.metrics.values";
-    // static final String METRICS_NODES = "scitools.metrics.nodes";
+    static final String METRICS_NODES = "scitools.metrics.nodes";
     static final String METRICS_EDGES = "scitools.metrics.edges";
 
     private static final String TEMPLATE_METRICS_VALUES = "%s/scitools-metrics-r%02d.csv";
-    // private static final String TEMPLATE_METRICS_NODES = "%s/scitools-metrics-nodes-r%02d.csv";
+    private static final String TEMPLATE_METRICS_NODES = "%s/scitools-metrics-nodes-r%02d.csv";
     private static final String TEMPLATE_METRICS_EDGES = "%s/scitools-metrics-edges-r%02d.csv";
 
     // ----------------------------------------------------------------------
@@ -83,12 +83,12 @@ public class SciToolsProvider implements MetricsProvider {
             int rev = Integer.parseInt(properties.getProperty(METRICS_REVISION));
 
             properties.put(METRICS_VALUES, String.format(TEMPLATE_METRICS_VALUES, root, rev));
-            // properties.put(METRICS_NODES, String.format(TEMPLATE_METRICS_NODES, root, rev));
+            properties.put(METRICS_NODES, String.format(TEMPLATE_METRICS_NODES, root, rev));
             properties.put(METRICS_EDGES, String.format(TEMPLATE_METRICS_EDGES, root, rev));
         }
         {
             Assert.notNull(properties.getProperty(METRICS_VALUES), METRICS_VALUES);
-            // Assert.notNull(properties.getProperty(METRICS_NODES), METRICS_NODES);
+            Assert.notNull(properties.getProperty(METRICS_NODES), METRICS_NODES);
             Assert.notNull(properties.getProperty(METRICS_EDGES), METRICS_EDGES);
         }
     }

@@ -1,22 +1,39 @@
 package jext.metrics.providers.sonarqube;
 
+import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
 import org.sonar.wsclient.component.ComponentClient;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SonarQubeComponent implements MetricsComponent {
 
-    private final SonarClient client;
-    private final Component component;
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
 
-    SonarQubeComponent(Component c, SonarClient client) {
+    protected final SonarQubeProvider provider;
+    protected final SonarClient client;
+    protected final Component component;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    SonarQubeComponent(Component c, SonarQubeProvider provider, SonarClient client) {
         this.component = c;
+        this.provider = provider;
         this.client = client;
     }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
 
     @Override
     public String getId() {
@@ -38,8 +55,26 @@ public class SonarQubeComponent implements MetricsComponent {
         ComponentClient cclient = client.componentClient();
         return cclient.list(getId())
                 .stream()
-                .map(c -> new SonarQubeComponent(c, client))
+                .map(c -> new SonarQubeComponent(c, provider, client))
                 .collect(Collectors.toList());
     }
+
+    // ----------------------------------------------------------------------
+    // Metrics
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Collection<MetricValue> getMetricValues() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Collection<MetricValue> getMetricValues(String category) {
+        return Collections.emptyList();
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

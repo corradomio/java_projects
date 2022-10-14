@@ -1,5 +1,6 @@
 package jext.metrics;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface MetricsComponent {
@@ -10,4 +11,6 @@ public interface MetricsComponent {
     boolean hasChildren();
     List<MetricsComponent> getChildren();
 
+    Collection<MetricValue> getMetricValues();
+    Collection<MetricValue> getMetricValues(String category);
 }
