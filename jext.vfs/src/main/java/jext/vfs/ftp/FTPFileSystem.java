@@ -18,7 +18,6 @@ public class FTPFileSystem extends AbstractFileSystem {
     // ----------------------------------------------------------------------
 
     private FTPClient client;
-    private FTPClientConfig config;
     private FTPVFile root;
 
     // ----------------------------------------------------------------------
@@ -32,12 +31,6 @@ public class FTPFileSystem extends AbstractFileSystem {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
-
-    // @Override
-    // public VFileSystem setProperty(String key, String value) {
-    //     props.setProperty(key, value);
-    //     return this;
-    // }
 
     @Override
     public boolean isConnected() {
@@ -69,7 +62,9 @@ public class FTPFileSystem extends AbstractFileSystem {
 
     @Override
     public void close() {
-        if (client != null)
+        if (client == null)
+            return;
+
         try {
             logger.infof("Disconnect from %s", url.toString());
 
@@ -106,7 +101,7 @@ public class FTPFileSystem extends AbstractFileSystem {
 
     private void connectTo() throws IOException {
         client = new FTPClient();
-        config = new FTPClientConfig();
+        FTPClientConfig config = new FTPClientConfig();
 
         client.configure(config);
 

@@ -4,6 +4,7 @@ import jext.logging.Logger;
 import jext.vfs.VFile;
 import jext.vfs.VFileSystem;
 import jext.vfs.VFileSystems;
+import jext.vfs.util.VFileUtils;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
@@ -20,27 +21,27 @@ import java.util.Properties;
 
 public class Main {
 
-    public static void main5(String[] args) throws IOException {
-        Logger.configure();
-
-        // VFileSystems.newFileSystem("https://github.com/hub4j/github-api");
-        Properties props = new Properties(){{
-            put("username", "corrado.mio@unimi.it");
-            put("password", "stargate");
-            // put("branch", "splserver3.0");
-            put("local", new File("d:/Temp").getAbsolutePath());
-        }};
-
-        VFileSystem vfs = VFileSystems.newFileSystem("git+http://10.10.103.124/splgroup/splv3.git", props);
-        vfs.connect();
-        vfs.copyLocally(null);
-
-        vfs.getVersions().forEach(v -> {
-            System.out.println(v);
-        });
-        // vfs.copyInto(new File("D:/Temp"), vfs.getRoot(), new ProgressMonitor() {
-        // });
-    }
+    // public static void main5(String[] args) throws IOException {
+    //     Logger.configure();
+    //
+    //     // VFileSystems.newFileSystem("https://github.com/hub4j/github-api");
+    //     Properties props = new Properties(){{
+    //         put("username", "corrado.mio@unimi.it");
+    //         put("password", "stargate");
+    //         // put("branch", "splserver3.0");
+    //         put("local", new File("d:/Temp").getAbsolutePath());
+    //     }};
+    //
+    //     VFileSystem vfs = VFileSystems.newFileSystem("git+http://10.10.103.124/splgroup/splv3.git", props);
+    //     vfs.connect();
+    //     vfs.copyInto(new F);
+    //
+    //     vfs.getVersions().forEach(v -> {
+    //         System.out.println(v);
+    //     });
+    //     // vfs.copyInto(new File("D:/Temp"), vfs.getRoot(), new ProgressMonitor() {
+    //     // });
+    // }
 
     public static void main4(String[] args) throws IOException {
         GitHub github = new GitHubBuilder().withPassword("corrado.mio@gmail.com", "G1THubP4$$w0rd!").build();
@@ -90,5 +91,11 @@ public class Main {
         root.listFiles().forEach(vfile -> {
             System.out.println(vfile);
         });
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        VFileSystem vfs = VFileSystems.newFileSystem(new File("D:\\Downloaded\\nebula-3.2.1.tgz"));
+        VFileUtils.dump(vfs);
     }
 }

@@ -1,6 +1,7 @@
 This library is a simplified version of
 
-    Apache Commons VFS
+    Apache Commons VFS v2
+    https://commons.apache.org/proper/commons-vfs/commons-vfs2/
 
 based on the following objects
 

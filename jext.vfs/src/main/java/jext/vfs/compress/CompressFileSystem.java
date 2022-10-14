@@ -10,6 +10,7 @@ import jext.vfs.VFile;
 import jext.vfs.VFileSelector;
 import jext.vfs.VFileSystem;
 import jext.vfs.VProgressMonitor;
+import jext.vfs.exceptions.NotConnectedException;
 import jext.vfs.util.FileCount;
 import jext.vfs.util.ProgressMonitor;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -58,6 +59,7 @@ public class CompressFileSystem extends AbstractFileSystem {
 
     @Override
     public VFile getRoot() {
+        checkfs();
         return root;
     }
 
@@ -67,15 +69,9 @@ public class CompressFileSystem extends AbstractFileSystem {
 
     @Override
     public VFileSystem connect() throws IOException {
-
-            initialize();
-            scanEntries();
-            return this;
-        }
-
-    @Override
-    public void close() {
-
+        initialize();
+        scanEntries();
+        return this;
     }
 
     @Override

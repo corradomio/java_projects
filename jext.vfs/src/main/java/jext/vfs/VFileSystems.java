@@ -3,6 +3,8 @@ package jext.vfs;
 import jext.logging.Logger;
 import jext.net.URL;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,12 +56,26 @@ public class VFileSystems {
 
     // ----------------------------------------------------------------------
 
-    public static VFileSystem newFileSystem(String surl) throws VFileSystemException {
+    public static VFileSystem newFileSystem(File compressedFile) throws VFileSystemException, IOException {
+        String protocol = extOf(compressedFile);
+        String surl = String.format("%s:///%s", protocol, compressedFile.getAbsolutePath().replace('\\', '/'));
+        return newFileSystem(surl);
+    }
+
+    private static String extOf(File file) {
+        String name = file.getName();
+        if (name.endsWith(".tar.tgz"))
+            return "tgz";
+        int p = name.lastIndexOf('.');
+        return name.substring(p+1);
+    }
+
+    public static VFileSystem newFileSystem(String surl) throws VFileSystemException, IOException {
         Properties props = new Properties();
         return newFileSystem(surl, props);
     }
 
-    public static VFileSystem newFileSystem(Properties props) throws VFileSystemException {
+    public static VFileSystem newFileSystem(Properties props) throws VFileSystemException, IOException {
         String surl = props.getProperty(URL);
         return newFileSystem(surl, props);
     }
@@ -73,7 +89,7 @@ public class VFileSystems {
      * @return a virtual file system object
      * @throws VFileSystemException
      */
-    public static VFileSystem newFileSystem(String surl, Properties props) throws VFileSystemException {
+    public static VFileSystem newFileSystem(String surl, Properties props) throws VFileSystemException, IOException {
         if (surl.endsWith(".git") && !surl.startsWith("git+"))
             surl = "git+" + surl;
 
@@ -96,7 +112,10 @@ public class VFileSystems {
         nprops.putAll(props);
         nprops.putAll(url.getParameters());
 
-        return factory.newFileSysytem(url, nprops);
+        VFileSystem vfs = factory.newFileSysytem(url, nprops);
+        vfs.connect();
+
+        return vfs;
     }
 
 }

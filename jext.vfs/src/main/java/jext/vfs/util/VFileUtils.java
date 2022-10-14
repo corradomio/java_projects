@@ -7,6 +7,8 @@ public class VFileUtils {
 
     public static void dump(VFileSystem fs) {
         dump(fs.getRoot(), 0);
+        fs.close();
+        println(0, "<<done>>");
     }
 
     public static void dump(VFile file) {

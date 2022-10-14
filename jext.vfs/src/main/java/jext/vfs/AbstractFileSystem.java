@@ -2,6 +2,7 @@ package jext.vfs;
 
 import jext.logging.Logger;
 import jext.net.URL;
+import jext.vfs.exceptions.NotConnectedException;
 import jext.vfs.util.Authentication;
 import jext.vfs.util.FileCount;
 import jext.vfs.util.ProgressMonitor;
@@ -10,6 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import static org.tmatesoft.svn.core.internal.wc17.db.statement.SVNWCDbSchema.REPOSITORY__Fields.root;
 
 public abstract class AbstractFileSystem implements VFileSystem {
 
@@ -47,6 +50,15 @@ public abstract class AbstractFileSystem implements VFileSystem {
     @Override
     public Authentication getAuthentication() {
         return new Authentication(props);
+    }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void close() {
+
     }
 
     // ----------------------------------------------------------------------
@@ -229,8 +241,8 @@ public abstract class AbstractFileSystem implements VFileSystem {
     // ----------------------------------------------------------------------
 
     protected void checkfs() {
-        if (!isConnected())
-            throw new VFileSystemException("Filesystem not connected");
+        if (root == null || !isConnected())
+            throw new NotConnectedException();
     }
 
 }

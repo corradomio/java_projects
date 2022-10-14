@@ -6,6 +6,7 @@ import jext.vfs.VFile;
 import jext.vfs.VFileSystem;
 import jext.vfs.VFileSystemException;
 import jext.vfs.VProgressMonitor;
+import jext.vfs.exceptions.NotConnectedException;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
@@ -127,11 +128,6 @@ public class SVNFileSystem extends AbstractFileSystem {
         List entries = new ArrayList();
         SVNDirEntry entry = repository.getDir("", -1, false, entries);
         root = new SVNFile(this, "", entry);
-    }
-
-    public void checkfs() {
-        if (!isConnected())
-            throw new VFileSystemException("Filesystem not connected");
     }
 
 }

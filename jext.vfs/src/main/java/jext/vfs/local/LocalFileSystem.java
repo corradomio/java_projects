@@ -17,7 +17,6 @@ public class LocalFileSystem extends AbstractFileSystem {
     // ----------------------------------------------------------------------
 
     private LocalFile root;
-    private boolean connected;
 
     // ----------------------------------------------------------------------
     // Constructors
@@ -25,8 +24,7 @@ public class LocalFileSystem extends AbstractFileSystem {
 
     public LocalFileSystem(URL url, java.util.Properties props) {
         super(url, props);
-        File local = new File(url.getPath());
-        this.root = new LocalFile(this, local, "/");
+
     }
 
     // ----------------------------------------------------------------------
@@ -35,7 +33,7 @@ public class LocalFileSystem extends AbstractFileSystem {
 
     @Override
     public boolean isConnected() {
-        return connected;
+        return root != null;
     }
 
     @Override
@@ -50,22 +48,16 @@ public class LocalFileSystem extends AbstractFileSystem {
 
     @Override
     public VFileSystem connect() throws IOException {
+        File rootFile = new File(url.getPath());
         // check if the local directory there exists
-        File rootFile = root.getf();
         if (!rootFile.exists())
             throw new FileNotFoundException(rootFile.getAbsolutePath());
         if (!rootFile.isDirectory())
             throw new FileNotFolderException(rootFile.getAbsolutePath());
 
-        connected = true;
+        this.root = new LocalFile(this, rootFile, "/");
         return this;
     }
-
-    @Override
-    public void close() {
-        connected = false;
-    }
-
 
     // ----------------------------------------------------------------------
     // Implementation
@@ -74,5 +66,9 @@ public class LocalFileSystem extends AbstractFileSystem {
     public File getLocalRoot() {
         return root.getf();
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }
