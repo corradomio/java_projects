@@ -9,7 +9,12 @@ public class CheckSciTools extends CheckBase {
     public static void main(String[] args) {
 
         MetricsProvider provider = MetricsProviders.getProvider("scitools",
-                PropertiesUtils.properties("file", "D:\\Dropbox\\Software\\unddb\\lucene\\scitools-metrics.csv"));
+                PropertiesUtils.properties(
+                        "scitools.name", "csvquickview",
+                "scitools.metrics.values", "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-r00.csv",
+                       "scitools.metrics.nodes",   "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-nodes-r00.csv",
+                       "scitools.metrics.edges",   "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-edges-r00.csv"
+                ));
 
         dump(provider.getProject(), 0);
     }

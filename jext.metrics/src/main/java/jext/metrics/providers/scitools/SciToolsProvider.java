@@ -2,8 +2,6 @@ package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
 import jext.metrics.Metric;
-import jext.metrics.MetricValue;
-import jext.metrics.MetricsException;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
@@ -30,9 +28,18 @@ import java.util.stream.Collectors;
 
 public class SciToolsProvider implements MetricsProvider {
 
-    private static final String ROOT = "";
-    private static final String NAME = "scitools";
-    private static final String PROPERTY_FILE = "file";
+    static final String ROOT = "";
+    static final String NAME = "scitools";
+    static final String PROJECT_NAME = "scitools.name";
+    static final String METRICS_ROOT = "scitools.metrics.root";
+    static final String METRICS_REVISION = "scitools.metrics.revision";
+    static final String METRICS_VALUES = "scitools.metrics.values";
+    // static final String METRICS_NODES = "scitools.metrics.nodes";
+    static final String METRICS_EDGES = "scitools.metrics.edges";
+
+    private static final String TEMPLATE_METRICS_VALUES = "%s/scitools-metrics-r%02d.csv";
+    // private static final String TEMPLATE_METRICS_NODES = "%s/scitools-metrics-nodes-r%02d.csv";
+    private static final String TEMPLATE_METRICS_EDGES = "%s/scitools-metrics-edges-r%02d.csv";
 
     // ----------------------------------------------------------------------
     // Private properties
@@ -41,14 +48,10 @@ public class SciToolsProvider implements MetricsProvider {
     private static final Logger logger = Logger.getLogger(SciToolsProvider.class);
 
     private Properties properties;
-    private File metricsFile;
 
     private final Map<String, Metric> metricsById = new TreeMap<>();
     private final Map<String, Metric> metricsByName = new TreeMap<>();
     private final Map<String, Set<String>> categories = new TreeMap<>();
-    // private final Map<String, List<MetricValue>> metricValues = new TreeMap<>();
-    // private final Map<String, SciToolsObject> objects = new HashMap<>();
-
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -72,8 +75,22 @@ public class SciToolsProvider implements MetricsProvider {
     }
 
     private void validate() {
-        Assert.notNull(properties.getProperty(PROPERTY_FILE), PROPERTY_FILE);
-        this.metricsFile = new File(properties.getProperty(PROPERTY_FILE));
+        if (properties.containsKey(METRICS_ROOT)) {
+            Assert.notNull(properties.getProperty(METRICS_ROOT), METRICS_ROOT);
+            Assert.notNull(properties.getProperty(METRICS_REVISION), METRICS_REVISION);
+
+            String root = properties.getProperty(METRICS_ROOT);
+            int rev = Integer.parseInt(properties.getProperty(METRICS_REVISION));
+
+            properties.put(METRICS_VALUES, String.format(TEMPLATE_METRICS_VALUES, root, rev));
+            // properties.put(METRICS_NODES, String.format(TEMPLATE_METRICS_NODES, root, rev));
+            properties.put(METRICS_EDGES, String.format(TEMPLATE_METRICS_EDGES, root, rev));
+        }
+        {
+            Assert.notNull(properties.getProperty(METRICS_VALUES), METRICS_VALUES);
+            // Assert.notNull(properties.getProperty(METRICS_NODES), METRICS_NODES);
+            Assert.notNull(properties.getProperty(METRICS_EDGES), METRICS_EDGES);
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -137,36 +154,35 @@ public class SciToolsProvider implements MetricsProvider {
 
     @Override
     public MetricsProject getProject() {
-        SciToolsProject project = new SciToolsProject(metricsFile,this);
-        project.loadData();
+        String projectName = getProjectName();
+        SciToolsProject project = new SciToolsProject(projectName, this);
+        project.initialize();
         return project;
     }
 
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
+    private String getProjectName() {
+        if (properties.containsKey(PROJECT_NAME))
+            return properties.getProperty(PROJECT_NAME);
 
-    // @Override
-    // public Collection<MetricValue> getMetricValues(String id) {
-    //     return metricValues.getOrDefault(id, Collections.emptyList());
-    // }
-    //
-    // @Override
-    // public Collection<MetricValue> getMetricValues(String id, String category) {
-    //     if (!metricValues.containsKey(id))
-    //         return Collections.emptyList();
-    //     if (!categories.containsKey(category))
-    //         return Collections.emptyList();
-    //
-    //     Set<String> categoryMetrics = categories.get(category);
-    //     return metricValues.get(id).stream()
-    //             .filter(v -> categoryMetrics.contains(v.getName()))
-    //             .collect(Collectors.toList());
-    // }
+        File file = new File(properties.getProperty(METRICS_VALUES));
+        String path = file.getAbsolutePath().replace('\\', '/');
+        if (path.contains("/.spl")) {
+            int p = path.lastIndexOf("/.spl");
+            file = new File(path.substring(0, p));
+        }
+        else {
+            file = file.getParentFile();
+        }
+        return file.getName();
+    }
 
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+
+    String getProperty(String key) {
+        return properties.getProperty(key);
+    }
 
     Set<String> getMetricNames(String category) {
         return categories.get(category);

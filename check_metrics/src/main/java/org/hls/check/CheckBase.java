@@ -13,11 +13,11 @@ public class CheckBase {
 
     static void dump(MetricsComponent c, int d) {
         if (c.hasChildren()) {
-            System.out.printf("%s[%s]%n", spaces(d), c.getId());
+            System.out.printf("%s[%s] %s %n", spaces(d), c.getId(), c.getName());
             c.getChildren().forEach(cc -> dump(cc, d+1));
         }
         else
-            System.out.printf("%s%s%n", spaces(d), c.getId());
+            System.out.printf("%s%s %s%n", spaces(d), c.getId(), c.getName());
     }
 
 }

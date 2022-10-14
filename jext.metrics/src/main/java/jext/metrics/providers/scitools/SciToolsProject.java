@@ -2,7 +2,6 @@ package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
 import jext.metrics.MetricValue;
-import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsException;
 import jext.metrics.MetricsProject;
 
@@ -20,7 +19,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class SciToolsProject implements MetricsProject {
+public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     // ----------------------------------------------------------------------
     //
@@ -28,8 +27,11 @@ public class SciToolsProject implements MetricsProject {
 
     private static final Logger logger = Logger.getLogger(SciToolsProject.class);
 
-    private final File metricsFile;
     private final SciToolsProvider provider;
+
+    private File metricsValues;
+    private File metricsNodes;
+    private File metricsEdges;
 
     private final Map<String, List<MetricValue>> metricValues = new TreeMap<>();
     private final Map<String, SciToolsObject> objects = new HashMap<>();
@@ -38,34 +40,15 @@ public class SciToolsProject implements MetricsProject {
     // Constructor
     // ----------------------------------------------------------------------
 
-    SciToolsProject(File metricsFile, SciToolsProvider provider) {
-        this.metricsFile = metricsFile;
+    SciToolsProject(String name, SciToolsProvider provider) {
+        super("0", name, "");
         this.provider = provider;
+        this.objects.put(this.getId(), this);
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
-
-    @Override
-    public String getId() {
-        return "0";
-    }
-
-    @Override
-    public String getName() {
-        return metricsFile.getName();
-    }
-
-    @Override
-    public boolean hasChildren() {
-        return true;
-    }
-
-    @Override
-    public List<MetricsComponent> getChildren() {
-        return Collections.emptyList();
-    }
 
     @Override
     public Collection<MetricValue> getMetricValues(String id) {
@@ -88,8 +71,17 @@ public class SciToolsProject implements MetricsProject {
     // Implementation
     // ----------------------------------------------------------------------
 
-    void loadData() {
-        try(LineNumberReader rdr = new LineNumberReader(new FileReader(this.metricsFile))) {
+    void initialize() {
+        loadData();
+        loadHierarchy();
+    }
+
+    private void loadData() {
+        File metricsFile = new File(provider.getProperty(SciToolsProvider.METRICS_VALUES));
+
+        // 0  1    2     3   4
+        // id,name,kname,key,value
+        try(LineNumberReader rdr = new LineNumberReader(new FileReader(metricsFile))) {
             // skip header
             String line = rdr.readLine();
             int count = 1;
@@ -126,6 +118,35 @@ public class SciToolsProject implements MetricsProject {
         metricValues.computeIfAbsent(id, par -> new ArrayList<>());
         metricValues.get(id).add(metricValue);
     }
+
+    private void loadHierarchy() {
+        File edgesFile = new File(provider.getProperty(SciToolsProvider.METRICS_EDGES));
+
+        // 0      1
+        // source,target  (child,parent)
+        try(LineNumberReader rdr = new LineNumberReader(new FileReader(edgesFile))) {
+            // skip header
+            String line = rdr.readLine();
+            int count = 1;
+            while((line = rdr.readLine()) != null) {
+                String[] parts = line.split(",");
+                SciToolsObject child = objects.get(parts[0]);
+                SciToolsObject parent = objects.get(parts[1]);
+
+                if (child == null)
+                    logger.errorf("Missing object with id %s", parts[0]);
+                if (parent == null)
+                    logger.errorf("Missing object with id %s", parts[1]);
+
+                if (child != null && parent != null)
+                    child.setParent(parent);
+            }
+        }
+        catch (IOException e) {
+            throw new MetricsException(e);
+        }
+    }
+
     // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------
