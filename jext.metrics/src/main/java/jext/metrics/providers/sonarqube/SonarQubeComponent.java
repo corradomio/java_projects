@@ -9,6 +9,7 @@ import org.sonar.wsclient.component.Component;
 import org.sonar.wsclient.component.ComponentClient;
 import org.sonar.wsclient.metrics.MetricsClient;
 
+import java.lang.annotation.IncompleteAnnotationException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,6 +18,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SonarQubeComponent implements MetricsComponent {
+
+    public static SonarQubeComponent of(Component c, SonarQubeProvider provider, SonarClient client) {
+        return new SonarQubeComponent(c, provider, client);
+    }
+
+    public static ComponentType getType(String qualifier) {
+        if (qualifier.equals("FIL"))
+            return ComponentType.FILE;
+        if (qualifier.equals("TRK"))
+            return ComponentType.PROJECT;
+        if (qualifier.equals("DIR"))
+            return ComponentType.DIRECTORY;
+        else
+            return ComponentType.UNKNOWN;
+    }
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -60,15 +76,7 @@ public class SonarQubeComponent implements MetricsComponent {
                 UTS     ???
                 BRC     branch ???
          */
-        String qualifier = component.qualifier();
-        if (qualifier.equals("FIL"))
-            return ComponentType.FILE;
-        if (qualifier.equals("TRK"))
-            return ComponentType.PROJECT;
-        if (qualifier.equals("DIR"))
-            return ComponentType.DIRECTORY;
-        else
-            return ComponentType.UNKNOWN;
+        return getType(component.qualifier());
     }
 
     @Override

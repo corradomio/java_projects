@@ -403,7 +403,7 @@
       "domain": "Duplications",
       "direction": 0,
       "qualitative": false,
-      "hidden": false
+      "hidden": true
     },
     {
       "id": "AYM2RxnG4wa9zTX5sTD6",

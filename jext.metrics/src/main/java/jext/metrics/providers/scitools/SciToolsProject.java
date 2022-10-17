@@ -2,6 +2,8 @@ package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
 import jext.metrics.ComponentType;
+import jext.metrics.MetricValue;
+import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsException;
 import jext.metrics.MetricsProject;
 
@@ -9,8 +11,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
@@ -45,6 +52,27 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     public void close() {
 
     }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    @Override
+    public Collection<MetricValue> getAllMetricValues(ComponentType type, String category) {
+        List<MetricValue> metricValues = new ArrayList<>();
+
+        Queue<MetricsComponent> queue = new LinkedList<>();
+        queue.add(this);
+        while(!queue.isEmpty()) {
+            MetricsComponent component = queue.remove();
+            queue.addAll(component.getChildren());
+
+            if (component.getType() == type)
+                metricValues.addAll(component.getMetricValues(category));
+        }
+        return metricValues;
+    }
+
 
     // ----------------------------------------------------------------------
     // Implementation
