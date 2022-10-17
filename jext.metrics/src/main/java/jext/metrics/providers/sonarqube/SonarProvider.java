@@ -2,8 +2,6 @@ package jext.metrics.providers.sonarqube;
 
 import jext.logging.Logger;
 import jext.metrics.Metric;
-import jext.metrics.MetricValue;
-import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
@@ -25,9 +23,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class SonarQubeProvider implements MetricsProvider {
+public class SonarProvider implements MetricsProvider {
 
-    private static final Logger logger = Logger.getLogger(SonarQubeProvider.class);
+    private static final Logger logger = Logger.getLogger(SonarProvider.class);
 
     private static final String ROOT = "";
     private static final String NAME = "sonarqube";
@@ -51,7 +49,7 @@ public class SonarQubeProvider implements MetricsProvider {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public SonarQubeProvider() {
+    public SonarProvider() {
 
     }
 
@@ -115,7 +113,7 @@ public class SonarQubeProvider implements MetricsProvider {
 
             String id = MapUtils.get(data,"key");
             String domain = MapUtils.get(data,"domain");
-            Metric metric = SonarQubeMetric.of(data);
+            Metric metric = SonarMetric.of(data);
             addMetric(metric);
             addMetricToCategory(ROOT, metric);
             addMetricToCategory(domain, metric);
@@ -180,7 +178,7 @@ public class SonarQubeProvider implements MetricsProvider {
             return metricsByName.get(name);
 
         logger.errorf("Unknown metric '%s'", name);
-        Metric metric = SonarQubeMetric.of(MapUtils.asMap(
+        Metric metric = SonarMetric.of(MapUtils.asMap(
                 "key", name,
                 "name", name,
                 "descrition", ""
@@ -197,7 +195,7 @@ public class SonarQubeProvider implements MetricsProvider {
     public MetricsProject getProject() {
         String name = properties.getProperty(SONAR_NAME);
         SonarClient client = connect();
-        SonarQubeProject project = new SonarQubeProject(name, this, client);
+        SonarProject project = new SonarProject(name, this, client);
         project.initialize();
         return project;
     }

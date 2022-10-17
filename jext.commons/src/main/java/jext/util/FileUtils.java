@@ -195,7 +195,7 @@ public class FileUtils {
         if (counter <= 0)
             return file;
         else
-            return new File(file.getParentFile(), file.getName() + String.format(".%d", counter));
+            return addExtension(file, String.format(".%d", counter));
     }
 
     // ----------------------------------------------------------------------
@@ -777,7 +777,6 @@ public class FileUtils {
         else
             return files[0];
     }
-
 
     // ----------------------------------------------------------------------
     // End

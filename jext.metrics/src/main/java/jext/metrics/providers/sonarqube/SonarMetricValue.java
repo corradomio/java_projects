@@ -7,25 +7,25 @@ import org.sonar.wsclient.services.Measure;
 
 import java.util.Objects;
 
-public class SonarQubeMetricValue implements MetricValue {
+public class SonarMetricValue implements MetricValue {
 
-    static SonarQubeMetricValue of(SonarQubeComponent component, SonarQubeMetric metric, Measure measure) {
-        return new SonarQubeMetricValue(component, metric, measure);
+    static SonarMetricValue of(SonarObject component, SonarMetric metric, Measure measure) {
+        return new SonarMetricValue(component, metric, measure);
     }
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
-    private final SonarQubeComponent component;
-    private final SonarQubeMetric metric;
+    private final SonarObject component;
+    private final SonarMetric metric;
     private final Measure measure;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    private SonarQubeMetricValue(SonarQubeComponent component, SonarQubeMetric metric, Measure measure) {
+    private SonarMetricValue(SonarObject component, SonarMetric metric, Measure measure) {
         this.component = component;
         this.metric = metric;
         this.measure = measure;

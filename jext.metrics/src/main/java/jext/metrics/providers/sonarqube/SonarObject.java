@@ -9,7 +9,6 @@ import org.sonar.wsclient.component.Component;
 import org.sonar.wsclient.component.ComponentClient;
 import org.sonar.wsclient.metrics.MetricsClient;
 
-import java.lang.annotation.IncompleteAnnotationException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SonarQubeComponent implements MetricsComponent {
+public class SonarObject implements MetricsComponent {
 
-    public static SonarQubeComponent of(Component c, SonarQubeProvider provider, SonarClient client) {
-        return new SonarQubeComponent(c, provider, client);
+    public static SonarObject of(Component c, SonarProvider provider, SonarClient client) {
+        return new SonarObject(c, provider, client);
     }
 
     public static ComponentType getType(String qualifier) {
@@ -38,7 +37,7 @@ public class SonarQubeComponent implements MetricsComponent {
     // Private fields
     // ----------------------------------------------------------------------
 
-    protected final SonarQubeProvider provider;
+    protected final SonarProvider provider;
     protected final SonarClient client;
     protected final Component component;
 
@@ -46,7 +45,7 @@ public class SonarQubeComponent implements MetricsComponent {
     // Constructor
     // ----------------------------------------------------------------------
 
-    SonarQubeComponent(Component c, SonarQubeProvider provider, SonarClient client) {
+    SonarObject(Component c, SonarProvider provider, SonarClient client) {
         this.component = c;
         this.provider = provider;
         this.client = client;
@@ -89,7 +88,7 @@ public class SonarQubeComponent implements MetricsComponent {
         ComponentClient cclient = client.componentClient();
         return cclient.list(getId())
                 .stream()
-                .map(c -> new SonarQubeComponent(c, provider, client))
+                .map(c -> new SonarObject(c, provider, client))
                 .collect(Collectors.toList());
     }
 
@@ -112,15 +111,15 @@ public class SonarQubeComponent implements MetricsComponent {
     @Override
     public Collection<MetricValue> getMetricValues(String category) {
         // collect the metrics in the specified category
-        Map<String, SonarQubeMetric> mmap = new HashMap<>();
+        Map<String, SonarMetric> mmap = new HashMap<>();
         List<String> mkeys = new ArrayList<>();
         for(Metric metric : provider.getMetrics(category)) {
-            mmap.put(metric.getId(), (SonarQubeMetric)metric);
+            mmap.put(metric.getId(), (SonarMetric)metric);
             mkeys.add(metric.getId());
         }
         MetricsClient metricsClient = client.metricsClient();
         return metricsClient.list(getId(), mkeys, false).stream()
-                .map(measure -> SonarQubeMetricValue.of(this,mmap.get(measure.getMetricKey()), measure))
+                .map(measure -> SonarMetricValue.of(this,mmap.get(measure.getMetricKey()), measure))
                 .collect(Collectors.toList());
     }
 

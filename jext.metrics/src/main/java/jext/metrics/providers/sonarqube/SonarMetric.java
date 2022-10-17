@@ -5,10 +5,10 @@ import jext.util.MapUtils;
 
 import java.util.Map;
 
-public class SonarQubeMetric implements Metric {
+public class SonarMetric implements Metric {
 
-    static SonarQubeMetric of(Map<String, Object> data) {
-        return new SonarQubeMetric(data);
+    static SonarMetric of(Map<String, Object> data) {
+        return new SonarMetric(data);
     }
 
     // ----------------------------------------------------------------------
@@ -35,7 +35,7 @@ public class SonarQubeMetric implements Metric {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private SonarQubeMetric(Map<String, Object> data) {
+    private SonarMetric(Map<String, Object> data) {
         this.data = data;
     }
 
