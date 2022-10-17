@@ -26,6 +26,8 @@ import org.sonar.wsclient.issue.ActionPlanClient;
 import org.sonar.wsclient.issue.IssueClient;
 import org.sonar.wsclient.issue.internal.DefaultActionPlanClient;
 import org.sonar.wsclient.issue.internal.DefaultIssueClient;
+import org.sonar.wsclient.metrics.MetricsClient;
+import org.sonar.wsclient.metrics.internal.DefaultMetricsClient;
 import org.sonar.wsclient.permissions.PermissionClient;
 import org.sonar.wsclient.permissions.internal.DefaultPermissionClient;
 import org.sonar.wsclient.project.ProjectClient;
@@ -142,6 +144,9 @@ public class SonarClient {
 
   public ComponentClient componentClient() {
     return new DefaultComponentClient(requestFactory);
+  }
+  public MetricsClient metricsClient() {
+    return new DefaultMetricsClient(requestFactory);
   }
 
   /**

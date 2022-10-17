@@ -1,5 +1,6 @@
 package jext.metrics.providers.sonarqube;
 
+import jext.metrics.ComponentType;
 import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsProject;
 import jext.util.Assert;
@@ -16,8 +17,6 @@ public class SonarQubeProject extends SonarQubeComponent implements MetricsProje
     // ----------------------------------------------------------------------
 
     private final String name;
-    private final SonarQubeProvider provider;
-    private SonarClient client;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -27,7 +26,6 @@ public class SonarQubeProject extends SonarQubeComponent implements MetricsProje
         super(null, provider, client);
         Assert.notNull(name, "name");
         this.name = name;
-        this.provider = provider;
     }
 
     void initialize() {
@@ -55,6 +53,11 @@ public class SonarQubeProject extends SonarQubeComponent implements MetricsProje
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public ComponentType getType() {
+        return ComponentType.PROJECT;
     }
 
     @Override

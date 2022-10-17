@@ -1,33 +1,34 @@
-package jext.metrics.providers.scitools;
+package jext.metrics.providers.sonarqube;
 
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
+import org.sonar.wsclient.services.Measure;
 
 import java.util.Objects;
 
-public class SciToolsMetricValue implements MetricValue {
+public class SonarQubeMetricValue implements MetricValue {
 
-    public static SciToolsMetricValue of(SciToolsObject object, SciToolsMetric metric, float value) {
-        return new SciToolsMetricValue(object, metric, value);
+    static SonarQubeMetricValue of(SonarQubeComponent component, SonarQubeMetric metric, Measure measure) {
+        return new SonarQubeMetricValue(component, metric, measure);
     }
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
-    private final SciToolsObject object;
-    private final SciToolsMetric metric;
-    private final float value;
+    private final SonarQubeComponent component;
+    private final SonarQubeMetric metric;
+    private final Measure measure;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    private SciToolsMetricValue(SciToolsObject object, SciToolsMetric metric, float value) {
-        this.object = object;
+    private SonarQubeMetricValue(SonarQubeComponent component, SonarQubeMetric metric, Measure measure) {
+        this.component = component;
         this.metric = metric;
-        this.value = value;
+        this.measure = measure;
     }
 
     // ----------------------------------------------------------------------
@@ -56,17 +57,17 @@ public class SciToolsMetricValue implements MetricValue {
 
     @Override
     public MetricsComponent getComponent() {
-        return object;
+        return component;
     }
 
     @Override
     public float getValue() {
-        return value;
+        return measure.getValue().floatValue();
     }
 
     @Override
     public int getIntValue() {
-        return (int)value;
+        return measure.getValue().intValue();
     }
 
     // ----------------------------------------------------------------------

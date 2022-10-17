@@ -47,10 +47,18 @@ api/project_analyses
 api/projects
 
 
+api/components      
+api/hotspots        Read and update Security Hotspots.
+api/issues          Read and update issues.
+api/languages       Get the list of programming languages supported in this instance.
+api/metrics         Get information on automatic metrics
+api/measures        Get components or children with specified measures.
+
+api/projects
+api/project_analyses
+api/project_badges
+
 api/ce
-api/components
-api/hotspot
-api/issues
 api/project_dump
 api/rules
 api/server

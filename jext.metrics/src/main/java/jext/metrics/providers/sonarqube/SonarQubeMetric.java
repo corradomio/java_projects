@@ -59,6 +59,18 @@ public class SonarQubeMetric implements Metric {
     }
 
     // ----------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
+
+    // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------
 

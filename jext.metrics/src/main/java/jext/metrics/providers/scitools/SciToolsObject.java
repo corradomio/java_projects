@@ -1,5 +1,6 @@
 package jext.metrics.providers.scitools;
 
+import jext.metrics.ComponentType;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
 
@@ -60,6 +61,40 @@ public class SciToolsObject implements MetricsComponent {
     }
 
     @Override
+    public ComponentType getType() {
+        if (kname.contains("File"))
+            return ComponentType.FILE;
+        if (kname.contains("Type"))
+            return ComponentType.TYPE;
+        if (kname.contains("Class"))
+            return ComponentType.TYPE;
+        if (kname.contains("Interface"))
+            return ComponentType.TYPE;
+        if (kname.contains("Struct"))
+            return ComponentType.TYPE;
+        if (kname.contains("Enum"))
+            return ComponentType.TYPE;
+        if (kname.contains("Method"))
+            return ComponentType.METHOD;
+        if (kname.contains("Indexer"))
+            return ComponentType.METHOD;
+        if (kname.contains("Constructor"))
+            return ComponentType.METHOD;
+        if (kname.contains("Delegate"))
+            return ComponentType.FIELD;
+        if (kname.contains("Static"))
+            return ComponentType.METHOD;
+        if (kname.contains("Finalizer"))
+            return ComponentType.METHOD;
+        if (kname.contains("Property"))
+            return ComponentType.FIELD;
+        if (kname.contains("Event"))
+            return ComponentType.FIELD;
+        else
+            return ComponentType.UNKNOWN;
+    }
+
+    @Override
     public boolean hasChildren() {
         return !children.isEmpty();
     }
@@ -85,7 +120,8 @@ public class SciToolsObject implements MetricsComponent {
 
         Set<String> categoryMetrics = provider.getMetricNames(category);
         return metricValues.stream()
-                .filter(v -> categoryMetrics.contains(v.getName()))
+                .filter(v -> categoryMetrics.contains(v.getMetric().getId())
+                          || categoryMetrics.contains(v.getMetric().getName()))
                 .collect(Collectors.toList());
     }
 

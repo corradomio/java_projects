@@ -1,6 +1,7 @@
 package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
+import jext.metrics.ComponentType;
 import jext.metrics.MetricsException;
 import jext.metrics.MetricsProject;
 
@@ -34,6 +35,11 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
+
+    @Override
+    public ComponentType getType() {
+        return ComponentType.PROJECT;
+    }
 
     @Override
     public void close() {
@@ -130,7 +136,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
                         continue;
                     }
 
-                    SciToolsMetricValue metricValue = SciToolsMetricValue.of(metric, value);
+                    SciToolsMetricValue metricValue = SciToolsMetricValue.of(object, metric, value);
                     object.addMetricValue(metricValue);
                 }
                 catch (NumberFormatException e) {

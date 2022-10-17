@@ -1,14 +1,19 @@
 package jext.metrics.providers.sonarqube;
 
+import jext.metrics.ComponentType;
+import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
 import org.sonar.wsclient.component.ComponentClient;
+import org.sonar.wsclient.metrics.MetricsClient;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SonarQubeComponent implements MetricsComponent {
@@ -46,6 +51,27 @@ public class SonarQubeComponent implements MetricsComponent {
     }
 
     @Override
+    public ComponentType getType() {
+        /*
+            Qualifiers
+                TRK     project
+                FIL
+                DIR
+                UTS     ???
+                BRC     branch ???
+         */
+        String qualifier = component.qualifier();
+        if (qualifier.equals("FIL"))
+            return ComponentType.FILE;
+        if (qualifier.equals("TRK"))
+            return ComponentType.PROJECT;
+        if (qualifier.equals("DIR"))
+            return ComponentType.DIRECTORY;
+        else
+            return ComponentType.UNKNOWN;
+    }
+
+    @Override
     public boolean hasChildren() {
         return "DIR".equals(component.qualifier());
     }
@@ -65,12 +91,29 @@ public class SonarQubeComponent implements MetricsComponent {
 
     @Override
     public Collection<MetricValue> getMetricValues() {
-        return Collections.emptyList();
+        List<MetricValue> allMetricValues = new ArrayList<>();
+        // collect all categories
+        Collection<String> categories = provider.getCategories();
+        for(String category : categories) {
+            Collection<MetricValue> metricValues = getMetricValues(category);
+            allMetricValues.addAll(metricValues);
+        }
+        return allMetricValues;
     }
 
     @Override
     public Collection<MetricValue> getMetricValues(String category) {
-        return Collections.emptyList();
+        // collect the metrics in the specified category
+        Map<String, SonarQubeMetric> mmap = new HashMap<>();
+        List<String> mkeys = new ArrayList<>();
+        for(Metric metric : provider.getMetrics(category)) {
+            mmap.put(metric.getId(), (SonarQubeMetric)metric);
+            mkeys.add(metric.getId());
+        }
+        MetricsClient metricsClient = client.metricsClient();
+        return metricsClient.list(getId(), mkeys, false).stream()
+                .map(measure -> SonarQubeMetricValue.of(this,mmap.get(measure.getMetricKey()), measure))
+                .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------

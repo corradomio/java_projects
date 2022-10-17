@@ -7,10 +7,12 @@ public interface MetricsComponent {
 
     String getId();
     String getName();
+    ComponentType getType();
 
     boolean hasChildren();
     List<MetricsComponent> getChildren();
 
     Collection<MetricValue> getMetricValues();
     Collection<MetricValue> getMetricValues(String category);
+
 }

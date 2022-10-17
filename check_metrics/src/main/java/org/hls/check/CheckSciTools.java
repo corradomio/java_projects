@@ -16,6 +16,12 @@ public class CheckSciTools extends CheckBase {
                        "scitools.metrics.edges",   "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-edges-r00.csv"
                 ));
 
-        dump(provider.getProject(), 0);
+        for (String category : provider.getCategories())
+            if (!category.isEmpty()) {
+                System.out.printf("-- %s --\n", category);
+                dumpMetrics(provider.getProject(), 0, category);
+            }
+
+        // dump(provider.getProject(), 0);
     }
 }
