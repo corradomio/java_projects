@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -264,22 +265,20 @@ public class SciToolsProvider implements MetricsProvider {
     // Operations/configuration
     // ----------------------------------------------------------------------
 
-    public void addMetric(Metric metric) {
+    @Override
+    public void registerCategory(String category, Collection<String> metrics) {
+        categories.put(category, new HashSet<>(metrics));
+    }
+
+    void addMetric(Metric metric) {
         metricsById.put(metric.getId(), metric);
         metricsByName.put(metric.getName(), metric);
     }
 
-    public void addCategory(String name, Collection<String> metrics) {
+    void addCategory(String name, Collection<String> metrics) {
         if (!ROOT.equals(name))
             categories.put(name, new TreeSet<>(metrics));
     }
-
-    // public void addMetricValue(String id, SciToolsMetric metric, String name, String kname, float value) {
-    //     SciToolsMetricValue metricValue = SciToolsMetricValue.of(metric, value);
-    //     objects.computeIfAbsent(id, par -> SciToolsObject.of(id, name, kname));
-    //     metricValues.computeIfAbsent(id, par -> new ArrayList<>());
-    //     metricValues.get(id).add(metricValue);
-    // }
 
     // ----------------------------------------------------------------------
     // End

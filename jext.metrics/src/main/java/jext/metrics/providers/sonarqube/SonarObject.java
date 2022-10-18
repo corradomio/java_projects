@@ -18,19 +18,38 @@ import java.util.stream.Collectors;
 
 public class SonarObject implements MetricsComponent {
 
+    private static final String QUAL_FIL = "FIL";
+    private static final String QUAL_DIR = "DIR";
+    private static final String QUAL_TRK = "TRK";
+
+    public static ComponentType toType(String qualifier) {
+        if (qualifier.equals(QUAL_FIL))
+            return ComponentType.FILE;
+        if (qualifier.equals(QUAL_TRK))
+            return ComponentType.PROJECT;
+        if (qualifier.equals(QUAL_DIR))
+            return ComponentType.DIRECTORY;
+        else
+            return ComponentType.UNKNOWN;
+    }
+
+    public static String fromType(ComponentType type) {
+        if(type == ComponentType.FILE)
+            return QUAL_FIL;
+        if (type == ComponentType.DIRECTORY)
+            return QUAL_DIR;
+        if (type == ComponentType.PROJECT)
+            return QUAL_TRK;
+        else
+            throw new RuntimeException(String.format("Unsupported type %s", type));
+    }
+
     public static SonarObject of(Component c, SonarProvider provider, SonarClient client) {
         return new SonarObject(c, provider, client);
     }
 
     public static ComponentType getType(String qualifier) {
-        if (qualifier.equals("FIL"))
-            return ComponentType.FILE;
-        if (qualifier.equals("TRK"))
-            return ComponentType.PROJECT;
-        if (qualifier.equals("DIR"))
-            return ComponentType.DIRECTORY;
-        else
-            return ComponentType.UNKNOWN;
+        return toType(qualifier);
     }
 
     // ----------------------------------------------------------------------

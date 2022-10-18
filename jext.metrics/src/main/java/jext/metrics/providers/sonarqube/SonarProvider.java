@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -129,6 +130,11 @@ public class SonarProvider implements MetricsProvider {
     private void addMetric(Metric metric) {
         metricsById.put(metric.getId(), metric);
         metricsByName.put(metric.getName(), metric);
+    }
+
+    @Override
+    public void registerCategory(String category, Collection<String> metrics) {
+        categories.put(category, new HashSet<>(metrics));
     }
 
     // ----------------------------------------------------------------------
