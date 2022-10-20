@@ -15,6 +15,13 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.netflix.governator/governator -->
+        <dependency>
+            <groupId>com.netflix.governator</groupId>
+            <artifactId>governator</artifactId>
+            <version>1.17.12</version>
+            <scope>runtime</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -26,6 +33,12 @@
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>
             <version>5.1.0.Final</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.burningwave/core -->
+        <dependency>
+            <groupId>org.burningwave</groupId>
+            <artifactId>core</artifactId>
+            <version>12.60.3</version>
         </dependency>
 
     </dependencies>
