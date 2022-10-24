@@ -1,8 +1,10 @@
 package org.hls.check.guice;
 
 import com.google.inject.AbstractModule;
-import org.hls.check.guice.internal.ModuleImpl;
-import org.hls.check.guice.internal.ProjectImpl;
+import org.hls.check.Module;
+import org.hls.check.Project;
+import org.hls.check.internal.ModuleImpl;
+import org.hls.check.internal.ProjectImpl;
 
 public class MyModule extends AbstractModule {
     @Override

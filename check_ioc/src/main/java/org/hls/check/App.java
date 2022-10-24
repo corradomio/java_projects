@@ -3,7 +3,6 @@ package org.hls.check;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.hls.check.guice.MyModule;
-import org.hls.check.guice.Project;
 
 public class App {
 

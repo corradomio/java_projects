@@ -1,6 +1,6 @@
-package org.hls.check.guice.internal;
+package org.hls.check.internal;
 
-import org.hls.check.guice.Module;
+import org.hls.check.Module;
 
 public class ModuleImpl implements Module {
 

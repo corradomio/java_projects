@@ -1,4 +1,4 @@
-package org.hls.check.guice;
+package org.hls.check;
 
 public interface Module {
 
