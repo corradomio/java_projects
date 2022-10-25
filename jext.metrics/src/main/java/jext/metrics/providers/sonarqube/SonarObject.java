@@ -4,6 +4,7 @@ import jext.metrics.ComponentType;
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
+import jext.util.MapUtils;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
 import org.sonar.wsclient.component.ComponentClient;
@@ -95,6 +96,17 @@ public class SonarObject implements MetricsComponent {
                 BRC     branch ???
          */
         return getType(component.qualifier());
+    }
+
+    @Override
+    public Map<String, Object> getData() {
+        return MapUtils.asMap(
+                "id", getId(),
+                "name", getName(),
+                "type", getType().toString(),
+                "qualifier", component.qualifier(),
+                "path", component.path()
+        );
     }
 
     @Override

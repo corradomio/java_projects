@@ -3,11 +3,14 @@ package jext.metrics.providers.scitools;
 import jext.metrics.ComponentType;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
+import jext.util.MapUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,6 +53,28 @@ public class SciToolsObject implements MetricsComponent {
     // Properties
     // ----------------------------------------------------------------------
 
+    private static final Map<String, ComponentType> TYPES;
+    static {
+        TYPES = new HashMap<>();
+        TYPES.put("File", ComponentType.FILE);
+
+        TYPES.put("Type", ComponentType.TYPE);
+        TYPES.put("Class", ComponentType.TYPE);
+        TYPES.put("Interface", ComponentType.TYPE);
+        TYPES.put("Struct", ComponentType.TYPE);
+        TYPES.put("Enum", ComponentType.TYPE);
+
+        TYPES.put("Method", ComponentType.METHOD);
+        TYPES.put("Indexer", ComponentType.METHOD);
+        TYPES.put("Constructor", ComponentType.METHOD);
+        TYPES.put("Finalizer", ComponentType.METHOD);
+        TYPES.put("Static", ComponentType.METHOD);
+
+        TYPES.put("Delegate", ComponentType.FIELD);
+        TYPES.put("Property", ComponentType.FIELD);
+        TYPES.put("Event", ComponentType.FIELD);
+    }
+
     @Override
     public String getId() {
         return id;
@@ -62,36 +87,54 @@ public class SciToolsObject implements MetricsComponent {
 
     @Override
     public ComponentType getType() {
-        if (kname.contains("File"))
-            return ComponentType.FILE;
-        if (kname.contains("Type"))
-            return ComponentType.TYPE;
-        if (kname.contains("Class"))
-            return ComponentType.TYPE;
-        if (kname.contains("Interface"))
-            return ComponentType.TYPE;
-        if (kname.contains("Struct"))
-            return ComponentType.TYPE;
-        if (kname.contains("Enum"))
-            return ComponentType.TYPE;
-        if (kname.contains("Method"))
-            return ComponentType.METHOD;
-        if (kname.contains("Indexer"))
-            return ComponentType.METHOD;
-        if (kname.contains("Constructor"))
-            return ComponentType.METHOD;
-        if (kname.contains("Delegate"))
-            return ComponentType.FIELD;
-        if (kname.contains("Static"))
-            return ComponentType.METHOD;
-        if (kname.contains("Finalizer"))
-            return ComponentType.METHOD;
-        if (kname.contains("Property"))
-            return ComponentType.FIELD;
-        if (kname.contains("Event"))
-            return ComponentType.FIELD;
-        else
-            return ComponentType.UNKNOWN;
+        // if (kname.contains("File"))
+        //     return ComponentType.FILE;
+        //
+        // if (kname.contains("Type"))
+        //     return ComponentType.TYPE;
+        // if (kname.contains("Class"))
+        //     return ComponentType.TYPE;
+        // if (kname.contains("Interface"))
+        //     return ComponentType.TYPE;
+        // if (kname.contains("Struct"))
+        //     return ComponentType.TYPE;
+        // if (kname.contains("Enum"))
+        //     return ComponentType.TYPE;
+        //
+        // if (kname.contains("Method"))
+        //     return ComponentType.METHOD;
+        // if (kname.contains("Indexer"))
+        //     return ComponentType.METHOD;
+        // if (kname.contains("Constructor"))
+        //     return ComponentType.METHOD;
+        // if (kname.contains("Static"))
+        //     return ComponentType.METHOD;
+        // if (kname.contains("Finalizer"))
+        //     return ComponentType.METHOD;
+        //
+        // if (kname.contains("Delegate"))
+        //     return ComponentType.FIELD;
+        // if (kname.contains("Property"))
+        //     return ComponentType.FIELD;
+        // if (kname.contains("Event"))
+        //     return ComponentType.FIELD;
+        // else
+        //     return ComponentType.UNKNOWN;
+
+        for (String k : TYPES.keySet())
+            if (kname.contains(k))
+                return TYPES.get(k);
+
+        return ComponentType.UNKNOWN;
+    }
+
+    @Override
+    public Map<String, Object> getData() {
+        return MapUtils.asMap(
+                "id", getId(),
+                "name", getName(),
+                "type", getType().toString()
+        );
     }
 
     @Override

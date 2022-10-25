@@ -11,9 +11,10 @@ public class CheckSciTools extends CheckBase {
         MetricsProvider provider = MetricsProviders.getProvider("scitools",
                 PropertiesUtils.properties(
                         "scitools.name", "csvquickview",
-                "scitools.metrics.values", "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-r00.csv",
-                       "scitools.metrics.nodes",   "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-nodes-r00.csv",
-                       "scitools.metrics.edges",   "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-edges-r00.csv"
+                        "scitools.metrics.values", "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-r00.csv",
+                        "scitools.metrics.nodes",  "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-nodes-r00.csv",
+                        "scitools.metrics.edges",  "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-edges-r00.csv",
+                        "scitools.idmaps",         "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-idmaps-r00.csv"
                 ));
 
         for (String category : provider.getCategories())
