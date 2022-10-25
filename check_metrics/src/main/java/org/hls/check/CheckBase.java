@@ -23,7 +23,7 @@ public class CheckBase {
     static void dumpMetrics(MetricsComponent c, int d, String category) {
         System.out.printf("%s[%s: %s] %s %n", spaces(d), c.getId(), c.getType(), c.getName());
         c.getMetricValues(category).forEach(mvalue -> {
-            System.out.printf("%s    %s: %d %n", spaces(d), mvalue.getMetric().getName(), mvalue.getIntValue());
+            System.out.printf("%s    %s: %d %n", spaces(d), mvalue.getMetric().getId(), mvalue.getIntValue());
         });
         c.getChildren().forEach(cc -> dumpMetrics(cc, d+1, category));
     }

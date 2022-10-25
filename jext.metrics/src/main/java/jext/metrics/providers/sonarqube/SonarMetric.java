@@ -1,6 +1,7 @@
 package jext.metrics.providers.sonarqube;
 
 import jext.metrics.Metric;
+import jext.metrics.providers.scitools.SciToolsMetric;
 import jext.util.MapUtils;
 
 import java.util.Map;
@@ -59,6 +60,14 @@ public class SonarMetric implements Metric {
     }
 
     // ----------------------------------------------------------------------
+    // Overrides
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean equals(Object obj) {
+        SonarMetric that = (SonarMetric) obj;
+        return this.getId().equals(that.getId());
+    }
 
     @Override
     public String toString() {

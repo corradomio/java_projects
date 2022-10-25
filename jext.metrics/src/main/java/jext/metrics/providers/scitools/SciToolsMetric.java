@@ -54,6 +54,12 @@ public class SciToolsMetric implements Metric {
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean equals(Object obj) {
+        SciToolsMetric that = (SciToolsMetric) obj;
+        return this.getId().equals(that.getId());
+    }
+
+    @Override
     public String toString() {
         return name;
     }

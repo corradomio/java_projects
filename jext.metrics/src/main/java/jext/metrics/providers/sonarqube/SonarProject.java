@@ -96,7 +96,21 @@ public class SonarProject extends SonarObject implements MetricsProject {
     );
 
     @Override
-    public Collection<MetricValue> getAllMetricValues(ComponentType type, String category) {
+    public Set<Metric> getAllMetrics() {
+        Set<Metric> metrics = new HashSet<>();
+
+        getAllMetricValues(ComponentType.FILE, null).forEach(mv -> {
+            metrics.add(mv.getMetric());
+        });
+        getAllMetricValues(ComponentType.DIRECTORY, null).forEach(mv -> {
+            metrics.add(mv.getMetric());
+        });
+
+        return metrics;
+    }
+
+    @Override
+    public List<MetricValue> getAllMetricValues(ComponentType type, String category) {
         Map<String, SonarMetric> mmap = new HashMap<>();
         Set<String> mkeys = new HashSet<>();
         for(Metric metric : provider.getMetrics(category)) {
@@ -109,7 +123,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
         Map<String, SonarObject> cmap = new HashMap<>();
         MetricsClient metricClient = client.metricsClient();
-        Collection<MetricValue> metricValues = metricClient.list(getId(), mkeys, true).stream()
+        return metricClient.list(getId(), mkeys, true).stream()
                 .filter(measure -> type == SonarObject.getType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
                 .map(measure -> {
                     SonarObject component;
@@ -125,10 +139,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
                     return SonarMetricValue.of(component, mmap.get(measure.getMetricKey()), measure);
                 })
                 .collect(Collectors.toList());
-
-        return metricValues;
     }
-
 
     // ----------------------------------------------------------------------
     // End

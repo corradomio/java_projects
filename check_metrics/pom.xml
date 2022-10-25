@@ -18,6 +18,7 @@
     <modules>
         <module>../jext.commons</module>
         <module>../jext.metrics</module>
+        <module>../jext.collections</module>
         <module>../sonar-ws-client</module>
     </modules>
 

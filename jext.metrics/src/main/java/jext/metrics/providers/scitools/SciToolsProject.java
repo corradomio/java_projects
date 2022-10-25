@@ -2,10 +2,14 @@ package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
 import jext.metrics.ComponentType;
+import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsException;
 import jext.metrics.MetricsProject;
+import jext.util.BidiMap;
+import jext.util.DefaultHashMap;
+import jext.util.HashBidiMap;
 
 import java.io.File;
 import java.io.FileReader;
@@ -14,10 +18,12 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
@@ -28,6 +34,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     private static final Logger logger = Logger.getLogger(SciToolsProject.class);
 
     private final Map<String, SciToolsObject> objects = new HashMap<>();
+    private final Map<String, BidiMap<String, String>> idmaps = new DefaultHashMap<>((key)->new HashBidiMap<>());
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -58,7 +65,25 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     // ----------------------------------------------------------------------
 
     @Override
-    public Collection<MetricValue> getAllMetricValues(ComponentType type, String category) {
+    public Set<Metric> getAllMetrics() {
+        Set<Metric> metrics = new HashSet<>();
+
+        Queue<MetricsComponent> queue = new LinkedList<>();
+        queue.add(this);
+        while(!queue.isEmpty()) {
+            MetricsComponent component = queue.remove();
+            queue.addAll(component.getChildren());
+
+            component.getMetricValues().forEach(mv -> {
+                metrics.add(mv.getMetric());
+            });
+        }
+
+        return metrics;
+    }
+
+    @Override
+    public List<MetricValue> getAllMetricValues(ComponentType type, String category) {
         List<MetricValue> metricValues = new ArrayList<>();
 
         Queue<MetricsComponent> queue = new LinkedList<>();
@@ -79,13 +104,17 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     // ----------------------------------------------------------------------
 
     void initialize() {
+        logger.info("initialize");
         loadNodes();
         loadEdges();
         loadMeasures();
+        loadIdMaps();
+        logger.info("done");
     }
 
     private void loadNodes() {
         File nodesFile = new File(provider.getProperty(SciToolsProvider.METRICS_NODES));
+        logger.debugf("... load nodes from %s", nodesFile);
 
         // 0  1    3
         // id,name,type
@@ -107,6 +136,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     private void loadEdges() {
         File edgesFile = new File(provider.getProperty(SciToolsProvider.METRICS_EDGES));
+        logger.debugf("... load edges from %s", edgesFile);
 
         // 0      1
         // source,target  (child,parent)
@@ -135,6 +165,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     private void loadMeasures() {
         File metricsFile = new File(provider.getProperty(SciToolsProvider.METRICS_VALUES));
+        logger.debugf("... load metrics from %s", metricsFile);
 
         // 0  1    2     3   4
         // id,name,kname,key,value
@@ -170,6 +201,43 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
                 catch (NumberFormatException e) {
                     logger.errorf("Number format exception on line %d on value %s", count, parts[4]);
                 }
+            }
+        }
+        catch (IOException e) {
+            throw new MetricsException(e);
+        }
+    }
+
+    private void loadIdMaps() {
+        File idmapsFile = new File(provider.getProperty(SciToolsProvider.METRICS_IDMAPS));
+        if (!idmapsFile.exists())
+            return;
+        else
+            logger.debugf("... load idmaps from %s", idmapsFile);
+
+        // 0    1    2
+        // type,eid,nid
+        try(LineNumberReader rdr = new LineNumberReader(new FileReader(idmapsFile))) {
+            // skip header
+            String line = rdr.readLine();
+            int count = 1;
+            while ((line = rdr.readLine()) != null) {
+                count += 1;
+
+                // 0    1    2
+                // type,eid,nid
+                String[] parts = line.split(",");
+                try {
+                    String type = parts[0];
+                    String eid = parts[1];
+                    String nid = parts[2];
+
+                    idmaps.get(type).put(eid, nid);
+                }
+                catch (NumberFormatException e) {
+                    logger.errorf("Number format exception on line %d on value %s", count, parts[4]);
+                }
+
             }
         }
         catch (IOException e) {

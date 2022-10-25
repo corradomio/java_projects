@@ -32,15 +32,18 @@ public class SciToolsProvider implements MetricsProvider {
     static final String ROOT = "";
     static final String NAME = "scitools";
     static final String PROJECT_NAME = "scitools.name";
-    static final String METRICS_ROOT = "scitools.metrics.root";
+    static final String METRICS_HOME = "scitools.metrics.home";
     static final String METRICS_REVISION = "scitools.metrics.revision";
+
     static final String METRICS_VALUES = "scitools.metrics.values";
-    static final String METRICS_NODES = "scitools.metrics.nodes";
-    static final String METRICS_EDGES = "scitools.metrics.edges";
+    static final String METRICS_NODES  = "scitools.metrics.nodes";
+    static final String METRICS_EDGES  = "scitools.metrics.edges";
+    static final String METRICS_IDMAPS = "scitools.metrics.idmaps";
 
     private static final String TEMPLATE_METRICS_VALUES = "%s/scitools-metrics-r%02d.csv";
-    private static final String TEMPLATE_METRICS_NODES = "%s/scitools-metrics-nodes-r%02d.csv";
-    private static final String TEMPLATE_METRICS_EDGES = "%s/scitools-metrics-edges-r%02d.csv";
+    private static final String TEMPLATE_METRICS_NODES  = "%s/scitools-metrics-nodes-r%02d.csv";
+    private static final String TEMPLATE_METRICS_EDGES  = "%s/scitools-metrics-edges-r%02d.csv";
+    private static final String TEMPLATE_METRICS_IDMAPS = "%s/scitools-idmaps-r%02d.csv";
 
     // ----------------------------------------------------------------------
     // Private properties
@@ -76,16 +79,17 @@ public class SciToolsProvider implements MetricsProvider {
     }
 
     private void validate() {
-        if (properties.containsKey(METRICS_ROOT)) {
-            Assert.notNull(properties.getProperty(METRICS_ROOT), METRICS_ROOT);
+        if (properties.containsKey(METRICS_HOME)) {
+            Assert.notNull(properties.getProperty(METRICS_HOME), METRICS_HOME);
             Assert.notNull(properties.getProperty(METRICS_REVISION), METRICS_REVISION);
 
-            String root = properties.getProperty(METRICS_ROOT);
+            String root = properties.getProperty(METRICS_HOME);
             int rev = Integer.parseInt(properties.getProperty(METRICS_REVISION));
 
             properties.put(METRICS_VALUES, String.format(TEMPLATE_METRICS_VALUES, root, rev));
             properties.put(METRICS_NODES, String.format(TEMPLATE_METRICS_NODES, root, rev));
             properties.put(METRICS_EDGES, String.format(TEMPLATE_METRICS_EDGES, root, rev));
+            properties.put(METRICS_IDMAPS, String.format(TEMPLATE_METRICS_IDMAPS, root, rev));
         }
         {
             Assert.notNull(properties.getProperty(METRICS_VALUES), METRICS_VALUES);
