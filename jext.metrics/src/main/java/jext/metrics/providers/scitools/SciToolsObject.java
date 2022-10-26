@@ -3,6 +3,7 @@ package jext.metrics.providers.scitools;
 import jext.metrics.ComponentType;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
+import jext.metrics.MetricsProject;
 import jext.util.MapUtils;
 
 import java.util.ArrayList;
@@ -29,29 +30,10 @@ public class SciToolsObject implements MetricsComponent {
     private final String kname;
 
     protected SciToolsProvider provider;
+    protected SciToolsProject project;
     private SciToolsObject parent;
     private final List<MetricsComponent> children = new ArrayList<>();
     private final List<MetricValue> metricValues = new ArrayList<>();
-
-    // ----------------------------------------------------------------------
-    // Constructor
-    // ----------------------------------------------------------------------
-
-    protected SciToolsObject(String id, String name, String kname) {
-        this.id = id;
-        this.name = name;
-        this.kname = kname;
-    }
-
-    void setParent(SciToolsObject parent) {
-        this.parent = parent;
-        this.provider = parent.provider;
-        this.parent.children.add(this);
-    }
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
 
     private static final Map<String, ComponentType> TYPES;
     static {
@@ -73,6 +55,32 @@ public class SciToolsObject implements MetricsComponent {
         TYPES.put("Delegate", ComponentType.FIELD);
         TYPES.put("Property", ComponentType.FIELD);
         TYPES.put("Event", ComponentType.FIELD);
+    }
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    protected SciToolsObject(String id, String name, String kname) {
+        this.id = id;
+        this.name = name;
+        this.kname = kname;
+    }
+
+    void setParent(SciToolsObject parent) {
+        this.parent = parent;
+        this.project = parent.project;
+        this.provider = parent.provider;
+        this.parent.children.add(this);
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    @Override
+    public MetricsProject getProject() {
+        return project;
     }
 
     @Override

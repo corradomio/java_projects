@@ -51,11 +51,13 @@ public interface MetricsProvider {
     Collection<Metric> getMetrics(String category);
 
     /**
-     * Properties of the metric with the specified name
-     * @param name name of the metric
+     * Properties of the metric with the specified name or id.
+     * Note: it is possible to have multiple metrics with the same name but different id
+     *
+     * @param nameOrId id of the metric
      * @return Metric object
      */
-    Metric getMetric(String name);
+    Metric getMetric(String nameOrId);
 
     /**
      * Navigate the hierarchical structure

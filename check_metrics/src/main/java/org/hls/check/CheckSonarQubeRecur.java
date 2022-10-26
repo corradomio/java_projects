@@ -20,7 +20,7 @@ public class CheckSonarQubeRecur {
 
         MetricsProject project = provider.getProject();
         provider.getCategories().forEach(category -> {
-            project.getAllMetricValues(ComponentType.FILE, category).forEach(value -> {
+            project.getMetricValues(ComponentType.FILE, category).forEach(value -> {
                 System.out.println(value);
             });
         });

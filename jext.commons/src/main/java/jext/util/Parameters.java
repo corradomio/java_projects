@@ -169,6 +169,13 @@ public class Parameters extends HashMap<String, Object> {
         return this;
     }
 
+    public Parameters addIfMissing(Properties properties) {
+        for (String key : properties.stringPropertyNames())
+            if (!containsKey(key))
+                put(key, properties.get(key));
+        return this;
+    }
+
     // ----------------------------------------------------------------------
     // The following method convert each value in the correspondent type.
     // In general it is supported:

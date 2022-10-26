@@ -26,10 +26,13 @@ import java.util.stream.Collectors;
 
 public class SonarProvider implements MetricsProvider {
 
-    private static final Logger logger = Logger.getLogger(SonarProvider.class);
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    static final String NAME = "sonarqube";
 
     private static final String ROOT = "";
-    private static final String NAME = "sonarqube";
     private static final String SONAR_NAME = "sonar.name";
     private static final String SONAR_URL = "sonar.url";
     // used also for token
@@ -40,6 +43,8 @@ public class SonarProvider implements MetricsProvider {
     // ----------------------------------------------------------------------
     // Private properties
     // ----------------------------------------------------------------------
+
+    private static final Logger logger = Logger.getLogger(SonarProvider.class);
 
     private Properties properties;
     private final Map<String, Set<String>> categories = new TreeMap<>();
@@ -114,7 +119,7 @@ public class SonarProvider implements MetricsProvider {
 
             String id = MapUtils.get(data,"key");
             String domain = MapUtils.get(data,"domain");
-            Metric metric = SonarMetric.of(data);
+            Metric metric = new SonarMetric(this, data);
             addMetric(metric);
             addMetricToCategory(ROOT, metric);
             addMetricToCategory(domain, metric);
@@ -177,16 +182,16 @@ public class SonarProvider implements MetricsProvider {
     }
 
     @Override
-    public Metric getMetric(String name) {
-        if (metricsById.containsKey(name))
-            return metricsById.get(name);
-        if (metricsByName.containsKey(name))
-            return metricsByName.get(name);
+    public Metric getMetric(String nameOrId) {
+        if (metricsById.containsKey(nameOrId))
+            return metricsById.get(nameOrId);
+        if (metricsByName.containsKey(nameOrId))
+            return metricsByName.get(nameOrId);
 
-        logger.errorf("Unknown metric '%s'", name);
-        Metric metric = SonarMetric.of(MapUtils.asMap(
-                "key", name,
-                "name", name,
+        logger.errorf("Unknown metric '%s'", nameOrId);
+        Metric metric = new SonarMetric(this, MapUtils.asMap(
+                "key", nameOrId,
+                "name", nameOrId,
                 "descrition", ""
         ));
         addMetric(metric);

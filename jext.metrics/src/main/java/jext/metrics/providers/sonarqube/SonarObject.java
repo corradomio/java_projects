@@ -4,6 +4,8 @@ import jext.metrics.ComponentType;
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
+import jext.metrics.MetricsProject;
+import jext.metrics.MetricsProvider;
 import jext.util.MapUtils;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
@@ -19,9 +21,17 @@ import java.util.stream.Collectors;
 
 public class SonarObject implements MetricsComponent {
 
+    // -----------------------------------------------------------------------
+    // Constants
+    // -----------------------------------------------------------------------
+
     private static final String QUAL_FIL = "FIL";
     private static final String QUAL_DIR = "DIR";
     private static final String QUAL_TRK = "TRK";
+
+    // -----------------------------------------------------------------------
+    // Conversions
+    // -----------------------------------------------------------------------
 
     public static ComponentType toType(String qualifier) {
         if (qualifier.equals(QUAL_FIL))
@@ -45,10 +55,6 @@ public class SonarObject implements MetricsComponent {
             throw new RuntimeException(String.format("Unsupported type %s", type));
     }
 
-    public static SonarObject of(Component c, SonarProvider provider, SonarClient client) {
-        return new SonarObject(c, provider, client);
-    }
-
     public static ComponentType getType(String qualifier) {
         return toType(qualifier);
     }
@@ -58,6 +64,7 @@ public class SonarObject implements MetricsComponent {
     // ----------------------------------------------------------------------
 
     protected final SonarProvider provider;
+    protected final SonarProject project;
     protected final SonarClient client;
     protected final Component component;
 
@@ -69,11 +76,24 @@ public class SonarObject implements MetricsComponent {
         this.component = c;
         this.provider = provider;
         this.client = client;
+        this.project = (SonarProject) this;
+    }
+
+    SonarObject(Component c, SonarObject parent) {
+        this.component = c;
+        this.provider = parent.provider;
+        this.client = parent.client;
+        this.project = parent.project;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public MetricsProject getProject() {
+        return project;
+    }
 
     @Override
     public String getId() {

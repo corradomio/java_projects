@@ -7,6 +7,7 @@ import jext.metrics.MetricValue;
 import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsException;
 import jext.metrics.MetricsProject;
+import jext.metrics.MetricsProvider;
 import jext.util.BidiMap;
 import jext.util.DefaultHashMap;
 import jext.util.HashBidiMap;
@@ -16,7 +17,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,16 +44,26 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         super("0", name, "");
         this.provider = provider;
         this.objects.put(this.getId(), this);
+        this.project = this;
     }
 
     // ----------------------------------------------------------------------
-    // Operations
+    // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public MetricsProvider getProvider() {
+        return provider;
+    }
 
     @Override
     public ComponentType getType() {
         return ComponentType.PROJECT;
     }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
 
     @Override
     public void close() {
@@ -65,7 +75,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     // ----------------------------------------------------------------------
 
     @Override
-    public Set<Metric> getAllMetrics() {
+    public Set<Metric> getMetrics() {
         Set<Metric> metrics = new HashSet<>();
 
         Queue<MetricsComponent> queue = new LinkedList<>();
@@ -83,7 +93,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     @Override
-    public List<MetricValue> getAllMetricValues(ComponentType type, String category) {
+    public List<MetricValue> getMetricValues(ComponentType type, String category) {
         List<MetricValue> metricValues = new ArrayList<>();
 
         Queue<MetricsComponent> queue = new LinkedList<>();

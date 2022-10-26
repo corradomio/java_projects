@@ -1,16 +1,14 @@
 package jext.metrics.providers.sonarqube;
 
 import jext.metrics.Metric;
+import jext.metrics.MetricsProject;
+import jext.metrics.MetricsProvider;
 import jext.metrics.providers.scitools.SciToolsMetric;
 import jext.util.MapUtils;
 
 import java.util.Map;
 
 public class SonarMetric implements Metric {
-
-    static SonarMetric of(Map<String, Object> data) {
-        return new SonarMetric(data);
-    }
 
     // ----------------------------------------------------------------------
     // Provate fields
@@ -30,19 +28,26 @@ public class SonarMetric implements Metric {
         },
      */
 
-    private Map<String, Object> data;
+    private final SonarProvider provider;
+    private final Map<String, Object> data;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    private SonarMetric(Map<String, Object> data) {
+    SonarMetric(SonarProvider provider, Map<String, Object> data) {
         this.data = data;
+        this.provider = provider;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public MetricsProvider getProvider() {
+        return provider;
+    }
 
     @Override
     public String getId() {

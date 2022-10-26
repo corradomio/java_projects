@@ -1,14 +1,9 @@
 package jext.metrics.providers.scitools;
 
 import jext.metrics.Metric;
+import jext.metrics.MetricsProvider;
 
 public class SciToolsMetric implements Metric {
-
-    public static SciToolsMetric of(String id, String name, String type, String description) {
-        if (type.isEmpty())
-            type = "count";
-        return new SciToolsMetric(id, name, type, description);
-    }
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -18,21 +13,28 @@ public class SciToolsMetric implements Metric {
     private final String name;
     private final String type;
     private final String description;
+    private final SciToolsProvider provider;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    private SciToolsMetric(String id, String name, String type, String description) {
+    SciToolsMetric(SciToolsProvider provider, String id, String name, String type, String description) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.description = description;
+        this.provider = provider;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public MetricsProvider getProvider() {
+        return provider;
+    }
 
     @Override
     public String getId() {

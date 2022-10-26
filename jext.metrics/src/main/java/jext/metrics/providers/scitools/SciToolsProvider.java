@@ -141,14 +141,14 @@ public class SciToolsProvider implements MetricsProvider {
     }
 
     @Override
-    public Metric getMetric(String name) {
-        if (metricsById.containsKey(name))
-            return metricsById.get(name);
-        if (metricsByName.containsKey(name))
-            return metricsByName.get(name);
+    public Metric getMetric(String nameOrId) {
+        if (metricsById.containsKey(nameOrId))
+            return metricsById.get(nameOrId);
+        if (metricsByName.containsKey(nameOrId))
+            return metricsByName.get(nameOrId);
 
-        logger.errorf("Unknown metric '%s'", name);
-        Metric metric = SciToolsMetric.of(name, name, "", "");
+        logger.errorf("Unknown metric '%s'", nameOrId);
+        Metric metric = new SciToolsMetric(this, nameOrId, nameOrId, "", "");
         addMetric(metric);
         return metric;
     }
@@ -207,7 +207,7 @@ public class SciToolsProvider implements MetricsProvider {
                 String type = XPathUtils.getValue(elt, "@type", "count");
                 String description = XPathUtils.getValue(elt, "#text");
 
-                Metric metric = SciToolsMetric.of(id, name, type, description);
+                Metric metric = new SciToolsMetric(this, id, name, type, description);
                 addMetric(metric);
             });
         }
