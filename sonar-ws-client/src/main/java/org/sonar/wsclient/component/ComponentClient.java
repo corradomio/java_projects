@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface ComponentClient {
 
-    List<Component> list(String id);
+    List<Component> list(String id, boolean recursive);
 }

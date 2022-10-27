@@ -1,6 +1,6 @@
 package jext.metrics;
 
-public enum ComponentType {
+public enum ObjectType {
     UNKNOWN,
     PROJECT,
     MODULE,
@@ -9,5 +9,6 @@ public enum ComponentType {
     TYPE,
     METHOD,
     FIELD,
-    NAMESPACE
+    NAMESPACE,
+    ALL
 }

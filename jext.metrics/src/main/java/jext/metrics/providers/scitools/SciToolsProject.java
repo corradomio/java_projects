@@ -1,13 +1,14 @@
 package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
-import jext.metrics.ComponentType;
 import jext.metrics.Metric;
-import jext.metrics.MetricValue;
-import jext.metrics.MetricsComponent;
 import jext.metrics.MetricsException;
+import jext.metrics.MetricsObject;
+import jext.metrics.MetricsObjects;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
+import jext.metrics.MetricsValues;
+import jext.metrics.ObjectType;
 import jext.util.BidiMap;
 import jext.util.DefaultHashMap;
 import jext.util.HashBidiMap;
@@ -16,11 +17,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -28,7 +27,7 @@ import java.util.Set;
 public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     // ----------------------------------------------------------------------
-    //
+    // Private fields
     // ----------------------------------------------------------------------
 
     private static final Logger logger = Logger.getLogger(SciToolsProject.class);
@@ -57,8 +56,8 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     @Override
-    public ComponentType getType() {
-        return ComponentType.PROJECT;
+    public ObjectType getType() {
+        return ObjectType.PROJECT;
     }
 
     // ----------------------------------------------------------------------
@@ -71,20 +70,38 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     // ----------------------------------------------------------------------
-    // Operations
+    // MetricsObjects
+    // ----------------------------------------------------------------------
+
+    @Override
+    public MetricsObjects getMetricsObjects(ObjectType type) {
+        MetricsObjects metricsObjects = new SciToolsObjects();
+        Queue<MetricsObject> queue = new LinkedList<>();
+        queue.add(this);
+        while(!queue.isEmpty()) {
+            MetricsObject mo = queue.remove();
+            queue.addAll(mo.getChildren());
+
+            metricsObjects.add(mo);
+        }
+        return metricsObjects;
+    }
+
+    // ----------------------------------------------------------------------
+    // Metrics/MetricsValues
     // ----------------------------------------------------------------------
 
     @Override
     public Set<Metric> getMetrics() {
         Set<Metric> metrics = new HashSet<>();
 
-        Queue<MetricsComponent> queue = new LinkedList<>();
+        Queue<MetricsObject> queue = new LinkedList<>();
         queue.add(this);
         while(!queue.isEmpty()) {
-            MetricsComponent component = queue.remove();
-            queue.addAll(component.getChildren());
+            MetricsObject mo = queue.remove();
+            queue.addAll(mo.getChildren());
 
-            component.getMetricValues().forEach(mv -> {
+            mo.getMetricValues().forEach(mv -> {
                 metrics.add(mv.getMetric());
             });
         }
@@ -93,19 +110,19 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     @Override
-    public List<MetricValue> getMetricValues(ComponentType type, String category) {
-        List<MetricValue> metricValues = new ArrayList<>();
+    public MetricsValues getMetricsValues(ObjectType type, String category) {
+        MetricsValues metricsValues = new SciToolsValues();
 
-        Queue<MetricsComponent> queue = new LinkedList<>();
+        Queue<MetricsObject> queue = new LinkedList<>();
         queue.add(this);
         while(!queue.isEmpty()) {
-            MetricsComponent component = queue.remove();
-            queue.addAll(component.getChildren());
+            MetricsObject mo = queue.remove();
+            queue.addAll(mo.getChildren());
 
-            if (component.getType() == type)
-                metricValues.addAll(component.getMetricValues(category));
+            if (mo.getType() == type)
+                metricsValues.addAll(mo.getMetricValues(category));
         }
-        return metricValues;
+        return metricsValues;
     }
 
 

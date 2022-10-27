@@ -23,6 +23,11 @@ public class DefaultMetricsClient implements MetricsClient {
 
     private final HttpRequestFactory requestFactory;
 
+    /**
+     *
+     * @param requestFactory
+     */
+
     public DefaultMetricsClient(HttpRequestFactory requestFactory) {
         this.requestFactory = requestFactory;
     }
@@ -45,6 +50,7 @@ public class DefaultMetricsClient implements MetricsClient {
         return allMeasures;
     }
 
+    /*
     private List<Measure> list15(String id, Collection<String> metricKeys, boolean recursive) {
         String json;
         if (recursive) {
@@ -60,6 +66,43 @@ public class DefaultMetricsClient implements MetricsClient {
                     "metricKeys", toMetricKeys(metricKeys),
                     "pageSize", 10000));
             return jsonToList(json);
+        }
+    }
+     */
+
+    private List<Measure> list15(String id, Collection<String> metricKeys, boolean recursive) {
+        String json;
+        if (!recursive) {
+            json = requestFactory.get(COMPONENT_MEASURES, MapUtils.asMap(
+                    "component", id,
+                    "metricKeys", toMetricKeys(metricKeys))
+            );
+            return jsonToList(json);
+        }
+        else {
+            List<Measure> measures = new ArrayList<>();
+            String mkeys = toMetricKeys(metricKeys);
+            int p = 1;
+            int nPages = 1;
+
+            while(p <= nPages) {
+                json = requestFactory.get(HERARCHICAL_MEASURES, MapUtils.asMap(
+                        "component", id,
+                        "metricKeys", mkeys,
+                        "p", p));
+
+                Map jsonRoot = (Map) JSONValue.parse(json);
+
+                // 1) retrieve the current page and the page numbers
+                int total = MapUtils.getInt(jsonRoot, "paging", "total");
+                int pageSize = MapUtils.getInt(jsonRoot, "paging", "pageSize");
+                nPages = (total + pageSize - 1)/pageSize;
+
+                // 2) retrieve all measures
+                measures.addAll(toListOfList(jsonRoot));
+            }
+
+            return measures;
         }
     }
 
@@ -88,12 +131,17 @@ public class DefaultMetricsClient implements MetricsClient {
         return measures(cmap, false);
     }
 
+    private List<Measure> toList(Map jsonRoot) {
+        Map cmap = (Map) jsonRoot.get("component");
+        return measures(cmap, false);
+    }
+
     private List<Measure> measures(Map cmap, boolean component) {
         List<Map> measures = (List<Map>) cmap.get("measures");
         List<Measure> list = new ArrayList<>();
         for(Map jsonc : measures) {
             String metricKey = (String) jsonc.get("metric");
-            double value = parseValue((String) jsonc.get("value"));
+            double value = parseValue(metricKey, (String) jsonc.get("value"));
 
             if (component) {
                 CMeasure measure = new CMeasure();
@@ -162,7 +210,7 @@ public class DefaultMetricsClient implements MetricsClient {
         }
     }
 
-    private List<Measure> jsonListToList(String json) {
+    private List<Measure> jsonListOfList(String json) {
         Map jsonRoot = (Map) JSONValue.parse(json);
         List<Map> components = (List<Map>) jsonRoot.get("components");
         List<Measure> list = new ArrayList<>();
@@ -173,7 +221,17 @@ public class DefaultMetricsClient implements MetricsClient {
         return list;
     }
 
-    private static double parseValue(String value) {
+    private List<Measure> toListOfList(Map jsonRoot) {
+        List<Map> components = (List<Map>) jsonRoot.get("components");
+        List<Measure> list = new ArrayList<>();
+        for(Map cmap : components) {
+            List<Measure> clist = measures(cmap, true);
+            list.addAll(clist);
+        }
+        return list;
+    }
+
+    private static double parseValue(String metricKey, String value) {
         try {
             if (value == null)
                 return 0.;
@@ -181,7 +239,7 @@ public class DefaultMetricsClient implements MetricsClient {
                 return Float.parseFloat(value);
         }
         catch(NumberFormatException e) {
-            System.err.printf("NumberFormatException: '%s'%n", value);
+            System.err.printf("[%s] NumberFormatException: '%s'%n", metricKey, value);
             return -1.;
         }
     }

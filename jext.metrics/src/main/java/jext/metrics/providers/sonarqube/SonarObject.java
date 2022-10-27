@@ -1,11 +1,10 @@
 package jext.metrics.providers.sonarqube;
 
-import jext.metrics.ComponentType;
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
-import jext.metrics.MetricsComponent;
+import jext.metrics.MetricsObject;
 import jext.metrics.MetricsProject;
-import jext.metrics.MetricsProvider;
+import jext.metrics.ObjectType;
 import jext.util.MapUtils;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SonarObject implements MetricsComponent {
+public class SonarObject implements MetricsObject {
 
     // -----------------------------------------------------------------------
     // Constants
@@ -33,29 +32,29 @@ public class SonarObject implements MetricsComponent {
     // Conversions
     // -----------------------------------------------------------------------
 
-    public static ComponentType toType(String qualifier) {
+    public static ObjectType toType(String qualifier) {
         if (qualifier.equals(QUAL_FIL))
-            return ComponentType.FILE;
+            return ObjectType.FILE;
         if (qualifier.equals(QUAL_TRK))
-            return ComponentType.PROJECT;
+            return ObjectType.PROJECT;
         if (qualifier.equals(QUAL_DIR))
-            return ComponentType.DIRECTORY;
+            return ObjectType.DIRECTORY;
         else
-            return ComponentType.UNKNOWN;
+            return ObjectType.UNKNOWN;
     }
 
-    public static String fromType(ComponentType type) {
-        if(type == ComponentType.FILE)
+    public static String fromType(ObjectType type) {
+        if(type == ObjectType.FILE)
             return QUAL_FIL;
-        if (type == ComponentType.DIRECTORY)
+        if (type == ObjectType.DIRECTORY)
             return QUAL_DIR;
-        if (type == ComponentType.PROJECT)
+        if (type == ObjectType.PROJECT)
             return QUAL_TRK;
         else
             throw new RuntimeException(String.format("Unsupported type %s", type));
     }
 
-    public static ComponentType getType(String qualifier) {
+    public static ObjectType asType(String qualifier) {
         return toType(qualifier);
     }
 
@@ -106,7 +105,7 @@ public class SonarObject implements MetricsComponent {
     }
 
     @Override
-    public ComponentType getType() {
+    public ObjectType getType() {
         /*
             Qualifiers
                 TRK     project
@@ -115,7 +114,7 @@ public class SonarObject implements MetricsComponent {
                 UTS     ???
                 BRC     branch ???
          */
-        return getType(component.qualifier());
+        return asType(component.qualifier());
     }
 
     @Override
@@ -135,9 +134,9 @@ public class SonarObject implements MetricsComponent {
     }
 
     @Override
-    public List<MetricsComponent> getChildren() {
+    public List<MetricsObject> getChildren() {
         ComponentClient cclient = client.componentClient();
-        return cclient.list(getId())
+        return cclient.list(getId(), false)
                 .stream()
                 .map(c -> new SonarObject(c, provider, client))
                 .collect(Collectors.toList());
@@ -172,6 +171,14 @@ public class SonarObject implements MetricsComponent {
         return metricsClient.list(getId(), mkeys, false).stream()
                 .map(measure -> SonarMetricValue.of(this,mmap.get(measure.getMetricKey()), measure))
                 .collect(Collectors.toList());
+    }
+
+    // ----------------------------------------------------------------------
+    // Custom
+    // ----------------------------------------------------------------------
+
+    public String getPath() {
+        return component.path();
     }
 
     // ----------------------------------------------------------------------

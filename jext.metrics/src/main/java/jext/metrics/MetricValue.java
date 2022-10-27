@@ -10,18 +10,18 @@ public interface MetricValue {
     Metric getMetric();
 
     /**
-     * Component owner of this metric
+     * Object owner of this metric
      *
-     * @return component owner of this metric
+     * @return object owner of this metric
      */
-    MetricsComponent getComponent();
+    MetricsObject getObject();
 
     /**
      * Metric value
      *
      * @return metric value
      */
-    float getValue();
+    double getValue();
 
     /**
      * Metric value as integer

@@ -1,11 +1,13 @@
 package jext.metrics.providers.sonarqube;
 
-import jext.metrics.ComponentType;
+import jext.logging.Logger;
 import jext.metrics.Metric;
-import jext.metrics.MetricValue;
-import jext.metrics.MetricsComponent;
+import jext.metrics.MetricsObject;
+import jext.metrics.MetricsObjects;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
+import jext.metrics.MetricsValues;
+import jext.metrics.ObjectType;
 import jext.util.Assert;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
@@ -24,8 +26,10 @@ import java.util.stream.Collectors;
 public class SonarProject extends SonarObject implements MetricsProject {
 
     // ----------------------------------------------------------------------
-    //
+    // Private fields
     // ----------------------------------------------------------------------
+
+    private static final Logger logger = Logger.getLogger(SonarProject.class);
 
     private final String name;
 
@@ -40,7 +44,8 @@ public class SonarProject extends SonarObject implements MetricsProject {
     }
 
     void initialize() {
-
+        logger.info("initialize");
+        logger.info("done");
     }
 
     // ----------------------------------------------------------------------
@@ -72,8 +77,8 @@ public class SonarProject extends SonarObject implements MetricsProject {
     }
 
     @Override
-    public ComponentType getType() {
-        return ComponentType.PROJECT;
+    public ObjectType getType() {
+        return ObjectType.PROJECT;
     }
 
     @Override
@@ -82,19 +87,35 @@ public class SonarProject extends SonarObject implements MetricsProject {
     }
 
     @Override
-    public List<MetricsComponent> getChildren() {
+    public List<MetricsObject> getChildren() {
         ComponentClient cclient = client.componentClient();
-        return cclient.list(getId())
+        return cclient.list(getId(), false)
                 .stream()
                 .map(c -> new SonarObject(c, this))
                 .collect(Collectors.toList());
     }
 
     // ----------------------------------------------------------------------
-    // getAllMetricValues
+    // MetricsObjects
     // ----------------------------------------------------------------------
 
-    private static List<String> INVALID_KEYS = Arrays.asList(
+    @Override
+    public MetricsObjects getMetricsObjects(ObjectType type) {
+        MetricsObjects metricsObjects = new SonarObjects();
+        ComponentClient cclient = client.componentClient();
+        cclient.list(getId(), true)
+                .forEach(c -> {
+                    SonarObject so = new SonarObject(c, this);
+                    metricsObjects.add(so);
+                });
+        return metricsObjects;
+    }
+
+    // ----------------------------------------------------------------------
+    // Metrics/MetricsValues
+    // ----------------------------------------------------------------------
+
+    private static List<String> INVALID_METRIC_KEYS = Arrays.asList(
             "ncloc_language_distribution",
             "duplications_data",
             "quality_gate_details"
@@ -104,10 +125,10 @@ public class SonarProject extends SonarObject implements MetricsProject {
     public Set<Metric> getMetrics() {
         Set<Metric> metrics = new HashSet<>();
 
-        getMetricValues(ComponentType.FILE, null).forEach(mv -> {
+        getMetricsValues(ObjectType.FILE, null).forEach(mv -> {
             metrics.add(mv.getMetric());
         });
-        getMetricValues(ComponentType.DIRECTORY, null).forEach(mv -> {
+        getMetricsValues(ObjectType.DIRECTORY, null).forEach(mv -> {
             metrics.add(mv.getMetric());
         });
 
@@ -115,7 +136,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
     }
 
     @Override
-    public List<MetricValue> getMetricValues(ComponentType type, String category) {
+    public MetricsValues getMetricsValues(ObjectType type, String category) {
         Map<String, SonarMetric> mmap = new HashMap<>();
         Set<String> mkeys = new HashSet<>();
         for(Metric metric : provider.getMetrics(category)) {
@@ -124,26 +145,34 @@ public class SonarProject extends SonarObject implements MetricsProject {
         }
 
         // Remove some invalid metrics
-        mkeys.removeAll(INVALID_KEYS);
+        mkeys.removeAll(INVALID_METRIC_KEYS);
 
+        // Initialize the component map with the current prokect component
         Map<String, SonarObject> cmap = new HashMap<>();
+
+        MetricsValues metricsValues = new SonarValues();
         MetricsClient metricClient = client.metricsClient();
-        return metricClient.list(getId(), mkeys, true).stream()
-                .filter(measure -> type == SonarObject.getType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
-                .map(measure -> {
-                    SonarObject component;
+        metricClient.list(getId(), mkeys, true)
+                .stream()
+                // select ONLY the specified object types
+                .filter(measure -> type == ObjectType.ALL || type == SonarObject.asType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
+                .forEach(measure -> {
+                    SonarObject so;
                     DefaultMetricsClient.CMeasure cmeasure = (DefaultMetricsClient.CMeasure) measure;
                     // check if the component is available
                     if (!cmap.containsKey(cmeasure.getComponent().key())) {
                         Component c = cmeasure.getComponent();
-                        component = new SonarObject(c, provider, client);
-                        cmap.put(component.getId(), component);
+                        so = new SonarObject(c, this);
+                        cmap.put(so.getId(), so);
                     }
-                    component = cmap.get(cmeasure.getComponent().key());
+                    so = cmap.get(cmeasure.getComponent().key());
 
-                    return SonarMetricValue.of(component, mmap.get(measure.getMetricKey()), measure);
-                })
-                .collect(Collectors.toList());
+                    SonarMetricValue metricValue = SonarMetricValue.of(so, mmap.get(measure.getMetricKey()), measure);
+
+                    metricsValues.add(metricValue);
+                });
+
+        return metricsValues;
     }
 
     // ----------------------------------------------------------------------

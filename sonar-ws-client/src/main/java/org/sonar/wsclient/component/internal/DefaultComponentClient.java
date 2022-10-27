@@ -22,12 +22,32 @@ public class DefaultComponentClient implements ComponentClient {
     }
 
     @Override
-    public List<Component> list(String id) {
-        String json = requestFactory.get(TREE_URL,MapUtils.asMap(
-                "component", id,
-                "strategy", "all",
-                "pageSize", 1000));
-        return jsonToList(json);
+    public List<Component> list(String id, boolean recursive) {
+        // 1) the result is paginated
+        // 2) the maximum number of results is 500 (default 100)
+        // 3) 'p' is used to specify the page (starting from 1)
+        // 4) 'total' is the total number of elements, NOT the total number of pages
+
+        List<Component> components = new ArrayList<>();
+        int nPages = 1;
+        for (int p=1; p <= nPages; ++p) {
+            String json = requestFactory.get(TREE_URL, MapUtils.asMap(
+                    "component", id,
+                    "strategy", recursive ? "all" : "children",
+                    "p", p));
+
+            Map jsonRoot = (Map) JSONValue.parse(json);
+
+            // 1) retrieve the current page and the page numbers
+            int total = MapUtils.getInt(jsonRoot, "paging", "total");
+            int pageSize = MapUtils.getInt(jsonRoot, "paging", "pageSize");
+            nPages = (total + pageSize - 1)/pageSize;
+
+            // 2) retrieve all components
+            components.addAll(toList(jsonRoot));
+        }
+        // return jsonToList(json);
+        return components;
     }
 
     /*
@@ -75,6 +95,14 @@ public class DefaultComponentClient implements ComponentClient {
 
     private List<Component> jsonToList(String json) {
         Map jsonRoot = (Map) JSONValue.parse(json);
+        List<Map> components = (List<Map>) jsonRoot.get("components");
+        List<Component> list = new ArrayList<>();
+        for(Map jsonc : components)
+            list.add(new Component(jsonc));
+        return list;
+    }
+
+    private List<Component> toList(Map jsonRoot) {
         List<Map> components = (List<Map>) jsonRoot.get("components");
         List<Component> list = new ArrayList<>();
         for(Map jsonc : components)

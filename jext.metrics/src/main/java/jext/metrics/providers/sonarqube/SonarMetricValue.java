@@ -2,22 +2,22 @@ package jext.metrics.providers.sonarqube;
 
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
-import jext.metrics.MetricsComponent;
+import jext.metrics.MetricsObject;
 import org.sonar.wsclient.services.Measure;
 
 import java.util.Objects;
 
 public class SonarMetricValue implements MetricValue {
 
-    static SonarMetricValue of(SonarObject component, SonarMetric metric, Measure measure) {
-        return new SonarMetricValue(component, metric, measure);
+    static SonarMetricValue of(SonarObject so, SonarMetric metric, Measure measure) {
+        return new SonarMetricValue(so, metric, measure);
     }
 
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
 
-    private final SonarObject component;
+    private final SonarObject object;
     private final SonarMetric metric;
     private final Measure measure;
 
@@ -25,8 +25,8 @@ public class SonarMetricValue implements MetricValue {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private SonarMetricValue(SonarObject component, SonarMetric metric, Measure measure) {
-        this.component = component;
+    private SonarMetricValue(SonarObject so, SonarMetric metric, Measure measure) {
+        this.object = so;
         this.metric = metric;
         this.measure = measure;
     }
@@ -56,12 +56,12 @@ public class SonarMetricValue implements MetricValue {
     }
 
     @Override
-    public MetricsComponent getComponent() {
-        return component;
+    public MetricsObject getObject() {
+        return object;
     }
 
     @Override
-    public float getValue() {
+    public double getValue() {
         return measure.getValue().floatValue();
     }
 

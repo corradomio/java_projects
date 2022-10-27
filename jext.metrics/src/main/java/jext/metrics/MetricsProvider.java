@@ -1,9 +1,12 @@
 package jext.metrics;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Properties;
 
 public interface MetricsProvider {
+
+    String ALL_CATEGORIES = "";
 
     /**
      * Provider name
@@ -33,8 +36,9 @@ public interface MetricsProvider {
 
     /**
      * Register a new category
+     *
      * @param category category name
-     * @param measures list of measures belonging to the category
+     * @param measures list of measure ids/names belonging to the category
      */
     void registerCategory(String category, Collection<String> measures);
 
@@ -46,9 +50,9 @@ public interface MetricsProvider {
     /**
      * List of metrics classified under the specified category
      * If the category doesn't exists, it returns the empty list.
-     * The category '' contains all metrics
+     * The category '' (or null) contains all metrics
      */
-    Collection<Metric> getMetrics(String category);
+    Collection<Metric> getMetrics(@Nullable String category);
 
     /**
      * Properties of the metric with the specified name or id.
@@ -60,9 +64,12 @@ public interface MetricsProvider {
     Metric getMetric(String nameOrId);
 
     /**
-     * Navigate the hierarchical structure
+     * Navigate the hierarchical structure.
+     * Note: if necessary it open a connection with the metric provider for this
+     * project.
+     * When the project is not more necessary, it is useful to call 'MetricsProject.close()'
      *
-     * @return root
+     * @return root object of the metrics project
      */
     MetricsProject getProject();
 

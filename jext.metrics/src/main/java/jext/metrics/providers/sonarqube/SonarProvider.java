@@ -10,6 +10,7 @@ import jext.util.JSONUtils;
 import jext.util.MapUtils;
 import org.sonar.wsclient.SonarClient;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -172,8 +173,10 @@ public class SonarProvider implements MetricsProvider {
     }
 
     @Override
-    public Collection<Metric> getMetrics(String category) {
-        Assert.notNull(category, "category");
+    public Collection<Metric> getMetrics(@Nullable String category) {
+        if (category == null)
+            category = MetricsProvider.ALL_CATEGORIES;
+
         if (!categories.containsKey(category))
             return Collections.emptyList();
         return categories.get(category).stream()

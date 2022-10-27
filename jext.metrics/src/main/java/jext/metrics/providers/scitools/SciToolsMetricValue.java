@@ -2,7 +2,7 @@ package jext.metrics.providers.scitools;
 
 import jext.metrics.Metric;
 import jext.metrics.MetricValue;
-import jext.metrics.MetricsComponent;
+import jext.metrics.MetricsObject;
 
 import java.util.Objects;
 
@@ -18,7 +18,7 @@ public class SciToolsMetricValue implements MetricValue {
 
     private final SciToolsObject object;
     private final SciToolsMetric metric;
-    private final float value;
+    private final double value;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -55,12 +55,12 @@ public class SciToolsMetricValue implements MetricValue {
     }
 
     @Override
-    public MetricsComponent getComponent() {
+    public MetricsObject getObject() {
         return object;
     }
 
     @Override
-    public float getValue() {
+    public double getValue() {
         return value;
     }
 

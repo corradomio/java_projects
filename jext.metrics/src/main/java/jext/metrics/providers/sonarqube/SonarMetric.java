@@ -1,9 +1,7 @@
 package jext.metrics.providers.sonarqube;
 
 import jext.metrics.Metric;
-import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
-import jext.metrics.providers.scitools.SciToolsMetric;
 import jext.util.MapUtils;
 
 import java.util.Map;

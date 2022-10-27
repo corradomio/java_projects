@@ -11,6 +11,7 @@ import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nullable;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
@@ -128,8 +129,9 @@ public class SciToolsProvider implements MetricsProvider {
     }
 
     @Override
-    public Collection<Metric> getMetrics(String category) {
-        Assert.notNull(category, "category");
+    public Collection<Metric> getMetrics(@Nullable String category) {
+        if (category == null)
+            category = MetricsProvider.ALL_CATEGORIES;
 
         if (!categories.containsKey(category))
             return Collections.emptyList();
