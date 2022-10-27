@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static jext.metrics.providers.sonarqube.SonarProvider.INVALID_METRIC_KEYS;
+
 public class SonarProject extends SonarObject implements MetricsProject {
 
     // ----------------------------------------------------------------------
@@ -115,20 +117,11 @@ public class SonarProject extends SonarObject implements MetricsProject {
     // Metrics/MetricsValues
     // ----------------------------------------------------------------------
 
-    private static List<String> INVALID_METRIC_KEYS = Arrays.asList(
-            "ncloc_language_distribution",
-            "duplications_data",
-            "quality_gate_details"
-    );
-
     @Override
     public Set<Metric> getMetrics() {
         Set<Metric> metrics = new HashSet<>();
 
-        getMetricsValues(ObjectType.FILE, null).forEach(mv -> {
-            metrics.add(mv.getMetric());
-        });
-        getMetricsValues(ObjectType.DIRECTORY, null).forEach(mv -> {
+        getMetricsValues(ObjectType.ALL, null).forEach(mv -> {
             metrics.add(mv.getMetric());
         });
 

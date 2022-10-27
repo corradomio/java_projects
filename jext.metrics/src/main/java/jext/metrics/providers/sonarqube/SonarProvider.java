@@ -13,6 +13,7 @@ import org.sonar.wsclient.SonarClient;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +41,12 @@ public class SonarProvider implements MetricsProvider {
     private static final String SONAR_USERNAME = "sonar.username";
     // with token, password must be the empty string
     private static final String SONAR_PASSWORD = "sonar.password";
+
+    static List<String> INVALID_METRIC_KEYS = Arrays.asList(
+            "ncloc_language_distribution",
+            "duplications_data",
+            "quality_gate_details"
+    );
 
     // ----------------------------------------------------------------------
     // Private properties
@@ -118,7 +125,10 @@ public class SonarProvider implements MetricsProvider {
             if (hidden)
                 return;
 
-            String id = MapUtils.get(data,"key");
+            String mkey = MapUtils.get(data,"key");
+            if (INVALID_METRIC_KEYS.contains(mkey))
+                return;
+
             String domain = MapUtils.get(data,"domain");
             Metric metric = new SonarMetric(this, data);
             addMetric(metric);
@@ -179,7 +189,9 @@ public class SonarProvider implements MetricsProvider {
 
         if (!categories.containsKey(category))
             return Collections.emptyList();
+
         return categories.get(category).stream()
+                .filter(mkey -> !INVALID_METRIC_KEYS.contains(mkey))
                 .map(this::getMetric)
                 .collect(Collectors.toList());
     }
