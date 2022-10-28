@@ -1,6 +1,5 @@
 package org.hls.check;
 
-import jext.metrics.ComponentType;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
@@ -20,7 +19,7 @@ public class CheckSonarQubeRecur {
 
         MetricsProject project = provider.getProject();
         provider.getCategories().forEach(category -> {
-            project.getMetricValues(ComponentType.FILE, category).forEach(value -> {
+            project.getMetricValues(category).forEach(value -> {
                 System.out.println(value);
             });
         });

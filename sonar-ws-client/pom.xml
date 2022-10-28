@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
+    <!-- parent>
         <artifactId>server</artifactId>
         <groupId>org.codehaus.sonar</groupId>
         <version>5.1</version>
-    </parent>
+    </parent -->
     <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.codehaus.sonar</groupId>
     <artifactId>sonar-ws-client</artifactId>
+    <version>5.1</version>
+
     <name>SonarQube :: Web Service Client</name>
     <description>Java Client Library for SonarQube Web Services</description>
 
@@ -17,7 +21,7 @@
         <httpclient4.version>4.2.2</httpclient4.version>
     </properties>
 
-    <build>
+    <!-- build>
         <plugins>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -90,7 +94,7 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build -->
     <dependencies>
 
         <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->

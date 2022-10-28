@@ -12,10 +12,28 @@ import java.util.Optional;
 
 public class SonarObjects extends ArrayList<MetricsObject> implements MetricsObjects {
 
-    private static final String PATH = "path";
+    // ----------------------------------------------------------------------
+    // Private fields
+    // ----------------------------------------------------------------------
+
+    public static final String PATH = "path";
+
+    private ObjectType type;
 
     // keep the map: object path -> object
     private Map<String/*path*/, MetricsObject> pathMap = new HierarchicalMap<>();
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
+
+    SonarObjects(ObjectType type) {
+        this.type = type;
+    }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean add(MetricsObject object) {
@@ -28,9 +46,8 @@ public class SonarObjects extends ArrayList<MetricsObject> implements MetricsObj
     }
 
     @Override
-    public Optional<MetricsObject> findObject(ObjectType type, String name, Object value) {
+    public Optional<MetricsObject> findObject(String name, Object value) {
         Assert.verify(validateName(name), String.format("%s is not available as property to search objects", name));
-        Assert.verify(validateType(type), String.format("%s is not available as type to search objects", type));
 
         // Problem:
         // spl:  src/Lucene.Net.Facet/Taxonomy/Directory/Consts.cs
@@ -50,17 +67,21 @@ public class SonarObjects extends ArrayList<MetricsObject> implements MetricsObj
         return Optional.empty();
     }
 
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
+
     private boolean validateName(String name) {
         return name.equals(PATH);
-    }
-
-    private boolean validateType(ObjectType type) {
-        return type == ObjectType.FILE || type == ObjectType.DIRECTORY;
     }
 
     private static String pathRest(String path) {
         int p = path.indexOf('/');
         return p != -1 ? path.substring(p+1) : "";
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

@@ -103,7 +103,9 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
     @Override
     public MetricsObjects getMetricsObjects(ObjectType type) {
-        MetricsObjects metricsObjects = new SonarObjects();
+        Assert.verify(validateType(type), String.format("%s is not available as type to search objects", type));
+
+        MetricsObjects metricsObjects = new SonarObjects(type);
         ComponentClient cclient = client.componentClient();
         cclient.list(getId(), true)
                 .forEach(c -> {
@@ -111,6 +113,15 @@ public class SonarProject extends SonarObject implements MetricsProject {
                     metricsObjects.add(so);
                 });
         return metricsObjects;
+    }
+
+    private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
+        add(ObjectType.FILE);
+        add(ObjectType.DIRECTORY);
+    }};
+
+    private static boolean validateType(ObjectType type) {
+        return SUPPORTED_TYPES.contains(type);
     }
 
     // ----------------------------------------------------------------------
@@ -148,7 +159,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
         metricClient.list(getId(), mkeys, true)
                 .stream()
                 // select ONLY the specified object types
-                .filter(measure -> type == ObjectType.ALL || type == SonarObject.asType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
+                .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
                 .forEach(measure -> {
                     SonarObject so;
                     DefaultMetricsClient.CMeasure cmeasure = (DefaultMetricsClient.CMeasure) measure;

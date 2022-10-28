@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,28 @@ public class SciToolsObject implements MetricsObject {
 
     public static SciToolsObject of(String id, String name, String kname) {
         return new SciToolsObject(id, name, kname);
+    }
+
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    private static final String QUAL_MODULE = "module";
+    private static final String QUAL_SOURCE = "source";
+    private static final String QUAL_TYPE = "type";
+    private static final String QUAL_METHOD = "method";
+
+    public static ObjectType toType(String type) {
+        if (type.equals(QUAL_MODULE))
+            return ObjectType.MODULE;
+        if (type.equals(QUAL_SOURCE))
+            return ObjectType.FILE;
+        if (type.equals(QUAL_TYPE))
+            return ObjectType.TYPE;
+        if (type.equals(QUAL_METHOD))
+            return ObjectType.METHOD;
+        else
+            return ObjectType.UNKNOWN;
     }
 
     // ----------------------------------------------------------------------

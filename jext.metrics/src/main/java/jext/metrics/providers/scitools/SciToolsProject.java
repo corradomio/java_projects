@@ -9,9 +9,7 @@ import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsValues;
 import jext.metrics.ObjectType;
-import jext.util.BidiMap;
-import jext.util.DefaultHashMap;
-import jext.util.HashBidiMap;
+import jext.util.Assert;
 
 import java.io.File;
 import java.io.FileReader;
@@ -33,7 +31,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     private static final Logger logger = Logger.getLogger(SciToolsProject.class);
 
     private final Map<String, SciToolsObject> objects = new HashMap<>();
-    private final Map<String, BidiMap<String, String>> idmaps = new DefaultHashMap<>((key)->new HashBidiMap<>());
+    private final IdMaps idmaps = new IdMaps();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -75,7 +73,9 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     @Override
     public MetricsObjects getMetricsObjects(ObjectType type) {
-        MetricsObjects metricsObjects = new SciToolsObjects();
+        Assert.verify(validateType(type), String.format("%s is not available as type to search objects", type));
+
+        MetricsObjects metricsObjects = new SciToolsObjects(type, idmaps);
         Queue<MetricsObject> queue = new LinkedList<>();
         queue.add(this);
         while(!queue.isEmpty()) {
@@ -85,6 +85,16 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
             metricsObjects.add(mo);
         }
         return metricsObjects;
+    }
+
+    private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
+        add(ObjectType.FILE);
+        add(ObjectType.TYPE);
+        add(ObjectType.METHOD);
+    }};
+
+    private static boolean validateType(ObjectType type) {
+        return SUPPORTED_TYPES.contains(type);
     }
 
     // ----------------------------------------------------------------------
@@ -259,7 +269,8 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
                     String eid = parts[1];
                     String nid = parts[2];
 
-                    idmaps.get(type).put(eid, nid);
+                    // type -> Neo4J id -> SciTools id
+                    idmaps.get(toType(type)).put(nid, eid);
                 }
                 catch (NumberFormatException e) {
                     logger.errorf("Number format exception on line %d on value %s", count, parts[4]);

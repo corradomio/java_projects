@@ -13,6 +13,6 @@ public interface MetricsObjects extends List<MetricsObject> {
      * @param value property value
      * @return the object if it is present
      */
-    Optional<MetricsObject> findObject(ObjectType type, String name, Object value);
+    Optional<MetricsObject> findObject(String name, Object value);
 
 }

@@ -33,10 +33,6 @@ public class SonarObject implements MetricsObject {
     private static final String QUAL_DIR = "DIR";
     private static final String QUAL_TRK = "TRK";
 
-    // -----------------------------------------------------------------------
-    // Conversions
-    // -----------------------------------------------------------------------
-
     public static ObjectType toType(String qualifier) {
         if (qualifier.equals(QUAL_FIL))
             return ObjectType.FILE;
@@ -48,20 +44,20 @@ public class SonarObject implements MetricsObject {
             return ObjectType.UNKNOWN;
     }
 
-    public static String fromType(ObjectType type) {
-        if(type == ObjectType.FILE)
-            return QUAL_FIL;
-        if (type == ObjectType.DIRECTORY)
-            return QUAL_DIR;
-        if (type == ObjectType.PROJECT)
-            return QUAL_TRK;
-        else
-            throw new RuntimeException(String.format("Unsupported type %s", type));
-    }
+    // -----------------------------------------------------------------------
+    // Conversions
+    // -----------------------------------------------------------------------
 
-    public static ObjectType asType(String qualifier) {
-        return toType(qualifier);
-    }
+    // public static String fromType(ObjectType type) {
+    //     if(type == ObjectType.FILE)
+    //         return QUAL_FIL;
+    //     if (type == ObjectType.DIRECTORY)
+    //         return QUAL_DIR;
+    //     if (type == ObjectType.PROJECT)
+    //         return QUAL_TRK;
+    //     else
+    //         throw new RuntimeException(String.format("Unsupported type %s", type));
+    // }
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -119,7 +115,7 @@ public class SonarObject implements MetricsObject {
                 UTS     ???
                 BRC     branch ???
          */
-        return asType(component.qualifier());
+        return toType(component.qualifier());
     }
 
     @Override

@@ -6,6 +6,9 @@ import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
 import jext.util.Assert;
+import jext.util.BidiMap;
+import jext.util.DefaultHashMap;
+import jext.util.HashBidiMap;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -57,6 +60,7 @@ public class SciToolsProvider implements MetricsProvider {
     private final Map<String, Metric> metricsById = new TreeMap<>();
     private final Map<String, Metric> metricsByName = new TreeMap<>();
     private final Map<String, Set<String>> categories = new TreeMap<>();
+    private final Map<String, BidiMap<String, Long>> idMaps = new DefaultHashMap<>((key) -> new HashBidiMap<>());
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -237,38 +241,6 @@ public class SciToolsProvider implements MetricsProvider {
             logger.error(e.getMessage());
         }
     }
-
-    // private void loadFromFile() {
-    //     try(LineNumberReader rdr = new LineNumberReader(new FileReader(this.metricsFile))) {
-    //         // skip header
-    //         String line = rdr.readLine();
-    //         int count = 1;
-    //         while((line = rdr.readLine()) != null) {
-    //             count += 1;
-    //
-    //             // 0  1    2     3   4
-    //             // id,name,kname,key,value
-    //             String[] parts = line.split(",");
-    //             try {
-    //                 String id = parts[0];
-    //                 float value = Float.parseFloat(parts[4]);
-    //                 String name = parts[1];
-    //                 String kname = parts[2];
-    //                 SciToolsMetric metric = (SciToolsMetric) getMetric(parts[3]);
-    //                 addMetricValue(id, metric, name, kname, value);
-    //
-    //                 if (count % 1000 == 0)
-    //                     logger.debugft("... %d metrics", count);
-    //             }
-    //             catch (NumberFormatException e) {
-    //                 logger.errorf("Number format exception on line %d on value %s", count, parts[4]);
-    //             }
-    //         }
-    //     }
-    //     catch (IOException e) {
-    //         throw new MetricsException(e);
-    //     }
-    // }
 
     // ----------------------------------------------------------------------
     // Operations/configuration
