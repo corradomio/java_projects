@@ -4,7 +4,10 @@ import jext.metrics.Metric;
 import jext.metrics.MetricValue;
 import jext.metrics.MetricsObject;
 import jext.metrics.MetricsProject;
+import jext.metrics.MetricsProvider;
+import jext.metrics.MetricsValues;
 import jext.metrics.ObjectType;
+import jext.util.HashSet;
 import jext.util.MapUtils;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
@@ -16,6 +19,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class SonarObject implements MetricsObject {
@@ -148,29 +153,40 @@ public class SonarObject implements MetricsObject {
 
     @Override
     public Collection<MetricValue> getMetricValues() {
-        List<MetricValue> allMetricValues = new ArrayList<>();
-        // collect all categories
-        Collection<String> categories = provider.getCategories();
-        for(String category : categories) {
-            Collection<MetricValue> metricValues = getMetricValues(category);
-            allMetricValues.addAll(metricValues);
-        }
-        return allMetricValues;
+        return getMetricValues(MetricsProvider.ALL_METRICS);
     }
 
     @Override
     public Collection<MetricValue> getMetricValues(String category) {
-        // collect the metrics in the specified category
+        ArrayList<MetricValue> mvalues = new ArrayList<>();
+        getMetricValues(category, mvalues::add);
+        return mvalues;
+    }
+
+    // ----------------------------------------------------------------------
+    // Metrics
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void getMetricValues(Consumer<MetricValue> callback) {
+        getMetricValues(MetricsProvider.ALL_METRICS, callback);
+    }
+
+    @Override
+    public void getMetricValues(String category, Consumer<MetricValue> callback) {
         Map<String, SonarMetric> mmap = new HashMap<>();
         List<String> mkeys = new ArrayList<>();
         for(Metric metric : provider.getMetrics(category)) {
             mmap.put(metric.getId(), (SonarMetric)metric);
             mkeys.add(metric.getId());
         }
+
         MetricsClient metricsClient = client.metricsClient();
-        return metricsClient.list(getId(), mkeys, false).stream()
-                .map(measure -> SonarMetricValue.of(this,mmap.get(measure.getMetricKey()), measure))
-                .collect(Collectors.toList());
+        metricsClient.list(getId(), mkeys, false, measure -> {
+            MetricValue mvalue = SonarMetricValue.of(this,mmap.get(measure.getMetricKey()), measure);
+
+            callback.accept(mvalue);
+        });
     }
 
     // ----------------------------------------------------------------------

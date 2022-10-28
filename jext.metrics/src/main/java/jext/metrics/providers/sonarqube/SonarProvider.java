@@ -185,7 +185,7 @@ public class SonarProvider implements MetricsProvider {
     @Override
     public Collection<Metric> getMetrics(@Nullable String category) {
         if (category == null)
-            category = MetricsProvider.ALL_CATEGORIES;
+            category = MetricsProvider.ALL_METRICS;
 
         if (!categories.containsKey(category))
             return Collections.emptyList();

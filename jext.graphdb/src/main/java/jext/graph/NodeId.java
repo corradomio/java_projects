@@ -5,6 +5,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class NodeId {
+    public static final String NO_ID = "-1";
+
+    public static boolean invalidId(String id) {
+        return id == null || NO_ID.equals(id) || id.isEmpty();
+    }
 
     public static Long asId(String id) {
         return Long.valueOf(id);

@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public interface MetricsProvider {
 
-    String ALL_CATEGORIES = "";
+    String ALL_METRICS = "";
 
     /**
      * Provider name

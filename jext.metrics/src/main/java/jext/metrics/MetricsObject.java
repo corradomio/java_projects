@@ -3,6 +3,8 @@ package jext.metrics;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 public interface MetricsObject {
 
@@ -35,7 +37,7 @@ public interface MetricsObject {
     /**
      * Object data.
      * It contains, at minimum, id, name and type.
-     * Note: different tools offer extra data
+     * Different tools offer extra data
      *
      * @return map with all data offered by the tool
      */
@@ -73,5 +75,10 @@ public interface MetricsObject {
      * @return list of metric values
      */
     Collection<MetricValue> getMetricValues(String category);
+
+    // based on callback
+
+    void getMetricValues(Consumer<MetricValue> callback);
+    void getMetricValues(String category, Consumer<MetricValue> callback);
 
 }

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class DefaultMetricsClient implements MetricsClient {
 
@@ -36,18 +37,43 @@ public class DefaultMetricsClient implements MetricsClient {
     public List<Measure> list(String id, Collection<String> metricKeys, boolean recursive) {
         if (metricKeys.isEmpty())
             return Collections.emptyList();
-        if (metricKeys.size() <= 15)
-            return list15(id, metricKeys, recursive);
 
         List<Measure> allMeasures = new ArrayList<>();
+        list(id, metricKeys, recursive, allMeasures::add);
+        return allMeasures;
+    }
+
+    // @Override
+    // public List<Measure> list(String id, Collection<String> metricKeys, boolean recursive) {
+    //     if (metricKeys.isEmpty())
+    //         return Collections.emptyList();
+    //     if (metricKeys.size() <= 15)
+    //         return list15(id, metricKeys, recursive);
+    //
+    //     List<Measure> allMeasures = new ArrayList<>();
+    //     List<String> allKeys = new ArrayList<>(metricKeys);
+    //     int i,e,n = metricKeys.size();
+    //     for(i=0; i<n; i+= 15) {
+    //         e = Math.min(i+15, n);
+    //         List<Measure> measures = list15(id, allKeys.subList(i, e), recursive);
+    //         allMeasures.addAll(measures);
+    //     }
+    //     return allMeasures;
+    // }
+
+    @Override
+    public void list(String id, Collection<String> metricKeys, boolean recursive, Consumer<Measure> callback) {
+        if (metricKeys.size() <= 15) {
+            list15(id, metricKeys, recursive, callback);
+            return;
+        }
+
         List<String> allKeys = new ArrayList<>(metricKeys);
         int i,e,n = metricKeys.size();
         for(i=0; i<n; i+= 15) {
             e = Math.min(i+15, n);
-            List<Measure> measures = list15(id, allKeys.subList(i, e), recursive);
-            allMeasures.addAll(measures);
+            list15(id, allKeys.subList(i, e), recursive, callback);
         }
-        return allMeasures;
     }
 
     /*
@@ -70,22 +96,20 @@ public class DefaultMetricsClient implements MetricsClient {
     }
      */
 
-    private List<Measure> list15(String id, Collection<String> metricKeys, boolean recursive) {
+    private void list15(String id, Collection<String> metricKeys, boolean recursive, Consumer<Measure> callback) {
         String json;
         if (!recursive) {
             json = requestFactory.get(COMPONENT_MEASURES, MapUtils.asMap(
                     "component", id,
                     "metricKeys", toMetricKeys(metricKeys))
             );
-            return jsonToList(json);
+            jsonToList(json).forEach(callback::accept);
         }
         else {
-            List<Measure> measures = new ArrayList<>();
             String mkeys = toMetricKeys(metricKeys);
-            int p = 1;
             int nPages = 1;
 
-            while(p <= nPages) {
+            for(int p=1; p <= nPages; p++) {
                 json = requestFactory.get(HERARCHICAL_MEASURES, MapUtils.asMap(
                         "component", id,
                         "metricKeys", mkeys,
@@ -99,10 +123,8 @@ public class DefaultMetricsClient implements MetricsClient {
                 nPages = (total + pageSize - 1)/pageSize;
 
                 // 2) retrieve all measures
-                measures.addAll(toListOfList(jsonRoot));
+                toListOfList(jsonRoot).forEach(callback::accept);
             }
-
-            return measures;
         }
     }
 
@@ -210,16 +232,16 @@ public class DefaultMetricsClient implements MetricsClient {
         }
     }
 
-    private List<Measure> jsonListOfList(String json) {
-        Map jsonRoot = (Map) JSONValue.parse(json);
-        List<Map> components = (List<Map>) jsonRoot.get("components");
-        List<Measure> list = new ArrayList<>();
-        for(Map cmap : components) {
-            List<Measure> clist = measures(cmap, true);
-            list.addAll(clist);
-        }
-        return list;
-    }
+    // private List<Measure> jsonListOfList(String json) {
+    //     Map jsonRoot = (Map) JSONValue.parse(json);
+    //     List<Map> components = (List<Map>) jsonRoot.get("components");
+    //     List<Measure> list = new ArrayList<>();
+    //     for(Map cmap : components) {
+    //         List<Measure> clist = measures(cmap, true);
+    //         list.addAll(clist);
+    //     }
+    //     return list;
+    // }
 
     private List<Measure> toListOfList(Map jsonRoot) {
         List<Map> components = (List<Map>) jsonRoot.get("components");

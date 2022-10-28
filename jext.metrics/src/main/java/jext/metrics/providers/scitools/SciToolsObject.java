@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class SciToolsObject implements MetricsObject {
@@ -141,6 +143,26 @@ public class SciToolsObject implements MetricsObject {
                           || categoryMetrics.contains(v.getMetric().getName()))
                 .collect(Collectors.toList());
     }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void getMetricValues(Consumer<MetricValue> callback) {
+        metricValues.forEach(callback);
+    }
+
+    @Override
+    public void getMetricValues(String category, Consumer<MetricValue> callback) {
+        Set<String> categoryMetrics = provider.getMetricNames(category);
+        metricValues.stream()
+                .filter(v -> categoryMetrics.contains(v.getMetric().getId())
+                        || categoryMetrics.contains(v.getMetric().getName())).
+                forEach(callback);
+    }
+
+    // ----------------------------------------------------------------------
+    // Implementation
+    // ----------------------------------------------------------------------
 
     void addMetricValue(MetricValue metricValue) {
         this.metricValues.add(metricValue);

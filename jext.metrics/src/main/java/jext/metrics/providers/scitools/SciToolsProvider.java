@@ -97,6 +97,9 @@ public class SciToolsProvider implements MetricsProvider {
             Assert.notNull(properties.getProperty(METRICS_NODES), METRICS_NODES);
             Assert.notNull(properties.getProperty(METRICS_EDGES), METRICS_EDGES);
         }
+        {
+            categories.put("", new HashSet<>());
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -131,7 +134,7 @@ public class SciToolsProvider implements MetricsProvider {
     @Override
     public Collection<Metric> getMetrics(@Nullable String category) {
         if (category == null)
-            category = MetricsProvider.ALL_CATEGORIES;
+            category = MetricsProvider.ALL_METRICS;
 
         if (!categories.containsKey(category))
             return Collections.emptyList();
@@ -279,6 +282,7 @@ public class SciToolsProvider implements MetricsProvider {
     void addMetric(Metric metric) {
         metricsById.put(metric.getId(), metric);
         metricsByName.put(metric.getName(), metric);
+        categories.get(ROOT).add(metric.getId());
     }
 
     void addCategory(String name, Collection<String> metrics) {

@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /*
     a 'property' is a string that can be:
@@ -130,7 +130,16 @@ public interface GraphSession extends AutoCloseable {
      * @param nodeProps node properties
      */
     @Nullable
-    String/*nodeId*/ findNode(String nodeType, Map<String, Object> nodeProps);
+    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String, Object> nodeProps);
+
+    /**
+     * Check if the node exusts
+     *
+     * @param nodeType node type or null
+     * @param nodeProps node properties
+     * @return true is the node exists
+     */
+    boolean existsNode(@Nullable String nodeType, Map<String, Object> nodeProps);
 
     // ----------------------------------------------------------------------
     // Operations on a single node
@@ -180,9 +189,8 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Delete the nodes with the specified properties
      */
-    // long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
-    long deleteNodes(String nodeType, Map<String,Object> nodeProps);
-    long deleteNodes(String nodeType, Map<String,Object> nodeProps, Consumer<Long> callback);
+    long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps);
+    long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callback);
 
     // ----------------------------------------------------------------------
 
@@ -208,27 +216,42 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
     // Special node queries
     // ----------------------------------------------------------------------
+    // It is not used the Neo4J algorithm because it is not able to select
+    // edges based on the edge properties
 
     /**
      * Select the adjacent nodes to the specified node, following the
      * specified edge, and selecting only the nodes/edges with the specified
      * properties
      *
+     * @param fromId starting node id
      * @param edgeType type of the edge or null
-     * @param fromId  node id
      * @param direction direction of the edges (Input, Output, Any)
+     * @param recursive if to scan recursively until the closure is reached
+     * @param nodeType node type to find
+     * @param nodeProps node properties to find
+     * @param edgeProps edge properties to naviage
      */
     Query queryAdjacentNodes(
-        String fromId, String edgeType, Direction direction, boolean recursive,
+        String fromId, @Nullable String edgeType, Direction direction, boolean recursive,
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
+    /**
+     * Select the adjacent nodes to the specified node, following the
+     * specified edge, and selecting only the nodes/edges with the specified
+     * properties
+     *
+     * @param fromIds starting node ids
+     * @param edgeType type of the edge or null
+     * @param direction direction of the edges (Input, Output, Any)
+     * @param recursive if to scan recursively until the closure is reached
+     * @param nodeType node type to find
+     * @param nodeProps node properties to find
+     * @param edgeProps edge properties to naviage
+     */
     Query queryAdjacentNodes(
-        Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
+        Collection<String> fromIds, @Nullable String edgeType, Direction direction, boolean recursive,
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
-
-    // Query queryAdjacentNodesAlgorithm(
-    //     String fromId, String edgeType, Direction direction, boolean recursive,
-    //     String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge queries
@@ -249,10 +272,10 @@ public interface GraphSession extends AutoCloseable {
      *      idto:   long                id to node
      *      edge: Map[String,Object]    edge properties
      */
-    Query queryEdges(String edgeType,
-        String fromType, Map<String, Object> fromProps,
-        String toType,   Map<String, Object> toProps,
-        Map<String, Object> edgeProps);
+    Query queryEdges(@Nullable String edgeType,
+                     @Nullable String fromType, Map<String, Object> fromProps,
+                     @Nullable String toType,   Map<String, Object> toProps,
+                     Map<String, Object> edgeProps);
 
     /**
      * Retrieve the edges between the specified nodes
@@ -268,9 +291,9 @@ public interface GraphSession extends AutoCloseable {
      *      edge: Map[String,Object]    edge properties
      *
      */
-    Query queryEdges(String edgeType, Collection<String> fromIds, Collection<String> toIds,
+    Query queryEdges(@Nullable String edgeType, Collection<String> fromIds, Collection<String> toIds,
                      Map<String, Object> edgeProps);
-    Query queryEdges(String edgeType, String fromId, Collection<String> toIds,
+    Query queryEdges(@Nullable String edgeType, String fromId, Collection<String> toIds,
                      Map<String, Object> edgeProps);
 
     /**
@@ -284,13 +307,16 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      * @return
      */
-    Query  queryPath(String edgeType,
+    Query  queryPath(@Nullable String edgeType,
                      String fromId, String toId, Direction direction, boolean recursive,
                      Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge
     // ----------------------------------------------------------------------
+
+    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId);
+    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId);
 
     /**
      * Find the edge between the specified nodes with the specified type and
@@ -302,6 +328,7 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      * @return edgeId or null
      */
+    @Nullable
     String/*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
 
     /**
@@ -363,11 +390,11 @@ public interface GraphSession extends AutoCloseable {
      * @param toProps to node properties
      * @param edgeProps edge properties
      */
-    long deleteEdges(String edgeType,  // can be null
+    long deleteEdges(@Nullable String edgeType,  // can be null
                      String fromNodeType, Map<String, Object> fromProps,
                      String toNodeType, Map<String, Object> toProps,
                      Map<String,Object> edgeProps,
-                     Consumer<Long> callback);
+                     LongConsumer callback);
 
     /**
      * Delete the edges from the specified nodes
@@ -377,8 +404,11 @@ public interface GraphSession extends AutoCloseable {
      * @param toIds target node ids (can be null)
      * @param edgeProps edge properties
      */
-    long deleteEdges(String edgeType, String fromId, List<String> toIds, Map<String,Object> edgeProps,
-                     Consumer<Long> callback);
+    long deleteEdges(@Nullable String edgeType,
+                     String fromId,
+                     @Nullable List<String> toIds,
+                     Map<String,Object> edgeProps,
+                     LongConsumer callback);
 
     // ----------------------------------------------------------------------
 
