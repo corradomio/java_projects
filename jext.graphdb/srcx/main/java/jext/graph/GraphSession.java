@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /*
@@ -120,7 +121,11 @@ public interface GraphSession extends AutoCloseable {
      *    2) if the value of a property is 'null' the property is checked for
      *       its existence.
      */
-    Query queryNodes(@Nullable String nodeType, @Nullable Map<String, Object> nodeProps);
+    Query queryNodes(@Nullable String nodeType, Map<String, Object> nodeProps);
+
+    // ----------------------------------------------------------------------
+    // Operations on a single node
+    // ----------------------------------------------------------------------
 
     /**
      * Find the node with the specified properties.
@@ -129,22 +134,12 @@ public interface GraphSession extends AutoCloseable {
      * @param nodeType node type or null
      * @param nodeProps node properties
      */
-    @Nullable
-    String/*nodeId*/ findNode(String nodeType, Map<String, Object> nodeProps);
-
-    // ----------------------------------------------------------------------
-    // Operations on a single node
-    // ----------------------------------------------------------------------
+    Optional<String/*nodeId*/> findNode(String nodeType, Map<String, Object> nodeProps);
 
     /**
      * Create a new node
      */
     String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps);
-
-    /**
-     * Create or update a node
-     */
-    String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
 
     /**
      * Check if the node there exists
@@ -154,7 +149,8 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Get the property values of the node
      */
-    Map<String, Object> getNodeValues(String nodeId);
+    Map<String, Object> getNode(String nodeId);
+    Map<String, Object> getNode(String nodeType, Map<String,Object> nodeProps);
 
     /**
      * Delete the node
@@ -170,7 +166,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Get the property values for the nodes
      */
-    List<Map<String, Object>> getNodesValues(Collection<String> nodeIds);
+    List<Map<String, Object>> getNodes(Collection<String> nodeIds);
 
     /**
      * Delete the nodes
@@ -180,7 +176,6 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Delete the nodes with the specified properties
      */
-    // long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count);
     long deleteNodes(String nodeType, Map<String,Object> nodeProps);
     long deleteNodes(String nodeType, Map<String,Object> nodeProps, Consumer<Long> callback);
 
@@ -225,10 +220,6 @@ public interface GraphSession extends AutoCloseable {
     Query queryAdjacentNodes(
         Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
         String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
-
-    // Query queryAdjacentNodesAlgorithm(
-    //     String fromId, String edgeType, Direction direction, boolean recursive,
-    //     String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge queries
@@ -424,13 +415,6 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      */
     void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    // boolean isDAG(String nodeType, Map<String,Object> nodeProps,
-    //               String edgeType, Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Query using named queries

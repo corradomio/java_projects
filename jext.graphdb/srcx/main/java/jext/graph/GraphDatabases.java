@@ -2,7 +2,9 @@ package jext.graph;
 
 import jext.logging.Logger;
 import jext.net.URL;
+import jext.util.PropertiesUtils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,14 +42,19 @@ public class GraphDatabases {
     // Factory Methods
     // ----------------------------------------------------------------------
 
-    public static GraphDatabase newGraphDatabase(Properties props) throws GraphDatabaseException {
+    public static GraphDatabase create(File propertiesFile) throws GraphDatabaseException {
+        Properties props = PropertiesUtils.load(propertiesFile);
+        return create(props);
+    }
+
+    public static GraphDatabase create(Properties props) throws GraphDatabaseException {
         String surl = props.getProperty(URL);
         if (surl == null)
             surl = props.getProperty(URI);
-        return newGraphDatabase(surl, props);
+        return create(surl, props);
     }
 
-    public static GraphDatabase newGraphDatabase(String surl, Properties props) throws GraphDatabaseException {
+    public static GraphDatabase create(String surl, Properties props) throws GraphDatabaseException {
         jext.net.URL url = new URL(surl);
         if (!protocols.containsKey(url.getProtocol()))
             throw new GraphDatabaseException("Unsupported protocol " + url.getProtocol());

@@ -1,17 +1,18 @@
 package jext.graph;
 
-import jext.graph.named.NamedIndices;
-import jext.graph.named.NamedQueries;
-import jext.graph.schema.GraphSchema;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
+import java.util.Map;
 
 public interface GraphDatabase {
 
-    GraphVersion getVersion();
+    /**
+     * Neo4j version as string "3.5.13"
+     */
+    String getVersion();
+
+    /**
+     * Neo4j major version as integer (3, 4 ...)
+     */
+    int getMajorVersion();
 
     /**
      * Initialize the database Connector
@@ -26,8 +27,6 @@ public interface GraphDatabase {
      * @return a Session, a wrapper to the connection
      */
     GraphSession connect();
-    GraphSession connect(String refId);
-    GraphSession connect(String refId, String model, int rev);
 
     /**
      * Delete the content of the database
@@ -39,37 +38,11 @@ public interface GraphDatabase {
      */
     void destroy();
 
-    // ----------------------------------------------------------------------
-    // Named queries
-    // ----------------------------------------------------------------------
-
     /**
      * Register a dictionary of named queries
      *
      * @param namedQueries a map 'name -> Cypher statement'
      */
-    GraphDatabase setNamedQueries(NamedQueries namedQueries);
-    NamedQueries  getNamedQueries();
-
-    /**
-     * Retrieve the named query
-     * @param qname query name to use
-     * @return query body
-     */
-    String getQuery(String qname);
-
-    // ----------------------------------------------------------------------
-    // Database Schema
-    // ----------------------------------------------------------------------
-
-    GraphDatabase setGraphSchema(File graphSchema) throws GraphDatabaseException;
-    GraphDatabase setGraphSchema(GraphSchema graphSchema);
-    GraphSchema   getGraphSchema();
-
-    // ----------------------------------------------------------------------
-    // Database indices
-    // ----------------------------------------------------------------------
-
-    GraphDatabase setNamedIndices(NamedIndices nindices);
-    NamedIndices  getNamedIndices();
+    void registerQueries(Map<String/*name*/, String/*body*/> namedQueries);
+    void registerVersionedQueries(Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries);
 }
