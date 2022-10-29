@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graphdb>
+    <!--
+        Define, IN ORDER
+
+        1) nodes
+        2) edges
+        3) models
+
+        Revisioned nodes can be ONLY of simple type, because the revisioned version
+        in an array of the same type
+
+        To support a revisioned array type, it is necessary to use a '$value' node with
+        structure:
+
+            $value {
+                revision: int,
+                value: T[]
+            }
+
+        In the connection it is necessary to specify:
+
+            refId:      id that identify the project
+            model:      subset of nodes
+            revision:   the current revision
+    -->
     <schema>
-        <!-- BEFORE models -->
         <!--
             unique id
-
           -->
         <nodes>
             <node name="splproject">
@@ -338,7 +360,6 @@
 
         </edges>
 
-        <!-- AFTER nodes -->
         <models>
             <model name="source"        ref="msource">
             </model>

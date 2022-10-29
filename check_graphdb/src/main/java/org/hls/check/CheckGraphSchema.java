@@ -6,6 +6,7 @@ import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
+import jext.graph.neo4j.VGraphDatabase;
 import jext.graph.schema.GraphSchema;
 import jext.logging.Logger;
 import jext.util.MapUtils;
@@ -27,10 +28,11 @@ public class CheckGraphSchema {
         NamedIndices namedIndices = NamedIndices.load(new File("config/nindices.xml"));
         GraphSchema  graphSchema  = GraphSchema.load( new File("config/dbschema.xml"));
         Properties  dbprops = PropertiesUtils.load(   new File("config/neo4j.properties"));
-        GraphDatabase gdb = GraphDatabases.create(dbprops)
-            .setGraphSchema(graphSchema)
+        VGraphDatabase gdb = (VGraphDatabase)GraphDatabases.create(dbprops);
+        gdb.setGraphSchema(graphSchema)
+            .setNamedIndices(namedIndices)
             .setNamedQueries(namedQueries)
-            .setNamedIndices(namedIndices);
+            ;
 
         try(GraphSession s = gdb.connect("123456")) {
             String nid = s.createNode("splproject", MapUtils.asMap(

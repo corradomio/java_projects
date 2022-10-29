@@ -4,6 +4,7 @@ import jext.cache.CacheManager;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
+import jext.graph.neo4j.VGraphDatabase;
 import jext.logging.Logger;
 import jext.util.MapUtils;
 
@@ -15,7 +16,7 @@ public class CreateNodes {
         Logger.configure();
         CacheManager.configure();
 
-        GraphDatabase gdb = GraphDatabases.create(new File("config/neo4j.properties"));
+        VGraphDatabase gdb = (VGraphDatabase) GraphDatabases.create(new File("config/neo4j.properties"));
         gdb.setGraphSchema(new File("config/dbschema.xml"));
 
         try(GraphSession s = gdb.connect("100001")) {

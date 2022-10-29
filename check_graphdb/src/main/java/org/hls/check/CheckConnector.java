@@ -4,6 +4,7 @@ import jext.cache.CacheManager;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
+import jext.graph.neo4j.VGraphDatabase;
 import jext.logging.Logger;
 import jext.util.Parameters;
 import jext.util.PropertiesUtils;
@@ -28,7 +29,7 @@ public class CheckConnector {
         CacheManager.configure();
         Properties props = PropertiesUtils.load("config/neo4j.properties");
 
-        GraphDatabase gdb = GraphDatabases.create(props);
+        VGraphDatabase gdb = (VGraphDatabase) GraphDatabases.create(props);
 
         try (GraphSession s = gdb.connect()) {
             // s.deleteRevisionMetadata("component");
