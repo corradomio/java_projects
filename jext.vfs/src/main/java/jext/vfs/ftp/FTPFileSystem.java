@@ -5,6 +5,7 @@ import jext.vfs.AbstractFileSystem;
 import jext.vfs.VFile;
 import jext.vfs.VFileSystem;
 import jext.vfs.VFileSystemException;
+import jext.vfs.exceptions.NotConnectedException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
@@ -48,16 +49,21 @@ public class FTPFileSystem extends AbstractFileSystem {
     // ----------------------------------------------------------------------
 
     @Override
-    public VFileSystem connect() throws IOException {
+    public VFileSystem connect() {
         if (isConnected())
             return this;
 
-        connectTo();
-        createRoot();
+        try {
+            connectTo();
+            createRoot();
 
-        logger.infof("Connected to %s", url.toString());
+            logger.infof("Connected to %s", url.toString());
 
-        return this;
+            return this;
+        }
+        catch (IOException e) {
+            throw new NotConnectedException(e);
+        }
     }
 
     @Override

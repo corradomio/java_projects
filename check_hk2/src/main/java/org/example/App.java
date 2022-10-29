@@ -1,7 +1,10 @@
 package org.example;
 
+import org.glassfish.hk2.api.DynamicConfigurationService;
+import org.glassfish.hk2.api.Populator;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
+import org.glassfish.hk2.extension.ServiceLocatorGenerator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
 /**
@@ -25,6 +28,9 @@ public class App
 
 
     static void m() {
-        ServiceLocatorFactory f;
+        ServiceLocatorFactory slf;
+        ServiceLocatorGenerator slg;
+        DynamicConfigurationService dcs;
+        Populator p ;
     }
 }

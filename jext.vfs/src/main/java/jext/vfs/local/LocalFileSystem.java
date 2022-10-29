@@ -4,6 +4,7 @@ import jext.net.URL;
 import jext.vfs.AbstractFileSystem;
 import jext.vfs.VFile;
 import jext.vfs.VFileSystem;
+import jext.vfs.exceptions.NotConnectedException;
 import org.apache.commons.vfs2.FileNotFolderException;
 
 import java.io.File;
@@ -47,16 +48,21 @@ public class LocalFileSystem extends AbstractFileSystem {
     // ----------------------------------------------------------------------
 
     @Override
-    public VFileSystem connect() throws IOException {
-        File rootFile = new File(url.getPath());
-        // check if the local directory there exists
-        if (!rootFile.exists())
-            throw new FileNotFoundException(rootFile.getAbsolutePath());
-        if (!rootFile.isDirectory())
-            throw new FileNotFolderException(rootFile.getAbsolutePath());
+    public VFileSystem connect() {
+        try {
+            File rootFile = new File(url.getPath());
+            // check if the local directory there exists
+            if (!rootFile.exists())
+                throw new FileNotFoundException(rootFile.getAbsolutePath());
+            if (!rootFile.isDirectory())
+                throw new FileNotFolderException(rootFile.getAbsolutePath());
 
-        this.root = new LocalFile(this, rootFile, "/");
-        return this;
+            this.root = new LocalFile(this, rootFile, "/");
+            return this;
+        }
+        catch (IOException e) {
+            throw new NotConnectedException(e);
+        }
     }
 
     // ----------------------------------------------------------------------

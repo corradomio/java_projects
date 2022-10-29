@@ -725,7 +725,7 @@ public class Neo4JOnlineSession implements GraphSession {
         Parameters params = Parameters.params(
                 FROM, asId(fromId),
                 TO, asId(toId)
-        );
+        ).add(E, edgeProps);
 
         return this.create(s, params);
     }

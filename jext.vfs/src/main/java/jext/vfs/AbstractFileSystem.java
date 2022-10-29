@@ -12,8 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.tmatesoft.svn.core.internal.wc17.db.statement.SVNWCDbSchema.REPOSITORY__Fields.root;
-
 public abstract class AbstractFileSystem implements VFileSystem {
 
     // ----------------------------------------------------------------------
@@ -241,7 +239,7 @@ public abstract class AbstractFileSystem implements VFileSystem {
     // ----------------------------------------------------------------------
 
     protected void checkfs() {
-        if (root == null || !isConnected())
+        if (!isConnected())
             throw new NotConnectedException();
     }
 

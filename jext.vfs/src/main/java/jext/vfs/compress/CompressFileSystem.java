@@ -68,10 +68,15 @@ public class CompressFileSystem extends AbstractFileSystem {
     // ----------------------------------------------------------------------
 
     @Override
-    public VFileSystem connect() throws IOException {
-        initialize();
-        scanEntries();
-        return this;
+    public VFileSystem connect() {
+        try {
+            initialize();
+            scanEntries();
+            return this;
+        }
+        catch (IOException e) {
+            throw new NotConnectedException(e);
+        }
     }
 
     @Override

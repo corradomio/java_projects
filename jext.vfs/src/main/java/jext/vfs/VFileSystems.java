@@ -4,7 +4,6 @@ import jext.logging.Logger;
 import jext.net.URL;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class VFileSystems {
 
     // ----------------------------------------------------------------------
 
-    public static VFileSystem newFileSystem(File compressedFile) throws VFileSystemException, IOException {
+    public static VFileSystem newFileSystem(File compressedFile) throws VFileSystemException {
         String protocol = extOf(compressedFile);
         String surl = String.format("%s:///%s", protocol, compressedFile.getAbsolutePath().replace('\\', '/'));
         return newFileSystem(surl);
@@ -70,12 +69,12 @@ public class VFileSystems {
         return name.substring(p+1);
     }
 
-    public static VFileSystem newFileSystem(String surl) throws VFileSystemException, IOException {
+    public static VFileSystem newFileSystem(String surl) throws VFileSystemException {
         Properties props = new Properties();
         return newFileSystem(surl, props);
     }
 
-    public static VFileSystem newFileSystem(Properties props) throws VFileSystemException, IOException {
+    public static VFileSystem newFileSystem(Properties props) throws VFileSystemException {
         String surl = props.getProperty(URL);
         return newFileSystem(surl, props);
     }
@@ -89,7 +88,7 @@ public class VFileSystems {
      * @return a virtual file system object
      * @throws VFileSystemException
      */
-    public static VFileSystem newFileSystem(String surl, Properties props) throws VFileSystemException, IOException {
+    public static VFileSystem newFileSystem(String surl, Properties props) throws VFileSystemException {
         if (surl.endsWith(".git") && !surl.startsWith("git+"))
             surl = "git+" + surl;
 
