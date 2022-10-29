@@ -6,6 +6,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -32,6 +33,7 @@ public class GraphDescribe {
             new ConnectivityInspector<>(g)
                 .connectedSets()
                 .stream()
+                .sorted((s1,s2) -> -(s1.size() - s2.size()))
                 .map(Set::size)
                 .collect(Collectors.toList()));
 

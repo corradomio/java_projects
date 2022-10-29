@@ -59,6 +59,20 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     // Configuration
     // ----------------------------------------------------------------------
 
+    public Neo4JGraphImporter<V, E> nodes(String label) {
+        if (label != null && !label.isEmpty()) {
+            vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
+            edges(String.format("MATCH (s:%1$s {refId:$refId}) -[:uses]-> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
+        }
+        else {
+            vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
+            edges("MATCH (s {refId:$refId}) -[:uses]-> (t) RETURN id(s) AS s, id(t) AS t");
+        }
+        vertexProperties("name", "type");
+        labels("s", "t");
+        return this;
+    }
+
     public Neo4JGraphImporter<V, E> vertices(String cypher) {
         this.vertices = cypher;
         return this;
