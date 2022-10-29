@@ -6,10 +6,10 @@ import jext.net.URL;
 
 import java.util.Properties;
 
-public class Neo4JOnlineDatabaseFactory implements GraphDatabaseFactory {
+public class VNeo4JOnlineDatabaseFactory implements GraphDatabaseFactory {
 
     @Override
     public GraphDatabase newGraphDatabase(URL url, Properties props) {
-        return new Neo4JOnlineDatabase(url, props);
+        return new VNeo4JOnlineDatabase(url, props);
     }
 }

@@ -87,6 +87,16 @@ public class NamedQueries {
             registerQuery(qname, namedQueries.get(qname));
     }
 
+    public void registerVersionedQueries(Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries) {
+        for(String version : namedQueries.keySet()) {
+            Map<String, String> nqueries = namedQueries.get(version);
+            for(String qname : nqueries.keySet())  {
+                String body = nqueries.get(qname);
+                addNamedQuery(version, qname, body);
+            }
+        }
+    }
+
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
@@ -98,6 +108,14 @@ public class NamedQueries {
         d.addCallParam("graphdb/namedqueries/query", 0);
         d.addSetNext("graphdb/namedqueries/query", "addNamedQuery");
 
+    }
+
+    public void addNamedQuery(String version, String qname, String body) {
+        NamedQuery nquery = new NamedQuery();
+        nquery.setVersion(version);
+        nquery.setName(qname);;
+        nquery.setBody(body);
+        addNamedQuery(nquery);
     }
 
     public void addNamedQuery(NamedQuery nquery) {

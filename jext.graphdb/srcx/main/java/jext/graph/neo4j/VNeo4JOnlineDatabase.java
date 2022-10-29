@@ -3,19 +3,12 @@ package jext.graph.neo4j;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabaseException;
 import jext.graph.GraphSession;
-import jext.graph.GraphVersion;
 import jext.graph.named.NamedIndex;
 import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
 import jext.graph.schema.GraphSchema;
-import jext.graph.schema.ModelSchema;
-import jext.graph.schema.NodeSchema;
-import jext.logging.Logger;
 import jext.net.URL;
 import jext.util.MapUtils;
-import jext.util.PropertiesUtils;
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,42 +16,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Neo4JOnlineDatabase implements GraphDatabase {
+public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphDatabase {
 
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
-
-    private static final String USER = "user";
-    private static final String PASSWORD = "password";
-
-    // compatibility with a previous implementation
-    private static final String URL_EXT = "neo4j.online.url";
-    private static final String USER_EXT = "neo4j.online.user";
-    private static final String PASSWORD_EXT = "neo4j.online.password";
-
-    private static final String MAX_DELETE = "maxdelete";
-    private static final String MAX_STATEMENTS = "maxstatements";
 
     public static final String NAME = "name";
 
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
-
-    private static Logger logger = Logger.getLogger(Neo4JOnlineDatabase.class);
-
-    private final URL url;
-    private final Properties props;
-    private Driver driver;
-    private GraphVersion version;
-
-    private int maxDelete, maxStatements;
 
     private NamedQueries namedQueries = new NamedQueries();
     private NamedIndices namedIndices = new NamedIndices();
@@ -68,63 +40,24 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     // Constructor
     // ----------------------------------------------------------------------
 
-    public Neo4JOnlineDatabase(URL url, Properties props) {
-        this.url = url;
-        this.props = props;
+    public VNeo4JOnlineDatabase(URL url, Properties props) {
+        super(url, props);
     }
 
     // ----------------------------------------------------------------------
     // Operations
     // ----------------------------------------------------------------------
 
-    @Override
-    public void initialize() {
-
-        String uri = this.url.getUrl();
-        String user = this.props.getProperty(USER);
-        String password = this.props.getProperty(PASSWORD);
-
-        // compatibility with a previous implementation
-        if (user == null) user = this.props.getProperty(USER_EXT);
-        if (password == null) password = props.getProperty(PASSWORD_EXT);
-
-        this.driver = org.neo4j.driver.GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
-
-        try(GraphSession session = this.connect()) {
-            String s = "CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition";
-            Map<String, Object> result = session.query(s, Collections.emptyMap()).result().next();
-
-            String dbversion = result.get("version").toString();
-            this.version = new GraphVersion(dbversion);
-        }
-
-        this.maxDelete = PropertiesUtils.getInt(props, MAX_DELETE, Neo4JOnlineSession.MAX_DELETE_NODES);
-        this.maxStatements = PropertiesUtils.getInt(props, MAX_STATEMENTS, Neo4JOnlineSession.MAX_STATEMENTS);
-    }
-
-    @Override
-    public GraphDatabase deleteAll() {
-        try(GraphSession session = connect()) {
-            session.deleteAll();
-        }
-        return this;
-    }
-
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
-
-    @Override
-    public GraphVersion getVersion() {
-        return version;
-    }
 
     // ----------------------------------------------------------------------
     // NamedIndices
     // ----------------------------------------------------------------------
 
     @Override
-    public GraphDatabase setNamedIndices(NamedIndices nindices) {
+    public VGraphDatabase setNamedIndices(NamedIndices nindices) {
         this.namedIndices = nindices;
         initIndices();
         return this;
@@ -169,31 +102,6 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     }
 
     // ----------------------------------------------------------------------
-    // NamedQueries
-    // ----------------------------------------------------------------------
-
-    @Override
-    public String getQuery(String qname) {
-        return namedQueries.getQuery(qname, version.getVersion());
-    }
-
-    @Override
-    public GraphDatabase setNamedQueries(NamedQueries namedQueries) {
-        this.namedQueries = namedQueries;
-        return this;
-    }
-
-    @Override
-    public NamedQueries getNamedQueries() {
-        return namedQueries;
-    }
-
-    // @Override
-    // public void registerQueries(Map<String/*name*/, String/*body*/> namedQueries) {
-    //     this.namedQueries.registerQueries(namedQueries);
-    // }
-
-    // ----------------------------------------------------------------------
     // Graph Schema
     // ----------------------------------------------------------------------
 
@@ -203,13 +111,13 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     }
 
     @Override
-    public GraphDatabase setGraphSchema(GraphSchema graphSchema) {
+    public VGraphDatabase setGraphSchema(GraphSchema graphSchema) {
         this.graphSchema = graphSchema;
         return this;
     }
 
     @Override
-    public GraphDatabase setGraphSchema(File schemaFile)  {
+    public VGraphDatabase setGraphSchema(File schemaFile)  {
         try {
             GraphSchema graphSchema = GraphSchema.load(schemaFile);
             return setGraphSchema(graphSchema);
@@ -234,31 +142,9 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     @Override
     public GraphSession connect(String refId, String model, int rev) {
-        return new Neo4JOnlineSession(this, refId, model, rev)
+        return new VNeo4JOnlineSession(this, refId, model, rev)
             .connect();
     }
-
-    @Override
-    public void destroy() {
-        if (driver != null) {
-            driver.close();
-            driver = null;
-        }
-    }
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    int getMaxDelete() {
-        return maxDelete;
-    }
-
-    int getMaxStatements() {
-        return maxStatements;
-    }
-
-    Driver getDriver() { return driver; }
 
     // ----------------------------------------------------------------------
     // End

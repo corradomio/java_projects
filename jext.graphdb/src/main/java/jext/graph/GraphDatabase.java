@@ -1,5 +1,7 @@
 package jext.graph;
 
+import jext.graph.named.NamedQueries;
+
 import java.util.Map;
 
 public interface GraphDatabase {
@@ -7,12 +9,7 @@ public interface GraphDatabase {
     /**
      * Neo4j version as string "3.5.13"
      */
-    String getVersion();
-
-    /**
-     * Neo4j major version as integer (3, 4 ...)
-     */
-    int getMajorVersion();
+    GraphVersion getVersion();
 
     /**
      * Initialize the database Connector
@@ -43,6 +40,6 @@ public interface GraphDatabase {
      *
      * @param namedQueries a map 'name -> Cypher statement'
      */
-    void registerQueries(Map<String/*name*/, String/*body*/> namedQueries);
-    void registerVersionedQueries(Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries);
+    GraphDatabase setNamedQueries(NamedQueries namedQueries);
+    NamedQueries getNamedQueries();
 }

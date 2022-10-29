@@ -2,7 +2,9 @@ package jext.graph;
 
 import jext.logging.Logger;
 import jext.net.URL;
+import jext.util.PropertiesUtils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,9 +38,20 @@ public class GraphDatabases {
         }
     }
 
+    protected GraphDatabases factory = new GraphDatabases();
+
     // ----------------------------------------------------------------------
     // Factory Methods
     // ----------------------------------------------------------------------
+
+    public static GraphDatabase create(File propertiesFile) throws GraphDatabaseException {
+        Properties props = PropertiesUtils.load(propertiesFile);
+        return create(props);
+    }
+
+    public static GraphDatabase create(Properties props) throws GraphDatabaseException {
+        return newGraphDatabase(props);
+    }
 
     public static GraphDatabase newGraphDatabase(Properties props) throws GraphDatabaseException {
         String surl = props.getProperty(URL);
