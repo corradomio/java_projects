@@ -1,8 +1,5 @@
 package jext.graph.named;
 
-import jext.util.MapUtils;
-import jext.util.StringUtils;
-
 public class NamedIndex {
 
     // ----------------------------------------------------------------------
