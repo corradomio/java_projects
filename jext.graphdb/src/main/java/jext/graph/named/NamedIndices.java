@@ -31,10 +31,8 @@ public class NamedIndices {
     // Private fields
     // ----------------------------------------------------------------------
 
-    public static final String NO_VERSION = "";
-
-    private Map<String/*version*/, Map<String, NamedIndex>> namedIndices = new HashMap<>();
-    private List<NamedIndex> indices = new ArrayList<>();
+    private final Map<String/*version*/, Map<String, NamedIndex>> namedIndices = new HashMap<>();
+    private final List<NamedIndex> indices = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor

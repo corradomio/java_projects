@@ -33,10 +33,10 @@ public class NamedQueries {
     // Private fields
     // ----------------------------------------------------------------------
 
-    public static final String NO_VERSION = "";
+    private static final String NO_VERSION = "";
 
-    private Map<String/*version*/, Map<String, NamedQuery>> namedQueries = new HashMap<>();
-    private List<NamedQuery> queries = new ArrayList<>();
+    private final Map<String/*version*/, Map<String, NamedQuery>> namedQueries = new HashMap<>();
+    private final List<NamedQuery> queries = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor

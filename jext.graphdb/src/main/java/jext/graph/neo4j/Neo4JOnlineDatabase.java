@@ -3,18 +3,22 @@ package jext.graph.neo4j;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphSession;
 import jext.graph.GraphVersion;
+import jext.graph.named.NamedIndex;
+import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
 import jext.logging.Logger;
 import jext.net.URL;
+import jext.util.MapUtils;
 import jext.util.PropertiesUtils;
-import jext.util.StringUtils;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Neo4JOnlineDatabase implements GraphDatabase {
 
@@ -24,6 +28,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     private static final String USER = "user";
     private static final String PASSWORD = "password";
+
+    private static final String NAME = "name";
 
     // compatibility with a previous implementation
     private static final String URL_EXT = "neo4j.online.url";
@@ -41,13 +47,13 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     private final URL url;
     private Driver driver;
-    protected final Properties props;
+    protected final Properties properties;
     protected GraphVersion version;
-
-    private int maxDelete, maxStatements;
-
-    // private final Map<String/*version*/, Map<String/*name*/, String/*body*/>> namedQueries = new HashMap<>();
     protected NamedQueries namedQueries = new NamedQueries();
+    protected NamedIndices namedIndices = new NamedIndices();
+
+    // used for autocommit & delete callbacks
+    private int maxDelete, maxStatements;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -55,7 +61,7 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     public Neo4JOnlineDatabase(URL url, Properties props) {
         this.url = url;
-        this.props = props;
+        this.properties = props;
     }
 
     // ----------------------------------------------------------------------
@@ -66,12 +72,12 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     public void initialize() {
 
         String uri = this.url.getUrl();
-        String user = this.props.getProperty(USER);
-        String password = this.props.getProperty(PASSWORD);
+        String user = this.properties.getProperty(USER);
+        String password = this.properties.getProperty(PASSWORD);
 
         // compatibility with a previous implementation
-        if (user == null) user = this.props.getProperty(USER_EXT);
-        if (password == null) password = props.getProperty(PASSWORD_EXT);
+        if (user == null) user = this.properties.getProperty(USER_EXT);
+        if (password == null) password = properties.getProperty(PASSWORD_EXT);
 
         this.driver = org.neo4j.driver.GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
 
@@ -81,8 +87,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
             this.version = new GraphVersion(result.get("version").toString());
         }
 
-        this.maxDelete = PropertiesUtils.getInt(props, MAX_DELETE, Neo4JOnlineSession.MAX_DELETE_NODES);
-        this.maxStatements = PropertiesUtils.getInt(props, MAX_STATEMENTS, Neo4JOnlineSession.MAX_STATEMENTS);
+        this.maxDelete = PropertiesUtils.getInt(properties, MAX_DELETE, Neo4JOnlineSession.MAX_DELETE_NODES);
+        this.maxStatements = PropertiesUtils.getInt(properties, MAX_STATEMENTS, Neo4JOnlineSession.MAX_STATEMENTS);
     }
 
     @Override
@@ -120,6 +126,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
         return version;
     }
 
+    // ----------------------------------------------------------------------
+
     int getMaxDelete() {
         return maxDelete;
     }
@@ -147,38 +155,59 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     String getQuery(String qname) {
         return namedQueries.getQuery(qname, getVersion().getVersion());
-        // if (!namedQueries.containsKey(qname))
-        //     throw new DatabaseException("USER", String.format("Named query '%s' not defined", qname));
-
-        // Map<String, String> nqueries;
-        //
-        // // check if is defined in specific version
-        // for(String version : namedQueries.keySet()) {
-        //     nqueries = namedQueries.get(version);
-        //
-        //     // skip version ""
-        //     if (version.isEmpty()) continue;
-        //     // skip wrong version
-        //     if (!this.version.getVersion().startsWith(version)) continue;
-        //     // skip if not defined
-        //     if (!nqueries.containsKey(qname)) continue;
-        //
-        //     return trim(nqueries.get(qname));
-        // }
-        //
-        // // check if it is defined in version ""
-        // nqueries = namedQueries.get("");
-        // if (nqueries.containsKey(qname))
-        //     return trim(nqueries.get(qname));
-        //
-        // throw new DatabaseException("USER", String.format("Named query '%s' not defined", qname));
     }
 
-    private String trim(String body) {
-        // Doesn't work! It is not enough to change the namespace!
-        // if (majorVersion == 4 && body.contains("algo."))
-        //     body = body.replace("algo.", "gds.");
-        return StringUtils.trim(body);
+    // ----------------------------------------------------------------------
+    // NamedIndices
+    // ----------------------------------------------------------------------
+
+    @Override
+    public NamedIndices getNamedIndices() {
+        return namedIndices;
     }
+
+    @Override
+    public GraphDatabase setNamedIndices(NamedIndices nindices) {
+        this.namedIndices = nindices;
+        initIndices();
+        return this;
+    }
+
+    private void initIndices() {
+        List<NamedIndex> nindices = namedIndices.getIndices(version.getVersion());
+        Set<String> inames = new TreeSet<>();
+
+        try(GraphSession session = connect()) {
+            if (version.getMajorVersion() == 3) {
+                session.query("CALL db.indexes()", Collections.emptyMap()).result()
+                    .forEach(nv -> {
+                        String iname = (String) nv.get(NAME);
+                        inames.add(iname);
+                    });
+            }
+            else {
+                session.query("SHOW INDEX", Collections.emptyMap()).result()
+                    .forEach(nv -> {
+                        String iname = (String) nv.get(NAME);
+                        inames.add(iname);
+                    });
+            }
+
+        }
+
+        for(NamedIndex nindex : nindices) {
+            if (inames.contains(nindex.getName()))
+                continue;
+
+            try(GraphSession session = connect()) {
+                session.execute(nindex.getBody(), MapUtils.asMap(NAME, nindex.getName()));
+            }
+        }
+
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

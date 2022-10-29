@@ -12,8 +12,8 @@ public class Name {
         return new Name(name, index);
     }
 
-    private String name;
-    private int index;
+    private final String name;
+    private final int index;
 
     public Name(String name) {
         this(name, -1);

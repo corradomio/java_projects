@@ -9,9 +9,6 @@ import java.io.File;
 
 public interface VGraphDatabase extends GraphDatabase {
 
-    VGraphDatabase setNamedIndices(NamedIndices nindices);
-    NamedIndices getNamedIndices();
-
     GraphSchema getGraphSchema();
     VGraphDatabase setGraphSchema(GraphSchema graphSchema);
     VGraphDatabase setGraphSchema(File schemaFile);

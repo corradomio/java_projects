@@ -1,6 +1,5 @@
 package jext.graph.neo4j;
 
-import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabaseException;
 import jext.graph.GraphSession;
 import jext.graph.named.NamedIndex;
@@ -26,15 +25,11 @@ public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphD
     // Constants
     // ----------------------------------------------------------------------
 
-    public static final String NAME = "name";
-
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
 
-    private NamedQueries namedQueries = new NamedQueries();
-    private NamedIndices namedIndices = new NamedIndices();
-    private GraphSchema graphSchema = new GraphSchema();
+    private GraphSchema  graphSchema  = new GraphSchema();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -42,63 +37,6 @@ public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphD
 
     public VNeo4JOnlineDatabase(URL url, Properties props) {
         super(url, props);
-    }
-
-    // ----------------------------------------------------------------------
-    // Operations
-    // ----------------------------------------------------------------------
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    // ----------------------------------------------------------------------
-    // NamedIndices
-    // ----------------------------------------------------------------------
-
-    @Override
-    public VGraphDatabase setNamedIndices(NamedIndices nindices) {
-        this.namedIndices = nindices;
-        initIndices();
-        return this;
-    }
-
-    @Override
-    public NamedIndices getNamedIndices() {
-        return namedIndices;
-    }
-
-    private void initIndices() {
-        List<NamedIndex> nindices = namedIndices.getIndices(version.getVersion());
-        Set<String> inames = new TreeSet<>();
-
-        try(GraphSession session = connect()) {
-            if (version.getMajorVersion() == 3) {
-                session.query("CALL db.indexes()", Collections.emptyMap()).result()
-                    .forEach(nv -> {
-                        String iname = (String) nv.get(NAME);
-                        inames.add(iname);
-                    });
-            }
-            else {
-                session.query("SHOW INDEX", Collections.emptyMap()).result()
-                    .forEach(nv -> {
-                        String iname = (String) nv.get(NAME);
-                        inames.add(iname);
-                    });
-            }
-
-        }
-
-        for(NamedIndex nindex : nindices) {
-            if (inames.contains(nindex.getName()))
-                continue;
-
-            try(GraphSession session = connect()) {
-                session.execute(nindex.getBody(), MapUtils.asMap(NAME, nindex.getName()));
-            }
-        }
-
     }
 
     // ----------------------------------------------------------------------
@@ -142,8 +80,8 @@ public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphD
 
     @Override
     public GraphSession connect(String refId, String model, int rev) {
-        return new VNeo4JOnlineSession(this, refId, model, rev)
-            .connect();
+        Neo4JOnlineSession session = new VNeo4JOnlineSession(this, refId, model, rev);
+        return session.connect();
     }
 
     // ----------------------------------------------------------------------

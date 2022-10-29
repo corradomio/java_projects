@@ -1,6 +1,8 @@
 package jext.graph;
 
+import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
+import jext.graph.neo4j.VGraphDatabase;
 
 import java.util.Map;
 
@@ -35,11 +37,10 @@ public interface GraphDatabase {
      */
     void destroy();
 
-    /**
-     * Register a dictionary of named queries
-     *
-     * @param namedQueries a map 'name -> Cypher statement'
-     */
     GraphDatabase setNamedQueries(NamedQueries namedQueries);
     NamedQueries getNamedQueries();
+
+    GraphDatabase setNamedIndices(NamedIndices nindices);
+    NamedIndices getNamedIndices();
+
 }

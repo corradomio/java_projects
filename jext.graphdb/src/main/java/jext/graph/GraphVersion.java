@@ -2,8 +2,8 @@ package jext.graph;
 
 public class GraphVersion {
 
-    private String dbversion;
-    private int majorVersion;
+    private final String dbversion;
+    private final int majorVersion;
 
     public GraphVersion(String dbversion) {
         this.dbversion = dbversion;
