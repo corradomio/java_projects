@@ -76,12 +76,6 @@ public class Parameters extends HashMap<String, Object> {
         return nparams;
     }
 
-    // public static Parameters asParameters(Properties properties) {
-    //     Parameters params = new Parameters();
-    //     params.add(properties);
-    //     return params;
-    // }
-
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
