@@ -13,17 +13,16 @@ import java.io.File;
 
 public class CheckGraph {
 
+    static String REF_ID = "dde55a05";
+
     static void checkModules() {
         System.out.println("checkModules");
         GraphImporter<Long, DirectedEdge> imp = new Neo4JGraphImporter<Long, DirectedEdge>()
-                .vertices("MATCH (s:module {refId:$refId}) RETURN id(s) AS s, s.fullname AS name")
-                .vertexProperties("name")
-                .edges("MATCH (s:module {refId:$refId}) -[:uses]-> (t:module) RETURN id(s) AS s, id(t) AS t")
-                .parameters(
-                        "refId", "ac61e44a"
-                )
-                .labels("s", "t")
-                ;
+            .nodes("module")
+            .parameters(
+                    "refId", REF_ID
+            )
+            ;
 
         Graph<Long, DirectedEdge> g = Graphs.newGraph(Long.class, DirectedEdge.class);
         imp.importGraph(g, new File("config/neo4j.properties"));
@@ -39,13 +38,11 @@ public class CheckGraph {
     static void checkSources() {
         System.out.println("checkSources");
         GraphImporter<Long, DirectedEdge> imp = new Neo4JGraphImporter<Long, DirectedEdge>()
-                .vertices("MATCH (s:source {refId:$refId}) RETURN id(s) AS s")
-                .edges("MATCH (s:source {refId:$refId}) -[:uses]-> (t:source) RETURN id(s) AS s, id(t) AS t")
-                .parameters(
-                        "refId", "ac61e44a"
-                )
-                .labels("s", "t")
-                ;
+            .nodes("source")
+            .parameters(
+                    "refId", REF_ID
+            )
+            ;
 
         Graph<Long, DirectedEdge> g = Graphs.newGraph(Long.class, DirectedEdge.class);
         imp.importGraph(g, new File("config/neo4j.properties"));
@@ -59,16 +56,15 @@ public class CheckGraph {
     }
 
     static void checkGraph() {
-        System.out.println("checkModules");
+        System.out.println("checkGraph");
         GraphImporter<Long, DirectedEdge> imp = new Neo4JGraphImporter<Long, DirectedEdge>()
-            .vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s")
-            .edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t")
+            // .vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s")
+            // .edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t")
+            .nodes(null)
             .parameters(
-                "refId", "2b32f1fe"
-                // "refId", "c77f6865"
-                // "refId", "c5b55d07"
+                "refId", REF_ID
             )
-            .labels("s", "t")
+            // .labels("s", "t")
             ;
 
         Graph<Long, DirectedEdge> g = Graphs.newGraph(Long.class, DirectedEdge.class);
@@ -79,8 +75,8 @@ public class CheckGraph {
     }
 
     public static void main(String[] args) {
-        // checkModules();
-        // checkSources();
+        checkModules();
+        checkSources();
         checkGraph();
     }
 }
