@@ -1,10 +1,10 @@
 package org.hls.check;
 
 import jext.cache.CacheManager;
-import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.graph.neo4j.VGraphDatabase;
+import jext.graph.schema.GraphSchema;
 import jext.logging.Logger;
 import jext.util.MapUtils;
 
@@ -12,12 +12,12 @@ import java.io.File;
 
 public class CreateNodes {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Logger.configure();
         CacheManager.configure();
 
         VGraphDatabase gdb = (VGraphDatabase) GraphDatabases.create(new File("config/neo4j.properties"));
-        gdb.setGraphSchema(new File("config/dbschema.xml"));
+        gdb.setGraphSchema(GraphSchema.load(new File("config/dbschema.xml")));
 
         try(GraphSession s = gdb.connect("100001")) {
             s.deleteNodes("test", MapUtils.asMap());

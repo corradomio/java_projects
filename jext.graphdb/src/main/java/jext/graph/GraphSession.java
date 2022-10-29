@@ -120,7 +120,7 @@ public interface GraphSession extends AutoCloseable {
      *    2) if the value of a property is 'null' the property is checked for
      *       its existence.
      */
-    Query queryNodes(@Nullable String nodeType, @Nullable Map<String, Object> nodeProps);
+    Query queryNodes(@Nullable String nodeType, @Nullable Map<String,Object> nodeProps);
 
     /**
      * Find the node with the specified properties.
@@ -130,7 +130,7 @@ public interface GraphSession extends AutoCloseable {
      * @param nodeProps node properties
      */
     @Nullable
-    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String, Object> nodeProps);
+    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String,Object> nodeProps);
 
     /**
      * Check if the node exusts
@@ -139,7 +139,7 @@ public interface GraphSession extends AutoCloseable {
      * @param nodeProps node properties
      * @return true is the node exists
      */
-    boolean existsNode(@Nullable String nodeType, Map<String, Object> nodeProps);
+    boolean existsNode(@Nullable String nodeType, Map<String,Object> nodeProps);
 
     // ----------------------------------------------------------------------
     // Operations on a single node
@@ -163,7 +163,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Get the property values of the node
      */
-    Map<String, Object> getNodeValues(String nodeId);
+    Map<String,Object> getNodeValues(String nodeId);
 
     /**
      * Delete the node
@@ -179,7 +179,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Get the property values for the nodes
      */
-    List<Map<String, Object>> getNodesValues(Collection<String> nodeIds);
+    List<Map<String,Object>> getNodesValues(Collection<String> nodeIds);
 
     /**
      * Delete the nodes
@@ -234,7 +234,7 @@ public interface GraphSession extends AutoCloseable {
      */
     Query queryAdjacentNodes(
         String fromId, @Nullable String edgeType, Direction direction, boolean recursive,
-        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
+        String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps);
 
     /**
      * Select the adjacent nodes to the specified node, following the
@@ -251,7 +251,7 @@ public interface GraphSession extends AutoCloseable {
      */
     Query queryAdjacentNodes(
         Collection<String> fromIds, @Nullable String edgeType, Direction direction, boolean recursive,
-        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
+        String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge queries
@@ -273,9 +273,9 @@ public interface GraphSession extends AutoCloseable {
      *      edge: Map[String,Object]    edge properties
      */
     Query queryEdges(@Nullable String edgeType,
-                     @Nullable String fromType, Map<String, Object> fromProps,
-                     @Nullable String toType,   Map<String, Object> toProps,
-                     Map<String, Object> edgeProps);
+                     @Nullable String fromType, Map<String,Object> fromProps,
+                     @Nullable String toType,   Map<String,Object> toProps,
+                     Map<String,Object> edgeProps);
 
     /**
      * Retrieve the edges between the specified nodes
@@ -292,9 +292,9 @@ public interface GraphSession extends AutoCloseable {
      *
      */
     Query queryEdges(@Nullable String edgeType, Collection<String> fromIds, Collection<String> toIds,
-                     Map<String, Object> edgeProps);
+                     Map<String,Object> edgeProps);
     Query queryEdges(@Nullable String edgeType, String fromId, Collection<String> toIds,
-                     Map<String, Object> edgeProps);
+                     Map<String,Object> edgeProps);
 
     /**
      * Select the edges between the specified nodes
@@ -309,7 +309,7 @@ public interface GraphSession extends AutoCloseable {
      */
     Query  queryPath(@Nullable String edgeType,
                      String fromId, String toId, Direction direction, boolean recursive,
-                     Map<String, Object> edgeProps);
+                     Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edge
@@ -384,15 +384,15 @@ public interface GraphSession extends AutoCloseable {
      * Delete the edges with the specified properties
      *
      * @param edgeType  edge type
-     * @param fromNodeType source node type
+     * @param fromType source node type
      * @param fromProps source node properties
-     * @param toNodeType to node type
+     * @param toType to node type
      * @param toProps to node properties
      * @param edgeProps edge properties
      */
     long deleteEdges(@Nullable String edgeType,  // can be null
-                     String fromNodeType, Map<String, Object> fromProps,
-                     String toNodeType, Map<String, Object> toProps,
+                     String fromType, Map<String,Object> fromProps,
+                     String toType, Map<String,Object> toProps,
                      Map<String,Object> edgeProps,
                      LongConsumer callback);
 
@@ -443,7 +443,7 @@ public interface GraphSession extends AutoCloseable {
      *
      * @param edgeId edgeId
      */
-    Map<String, Object> getEdgeProperties(String edgeId);
+    Map<String,Object> getEdgeProperties(String edgeId);
 
     /**
      * Set the edge properties to the edges connecting fromId with toIds
@@ -454,13 +454,6 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      */
     void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
-
-    // ----------------------------------------------------------------------
-    // Properties
-    // ----------------------------------------------------------------------
-
-    // boolean isDAG(String nodeType, Map<String,Object> nodeProps,
-    //               String edgeType, Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Query using named queries

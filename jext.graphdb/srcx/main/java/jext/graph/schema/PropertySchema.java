@@ -5,7 +5,7 @@ import jext.graph.util.PropertyUtils;
 public class PropertySchema {
 
     // ----------------------------------------------------------------------
-    // Private Fields
+    // Constants
     // ----------------------------------------------------------------------
 
     private static final String BOOLEAN = "bool";
@@ -19,7 +19,9 @@ public class PropertySchema {
     private static final String BYTES = "bytes";
     private static final String JSON = "json";
 
-
+    // ----------------------------------------------------------------------
+    // Private Fields
+    // ----------------------------------------------------------------------
 
     private String name;
     private String type;

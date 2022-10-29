@@ -8,7 +8,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -78,7 +77,7 @@ public class GraphSchema {
     // Properties/get
     // ----------------------------------------------------------------------
 
-    public Map<String, Object> uniqueProps(String nodeType, Map<String, Object> nprops) {
+    public Map<String,Object> uniqueProps(String nodeType, Map<String,Object> nprops) {
         NodeSchema nodeSchema = nodeSchema(nodeType);
         return nodeSchema.uniqueProps(nprops);
     }

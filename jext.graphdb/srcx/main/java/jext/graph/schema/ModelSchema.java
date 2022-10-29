@@ -1,10 +1,8 @@
 package jext.graph.schema;
 
 import jext.graph.util.PropertyUtils;
-import jext.util.ArrayUtils;
 import jext.util.MapUtils;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -15,7 +13,7 @@ public class ModelSchema {
 
     public static ModelSchema NO_SCHEMA = new ModelSchema(null) {
         @Override
-        public Map<String, Object> normalizeCreate(NodeSchema nschema, Map<String, Object> nprops) {
+        public Map<String,Object> normalizeCreate(NodeSchema nschema, Map<String,Object> nprops) {
             return nprops;
         }
     };
@@ -54,7 +52,7 @@ public class ModelSchema {
     // Properties/get
     // ----------------------------------------------------------------------
 
-    public Map<String, Object> normalizeCreate(NodeSchema nschema, Map<String, Object> nprops) {
+    public Map<String,Object> normalizeCreate(NodeSchema nschema, Map<String,Object> nprops) {
         if (nschema == ref) {
             int rev = MapUtils.getInt(nprops, REVISION);
             nprops.put(REVISIONS, new int[]{rev});
@@ -62,7 +60,7 @@ public class ModelSchema {
         return nprops;
     }
 
-    public Map<String, Object> normalizeUpdate(NodeSchema nschema, Map<String, Object> nprops) {
+    public Map<String,Object> normalizeUpdate(NodeSchema nschema, Map<String,Object> nprops) {
         if (nschema == ref) {
             int rev = MapUtils.getInt(nprops, REVISION);
             int[] revs = MapUtils.getIntArray(nprops, REVISIONS);

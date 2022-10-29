@@ -2,7 +2,6 @@ package jext.graph.schema;
 
 import jext.graph.GraphDatabaseException;
 import jext.graph.util.PropertyUtils;
-import jext.util.Assert;
 import jext.util.MapUtils;
 
 import java.util.ArrayList;
@@ -76,20 +75,20 @@ public class NodeSchema {
         return pschema;
     }
 
-    public Map<String, Object> uniqueProps(Map<String, Object> props) {
+    public Map<String,Object> uniqueProps(Map<String,Object> props) {
         if (props.isEmpty() || unique.isEmpty())
             return Collections.emptyMap();
 
-        Map<String, Object> uprops = new HashMap<>();
+        Map<String,Object> uprops = new HashMap<>();
         for (String uname : unique)
             uprops.put(uname, props.get(uname));
 
         return uprops;
     }
 
-    public Map<String, Object> normalizeCreate(Map<String, Object> cprops) {
+    public Map<String,Object> normalizeCreate(Map<String,Object> cprops) {
         int rev = MapUtils.getOrDefault(cprops, REVISION, -1);
-        Map<String, Object> nprops = new HashMap<>();
+        Map<String,Object> nprops = new HashMap<>();
         for (String pname : cprops.keySet()) {
             Object value = cprops.get(pname);
             if (REVISION.equals(pname))
@@ -104,9 +103,9 @@ public class NodeSchema {
         return nprops;
     }
 
-    public Map<String, Object> normalizeUpdate(Map<String, Object> cprops, Map<String, Object> uprops) {
+    public Map<String,Object> normalizeUpdate(Map<String,Object> cprops, Map<String,Object> uprops) {
         int rev = MapUtils.getOrDefault(uprops, REVISION, -1);
-        Map<String, Object> nprops = new HashMap<>();
+        Map<String,Object> nprops = new HashMap<>();
         for (String pname : uprops.keySet()) {
             Object uvalue = uprops.get(pname);
             Object cvalue = cprops.get(pname);
@@ -123,9 +122,9 @@ public class NodeSchema {
         return nprops;
     }
 
-    public Map<String, Object> normalizeQuery(Map<String, Object> qprops) {
+    public Map<String,Object> normalizeQuery(Map<String,Object> qprops) {
         int rev = MapUtils.getOrDefault(qprops, REVISION, -1);
-        Map<String, Object> nprops = new HashMap<>();
+        Map<String,Object> nprops = new HashMap<>();
         for (String pname : qprops.keySet()) {
             Object value = qprops.get(pname);
             if (REVISION.equals(pname))

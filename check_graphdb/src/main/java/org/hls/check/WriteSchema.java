@@ -65,7 +65,7 @@ public class WriteSchema {
         Map<String, Map<String, String>> schema = new TreeMap<>();
 
         try(GraphSession s = gdb.connect()) {
-            List<Map<String, Object>> labels = s.query("MATCH (n) RETURN DISTINCT(labels(n)) AS l",
+            List<Map<String,Object>> labels = s.query("MATCH (n) RETURN DISTINCT(labels(n)) AS l",
                 Collections.emptyMap()
             ).result().toList();
             labels.forEach(m -> {
@@ -74,13 +74,13 @@ public class WriteSchema {
                 Map<String, String> ptypes = new TreeMap<>();
                 schema.put(label, ptypes);
 
-                List<Map<String, Object>> rlist = s.query(String.format("MATCH (n:%s) RETURN n", label),
+                List<Map<String,Object>> rlist = s.query(String.format("MATCH (n:%s) RETURN n", label),
                     Collections.emptyMap()
                 ).result().toList();
 
                 rlist.forEach(r -> {
                     Node node = (Node) r.get("n");
-                    Map<String, Object> n = node.asMap();
+                    Map<String,Object> n = node.asMap();
                     n.forEach((k, v) -> {
                         String t = toType(v);
                         if (t == null)

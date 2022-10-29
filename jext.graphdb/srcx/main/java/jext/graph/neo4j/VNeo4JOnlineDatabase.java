@@ -1,29 +1,12 @@
 package jext.graph.neo4j;
 
-import jext.graph.GraphDatabaseException;
 import jext.graph.GraphSession;
-import jext.graph.named.NamedIndex;
-import jext.graph.named.NamedIndices;
-import jext.graph.named.NamedQueries;
 import jext.graph.schema.GraphSchema;
 import jext.net.URL;
-import jext.util.MapUtils;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphDatabase {
-
-    // ----------------------------------------------------------------------
-    // Constants
-    // ----------------------------------------------------------------------
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -44,24 +27,13 @@ public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphD
     // ----------------------------------------------------------------------
 
     @Override
-    public GraphSchema getGraphSchema() {
-        return graphSchema;
-    }
-
-    @Override
     public VGraphDatabase setGraphSchema(GraphSchema graphSchema) {
         this.graphSchema = graphSchema;
         return this;
     }
 
-    @Override
-    public VGraphDatabase setGraphSchema(File schemaFile)  {
-        try {
-            GraphSchema graphSchema = GraphSchema.load(schemaFile);
-            return setGraphSchema(graphSchema);
-        } catch (ParserConfigurationException| IOException | SAXException e) {
-            throw new GraphDatabaseException(e);
-        }
+    GraphSchema getGraphSchema() {
+        return graphSchema;
     }
 
     // ----------------------------------------------------------------------

@@ -28,15 +28,15 @@ public class Neo4JAdjacentQuery implements Query {
     private String edgeType;
     private Direction direction;
     private String nodeType;
-    private Map<String, Object> nodeProps;
-    private Map<String, Object> edgeProps;
+    private Map<String,Object> nodeProps;
+    private Map<String,Object> edgeProps;
 
     //private List<String> resultIds;
 
     public Neo4JAdjacentQuery(
         GraphSession session,
         Collection<String> fromIds, String edgeType, Direction direction,
-        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps) {
+        String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps) {
         this.session = (Neo4JOnlineSession) session;
 
         this.fromIds = fromIds;
@@ -88,7 +88,7 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public Map<String, Object> values(String alias) {
+    public Map<String,Object> values(String alias) {
         return values();
     }
 
@@ -98,7 +98,7 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String, Object>> allValues(String alias) {
+    public GraphIterator<Map<String,Object>> allValues(String alias) {
         return allValues();
     }
 
@@ -131,7 +131,7 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public Map<String, Object> values() {
+    public Map<String,Object> values() {
         return scanAdjacentNodes().values();
         // if (resultIds.isEmpty())
         //     return null;
@@ -146,17 +146,17 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String, Object>> allValues() {
+    public GraphIterator<Map<String,Object>> allValues() {
         return scanAdjacentNodes().allValues();
     }
 
     @Override
-    public GraphIterator<Map<String, Object>> result() {
+    public GraphIterator<Map<String,Object>> result() {
         return allValues(alias);
     }
 
     @Override
-    public GraphIterator<Map<String, Object>> result(String alias) {
+    public GraphIterator<Map<String,Object>> result(String alias) {
         return allValues(alias);
     }
 

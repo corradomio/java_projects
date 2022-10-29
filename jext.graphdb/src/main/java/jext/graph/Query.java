@@ -44,8 +44,8 @@ public interface Query {
     /**
      * Return the values of SINGLE element
      */
-    @Nullable Map<String, Object> values();
-    @Nullable Map<String, Object> values(String alias);
+    @Nullable Map<String,Object> values();
+    @Nullable Map<String,Object> values(String alias);
 
     /**
      * Return the id of the selected elements
@@ -56,13 +56,13 @@ public interface Query {
     /**
      * Return the value of the selected elements
      */
-    GraphIterator<Map<String, Object>> allValues();
-    GraphIterator<Map<String, Object>> allValues(String alias);
+    GraphIterator<Map<String,Object>> allValues();
+    GraphIterator<Map<String,Object>> allValues(String alias);
 
     /**
      * Return the result of the query
      */
-    GraphIterator<Map<String, Object>> result();
-    GraphIterator<Map<String, Object>> result(String alias);
+    GraphIterator<Map<String,Object>> result();
+    GraphIterator<Map<String,Object>> result(String alias);
 
 }

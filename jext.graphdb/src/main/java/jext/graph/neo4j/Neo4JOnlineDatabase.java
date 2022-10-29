@@ -28,8 +28,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     private static final String USER = "user";
     private static final String PASSWORD = "password";
-
     private static final String NAME = "name";
+    private static final String REVBOLT = "revbolt";
 
     // compatibility with a previous implementation
     private static final String URL_EXT = "neo4j.online.url";
@@ -45,8 +45,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
     private static Logger logger = Logger.getLogger(Neo4JOnlineDatabase.class);
 
-    private final URL url;
-    private Driver driver;
+    protected final URL url;
+    protected Driver driver;
     protected final Properties properties;
     protected GraphVersion version;
     protected NamedQueries namedQueries = new NamedQueries();
@@ -78,12 +78,14 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
         // compatibility with a previous implementation
         if (user == null) user = this.properties.getProperty(USER_EXT);
         if (password == null) password = properties.getProperty(PASSWORD_EXT);
+        // support for 'bolt://...' and 'bolt:rev://...'
+        if (uri.startsWith(REVBOLT)) uri = uri.substring(3);
 
         this.driver = org.neo4j.driver.GraphDatabase.driver( uri, AuthTokens.basic( user, password ) );
 
         try(GraphSession session = this.connect()) {
             String s = "CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition";
-            Map<String, Object> result = session.query(s, Collections.emptyMap()).result().next();
+            Map<String,Object> result = session.query(s, Collections.emptyMap()).result().next();
             this.version = new GraphVersion(result.get("version").toString());
         }
 

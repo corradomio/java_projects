@@ -24,13 +24,13 @@ public class Neo4JQuery implements Query {
     private Neo4JOnlineSession session;
     private String stmt;
     private String alias;
-    private Map<String, Object> params;
+    private Map<String,Object> params;
     private boolean edge;
 
     private Limit limit;
     private boolean distinct;
 
-    public Neo4JQuery(GraphSession session, String alias, String stmt, Map<String, Object> p) {
+    public Neo4JQuery(GraphSession session, String alias, String stmt, Map<String,Object> p) {
         this.session = (Neo4JOnlineSession) session;
         this.stmt = stmt;
         this.alias = alias;
@@ -66,8 +66,8 @@ public class Neo4JQuery implements Query {
     @Override public long delete() { return delete(alias); }
     @Override public String id(){ return id(alias); }
     @Override public GraphIterator<String> ids() { return ids(alias); }
-    @Override public Map<String, Object> values() { return values(alias); }
-    @Override public GraphIterator<Map<String, Object>> allValues() { return allValues(alias); }
+    @Override public Map<String,Object> values() { return values(alias); }
+    @Override public GraphIterator<Map<String,Object>> allValues() { return allValues(alias); }
 
 
     @Override
@@ -112,13 +112,13 @@ public class Neo4JQuery implements Query {
     }
 
     @Override
-    public Map<String, Object> values(String alias) {
+    public Map<String,Object> values(String alias) {
         String s = String.format("%s RETURN %s", stmt, alias);
         return session.retrieve(alias, s, params);
     }
 
     @Override
-    public GraphIterator<Map<String, Object>> allValues(String alias) {
+    public GraphIterator<Map<String,Object>> allValues(String alias) {
         String s;
         if (distinct)
             s = String.format("%s RETURN DISTINCT %s", stmt, alias);
@@ -129,7 +129,7 @@ public class Neo4JQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String, Object>> result() {
+    public GraphIterator<Map<String,Object>> result() {
         String s = setLimit(stmt);
         return session.resultIter(alias, s, params, edge);
     }
@@ -149,12 +149,12 @@ public class Neo4JQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String, Object>> result(String alias) {
+    public GraphIterator<Map<String,Object>> result(String alias) {
         String s = setLimit(stmt);
 
-        GraphIterator<Map<String, Object>> git = session.resultIter(alias, s, params, edge);
+        GraphIterator<Map<String,Object>> git = session.resultIter(alias, s, params, edge);
 
-        return new GraphIterator<Map<String, Object>>() {
+        return new GraphIterator<Map<String,Object>>() {
 
             @Override
             public boolean hasNext() {
@@ -162,9 +162,9 @@ public class Neo4JQuery implements Query {
             }
 
             @Override
-            public Map<String, Object> next() {
-                Map<String, Object> tmp = git.next();
-                Map<String, Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, alias));
+            public Map<String,Object> next() {
+                Map<String,Object> tmp = git.next();
+                Map<String,Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, alias));
 
                 for (String key : tmp.keySet()) {
                     if (key.equals(alias))
@@ -178,16 +178,16 @@ public class Neo4JQuery implements Query {
             }
 
             @Override
-            public List<Map<String, Object>> toList() {
-                List<Map<String, Object>> l = new ArrayList<>();
+            public List<Map<String,Object>> toList() {
+                List<Map<String,Object>> l = new ArrayList<>();
                 while(hasNext())
                     l.add(next());
                 return l;
             }
 
             @Override
-            public Set<Map<String, Object>> toSet() {
-                Set<Map<String, Object>> s = new HashSet<>();
+            public Set<Map<String,Object>> toSet() {
+                Set<Map<String,Object>> s = new HashSet<>();
                 while(hasNext())
                     s.add(next());
                 return s;
