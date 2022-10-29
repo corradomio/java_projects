@@ -91,24 +91,11 @@ public class GraphSchema {
     }
 
     public ModelSchema modelSchema(String model) {
-        if (model == null)
+        if (model == null || !modelSchemas.containsKey(model))
             return ModelSchema.NO_SCHEMA;
         else
             return modelSchemas.get(model);
     }
-
-    // public boolean isModelReference(String model, String nodeType) {
-    //     if (isEmpty(model) || isEmpty(nodeType))
-    //         return false;
-    //     ModelSchema modelSchema = modelSchemas.get(model);
-    //     if (modelSchema == null)
-    //         return false;
-    //     NodeSchema nodeSchema = modelSchema.referenceNode();
-    //     if (nodeSchema == null)
-    //         return false;
-    //     else
-    //         return nodeSchema.name().equals(nodeType);
-    // }
 
     // ----------------------------------------------------------------------
     // Properties/set

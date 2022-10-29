@@ -44,8 +44,12 @@ public class ModelSchema {
         return name;
     }
 
-    public NodeSchema referenceNode() {
+    public NodeSchema reference() {
         return ref;
+    }
+
+    public boolean isReference(String name) {
+        return ref != null && ref.name().equals(name);
     }
 
     // ----------------------------------------------------------------------

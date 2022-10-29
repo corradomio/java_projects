@@ -2,43 +2,77 @@ package jext.graph.neo4j;
 
 import jext.graph.Query;
 import jext.graph.schema.GraphSchema;
+import jext.graph.schema.ModelSchema;
+import jext.graph.schema.NodeSchema;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.LongConsumer;
 
+/*
+                   (1)              (2)
+    MATCH  (n:type {p:v,...}) WHERE n.p=v AND ... RETURN n
+                   (1)              (3)
+    CREATE (n:type {p:v,...}) SET   n.p=v,... RETURN id(n)
+
+    ... RETURN n.p, ...
+    ... DELETE n.p, ...
+ */
+
 public class VNeo4JOnlineSession extends Neo4JOnlineSession {
 
-    public static final int NO_REVISION = -1;
+    private static final String REVISION = "revision";
+    public static final int NO_REV = -1;
 
     private final String refId;
     private final String model;
-    private final int revision;
+    private final int rev;
     private final GraphSchema schema;
 
-    public VNeo4JOnlineSession(VNeo4JOnlineDatabase graphdb, String refId, String model, int revision) {
+    public VNeo4JOnlineSession(VNeo4JOnlineDatabase graphdb, String refId, String model, int rev) {
         super(graphdb);
         this.refId = refId;
         this.model = model;
-        this.revision = revision;
+        this.rev = rev;
         this.schema = graphdb.getGraphSchema();
     }
 
     // ----------------------------------------------------------------------
     // Query Nodes
     // ----------------------------------------------------------------------
-    //
-
-    private Map<String,Object> check(Map<String,Object> props) {
-        if (props != null && !props.containsKey(REF_ID) && refId != null) {
+    
+    // create
+    private Map<String, Object> check(String nodeType, Map<String,Object> props) {
+        if (props != null && refId != null) {
             if (props.isEmpty())
                 props = new HashMap<>();
-            props.put(REF_ID, refId);
+            if (!props.containsKey(REF_ID))
+                props.put(REF_ID, refId);
         }
+        ModelSchema mschema = schema.modelSchema(model);
+        NodeSchema  nschema = schema.nodeSchema(nodeType);
+
+        if (mschema.isReference(nodeType))
+        if (nschema.isRevisioned() && rev != NO_REV)
+            props.put(REVISION, rev);
+
         return props;
     }
 
+    // query
+    private Map<String,Object> check(Map<String,Object> props) {
+        if (props != null && refId != null) {
+            if (props.isEmpty())
+                props = new HashMap<>();
+            if (!props.containsKey(REF_ID))
+                props.put(REF_ID, refId);
+            if (!props.containsKey(REVISION) && rev != NO_REV)
+                props.put(REVISION, rev);
+        }
+        return props;
+    }
+    
     @Override
     public Query queryNodes(@Nullable String nodeType, @Nullable Map<String,Object> nodeProps) {
         return super.queryNodes(nodeType, check(nodeProps));
@@ -61,12 +95,12 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession {
 
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps) {
-        return super.createNode(nodeType, check(nodeProps));
+        return super.createNode(nodeType, check(nodeType, nodeProps));
     }
 
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps) {
-        return super.createNode(nodeType, check(findProps), updateProps);
+        return super.createNode(nodeType, check(nodeType, findProps), updateProps);
     }
 
     // ----------------------------------------------------------------------

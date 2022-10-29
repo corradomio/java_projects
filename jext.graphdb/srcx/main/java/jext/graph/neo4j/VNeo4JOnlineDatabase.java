@@ -7,7 +7,7 @@ import jext.net.URL;
 import javax.annotation.Nullable;
 import java.util.Properties;
 
-import static jext.graph.neo4j.VNeo4JOnlineSession.NO_REVISION;
+import static jext.graph.neo4j.VNeo4JOnlineSession.NO_REV;
 
 public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphDatabase {
 
@@ -45,12 +45,12 @@ public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphD
 
     @Override
     public GraphSession connect() {
-        return connect(null, null, NO_REVISION);
+        return connect(null, null, NO_REV);
     }
 
     @Override
     public GraphSession connect(@Nullable String refId) {
-        return connect(refId, null, NO_REVISION);
+        return connect(refId, null, NO_REV);
     }
 
     @Override
