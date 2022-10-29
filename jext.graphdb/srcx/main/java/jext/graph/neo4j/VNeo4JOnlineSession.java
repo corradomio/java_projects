@@ -10,6 +10,8 @@ import java.util.function.LongConsumer;
 
 public class VNeo4JOnlineSession extends Neo4JOnlineSession {
 
+    public static final int NO_REVISION = -1;
+
     private final String refId;
     private final String model;
     private final int revision;
