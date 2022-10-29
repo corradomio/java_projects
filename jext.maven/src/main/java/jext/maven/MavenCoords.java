@@ -60,7 +60,7 @@ public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
         if (v == null) v = NONE;
 
         if (name.contains(":") && !name.endsWith(v)) {
-            logger.warnf("Invalid name,version pair: %s, %s", name, v);
+            // logger.debugf("Invalid name,version pair: %s, %s", name, v);
         }
 
         String[] parts = name.split(":");

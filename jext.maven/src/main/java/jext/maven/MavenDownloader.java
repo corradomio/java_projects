@@ -342,6 +342,7 @@ public class MavenDownloader implements MavenConst {
         return visited
             .stream()
             .map(dcoords -> dcoords.coords)
+            .map(this::getVersioned)
             .collect(Collectors.toSet());
     }
 
@@ -681,7 +682,7 @@ public class MavenDownloader implements MavenConst {
         // if 'coords' are marked as 'invalid', skip then (with timeout)
         if (isInvalidType(coords, type)) {
             excpt.addCause(new RuntimeException("Invalid Maven coordinates: " + coords.toString()));
-            logger.warnc(coords.toString(), "Maven artifact %s invalid (because marked with '.invalid' flag file)", coords);
+            logger.warnc(coords.toString(), "Maven artifact %s marked '.invalid'", coords);
             return excpt;
         }
 
@@ -986,9 +987,9 @@ public class MavenDownloader implements MavenConst {
     public void checkArtifacts(Collection<MavenCoords> coordsList, boolean parallel) {
         logger.infof("Checking %d artifacts ...", coordsList.size());
         if (parallel)
-            Parallel.forEach(coordsList, coords -> checkArtifact(coords));
+            Parallel.forEach(coordsList, this::checkArtifact);
         else
-            Serial.forEach(coordsList, coords -> checkArtifact(coords));
+            Serial.forEach(coordsList, this::checkArtifact);
         logger.infof("Checked %d artifacts", coordsList.size());
     }
 

@@ -123,6 +123,8 @@ public class NuGetDownloader implements LibraryDownloader {
     }
 
     // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
 
     public void initialize() {
         createDownloadDirectory();
