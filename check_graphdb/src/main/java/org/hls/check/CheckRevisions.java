@@ -54,11 +54,7 @@ public class CheckRevisions {
 
         try(GraphSession s = gdb.connect(REF_ID, "source", 5)) {
             s.deleteNodes("module", MapUtils.asMap(
-                "name", "mymodule",
-                "fullname", "p.mymodule",
-                "digest", 444,
-                "mrefId", "01",
-                "path", "mypath"
+                "fullname", "p.mymodule"
             ));
         }
 

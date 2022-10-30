@@ -54,6 +54,7 @@ public class Neo4JOnlineSession implements GraphSession {
     static final String FROM = "from";
     static final String TO = "to";
     static final String NONE = "";
+    static final String ID = "id";
 
     static final String AND_BLOCK = "${and:";
     static final String WHERE_BLOCK = "${where:";
@@ -233,7 +234,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String s = "MATCH (n) WHERE id(n) = $id RETURN count(n)";
 
         return this.count(s, Parameters.params(
-            "id", asId(nodeId))) > 0;
+            ID, asId(nodeId))) > 0;
     }
 
     @Override
@@ -256,7 +257,7 @@ public class Neo4JOnlineSession implements GraphSession {
         if (invalidId(nodeId)) return false;
 
         Parameters params = Parameters.params(
-            "id", asId(nodeId));
+            ID, asId(nodeId));
         String s = "MATCH (n) WHERE id(n) = $id DETACH DELETE n";
         long count = this.delete(s, params, false);
         return count > 0;
@@ -267,7 +268,7 @@ public class Neo4JOnlineSession implements GraphSession {
         if (invalidId(nodeId)) return Collections.emptyMap();
 
         Parameters params = Parameters.params(
-            "id", asId(nodeId));
+            ID, asId(nodeId));
         String s = "MATCH (n) WHERE id(n) = $id RETURN n";
         return this.retrieve(N, s, params);
     }
@@ -368,7 +369,7 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public List<Map<String,Object>> getNodesValues(Collection<String> nodeIds) {
         Parameters params = Parameters.params(
-            "id", asIds(nodeIds));
+            ID, asIds(nodeIds));
         String s = "MATCH (n) WHERE id(n) IN $id RETURN n";
 
         return this.retrieveAllIter(N, s, params, false).toList();
@@ -388,7 +389,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String sblock = sblock(N, nodeProps, false);
 
         Parameters params = Parameters.params(
-            "id", asId(nodeId))
+            ID, asId(nodeId))
             .add(N, nodeProps);
 
         String s = String.format("MATCH (n) WHERE id(n) = $id %s RETURN n", sblock);
@@ -424,7 +425,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String sblock = sblock(N, updateProps, false);
         String s = String.format("MATCH (n %s %s) %s %s RETURN count(n)", label(nodeType), pblock, wblock, sblock);
 
-        Parameters params = Parameters.params(nodeProps).add(N, nodeProps);
+        Parameters params = Parameters.params(nodeProps)
+            .add(N, nodeProps)
+            .add(N, updateProps);
 
         this.execute(s, params);
     }
@@ -532,16 +535,16 @@ public class Neo4JOnlineSession implements GraphSession {
         String s;
 
         if (recursive) {
-            s = String.format("MATCH shortestPath( (node) %s (n: %s %s) ) WHERE id(node) in $id %s",
+            s = String.format("MATCH shortestPath( (t) %s (n: %s %s) ) WHERE id(t) in $id %s",
                 eblock, nodeType, pblock, wblock);
         }
         else {
-            s = String.format("MATCH (node) %s (n: %s %s) WHERE id(node) in $id %s",
+            s = String.format("MATCH (t) %s (n: %s %s) WHERE id(t) in $id %s",
                 eblock, nodeType, pblock, wblock);
         }
 
         Parameters params = Parameters.params(
-            "id", asIds(fromIds))
+            ID, asIds(fromIds))
             .add(N, nodeProps)
             .add(E, edgeProps);
 
@@ -555,7 +558,7 @@ public class Neo4JOnlineSession implements GraphSession {
             eblock, wblock);
 
         Parameters params = Parameters.params(
-            "id", asIds(fromIds))
+            ID, asIds(fromIds))
             .add(E, edgeProps);
 
         return new Neo4JQuery(this, N, s, params).distinct();
@@ -566,7 +569,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String s = String.format("MATCH (n %s %s) WHERE id(n) in $id", label(nodeType), pblock);
 
         Parameters params = Parameters.params(
-            "id", asIds(ids))
+            ID, asIds(ids))
             .add(N, nodeProps);
 
         return new Neo4JQuery(this, N, s, params);
@@ -1037,7 +1040,7 @@ public class Neo4JOnlineSession implements GraphSession {
             "WHERE id(e) = $id %s", sblock);
 
         Parameters params = Parameters.params(
-            "id", asId(edgeId))
+            ID, asId(edgeId))
             .add(E, updateProps);
         this.execute(s, params);
     }
@@ -1053,7 +1056,7 @@ public class Neo4JOnlineSession implements GraphSession {
     public Map<String,Object> getEdgeProperties(String edgeId) {
         String s = String.format("MATCH ()-[e]-() WHERE id(e) = $id RETURN e LIMIT 1");
         Parameters params = Parameters.params(
-            "id", asId(edgeId));
+            ID, asId(edgeId));
         return this.retrieve("e", s, params, true);
     }
 
