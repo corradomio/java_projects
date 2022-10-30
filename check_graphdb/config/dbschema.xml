@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graphdb>
+    <!--
+      -->
     <schema>
-        <!-- BEFORE models -->
-        <!--
-            unique id
-
-          -->
         <nodes>
             <node name="splproject">
                 <!-- property name="refId" type="string"/ -->
@@ -354,10 +351,7 @@
 
         <!-- unused for now -->
         <edges>
-            <edge name="use" revisiond="true">
-                <source ref="source"/>
-                <target ref="source"/>
-            </edge>
+
         </edges>
 
         <!-- AFTER nodes -->

@@ -11,7 +11,7 @@ import jext.util.MapUtils;
 import java.io.File;
 import java.util.Collections;
 
-public class CheckRevisions {
+public class CheckRevNodes {
 
     static String REF_ID = "100001";
 

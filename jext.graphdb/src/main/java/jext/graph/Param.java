@@ -73,11 +73,17 @@ public class Param {
             return keyed.substring(pos + 1, end);
     }
 
-    // name        -> name
-    // $name       -> name
-    // name[index] -> nameIndex
-    // name[!]     -> name_a
-    // name[+]     -> name_a
+    public static String pnameOf(String param, String index) {
+        if (param.startsWith("$"))
+            param = param.substring(1);
+        return String.format("%s%s", param, index);
+    }
+
+    // name             -> name
+    // $name            -> name
+    // name[index]      -> nameIndex
+    // name[!]          -> name_a
+    // name[+]          -> name_a
     // name[index,!]    -> nameIndex_a
     // name[index,+]    -> nameIndex_a
     // name[idx1,idx2]  -> nameIdx1_Idx2

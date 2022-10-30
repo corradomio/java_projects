@@ -168,6 +168,21 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // Edge queries
     // ----------------------------------------------------------------------
 
+    private Map<String,Object> echeck(Map<String,Object> props) {
+        if (props.containsKey(REVISION))
+            props.put(REVISION, rev);
+        return props;
+    }
+
+    @Override
+    public String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps) {
+        return super.createEdge(edgeType, fromId, toId, echeck(edgeProps));
+    }
+
+    // ----------------------------------------------------------------------
+    // Edge queries
+    // ----------------------------------------------------------------------
+
     @Override
     public Query queryEdges(
         @Nullable String edgeType,

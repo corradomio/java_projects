@@ -153,7 +153,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Create or update a node
      */
-    String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> nodeProps);
+    String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
 
     /**
      * Check if the node there exists

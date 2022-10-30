@@ -47,6 +47,9 @@ class CypherFormatter {
     //      n.$degree    ==  apoc.node.degree(n)
     //      n.$outdegree ==  apoc.node.degree(n, '>')
     //      n.$indegree  ==  apoc.node.degree(n, '<')
+    //
+    //      n.$count
+    //      e.$count
     //  .
 
     static String label(String type) {
@@ -254,6 +257,12 @@ class CypherFormatter {
                 String index = params.get(param).toString();
                 sb.append(String.format("%1$s.inRevision = apocx.coll.arraySet(%1$s.inRevision, $%1$s%3$s, true)",
                     alias, index, param));
+            }
+
+            // [$count, 1] -> n.count = arrayIncr(n.count, index)
+            else if (isCount(param)) {
+                sb.append(String.format("%1$s.count = apocx.coll.arrayIncr(%1$s.count, $%1$srevision)",
+                    alias));
             }
 
             // name[!] -> appendDistinct(n.name, $pname)
@@ -504,6 +513,10 @@ class CypherFormatter {
 
     private static boolean isRevision(String name) {
         return "revision".equals(name);
+    }
+
+    private static boolean isCount(String name) {
+        return "$count".equals(name);
     }
 
     private static boolean isDegree(String name) {

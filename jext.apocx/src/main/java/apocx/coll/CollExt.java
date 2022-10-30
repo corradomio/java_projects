@@ -67,7 +67,7 @@ public class CollExt {
         }
 
         int n = coll.size();
-        if (index > n) {
+        if (index >= n) {
             Object lastValue;
             if (n > 0)
                 lastValue = coll.get(n-1);
