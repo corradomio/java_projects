@@ -11,4 +11,5 @@ public class ModelNode {
     public void setRef(String ref) {
         this.ref = ref;
     }
+
 }

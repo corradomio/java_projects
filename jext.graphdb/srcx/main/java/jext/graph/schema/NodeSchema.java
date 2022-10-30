@@ -10,6 +10,16 @@ import java.util.Map;
 
 public class NodeSchema {
 
+    public static NodeSchema of(String name) {
+        NodeSchema nschema = new NodeSchema();
+        nschema.name = name;
+        return nschema;
+    }
+
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
     public static final int NO_REV = -1;
     public static final String REVISION = "revision";
     public static final String REVISIONS = "revisions";
@@ -24,8 +34,8 @@ public class NodeSchema {
     private String  name;
     private boolean revisioned;
 
-    private Map<String, PropertySchema> properties = new HashMap<>();
-    private List<String> unique = new ArrayList<>();
+    private final Map<String, PropertySchema> properties = new HashMap<>();
+    private final List<String> unique = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -47,13 +57,6 @@ public class NodeSchema {
         return revisioned;
     }
 
-    public boolean isRevisioned(String name) {
-        if (properties.containsKey(name))
-            return properties.get(name).isRevisioned();
-        else
-            return false;
-    }
-
     // ----------------------------------------------------------------------
     // Properties/set
     // ----------------------------------------------------------------------
@@ -68,9 +71,9 @@ public class NodeSchema {
     }
 
     public void addProperty(PropertySchema pschema) {
-        properties.put(pschema.getName(), pschema);
+        properties.put(pschema.name(), pschema);
         if (pschema.isUnique())
-            unique.add(pschema.getName());
+            unique.add(pschema.name());
     }
 
     // ----------------------------------------------------------------------
@@ -84,8 +87,9 @@ public class NodeSchema {
     public PropertySchema propertySchema(String name) {
         PropertySchema pschema = properties.get(name);
         if (pschema == null) {
-            logger.errorf("Invalid property %s.%s", this.name, name);
+            logger.warnf("Unknown property %s.%s", this.name, name);
             pschema = PropertySchema.of(name, null);
+            addProperty(pschema);
         }
         return pschema;
     }

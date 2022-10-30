@@ -124,18 +124,13 @@
                 <property name="namespace" type="string"/>
                 <property name="type" type="string"/>
             </node>
+
             <node name="type" revisioned="true">
                 <!-- property name="refId" type="string"/ -->
                 <!-- property name="inRevision" type="bool[]"/ -->
 
-                <property name="clusterF" type="string"/>
-                <property name="clusterF2" type="string"/>
-                <property name="clusterT" type="string"/>
-                <property name="clusterT2" type="string"/>
                 <property name="digest" type="string" revisioned="true"/>
-                <property name="featureScore" type="double" revisioned="true"/>
                 <property name="fullname" type="string"/>
-                <property name="kCoreScore" type="double" revisioned="true"/>
                 <property name="libraryId" type="string"/>
                 <property name="modifiers" type="string[]"/>
                 <property name="moduleId" type="string"/>
@@ -149,25 +144,29 @@
                 <property name="type" type="string"/>
                 <property name="typeParams" type="long"/>
             </node>
+
             <node name="method" revisioned="true">
                 <!-- property name="refId" type="string"/ -->
                 <!-- property name="inRevision" type="bool[]"/ -->
 
-                <property name="declaration" type="string"/>
-                <property name="digest" type="string" revisioned="true"/>
-                <property name="fullname" type="string"/>
-                <property name="modifiers" type="string[]"/>
-                <property name="moduleId" type="string"/>
-                <property name="nParams" type="long"/>
+                <property name="declaration" type="string" revisioned="true"/>
+                <property name="signature"   type="string" revisioned="true"/>
+                <property name="digest"      type="string" revisioned="true"/>
+
+                <property name="typeId" type="string" revisioned="true"/>
+
                 <property name="name" type="string"/>
+                <property name="fullname" type="string"/>
                 <property name="namespace" type="string"/>
-                <property name="ownerTypeId" type="string"/>
+
+                <property name="modifiers" type="string[]" revisioned="true"/>
+
                 <property name="projectId" type="string"/>
-                <property name="signature" type="string"/>
+                <property name="moduleId" type="string"/>
                 <property name="sourceId" type="string"/>
-                <property name="type" type="string"/>
-                <property name="typeId" type="string[]"/>
+                <property name="ownerTypeId" type="string"/>
             </node>
+
             <node name="parameter">
                 <!-- property name="refId" type="string"/ -->
 
@@ -182,6 +181,7 @@
                 <property name="type" type="string"/>
                 <property name="typeId" type="string"/>
             </node>
+
             <node name="field" revisioned="true">
                 <!-- property name="refId" type="string"/ -->
                 <!-- property name="inRevision" type="bool[]"/ -->
@@ -349,12 +349,30 @@
             </node>
         </nodes>
 
-        <!-- unused for now -->
-        <edges>
+        <!--
+            list of revisioned edges
+            We suppose that there are NO edges with the same name,
+            one revisioned and the other no!
 
+            "memberOf"
+            "uses"
+            "inNamespace"
+            "context"
+            "comment"
+            "ofType"
+            "follows"
+            "contains"
+            "use"
+            "call"
+            "declares"
+          -->
+        <edges>
+            <edge name="uses"     revisioned="true"/>
+            <edge name="memberOf" revisioned="true"/>
+            <edge name="contains" revisioned="true"/>
+            <edge name="ofType"   revisioned="true"/>
         </edges>
 
-        <!-- AFTER nodes -->
         <models>
             <model name="source"        ref="msource">
                 <node ref="project"/>

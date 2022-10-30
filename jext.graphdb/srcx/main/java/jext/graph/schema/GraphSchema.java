@@ -1,6 +1,7 @@
 package jext.graph.schema;
 
 import jext.graph.GraphDatabaseException;
+import jext.logging.Logger;
 import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.ObjectCreateRule;
 import org.xml.sax.SAXException;
@@ -40,11 +41,18 @@ public class GraphSchema {
         d.addSetProperties("graphdb/schema/nodes/node/property");
         // property -> node
         d.addSetNext( "graphdb/schema/nodes/node/property", "addProperty" );
+
         // node
         d.addObjectCreate("graphdb/schema/nodes/node", NodeSchema.class);
         d.addSetProperties("graphdb/schema/nodes/node");
         // node -> graph
         d.addSetNext( "graphdb/schema/nodes/node", "addNodeSchema" );
+
+        // edge
+        d.addObjectCreate("graphdb/schema/edges/edge", EdgeSchema.class);
+        d.addSetProperties("graphdb/schema/edges/edge");
+        // edge -> graph
+        d.addSetNext( "graphdb/schema/edges/edge", "addEdgeSchema" );
 
         // model
         ObjectCreateRule msc = new ObjectCreateRule(ModelSchema.class);
@@ -66,7 +74,10 @@ public class GraphSchema {
     // Private fields
     // ----------------------------------------------------------------------
 
+    private static final Logger logger = Logger.getLogger(GraphSchema.class);
+
     private Map<String, NodeSchema>  nodeSchemas  = new TreeMap<>();
+    private Map<String, EdgeSchema>  edgeSchemas  = new TreeMap<>();
     private Map<String, ModelSchema> modelSchemas = new TreeMap<>();
 
     // ----------------------------------------------------------------------
@@ -81,24 +92,37 @@ public class GraphSchema {
     // Properties/get
     // ----------------------------------------------------------------------
 
-    public Map<String,Object> uniqueProps(String nodeType, Map<String,Object> nprops) {
-        NodeSchema nodeSchema = nodeSchema(nodeType);
-        return nodeSchema.uniqueProperties(nprops);
-    }
-
     public NodeSchema nodeSchema(String node) {
         NodeSchema nschema = nodeSchemas.get(node);
-        if (nschema == null)
-            throw new GraphDatabaseException(String.format("Node '%s' not defined", node));
-        else
-            return nschema;
+        if (nschema == null) {
+            logger.errorf("Unknown node %s", node);
+            nschema = NodeSchema.of(node);
+            addNodeSchema(nschema);
+        }
+        return nschema;
+    }
+
+    public EdgeSchema edgeSchema(String edge) {
+        EdgeSchema eschema = edgeSchemas.get(edge);
+        if (eschema == null) {
+            logger.errorf("Unknown edge %s", edge);
+            eschema = EdgeSchema.of(edge);
+            addEdgeSchema(eschema);
+        }
+        return eschema;
     }
 
     public ModelSchema modelSchema(String model) {
-        if (model == null || !modelSchemas.containsKey(model))
+        if (model == null)
             return ModelSchema.NO_SCHEMA;
-        else
-            return modelSchemas.get(model);
+
+        ModelSchema mschema = modelSchemas.get(model);
+        if (mschema == null) {
+            logger.errorf("Unknown model %s", model);
+            mschema = ModelSchema.NO_SCHEMA;
+            addModelSchema(mschema);
+        }
+        return mschema;
     }
 
     // ----------------------------------------------------------------------
@@ -107,6 +131,10 @@ public class GraphSchema {
 
     public void addNodeSchema(NodeSchema nschema) {
         nodeSchemas.put(nschema.name(), nschema);
+    }
+
+    public void addEdgeSchema(EdgeSchema eschema) {
+        edgeSchemas.put(eschema.name(), eschema);
     }
 
     public void addModelSchema(ModelSchema mschema) {

@@ -41,7 +41,6 @@ public class CheckRevEdges {
             ));
 
             s.createEdge("use", m1, m2, MapUtils.asMap(
-                "revision", null,
                 "$count", 1
             ));
         }

@@ -2,6 +2,7 @@ package jext.graph.neo4j;
 
 import jext.graph.Param;
 import jext.graph.Query;
+import jext.graph.schema.EdgeSchema;
 import jext.graph.schema.GraphSchema;
 import jext.graph.schema.ModelSchema;
 import jext.graph.schema.NodeSchema;
@@ -169,14 +170,19 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // ----------------------------------------------------------------------
 
     private Map<String,Object> echeck(Map<String,Object> props) {
-        if (props.containsKey(REVISION))
+        if (props.isEmpty())
+            props = new HashMap<>();
+        if (!props.containsKey(REVISION))
             props.put(REVISION, rev);
         return props;
     }
 
     @Override
     public String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps) {
-        return super.createEdge(edgeType, fromId, toId, echeck(edgeProps));
+        EdgeSchema eschema = schema.edgeSchema(edgeType);
+        if (eschema.isRevisioned())
+            edgeProps = echeck(edgeProps);
+        return super.createEdge(edgeType, fromId, toId, edgeProps);
     }
 
     // ----------------------------------------------------------------------

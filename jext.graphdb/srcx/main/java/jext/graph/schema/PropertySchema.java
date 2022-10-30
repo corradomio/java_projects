@@ -51,11 +51,11 @@ public class PropertySchema {
     // Properties/get
     // ----------------------------------------------------------------------
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public String getType() {
+    public String type() {
         return type;
     }
 
@@ -146,7 +146,9 @@ public class PropertySchema {
 
     public void setType(String type) {
         this.type = type;
-        this.array = type.endsWith("[]");
+        this.array = type.contains("[");
+        if (this.array)
+            this.type = type.substring(0, type.indexOf("["));
     }
 
     public void setRevisioned(boolean revisioned) {

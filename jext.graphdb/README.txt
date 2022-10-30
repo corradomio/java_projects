@@ -140,3 +140,15 @@ revisionedEdge
     inRevision: [f,t,f,...]    in quale revisione e' visibile
                  0 1 2
 
+-----------------------------------------------------------------------------
+
+special properties:
+
+    1) $count: it is increamented on each "create"
+    2) versioned T[]: it must be implemented with an extra node with name VT
+
+        VT {
+            revision: int
+            value: T[]
+        }
+
