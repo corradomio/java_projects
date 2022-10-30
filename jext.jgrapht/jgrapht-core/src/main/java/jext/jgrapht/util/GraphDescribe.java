@@ -30,12 +30,11 @@ public class GraphDescribe {
         }
 
         System.out.printf("components:%n  %s%n",
-            new ConnectivityInspector<>(g)
+            (int) new ConnectivityInspector<>(g)
                 .connectedSets()
                 .stream()
-                .sorted((s1,s2) -> -(s1.size() - s2.size()))
-                .map(Set::size)
-                .collect(Collectors.toList()));
+                .sorted((s1, s2) -> -(s1.size() - s2.size()))
+                .map(Set::size).count());
 
         GraphType gt = g.getType();
         System.out.println("properties:");

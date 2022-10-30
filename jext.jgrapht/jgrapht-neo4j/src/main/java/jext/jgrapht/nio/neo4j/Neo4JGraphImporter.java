@@ -16,12 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Supplier;
 
 
 public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
@@ -39,7 +37,7 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     /** Query to retrieve all edges */
     private String edges;
     /** Parameters used in the queries */
-    private final Map<String, Object> params = new HashMap<>();
+    private final Map<String, Object> parameters = new HashMap<>();
     /** Label used for the source node */
     private String slabel = "s";
     /** Label used for the target node */
@@ -60,13 +58,17 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     // ----------------------------------------------------------------------
 
     public Neo4JGraphImporter<V, E> nodes(String label) {
-        if (label != null && !label.isEmpty()) {
-            vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
-            edges(String.format("MATCH (s:%1$s {refId:$refId}) -[:uses]-> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
+        if (label == null || label.isEmpty()) {
+            vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
+            edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t");
+        }
+        else if ("type".equals(label)) {
+            vertices(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) RETURN id(s) AS s, s.fullname AS name", label));
+            edges(   String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
         }
         else {
-            vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
-            edges("MATCH (s {refId:$refId}) -[:uses]-> (t) RETURN id(s) AS s, id(t) AS t");
+            vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
+            edges(   String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
         }
         vertexProperties("name", "type");
         labels("s", "t");
@@ -93,8 +95,12 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         return this;
     }
 
+    public Map<String, Object> parameters() {
+        return this.parameters;
+    }
+
     public Neo4JGraphImporter<V, E> parameters(Map<String, Object> params) {
-        this.params.putAll(params);
+        this.parameters.putAll(params);
         return this;
     }
 
@@ -102,7 +108,7 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         for(int i=0; i<params.length; i+=2) {
             String name  = params[i+0].toString();
             Object value = params[i+1];
-            this.params.put(name, value);
+            this.parameters.put(name, value);
         }
         return this;
     }
@@ -138,7 +144,7 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
             properties.load(reader);
 
             // params.putAll(properties); // doesn't work cast problems
-            properties.stringPropertyNames().forEach(key -> params.put(key, properties.get(key)));
+            properties.stringPropertyNames().forEach(key -> parameters.put(key, properties.get(key)));
 
             importGraph(graph);
         }
@@ -162,9 +168,9 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     // ----------------------------------------------------------------------
 
     private void connect() {
-        String uri = (String) params.get(NEO4J_URI);
-        String username = (String) params.get(NEO4J_USERNAME);
-        String password = (String) params.get(NEO4J_PASSWORD);
+        String uri = (String) parameters.get(NEO4J_URI);
+        String username = (String) parameters.get(NEO4J_USERNAME);
+        String password = (String) parameters.get(NEO4J_PASSWORD);
 
         driver = GraphDatabase.driver( uri, AuthTokens.basic( username, password ) );
         session = driver.session();
@@ -184,7 +190,7 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         if (vertices == null)
             return Collections.emptySet();
 
-        Result r = session.run(vertices, params);
+        Result r = session.run(vertices, parameters);
         while (r.hasNext()) {
             Record rec = r.next();
             V vertex = get(rec, slabel);
@@ -196,7 +202,7 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     }
 
     private void edges(Graph<V, E> graph, Set<V> vertices) {
-        Result r = session.run(edges, params);
+        Result r = session.run(edges, parameters);
         while (r.hasNext()) {
             Record rec = r.next();
             V sourceVertex = get(rec, slabel);
