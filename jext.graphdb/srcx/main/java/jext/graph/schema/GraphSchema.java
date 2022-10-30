@@ -5,7 +5,6 @@ import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.ObjectCreateRule;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -17,14 +16,19 @@ public class GraphSchema {
     // Load from file
     // ----------------------------------------------------------------------
 
-    public static GraphSchema load(File schemaFile) throws ParserConfigurationException, IOException, SAXException {
+    public static GraphSchema load(File schemaFile) throws GraphDatabaseException {
         Digester d = new Digester();
         GraphSchema gschema = new GraphSchema();
 
         addRules(d, gschema);
 
         d.push(gschema);
-        d.parse(schemaFile);
+
+        try {
+            d.parse(schemaFile);
+        } catch (IOException | SAXException e) {
+            throw new GraphDatabaseException(e);
+        }
 
         return gschema;
     }

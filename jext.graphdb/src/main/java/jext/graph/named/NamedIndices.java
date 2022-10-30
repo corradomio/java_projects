@@ -1,5 +1,6 @@
 package jext.graph.named;
 
+import jext.graph.GraphDatabaseException;
 import org.apache.commons.digester3.Digester;
 import org.xml.sax.SAXException;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class NamedIndices {
 
-    public static NamedIndices load(File nindicesFile) throws ParserConfigurationException, IOException, SAXException {
+    public static NamedIndices load(File nindicesFile) throws GraphDatabaseException {
         Digester d = new Digester();
 
         NamedIndices nindices = new NamedIndices();
@@ -22,7 +23,11 @@ public class NamedIndices {
 
         d.push(nindices);
 
-        d.parse(nindicesFile);
+        try {
+            d.parse(nindicesFile);
+        } catch (IOException | SAXException e) {
+            throw new GraphDatabaseException(e);
+        }
 
         return nindices;
     }

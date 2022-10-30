@@ -11,6 +11,7 @@ import jext.graph.Param;
 import jext.logging.Logger;
 import jext.util.ArrayUtils;
 import jext.util.Parameters;
+import jext.util.StringUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,6 +48,13 @@ class CypherFormatter {
     //      n.$outdegree ==  apoc.node.degree(n, '>')
     //      n.$indegree  ==  apoc.node.degree(n, '<')
     //  .
+
+    static String label(String type) {
+        if (StringUtils.isEmpty(type))
+            return NONE;
+        else
+            return String.format(":%s", type);
+    }
 
     /**
      * Create the PROPERTIES block:

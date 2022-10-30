@@ -153,7 +153,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Create or update a node
      */
-    String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
+    String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> nodeProps);
 
     /**
      * Check if the node there exists
@@ -206,9 +206,10 @@ public interface GraphSession extends AutoCloseable {
      */
     void setNodeProperties(String nodeId, Map<String,Object> nodeProps);
     void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
+    void setNodesProperties(String nodeType, Map<String,Object> nodeProps, Map<String,Object> updateProps);
 
     void setNodeProperty(String nodeId, String name, Object value);
-    void setNodeProperty(String nodeId, String name, int index, Object value);
+    void setNodesProperty(String nodeType, Map<String,Object> nodeProps, String name, Object value);
 
     void deleteNodeProperty(String nodeId, String name);
     void deleteNodesProperties(Collection<String> nodeId, Collection<String> names);
@@ -315,7 +316,7 @@ public interface GraphSession extends AutoCloseable {
     // Edge
     // ----------------------------------------------------------------------
 
-    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId);
+    String/*edgeId*/ findEdge(  String edgeType, String fromId, String toId);
     String/*edgeId*/ createEdge(String edgeType, String fromId, String toId);
 
     /**
@@ -352,7 +353,8 @@ public interface GraphSession extends AutoCloseable {
      * @param updateProps edge properties to update
      * @return edgeId
      */
-    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId,  Map<String,Object> findProps, Map<String,Object> updateProps);
+    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId,
+                                Map<String,Object> findProps, Map<String,Object> updateProps);
 
     /**
      * Create multiple edges.
@@ -436,7 +438,6 @@ public interface GraphSession extends AutoCloseable {
      * @param value values of the property
      */
     void   setEdgeProperty(String edgeId, String name, Object value);
-    void   setEdgeProperty(String edgeId, String name, int index, Object value);
 
     /**
      * Retrieve the properties of the edge

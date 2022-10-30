@@ -1,8 +1,6 @@
 package jext.graph.schema;
 
-import jext.graph.util.PropertyUtils;
 import jext.logging.Logger;
-import jext.util.MapUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,9 +10,10 @@ import java.util.Map;
 
 public class NodeSchema {
 
-    static final String REVISION = "revision";
-    static final String REVISIONS = "revisions";
-    static final String IN_REVISION = "inRevision";
+    public static final int NO_REV = -1;
+    public static final String REVISION = "revision";
+    public static final String REVISIONS = "revisions";
+    public static final String IN_REVISION = "inRevision";
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -22,7 +21,7 @@ public class NodeSchema {
 
     private static final Logger logger = Logger.getLogger(NodeSchema.class);
 
-    private String name = "";
+    private String  name;
     private boolean revisioned;
 
     private Map<String, PropertySchema> properties = new HashMap<>();
@@ -78,6 +77,10 @@ public class NodeSchema {
     // Utilities
     // ----------------------------------------------------------------------
 
+    private boolean skip(String name) {
+        return REVISION.equals(name) || REVISIONS.equals(name);
+    }
+
     public PropertySchema propertySchema(String name) {
         PropertySchema pschema = properties.get(name);
         if (pschema == null) {
@@ -98,48 +101,46 @@ public class NodeSchema {
         return uprops;
     }
 
-    public Map<String,Object> normalizeCreate(Map<String,Object> cprops) {
-        int rev = MapUtils.getOrDefault(cprops, REVISION, -1);
-        Map<String,Object> nprops = new HashMap<>();
+    public Map<String,Object> normalizeCreate(Map<String,Object> cprops, int rev) {
         for (String name : cprops.keySet()) {
-            Object value = cprops.get(name);
-            if (REVISION.equals(name))
+            // skip special names
+            if (skip(name))
                 continue;
 
-            PropertySchema pschema = propertySchema(name);
-            nprops.put(name, pschema.asRevisioned(rev, value));
-        }
-        if (isRevisioned()) {
-            nprops.put(IN_REVISION, PropertyUtils.boolArray(rev, true));
-        }
-        return nprops;
-    }
-
-    public Map<String,Object> normalizeUpdate(Map<String,Object> cprops, Map<String,Object> uprops) {
-        int rev = MapUtils.getOrDefault(uprops, REVISION, -1);
-        Map<String,Object> nprops = new HashMap<>();
-        for (String name : uprops.keySet()) {
-            Object uvalue = uprops.get(name);
             Object cvalue = cprops.get(name);
-            if (REVISION.equals(name))
+            PropertySchema pschema = propertySchema(name);
+            cprops.put(name, pschema.asRevisioned(cvalue, rev));
+        }
+        return cprops;
+    }
+
+    public Map<String,Object> normalizeUpdate(Map<String,Object> cprops, Map<String,Object> pprops, int rev) {
+        Map<String,Object> uprops = new HashMap<>();
+        for (String name : cprops.keySet()) {
+            // skip special names
+            if (skip(name))
                 continue;
 
             PropertySchema pschema = propertySchema(name);
-            nprops.put(name, pschema.asRevisioned(cvalue, rev, uvalue));
+
+            // skip not revisioned vields
+            if (!pschema.isRevisioned())
+                continue;
+
+            Object cvalue = cprops.get(name);
+            Object pvalue = pprops.get(name);
+
+            uprops.put(name, pschema.asRevisioned(cvalue, pvalue, rev));
         }
-        if (isRevisioned()) {
-            Object revs = cprops.get(IN_REVISION);
-            nprops.put(IN_REVISION, PropertyUtils.boolArray(revs, rev, true));
-        }
-        return nprops;
+
+        return uprops;
     }
 
-    public Map<String,Object> normalizeQuery(Map<String,Object> qprops) {
-        int rev = MapUtils.getOrDefault(qprops, REVISION, -1);
+    public Map<String,Object> normalizeQuery(Map<String,Object> qprops, int rev) {
         Map<String,Object> nprops = new HashMap<>();
         for (String name : qprops.keySet()) {
             Object value = qprops.get(name);
-            if (REVISION.equals(name))
+            if (skip(name))
                 continue;
 
             PropertySchema pschema = propertySchema(name);

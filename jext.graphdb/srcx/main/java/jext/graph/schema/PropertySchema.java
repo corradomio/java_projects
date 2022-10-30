@@ -2,6 +2,8 @@ package jext.graph.schema;
 
 import jext.graph.util.PropertyUtils;
 
+import static jext.graph.schema.NodeSchema.NO_REV;
+
 public class PropertySchema {
 
     public static PropertySchema of(String name, Object value) {
@@ -88,8 +90,8 @@ public class PropertySchema {
             return OBJECT;
     }
 
-    public Object asRevisioned(int rev, Object value) {
-        if (!revisioned || rev == -1)
+    public Object asRevisioned(Object value, int rev) {
+        if (!revisioned || rev == NO_REV)
             return value;
         if (BOOLEAN.equals(type))
             return PropertyUtils.boolArray(rev, (Boolean) value);
@@ -103,12 +105,13 @@ public class PropertySchema {
             return PropertyUtils.objectArray(rev, value);
     }
 
-    public Object asRevisioned(Object prev, int rev, Object value) {
-        if (!revisioned || rev == -1)
+    public Object asRevisioned(Object value, Object prev, int rev) {
+        if (!revisioned || rev == NO_REV)
             return value;
         if (prev == null)
-            return asRevisioned(rev, value);
+            return asRevisioned(value, rev);
 
+        // for revisioned properties, prev is an array
         if (BOOLEAN.equals(type))
             return PropertyUtils.boolArray(prev, rev, (Boolean) value);
         if (INTEGER.equals(type) || LONG.equals(type))
@@ -122,7 +125,7 @@ public class PropertySchema {
     }
 
     public String atRevision(String name, int rev) {
-        if (!revisioned || rev == -1 || name.contains("["))
+        if (!revisioned || rev == NO_REV || name.contains("["))
             return name;
         else
             return String.format("%s[$revision]", name);

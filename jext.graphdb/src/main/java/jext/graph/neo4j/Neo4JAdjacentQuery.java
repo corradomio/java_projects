@@ -18,25 +18,25 @@ public class Neo4JAdjacentQuery implements Query {
 
     private static final String N = "n";
 
-    private Neo4JOnlineSession session;
+    private final Neo4JOnlineSession session;
 
     private Limit limit;
     private String alias;
     private boolean distinct;
 
-    private Collection<String> fromIds;
-    private String edgeType;
-    private Direction direction;
-    private String nodeType;
-    private Map<String,Object> nodeProps;
-    private Map<String,Object> edgeProps;
-
-    //private List<String> resultIds;
+    private final Collection<String> fromIds;
+    private final String edgeType;
+    private final Direction direction;
+    private final String nodeType;
+    private final Map<String,Object> nodeProps;
+    private final Map<String,Object> edgeProps;
 
     public Neo4JAdjacentQuery(
         GraphSession session,
         Collection<String> fromIds, String edgeType, Direction direction,
-        String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps) {
+        String nodeType, Map<String,Object> nodeProps,
+        Map<String,Object> edgeProps)
+    {
         this.session = (Neo4JOnlineSession) session;
 
         this.fromIds = fromIds;
@@ -107,13 +107,11 @@ public class Neo4JAdjacentQuery implements Query {
     @Override
     public long count() {
         return scanAdjacentNodes().count();
-        // return resultIds.size();
     }
 
     @Override
     public boolean exists() {
         return scanAdjacentNodes().exists();
-        // return !resultIds.isEmpty();
     }
 
     @Override
@@ -124,20 +122,11 @@ public class Neo4JAdjacentQuery implements Query {
     @Override
     public String id() {
         return scanAdjacentNodes().id();
-        // if (resultIds.isEmpty())
-        //     return null;
-        // else
-        //     return resultIds.iterator().next();
     }
 
     @Override
     public Map<String,Object> values() {
         return scanAdjacentNodes().values();
-        // if (resultIds.isEmpty())
-        //     return null;
-        //
-        // String nodeId = resultIds.iterator().next();
-        // return session.getNodeValues(nodeId);
     }
 
     @Override

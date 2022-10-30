@@ -4,7 +4,6 @@ import jext.graph.Direction;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
-import jext.graph.Param;
 import jext.graph.Query;
 import jext.logging.Logger;
 import jext.util.Assert;
@@ -38,6 +37,7 @@ import static jext.graph.NodeId.invalidId;
 import static jext.graph.NodeId.toId;
 import static jext.graph.neo4j.CypherFormatter.ablock;
 import static jext.graph.neo4j.CypherFormatter.eblock;
+import static jext.graph.neo4j.CypherFormatter.label;
 import static jext.graph.neo4j.CypherFormatter.pblock;
 import static jext.graph.neo4j.CypherFormatter.sblock;
 import static jext.graph.neo4j.CypherFormatter.ublock;
@@ -243,7 +243,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String pblock = pblock(N, nodeProps);
         String sblock = sblock(N, nodeProps, true);
 
-        String s = String.format("CREATE (n:%s %s) %s RETURN id(n)", nodeType, pblock, sblock);
+        String s = String.format("CREATE (n %s %s) %s RETURN id(n)", label(nodeType), pblock, sblock);
 
         Parameters params = Parameters.params(nodeProps)
             .add(N, nodeProps);
@@ -353,23 +353,9 @@ public class Neo4JOnlineSession implements GraphSession {
     private long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count) {
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, false, true);
-        String s;
+        String s = String.format("MATCH (n %s %s) %s WITH n LIMIT %d DETACH DELETE n", label(nodeType), pblock, wblock, count);
 
         Assert.verify(count > 0, "deleteNodes: count MUST BE > 0");
-
-        // if (nodeType == null && count <= 0)
-        //     s = String.format("MATCH (n %s) %s DETACH DELETE n", pblock, wblock);
-        // else if (nodeType == null)
-        //     s = String.format("MATCH (n %s) %s WITH n LIMIT %d DETACH DELETE n", pblock, wblock, count);
-        // else if (count <= 0)
-        //     s = String.format("MATCH (n:%s %s) %s DETACH DELETE n", nodeType, pblock, wblock);
-        // else
-        //     s = String.format("MATCH (n:%s %s) %s WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, wblock, count);
-
-        if (nodeType == null)
-            s = String.format("MATCH (n %s) %s WITH n LIMIT %d DETACH DELETE n", pblock, wblock, count);
-        else
-            s = String.format("MATCH (n:%s %s) %s WITH n LIMIT %d DETACH DELETE n", nodeType, pblock, wblock, count);
 
         Parameters nparams = Parameters.params();
         nparams.add(N, nodeProps);
@@ -390,9 +376,13 @@ public class Neo4JOnlineSession implements GraphSession {
 
     // ----------------------------------------------------------------------
 
+    private static boolean noProps(Map<String,Object> props) {
+        return props == null || props.isEmpty();
+    }
+
     @Override
     public void setNodeProperties(String nodeId, Map<String,Object> nodeProps) {
-        if (nodeProps == null || nodeProps.isEmpty())
+        if (noProps(nodeProps))
             return;
 
         String sblock = sblock(N, nodeProps, false);
@@ -408,7 +398,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps) {
-        if (nodeProps == null || nodeProps.isEmpty() || nodeIds == null || nodeIds.isEmpty())
+        if (noProps(nodeProps) || nodeIds == null || nodeIds.isEmpty())
             return;
 
         String sblock = sblock(N, nodeProps, false);
@@ -423,13 +413,30 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
+    public void setNodesProperties(String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps) {
+        if (noProps(updateProps))
+            return;
+
+        // MATCH (n:type {...}) WHERE ... SET ... RETURN count(n)
+
+        String pblock = pblock(N, nodeProps);
+        String wblock = wblock(N, nodeProps, false, true);
+        String sblock = sblock(N, updateProps, false);
+        String s = String.format("MATCH (n %s %s) %s %s RETURN count(n)", label(nodeType), pblock, wblock, sblock);
+
+        Parameters params = Parameters.params(nodeProps).add(N, nodeProps);
+
+        this.execute(s, params);
+    }
+
+    @Override
     public void setNodeProperty(String nodeId, String name, Object value) {
         setNodeProperties(nodeId, MapUtils.asMap(name, value));
     }
 
     @Override
-    public void setNodeProperty(String nodeId, String name, int index, Object value) {
-        setNodeProperty(nodeId, Param.at(name, index), value);
+    public void setNodesProperty(String nodeType, Map<String,Object> nodeProps, String name, Object value) {
+        setNodesProperties(nodeType, nodeProps, MapUtils.asMap(name, value));
     }
 
     // ----------------------------------------------------------------------
@@ -469,12 +476,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, false, true);
-        String s;
-
-        if (StringUtils.isEmpty(nodeType))
-            s = String.format("MATCH (n %s) %s", pblock, wblock);
-        else
-            s = String.format("MATCH (n:%s %s) %s", nodeType, pblock, wblock);
+        String s = String.format("MATCH (n %s %s) %s", label(nodeType), pblock, wblock);
 
         Parameters params = Parameters.params(nodeProps).add(N, nodeProps);
 
@@ -530,7 +532,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String s;
 
         if (recursive) {
-            s = String.format("MATCH shortestPath( (node) %s (n:%s %s) ) WHERE id(node) in $id %s",
+            s = String.format("MATCH shortestPath( (node) %s (n: %s %s) ) WHERE id(node) in $id %s",
                 eblock, nodeType, pblock, wblock);
         }
         else {
@@ -561,12 +563,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     Query selectNodes(Collection<String> ids, String nodeType,  Map<String,Object> nodeProps) {
         String pblock = pblock(N, nodeProps);
-        String s;
-
-        if (nodeType == null)
-            s = String.format("MATCH (n %s) WHERE id(n) in $id", pblock);
-        else
-            s = String.format("MATCH (n:%s %s) WHERE id(n) in $id", nodeType, pblock);
+        String s = String.format("MATCH (n %s %s) WHERE id(n) in $id", label(nodeType), pblock);
 
         Parameters params = Parameters.params(
             "id", asIds(ids))
@@ -714,7 +711,8 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     @Nullable
     public String createEdge(String edgeType, String fromId, String toId,
-                             Map<String,Object> findProps, Map<String,Object> updateProps)
+                             Map<String,Object> findProps,
+                             Map<String,Object> updateProps)
     {
         if (invalidId(fromId) || invalidId(toId) || fromId.equals(toId))
             return null;
@@ -1042,11 +1040,6 @@ public class Neo4JOnlineSession implements GraphSession {
             "id", asId(edgeId))
             .add(E, updateProps);
         this.execute(s, params);
-    }
-
-    @Override
-    public void setEdgeProperty(String nodeId, String name, int index, Object value) {
-        setEdgeProperty(nodeId, Param.at(name, index), value);
     }
 
     @Override

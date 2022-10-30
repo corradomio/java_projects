@@ -1,5 +1,6 @@
 package jext.graph.named;
 
+import jext.graph.GraphDatabaseException;
 import jext.util.StringUtils;
 import org.apache.commons.digester3.Digester;
 import org.neo4j.driver.exceptions.DatabaseException;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 public class NamedQueries {
 
-    public static NamedQueries load(File nqueriesFile) throws ParserConfigurationException, IOException, SAXException {
+    public static NamedQueries load(File nqueriesFile) throws GraphDatabaseException {
         Digester d = new Digester();
 
         NamedQueries nqueries = new NamedQueries();
@@ -24,7 +25,11 @@ public class NamedQueries {
 
         d.push(nqueries);
 
-        d.parse(nqueriesFile);
+        try {
+            d.parse(nqueriesFile);
+        } catch (IOException | SAXException e) {
+            throw new GraphDatabaseException(e);
+        }
 
         return nqueries;
     }

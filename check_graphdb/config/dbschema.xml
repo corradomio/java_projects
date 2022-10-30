@@ -1,36 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graphdb>
-    <!--
-        Define, IN ORDER
-
-        1) nodes
-        2) edges
-        3) models
-
-        Revisioned nodes can be ONLY of simple type, because the revisioned version
-        in an array of the same type
-
-        To support a revisioned array type, it is necessary to use a '$value' node with
-        structure:
-
-            $value {
-                revision: int,
-                value: T[]
-            }
-
-        In the connection it is necessary to specify:
-
-            refId:      id that identify the project
-            model:      subset of nodes
-            revision:   the current revision
-    -->
     <schema>
+        <!-- BEFORE models -->
         <!--
             unique id
+
           -->
         <nodes>
             <node name="splproject">
-                <property name="refId" type="string" unique="true"/>
+                <!-- property name="refId" type="string"/ -->
 
                 <property name="description" type="string"/>
                 <property name="fullname" type="string"/>
@@ -47,76 +25,14 @@
 
             <!-- source -->
             <node name="msource">
-                <property name="refId" type="string" unique="true"/>
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="revisions" type="long[]"/ -->
 
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
                 <property name="reason" type="string"/>
                 <property name="repository" type="string"/>
                 <property name="revisionId" type="string"/>
-                <!--<property name="revisions" type="long[]"/>-->
-                <property name="role" type="string"/>
-                <property name="sourceHome" type="string"/>
-                <property name="status" type="string"/>
-                <property name="timestamp" type="long"/>
-            </node>
-
-            <node name="module" revisioned="true">
-                <property name="refId"    type="string" unique="true"/>
-                <property name="fullname" type="string" unique="true"/>
-
-                <property name="digest" type="long" revisioned="true"/>
-                <!--<property name="inRevision" type="bool[]"/>-->
-                <property name="moduleRefId" type="string"/>
-                <property name="name" type="string"/>
-                <property name="namespace" type="string"/>
-                <property name="path" type="string"/>
-                <property name="type" type="string"/>
-            </node>
-
-            <node name="source" revisioned="true">
-                <property name="refId" type="string"/>
-
-                <property name="digest" type="string" revisioned="true"/>
-                <property name="fullname" type="string"/>
-                <!--<property name="inRevision" type="bool[]"/>-->
-                <property name="language" type="string"/>
-                <property name="moduleId" type="string"/>
-                <property name="name" type="string"/>
-                <property name="path" type="string"/>
-                <property name="type" type="string"/>
-            </node>
-
-            <node name="library">
-                <property name="fullname" type="string"/>
-                <property name="language" type="string"/>
-                <property name="libraryType" type="string"/>
-                <property name="name" type="string"/>
-                <property name="path" type="string"/>
-                <property name="refId" type="string"/>
-                <property name="type" type="string"/>
-                <property name="version" type="string"/>
-            </node>
-
-            <node name="librepo">
-                <property name="fullname" type="string"/>
-                <property name="name" type="string"/>
-                <property name="refId" type="string"/>
-                <property name="repositoryType" type="string"/>
-                <property name="type" type="string"/>
-                <property name="url" type="string"/>
-            </node>
-
-            <!-- dependency -->
-            <node name="mdependency">
-                <property name="refId" type="string" unique="true"/>
-
-                <property name="fullname" type="string"/>
-                <property name="name" type="string"/>
-                <property name="reason" type="string"/>
-                <property name="repository" type="string"/>
-                <property name="revisionId" type="string"/>
-                <!--<property name="revisions" type="long[]"/>-->
                 <property name="role" type="string"/>
                 <property name="sourceHome" type="string"/>
                 <property name="status" type="string"/>
@@ -124,7 +40,8 @@
             </node>
 
             <node name="project">
-                <property name="refId" type="string" unique="true"/>
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="revisions" type="long[]"/ -->
 
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
@@ -134,15 +51,76 @@
                 <property name="reason" type="string"/>
                 <property name="repository" type="string"/>
                 <property name="revisionId" type="string"/>
-                <!--<property name="revisions" type="long[]"/>-->
                 <property name="role" type="string"/>
                 <property name="status" type="string"/>
                 <property name="timestamp" type="long"/>
                 <property name="type" type="string"/>
             </node>
 
+            <node name="module" revisioned="true">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
+
+                <property name="fullname" type="string" unique="true"/>
+                <property name="name" type="string"/>
+
+                <property name="digest" type="long" revisioned="true"/>
+                <property name="mrefId" type="string"/>
+                <property name="path" type="string"/>
+            </node>
+
+            <node name="source" revisioned="true">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
+
+                <property name="digest" type="string" revisioned="true"/>
+                <property name="fullname" type="string"/>
+                <property name="language" type="string"/>
+                <property name="moduleId" type="string"/>
+                <property name="name" type="string"/>
+                <property name="path" type="string"/>
+                <property name="type" type="string"/>
+            </node>
+
+            <node name="library">
+                <!-- property name="refId" type="string"/ -->
+
+                <property name="fullname" type="string"/>
+                <property name="language" type="string"/>
+                <property name="libraryType" type="string"/>
+                <property name="name" type="string"/>
+                <property name="path" type="string"/>
+                <property name="type" type="string"/>
+                <property name="version" type="string"/>
+            </node>
+
+            <node name="librepo">
+                <!-- property name="refId" type="string"/ -->
+
+                <property name="fullname" type="string"/>
+                <property name="name" type="string"/>
+                <property name="repositoryType" type="string"/>
+                <property name="type" type="string"/>
+                <property name="url" type="string"/>
+            </node>
+
+            <!-- dependency -->
+            <node name="mdependency">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="revisions" type="long[]"/ -->
+
+                <property name="fullname" type="string"/>
+                <property name="name" type="string"/>
+                <property name="reason" type="string"/>
+                <property name="repository" type="string"/>
+                <property name="revisionId" type="string"/>
+                <property name="role" type="string"/>
+                <property name="status" type="string"/>
+                <property name="timestamp" type="long"/>
+            </node>
+
             <node name="namespace">
-                <property name="refId" type="string"/>
+                <!-- property name="refId" type="string"/ -->
 
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
@@ -150,17 +128,22 @@
                 <property name="type" type="string"/>
             </node>
             <node name="type" revisioned="true">
-                <property name="refId" type="string"/>
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
 
                 <property name="clusterF" type="string"/>
                 <property name="clusterF2" type="string"/>
                 <property name="clusterT" type="string"/>
                 <property name="clusterT2" type="string"/>
                 <property name="digest" type="string" revisioned="true"/>
+                <property name="featureScore" type="double" revisioned="true"/>
                 <property name="fullname" type="string"/>
+                <property name="kCoreScore" type="double" revisioned="true"/>
                 <property name="libraryId" type="string"/>
                 <property name="modifiers" type="string[]"/>
                 <property name="moduleId" type="string"/>
+                <property name="moduleName" type="string"/>
+                <property name="mrefId" type="string"/>
                 <property name="name" type="string"/>
                 <property name="namespace" type="string"/>
                 <property name="role" type="string"/>
@@ -170,10 +153,12 @@
                 <property name="typeParams" type="long"/>
             </node>
             <node name="method" revisioned="true">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
+
                 <property name="declaration" type="string"/>
                 <property name="digest" type="string" revisioned="true"/>
                 <property name="fullname" type="string"/>
-                <!--<property name="inRevision" type="bool[]"/>-->
                 <property name="modifiers" type="string[]"/>
                 <property name="moduleId" type="string"/>
                 <property name="nParams" type="long"/>
@@ -181,13 +166,14 @@
                 <property name="namespace" type="string"/>
                 <property name="ownerTypeId" type="string"/>
                 <property name="projectId" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="signature" type="string"/>
                 <property name="sourceId" type="string"/>
                 <property name="type" type="string"/>
                 <property name="typeId" type="string[]"/>
             </node>
             <node name="parameter">
+                <!-- property name="refId" type="string"/ -->
+
                 <property name="fullname" type="string"/>
                 <property name="moduleId" type="string"/>
                 <property name="name" type="string"/>
@@ -195,29 +181,31 @@
                 <property name="ownerMethodId" type="string"/>
                 <property name="ownerTypeId" type="string"/>
                 <property name="projectId" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="sourceId" type="string"/>
                 <property name="type" type="string"/>
                 <property name="typeId" type="string"/>
             </node>
             <node name="field" revisioned="true">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
+
                 <property name="declaration" type="string"/>
                 <property name="digest" type="string[]"/>
                 <property name="fullname" type="string"/>
-                <!--<property name="inRevision" type="bool[]"/>-->
                 <property name="modifiers" type="string[]"/>
                 <property name="moduleId" type="string"/>
                 <property name="name" type="string"/>
                 <property name="namespace" type="string"/>
                 <property name="ownerTypeId" type="string"/>
                 <property name="projectId" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="sourceId" type="string"/>
                 <property name="type" type="string"/>
                 <property name="typeId" type="string[]"/>
             </node>
 
             <node name="comment">
+                <!-- property name="refId" type="string"/ -->
+
                 <property name="allComments" type="string[]"/>
                 <property name="authors" type="string[]"/>
                 <property name="comments" type="string[]"/>
@@ -227,68 +215,73 @@
                 <property name="name" type="string"/>
                 <property name="namespace" type="string"/>
                 <property name="projectId" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="sourceId" type="string"/>
                 <property name="type" type="string"/>
                 <property name="withCommentId" type="string"/>
             </node>
             <node name="decltype">
+                <!-- property name="refId" type="string"/ -->
+
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
                 <property name="rank" type="long"/>
-                <property name="refId" type="string"/>
                 <property name="signature" type="string"/>
                 <property name="type" type="string"/>
                 <property name="typeId" type="string"/>
                 <property name="typeParams" type="long"/>
             </node>
             <node name="typeparam" revisioned="true">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
+
                 <property name="fullname" type="string"/>
-                <!--<property name="inRevision" type="bool[]"/>-->
                 <property name="name" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="signature" type="string"/>
                 <property name="type" type="string"/>
             </node>
             <node name="token">
+                <!-- property name="refId" type="string"/ -->
+
                 <property name="clusterF" type="string"/>
                 <property name="clusterF2" type="string"/>
                 <property name="clusterT" type="string"/>
                 <property name="clusterT2" type="string"/>
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="type" type="string"/>
             </node>
 
-            <!-- component -->
+            <!-- dependency -->
             <node name="mcomponent">
-                <property name="refId" type="string" unique="true"/>
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="revisions" type="long[]"/ -->
+
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
                 <property name="reason" type="string"/>
                 <property name="repository" type="string"/>
                 <property name="revisionId" type="string"/>
-                <!--<property name="revisions" type="long[]"/>-->
                 <property name="role" type="string"/>
                 <property name="status" type="string"/>
                 <property name="timestamp" type="long"/>
                 <property name="type" type="string"/>
             </node>
             <node name="component" revisioned="true">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
+
+                <property name="fullname" type="string" unique="true"/>
+                <property name="mrefId" type="string" unique="true"/>
+                <property name="name" type="string"/>
+                <property name="namespace" type="string"/>
+
                 <property name="complexity" type="double[]"/>
                 <property name="count" type="long" revisioned="true"/>
                 <property name="countTypes" type="long" revisioned="true"/>
                 <property name="depth" type="long"/>
                 <property name="digest" type="string" revisioned="true"/>
-                <property name="fullname" type="string"/>
-                <!--<property name="inRevision" type="bool[]"/>-->
                 <property name="moduleId" type="string"/>
                 <property name="moduleName" type="string"/>
-                <property name="moduleRefId" type="string"/>
-                <property name="name" type="string"/>
-                <property name="namespace" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="role" type="string"/>
                 <property name="type" type="string"/>
                 <property name="typeId" type="string"/>
@@ -296,19 +289,23 @@
 
             <!-- feature -->
             <node name="mfeature">
-                <property name="refId" type="string" unique="true"/>
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="revisions" type="long[]"/ -->
+
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
                 <property name="reason" type="string"/>
                 <property name="repository" type="string"/>
                 <property name="revisionId" type="string"/>
-                <!--<property name="revisions" type="long[]"/>-->
                 <property name="role" type="string"/>
                 <property name="status" type="string"/>
                 <property name="timestamp" type="long"/>
                 <property name="type" type="string"/>
             </node>
             <node name="feature" revisioned="true">
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="inRevision" type="bool[]"/ -->
+
                 <property name="complexity" type="double[]"/>
                 <property name="componentId" type="string"/>
                 <property name="count" type="long" revisioned="true"/>
@@ -316,13 +313,11 @@
                 <property name="digest" type="string" revisioned="true"/>
                 <property name="fat" type="bool" revisioned="true"/>
                 <property name="fullname" type="string"/>
-                <!--<property name="inRevision" type="bool[]"/>-->
                 <property name="moduleId" type="string"/>
                 <property name="moduleName" type="string"/>
-                <property name="moduleRefId" type="string"/>
+                <property name="mrefId" type="string"/>
                 <property name="name" type="string"/>
                 <property name="namespace" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="role" type="string"/>
                 <property name="type" type="string"/>
                 <property name="typeId" type="string"/>
@@ -330,10 +325,11 @@
 
             <!-- other -->
             <node name="cluster">
+                <!-- property name="refId" type="string"/ -->
+
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
                 <property name="reason" type="string"/>
-                <property name="refId" type="string"/>
                 <property name="repository" type="string"/>
                 <property name="role" type="string"/>
                 <property name="status" type="string"/>
@@ -341,29 +337,18 @@
                 <property name="type" type="string"/>
             </node>
             <node name="core">
-                <property name="refId" type="string"/>
+                <!-- property name="refId" type="string"/ -->
+                <!-- property name="revisions" type="long[]"/ -->
 
                 <property name="fullname" type="string"/>
                 <property name="name" type="string"/>
                 <property name="reason" type="string"/>
                 <property name="repository" type="string"/>
                 <property name="revisionId" type="string"/>
-                <!--<property name="revisions" type="long[]"/>-->
                 <property name="role" type="string"/>
                 <property name="status" type="string"/>
                 <property name="timestamp" type="long"/>
                 <property name="type" type="string"/>
-            </node>
-
-            <!-- test -->
-            <node name="test" revisioned="true">
-                <property name="refId" type="string" unique="true"/>
-                <property name="name" type="string" unique="true"/>
-
-                <property name="count" type="int" revisioned="true"/>
-                <property name="sum" type="float" revisioned="true"/>
-                <property name="digest" type="long" revisioned="true"/>
-                <property name="shuffle" type="string" revisioned="true"/>
             </node>
         </nodes>
 
@@ -372,10 +357,13 @@
 
         </edges>
 
+        <!-- AFTER nodes -->
         <models>
             <model name="source"        ref="msource">
+                <node ref="project"/>
                 <node ref="module"/>
                 <node ref="source"/>
+
                 <node ref="library"/>
                 <node ref="librepo"/>
             </model>
@@ -391,15 +379,13 @@
                 <node ref="typeparam"/>
                 <node ref="token"/>
             </model>
+
             <model name="component"     ref="mcomponent">
                 <node ref="component"/>
             </model>
+
             <model name="feature"       ref="mfeature">
                 <node ref="feature"/>
-            </model>
-
-            <model name="test">
-                <node ref="test"/>
             </model>
         </models>
     </schema>

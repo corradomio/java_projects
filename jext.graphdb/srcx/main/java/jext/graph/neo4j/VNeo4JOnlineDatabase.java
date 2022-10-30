@@ -7,7 +7,7 @@ import jext.net.URL;
 import javax.annotation.Nullable;
 import java.util.Properties;
 
-import static jext.graph.neo4j.VNeo4JOnlineSession.NO_REV;
+import static jext.graph.schema.NodeSchema.NO_REV;
 
 public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphDatabase {
 
