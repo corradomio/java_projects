@@ -18,7 +18,7 @@ public class CheckGraph {
     static void checkModules() {
         System.out.println("checkModules");
         GraphImporter<Long, DirectedEdge> imp = new Neo4JGraphImporter<Long, DirectedEdge>()
-            .nodes("module")
+            .vertices("module")
             .parameters(
                     "refId", REF_ID
             )
@@ -38,7 +38,7 @@ public class CheckGraph {
     static void checkSources() {
         System.out.println("checkSources");
         GraphImporter<Long, DirectedEdge> imp = new Neo4JGraphImporter<Long, DirectedEdge>()
-            .nodes("source")
+            .vertices("source")
             .parameters(
                     "refId", REF_ID
             )
@@ -60,7 +60,7 @@ public class CheckGraph {
         GraphImporter<Long, DirectedEdge> imp = new Neo4JGraphImporter<Long, DirectedEdge>()
             // .vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s")
             // .edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t")
-            .nodes(null)
+            .vertices(null)
             .parameters(
                 "refId", REF_ID
             )

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 
 public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
@@ -42,8 +44,10 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     private String slabel = "s";
     /** Label used for the target node */
     private String tlabel = "t";
-    /** vertex properties */
-    private final List<String> vprops = new ArrayList<>();
+    /** Neo4J record -> vertex */
+    private BiFunction<String, Map<String, Object>, V> toVertex = (id, map) -> (V)id;
+
+    private final Map<String, V> vmap = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -57,31 +61,35 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     // Configuration
     // ----------------------------------------------------------------------
 
-    public Neo4JGraphImporter<V, E> nodes(String label) {
-        if (label == null || label.isEmpty()) {
-            vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
-            edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t");
-        }
-        else if ("type".equals(label)) {
-            vertices(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) RETURN id(s) AS s, s.fullname AS name", label));
-            edges(   String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
-        }
-        else {
-            vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
-            edges(   String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
-        }
-        vertexProperties("name", "type");
-        labels("s", "t");
-        return this;
+    private static boolean isCypher(String s) {
+        return s != null && s.toLowerCase().startsWith("match ");
     }
 
     public Neo4JGraphImporter<V, E> vertices(String cypher) {
-        this.vertices = cypher;
-        return this;
+        if (isCypher(cypher)) {
+            this.vertices = cypher;
+            return this;
+        }
+        else
+        {
+            String label = cypher;
+            if (label == null || label.isEmpty()) {
+                vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
+                edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t");
+            } else if ("type" .equals(label)) {
+                vertices(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) RETURN id(s) AS s, s.fullname AS name", label));
+                edges(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
+            } else {
+                vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
+                edges(String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
+            }
+            labels("s", "t");
+            return this;
+        }
     }
 
-    public Neo4JGraphImporter<V, E> vertexProperties(String... names) {
-        this.vprops.addAll(Arrays.asList(names));
+    public Neo4JGraphImporter<V, E> toVertex(BiFunction<String, Map<String, Object>, V> converter) {
+        this.toVertex = converter;
         return this;
     }
 
@@ -181,11 +189,6 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         edges(graph, vertices);
     }
 
-    private V get(Record rec, String vlablel) {
-        IntegerValue v = (IntegerValue) rec.get(vlablel);
-        return (V)Long.valueOf(v.asLong());
-    }
-
     private Set<V> vertices(Graph<V, E> graph) {
         if (vertices == null)
             return Collections.emptySet();
@@ -193,12 +196,25 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
         Result r = session.run(vertices, parameters);
         while (r.hasNext()) {
             Record rec = r.next();
-            V vertex = get(rec, slabel);
+            V vertex = get(rec);
 
             graph.addVertex(vertex);
         }
 
         return graph.vertexSet();
+    }
+
+    private V get(Record rec) {
+        String id = rec.get(slabel).toString();
+        Map<String, Object> map = rec.asMap();
+        V vertex = toVertex.apply(id, map);
+        vmap.put(id, vertex);
+        return vertex;
+    }
+
+    private V get(Record rec, String label) {
+        String id = rec.get(label).toString();
+        return vmap.get(id);
     }
 
     private void edges(Graph<V, E> graph, Set<V> vertices) {

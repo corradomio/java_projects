@@ -3,32 +3,42 @@ package jext.jgrapht.vertices;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Vertex<T> {
+public class Vertex {
 
-    private final T id;
-    private final Map<String, Object> props = new HashMap<>();
+    private final String id;
+    private final Map<String, Object> data = new HashMap<>();
 
-    public Vertex(T id) {
+    public Vertex(String id) {
         this.id = id;
     }
 
-    public T id() {
+    // ----------------------------------------------------------------------
+
+    public String id() {
         return id;
     }
 
-    public Vertex<T> put(String name, Object value) {
-        this.props.put(name, value);
+    public Map<String, Object> data() {
+        return data;
+    }
+
+    // ----------------------------------------------------------------------
+
+    public Vertex put(String name, Object value) {
+        this.data.put(name, value);
         return this;
     }
 
-    public Vertex<T> putAll(Map<String, Object> props) {
-        this.props.putAll(props);
+    public Vertex putAll(Map<String, Object> props) {
+        this.data.putAll(props);
         return this;
     }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public boolean equals(Object obj) {
-        Vertex<T> that = (Vertex<T>) obj;
+        Vertex that = (Vertex) obj;
         return this.id.equals(that.id);
     }
 
@@ -39,7 +49,7 @@ public class Vertex<T> {
 
     @Override
     public String toString() {
-        return String.format("v%s", this.id.toString());
+        return this.id;
     }
 
 }
