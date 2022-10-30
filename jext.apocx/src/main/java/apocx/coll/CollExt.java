@@ -6,12 +6,29 @@ import org.neo4j.procedure.UserFunction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
 public class CollExt {
+
+    @UserFunction
+    @Description("apocx.coll.arrayIncr(coll, index) | increment coll[index] value, supporting indices < 0")
+    public Object arrayIncr(@Name("coll") List<Object> coll, @Name("index") long index) {
+        if (coll == null)
+            coll = new ArrayList<>();
+        else
+            coll = new ArrayList<>(coll);
+
+        int n = coll.size();
+        if (index > n) {
+            while (coll.size() <= index)
+                coll.add(0);
+        }
+
+        coll.set( (int) index, 1 + ((Number)coll.get((int)index)).intValue());
+        return coll;
+    }
 
     @UserFunction
     @Description("apocx.coll.arrayGet(coll, index) | get coll[index] value, supporting indices < 0")
@@ -32,80 +49,61 @@ public class CollExt {
     @UserFunction
     @Description("apocx.coll.arraySet(coll, index, value) | set coll[index] to value, extend coll if necessary")
     public List<Object> arraySet(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
-        // if (coll == null) return null;
-        // if (index < 0 || value == null || index >= coll.size()) return coll;
-        //
-        // List<Object> list = new ArrayList<>(coll);
-        // list.set( (int) index, value );
-        // return list;
         if (index < 0)
             return null;
 
-        value = makeArray(value);
+        // value = makeArray(value);
 
-        List<Object> list;
         if (coll == null)
-            list = new ArrayList<>();
+            coll = new ArrayList<>();
         else
-            list = new ArrayList<>(coll);
+            coll = new ArrayList<>(coll);
 
         // remove the element coll[index]
         if (value == null) {
-            if (index < list.size())
-                list.remove((int) index);
-            return list;
+            if (index < coll.size())
+                coll.remove((int) index);
+            return coll;
         }
 
-        Object lastValue;
-        int n = list.size();
-        if (n > 0)
-            lastValue = list.get(n-1);
-            // else if (value instanceof Boolean)
-            //     lastValue = false;
-            // else if (value instanceof Integer)
-            //     lastValue = 0;
-            // else if (value instanceof Long)
-            //     lastValue = 0L;
-            // else if (value instanceof Float)
-            //     lastValue = 0.f;
-            // else if (value instanceof Double)
-            //     lastValue = 0.;
-            // else if (value instanceof String)
-            //     lastValue = "";
-            // else
-            //     throw new IllegalArgumentException(value.toString());
-        else
-            lastValue = defaultValue(value);
+        int n = coll.size();
+        if (index > n) {
+            Object lastValue;
+            if (n > 0)
+                lastValue = coll.get(n-1);
+            else
+                lastValue = defaultValue(value);
 
-        while (list.size() <= index)
-            list.add(lastValue);
-
-        list.set( (int) index, value);
-        return list;
-    }
-
-    @Deprecated
-    @UserFunction
-    @Description("apocx.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
-    public List<Object> setOrExtend(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
-        return arraySet(coll, index, value);
-    }
-
-    private static Object makeArray(Object value) {
-        if (!(value instanceof Collection))
-            return value;
-        Collection c = (Collection) value;
-        if (c.isEmpty())
-            return "";
-
-        StringBuilder sb = new StringBuilder();
-        for (Object e : c) {
-            if (sb.length() > 0)
-                sb.append(",");
-            sb.append(e.toString());
+            while (coll.size() <= index)
+                coll.add(lastValue);
         }
-        return sb.toString();
+
+        coll.set( (int) index, value);
+        return coll;
     }
+
+    // @Deprecated
+    // @UserFunction
+    // @Description("apocx.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
+    // public List<Object> setOrExtend(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
+    //     return arraySet(coll, index, value);
+    // }
+
+    // private static Object makeArray(Object value) {
+    //     if (!(value instanceof Collection))
+    //         return value;
+    //     Collection c = (Collection) value;
+    //     if (c.isEmpty())
+    //         return "";
+    //
+    //     StringBuilder sb = new StringBuilder();
+    //     for (Object e : c) {
+    //         if (sb.length() > 0)
+    //             sb.append(",");
+    //         sb.append(e.toString());
+    //     }
+    //     return sb.toString();
+    // }
 
     private static Object defaultValue(Object value) {
         Object lastValue;
@@ -132,7 +130,7 @@ public class CollExt {
         if (value == null)
             return coll;
 
-        value = makeArray(value);
+        // value = makeArray(value);
 
         List<Object> list;
         if (coll == null)
@@ -149,7 +147,7 @@ public class CollExt {
         if (value == null)
             return coll;
 
-        value = makeArray(value);
+        // value = makeArray(value);
 
         List<Object> list;
         if (coll == null)

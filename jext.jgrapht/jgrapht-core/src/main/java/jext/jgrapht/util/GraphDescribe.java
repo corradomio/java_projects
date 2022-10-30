@@ -7,6 +7,7 @@ import org.jgrapht.GraphType;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -29,12 +30,18 @@ public class GraphDescribe {
             System.out.println("  e: " + e.getClass());
         }
 
-        System.out.printf("components:%n  %s%n",
-            (int) new ConnectivityInspector<>(g)
-                .connectedSets()
-                .stream()
-                .sorted((s1, s2) -> -(s1.size() - s2.size()))
-                .map(Set::size).count());
+        List<Integer> components = new ConnectivityInspector<>(g)
+            .connectedSets()
+            .stream()
+            .sorted((s1,s2) -> -(s1.size() - s2.size()))
+            .map(Set::size)
+            .collect(Collectors.toList());
+
+        System.out.printf("components:%n  %s%n", components.size());
+        if (components.size() < 10)
+            System.out.printf("  %s%n", components);
+        else
+            System.out.printf("  %s%n", components.subList(0, 10));
 
         GraphType gt = g.getType();
         System.out.println("properties:");

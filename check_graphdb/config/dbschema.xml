@@ -354,7 +354,10 @@
 
         <!-- unused for now -->
         <edges>
-
+            <edge name="use" revisiond="true">
+                <source ref="source"/>
+                <target ref="source"/>
+            </edge>
         </edges>
 
         <!-- AFTER nodes -->
