@@ -4,6 +4,13 @@ import jext.graph.util.PropertyUtils;
 
 public class PropertySchema {
 
+    public static PropertySchema of(String name, Object value) {
+        PropertySchema pschema = new PropertySchema();
+        pschema.name = name;
+        pschema.type = typeOf(value);
+        return pschema;
+    }
+
     // ----------------------------------------------------------------------
     // Constants
     // ----------------------------------------------------------------------
@@ -18,6 +25,7 @@ public class PropertySchema {
     // special formats
     private static final String BYTES = "bytes";
     private static final String JSON = "json";
+    private static final String OBJECT = "object";
 
     // ----------------------------------------------------------------------
     // Private Fields
@@ -61,6 +69,25 @@ public class PropertySchema {
     //
     // ----------------------------------------------------------------------
 
+    public static String typeOf(Object value) {
+        if (value == null)
+            return OBJECT;
+        if (value instanceof String)
+            return STRING;
+        if (value instanceof Boolean)
+            return BOOLEAN;
+        if (value instanceof Integer)
+            return INTEGER;
+        if (value instanceof Long)
+            return LONG;
+        if (value instanceof Float)
+            return FLOAT;
+        if (value instanceof Double)
+            return DOUBLE;
+        else
+            return OBJECT;
+    }
+
     public Object asRevisioned(int rev, Object value) {
         if (!revisioned || rev == -1)
             return value;
@@ -95,10 +122,10 @@ public class PropertySchema {
     }
 
     public String atRevision(String name, int rev) {
-        if (!revisioned || rev == -1)
+        if (!revisioned || rev == -1 || name.contains("["))
             return name;
         else
-            return String.format("%s[$revision", name);
+            return String.format("%s[$revision]", name);
     }
 
 

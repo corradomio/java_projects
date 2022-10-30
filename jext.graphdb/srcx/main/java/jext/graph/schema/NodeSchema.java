@@ -1,7 +1,7 @@
 package jext.graph.schema;
 
-import jext.graph.GraphDatabaseException;
 import jext.graph.util.PropertyUtils;
+import jext.logging.Logger;
 import jext.util.MapUtils;
 
 import java.util.ArrayList;
@@ -12,13 +12,15 @@ import java.util.Map;
 
 public class NodeSchema {
 
+    static final String REVISION = "revision";
+    static final String REVISIONS = "revisions";
+    static final String IN_REVISION = "inRevision";
+
     // ----------------------------------------------------------------------
     // Private Fields
     // ----------------------------------------------------------------------
 
-    static final String REVISION = "revision";
-    static final String REVISIONS = "revisions";
-    static final String IN_REVISION = "inRevision";
+    private static final Logger logger = Logger.getLogger(NodeSchema.class);
 
     private String name = "";
     private boolean revisioned;
@@ -46,9 +48,17 @@ public class NodeSchema {
         return revisioned;
     }
 
+    public boolean isRevisioned(String name) {
+        if (properties.containsKey(name))
+            return properties.get(name).isRevisioned();
+        else
+            return false;
+    }
+
     // ----------------------------------------------------------------------
     // Properties/set
     // ----------------------------------------------------------------------
+    // Called from the digester
 
     public void setName(String name) {
         this.name = name;
@@ -68,14 +78,16 @@ public class NodeSchema {
     // Utilities
     // ----------------------------------------------------------------------
 
-    public PropertySchema propertySchema(String pname) {
-        PropertySchema pschema = properties.get(pname);
-        if (pschema == null)
-            throw new GraphDatabaseException(String.format("Invalid property %s.%s", name, pname));
+    public PropertySchema propertySchema(String name) {
+        PropertySchema pschema = properties.get(name);
+        if (pschema == null) {
+            logger.errorf("Invalid property %s.%s", this.name, name);
+            pschema = PropertySchema.of(name, null);
+        }
         return pschema;
     }
 
-    public Map<String,Object> uniqueProps(Map<String,Object> props) {
+    public Map<String,Object> uniqueProperties(Map<String,Object> props) {
         if (props.isEmpty() || unique.isEmpty())
             return Collections.emptyMap();
 
@@ -89,13 +101,13 @@ public class NodeSchema {
     public Map<String,Object> normalizeCreate(Map<String,Object> cprops) {
         int rev = MapUtils.getOrDefault(cprops, REVISION, -1);
         Map<String,Object> nprops = new HashMap<>();
-        for (String pname : cprops.keySet()) {
-            Object value = cprops.get(pname);
-            if (REVISION.equals(pname))
+        for (String name : cprops.keySet()) {
+            Object value = cprops.get(name);
+            if (REVISION.equals(name))
                 continue;
 
-            PropertySchema pschema = propertySchema(pname);
-            nprops.put(pname, pschema.asRevisioned(rev, value));
+            PropertySchema pschema = propertySchema(name);
+            nprops.put(name, pschema.asRevisioned(rev, value));
         }
         if (isRevisioned()) {
             nprops.put(IN_REVISION, PropertyUtils.boolArray(rev, true));
@@ -106,14 +118,14 @@ public class NodeSchema {
     public Map<String,Object> normalizeUpdate(Map<String,Object> cprops, Map<String,Object> uprops) {
         int rev = MapUtils.getOrDefault(uprops, REVISION, -1);
         Map<String,Object> nprops = new HashMap<>();
-        for (String pname : uprops.keySet()) {
-            Object uvalue = uprops.get(pname);
-            Object cvalue = cprops.get(pname);
-            if (REVISION.equals(pname))
+        for (String name : uprops.keySet()) {
+            Object uvalue = uprops.get(name);
+            Object cvalue = cprops.get(name);
+            if (REVISION.equals(name))
                 continue;
 
-            PropertySchema pschema = propertySchema(pname);
-            nprops.put(pname, pschema.asRevisioned(cvalue, rev, uvalue));
+            PropertySchema pschema = propertySchema(name);
+            nprops.put(name, pschema.asRevisioned(cvalue, rev, uvalue));
         }
         if (isRevisioned()) {
             Object revs = cprops.get(IN_REVISION);
@@ -125,13 +137,13 @@ public class NodeSchema {
     public Map<String,Object> normalizeQuery(Map<String,Object> qprops) {
         int rev = MapUtils.getOrDefault(qprops, REVISION, -1);
         Map<String,Object> nprops = new HashMap<>();
-        for (String pname : qprops.keySet()) {
-            Object value = qprops.get(pname);
-            if (REVISION.equals(pname))
+        for (String name : qprops.keySet()) {
+            Object value = qprops.get(name);
+            if (REVISION.equals(name))
                 continue;
 
-            PropertySchema pschema = propertySchema(pname);
-            nprops.put(pschema.atRevision(pname, rev), value);
+            PropertySchema pschema = propertySchema(name);
+            nprops.put(pschema.atRevision(name, rev), value);
         }
         return nprops;
     }

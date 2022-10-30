@@ -10,7 +10,7 @@ public enum Op {
     LEQ("<="),      // <=
 
     IN("in"),       // IN
-    NIN("!in"),     // NOT IN
+    NOT_IN("!in"),     // NOT IN
 
     STARTS_WITH("startsWith"),      // string
     ENDS_WITH("endsWith"),          // string
@@ -43,7 +43,7 @@ public enum Op {
             case ">" : return GT;
             case ">=": return GEQ;
             case "in": return IN;
-            case "!in": return NIN;
+            case "!in": return NOT_IN;
             case "startsWith": return STARTS_WITH;
             case "endsWith": return ENDS_WITH;
             case "contains": return CONTAINS;

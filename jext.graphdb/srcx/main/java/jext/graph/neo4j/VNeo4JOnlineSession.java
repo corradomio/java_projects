@@ -23,12 +23,17 @@ import java.util.function.LongConsumer;
 public class VNeo4JOnlineSession extends Neo4JOnlineSession {
 
     private static final String REVISION = "revision";
+    private static final String APPEND_DISTINCT_REVISION = "revision[!]";
     public static final int NO_REV = -1;
 
     private final String refId;
     private final String model;
     private final int rev;
     private final GraphSchema schema;
+
+    // ----------------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------------
 
     public VNeo4JOnlineSession(VNeo4JOnlineDatabase graphdb, String refId, String model, int rev) {
         super(graphdb);
@@ -41,52 +46,57 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession {
     // ----------------------------------------------------------------------
     // Query Nodes
     // ----------------------------------------------------------------------
-    
-    // create
-    private Map<String, Object> check(String nodeType, Map<String,Object> props) {
+    //  (revision, rev) ->
+    //      set:    inRevision[rev] = true
+    //      where:  inRevision[rev]
+
+    private Map<String, Object> check(Map<String,Object> props) {
+        // add 'refId'
         if (props != null && refId != null) {
             if (props.isEmpty())
                 props = new HashMap<>();
             if (!props.containsKey(REF_ID))
                 props.put(REF_ID, refId);
         }
+
+        return props;
+    }
+    
+    // create
+    private Map<String, Object> check(String nodeType, Map<String,Object> props, boolean create) {
+
+        check(props);
+
         ModelSchema mschema = schema.modelSchema(model);
         NodeSchema  nschema = schema.nodeSchema(nodeType);
 
         if (mschema.isReference(nodeType))
+            props.put(APPEND_DISTINCT_REVISION, rev);
         if (nschema.isRevisioned() && rev != NO_REV)
             props.put(REVISION, rev);
 
+        if (create)
+            nschema.normalizeCreate(props);
+        else
+            nschema.normalizeQuery(props);
+
         return props;
     }
 
-    // query
-    private Map<String,Object> check(Map<String,Object> props) {
-        if (props != null && refId != null) {
-            if (props.isEmpty())
-                props = new HashMap<>();
-            if (!props.containsKey(REF_ID))
-                props.put(REF_ID, refId);
-            if (!props.containsKey(REVISION) && rev != NO_REV)
-                props.put(REVISION, rev);
-        }
-        return props;
-    }
-    
     @Override
     public Query queryNodes(@Nullable String nodeType, @Nullable Map<String,Object> nodeProps) {
-        return super.queryNodes(nodeType, check(nodeProps));
+        return super.queryNodes(nodeType, check(nodeType, nodeProps, false));
     }
 
     @Nullable
     @Override
     public String/*nodeId*/ findNode(@Nullable String nodeType, Map<String,Object> nodeProps) {
-        return super.findNode(nodeType, check(nodeProps));
+        return super.findNode(nodeType, check(nodeType, nodeProps, false));
     }
 
     @Override
     public boolean existsNode(@Nullable String nodeType, Map<String,Object> nodeProps) {
-        return super.existsNode(nodeType, check(nodeProps));
+        return super.existsNode(nodeType, check(nodeType, nodeProps, false));
     }
 
     // ----------------------------------------------------------------------
@@ -95,12 +105,12 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession {
 
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps) {
-        return super.createNode(nodeType, check(nodeType, nodeProps));
+        return super.createNode(nodeType, check(nodeType, nodeProps, true));
     }
 
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps) {
-        return super.createNode(nodeType, check(nodeType, findProps), updateProps);
+        return super.createNode(nodeType, check(nodeType, findProps, true), updateProps);
     }
 
     // ----------------------------------------------------------------------
@@ -109,17 +119,17 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession {
 
     @Override
     public long countNodes(String nodeType, Map<String,Object> nodeProps) {
-        return super.countNodes(nodeType, check(nodeProps));
+        return super.countNodes(nodeType, check(nodeType, nodeProps, false));
     }
 
     @Override
     public long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps) {
-        return super.deleteNodes(nodeType, check(nodeProps));
+        return super.deleteNodes(nodeType, check(nodeType, nodeProps, false));
     }
 
     @Override
     public long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callback) {
-        return super.deleteNodes(nodeType, check(nodeProps), callback);
+        return super.deleteNodes(nodeType, check(nodeType, nodeProps, false), callback);
     }
 
     // ----------------------------------------------------------------------
@@ -133,8 +143,8 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession {
         @Nullable String toType,   Map<String,Object> toProps,
         Map<String,Object> edgeProps) {
         return super.queryEdges(edgeType,
-            fromType, check(fromProps),
-            toType, check(toProps),
+            fromType, check(fromType, fromProps, false),
+            toType,   check(toType,   toProps,   false),
             edgeProps);
     }
 
@@ -150,8 +160,8 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession {
         Map<String,Object> edgeProps,
         LongConsumer callback) {
         return super.deleteEdges(edgeType,
-            fromType, check(fromProps),
-            toType, check(toProps),
+            fromType, check(fromType, fromProps, false),
+            toType,   check(toType,   toProps,   false),
             edgeProps, callback);
     }
 

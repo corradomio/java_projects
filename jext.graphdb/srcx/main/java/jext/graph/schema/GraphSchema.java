@@ -79,7 +79,7 @@ public class GraphSchema {
 
     public Map<String,Object> uniqueProps(String nodeType, Map<String,Object> nprops) {
         NodeSchema nodeSchema = nodeSchema(nodeType);
-        return nodeSchema.uniqueProps(nprops);
+        return nodeSchema.uniqueProperties(nprops);
     }
 
     public NodeSchema nodeSchema(String node) {

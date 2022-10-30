@@ -7,7 +7,6 @@ import jext.graph.GraphSession;
 import jext.graph.Param;
 import jext.graph.Query;
 import jext.logging.Logger;
-import jext.util.ArrayUtils;
 import jext.util.Assert;
 import jext.util.MapUtils;
 import jext.util.Parameters;
@@ -27,7 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +36,12 @@ import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.asIds;
 import static jext.graph.NodeId.invalidId;
 import static jext.graph.NodeId.toId;
+import static jext.graph.neo4j.CypherFormatter.ablock;
+import static jext.graph.neo4j.CypherFormatter.eblock;
+import static jext.graph.neo4j.CypherFormatter.pblock;
+import static jext.graph.neo4j.CypherFormatter.sblock;
+import static jext.graph.neo4j.CypherFormatter.ublock;
+import static jext.graph.neo4j.CypherFormatter.wblock;
 
 public class Neo4JOnlineSession implements GraphSession {
 
@@ -45,16 +49,16 @@ public class Neo4JOnlineSession implements GraphSession {
     // Constants
     // ----------------------------------------------------------------------
 
-    private enum WhereType {
-        WHERE,
-        AND
-    }
+    static final String N = "n";
+    static final String E = "e";
+    static final String FROM = "from";
+    static final String TO = "to";
+    static final String NONE = "";
 
-    private static final String N = "n";
-    private static final String E = "e";
-    private static final String FROM = "from";
-    private static final String TO = "to";
-    private static final String NONE = "";
+    static final String AND_BLOCK = "${and:";
+    static final String WHERE_BLOCK = "${where:";
+    static final String END_BLOCK = "}";
+
     static final int MAX_STATEMENTS = 8*1024;
     static final int MAX_DELETE_NODES = 16*1024;
 
@@ -150,9 +154,9 @@ public class Neo4JOnlineSession implements GraphSession {
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
             while (query.contains(AND_BLOCK))
-                query = ublock(query, nparams, WhereType.AND);
+                query = ublock(query, nparams, true);
             while (query.contains(WHERE_BLOCK))
-                query = ublock(query, nparams, WhereType.WHERE);
+                query = ublock(query, nparams, false);
             params = nparams;
         }
 
@@ -171,9 +175,9 @@ public class Neo4JOnlineSession implements GraphSession {
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
             while (query.contains(AND_BLOCK))
-                query = ublock(query, nparams, WhereType.AND);
+                query = ublock(query, nparams, true);
             while (query.contains(WHERE_BLOCK))
-                query = ublock(query, nparams, WhereType.WHERE);
+                query = ublock(query, nparams, false);
             params = nparams;
         }
 
@@ -348,7 +352,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     private long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count) {
         String pblock = pblock(N, nodeProps);
-        String wblock = wblock(N, nodeProps, WhereType.WHERE, true);
+        String wblock = wblock(N, nodeProps, false, true);
         String s;
 
         Assert.verify(count > 0, "deleteNodes: count MUST BE > 0");
@@ -391,7 +395,7 @@ public class Neo4JOnlineSession implements GraphSession {
         if (nodeProps == null || nodeProps.isEmpty())
             return;
 
-        String sblock = sblock(N, nodeProps);
+        String sblock = sblock(N, nodeProps, false);
 
         Parameters params = Parameters.params(
             "id", asId(nodeId))
@@ -407,7 +411,7 @@ public class Neo4JOnlineSession implements GraphSession {
         if (nodeProps == null || nodeProps.isEmpty() || nodeIds == null || nodeIds.isEmpty())
             return;
 
-        String sblock = sblock(N, nodeProps);
+        String sblock = sblock(N, nodeProps, false);
 
         Parameters params = Parameters.params(
             "ids", asIds(nodeIds))
@@ -464,7 +468,7 @@ public class Neo4JOnlineSession implements GraphSession {
         // nodeProps = ckparams(nodeProps);
 
         String pblock = pblock(N, nodeProps);
-        String wblock = wblock(N, nodeProps, WhereType.WHERE, true);
+        String wblock = wblock(N, nodeProps, false, true);
         String s;
 
         if (StringUtils.isEmpty(nodeType))
@@ -522,7 +526,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         String eblock = eblock(E, edgeType, direction, recursive, edgeProps);
         String pblock = pblock(N, nodeProps);
-        String wblock = wblock(E, edgeProps, WhereType.AND);
+        String wblock = wblock(E, edgeProps, true, false);
         String s;
 
         if (recursive) {
@@ -544,7 +548,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     Query queryAdjacentNodesStep(Collection<String> fromIds, String edgeType, Direction direction, Map<String,Object> edgeProps) {
         String eblock = eblock(E, edgeType, direction, false, edgeProps);
-        String wblock = wblock(E, edgeProps, WhereType.AND);
+        String wblock = wblock(E, edgeProps, true, false);
         String s = String.format("MATCH (s) %s (n) WHERE id(s) in $id %s",
             eblock, wblock);
 
@@ -589,9 +593,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String eblock = eblock(E, edgeType, Direction.Output, false, Collections.emptyMap());
         String tblock = pblock(TO, toProps);
 
-        String wfblock = wblock(FROM, fromProps, WhereType.WHERE);
-        String wtblock = wblock(TO,   toProps,   wfblock.isEmpty() ? WhereType.WHERE : WhereType.AND);
-        String weblock = wblock(E,            edgeProps, wtblock.isEmpty() ? WhereType.WHERE : WhereType.AND);
+        String wfblock = wblock(FROM, fromProps, false, false);
+        String wtblock = wblock(TO,   toProps, !wfblock.isEmpty(), false);
+        String weblock = wblock(E,            edgeProps, !wtblock.isEmpty(), false);
 
         String wblock = String.format("%s%s%s", wfblock, wtblock, weblock);
 
@@ -717,7 +721,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         // search if the edge already exists
         String pblock = pblock(E, findProps);
-        String wblock = wblock(E, findProps, WhereType.AND, true);
+        String wblock = wblock(E, findProps, true, true);
 
         String s = String.format("MATCH (from) -[e:%s %s]-> (to) WHERE id(from) = $from AND id(to)=$to %s",
             edgeType, pblock, wblock);
@@ -762,8 +766,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
         String s;
         String pblock = pblock(E, pparams);
-        String wblock = wblock(E, wparams, WhereType.AND, true);
-        String sblock = sblock(E, sparams);
+        String wblock = wblock(E, wparams, true, true);
+        String sblock = sblock(E, sparams, false);
 
         Parameters edgeProps = Parameters.params(findProps).add(updateProps);
         Set<String> reachableIds, missingIds;
@@ -821,7 +825,7 @@ public class Neo4JOnlineSession implements GraphSession {
         //
         {
             pblock = pblock(E, findProps);
-            wblock = wblock(E, findProps, WhereType.AND, true);
+            wblock = wblock(E, findProps, true, true);
             sblock = sblock(E, updateProps, false);
             s = String.format("MATCH (from) -[e:%s %s]-> (to) WHERE id(from)=$from AND id(to) IN $to " +
                     "%s " +
@@ -868,8 +872,8 @@ public class Neo4JOnlineSession implements GraphSession {
         Parameters sparams = Parameters.params(updateProps);
 
         String pblock = pblock(E, pparams);
-        String wblock = wblock(E, wparams, WhereType.AND, true);
-        String sblock = sblock(E, sparams);
+        String wblock = wblock(E, wparams, true, true);
+        String sblock = sblock(E, sparams, false);
         String s;
 
         if (edgeType == null && toIds == null)
@@ -913,7 +917,7 @@ public class Neo4JOnlineSession implements GraphSession {
                     Map<String,Object> edgeProps)
     {
         String eblock = eblock(E, edgeType, direction, recursive, null);
-        String wblock = wblock(E, edgeProps, WhereType.AND);
+        String wblock = wblock(E, edgeProps, true, false);
         String s;
 
         if (recursive) {
@@ -980,7 +984,7 @@ public class Neo4JOnlineSession implements GraphSession {
                             LongConsumer callback) {
         String s;
         String pblock = pblock(E, edgeProps);
-        String wblock = wblock(E, edgeProps, WhereType.AND, true);
+        String wblock = wblock(E, edgeProps, true, true);
         int maxdelete = graphdb.getMaxDelete();
 
         if (edgeType == null && toIds == null)
@@ -1030,7 +1034,7 @@ public class Neo4JOnlineSession implements GraphSession {
         if (updateProps == null || updateProps.isEmpty())
             return;
 
-        String sblock = sblock(E, updateProps);
+        String sblock = sblock(E, updateProps, false);
         String s = String.format("MATCH ()-[e]-() " +
             "WHERE id(e) = $id %s", sblock);
 
@@ -1063,7 +1067,7 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps) {
         String s;
-        String sblock = sblock(E, edgeProps);
+        String sblock = sblock(E, edgeProps, false);
         Parameters params;
 
         if (toIds == null) {
@@ -1411,453 +1415,6 @@ public class Neo4JOnlineSession implements GraphSession {
         }
 
         return body;
-    }
-
-    // ----------------------------------------------------------------------
-    // Implementation
-    // ----------------------------------------------------------------------
-    // cypher template:
-    //
-    //      MATCH (n:label {slot: $param, ...})
-    //      WHERE n.slot        OP $param
-    //         OR n.slot[index] OP $param
-    //         OR sslot(n),     OP $param
-    //      SET   n.slot = $param,
-    //            n.slot = function(n.slot, index, $param),
-    //            n.slot = function(n.slot, $param)
-    //
-    //  There are some 'special' (s)slots:
-    //
-    //      n.$label     ==  labels(n)[0]
-    //      n.$degree    ==  apoc.node.degree(n)
-    //      n.$outdegree ==  apoc.node.degree(n, '>')
-    //      n.$indegree  ==  apoc.node.degree(n, '<')
-    //  .
-
-    private static String label(String l) {
-        if (l == null || l.isEmpty())
-            return NONE;
-        else
-            return ":" + l;
-    }
-
-    /**
-     * Create the block:
-     *
-     *      { param: $[prefix]param, ... }
-     *
-     * Note: this block has a different meaning if used ina MATCH or CREATE clause:
-     *   - in MATCH clause is a WHERE clause
-     *   - in CREATE clause is a SET clause
-     *
-     * However, we can limit the 'pblock' only to 'properties with simple values'
-     */
-    private static String pblock(String prefix, Map<String,Object> params) {
-
-        if (params == null || params.size() == 0)
-            return NONE;
-
-        StringBuilder sb = new StringBuilder();
-        for(String param : params.keySet()) {
-            Object value = params.get(param);
-
-            if (Param.isSpecialOrArray(param, value))
-                continue;
-
-            if (sb.length() > 1)
-                sb.append(",");
-
-            // { ... param: $nparam
-            sb.append(param).append(":$").append(prefix).append(param);
-        }
-
-        // check if sb is empty
-        if (sb.length() == 0)
-            return NONE;
-        else
-            // add {...}
-            return sb.insert(0, "{").append("}").toString();
-    }
-
-    /**
-         * Create the blocks
-         *
-         *      WHERE n.param = $param AND ...
-         *
-         * or
-         *
-         *      AND  n.param = $param AND ...
-         *
-         * @param params parameters
-         * @param where if to include the WHERE keyword or AND
-         */
-    private static String wblock(String alias, Map<String,Object> params, WhereType where, boolean pblock) {
-        if (params == null || params.isEmpty())
-            return NONE;
-
-        String s;
-        StringBuilder sb = new StringBuilder();
-        for (String param : new HashSet<>(params.keySet())) {
-            Object value = params.get(param);
-
-            // check if already used in 'pblock'
-            if (pblock && !Param.isSpecialOrArray(param, value))
-                continue;
-
-            // append "... AND "
-            if (sb.length() > 0) sb.append(" AND ");
-
-            // strip 'name[...]' -> 'name'
-            String pname = Param.pnameOf(param);
-            params.put(pname, value);
-
-            // [param, null] -> "EXISTS(n.param)"
-            if (Param.isExists(value)) {
-                s = String.format("EXISTS(%s.%s)", alias, param);
-            }
-
-            // ['revision', rev] -> "n.inRevision[rev]"
-            else if (Param.isRevision(param)) {
-                s = revisionCondition(alias, param, value);
-            }
-
-            // ['$degree', deg]
-            // ['$degree[edge]', deg]
-            else if (Param.isDegree(param)) {
-                s = degreeCondition(alias, param, value);
-            }
-
-            // ['$label', val] -> ...
-            else if (Param.isSpecial(param)) {
-                s = specialCondition(alias, param, value);
-            }
-
-            // [param, value: a collection] -> "n.param IN $param"
-            else if (Param.isCollection(value)) {
-                s = String.format("%1$s.%2$s IN $%1$s%3$s", alias, param, pname);
-            }
-
-            // [param, value]        -> 'name = $param'
-            // [param[index], value] -> 'name[index] = $paramIndex'
-            else {
-                s = String.format("%1$s.%2$s = $%1$s%3$s", alias, param, pname);
-            }
-
-            sb.append(s);
-        }
-
-        if (sb.length() == 0)
-            return NONE;
-
-        switch (where) {
-            // case NONE: return sb.toString();
-            case AND:   return sb.insert(0, " AND "  ).toString();
-            case WHERE: return sb.insert(0, " WHERE ").toString();
-            default: return sb.toString();
-        }
-    }
-    private static String wblock(String alias, Map<String,Object> params, WhereType where) {
-        return wblock(alias, params, where, false);
-    }
-
-    private static String specialCondition(String alias, String param, Object value) {
-        String s;
-        String pname = Param.pnameOf(param);
-
-        // ["$label", l] -> labels(n)[0] = $_label
-        if (param.equals("$label")) {
-            s = String.format("labels(%1$s)[0] = $%1$s%2$s", alias, pname);
-        }
-
-        else {
-            logger.errorf("Unknown special field '%s'", param);
-            s = "true";
-        }
-
-        return s;
-    }
-
-    private static String revisionCondition(String alias, String param, Object value) {
-    /*
-        [revision, 0 | [0,1,...]] ->
-            n.inRevision[0]
-               (n.inRevision[0] OR n.inRevision[1] ... )
-     */
-        // revs == null -> true
-        if (value == null) {
-            logger.errorf("Revision condition with null value");
-            return "true";
-        }
-
-        // rev:integer|long -> inRevision[rev]
-        if (value instanceof Number) {
-            int rev = ((Number) value).intValue();
-            return String.format("%s.inRevision[%d]", alias, rev);
-        }
-
-        // convert collection in int[]
-        int[] revs ;
-        if (value instanceof Collection)
-            revs = ArrayUtils.asIntArray(value);
-        else
-            revs = (int[]) value;
-        // end
-
-        // revs == []
-        if (revs.length == 0) {
-            logger.errorf("Revision condition with empty array []");
-            return "true";
-        }
-
-        // revs == [1]
-        if (revs.length == 1)
-            return String.format("%s.inRevision[%d]", alias, revs[0]);
-
-        // revs = [1,2,...]
-        StringBuilder sb = new StringBuilder("(");
-        sb.append(String.format("%s.inRevision[%d]", alias, revs[0]));
-        for (int i=1; i<revs.length; ++i) {
-            sb.append(" OR ")
-              .append(String.format("%s.inRevision[%d]", alias, revs[i]));
-        }
-        sb.append(")");
-
-        return sb.toString();
-    }
-
-    private static String degreeCondition(String alias, String param, Object value) {
-        String s = "true";
-        String edge = Param.keyOf(param);
-        String pname = Param.pnameOf(param);
-        String op = Param.opOf(param);
-
-        // ["$degree", d] -> apoc.node.degree(n) = $_degree
-        // ["$degree[e]", d]
-        if (param.startsWith("$degree") && edge.isEmpty()) {
-            s = String.format("apoc.node.degree(%1$s) = $%1$s%2$s", alias, pname);
-        }
-
-        else if (param.startsWith("$degree[")) {
-            s = String.format("apoc.node.degree(%1$s,%3$s) = $%1$s%2$s", alias, pname, edge);
-        }
-
-        // ["$outdegree", d] -> apoc.node.degree(n,'>') = $_outdegree
-        else if (param.startsWith("$outdegree")) {
-            s = String.format("apoc.node.degree(%1$s, '%3$s>') = $%1$s%2$s", alias, pname, edge);
-        }
-
-        // ["$indegree", d] -> apoc.node.degree(n,'<') = $_indegree
-        else if (param.startsWith("$indegree")) {
-            s = String.format("apoc.node.degree(%1$s, '%3$s<') = $%1$s%2$s", alias, pname, edge);
-        }
-
-        return s;
-    }
-
-    /**
-     * Create the block
-     *
-     *      SET n.param = $nparam, ...
-     *
-     * Note: 'pblock' specify if some parameters are already used in 'pblock'
-     */
-    private static String sblock(String alias, Map<String,Object> params, boolean pblock) {
-        if (params == null || params.size() == 0)
-            return NONE;
-
-        StringBuilder sb = new StringBuilder();
-        for(String param : new HashSet<>(params.keySet())) {
-            Object value = params.get(param);
-
-            // check if already used in 'pblock'
-            if (pblock && !Param.isSpecialOrArray(param, value))
-                continue;
-
-            if (sb.length() > 0) sb.append(",");
-
-            // [revision, rev] -> inRevision[rev] = true -> inRevision = [...true]
-            if (Param.isRevision(param)) {
-                String index = params.get(param).toString();
-                sb.append(String.format("%1$s.inRevision = apocx.coll.arraySet(%1$s.inRevision, $%1$s%3$s, true)",
-                    alias, index, param));
-            }
-            // name[!] -> appendDistinct(n.name, $pname)
-            else if (Param.isAppendDistinct(param)) {
-                String name  = Param.nameOf(param);
-                String pname = Param.pnameOf(param);
-
-                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct(%1$s.%2$s, $%1$s%3$s)",
-                    alias, name, pname));
-
-                params.put(pname, params.get(param));
-                params.remove(param);
-            }
-            // name[+] -> append(n.name, $pname)
-            else if (Param.isAppend(param)) {
-                String name  = Param.nameOf(param);
-                String pname = Param.pnameOf(param);
-
-                sb.append(String.format("%1$s.%2$s = apocx.coll.append(%1$s.%2$s, $%1$s%3$s)",
-                    alias, name, pname));
-
-                params.put(pname, params.get(param));
-                params.remove(param);
-            }
-            // name[index,!] -> appendDistinct2(n.name, index, $pname)
-            else if (Param.isAppendDistinct2(param)) {
-                String name  = Param.nameOf(param);
-                String pname = Param.pnameOf(param);
-                int index = Param.indexOf(param, 1);
-
-                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct2(%1$s.%2$s, %4$d, $%1$s%3$s)",
-                    alias, name, pname, index));
-
-                params.put(pname, params.get(param));
-                params.remove(param);
-            }
-            // name[index,+] -> append2(n.name, index, $pname)
-            else if (Param.isAppend2(param)) {
-                String name  = Param.nameOf(param);
-                String pname = Param.pnameOf(param);
-                int index = Param.indexOf(param, 1);
-
-                sb.append(String.format("%1$s.%2$s = apocx.coll.append2(%1$s.%2$s, %4$d, $%1$s%3$s)",
-                    alias, name, pname, index));
-
-                params.put(pname, params.get(param));
-                params.remove(param);
-            }
-            // name[idx1,idx2] -> array2Set(n.name, idx1, idx2, $pname)
-            else if (param.contains("[") && param.contains(",")) {
-                String name  = Param.nameOf(param);
-                String pname = Param.pnameOf(param);
-                int index1 = Param.indexOf(param, 1);
-                int index2 = Param.indexOf(param, 2);
-
-                sb.append(String.format("%1$s.%2$s = apocx.coll.array2Set(%1$s.%2$s, %4$d, %5$d, $%1$s%3$s)",
-                    alias, name, pname, index1, index2));
-
-                params.put(pname, params.get(param));
-                params.remove(param);
-            }
-            // name[index] -> arraySet(n.name, index, $pname)
-            else if (param.contains("[")) {
-                String name  = Param.nameOf(param);
-                String pname = Param.pnameOf(param);
-                int index = Param.indexOf(param, 0);
-
-                sb.append(String.format("%1$s.%2$s = apocx.coll.arraySet(%1$s.%2$s, %4$d, $%1$s%3$s)",
-                    alias, name, pname, index));
-
-                params.put(pname, params.get(param));
-                params.remove(param);
-            }
-            // name -> name = $pname
-            else {
-                sb.append(String.format("%1$s.%2$s = $%1$s%2$s", alias, param));
-            }
-        }
-
-        if (sb.length() == 0)
-            return NONE;
-        else
-            return sb.insert(0, "SET ").toString();
-    }
-    private static String sblock(String alias, Map<String,Object> params) {
-        return sblock(alias, params, false);
-    }
-
-    /**
-     * Create the edge syntax block
-     *
-     *       -[e:etype {...}]-         Any
-     *       -[e:etype {...}]->        Output
-     *      <-[e:etype {...}]-         Input
-     *
-     */
-    private static String eblock(String alias, String edgeType, Direction direction, boolean recursive,
-                                 Map<String,Object> edgeProps) {
-        String eblock;
-
-        switch (direction) {
-            case Input:
-                eblock = "<-[%s%s%s %s]-";
-                break;
-            case Output:
-                eblock = "-[%s%s%s %s]->";
-                break;
-            default:
-                eblock = "-[%s%s%s %s]-";
-                break;
-        }
-
-        String pblock = pblock(alias, edgeProps);
-        String etype = edgeType != null ? ":" + edgeType : NONE;
-
-        return String.format(eblock,
-            alias,
-            etype,
-            recursive ? "*" : NONE,
-            pblock);
-    }
-
-    /**
-     * Create 'n.att1, n.att2, ...' block
-     */
-    private static String ablock(String alias, Collection<String> attributes) {
-        if (attributes.isEmpty())
-            return NONE;
-
-        Iterator<String> it = attributes.iterator();
-        StringBuilder sb = new StringBuilder()
-            .append(alias).append(".").append(it.next());
-
-        while (it.hasNext()) {
-            sb.append(",").append(alias).append(".").append(it.next());
-        }
-        return sb.toString();
-    }
-
-    // ----------------------------------------------------------------------
-    // ${and:[alias]:[name]}
-    // ${where:[alias]:[name]}
-
-    private static final String AND_BLOCK = "${and:";
-    private static final String WHERE_BLOCK = "${where:";
-    private static final String END_BLOCK = "}";
-
-    /**
-     * Create 'WHERE ...' or 'AND ...'
-     */
-    private static String ublock(String stmt, Parameters params, WhereType utype) {
-        String prefix = utype == WhereType.AND ? AND_BLOCK : WHERE_BLOCK;
-        int bgn = stmt.indexOf(prefix) ;
-        int end = stmt.indexOf(END_BLOCK, bgn);
-        String name = stmt.substring(bgn+prefix.length(), end);
-        String alias;
-
-        // name | alias:name
-        int sep = name.indexOf(':');
-        if (sep == -1)
-            alias = N;
-        else {
-            alias = name.substring(0, sep);
-            name = name.substring(sep+1);
-        }
-
-        //
-        // params['name'] is ANOTHER map
-        //
-        Map<String,Object> aparams = (Map<String,Object>) params.getOrDefault(name, Collections.emptyMap());
-        params.remove(name);
-
-        String wblock = wblock(alias, aparams, utype);
-
-        // replace '${and...}' or '${where...}' with 'wblock'
-        stmt = stmt.substring(0, bgn) + wblock + stmt.substring(end+END_BLOCK.length());
-        params.add(alias, aparams);
-
-        return stmt;
     }
 
     // ----------------------------------------------------------------------

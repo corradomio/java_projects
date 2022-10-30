@@ -85,7 +85,6 @@ query
         n.prop[rev] (starts|ends) with|contains value
         n.prop[rev] in value
 
-
 -----------------------------------------------------------------------------
 
 1) rimuovere la dipendenza da GraphSchema in ModelSchema
@@ -116,3 +115,28 @@ Problema:
 
     invece che una property del node, una relazione con il node della property
     e il valore della property per quella particolare revisione
+
+
+-----------------------------------------------------------------------------
+
+    name    ==  Name[name, -1]
+    value   == Value[=, value]
+
+    {name,          value           }
+    {Name[name, i], value           }
+    {name,          Value[op, value]}
+    {Name[name, i], Value[op, value]}
+
+-----------------------------------------------------------------------------
+
+modelNode
+    revisions: [1,2,3,4]        quali revisioni sono possibili
+
+revisionedNode
+    inRevision: [f,t,f,...]    in quale revisione e' visibile
+                 0 1 2
+
+revisionedEdge
+    inRevision: [f,t,f,...]    in quale revisione e' visibile
+                 0 1 2
+
