@@ -18,7 +18,10 @@ public enum Op {
     NCONTAINS("!contains"),    // string, collection (NOT c CONTAINS x)
 
     APPEND("append"),
-    APPEND_DISTINCT("!append");
+    APPEND_DISTINCT("!append"),
+
+    INCR("incr")
+    ;
 
     private String op;
 

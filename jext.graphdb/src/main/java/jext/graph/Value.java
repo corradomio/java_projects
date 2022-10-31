@@ -18,10 +18,13 @@ public class Value {
     public static Value append(Object value) { return of(Op.APPEND, value); }
     public static Value appendDistinct(Object value) { return of(Op.APPEND_DISTINCT, value); }
 
+    public static Value incr(Object value) { return of(Op.INCR, value); }
+
     public static Value in(Object value) { return of(Op.IN, value); }
     public static Value nin(Object value) { return of(Op.NIN, value); }
     public static Value contains(Object value) { return of(Op.CONTAINS, value); }
     public static Value ncontains(Object value) { return of(Op.NCONTAINS, value); }
+
     public static Value startsWith(Object value) { return of(Op.STARTS_WITH, value); }
     public static Value endsWith(Object value) { return of(Op.ENDS_WITH, value); }
 

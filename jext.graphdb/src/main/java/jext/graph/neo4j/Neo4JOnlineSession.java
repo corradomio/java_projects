@@ -68,9 +68,9 @@ public class Neo4JOnlineSession implements GraphSession {
 
 
     public static final String REF_ID = "refId";
-    public static final String REVISION = "$revision";
+    public static final String REVISION = "revision";
     public static final String REVISIONS = "revisions";
-    public static final String IN_REVISION = "$revision";
+    public static final String IN_REVISION = "inRevision";
     public static final String COUNT = "count";
 
     // ----------------------------------------------------------------------
