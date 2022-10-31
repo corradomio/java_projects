@@ -367,7 +367,9 @@
             "declares"
           -->
         <edges>
-            <edge name="uses"     revisioned="true"/>
+            <edge name="uses"     revisioned="true">
+                <property name="count" type="int" revisioned="true"/>
+            </edge>
             <edge name="memberOf" revisioned="true"/>
             <edge name="contains" revisioned="true"/>
             <edge name="ofType"   revisioned="true"/>

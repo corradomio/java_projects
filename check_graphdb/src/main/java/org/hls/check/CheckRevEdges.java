@@ -12,6 +12,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 
+import static jext.graph.neo4j.Neo4JOnlineSession.COUNT;
+
 public class CheckRevEdges {
 
     static String REF_ID = "100001";
@@ -45,7 +47,15 @@ public class CheckRevEdges {
             ));
 
             e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
-                "count", 1
+                COUNT, 1
+            ));
+
+        }
+
+        try(GraphSession s = gdb.connect(REF_ID, "source", 1)) {
+
+            e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
+                COUNT, 0
             ));
 
         }

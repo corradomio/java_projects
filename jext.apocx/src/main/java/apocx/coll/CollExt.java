@@ -13,20 +13,18 @@ import java.util.function.Function;
 public class CollExt {
 
     @UserFunction
-    @Description("apocx.coll.arrayIncr(coll, index) | increment coll[index] value, supporting indices < 0")
-    public Object arrayIncr(@Name("coll") List<Object> coll, @Name("index") long index) {
+    @Description("apocx.coll.arrayIncr(coll, index, value) | increment coll[index] value")
+    public Object arrayIncr(@Name("coll") List<Object> coll, @Name("index") long index, @Name("incr") long incr) {
         if (coll == null)
             coll = new ArrayList<>();
         else
             coll = new ArrayList<>(coll);
 
-        int n = coll.size();
-        if (index > n) {
-            while (coll.size() <= index)
-                coll.add(0);
-        }
+        while (coll.size() <= index)
+            coll.add(0L);
 
-        coll.set( (int) index, 1 + ((Number)coll.get((int)index)).intValue());
+        long value = ((Number)coll.get((int)index)).longValue();
+        coll.set( (int) index, Long.valueOf(value + incr));
         return coll;
     }
 
@@ -36,11 +34,7 @@ public class CollExt {
         if (coll == null)
             return null;
 
-        long n = coll.size();
-        if (index < 0)
-            index = n+index;
-
-        if (index >= 0 && index < n)
+        if (index >= 0 && index < coll.size())
             return coll.get((int)index);
         else
             return null;
@@ -49,22 +43,10 @@ public class CollExt {
     @UserFunction
     @Description("apocx.coll.arraySet(coll, index, value) | set coll[index] to value, extend coll if necessary")
     public List<Object> arraySet(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
-        if (index < 0)
-            return null;
-
-        // value = makeArray(value);
-
         if (coll == null)
             coll = new ArrayList<>();
         else
             coll = new ArrayList<>(coll);
-
-        // remove the element coll[index]
-        if (value == null) {
-            if (index < coll.size())
-                coll.remove((int) index);
-            return coll;
-        }
 
         int n = coll.size();
         if (index >= n) {
@@ -82,33 +64,10 @@ public class CollExt {
         return coll;
     }
 
-    // @Deprecated
-    // @UserFunction
-    // @Description("apocx.coll.setOrExtend(coll, index, value) | set coll[index] to value, extend coll if necessary")
-    // public List<Object> setOrExtend(@Name("coll") List<Object> coll, @Name("index") long index, @Name("value") Object value) {
-    //     return arraySet(coll, index, value);
-    // }
-
-    // private static Object makeArray(Object value) {
-    //     if (!(value instanceof Collection))
-    //         return value;
-    //     Collection c = (Collection) value;
-    //     if (c.isEmpty())
-    //         return "";
-    //
-    //     StringBuilder sb = new StringBuilder();
-    //     for (Object e : c) {
-    //         if (sb.length() > 0)
-    //             sb.append(",");
-    //         sb.append(e.toString());
-    //     }
-    //     return sb.toString();
-    // }
-
     private static Object defaultValue(Object value) {
         Object lastValue;
         if (value instanceof Boolean)
-            lastValue = false;
+            lastValue = Boolean.FALSE;
         else if (value instanceof Integer)
             lastValue = 0;
         else if (value instanceof Long)
@@ -130,15 +89,12 @@ public class CollExt {
         if (value == null)
             return coll;
 
-        // value = makeArray(value);
-
-        List<Object> list;
         if (coll == null)
-            list = new ArrayList<>();
+            coll = new ArrayList<>();
         else
-            list = new ArrayList<>(coll);
-        list.add(value);
-        return list;
+            coll = new ArrayList<>(coll);
+        coll.add(value);
+        return coll;
     }
 
     @UserFunction
@@ -147,16 +103,13 @@ public class CollExt {
         if (value == null)
             return coll;
 
-        // value = makeArray(value);
-
-        List<Object> list;
         if (coll == null)
-            list = new ArrayList<>();
+            coll = new ArrayList<>();
         else
-            list = new ArrayList<>(coll);
-        if (!list.contains(value))
-            list.add(value);
-        return list;
+            coll = new ArrayList<>(coll);
+        if (!coll.contains(value))
+            coll.add(value);
+        return coll;
     }
 
     @UserFunction
@@ -166,18 +119,17 @@ public class CollExt {
             return coll;
 
         int size = coll.size();
-        List<Object> list;
 
         if (length <= size) {
-            list = coll.subList(0, (int)length);
+            coll = coll.subList(0, (int)length);
         }
         else {
             Object lastObject = coll.get(size-1);
-            list = new ArrayList<>(coll);
-            while (list.size() < length)
-                list.add(lastObject);
+            coll = new ArrayList<>(coll);
+            while (coll.size() < length)
+                coll.add(lastObject);
         }
-        return list;
+        return coll;
     }
 
     //
@@ -190,14 +142,13 @@ public class CollExt {
         if (value == null)
             return null;
 
-        List<Object> list;
         if (coll == null)
-            list = new ArrayList<>();
+            coll = new ArrayList<>();
         else
-            list = new ArrayList<>(coll);
-        while (list.size() <= index1)
-            list.add("");
-        String eltList = (String) list.get((int)index1);
+            coll = new ArrayList<>(coll);
+        while (coll.size() <= index1)
+            coll.add("");
+        String eltList = (String) coll.get((int)index1);
         List<String> elts = split(eltList);
         String lastValue;
         if (elts.size() > 0)
@@ -211,9 +162,9 @@ public class CollExt {
         StringBuilder sb = new StringBuilder(elts.get(0));
         for(int i=1; i<elts.size(); ++i)
             sb.append(",").append(elts.get(i));
-        list.set((int)index1, sb.toString());
+        coll.set((int)index1, sb.toString());
 
-        return list;
+        return coll;
     }
 
     @Deprecated
@@ -237,20 +188,22 @@ public class CollExt {
     public List<Object> append2(@Name("coll") List<Object> coll,  @Name("value") long index, @Name("value") Object value) {
         if (value == null)
             return null;
-        List<Object> list;
+
         if (coll == null)
-            list = new ArrayList<>();
+            coll = new ArrayList<>();
         else
-            list = new ArrayList<>(coll);
-        while (list.size() <= index)
-            list.add("");
-        String seq = (String) list.get((int)index);
+            coll = new ArrayList<>(coll);
+        while (coll.size() <= index)
+            coll.add("");
+
+        String seq = (String) coll.get((int)index);
         if (seq.isEmpty())
             seq = value.toString();
         else
             seq = seq + "," + value;
-        list.set((int)index, seq);
-        return list;
+
+        coll.set((int)index, seq);
+        return coll;
     }
 
     //

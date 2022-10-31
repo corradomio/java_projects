@@ -16,7 +16,7 @@ public class Value {
     public static Value leq(Object value) { return of(Op.LEQ, value); }
 
     public static Value append(Object value) { return of(Op.APPEND, value); }
-    public static Value appendDistict(Object value) { return of(Op.APPEND_DISTINCT, value); }
+    public static Value appendDistinct(Object value) { return of(Op.APPEND_DISTINCT, value); }
 
     public static Value in(Object value) { return of(Op.IN, value); }
     public static Value nin(Object value) { return of(Op.NIN, value); }

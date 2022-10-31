@@ -18,12 +18,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
+import static jext.graph.neo4j.Neo4JOnlineSession.WHERE_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.AND_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.END_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.N;
 import static jext.graph.neo4j.Neo4JOnlineSession.NONE;
-import static jext.graph.neo4j.Neo4JOnlineSession.WHERE_BLOCK;
+import static jext.graph.neo4j.Neo4JOnlineSession.REVISION;
 import static jext.graph.neo4j.Neo4JOnlineSession.IN_REVISION;
+import static jext.graph.neo4j.Neo4JOnlineSession.COUNT;
 
 
 class CypherFormatter {
@@ -50,8 +52,8 @@ class CypherFormatter {
     //      n.$outdegree ==  apoc.node.degree(n, '>')
     //      n.$indegree  ==  apoc.node.degree(n, '<')
     //
-    //      n.$count
-    //      e.$count
+    //      n.count
+    //      e.count
     //  .
 
     static String label(String type) {
@@ -59,6 +61,13 @@ class CypherFormatter {
             return NONE;
         else
             return String.format(":%s", type);
+    }
+
+    static String name(String name) {
+        if (name.startsWith("$"))
+            return String.format("`%s`", name);
+        else
+            return name;
     }
 
     /**
@@ -85,8 +94,9 @@ class CypherFormatter {
 
             comma(sb);
 
-            // { ... param: $nparam ...
-            sb.append(param).append(":$").append(prefix).append(param);
+            // { ... param: $[prefix]param ...
+            // sb.append(param).append(":$").append(prefix).append(param);
+            sb.append(String.format("%2$s:$%1$s%2$s", prefix, param));
         }
 
         return brackets(sb);
@@ -179,7 +189,7 @@ class CypherFormatter {
         // rev:integer|long -> inRevision[rev]
         if (value instanceof Number) {
             int rev = ((Number) value).intValue();
-            return String.format("%s.%s[%d]", alias, IN_REVISION, rev);
+            return String.format("%s.`%s`[%d]", alias, IN_REVISION, rev);
         }
 
         // convert collection in int[]
@@ -199,7 +209,7 @@ class CypherFormatter {
         StringBuilder sb = new StringBuilder();
         for(int i=0; i< revs.length; ++i) {
             andor(sb, false);
-            sb.append(String.format("%s.%s[%d]", alias, IN_REVISION, revs[0]));
+            sb.append(String.format("%s.`%s`[%d]", alias, IN_REVISION, revs[0]));
         }
 
         return parens(sb);
@@ -256,15 +266,14 @@ class CypherFormatter {
 
             // [revision, rev] -> inRevision[rev] = true -> inRevision = [...true]
             if (isRevision(param)) {
-                String index = params.get(param).toString();
-                sb.append(String.format("%1$s.%3$s = apocx.coll.arraySet(%1$s.%3$s, $%1$s%2$s, true)",
+                sb.append(String.format("%1$s.`%3$s` = apocx.coll.arraySet(%1$s.`%3$s`, $`%1$s%2$s`, true)",
                     alias, param, IN_REVISION));
             }
 
             // [$count, 1] -> n.count = arrayIncr(n.count, index)
             else if (isCount(param)) {
-                sb.append(String.format("%1$s.count = apocx.coll.arrayIncr(%1$s.count, $%1$srevision)",
-                    alias));
+                sb.append(String.format("%1$s.`%2$s` = apocx.coll.arrayIncr(%1$s.`%2$s`, $`%1$s%3$s`, $`%1$s%2$s`)",
+                    alias, COUNT, REVISION));
             }
 
             // name[!] -> appendDistinct(n.name, $pname)
@@ -344,6 +353,11 @@ class CypherFormatter {
                 params.remove(param);
             }
             // name -> name = $pname
+            // else if (isSpecial(param, value)) {
+            //     String name = Param.nameOf(param);
+            //     sb.append(String.format("%1$s.`%2$s` = $%1$s%3$s", alias, param, name));
+            //     params.put(name, value);
+            // }
             else {
                 sb.append(String.format("%1$s.%2$s = $%1$s%2$s", alias, param));
             }
@@ -514,15 +528,16 @@ class CypherFormatter {
     }
 
     private static boolean isRevision(String name) {
-        return "revision".equals(name);
+        return REVISION.equals(name);
     }
 
     private static boolean isCount(String name) {
-        return "$count".equals(name);
+        return COUNT.equals(name);
     }
 
     private static boolean isDegree(String name) {
-        return name.startsWith("$degree") || name.startsWith("$indegree") || name.startsWith("$outdegree");
+        //return name.endsWith("$degree") || name.startsWith("$indegree") || name.startsWith("$outdegree");
+        return name.startsWith("$") && name.endsWith("degree");
     }
 
     private static boolean isLabel(String name) {

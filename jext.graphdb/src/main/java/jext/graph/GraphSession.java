@@ -70,6 +70,8 @@ public interface GraphSession extends AutoCloseable {
     String GRAPH_ID = "$id";
     String GRAPH_LABELS = "$labels";
     String GRAPH_TYPE = "$type";
+    String SOURCE_ID = "$source";
+    String TARGET_ID = "$target";
 
     // ----------------------------------------------------------------------
     // Database Session

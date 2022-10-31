@@ -68,9 +68,10 @@ public class Neo4JOnlineSession implements GraphSession {
 
 
     public static final String REF_ID = "refId";
-    public static final String REVISION = "revision";
+    public static final String REVISION = "$revision";
     public static final String REVISIONS = "revisions";
-    public static final String IN_REVISION = "inRevision";
+    public static final String IN_REVISION = "$revision";
+    public static final String COUNT = "count";
 
     // ----------------------------------------------------------------------
     // Special handled parameters
@@ -236,7 +237,10 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createNode(String nodeType, Map<String,Object> nodeProps) {
-        if(Assert.check(nodeProps.containsKey(TYPE), "Missing 'type' in %s", nodeType))
+        if(!Assert.check(nodeProps.containsKey(TYPE), "Missing 'type' in %s", nodeType))
+            nodeProps.put(TYPE, nodeType);
+        if (Assert.check(nodeProps.get(TYPE).equals(nodeType), "Mismatch between 'type' and nodeType: %s != %s",
+            nodeProps.get(TYPE), nodeType))
             Assert.nop();
 
         String pblock = pblock(N, nodeProps);
@@ -630,8 +634,7 @@ public class Neo4JOnlineSession implements GraphSession {
         Parameters params;
 
         if (fromIds == toIds) {
-            s = String.format(
-                "MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $from " +
+            s = String.format("MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $from " +
                     "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
                 eblock
             );
@@ -640,8 +643,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 .add(FROM, asIds(fromIds));
         }
         else {
-            s = String.format(
-                "MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $to " +
+            s = String.format("MATCH (from) %s (to) WHERE id(from) IN $from AND id(to) IN $to " +
                     "RETURN id(from) AS idfrom, id(to) AS idto, e AS edge",
                 eblock
             );
@@ -699,8 +701,8 @@ public class Neo4JOnlineSession implements GraphSession {
         return createEdge(edgeType, fromId, toId, Collections.emptyMap(), edgeProps);
     }
 
-    @Override
     @Nullable
+    @Override
     public String createEdge(String edgeType, String fromId, String toId,
                              Map<String,Object> findProps,
                              Map<String,Object> updateProps)
@@ -724,8 +726,8 @@ public class Neo4JOnlineSession implements GraphSession {
         String edgeId = this.query(s, params).id(E);
         if (edgeId == null) {
             s = String.format("MATCH (from),(to) WHERE id(from) = $from AND id(to)=$to " +
-                "CREATE (from) -[e:%s %s]-> (to) " +
-                "RETURN id(e)", edgeType, pblock);
+                    "CREATE (from) -[e:%s %s]-> (to) RETURN id(e)",
+                edgeType, pblock);
 
             edgeId = this.create(s, params);
         }
@@ -769,8 +771,8 @@ public class Neo4JOnlineSession implements GraphSession {
         // 1) find the reachable nodes
         //
         {
-            s = String.format("MATCH (from) -[e:%s %s]-(to) WHERE id(from)=$from %s RETURN id(to)", edgeType,
-                pblock, wblock);
+            s = String.format("MATCH (from) -[e:%s %s]-(to) WHERE id(from)=$from %s RETURN id(to)",
+                edgeType, pblock, wblock);
 
             Parameters params = Parameters.params(
                 FROM, asId(fromId)
@@ -820,8 +822,7 @@ public class Neo4JOnlineSession implements GraphSession {
                     "%s " +
                     "%s " +
                     "RETURN id(e)",
-                edgeType,
-                pblock, wblock, sblock);
+                edgeType, pblock, wblock, sblock);
 
             Parameters params = Parameters.params(
                 FROM, asId(fromId),
@@ -1116,9 +1117,9 @@ public class Neo4JOnlineSession implements GraphSession {
                 return null;
 
             Record r = result.single();
-            if (edge)
+            if (edge) // RelashionshipValue rv = r.get(alias)
                 return toEdgeMap(alias, r);
-            else
+            else // NodeValue nv = r.get(alias)
                 return toNodeMap(alias, r);
         }
         catch (Throwable t) {
@@ -1262,7 +1263,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Query query(String s, Map<String,Object> params) {
-        logStmt(s, params);
+        // logStmt(s, params);
         try {
             s = StringUtils.format(s, params);
 
@@ -1309,34 +1310,12 @@ public class Neo4JOnlineSession implements GraphSession {
 
         try {
             if (edge){
-                // while (count != 0) {
-                    // count = session.writeTransaction(tx ->
-                    //     tx.run(s, params)
-                    //         .consume()
-                    //         .counters()
-                    //         .relationshipsDeleted())
-                    //     .intValue();
-
-                    count = session_run(s, params).consume().counters().relationshipsDeleted();
-                    total += count;
-                    // if (count > 0)
-                    //     logger.debugft("Deleted %d edges %s", total, params);
-                // }
+                count = session_run(s, params).consume().counters().relationshipsDeleted();
+                total += count;
             }
             else {
-                // while(count != 0) {
-                    // count = session.writeTransaction(tx ->
-                    //     tx.run(s, params)
-                    //         .consume()
-                    //         .counters()
-                    //         .nodesDeleted())
-                    //     .intValue();
-
-                    count = session_run(s, params).consume().counters().nodesDeleted();
-                    total += count;
-                    // if (count > 0)
-                    //     logger.debugft("Deleted %d nodes %s", total, params);
-                // }
+                count = session_run(s, params).consume().counters().nodesDeleted();
+                total += count;
             }
         }
         catch (Throwable t) {
@@ -1352,7 +1331,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
         Node node = r.get(alias).asNode();
         return toNodeMap(node);
-
     }
 
     public static  Map<String,Object> toNodeMap(Node node) {
@@ -1360,47 +1338,50 @@ public class Neo4JOnlineSession implements GraphSession {
 
         body.put(GRAPH_ID, toId(node.id()));
 
-        List<String> labels = new ArrayList<>();
-        node.labels().forEach(label -> labels.add(label));
+        // put $id
+        // put $labels
+        // put $type     == labels[0]
 
-        // put_ $id
-        // put_ $labels
-        // put_ $type     == labels[0]
-
-        body.put(GRAPH_LABELS, labels);
-
+        body.put(GRAPH_LABELS, node.labels());
+        List<String> labels = (List<String>) body.get(GRAPH_LABELS);
         if (!labels.isEmpty())
             body.put(GRAPH_TYPE, labels.get(0));
 
-        // put_ properties
+        // put properties
         body.putAll(node.asMap());
 
         return body;
     }
 
     private static Map<String,Object> toEdgeMap(String alias, Record r) {
-        Map<String,Object> body = new HashMap<>();
-
         if (r == null)
-            return body;
+            return Collections.emptyMap();
 
         Relationship edge = r.get(alias).asRelationship();
+        return toEdgeMap(edge);
+    }
 
-        // put properties
-        body.putAll(edge.asMap());
+    private static  Map<String,Object> toEdgeMap(Relationship edge) {
+        Map<String,Object> body = new HashMap<>();
 
         // put $id
         // put $type
+        // put $source
+        // put $target
 
         body.put(GRAPH_ID, toId(edge.id()));
         body.put(GRAPH_TYPE, edge.type());
+        body.put(SOURCE_ID, toId(edge.startNodeId()));
+        body.put(TARGET_ID, toId(edge.startNodeId()));
+
+        // put properties
+        body.putAll(edge.asMap());
 
         return body;
     }
 
     private static Map<String,Object> toResultMap(String alias, Record r) {
         Map<String,Object> body = new HashMap<>();
-
         if (r == null)
             return body;
 
@@ -1410,7 +1391,11 @@ public class Neo4JOnlineSession implements GraphSession {
         for(String k : keys) {
             Object v = body.get(k);
             if (v instanceof Relationship)
-                body.put(k, toEdgeMap(k, r));
+                body.put(k, toEdgeMap((Relationship) v));
+            else if (v instanceof Node)
+                body.put(k, toNodeMap((Node) v));
+            else
+                body.put(k, v);
         }
 
         return body;
