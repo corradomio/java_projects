@@ -9,9 +9,21 @@ public class Param {
         return String.format("%s[%d]", name, index);
     }
 
+    public static String appendDistinct(String name) {
+        return name + "[!]";
+    }
+
+    public static String appendDistinct(String name, int index) {
+        return String.format("%s[%d,!]", name, index);
+    }
+
     // ----------------------------------------------------------------------
     // param ->
     // ----------------------------------------------------------------------
+    // == != < <= > >=
+    // in !in
+    // contains !contains
+
 
     // name[index]  -> name
     // name{op}     -> name
@@ -24,13 +36,13 @@ public class Param {
         if (pos == -1)
             pos = param.indexOf(" ");
         if (pos == -1)
-            pos = param.indexOf("==");
+            pos = param.indexOf("!");
         if (pos == -1)
             pos = param.indexOf("<");
         if (pos == -1)
             pos = param.indexOf(">");
         if (pos == -1)
-            pos = param.indexOf("!");
+            pos = param.indexOf("=");
         if (pos != -1)
             return param.substring(0, pos);
         else

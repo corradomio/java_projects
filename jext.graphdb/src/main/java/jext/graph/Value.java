@@ -4,17 +4,26 @@ import java.util.Objects;
 
 public class Value {
 
-    public static Value of(Object value) {
-        return of(Op.EQ, value);
-    }
+    public static Value of(Object value) { return of(Op.EQ, value); }
+    public static Value of(String op, Object value) { return of(Op.valueOf(op), value); }
+    public static Value of(Op op, Object value) { return new Value(op, value); }
 
-    public static Value of(String op, Object value) {
-        return of(Op.valueOf(op), value);
-    }
+    public static Value eq(Object value) { return of(Op.EQ, value); }
+    public static Value neq(Object value) { return of(Op.NEQ, value); }
+    public static Value gt(Object value) { return of(Op.GT, value); }
+    public static Value geq(Object value) { return of(Op.GEQ, value); }
+    public static Value lt(Object value) { return of(Op.LT, value); }
+    public static Value leq(Object value) { return of(Op.LEQ, value); }
 
-    public static Value of(Op op, Object value) {
-        return new Value(op, value);
-    }
+    public static Value append(Object value) { return of(Op.APPEND, value); }
+    public static Value appendDistict(Object value) { return of(Op.APPEND_DISTINCT, value); }
+
+    public static Value in(Object value) { return of(Op.IN, value); }
+    public static Value nin(Object value) { return of(Op.NIN, value); }
+    public static Value contains(Object value) { return of(Op.CONTAINS, value); }
+    public static Value ncontains(Object value) { return of(Op.NCONTAINS, value); }
+    public static Value startsWith(Object value) { return of(Op.STARTS_WITH, value); }
+    public static Value endsWith(Object value) { return of(Op.ENDS_WITH, value); }
 
     // ----------------------------------------------------------------------
 

@@ -19,6 +19,8 @@ public class CreateNodes {
         VGraphDatabase gdb = (VGraphDatabase) GraphDatabases.create(new File("config/neo4j.properties"));
         gdb.setGraphSchema(GraphSchema.load(new File("config/dbschema.xml")));
 
+        String id;
+
         try(GraphSession s = gdb.connect("100001")) {
             s.deleteNodes("test", MapUtils.asMap());
         }
@@ -34,13 +36,15 @@ public class CreateNodes {
         }
 
         try(GraphSession s = gdb.connect("100001", "test", 3)) {
-            s.createNode("test", MapUtils.asMap(
+            id = s.createNode("test", MapUtils.asMap(
                 "name", "test",
                 "count", 31,
                 "sum", 32.2,
                 "digest", 33456789,
                 "shuffle", "treciccio"
             ));
+
+            s.setNodeProperty(id, "revision", 4);
         }
 
         gdb.destroy();

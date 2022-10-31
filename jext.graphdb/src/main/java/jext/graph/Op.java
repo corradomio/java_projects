@@ -10,15 +10,15 @@ public enum Op {
     LEQ("<="),      // <=
 
     IN("in"),       // IN
-    NOT_IN("!in"),     // NOT IN
+    NIN("!in"),     // NOT IN
 
-    STARTS_WITH("startsWith"),      // string
-    ENDS_WITH("endsWith"),          // string
-    CONTAINS("contains"),           // string, collection (c CONTAINS x)
-    NOT_CONTAINS("!contains"),    // string, collection (NOT c CONTAINS x)
+    STARTS_WITH("startsWith"), // string
+    ENDS_WITH("endsWith"),     // string
+    CONTAINS("contains"),      // string, collection (c CONTAINS x)
+    NCONTAINS("!contains"),    // string, collection (NOT c CONTAINS x)
 
     APPEND("append"),
-    APPEND_DISTINCT("appendDistinct");
+    APPEND_DISTINCT("!append");
 
     private String op;
 
@@ -43,11 +43,11 @@ public enum Op {
             case ">" : return GT;
             case ">=": return GEQ;
             case "in": return IN;
-            case "!in": return NOT_IN;
+            case "!in": return NIN;
             case "startsWith": return STARTS_WITH;
             case "endsWith": return ENDS_WITH;
             case "contains": return CONTAINS;
-            case "!contains": return NOT_CONTAINS;
+            case "!contains": return NCONTAINS;
             case "append": return APPEND;
             case "!append": return APPEND_DISTINCT;
             default:
