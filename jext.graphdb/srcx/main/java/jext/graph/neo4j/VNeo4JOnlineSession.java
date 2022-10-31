@@ -6,6 +6,7 @@ import jext.graph.schema.EdgeSchema;
 import jext.graph.schema.GraphSchema;
 import jext.graph.schema.ModelSchema;
 import jext.graph.schema.NodeSchema;
+import jext.graph.schema.PropertySchema;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -126,7 +127,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         NodeSchema nschema = schema.nodeSchema(nodeType);
         Map<String,Object> findProps = nschema.uniqueProperties(nodeProps);
         String nodeId = super.queryNodes(nodeType, check(findProps)).id();
-        return getNodeValues(nodeId);
+        return getNodeProperties(nodeId);
     }
 
     private String/*nodeId*/ updateNode(String nodeType,
@@ -238,8 +239,81 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryUsingFullText(String query,  Map<String,Object> queryParams) {
-        return super.queryUsingFullText(query, check(queryParams));
+    public Query queryUsingFullText(String query,  Map<String,Object> params) {
+        return super.queryUsingFullText(query, check(params));
+    }
+
+    // ----------------------------------------------------------------------
+    // Post processing
+    // ----------------------------------------------------------------------
+
+    private static final String TYPE = GRAPH_TYPE;
+    private static final String LABELS = GRAPH_LABELS;
+
+    private static boolean isSpecial(String name) {
+        return name.startsWith("$");
+    }
+
+    @Override
+    protected Map<String, Object> postProcess(Map<String, Object> map) {
+        if (rev == NO_REV)
+            return super.postProcess(map);
+        if (map.containsKey(LABELS))
+            return processNode(map);
+        if (map.containsKey(TYPE))
+            return processEdge(map);
+        else
+            return super.postProcess(map);
+    }
+
+    private Map<String, Object> processNode(Map<String, Object> map) {
+        String nodeType = (String) map.get(TYPE);
+        NodeSchema nschema = schema.nodeSchema(nodeType);
+        if (!nschema.hasRevisionedProperties())
+            return map;
+
+        Map<String, Object> nmap = new HashMap<>();
+        for (String name : map.keySet()) {
+            if (isSpecial(name)) {
+                nmap.put(name, map.get(name));
+                continue;
+            }
+
+            PropertySchema pschema = nschema.propertySchema(name);
+            if (!pschema.isRevisioned()) {
+                nmap.put(name, map.get(name));
+            }
+            else {
+                nmap.put(name, pschema.atRevision(map.get(name), rev));
+            }
+        }
+
+        return nmap;
+    }
+
+    private Map<String, Object> processEdge(Map<String, Object> map) {
+        String edgeType = (String) map.get(TYPE);
+        EdgeSchema eschema = schema.edgeSchema(edgeType);
+        if (!eschema.hasRevisionedProperties())
+            return map;
+
+        Map<String, Object> nmap = new HashMap<>();
+        for (String name : map.keySet()) {
+            if (isSpecial(name)) {
+                nmap.put(name, map.get(name));
+                continue;
+            }
+
+            PropertySchema pschema = eschema.propertySchema(name);
+            if (!pschema.isRevisioned()) {
+                nmap.put(name, map.get(name));
+            }
+            else {
+                nmap.put(name, pschema.atRevision(map.get(name), rev));
+            }
+        }
+
+        return nmap;
     }
 
     // ----------------------------------------------------------------------

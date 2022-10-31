@@ -142,15 +142,10 @@ public class Neo4JOnlineSession implements GraphSession {
     // to extend the 'namedQuery' conditions
     //
 
-    // private Map<String,Object> ckparams(Map<String,Object> params) {
-    //     return params;
-    // }
-
     @Override
     public Query queryUsing(String queryName,  Map<String,Object> params) {
 
         String query = graphdb.getQuery(queryName);
-        // params = ckparams(params);
 
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
@@ -171,7 +166,6 @@ public class Neo4JOnlineSession implements GraphSession {
     public void executeUsing(String queryName, Map<String,Object> params) {
 
         String query = graphdb.getQuery(queryName);
-        // params = ckparams(params);
 
         if (query.contains(AND_BLOCK) || query.contains(WHERE_BLOCK)) {
             Parameters nparams = Parameters.params(params);
@@ -201,15 +195,14 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryUsingFullText(String query,  Map<String,Object> queryParams) {
-        // queryParams = ckparams(queryParams);
+    public Query queryUsingFullText(String query,  Map<String,Object> params) {
 
         // indexName
         // query
         // labels ONLY if size > 0
         // refIds ONLY if size > 0
-        boolean hasLabels = queryParams.containsKey(LABELS) && !((Collection<String>)queryParams.get(LABELS)).isEmpty();
-        boolean hasRefIds = queryParams.containsKey(REF_IDS) && !((Collection<String>)queryParams.get(REF_IDS)).isEmpty();
+        boolean hasLabels = params.containsKey(LABELS) && !((Collection<String>)params.get(LABELS)).isEmpty();
+        boolean hasRefIds = params.containsKey(REF_IDS) && !((Collection<String>)params.get(REF_IDS)).isEmpty();
 
         String s = "CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n ";
         if (hasLabels && hasRefIds)
@@ -219,7 +212,7 @@ public class Neo4JOnlineSession implements GraphSession {
         else if (hasRefIds)
             s += "WHERE n.refId IN $refIds ";
 
-        return new Neo4JQuery(this, N, s, queryParams);
+        return new Neo4JQuery(this, N, s, params);
     }
 
     // ----------------------------------------------------------------------
@@ -239,7 +232,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public String createNode(String nodeType, Map<String,Object> nodeProps) {
-        // nodeProps = ckparams(nodeProps);
+        if(Assert.check(nodeProps.containsKey(TYPE), "Missing 'type' in %s", nodeType))
+            Assert.nop();
 
         String pblock = pblock(N, nodeProps);
         String sblock = sblock(N, nodeProps, true);
@@ -264,20 +258,19 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public Map<String,Object> getNodeValues(String nodeId) {
+    public Map<String,Object> getNodeProperties(String nodeId) {
         if (invalidId(nodeId)) return Collections.emptyMap();
 
         Parameters params = Parameters.params(
             ID, asId(nodeId));
         String s = "MATCH (n) WHERE id(n) = $id RETURN n";
-        return this.retrieve(N, s, params);
+
+        Map<String,Object> nv = this.retrieve(N, s, params);
+        return postProcess(nv);
     }
 
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps) {
-        // findProps = ckparams(findProps);
-        // updateProps = ckparams(updateProps);
-
         String nodeId = findNode(nodeType, findProps);
         if (invalidId(nodeId))
             nodeId = createNode(nodeType, findProps);
@@ -335,8 +328,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long deleteNodes(String nodeType, Map<String,Object> nodeProps, LongConsumer callable) {
-        // nodeProps = ckparams(nodeProps);
-
         int maxdelete = graphdb.getMaxDelete();
 
         // commit the transaction
@@ -475,8 +466,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Query queryNodes(String nodeType, Map<String,Object> nodeProps) {
-        // nodeProps = ckparams(nodeProps);
-
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, false, true);
         String s = String.format("MATCH (n %s %s) %s", label(nodeType), pblock, wblock);
@@ -514,8 +503,6 @@ public class Neo4JOnlineSession implements GraphSession {
     public Query queryAdjacentNodes(
         Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
         String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps) {
-
-        // nodeProps = ckparams(nodeProps);
 
         if (!recursive)
             return queryAdjacentNodesImpl(fromIds, edgeType, direction, recursive, nodeType,
@@ -585,9 +572,6 @@ public class Neo4JOnlineSession implements GraphSession {
         String fromType, Map<String,Object> fromProps,
         String toType,   Map<String,Object> toProps,
         Map<String,Object> edgeProps) {
-
-        // fromProps = ckparams(fromProps);
-        // toProps   = ckparams(toProps);
 
         String fblock = pblock(FROM, fromProps);
         String eblock = eblock(E, edgeType, Direction.Output, false, Collections.emptyMap());
@@ -950,9 +934,6 @@ public class Neo4JOnlineSession implements GraphSession {
         String s;
         int maxdelete = graphdb.getMaxDelete();
 
-        // fromProps = ckparams(fromProps);
-        // toProps   = ckparams(toProps);
-
         if (edgeType == null)
             s = String.format("MATCH (from:%s %s) -[e %s]-> (to:%s %s) WITH e LIMIT %d DELETE e",
                 fromType, pblock(FROM, fromProps),
@@ -1057,7 +1038,9 @@ public class Neo4JOnlineSession implements GraphSession {
         String s = String.format("MATCH ()-[e]-() WHERE id(e) = $id RETURN e LIMIT 1");
         Parameters params = Parameters.params(
             ID, asId(edgeId));
-        return this.retrieve("e", s, params, true);
+
+        Map<String, Object> ev = this.retrieve("e", s, params, true);
+        return postProcess(ev);
     }
 
     @Override
@@ -1086,6 +1069,17 @@ public class Neo4JOnlineSession implements GraphSession {
 
 
         this.execute(s, params);
+    }
+
+    // ----------------------------------------------------------------------
+    // Post processing
+    // ----------------------------------------------------------------------
+
+    protected Map<String, Object> postProcess(Map<String, Object> map) {
+        // node map contains $type AND $labels
+        // edge map contains $type
+        // generic map doesn't contain $type
+        return map;
     }
 
     // ----------------------------------------------------------------------
@@ -1169,8 +1163,11 @@ public class Neo4JOnlineSession implements GraphSession {
             Result result = session_run(s, params);
 
             return new Neo4JResultSet<Map<String,Object>>(result) {
+                @Override
                 protected Map<String,Object> compose(Record r) {
-                    return edge ? toEdgeMap(alias, r) : toNodeMap(alias, r);
+                    Map<String,Object> nv = edge ? toEdgeMap(alias, r) : toNodeMap(alias, r);
+                    Neo4JOnlineSession.this.postProcess(nv);
+                    return nv;
                 }
             };
         }
@@ -1188,7 +1185,9 @@ public class Neo4JOnlineSession implements GraphSession {
 
             return new Neo4JResultSet<Map<String,Object>>(result) {
                 protected Map<String,Object> compose(Record r) {
-                    return toResultMap(alias, r);
+                    Map<String, Object> nv = toResultMap(alias, r);
+                    nv = Neo4JOnlineSession.this.postProcess(nv);
+                    return nv;
                 }
             };
         }
@@ -1366,7 +1365,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         body.put(GRAPH_LABELS, labels);
 
-        if (labels.size() > 0)
+        if (!labels.isEmpty())
             body.put(GRAPH_TYPE, labels.get(0));
 
         // put_ properties

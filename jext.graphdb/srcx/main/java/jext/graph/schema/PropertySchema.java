@@ -124,11 +124,19 @@ public class PropertySchema {
             return PropertyUtils.objectArray(prev, rev, value);
     }
 
-    public String atRevision(String name, int rev) {
-        if (!revisioned || rev == NO_REV || name.contains("["))
-            return name;
+    public Object atRevision(Object value, int rev) {
+        if (!revisioned || rev == NO_REV)
+            return value;
+        if (BOOLEAN.equals(type))
+            return PropertyUtils.asBoolArray(value)[rev];
+        if (INTEGER.equals(type) || LONG.equals(type))
+            return PropertyUtils.asLongArray(value)[rev];
+        if (FLOAT.equals(type) || DOUBLE.equals(type))
+            return PropertyUtils.asDoubleArray(value)[rev];
+        if (STRING.equals(type))
+            return PropertyUtils.asStringArray(value)[rev];
         else
-            return String.format("%s[$revision]", name);
+            return PropertyUtils.asObjectArray(value)[rev];
     }
 
 

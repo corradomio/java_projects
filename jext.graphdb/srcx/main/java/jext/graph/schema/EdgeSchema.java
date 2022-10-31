@@ -1,6 +1,6 @@
 package jext.graph.schema;
 
-public class EdgeSchema {
+public class EdgeSchema extends ObjectSchema {
 
     public static EdgeSchema of(String name) {
         EdgeSchema eschema = new EdgeSchema();
@@ -9,30 +9,11 @@ public class EdgeSchema {
     }
 
     // ----------------------------------------------------------------------
-    // Private fields
-    // ----------------------------------------------------------------------
-
-    private String  name;
-    private boolean revisioned;
-
-    // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public EdgeSchema() {
 
-    }
-
-    // ----------------------------------------------------------------------
-    // Properties/get
-    // ----------------------------------------------------------------------
-
-    public String name() {
-        return name;
-    }
-
-    public boolean isRevisioned() {
-        return revisioned;
     }
 
     // ----------------------------------------------------------------------

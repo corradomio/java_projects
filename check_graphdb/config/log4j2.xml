@@ -4,7 +4,7 @@
         <Console name="Console">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <RollingFile  name="LogFile" fileName="/splserver-2.8.web.log" append="false"
+        <RollingFile  name="LogFile" fileName="/check-graphdb.log" append="false"
                       filePattern="/spllogs/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%d %p %c{1.} %m%n</Pattern>
@@ -41,7 +41,7 @@
 
         <Root level="DEBUG">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="LogFile"/>
+            <!--<AppenderRef ref="LogFile"/>-->
         </Root>
     </Loggers>
 </Configuration>

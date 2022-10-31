@@ -10,6 +10,7 @@ import jext.util.MapUtils;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Map;
 
 public class CheckRevEdges {
 
@@ -40,9 +41,14 @@ public class CheckRevEdges {
                 "path", "p/m2"
             ));
 
-            s.createEdge("use", m1, m2, MapUtils.asMap(
-                "$count", 1
+            String e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
+                // "$count", 1
             ));
+
+
+            Map<String, Object> nv = s.getNodeProperties(m1);
+            Map<String, Object> ev = s.getEdgeProperties(e12);
+
         }
 
         gdb.destroy();

@@ -174,7 +174,7 @@ public class Neo4JQuery implements Query {
                     nv.put(key, value);
                 }
 
-                return nv;
+                return session.postProcess(nv);
             }
 
             @Override

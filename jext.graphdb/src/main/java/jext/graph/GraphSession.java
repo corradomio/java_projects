@@ -163,7 +163,7 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Get the property values of the node
      */
-    Map<String,Object> getNodeValues(String nodeId);
+    Map<String,Object> getNodeProperties(String nodeId);
 
     /**
      * Delete the node
