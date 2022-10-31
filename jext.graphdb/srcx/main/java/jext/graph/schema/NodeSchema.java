@@ -45,7 +45,8 @@ public class NodeSchema extends ObjectSchema {
     // Utilities
     // ----------------------------------------------------------------------
 
-    protected void addProperty(PropertySchema pschema) {
+    @Override
+    public void addProperty(PropertySchema pschema) {
         super.addProperty(pschema);
         if (pschema.isUnique())
             unique.add(pschema.name());

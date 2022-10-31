@@ -27,29 +27,36 @@ public class CheckRevEdges {
             s.deleteNodes(null, Collections.emptyMap());
         }
 
+        String m1,m2,e12;
+
         try(GraphSession s = gdb.connect(REF_ID, "source", 1)) {
-            String m1 = s.createNode("module", MapUtils.asMap(
+            m1 = s.createNode("module", MapUtils.asMap(
                 "name", "m1",
                 "fullname", "p.m1",
                 "digest", 111,
                 "path", "p/m1"
             ));
-            String m2 = s.createNode("module", MapUtils.asMap(
+
+            m2 = s.createNode("module", MapUtils.asMap(
                 "name", "m2",
                 "fullname", "p.m2",
                 "digest", 111,
                 "path", "p/m2"
             ));
 
-            String e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
-                // "$count", 1
+            e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
+                "count", 1
             ));
 
-
-            Map<String, Object> nv = s.getNodeProperties(m1);
-            Map<String, Object> ev = s.getEdgeProperties(e12);
-
         }
+
+        try(GraphSession s = gdb.connect(REF_ID, "source", 1)) {
+            Map<String, Object> nv = s.getNodeProperties(m1);
+            System.out.println(nv);
+            Map<String, Object> ev = s.getEdgeProperties(e12);
+            System.out.println(ev);
+        }
+
 
         gdb.destroy();
         CacheManager.shutdown();

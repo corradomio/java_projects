@@ -29,6 +29,11 @@ public class EdgeSchema extends ObjectSchema {
         this.revisioned = revisioned;
     }
 
+    @Override
+    public void addProperty(PropertySchema pschema) {
+        super.addProperty(pschema);
+    }
+
     // ----------------------------------------------------------------------
     // End
     // ----------------------------------------------------------------------

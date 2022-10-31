@@ -23,6 +23,8 @@ import static jext.graph.neo4j.Neo4JOnlineSession.END_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.N;
 import static jext.graph.neo4j.Neo4JOnlineSession.NONE;
 import static jext.graph.neo4j.Neo4JOnlineSession.WHERE_BLOCK;
+import static jext.graph.neo4j.Neo4JOnlineSession.IN_REVISION;
+
 
 class CypherFormatter {
 
@@ -177,7 +179,7 @@ class CypherFormatter {
         // rev:integer|long -> inRevision[rev]
         if (value instanceof Number) {
             int rev = ((Number) value).intValue();
-            return String.format("%s.inRevision[%d]", alias, rev);
+            return String.format("%s.%s[%d]", alias, IN_REVISION, rev);
         }
 
         // convert collection in int[]
@@ -197,7 +199,7 @@ class CypherFormatter {
         StringBuilder sb = new StringBuilder();
         for(int i=0; i< revs.length; ++i) {
             andor(sb, false);
-            sb.append(String.format("%s.inRevision[%d]", alias, revs[0]));
+            sb.append(String.format("%s.%s[%d]", alias, IN_REVISION, revs[0]));
         }
 
         return parens(sb);
@@ -255,8 +257,8 @@ class CypherFormatter {
             // [revision, rev] -> inRevision[rev] = true -> inRevision = [...true]
             if (isRevision(param)) {
                 String index = params.get(param).toString();
-                sb.append(String.format("%1$s.inRevision = apocx.coll.arraySet(%1$s.inRevision, $%1$s%3$s, true)",
-                    alias, index, param));
+                sb.append(String.format("%1$s.%3$s = apocx.coll.arraySet(%1$s.%3$s, $%1$s%2$s, true)",
+                    alias, param, IN_REVISION));
             }
 
             // [$count, 1] -> n.count = arrayIncr(n.count, index)

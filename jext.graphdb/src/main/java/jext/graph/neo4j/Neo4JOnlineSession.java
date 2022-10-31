@@ -66,7 +66,11 @@ public class Neo4JOnlineSession implements GraphSession {
     private static final String USES = "uses";
     private static final String TYPE = "type";
 
-    protected static final String REF_ID = "refId";
+
+    public static final String REF_ID = "refId";
+    public static final String REVISION = "revision";
+    public static final String REVISIONS = "revisions";
+    public static final String IN_REVISION = "inRevision";
 
     // ----------------------------------------------------------------------
     // Special handled parameters

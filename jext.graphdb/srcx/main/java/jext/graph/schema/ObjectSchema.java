@@ -6,6 +6,9 @@ import jext.logging.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
+import static jext.graph.neo4j.Neo4JOnlineSession.REVISION;
+import static jext.graph.neo4j.Neo4JOnlineSession.REVISIONS;
+
 public abstract class ObjectSchema {
 
     // ----------------------------------------------------------------------
@@ -13,9 +16,6 @@ public abstract class ObjectSchema {
     // ----------------------------------------------------------------------
 
     public static final int NO_REV = -1;
-    public static final String REVISION = "revision";
-    public static final String REVISIONS = "revisions";
-    public static final String IN_REVISION = "inRevision";
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -58,7 +58,7 @@ public abstract class ObjectSchema {
         return pschema;
     }
 
-    protected void addProperty(PropertySchema pschema) {
+    public void addProperty(PropertySchema pschema) {
         properties.put(pschema.name(), pschema);
         if (pschema.isRevisioned())
             revisionedProperties = true;

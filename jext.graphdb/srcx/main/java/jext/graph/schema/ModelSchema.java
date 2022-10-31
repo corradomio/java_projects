@@ -1,21 +1,15 @@
 package jext.graph.schema;
 
-import jext.graph.util.PropertyUtils;
-import jext.util.MapUtils;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static jext.graph.schema.NodeSchema.REVISION;
-import static jext.graph.schema.NodeSchema.REVISIONS;
 
 public class ModelSchema {
 
     public static ModelSchema NO_SCHEMA = new ModelSchema(null) {
-        @Override
-        public Map<String,Object> normalizeCreate(NodeSchema nschema, Map<String,Object> nprops) {
-            return nprops;
-        }
+        // @Override
+        // public Map<String,Object> normalizeCreate(NodeSchema nschema, Map<String,Object> nprops) {
+        //     return nprops;
+        // }
     };
 
     // ----------------------------------------------------------------------
@@ -56,23 +50,23 @@ public class ModelSchema {
     // Properties/get
     // ----------------------------------------------------------------------
 
-    public Map<String,Object> normalizeCreate(NodeSchema nschema, Map<String,Object> nprops) {
-        if (nschema == ref) {
-            int rev = MapUtils.getInt(nprops, REVISION);
-            nprops.put(REVISIONS, new int[]{rev});
-        }
-        return nprops;
-    }
+    // public Map<String,Object> normalizeCreate(NodeSchema nschema, Map<String,Object> nprops) {
+    //     if (nschema == ref) {
+    //         int rev = MapUtils.getInt(nprops, REVISION);
+    //         nprops.put(REVISIONS, new int[]{rev});
+    //     }
+    //     return nprops;
+    // }
 
-    public Map<String,Object> normalizeUpdate(NodeSchema nschema, Map<String,Object> nprops) {
-        if (nschema == ref) {
-            int rev = MapUtils.getInt(nprops, REVISION);
-            int[] revs = MapUtils.getIntArray(nprops, REVISIONS);
-            revs = PropertyUtils.appendUnique(revs, rev);
-            nprops.put(REVISIONS, revs);
-        }
-        return nprops;
-    }
+    // public Map<String,Object> normalizeUpdate(NodeSchema nschema, Map<String,Object> nprops) {
+    //     if (nschema == ref) {
+    //         int rev = MapUtils.getInt(nprops, REVISION);
+    //         int[] revs = MapUtils.getIntArray(nprops, REVISIONS);
+    //         revs = PropertyUtils.appendUnique(revs, rev);
+    //         nprops.put(REVISIONS, revs);
+    //     }
+    //     return nprops;
+    // }
 
     // ----------------------------------------------------------------------
     // Properties/set

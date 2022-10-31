@@ -15,9 +15,6 @@ import java.util.Map;
 import java.util.function.LongConsumer;
 
 import static jext.graph.schema.NodeSchema.NO_REV;
-import static jext.graph.schema.NodeSchema.REVISION;
-import static jext.graph.schema.NodeSchema.REVISIONS;
-import static jext.graph.schema.NodeSchema.IN_REVISION;
 
 /*
                    (1)              (2)
@@ -58,7 +55,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // query
     private Map<String, Object> check(Map<String,Object> props) {
         // add 'refId'
-        if (props != null && refId != null) {
+        if (refId != null) {
             if (props.isEmpty())
                 props = new HashMap<>();
             if (!props.containsKey(REF_ID))
@@ -70,20 +67,22 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
 
     // query + revision
     private Map<String, Object> check(String nodeType, Map<String,Object> props, boolean create) {
-
+        // FIRST: add refId is available
         props = check(props);
-
+        // SECOND: normal processing IF no revision specified
         if (rev == NO_REV)
             return props;
 
         ModelSchema mschema = schema.modelSchema(model);
         NodeSchema  nschema = schema.nodeSchema(nodeType);
-        props = new HashMap<>(props);
 
         if (mschema.isReference(nodeType))
             props.put(REVISIONS, Collections.singleton(rev));
         if (nschema.isRevisioned())
             props.put(REVISION, rev);
+
+        if (!nschema.hasRevisionedProperties())
+            return props;
 
         if (create)
             nschema.normalizeCreate(props, rev);
@@ -113,12 +112,6 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         else
             return updateNode(nodeType, nodeProps, prevProps);
     }
-
-    // @Override
-    // public String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps) {
-    //     Map<String, Object> prevProps = findPrevious(nodeType, findProps);
-    //     return super.createNode(nodeType, check(nodeType, findProps, prevProps), updateProps);
-    // }
 
     private Map<String, Object> findPrevious(String nodeType, Map<String,Object> nodeProps) {
         if (rev <= 0)
@@ -173,17 +166,31 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     private Map<String,Object> echeck(Map<String,Object> props) {
         if (props.isEmpty())
             props = new HashMap<>();
-        if (!props.containsKey(REVISION))
+        return props;
+    }
+
+    private Map<String, Object> echeck(String edgeType, Map<String,Object> props, boolean create) {
+        // FIRST: check is props is empty
+        props = echeck(props);
+        // SECOND: normal processing if no revision
+        if (rev == NO_REV)
+            return props;
+
+        EdgeSchema eschema = schema.edgeSchema(edgeType);
+        if (eschema.isRevisioned())
             props.put(REVISION, rev);
+        if (!eschema.hasRevisionedProperties())
+            return props;
+        if (create)
+            eschema.normalizeCreate(props, rev);
+        else
+            eschema.normalizeQuery(props, rev);
         return props;
     }
 
     @Override
     public String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps) {
-        EdgeSchema eschema = schema.edgeSchema(edgeType);
-        if (eschema.isRevisioned())
-            edgeProps = echeck(edgeProps);
-        return super.createEdge(edgeType, fromId, toId, edgeProps);
+        return super.createEdge(edgeType, fromId, toId, echeck(edgeType, edgeProps, true));
     }
 
     // ----------------------------------------------------------------------
@@ -197,9 +204,9 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         @Nullable String toType,   Map<String,Object> toProps,
         Map<String,Object> edgeProps) {
         return super.queryEdges(edgeType,
-            fromType, check(fromType, fromProps, false),
-            toType,   check(toType,   toProps, false),
-            edgeProps);
+                fromType, check(fromType, fromProps, false),
+                toType,   check(toType,   toProps, false),
+                echeck(edgeType, edgeProps, false));
     }
 
     // ----------------------------------------------------------------------
@@ -214,9 +221,10 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         Map<String,Object> edgeProps,
         LongConsumer callback) {
         return super.deleteEdges(edgeType,
-            fromType, check(fromType, fromProps, false),
-            toType,   check(toType,   toProps, false),
-            edgeProps, callback);
+                fromType, check(fromType, fromProps, false),
+                toType,   check(toType,   toProps, false),
+                echeck(edgeType, edgeProps, false),
+                callback);
     }
 
 
