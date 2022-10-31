@@ -47,7 +47,7 @@ public class CheckRevEdges {
             ));
 
             e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
-                COUNT, 1
+                "$count", 1
             ));
 
         }
@@ -55,7 +55,7 @@ public class CheckRevEdges {
         try(GraphSession s = gdb.connect(REF_ID, "source", 1)) {
 
             e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
-                COUNT, 0
+                "$count", 1
             ));
 
         }

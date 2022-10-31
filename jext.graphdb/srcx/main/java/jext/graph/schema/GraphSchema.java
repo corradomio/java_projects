@@ -36,7 +36,7 @@ public class GraphSchema {
 
     private static void addRules(Digester d, GraphSchema gschema) {
 
-        // property
+        // node property
         d.addObjectCreate("graphdb/schema/nodes/node/property", PropertySchema.class);
         d.addSetProperties("graphdb/schema/nodes/node/property");
         // property -> node
@@ -47,6 +47,12 @@ public class GraphSchema {
         d.addSetProperties("graphdb/schema/nodes/node");
         // node -> graph
         d.addSetNext( "graphdb/schema/nodes/node", "addNodeSchema" );
+
+        // edge property
+        d.addObjectCreate("graphdb/schema/edges/edge/property", PropertySchema.class);
+        d.addSetProperties("graphdb/schema/edges/edge/property");
+        // property -> node
+        d.addSetNext( "graphdb/schema/edges/edge/property", "addProperty" );
 
         // edge
         d.addObjectCreate("graphdb/schema/edges/edge", EdgeSchema.class);

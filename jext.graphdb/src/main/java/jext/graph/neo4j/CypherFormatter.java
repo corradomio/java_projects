@@ -272,7 +272,7 @@ class CypherFormatter {
 
             // [$count, 1] -> n.count = arrayIncr(n.count, index)
             else if (isCount(param)) {
-                sb.append(String.format("%1$s.`%2$s` = apocx.coll.arrayIncr(%1$s.`%2$s`, $`%1$s%3$s`, $`%1$s%2$s`)",
+                sb.append(String.format("%1$s.%2$s = apocx.coll.arrayIncr(%1$s.%2$s, $`%1$s%3$s`, $`%1$s$%2$s`)",
                     alias, COUNT, REVISION));
             }
 
@@ -352,12 +352,6 @@ class CypherFormatter {
                 params.put(pname, params.get(param));
                 params.remove(param);
             }
-            // name -> name = $pname
-            // else if (isSpecial(param, value)) {
-            //     String name = Param.nameOf(param);
-            //     sb.append(String.format("%1$s.`%2$s` = $%1$s%3$s", alias, param, name));
-            //     params.put(name, value);
-            // }
             else {
                 sb.append(String.format("%1$s.%2$s = $%1$s%2$s", alias, param));
             }
@@ -532,7 +526,7 @@ class CypherFormatter {
     }
 
     private static boolean isCount(String name) {
-        return COUNT.equals(name);
+        return "$count".equals(name);
     }
 
     private static boolean isDegree(String name) {
