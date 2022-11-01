@@ -4,7 +4,12 @@ import java.util.Objects;
 
 public class Value {
 
-    public static Value of(Object value) { return of(Op.EQ, value); }
+    public static Value of(Object value) {
+        if (value instanceof Value)
+            return (Value) value;
+        else
+            return of(Op.EQ, value);
+    }
     public static Value of(String op, Object value) { return of(Op.valueOf(op), value); }
     public static Value of(Op op, Object value) { return new Value(op, value); }
 
@@ -17,13 +22,15 @@ public class Value {
 
     public static Value append(Object value) { return of(Op.APPEND, value); }
     public static Value appendDistinct(Object value) { return of(Op.APPEND_DISTINCT, value); }
+    public static Value ladd(Object value) { return of(Op.LIST_ADD, value); }
+    public static Value sadd(Object value) { return of(Op.SET_ADD, value); }
 
     public static Value incr(Object value) { return of(Op.INCR, value); }
 
     public static Value in(Object value) { return of(Op.IN, value); }
-    public static Value nin(Object value) { return of(Op.NIN, value); }
+    public static Value nin(Object value) { return of(Op.NOT_IN, value); }
     public static Value contains(Object value) { return of(Op.CONTAINS, value); }
-    public static Value ncontains(Object value) { return of(Op.NCONTAINS, value); }
+    public static Value ncontains(Object value) { return of(Op.NOT_CONTAINS, value); }
 
     public static Value startsWith(Object value) { return of(Op.STARTS_WITH, value); }
     public static Value endsWith(Object value) { return of(Op.ENDS_WITH, value); }

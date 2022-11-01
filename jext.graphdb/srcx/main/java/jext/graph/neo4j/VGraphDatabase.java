@@ -10,6 +10,6 @@ public interface VGraphDatabase extends GraphDatabase {
 
     VGraphDatabase setGraphSchema(GraphSchema graphSchema);
 
-    GraphSession connect(@Nullable String refId);
-    GraphSession connect(@Nullable String refId, @Nullable String model, int rev);
+    VGraphSession connect(@Nullable String refId);
+    VGraphSession connect(@Nullable String refId, @Nullable String model, int rev);
 }

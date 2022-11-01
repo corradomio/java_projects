@@ -10,17 +10,21 @@ public enum Op {
     LEQ("<="),      // <=
 
     IN("in"),       // IN
-    NIN("!in"),     // NOT IN
+    NOT_IN("!in"),     // NOT IN
+    CONTAINS("contains"),      // string, collection (c CONTAINS x)
+    NOT_CONTAINS("!contains"),    // string, collection (NOT c CONTAINS x)
+
+    INCR("incr"),
 
     STARTS_WITH("startsWith"), // string
     ENDS_WITH("endsWith"),     // string
-    CONTAINS("contains"),      // string, collection (c CONTAINS x)
-    NCONTAINS("!contains"),    // string, collection (NOT c CONTAINS x)
 
-    APPEND("append"),
-    APPEND_DISTINCT("!append"),
+    LIST_ADD("listAdd"),
+    SET_ADD("setAdd"),
 
-    INCR("incr")
+    // deprecated
+    APPEND("listAdd"),
+    APPEND_DISTINCT("setAdd")
     ;
 
     private String op;
@@ -46,13 +50,13 @@ public enum Op {
             case ">" : return GT;
             case ">=": return GEQ;
             case "in": return IN;
-            case "!in": return NIN;
+            case "!in": return NOT_IN;
             case "startsWith": return STARTS_WITH;
             case "endsWith": return ENDS_WITH;
             case "contains": return CONTAINS;
-            case "!contains": return NCONTAINS;
-            case "append": return APPEND;
-            case "!append": return APPEND_DISTINCT;
+            case "!contains": return NOT_CONTAINS;
+            case "append": return LIST_ADD;
+            case "!append": return SET_ADD;
             default:
                 throw new IllegalArgumentException("Unknown '" + op + "'");
         }

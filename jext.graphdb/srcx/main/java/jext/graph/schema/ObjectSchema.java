@@ -85,17 +85,22 @@ public abstract class ObjectSchema {
         return REVISION.equals(name) || REVISIONS.equals(name);
     }
 
-    public Map<String,Object> normalizeCreate(Map<String,Object> cprops, int rev) {
-        for (String name : cprops.keySet()) {
+    public Map<String,Object> normalizeCreate(Map<String,Object> props, int rev) {
+        for (String name : props.keySet()) {
             // skip special names
             if (skip(name))
                 continue;
 
-            Object cvalue = cprops.get(name);
             PropertySchema pschema = propertySchema(name);
-            cprops.put(name, pschema.asRevisioned(cvalue, rev));
+            if (!pschema.isRevisioned())
+                continue;
+
+            Object value = props.get(name);
+            // props.remove(name);
+            // props.put(Param.at(name, rev), value);
+            props.put(name, pschema.asRevisioned(value, rev));
         }
-        return cprops;
+        return props;
     }
 
     public Map<String,Object> normalizeUpdate(Map<String,Object> cprops, Map<String,Object> pprops, int rev) {
@@ -106,14 +111,11 @@ public abstract class ObjectSchema {
                 continue;
 
             PropertySchema pschema = propertySchema(name);
-
-            // skip not revisioned vields
             if (!pschema.isRevisioned())
                 continue;
 
             Object cvalue = cprops.get(name);
             Object pvalue = pprops.get(name);
-
             uprops.put(name, pschema.asRevisioned(cvalue, pvalue, rev));
         }
 

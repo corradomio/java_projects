@@ -85,11 +85,11 @@ public class Param {
             return keyed.substring(pos + 1, end);
     }
 
-    // public static String pnameOf(String param, String index) {
-    //     if (param.startsWith("$"))
-    //         param = param.substring(1);
-    //     return String.format("%s%s", param, index);
-    // }
+    public static String pnameOf(String param, String index) {
+        if (param.startsWith("$"))
+            param = param.substring(1);
+        return String.format("%s%s", param, index);
+    }
 
     // name             -> name
     // $name            -> name

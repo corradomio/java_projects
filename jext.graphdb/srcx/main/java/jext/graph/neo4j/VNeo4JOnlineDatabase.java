@@ -49,14 +49,14 @@ public class VNeo4JOnlineDatabase extends Neo4JOnlineDatabase implements VGraphD
     }
 
     @Override
-    public GraphSession connect(@Nullable String refId) {
+    public VGraphSession connect(@Nullable String refId) {
         return connect(refId, null, NO_REV);
     }
 
     @Override
-    public GraphSession connect(@Nullable String refId, @Nullable String model, int rev) {
-        Neo4JOnlineSession session = new VNeo4JOnlineSession(this, refId, model, rev);
-        return session.connect();
+    public VGraphSession connect(@Nullable String refId, @Nullable String model, int rev) {
+        VNeo4JOnlineSession session = new VNeo4JOnlineSession(this, refId, model, rev);
+        return (VGraphSession) session.connect();
     }
 
     // ----------------------------------------------------------------------

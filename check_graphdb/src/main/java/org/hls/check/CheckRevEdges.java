@@ -4,6 +4,7 @@ import jext.cache.CacheManager;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.graph.neo4j.VGraphDatabase;
+import jext.graph.neo4j.VGraphSession;
 import jext.graph.schema.GraphSchema;
 import jext.logging.Logger;
 import jext.util.MapUtils;
@@ -47,7 +48,7 @@ public class CheckRevEdges {
             ));
 
             e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
-                "$count", 1
+                // "$count", 1
             ));
 
         }
@@ -55,7 +56,7 @@ public class CheckRevEdges {
         try(GraphSession s = gdb.connect(REF_ID, "source", 1)) {
 
             e12 = s.createEdge("uses", m1, m2, MapUtils.asMap(
-                "$count", 1
+                // "$count", 1
             ));
 
         }
@@ -67,6 +68,10 @@ public class CheckRevEdges {
             System.out.println(ev);
         }
 
+        try(VGraphSession s = gdb.connect(REF_ID, "source", 0)) {
+            s.deleteNode("module", m1);
+            s.deleteEdge("uses", m1, m2);
+        }
 
         gdb.destroy();
         CacheManager.shutdown();

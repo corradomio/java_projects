@@ -1,7 +1,27 @@
+
+    MATCH (n:type {prop:$value, ...})
+    WHERE n.prop op value
+       OR pred(n.prop, ...)
+    SET n.prop = value, n.prop = fun(n.prop, ....)
+    RETURN n, n.prop, ...
+
+
+
+    CREATE (n:type
+
+
+Delete nodes&edges in revision
+------------------------------
+
+With rev != -1, nothing is really deleted.
+The revisioned object will have 'inRevision[rev] = false'
+
+
 Revisioned edges
 ----------------
 
 An edge is revisioned IF one of the node is revisioned
+NO: also the edge must be revisioned!
 
 
 Noe4J node types
@@ -101,7 +121,7 @@ revisioned_type
 
 
 revisioned_node
-    inRevision : revisioned_bool
+    inRevision : bool[]
 
 
 Problema:

@@ -7,6 +7,7 @@ import jext.graph.schema.GraphSchema;
 import jext.graph.schema.ModelSchema;
 import jext.graph.schema.NodeSchema;
 import jext.graph.schema.PropertySchema;
+import jext.util.Parameters;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -14,6 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.LongConsumer;
 
+import static jext.graph.NodeId.asId;
+import static jext.graph.neo4j.CypherFormatter.label;
+import static jext.graph.neo4j.CypherFormatter.pblock;
+import static jext.graph.neo4j.CypherFormatter.wblock;
 import static jext.graph.schema.NodeSchema.NO_REV;
 
 /*
@@ -52,15 +57,17 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     //      set:    inRevision[rev] = true
     //      where:  inRevision[rev]
 
-    // query
+    // add 'refId' is not present
     private Map<String, Object> check(Map<String,Object> props) {
         // add 'refId'
-        if (refId != null) {
-            if (props.isEmpty())
-                props = new HashMap<>();
-            if (!props.containsKey(REF_ID))
-                props.put(REF_ID, refId);
-        }
+        if (refId == null)
+            return props;
+
+        // can be a unmodifiable map
+        if (props.isEmpty())
+            props = new HashMap<>();
+        if (!props.containsKey(REF_ID))
+            props.put(REF_ID, refId);
 
         return props;
     }
@@ -69,6 +76,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     private Map<String, Object> check(String nodeType, Map<String,Object> props, boolean create) {
         // FIRST: add refId is available
         props = check(props);
+
         // SECOND: normal processing IF no revision specified
         if (rev == NO_REV)
             return props;
@@ -96,7 +104,8 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
 
     @Override
     public Query queryNodes(@Nullable String nodeType, @Nullable Map<String,Object> nodeProps) {
-        return super.queryNodes(nodeType, check(nodeType, nodeProps, false));
+        nodeProps = check(nodeType, nodeProps, false);
+        return super.queryNodes(nodeType, nodeProps);
     }
 
     // ----------------------------------------------------------------------
@@ -140,23 +149,88 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // ----------------------------------------------------------------------
 
     @Override
+    public boolean deleteNode(String nodeId) {
+        Map<String, Object> nodeProps = super.getNodeProperties(nodeId);
+        String nodeType = (String)nodeProps.get(GRAPH_TYPE);
+        return deleteNode(nodeType, nodeId);
+    }
+
+    @Override
+    public boolean deleteNode(String nodeType, String nodeId) {
+        if (rev == NO_REV)
+            return super.deleteNode(nodeId);
+
+        NodeSchema nschema = schema.nodeSchema(nodeType);
+        if (!nschema.isRevisioned())
+            return false;
+
+        setNodeProperty(nodeId, Param.at(IN_REVISION, rev), false);
+        deleteIncidentEdges(nodeId);
+        return true;
+    }
+
+    private void deleteIncidentEdges(String nodeId) {
+        // MATCH (n)-[e]->()
+        // WHERE id(n)=$id
+        //   AND e.inRevision IS NOT NULL AND e.inRevision[rev]
+        // SET e.inRevision = apox.coll.arraySet(e.inRevision, rev, false)
+        // RETURN count(e)
+
+        String s = String.format("MATCH (n)-[e]->() " +
+                "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
+                "  AND id(n)=$id " +
+                "SET e.%1$s = apox.coll.arraySet(e.%1$s, $%2$s, false) " +
+                "RETURN COUNT(e)", IN_REVISION, REVISION);
+
+        Parameters params = Parameters.params(
+                ID, asId(nodeId),
+                REVISION, rev);
+        
+        this.execute(s, params);
+    }
+
+    @Override
     public long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callback) {
         if (rev == NO_REV)
             return super.deleteNodes(nodeType, check(nodeType, nodeProps, false), callback);
-        else
-            return resetRevision(nodeType, nodeProps, callback);
-    }
 
-    // remove nodes from revision
-    private long resetRevision(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callback) {
         NodeSchema nschema = schema.nodeSchema(nodeType);
         if (!nschema.isRevisioned())
             return 0;
 
-        nodeProps = check(nodeProps);
+        nodeProps = check(nodeType, nodeProps, false);
 
+        long count = countNodes(nodeType, nodeProps);
         setNodesProperty(nodeType, nodeProps, Param.at(IN_REVISION, rev), false);
-        return 1;
+        deleteIncidentEdges(nodeType, nodeProps);
+        return count;
+    }
+
+    private void deleteIncidentEdges(@Nullable String nodeType, Map<String,Object> nodeProps) {
+        // MATCH (n:type {...})-[e]->()
+        // WHERE n.props ....
+        //   AND e.inRevision IS NOT NULL AND e.inRevision[rev]
+        // SET e.inRevision = apox.coll.arraySet(e.inRevision, rev, false)
+        // RETURN count(e)
+
+        String pblock = pblock(N, nodeProps);
+        String wblock = wblock(N, nodeProps, true, true);
+
+        String s = String.format("MATCH (n%3$s %4$s)-[e]->() " +
+                "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
+                "%5$s " +
+                "SET e.%1$s = apox.coll.arraySet(e.%1$s, $%2$s, false) " +
+                "RETURN COUNT(e)",
+                IN_REVISION, REVISION,
+                label(nodeType),
+                pblock,
+                wblock
+        );
+
+        Parameters params = Parameters.params(nodeProps)
+                .add(REVISION, rev);
+
+        this.execute(s, params);
     }
 
     // ----------------------------------------------------------------------
@@ -172,6 +246,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     private Map<String, Object> echeck(String edgeType, Map<String,Object> props, boolean create) {
         // FIRST: check is props is empty
         props = echeck(props);
+
         // SECOND: normal processing if no revision
         if (rev == NO_REV)
             return props;
@@ -188,10 +263,59 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         return props;
     }
 
+    // ----------------------------------------------------------------------
+
+    @Nullable
+    @Override
+    public String findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps) {
+        if (rev == NO_REV)
+            return super.findEdge(edgeType, fromId, toId, edgeProps);
+
+        edgeProps = echeck(edgeType, edgeProps, false);
+        return super.findEdge(edgeType, fromId, toId, edgeProps);
+    }
+
+    // ----------------------------------------------------------------------
+
     @Override
     public String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps) {
-        return super.createEdge(edgeType, fromId, toId, echeck(edgeType, edgeProps, true));
+        if (rev == NO_REV)
+            return super.createEdge(edgeType, fromId, toId, edgeProps);
+
+        String edgeId = super.findEdge(edgeType, fromId, toId);
+        if (edgeId == null)
+            return super.createEdge(edgeType, fromId, toId, echeck(edgeType, edgeProps, true));
+
+        setEdgeProperty(edgeId, Param.at(IN_REVISION, rev), true);
+        return edgeId;
     }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public boolean deleteEdge(String edgeId) {
+        if (rev == NO_REV)
+            return super.deleteEdge(edgeId);
+
+        Map<String, Object> edgeProps = super.getEdgeProperties(edgeId);
+        String edgeType = (String)edgeProps.get(GRAPH_TYPE);
+        return deleteEdge(edgeType, edgeId);
+    }
+
+    @Override
+    public boolean deleteEdge(String edgeType, String edgeId) {
+        if (rev == NO_REV)
+            return super.deleteEdge(edgeId);
+
+        EdgeSchema eschema = schema.edgeSchema(edgeType);
+        if (!eschema.isRevisioned())
+            return false;
+
+        setEdgeProperty(edgeId, Param.at(IN_REVISION, rev), false);
+        return true;
+    }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public Query queryEdges(
@@ -218,7 +342,6 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
                 echeck(edgeType, edgeProps, false),
                 callback);
     }
-
 
     // ----------------------------------------------------------------------
     // Query using named queries

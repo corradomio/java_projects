@@ -13,28 +13,33 @@ import java.util.function.Function;
 public class CollExt {
 
     @UserFunction
-    @Description("apocx.coll.arrayIncr(coll, index, value) | increment coll[index] value")
+    @Description("apocx.coll.arrayIncr(coll, index, value) | increment coll[index] value, extend coll if necessary")
     public Object arrayIncr(@Name("coll") List<Object> coll, @Name("index") long index, @Name("incr") long incr) {
         if (coll == null)
             coll = new ArrayList<>();
         else
             coll = new ArrayList<>(coll);
 
+        if (index < 0)
+            index = coll.size() + index;
+
         while (coll.size() <= index)
             coll.add(0L);
 
         long value = ((Number)coll.get((int)index)).longValue();
-        coll.set( (int) index, Long.valueOf(value + incr));
+        coll.set( (int) index, value + incr);
         return coll;
     }
 
     @UserFunction
-    @Description("apocx.coll.arrayGet(coll, index) | get coll[index] value, supporting indices < 0")
+    @Description("apocx.coll.arrayGet(coll, index) | get coll[index] value")
     public Object arrayGet(@Name("coll") List<Object> coll, @Name("index") long index) {
         if (coll == null)
             return null;
 
-        if (index >= 0 && index < coll.size())
+        if (index < 0)
+            return coll.get((int)(coll.size() + index));
+        else if (index >= 0 && index < coll.size())
             return coll.get((int)index);
         else
             return null;
@@ -48,13 +53,15 @@ public class CollExt {
         else
             coll = new ArrayList<>(coll);
 
-        int n = coll.size();
-        if (index >= n) {
+        if (index < 0)
+            index = coll.size() + index;
+
+        if (index >= coll.size()) {
             Object lastValue;
-            if (n > 0)
-                lastValue = coll.get(n-1);
-            else
+            if (coll.isEmpty())
                 lastValue = defaultValue(value);
+            else
+                lastValue = coll.get(coll.size()-1);
 
             while (coll.size() <= index)
                 coll.add(lastValue);
@@ -67,7 +74,7 @@ public class CollExt {
     private static Object defaultValue(Object value) {
         Object lastValue;
         if (value instanceof Boolean)
-            lastValue = Boolean.FALSE;
+            lastValue = false;
         else if (value instanceof Integer)
             lastValue = 0;
         else if (value instanceof Long)
@@ -84,8 +91,8 @@ public class CollExt {
     }
 
     @UserFunction
-    @Description("apocx.coll.append(coll, value) | append value to collection")
-    public List<Object> append(@Name("coll") List<Object> coll, @Name("value") Object value) {
+    @Description("apocx.coll.listAdd(coll, value) | append value to collection")
+    public List<Object> listAdd(@Name("coll") List<Object> coll, @Name("value") Object value) {
         if (value == null)
             return coll;
 
@@ -98,8 +105,8 @@ public class CollExt {
     }
 
     @UserFunction
-    @Description("apocx.coll.appendDistinct(coll, value) | append value to collection without duplicates")
-    public List<Object> appendDistinct(@Name("coll") List<Object> coll, @Name("value") Object value) {
+    @Description("apocx.coll.setAdd(coll, value) | append value to collection")
+    public List<Object> setAdd(@Name("coll") List<Object> coll, @Name("value") Object value) {
         if (value == null)
             return coll;
 
@@ -132,9 +139,25 @@ public class CollExt {
         return coll;
     }
 
-    //
+    // ----------------------------------------------------------------------
+
+    @Deprecated
+    @UserFunction
+    @Description("apocx.coll.append(coll, value) | append value to collection")
+    public List<Object> append(@Name("coll") List<Object> coll, @Name("value") Object value) {
+        return listAdd(coll, value);
+    }
+
+    @Deprecated
+    @UserFunction
+    @Description("apocx.coll.appendDistinct(coll, value) | append value to collection without duplicates")
+    public List<Object> appendDistinct(@Name("coll") List<Object> coll, @Name("value") Object value) {
+        return setAdd(coll, value);
+    }
+
+    // ----------------------------------------------------------------------
     // support for 2-dimensional arrays
-    //
+    // ----------------------------------------------------------------------
 
     @UserFunction
     @Description("apocx.coll.array2Set(coll, index1, index2, value) | set coll[index1,index2] to value, extend coll if necessary")
