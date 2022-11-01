@@ -34,7 +34,7 @@ public class CreateEdges {
             }
             if (targetIds.isEmpty()) {
                 for (int id = 1; id < 5000; ++id)
-                    s.createNode("T", Parameters.params("id", id));
+                    s.createNode("T", Parameters.params().add("id", id));
             }
 
             s.deleteEdges("E", sourceId, null, Parameters.empty(), (v)->{});
@@ -44,9 +44,9 @@ public class CreateEdges {
                 ids.add(i);
 
             // T pari
-            targetIds = s.queryNodes("T", Parameters.params("id", ids)).ids().toList();
+            targetIds = s.queryNodes("T", Parameters.params().add("id", ids)).ids().toList();
 
-            s.createEdges("E", sourceId, targetIds, Parameters.params(
+            s.createEdges("E", sourceId, targetIds, Parameters.params().add(
                 //"revision", 1
                 Param.at("inRevision", 3), true
             ));
@@ -54,14 +54,15 @@ public class CreateEdges {
         }
         try(GraphSession s = gdb.connect()) {
 
-            s.setEdgeProperties("E", sourceId, (Collection<String>)null, Parameters.empty(), Parameters.params(
+            s.setEdgeProperties("E", sourceId, (Collection<String>)null, Parameters.empty(),
+                Parameters.params().add(
                 //"revision", 1
                 Param.at("inRevision", 4), false
             ));
 
             // tutti i T
             targetIds = s.queryNodes("T", Parameters.params()).ids().toList();
-            s.createEdges("E", sourceId, targetIds, Parameters.params(
+            s.createEdges("E", sourceId, targetIds, Parameters.params().add(
                 //"revision", 1
                 Param.at("inRevision", 4), true
             ));

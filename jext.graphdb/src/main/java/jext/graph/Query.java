@@ -10,7 +10,7 @@ public interface Query {
      * @param limit
      */
     Query limit(Limit limit);
-    Query limit(int limit);
+    Query limit(long limit);
 
     /**
      * If the results must be unique

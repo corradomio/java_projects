@@ -49,7 +49,7 @@ public class Neo4JQuery implements Query {
         return this;
     }
 
-    public Query limit(int limit) {
+    public Query limit(long limit) {
         this.limit = new Limit(limit);
         return this;
     }

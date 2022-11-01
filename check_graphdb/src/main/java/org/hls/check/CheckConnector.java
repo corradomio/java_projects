@@ -42,7 +42,7 @@ public class CheckConnector {
         }
 
         try (GraphSession s = gdb.connect(REF_ID, "dependency", 0)) {
-            s.queryNodes("type", Parameters.params(
+            s.queryNodes("type", Parameters.params().add(
                 "type", "type"
             )).allValues().forEach(nv -> System.out.println(nv));
         }

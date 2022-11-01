@@ -194,9 +194,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
                 "SET e.%1$s = apocx.coll.arraySet(e.%1$s, $%2$s, false) " +
                 "RETURN COUNT(e)", IN_REVISION, REVISION);
 
-        Parameters params = Parameters.params(
-                ID, asId(nodeId),
-                REVISION, rev);
+        Parameters params = Parameters.params().add(ID, asId(nodeId), REVISION, rev);
 
         this.execute(s, params);
     }
@@ -239,8 +237,9 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
                 wblock
         );
 
-        Parameters params = Parameters.params(nodeProps)
-                .add(REVISION, rev);
+        Parameters params = Parameters.params()
+            .add(nodeProps)
+            .add(REVISION, rev);
 
         this.execute(s, params);
     }

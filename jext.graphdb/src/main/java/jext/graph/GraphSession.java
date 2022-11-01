@@ -111,17 +111,6 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     /**
-     * Find the node with the specified properties.
-     * Equivalent to 'queryNodes(...).id()'
-     *
-     * @param nodeType  node type or null
-     * @param nodeProps node properties
-     * @return the nodeId or null
-     */
-    @Nullable
-    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String,Object> nodeProps);
-
-    /**
      * Create a new node
      */
     String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps);
@@ -132,6 +121,22 @@ public interface GraphSession extends AutoCloseable {
      * If already present, only updateProps are updated
      */
     String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
+
+    @Nullable
+    Map<String,Object> findNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps);
+
+    /**
+     * Find the node with the specified properties.
+     * Equivalent to 'queryNodes(...).id()'
+     *
+     * @param nodeType  node type or null
+     * @param nodeProps node properties
+     * @return the nodeId or null
+     */
+    @Nullable
+    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String,Object> nodeProps);
+
+    // ----------------------------------------------------------------------
 
     /**
      * Check if the node there exists
@@ -178,6 +183,7 @@ public interface GraphSession extends AutoCloseable {
     long deleteNodes(Collection<String> nodeIds);
 
     void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
+
     // void deleteNodesProperties(Collection<String> nodeIds, Collection<String> names);
 
     // ----------------------------------------------------------------------
@@ -195,7 +201,7 @@ public interface GraphSession extends AutoCloseable {
      *    2) if the value of a property is 'null' the property is checked for
      *       its existence.
      */
-    Query queryNodes(@Nullable String nodeType, @Nullable Map<String,Object> nodeProps);
+    Query queryNodes(@Nullable String nodeType, Map<String,Object> nodeProps);
 
     /**
      * Effcient methods to find if there exists at minimum a node with the specified

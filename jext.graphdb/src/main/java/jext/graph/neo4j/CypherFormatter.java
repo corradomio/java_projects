@@ -121,6 +121,7 @@ class CypherFormatter {
         StringBuilder sb = new StringBuilder();
         for (String param : new HashSet<>(params.keySet())) {
             String s;
+            // strip 'name[...]' -> 'name'
             // String  name = Param.nameOf(param);
             String pname = Param.pnameOf(param);
             Object value = params.get(param);
@@ -134,11 +135,15 @@ class CypherFormatter {
             // append "... AND "
             andor(sb, true);
 
-            // strip 'name[...]' -> 'name'
+
+            if (isId(param)) {
+                s = String.format("id(%s) = %s", alias, param);
+            }
 
             // [param, null] -> "EXISTS(n.param)"
-            if (isExists(value)) {
-                s = String.format("EXISTS(%s.%s)", alias, param);
+            else if (isExists(value)) {
+                //s = String.format("EXISTS(%s.%s)", alias, param);
+                s = String.format("%s.%s IS NOT NULL", alias, param);
             }
 
             // ['revision', rev] -> "n.inRevision[rev]"
@@ -518,7 +523,7 @@ class CypherFormatter {
 
     private static boolean isSpecial(String name, Object value) {
         // $name, revision and name[index] have special handling
-        if (name.startsWith("$") || name.equals("revision") || name.contains("["))
+        if (name.startsWith("$") || name.equals("revision") || name.equals("id") || name.contains("["))
             return true;
         // in WHERE clause, null and collections have special handling
         if (value == null || value instanceof Collection || value.getClass().isArray())
@@ -527,6 +532,10 @@ class CypherFormatter {
             return true;
         else
             return false;
+    }
+
+    private static boolean isId(String name) {
+        return "id".equals(name);
     }
 
     private static boolean isExists(Object value) {
