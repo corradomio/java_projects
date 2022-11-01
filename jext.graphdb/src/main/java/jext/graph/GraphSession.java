@@ -511,7 +511,7 @@ public interface GraphSession extends AutoCloseable {
     void executeUsing(String queryName, Map<String,Object> queryParams);
 
     // ----------------------------------------------------------------------
-    // Query using named queries
+    // Query using fulltext
     // ----------------------------------------------------------------------
 
     /**

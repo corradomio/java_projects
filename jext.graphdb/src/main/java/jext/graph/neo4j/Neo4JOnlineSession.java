@@ -1326,34 +1326,12 @@ public class Neo4JOnlineSession implements GraphSession {
 
         try {
             if (edge){
-                // while (count != 0) {
-                    // count = session.writeTransaction(tx ->
-                    //     tx.run(s, params)
-                    //         .consume()
-                    //         .counters()
-                    //         .relationshipsDeleted())
-                    //     .intValue();
-
-                    count = session_run(s, params).consume().counters().relationshipsDeleted();
-                    total += count;
-                    // if (count > 0)
-                    //     logger.debugft("Deleted %d edges %s", total, params);
-                // }
+                count = session_run(s, params).consume().counters().relationshipsDeleted();
+                total += count;
             }
             else {
-                // while(count != 0) {
-                    // count = session.writeTransaction(tx ->
-                    //     tx.run(s, params)
-                    //         .consume()
-                    //         .counters()
-                    //         .nodesDeleted())
-                    //     .intValue();
-
-                    count = session_run(s, params).consume().counters().nodesDeleted();
-                    total += count;
-                    // if (count > 0)
-                    //     logger.debugft("Deleted %d nodes %s", total, params);
-                // }
+                count = session_run(s, params).consume().counters().nodesDeleted();
+                total += count;
             }
         }
         catch (Throwable t) {
@@ -1375,42 +1353,43 @@ public class Neo4JOnlineSession implements GraphSession {
     public static  Map<String,Object> toNodeMap(Node node) {
         Map<String,Object> body = new HashMap<>();
 
+        // put $id
+        // put $labels
+        // put $type     == labels[0]
+
         body.put(GRAPH_ID, toId(node.id()));
+        body.put(GRAPH_LABELS, node.labels());
+        body.put(GRAPH_TYPE, ((List<String>)body.get(GRAPH_LABELS)).get(0));
 
-        List<String> labels = new ArrayList<>();
-        node.labels().forEach(label -> labels.add(label));
-
-        // put_ $id
-        // put_ $labels
-        // put_ $type     == labels[0]
-
-        body.put(GRAPH_LABELS, labels);
-
-        if (!labels.isEmpty())
-            body.put(GRAPH_TYPE, labels.get(0));
-
-        // put_ properties
+        // put properties
         body.putAll(node.asMap());
 
         return body;
     }
 
     private static Map<String,Object> toEdgeMap(String alias, Record r) {
-        Map<String,Object> body = new HashMap<>();
-
         if (r == null)
-            return body;
+            return Collections.emptyMap();
 
         Relationship edge = r.get(alias).asRelationship();
+        return toEdgeMap(edge);
+    }
 
-        // put properties
-        body.putAll(edge.asMap());
+    private static Map<String,Object> toEdgeMap(Relationship edge) {
+        Map<String,Object> body = new HashMap<>();
 
         // put $id
         // put $type
+        // put $source
+        // put $target
 
         body.put(GRAPH_ID, toId(edge.id()));
         body.put(GRAPH_TYPE, edge.type());
+        body.put(SOURCE_ID, toId(edge.startNodeId()));
+        body.put(TARGET_ID, toId(edge.endNodeId()));
+
+        // put properties
+        body.putAll(edge.asMap());
 
         return body;
     }
@@ -1427,7 +1406,11 @@ public class Neo4JOnlineSession implements GraphSession {
         for(String k : keys) {
             Object v = body.get(k);
             if (v instanceof Relationship)
-                body.put(k, toEdgeMap(k, r));
+                body.put(k, toEdgeMap((Relationship) v));
+            else if (v instanceof Node)
+                body.put(k, toNodeMap((Node)v));
+            else
+                body.put(k, v);
         }
 
         return body;

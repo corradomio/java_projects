@@ -100,6 +100,22 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         return props;
     }
 
+    private Map<String, Object> qcheck(Map<String,Object> props) {
+        // add 'refId'
+        if (refId == null)
+            return props;
+
+        // can be a unmodifiable map
+        if (props.isEmpty())
+            props = new HashMap<>();
+        if (!props.containsKey(REF_ID))
+            props.put(REF_ID, refId);
+        if (!props.containsKey(REVISION))
+            props.put(REVISION, rev);
+
+        return props;
+    }
+
     // ----------------------------------------------------------------------
 
     @Override
@@ -132,9 +148,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         return getNodeProperties(nodeId);
     }
 
-    private String/*nodeId*/ updateNode(String nodeType,
-                                        Map<String,Object> nodeProps,
-                                        Map<String,Object> prevProps) {
+    private String/*nodeId*/ updateNode(String nodeType,  Map<String,Object> nodeProps, Map<String,Object> prevProps) {
         String nodeId = (String) prevProps.get(GRAPH_ID);
         NodeSchema nschema = schema.nodeSchema(nodeType);
         Map<String,Object> updateProps = nschema.normalizeUpdate(nodeProps, prevProps, rev);
@@ -164,21 +178,19 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         if (!nschema.isRevisioned())
             return false;
 
-        setNodeProperty(nodeId, Param.at(IN_REVISION, rev), false);
         deleteIncidentEdges(nodeId);
+        setNodeProperty(nodeId, Param.at(IN_REVISION, rev), false);
         return true;
     }
 
     private void deleteIncidentEdges(String nodeId) {
         // MATCH (n)-[e]->()
-        // WHERE id(n)=$id
-        //   AND e.inRevision IS NOT NULL AND e.inRevision[rev]
-        // SET e.inRevision = apox.coll.arraySet(e.inRevision, rev, false)
+        // WHERE id(n)=$id AND e.inRevision[rev]
+        // SET e.inRevision = apocx.coll.arraySet(e.inRevision, $revision, false)
         // RETURN count(e)
 
         String s = String.format("MATCH (n)-[e]-() " +
-                "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
-                "  AND id(n)=$id " +
+                "WHERE id(n)=$id AND e.%1$s[$%2$s] " +
                 "SET e.%1$s = apocx.coll.arraySet(e.%1$s, $%2$s, false) " +
                 "RETURN COUNT(e)", IN_REVISION, REVISION);
 
@@ -201,15 +213,15 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         nodeProps = check(nodeType, nodeProps, false);
 
         long count = countNodes(nodeType, nodeProps);
-        setNodesProperty(nodeType, nodeProps, Param.at(IN_REVISION, rev), false);
         deleteIncidentEdges(nodeType, nodeProps);
+        setNodesProperty(nodeType, nodeProps, Param.at(IN_REVISION, rev), false);
         return count;
     }
 
     private void deleteIncidentEdges(@Nullable String nodeType, Map<String,Object> nodeProps) {
         // MATCH (n:type {...})-[e]->()
-        // WHERE n.props ....
-        //   AND e.inRevision IS NOT NULL AND e.inRevision[rev]
+        // WHERE n.inRevision[rev] AND e.inRevision[rev]
+        //   AND ...
         // SET e.inRevision = apox.coll.arraySet(e.inRevision, rev, false)
         // RETURN count(e)
 
@@ -217,7 +229,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         String wblock = wblock(N, nodeProps, true, true);
 
         String s = String.format("MATCH (n%3$s %4$s)-[e]-() " +
-                "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
+                "WHERE n.%1$s[$%2$s] AND e.%1$s[$%2$s] " +
                 "%5$s " +
                 "SET e.%1$s = apocx.coll.arraySet(e.%1$s, $%2$s, false) " +
                 "RETURN COUNT(e)",
@@ -324,9 +336,9 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         @Nullable String toType,   Map<String,Object> toProps,
         Map<String,Object> edgeProps) {
         return super.queryEdges(edgeType,
-                fromType, check(fromType, fromProps, false),
-                toType,   check(toType,   toProps, false),
-                echeck(edgeType, edgeProps, false));
+            fromType, check(fromType, fromProps, false),
+            toType,   check(toType,   toProps, false),
+            echeck(edgeType, edgeProps, false));
     }
 
     @Override
@@ -337,33 +349,30 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         Map<String,Object> edgeProps,
         LongConsumer callback) {
         return super.deleteEdges(edgeType,
-                fromType, check(fromType, fromProps, false),
-                toType,   check(toType,   toProps, false),
-                echeck(edgeType, edgeProps, false),
-                callback);
+            fromType, check(fromType, fromProps, false),
+            toType,   check(toType,   toProps, false),
+            echeck(edgeType, edgeProps, false),
+            callback);
     }
 
     // ----------------------------------------------------------------------
     // Query using named queries
+    // Query suing full text
     // ----------------------------------------------------------------------
 
     @Override
     public Query queryUsing(String queryName, Map<String,Object> queryParams) {
-        return super.queryUsing(queryName, check(queryParams));
+        return super.queryUsing(queryName, qcheck(queryParams));
     }
 
     @Override
     public void executeUsing(String queryName, Map<String,Object> queryParams) {
-        super.executeUsing(queryName, check(queryParams));
+        super.executeUsing(queryName, qcheck(queryParams));
     }
-
-    // ----------------------------------------------------------------------
-    // Query using named queries
-    // ----------------------------------------------------------------------
 
     @Override
     public Query queryUsingFullText(String query,  Map<String,Object> params) {
-        return super.queryUsingFullText(query, check(params));
+        return super.queryUsingFullText(query, qcheck(params));
     }
 
     // ----------------------------------------------------------------------
@@ -392,51 +401,39 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     private Map<String, Object> processNode(Map<String, Object> map) {
         String nodeType = (String) map.get(TYPE);
         NodeSchema nschema = schema.nodeSchema(nodeType);
+
         if (!nschema.hasRevisionedProperties())
             return map;
 
-        Map<String, Object> nmap = new HashMap<>();
         for (String name : map.keySet()) {
-            if (isSpecial(name)) {
-                nmap.put(name, map.get(name));
+            if (isSpecial(name))
                 continue;
-            }
 
             PropertySchema pschema = nschema.propertySchema(name);
-            if (!pschema.isRevisioned()) {
-                nmap.put(name, map.get(name));
-            }
-            else {
-                nmap.put(name, pschema.atRevision(map.get(name), rev));
-            }
+            if (pschema.isRevisioned())
+                map.put(name, pschema.atRevision(map.get(name), rev));
         }
 
-        return nmap;
+        return map;
     }
 
     private Map<String, Object> processEdge(Map<String, Object> map) {
         String edgeType = (String) map.get(TYPE);
         EdgeSchema eschema = schema.edgeSchema(edgeType);
+
         if (!eschema.hasRevisionedProperties())
             return map;
 
-        Map<String, Object> nmap = new HashMap<>();
         for (String name : map.keySet()) {
-            if (isSpecial(name)) {
-                nmap.put(name, map.get(name));
+            if (isSpecial(name))
                 continue;
-            }
 
             PropertySchema pschema = eschema.propertySchema(name);
-            if (!pschema.isRevisioned()) {
-                nmap.put(name, map.get(name));
-            }
-            else {
-                nmap.put(name, pschema.atRevision(map.get(name), rev));
-            }
+            if (pschema.isRevisioned())
+                map.put(name, pschema.atRevision(map.get(name), rev));
         }
 
-        return nmap;
+        return map;
     }
 
     // ----------------------------------------------------------------------
