@@ -160,7 +160,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     }
 
     // ----------------------------------------------------------------------
-    // Edge queries
+    // Edges
     // ----------------------------------------------------------------------
 
     private Map<String,Object> echeck(Map<String,Object> props) {
@@ -193,10 +193,6 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         return super.createEdge(edgeType, fromId, toId, echeck(edgeType, edgeProps, true));
     }
 
-    // ----------------------------------------------------------------------
-    // Edge queries
-    // ----------------------------------------------------------------------
-
     @Override
     public Query queryEdges(
         @Nullable String edgeType,
@@ -208,10 +204,6 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
                 toType,   check(toType,   toProps, false),
                 echeck(edgeType, edgeProps, false));
     }
-
-    // ----------------------------------------------------------------------
-    // Edge
-    // ----------------------------------------------------------------------
 
     @Override
     public long deleteEdges(

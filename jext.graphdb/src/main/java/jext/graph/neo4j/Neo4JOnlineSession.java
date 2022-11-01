@@ -931,8 +931,7 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public long deleteEdges(
-            @Nullable String edgeType,  // can be null
+    public long deleteEdges(@Nullable String edgeType,  // can be null
             String fromType, Map<String,Object> fromProps,
             String toType, Map<String,Object> toProps,
             Map<String,Object> edgeProps,
@@ -968,8 +967,10 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public long deleteEdges(String edgeType, String fromId, List<String> toIds, Map<String,Object> edgeProps,
-                            LongConsumer callback) {
+    public long deleteEdges(@Nullable String edgeType,
+            String fromId, List<String> toIds,
+            Map<String,Object> edgeProps,
+            LongConsumer callback) {
         String s;
         String pblock = pblock(E, edgeProps);
         String wblock = wblock(E, edgeProps, true, true);

@@ -135,7 +135,7 @@ public interface GraphSession extends AutoCloseable {
     String/*nodeId*/ findNode(@Nullable String nodeType, Map<String,Object> nodeProps);
 
     /**
-     * Check if the node exusts
+     * Check if the node exists
      *
      * @param nodeType node type or null
      * @param nodeProps node properties
