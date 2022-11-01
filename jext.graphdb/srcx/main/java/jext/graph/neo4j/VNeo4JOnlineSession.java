@@ -176,7 +176,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         // SET e.inRevision = apox.coll.arraySet(e.inRevision, rev, false)
         // RETURN count(e)
 
-        String s = String.format("MATCH (n)-[e]->() " +
+        String s = String.format("MATCH (n)-[e]-() " +
                 "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
                 "  AND id(n)=$id " +
                 "SET e.%1$s = apox.coll.arraySet(e.%1$s, $%2$s, false) " +
@@ -216,7 +216,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, true, true);
 
-        String s = String.format("MATCH (n%3$s %4$s)-[e]->() " +
+        String s = String.format("MATCH (n%3$s %4$s)-[e]-() " +
                 "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
                 "%5$s " +
                 "SET e.%1$s = apox.coll.arraySet(e.%1$s, $%2$s, false) " +
