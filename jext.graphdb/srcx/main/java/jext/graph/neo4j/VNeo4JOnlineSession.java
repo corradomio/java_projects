@@ -179,7 +179,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         String s = String.format("MATCH (n)-[e]-() " +
                 "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
                 "  AND id(n)=$id " +
-                "SET e.%1$s = apox.coll.arraySet(e.%1$s, $%2$s, false) " +
+                "SET e.%1$s = apocx.coll.arraySet(e.%1$s, $%2$s, false) " +
                 "RETURN COUNT(e)", IN_REVISION, REVISION);
 
         Parameters params = Parameters.params(
@@ -219,7 +219,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         String s = String.format("MATCH (n%3$s %4$s)-[e]-() " +
                 "WHERE e.%1$s IS NOT NULL AND e.%1$s[$%2$s] " +
                 "%5$s " +
-                "SET e.%1$s = apox.coll.arraySet(e.%1$s, $%2$s, false) " +
+                "SET e.%1$s = apocx.coll.arraySet(e.%1$s, $%2$s, false) " +
                 "RETURN COUNT(e)",
                 IN_REVISION, REVISION,
                 label(nodeType),
