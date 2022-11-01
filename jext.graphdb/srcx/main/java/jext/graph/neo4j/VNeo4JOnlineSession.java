@@ -185,7 +185,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         Parameters params = Parameters.params(
                 ID, asId(nodeId),
                 REVISION, rev);
-        
+
         this.execute(s, params);
     }
 
