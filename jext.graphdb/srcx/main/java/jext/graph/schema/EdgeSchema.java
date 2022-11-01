@@ -22,11 +22,16 @@ public class EdgeSchema extends ObjectSchema {
     // Called from the digester
 
     public void setName(String name) {
-        this.name = name;
+        super.setName(name);
     }
 
     public void setRevisioned(boolean revisioned) {
-        this.revisioned = revisioned;
+        super.setRevisioned(revisioned);
+    }
+
+    @Override
+    public void setCounted(boolean counted) {
+        super.setCounted(counted);
     }
 
     @Override

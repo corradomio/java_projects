@@ -33,17 +33,20 @@ public class NodeSchema extends ObjectSchema {
     // ----------------------------------------------------------------------
     // Called from the digester
 
+    @Override
     public void setName(String name) {
-        this.name = name;
+        super.setName(name);
     }
 
+    @Override
     public void setRevisioned(boolean revisioned) {
-        this.revisioned = revisioned;
+        super.setRevisioned(revisioned);
     }
 
-    // ----------------------------------------------------------------------
-    // Utilities
-    // ----------------------------------------------------------------------
+    @Override
+    public void setCounted(boolean counted) {
+        super.setCounted(counted);
+    }
 
     @Override
     public void addProperty(PropertySchema pschema) {
@@ -51,6 +54,10 @@ public class NodeSchema extends ObjectSchema {
         if (pschema.isUnique())
             unique.add(pschema.name());
     }
+
+    // ----------------------------------------------------------------------
+    // Utilities
+    // ----------------------------------------------------------------------
 
     public Map<String,Object> uniqueProperties(Map<String,Object> props) {
         if (props.isEmpty() || unique.isEmpty())

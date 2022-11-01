@@ -25,6 +25,7 @@ public abstract class ObjectSchema {
 
     protected String  name;
     protected boolean revisioned;
+    protected boolean counted;
     protected boolean revisionedProperties;
     protected final Map<String, PropertySchema> properties = new HashMap<>();
 
@@ -62,6 +63,18 @@ public abstract class ObjectSchema {
         properties.put(pschema.name(), pschema);
         if (pschema.isRevisioned())
             revisionedProperties = true;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRevisioned(boolean revisioned) {
+        this.revisioned = revisioned;
+    }
+
+    public void setCounted(boolean counted) {
+        this.counted = counted;
     }
 
     // ----------------------------------------------------------------------
