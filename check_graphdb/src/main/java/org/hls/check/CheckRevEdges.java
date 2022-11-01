@@ -70,6 +70,9 @@ public class CheckRevEdges {
 
         try(VGraphSession s = gdb.connect(REF_ID, "source", 1)) {
             s.deleteNode("module", m1);
+        }
+
+        try(VGraphSession s = gdb.connect(REF_ID, "source", 1)) {
             s.deleteEdge("uses", m1, m2);
         }
 

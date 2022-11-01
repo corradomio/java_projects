@@ -102,6 +102,7 @@ class CypherFormatter {
         // { param: $[n]param, ... }
         return brackets(sb);
     }
+    static String pblock(Map<String,Object> params) { return pblock(NONE, params); }
 
     /**
      * Create a WHERE block
@@ -175,6 +176,9 @@ class CypherFormatter {
         // WHERE ...
         //   AND ...
         return where(sb, and);
+    }
+    static String wblock(Map<String,Object> params, boolean and, boolean pblock) {
+        return wblock(NONE, params, and, pblock);
     }
 
     private static String revisionCondition(String alias, Object value) {
@@ -361,6 +365,9 @@ class CypherFormatter {
 
         return update(sb);
     }
+    static String sblock(Map<String,Object> params, boolean pblock) {
+        return sblock(NONE, params, pblock);
+    }
 
     /**
      * Create the EDGE block
@@ -415,6 +422,7 @@ class CypherFormatter {
         }
         return sb.toString();
     }
+    static String ablock(Collection<String> attributes) { return ablock(NONE, attributes); }
 
     // ----------------------------------------------------------------------
     // ${and:  [alias:][name]}

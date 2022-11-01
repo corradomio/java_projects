@@ -35,7 +35,6 @@ import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.asIds;
 import static jext.graph.NodeId.invalidId;
 import static jext.graph.NodeId.toId;
-import static jext.graph.neo4j.CypherFormatter.ablock;
 import static jext.graph.neo4j.CypherFormatter.eblock;
 import static jext.graph.neo4j.CypherFormatter.label;
 import static jext.graph.neo4j.CypherFormatter.pblock;
@@ -260,7 +259,9 @@ public class Neo4JOnlineSession implements GraphSession {
 
         Parameters params = Parameters.params(
             ID, asId(nodeId));
+
         String s = "MATCH (n) WHERE id(n) = $id DETACH DELETE n";
+
         long count = this.delete(s, params, false);
         return count > 0;
     }
@@ -271,6 +272,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         Parameters params = Parameters.params(
             ID, asId(nodeId));
+
         String s = "MATCH (n) WHERE id(n) = $id RETURN n";
 
         Map<String,Object> nv = this.retrieve(N, s, params);
@@ -280,6 +282,7 @@ public class Neo4JOnlineSession implements GraphSession {
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps) {
         String nodeId = findNode(nodeType, findProps);
+
         if (invalidId(nodeId))
             nodeId = createNode(nodeType, findProps);
 
@@ -322,8 +325,10 @@ public class Neo4JOnlineSession implements GraphSession {
 
     private void deleteSomeNodes(Collection<String> nodeIds) {
         Parameters params = Parameters.params(
-            "ids", asIds(nodeIds));
-        String s = "MATCH (n) WHERE id(n) IN $ids DETACH DELETE n";
+            ID, asIds(nodeIds));
+
+        String s = "MATCH (n) WHERE id(n) IN $id DETACH DELETE n";
+
         this.execute(s, params);
     }
 
@@ -369,6 +374,7 @@ public class Neo4JOnlineSession implements GraphSession {
     public List<Map<String,Object>> getNodesProperties(Collection<String> nodeIds) {
         Parameters params = Parameters.params(
             ID, asIds(nodeIds));
+
         String s = "MATCH (n) WHERE id(n) IN $id RETURN n";
 
         return this.retrieveAllIter(N, s, params, false).toList();
@@ -416,8 +422,6 @@ public class Neo4JOnlineSession implements GraphSession {
     public void setNodesProperties(String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps) {
         if (noProps(updateProps))
             return;
-
-        // MATCH (n:type {...}) WHERE ... SET ... RETURN count(n)
 
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, false, true);
@@ -552,7 +556,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     Query selectNodes(Collection<String> ids, String nodeType,  Map<String,Object> nodeProps) {
         String pblock = pblock(N, nodeProps);
-        String s = String.format("MATCH (n%s %s) WHERE id(n) in $id", label(nodeType), pblock);
+        String s = String.format("MATCH (n%s %s) WHERE id(n) IN $id", label(nodeType), pblock);
 
         Parameters params = Parameters.params(
             ID, asIds(ids))
