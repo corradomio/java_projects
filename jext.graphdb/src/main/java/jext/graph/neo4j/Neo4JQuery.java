@@ -9,6 +9,7 @@ import jext.util.MapUtils;
 import org.neo4j.driver.types.Node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +22,10 @@ import java.util.stream.Collectors;
 
 public class Neo4JQuery implements Query {
 
-    private Neo4JOnlineSession session;
-    private String stmt;
-    private String alias;
-    private Map<String,Object> params;
+    private final Neo4JOnlineSession session;
+    private final String stmt;
+    private final String alias;
+    private final Map<String,Object> params;
     private boolean edge;
 
     private Limit limit;
@@ -59,7 +60,6 @@ public class Neo4JQuery implements Query {
         this.distinct = true;
         return this;
     }
-
 
     @Override public long count() { return count(alias); }
     @Override public boolean exists() { return exists(alias); }

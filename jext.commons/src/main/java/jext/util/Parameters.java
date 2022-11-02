@@ -15,10 +15,6 @@ import java.util.function.Function;
 public class Parameters extends HashMap<String, Object> {
 
     private static final Parameters EMPTY = new Parameters() {
-        @Override
-        public Parameters add(String name, Object value, Object... a) {
-            throw new UnsupportedOperationException();
-        }
 
         @Override
         public Parameters add(Properties properties) {
@@ -145,26 +141,27 @@ public class Parameters extends HashMap<String, Object> {
     //     return params().add((Map<String, Object>) params);
     // }
 
-    // /**
-    //  * Create an object populated with the list of key/value pairs
-    //  *
-    //  * @param name first key
-    //  * @param value first value
-    //  * @param a remaining key/values
-    //  * @return the map
-    //  */
-    // public static Parameters params(String name, Object value, Object... a) {
-    //     Parameters params = params().add(name, value, a);
-    //
-    //     int at = 0;
-    //     while (at < a.length-1) {
-    //         String key = a[at++].toString();
-    //         Object val = a[at++];
-    //
-    //         params.put(key, val);
-    //     }
-    //     return params;
-    // }
+    /**
+     * Create an object populated with the list of key/value pairs
+     *
+     * @param name first key
+     * @param value first value
+     * @param a remaining key/values
+     * @return the map
+     */
+    public static Parameters params(String name, Object value, Object... a) {
+        Parameters params = params();
+        params.put(name, value);
+
+        int at = 0;
+        while (at < a.length-1) {
+            String key = a[at++].toString();
+            Object val = a[at++];
+
+            params.put(key, val);
+        }
+        return params;
+    }
 
     /**
      * Select a subset of keys
@@ -190,26 +187,26 @@ public class Parameters extends HashMap<String, Object> {
     // Operations
     // ----------------------------------------------------------------------
 
-    /**
-     * Add one or more key/value pairs
-     * 
-     * @param name first key
-     * @param value first value
-     * @param a remaining key/values
-     * @return itself
-     */
-    public Parameters add(String name, Object value, Object... a) {
-        this.put(name, value);
-
-        int at = 0;
-        while (at < a.length-1) {
-            String key = a[at++].toString();
-            Object val = a[at++];
-
-            this.put(key, val);
-        }
-        return this;
-    }
+    // /**
+    //  * Add one or more key/value pairs
+    //  *
+    //  * @param name first key
+    //  * @param value first value
+    //  * @param a remaining key/values
+    //  * @return itself
+    //  */
+    // public Parameters add(String name, Object value, Object... a) {
+    //     this.put(name, value);
+    //
+    //     int at = 0;
+    //     while (at < a.length-1) {
+    //         String key = a[at++].toString();
+    //         Object val = a[at++];
+    //
+    //         this.put(key, val);
+    //     }
+    //     return this;
+    // }
 
     /**
      * Add the content of the properties object 
@@ -219,7 +216,7 @@ public class Parameters extends HashMap<String, Object> {
      */
     public Parameters add(Properties properties) {
         properties.forEach((k, v) -> {
-            add(k.toString(), v);
+            put(k.toString(), v);
         });
         return this;
     }

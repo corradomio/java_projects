@@ -9,6 +9,7 @@ import jext.graph.named.NamedQueries;
 import jext.logging.Logger;
 import jext.net.URL;
 import jext.util.MapUtils;
+import jext.util.Parameters;
 import jext.util.PropertiesUtils;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
@@ -202,7 +203,7 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
                 continue;
 
             try(GraphSession session = connect()) {
-                session.execute(nindex.getBody(), MapUtils.asMap(NAME, nindex.getName()));
+                session.execute(nindex.getBody(), Parameters.params(NAME, nindex.getName()));
             }
         }
 
