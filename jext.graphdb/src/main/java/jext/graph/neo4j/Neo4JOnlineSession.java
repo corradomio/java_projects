@@ -313,8 +313,6 @@ public class Neo4JOnlineSession implements GraphSession {
         //
         // Map<String,Object> nv = this.retrieve(N, s, params);
         // return postProcess(nv);
-        if (invalidId(nodeId))
-            return null;
 
         Query query = queryNodes(null, Parameters.params(ID, asId(nodeId))).limit(1);
         Map<String,Object> map = query.values();
