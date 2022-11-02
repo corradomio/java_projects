@@ -137,7 +137,7 @@ class CypherFormatter {
 
 
             if (isId(param)) {
-                s = String.format("id(%s) = %s", alias, param);
+                s = String.format("id(%1$s) = $%1$s%2$s", alias, param);
             }
 
             // [param, null] -> "EXISTS(n.param)"

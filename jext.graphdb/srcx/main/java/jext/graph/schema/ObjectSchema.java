@@ -3,6 +3,7 @@ package jext.graph.schema;
 import jext.graph.Param;
 import jext.logging.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,7 +87,7 @@ public abstract class ObjectSchema {
     }
 
     public Map<String,Object> normalizeCreate(Map<String,Object> props, int rev) {
-        for (String name : props.keySet()) {
+        for (String name : new ArrayList<>(props.keySet())) {
             // skip special names
             if (skip(name))
                 continue;
@@ -96,9 +97,9 @@ public abstract class ObjectSchema {
                 continue;
 
             Object value = props.get(name);
-            // props.remove(name);
-            // props.put(Param.at(name, rev), value);
-            props.put(name, pschema.asRevisioned(value, rev));
+            props.remove(name);
+            props.put(Param.at(name, rev), value);
+            // props.put(name, pschema.asRevisioned(value, rev));
         }
         return props;
     }
@@ -114,9 +115,10 @@ public abstract class ObjectSchema {
             if (!pschema.isRevisioned())
                 continue;
 
-            Object cvalue = cprops.get(name);
-            Object pvalue = pprops.get(name);
-            uprops.put(name, pschema.asRevisioned(cvalue, pvalue, rev));
+            // Object cvalue = cprops.get(name);
+            // Object pvalue = pprops.get(name);
+            // uprops.put(name, pschema.asRevisioned(cvalue, pvalue, rev));
+            uprops.put(Param.at(name, rev), cprops.get(name));
         }
 
         return uprops;

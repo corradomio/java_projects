@@ -78,7 +78,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         props = check(props);
 
         // SECOND: normal processing IF no revision specified
-        if (rev == NO_REV)
+        if (rev == NO_REV || nodeType == null)
             return props;
 
         ModelSchema mschema = schema.modelSchema(model);
@@ -130,9 +130,10 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
 
     @Override
     public String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps) {
+        nodeProps = check(nodeProps);
         // check if the node is already present
         Map<String, Object> prevProps = findPrevious(nodeType, nodeProps);
-        if (prevProps.isEmpty())
+        if (prevProps == null)
             return super.createNode(nodeType, check(nodeType, nodeProps, true));
         else
             return updateNode(nodeType, nodeProps, prevProps);
@@ -140,7 +141,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
 
     private Map<String, Object> findPrevious(String nodeType, Map<String,Object> nodeProps) {
         if (rev <= 0)
-            return Collections.emptyMap();
+            return null;
 
         NodeSchema nschema = schema.nodeSchema(nodeType);
         Map<String,Object> findProps = nschema.uniqueProperties(nodeProps);
@@ -385,8 +386,8 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     }
 
     @Override
-    protected Map<String, Object> postProcess(Map<String, Object> map) {
-        if (rev == NO_REV)
+    protected Map<String, Object> postProcess(@Nullable Map<String, Object> map) {
+        if (rev == NO_REV || map == null)
             return super.postProcess(map);
         if (map.containsKey(LABELS))
             return processNode(map);

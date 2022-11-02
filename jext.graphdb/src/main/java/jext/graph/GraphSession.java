@@ -122,6 +122,12 @@ public interface GraphSession extends AutoCloseable {
      */
     String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
 
+    /**
+     *
+     * @param nodeType node type
+     * @param nodeProps node properties
+     * @return the node properties or the empty map
+     */
     @Nullable
     Map<String,Object> findNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps);
 
@@ -145,6 +151,7 @@ public interface GraphSession extends AutoCloseable {
 
     /**
      * Get the property values of the node
+     * @return the node properties or the empty map
      */
     Map<String,Object> getNodeProperties(String nodeId);
 
@@ -355,6 +362,7 @@ public interface GraphSession extends AutoCloseable {
      * Retrieve the properties of the edge
      *
      * @param edgeId edgeId
+     * @return the edge properties or the empty map;
      */
     Map<String,Object> getEdgeProperties(String edgeId);
 

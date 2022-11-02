@@ -235,7 +235,6 @@ public class Neo4JOnlineSession implements GraphSession {
         return this.create(s, params);
     }
 
-    @Nullable
     @Override
     public Map<String,Object> findNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps) {
         Assert.notNull(nodeProps, "nodeProps is null");
@@ -282,7 +281,7 @@ public class Neo4JOnlineSession implements GraphSession {
         // return this.count(s, Parameters.params(
         //     ID, asId(nodeId))) > 0;
 
-        Query query = queryNodes(null, Parameters.params(ID, nodeId)).limit(1);
+        Query query = queryNodes(null, Parameters.params(ID, asId(nodeId))).limit(1);
         return query.count() > 0;
     }
 
@@ -299,7 +298,7 @@ public class Neo4JOnlineSession implements GraphSession {
         // long count = this.delete(s, params, false);
         // return count > 0;
 
-        Query query = queryNodes(null, Parameters.params(ID, nodeId)).limit(1);
+        Query query = queryNodes(null, Parameters.params(ID, asId(nodeId))).limit(1);
         return query.delete() > 0;
     }
 
@@ -314,8 +313,10 @@ public class Neo4JOnlineSession implements GraphSession {
         //
         // Map<String,Object> nv = this.retrieve(N, s, params);
         // return postProcess(nv);
+        if (invalidId(nodeId))
+            return null;
 
-        Query query = queryNodes(null, Parameters.params(ID, nodeId)).limit(1);
+        Query query = queryNodes(null, Parameters.params(ID, asId(nodeId))).limit(1);
         Map<String,Object> map = query.values();
         return postProcess(map);
     }
@@ -1072,7 +1073,9 @@ public class Neo4JOnlineSession implements GraphSession {
 
         Map<String,Object> params = Parameters.params(ID, asId(edgeId));
 
-        return this.retrieve("e", s, params, true);
+        Map<String,Object> map = this.retrieve("e", s, params, true);
+        if (map == null) map = Collections.emptyMap();
+        return map;
     }
 
     @Override
