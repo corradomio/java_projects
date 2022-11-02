@@ -31,85 +31,6 @@ public class Parameters extends HashMap<String, Object> {
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public Parameters addIfMissing(Map<String, Object> map) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Parameters addIfMissing(Properties properties) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Parameters setValue(String name, Object value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object put(String key, Object value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void putAll(Map<? extends String, ?> m) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object remove(Object key) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object putIfAbsent(String key, Object value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean remove(Object key, Object value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean replace(String key, Object oldValue, Object newValue) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object replace(String key, Object value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object computeIfAbsent(String key, Function<? super String, ?> mappingFunction) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object computeIfPresent(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object compute(String key, BiFunction<? super String, ? super Object, ?> remappingFunction) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object merge(String key, Object value, BiFunction<? super Object, ? super Object, ?> remappingFunction) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void replaceAll(BiFunction<? super String, ? super Object, ?> function) {
-            throw new UnsupportedOperationException();
-        }
     };
 
     // ----------------------------------------------------------------------
@@ -131,15 +52,18 @@ public class Parameters extends HashMap<String, Object> {
      */
     public static Parameters params() { return new Parameters(); }
 
-    // /**
-    //  * Create an object populated with the specified map
-    //  *
-    //  * @param params map used for initialization
-    //  * @return the map
-    //  */
-    // public static Parameters params(Map<String, ?> params) {
-    //     return params().add((Map<String, Object>) params);
-    // }
+    /**
+     * Create an object populated with the specified map
+     *
+     * @param params map used for initialization
+     * @return the map
+     */
+    public static Parameters params(Map<String, Object> params) {
+        return params().add(params);
+    }
+    public static Parameters params(String prefix, Map<String, Object> params) {
+        return params().add(prefix, params);
+    }
 
     /**
      * Create an object populated with the list of key/value pairs
@@ -150,17 +74,18 @@ public class Parameters extends HashMap<String, Object> {
      * @return the map
      */
     public static Parameters params(String name, Object value, Object... a) {
-        Parameters params = params();
-        params.put(name, value);
-
-        int at = 0;
-        while (at < a.length-1) {
-            String key = a[at++].toString();
-            Object val = a[at++];
-
-            params.put(key, val);
-        }
-        return params;
+        return params().add(name, value, a);
+        // Parameters params = params();
+        // params.put(name, value);
+        //
+        // int at = 0;
+        // while (at < a.length-1) {
+        //     String key = a[at++].toString();
+        //     Object val = a[at++];
+        //
+        //     params.put(key, val);
+        // }
+        // return params;
     }
 
     /**
@@ -171,7 +96,7 @@ public class Parameters extends HashMap<String, Object> {
      * @return a new map with the selected keys (can be empty)
      */
     public static Parameters select(Map<String, ?> params, String... keys) {
-        Parameters nparams = empty();
+        Parameters nparams = params();
         for (String key : keys)
             nparams.put(key, params.get(key));
         return nparams;
@@ -228,8 +153,18 @@ public class Parameters extends HashMap<String, Object> {
      * @return itself
      */
     public Parameters add(Map<String, Object> map) {
-        if (map != null)
-            super.putAll(map);
+        if (map == null)
+            return this;
+
+        super.putAll(map);
+        return this;
+    }
+
+    public Parameters add(String name, Object value, Object... a) {
+        super.put(name, value);
+        for (int i=0; i<a.length-1; i+= 2) {
+            super.put(a[i].toString(), a[i+1]);
+        }
         return this;
     }
 
@@ -473,7 +408,7 @@ public class Parameters extends HashMap<String, Object> {
     }
 
     // ----------------------------------------------------------------------
-    // IO
+    // End
     // ----------------------------------------------------------------------
 
 }
