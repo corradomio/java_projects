@@ -1,20 +1,11 @@
 package org.hls.check;
 
-import jext.springframework.core.env.EnvironmentUtils;
 import org.hls.check.data.component.ComponentRepository;
-import org.hls.check.data.dependency.ProjectRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.PageRequest;
-
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 // @SpringBootApplication
 @ComponentScan
@@ -48,11 +39,11 @@ public class AccessingDataNeo4jApplication {
     @Bean
     CommandLineRunner demo3(final ComponentRepository cr) {
         return args -> {
-            System.out.println(cr.countAllByRefId("abe112c1"));
-            System.out.println(cr.countUsingZero("abe112c1"));
-            System.out.println(cr.countUsingParam("abe112c1"));
-            // System.out.println(cr.countUsingName("abe112c1"));
-            System.out.println(cr.checkUsingNamedQuery("abe112c1"));
+            System.out.println(cr.countAllByRefId("dde55a05"));
+            System.out.println(cr.countUsingZero("dde55a05"));
+            System.out.println(cr.countUsingParam("dde55a05"));
+            // System.out.println(cr.countUsingName("dde55a05"));
+            System.out.println(cr.checkUsingNamedQuery("dde55a05"));
         };
     }
 
