@@ -4,16 +4,50 @@ import jext.graph.Op;
 import jext.graph.Param;
 import jext.graph.Value;
 
+import java.util.HashSet;
+import java.util.Map;
+
+import static jext.graph.neo4j.Neo4JOnlineSession.NONE;
+
 public class WhereFormatter {
 
-    static final String ID = "id";
-    static final String LABEL = "$label";
-    static final String REVISION = "revision";
-    static final String IN_REVISION = "inRevision";
+    private static final String NONE = "";
+    private static final String ID = "id";
+    private static final String LABEL = "$label";
+    private static final String REVISION = "revision";
+    private static final String IN_REVISION = "inRevision";
 
-    static final String DEGREE = "$degree";
-    static final String IN_DEGREE = "$indegree";
-    static final String OUT_DEGREE = "$outdegree";
+    private static final String DEGREE = "$degree";
+    private static final String IN_DEGREE = "$indegree";
+    private static final String OUT_DEGREE = "$outdegree";
+
+    public static String wblock(String alias, Map<String,Object> params, boolean and, boolean pblock) {
+        if (params.isEmpty())
+            return NONE;
+
+        StringBuilder sb = new StringBuilder();
+        for (String key : new HashSet<>(params.keySet())) {
+            Param param = Param.of(alias, key);
+            Value value = Value.of(params.get(key));
+
+            andor(sb, true);
+            sb.append(format(param, value));
+        }
+
+        return where(sb, and);
+    }
+
+    private static void andor(StringBuilder sb, boolean and) {
+        if (sb.length() > 0)
+            sb.append(and ? " AND " : " OR ");
+    }
+
+    private static String where(StringBuilder sb, boolean and) {
+        if (sb.length() == 0)
+            return NONE;
+
+        return sb.insert(0, and ? " AND ": " WHERE ").toString();
+    }
 
     /*
     EQ("=="),       // ==
@@ -36,7 +70,7 @@ public class WhereFormatter {
     LIST_ADD("listAdd"),
     SET_ADD("setAdd"),
      */
-    public static String format(Param param, Value value) {
+    private static String format(Param param, Value value) {
         // set/assignment
         if (Op.ASSIGN == value.op) {
 
