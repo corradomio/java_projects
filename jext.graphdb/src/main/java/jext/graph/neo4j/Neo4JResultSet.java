@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
-public class Neo4JResultSet<T> implements GraphIterator<T> {
+public abstract class Neo4JResultSet<T> implements GraphIterator<T> {
 
     private Result result;
 
@@ -43,8 +44,6 @@ public class Neo4JResultSet<T> implements GraphIterator<T> {
         return s;
     }
 
-    protected T compose(Record r) {
-        return null;
-    }
+    protected abstract T compose(Record r);
 
 }

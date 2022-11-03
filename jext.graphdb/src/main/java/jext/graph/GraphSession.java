@@ -188,10 +188,9 @@ public interface GraphSession extends AutoCloseable {
      * Delete the nodes
      */
     long deleteNodes(Collection<String> nodeIds);
+    long deleteNodes(Collection<String> nodeIds, LongConsumer callback);
 
     void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
-
-    // void deleteNodesProperties(Collection<String> nodeIds, Collection<String> names);
 
     // ----------------------------------------------------------------------
     // Query Nodes

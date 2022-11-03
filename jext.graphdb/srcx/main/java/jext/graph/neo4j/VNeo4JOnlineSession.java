@@ -202,7 +202,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
 
     @Override
     public long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callback) {
-        if (rev == NO_REV)
+        if (rev == NO_REV || nodeType == null)
             return super.deleteNodes(nodeType, check(nodeType, nodeProps, false), callback);
 
         NodeSchema nschema = schema.nodeSchema(nodeType);

@@ -201,7 +201,7 @@ public class Neo4JOnlineSession implements GraphSession {
         // query
         // labels ONLY if size > 0
         // refIds ONLY if size > 0
-        boolean hasLabels = params.containsKey(LABELS) && !((Collection<String>)params.get(LABELS)).isEmpty();
+        boolean hasLabels = params.containsKey(LABELS)  && !((Collection<String>)params.get(LABELS)).isEmpty();
         boolean hasRefIds = params.containsKey(REF_IDS) && !((Collection<String>)params.get(REF_IDS)).isEmpty();
 
         String s = "CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n ";
@@ -229,8 +229,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         String s = String.format("CREATE (n:%s %s) %s RETURN id(n)", nodeType, pblock, sblock);
 
-        Parameters params = Parameters.params().add(nodeProps)
-            .add(N, nodeProps);
+        Parameters params = Parameters.params().add(N, nodeProps);
 
         return this.create(s, params);
     }
@@ -273,13 +272,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public boolean existsNode(String nodeId) {
-        // if (invalidId(nodeId))
-        //     return false;
-        //
-        // String s = "MATCH (n) WHERE id(n) = $id RETURN count(n)";
-        //
-        // return this.count(s, Parameters.params(
-        //     ID, asId(nodeId))) > 0;
+        if (invalidId(nodeId))
+            return false;
 
         Query query = queryNodes(null, Parameters.params(ID, asId(nodeId))).limit(1);
         return query.count() > 0;
@@ -287,16 +281,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public boolean deleteNode(String nodeId) {
-        // if (invalidId(nodeId))
-        //     return false;
-        //
-        // Parameters params = Parameters.params(
-        //     ID, asId(nodeId));
-        //
-        // String s = "MATCH (n) WHERE id(n) = $id DETACH DELETE n";
-        //
-        // long count = this.delete(s, params, false);
-        // return count > 0;
+        if (invalidId(nodeId))
+            return false;
 
         Query query = queryNodes(null, Parameters.params(ID, asId(nodeId))).limit(1);
         return query.delete() > 0;
@@ -304,15 +290,6 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Map<String,Object> getNodeProperties(String nodeId) {
-        // if (invalidId(nodeId)) return Collections.emptyMap();
-        //
-        // Parameters params = Parameters.params(
-        //     ID, asId(nodeId));
-        //
-        // String s = "MATCH (n) WHERE id(n) = $id RETURN n";
-        //
-        // Map<String,Object> nv = this.retrieve(N, s, params);
-        // return postProcess(nv);
         if (invalidId(nodeId))
             return null;
 
@@ -343,44 +320,49 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long deleteNodes(Collection<String> nodeIds) {
+        return deleteNodes(nodeIds, (count) -> {});
+    }
+
+    @Override
+    public long deleteNodes(Collection<String> nodeIds, LongConsumer callable) {
         int maxdelete = graphdb.getMaxDelete();
 
-        if (nodeIds == null || nodeIds.isEmpty())
+        if (invalidId(nodeIds))
             return 0;
 
         if (nodeIds.size() > maxdelete)
             nodeIds = new ArrayList<>(nodeIds);
 
+        int total = 0;
         while(nodeIds.size() > maxdelete) {
             int n = nodeIds.size();
             commitAndBegin();
 
-            deleteSomeNodes(((List<String>)nodeIds).subList(0, maxdelete));
+            total += deleteSomeNodes(((List<String>)nodeIds).subList(0, maxdelete), callable);
+            callable.accept(total);
             nodeIds = ((List<String>)nodeIds).subList(maxdelete, n);
         }
-        if (!nodeIds.isEmpty())
-            deleteSomeNodes(nodeIds);
+        if (!nodeIds.isEmpty()) {
+            total += deleteSomeNodes(nodeIds, callable);
+            callable.accept(total);
+        }
 
         return nodeIds.size();
     }
 
-    private void deleteSomeNodes(Collection<String> nodeIds) {
-        Map<String,Object> params = Parameters.params(ID, asIds(nodeIds));
-
-        String s = "MATCH (n) WHERE id(n) IN $id DETACH DELETE n";
-
-        this.execute(s, params);
+    private long deleteSomeNodes(Collection<String> nodeIds, LongConsumer callable) {
+        return deleteNodes(null, Parameters.params(ID, nodeIds), callable);
     }
 
     // ----------------------------------------------------------------------
 
     @Override
-    public long deleteNodes(String nodeType, Map<String,Object> nodeProps) {
-        return deleteNodes(nodeType, nodeProps, (count)->{ });
+    public long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps) {
+        return deleteNodes(nodeType, nodeProps, (count) -> { });
     }
 
     @Override
-    public long deleteNodes(String nodeType, Map<String,Object> nodeProps, LongConsumer callable) {
+    public long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callable) {
         int maxdelete = graphdb.getMaxDelete();
 
         // commit the transaction
@@ -396,17 +378,6 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     private long deleteNodes(String nodeType, Map<String,Object> nodeProps, long count) {
-        // String pblock = pblock(N, nodeProps);
-        // String wblock = wblock(N, nodeProps, false, true);
-        // String s = String.format("MATCH (n%s %s) %s WITH n LIMIT %d DETACH DELETE n", label(nodeType), pblock, wblock, count);
-        //
-        // Assert.verify(count > 0, "deleteNodes: count MUST BE > 0");
-        //
-        // Parameters nparams = Parameters.params()
-        //     .add(N, nodeProps);
-        //
-        // return this.delete(s, nparams, false);
-
         Query query = queryNodes(nodeType, nodeProps).limit(count);
         return query.delete();
     }
@@ -507,9 +478,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String wblock = wblock(N, nodeProps, false, true);
         String s = String.format("MATCH (n%s %s) %s", label(nodeType), pblock, wblock);
 
-        Parameters params = Parameters.params()
-            .add(nodeProps)
-            .add(N, nodeProps);
+        Parameters params = Parameters.params().add(N, nodeProps);
 
         return new Neo4JQuery(this, N, s, params);
     }
@@ -1245,11 +1214,11 @@ public class Neo4JOnlineSession implements GraphSession {
     // Implementation
     // ----------------------------------------------------------------------
 
-    private void logStmt(String s, Map<String,Object> params) {
+    private static void logStmt(String s, Map<String,Object> params) {
         logStmt(s, params, null);
     }
 
-    private void logStmt(String s, Map<String,Object> params, Throwable t) {
+    private static void logStmt(String s, Map<String,Object> params, Throwable t) {
         if (!logger.isDebugEnabled() && t == null)
             return;
 
@@ -1277,9 +1246,12 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     private static String asString(Object value) {
-        if (value == null) return "null";
-        if (value instanceof String) return String.format("'%s'", value);
-        return value.toString();
+        if (value == null)
+            return "null";
+        if (value instanceof String)
+            return String.format("'%s'", value);
+        else
+            return value.toString();
     }
 
     // ----------------------------------------------------------------------
@@ -1288,7 +1260,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public Query query(String s, Map<String,Object> params) {
-        // altready used in Ne4JQuery
+        // already used in Ne4JQuery
         // logStmt(s, params);
         try {
             s = StringUtils.format(s, params);

@@ -14,6 +14,17 @@ public class PropertyUtils {
 
     // -- bool
 
+    public static boolean atBoolArray(Object v, int rev) {
+        boolean[] array = asBoolArray(v);
+        int len = array.length;
+        if (rev < len)
+            return array[rev];
+        if (len == 0)
+            return false;
+        else
+            return array[len-1];
+    }
+
     public static boolean[] asBoolArray(Object v) {
         if (v == null)
             return NO_BOOLS;
@@ -61,6 +72,17 @@ public class PropertyUtils {
     }
 
     // -- int/long
+
+    public static long atLongArray(Object v, int rev) {
+        long[] array = asLongArray(v);
+        int len = array.length;
+        if (rev < len)
+            return array[rev];
+        if (len == 0)
+            return 0;
+        else
+            return array[len-1];
+    }
 
     public static long[] asLongArray(Object v) {
         if (v == null)
@@ -110,6 +132,17 @@ public class PropertyUtils {
 
     // -- float/double
 
+    public static double atDoubleArray(Object v, int rev) {
+        double[] array = asDoubleArray(v);
+        int len = array.length;
+        if (rev < len)
+            return array[rev];
+        if (len == 0)
+            return 0;
+        else
+            return array[len-1];
+    }
+
     public static double[] asDoubleArray(Object v) {
         if (v == null)
             return NO_DOUBLES;
@@ -158,6 +191,17 @@ public class PropertyUtils {
 
     // -- string
 
+    public static String atStringArray(Object v, int rev) {
+        String[] array = asStringArray(v);
+        int len = array.length;
+        if (rev < len)
+            return array[rev];
+        if (len == 0)
+            return null;
+        else
+            return array[len-1];
+    }
+
     public static String[] asStringArray(Object v) {
         if (v == null)
             return NO_STRINGS;
@@ -199,6 +243,17 @@ public class PropertyUtils {
     }
 
     // -- object
+
+    public static Object atObjectArray(Object v, int rev) {
+        Object[] array = asObjectArray(v);
+        int len = array.length;
+        if (rev < len)
+            return array[rev];
+        if (len == 0)
+            return null;
+        else
+            return array[len-1];
+    }
 
     public static Object[] asObjectArray(Object v) {
         if (v == null)

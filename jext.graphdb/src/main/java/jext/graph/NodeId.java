@@ -11,6 +11,10 @@ public class NodeId {
         return id == null || NO_ID.equals(id) || id.isEmpty();
     }
 
+    public static boolean invalidId(Collection<String> ids) {
+        return ids == null || ids.isEmpty();
+    }
+
     public static Long asId(String id) {
         return Long.valueOf(id);
     }

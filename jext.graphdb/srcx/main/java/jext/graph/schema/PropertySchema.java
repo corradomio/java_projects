@@ -105,38 +105,38 @@ public class PropertySchema {
             return PropertyUtils.objectArray(rev, value);
     }
 
-    public Object asRevisioned(Object value, Object prev, int rev) {
-        if (!revisioned || rev == NO_REV)
-            return value;
-        if (prev == null)
-            return asRevisioned(value, rev);
-
-        // for revisioned properties, prev is an array
-        if (BOOLEAN.equals(type))
-            return PropertyUtils.boolArray(prev, rev, (Boolean) value);
-        if (INTEGER.equals(type) || LONG.equals(type))
-            return PropertyUtils.longArray(prev, rev, ((Number)value).longValue());
-        if (FLOAT.equals(type) || DOUBLE.equals(type))
-            return PropertyUtils.doubleArray(prev, rev, ((Number)value).doubleValue());
-        if (STRING.equals(type))
-            return PropertyUtils.stringArray(prev, rev, (String)value);
-        else
-            return PropertyUtils.objectArray(prev, rev, value);
-    }
+    // public Object asRevisioned(Object value, Object prev, int rev) {
+    //     if (!revisioned || rev == NO_REV)
+    //         return value;
+    //     if (prev == null)
+    //         return asRevisioned(value, rev);
+    //
+    //     // for revisioned properties, prev is an array
+    //     if (BOOLEAN.equals(type))
+    //         return PropertyUtils.boolArray(prev, rev, (Boolean) value);
+    //     if (INTEGER.equals(type) || LONG.equals(type))
+    //         return PropertyUtils.longArray(prev, rev, ((Number)value).longValue());
+    //     if (FLOAT.equals(type) || DOUBLE.equals(type))
+    //         return PropertyUtils.doubleArray(prev, rev, ((Number)value).doubleValue());
+    //     if (STRING.equals(type))
+    //         return PropertyUtils.stringArray(prev, rev, (String)value);
+    //     else
+    //         return PropertyUtils.objectArray(prev, rev, value);
+    // }
 
     public Object atRevision(Object value, int rev) {
         if (!revisioned || rev == NO_REV)
             return value;
         if (BOOLEAN.equals(type))
-            return PropertyUtils.asBoolArray(value)[rev];
+            return PropertyUtils.atBoolArray(value, rev);
         if (INTEGER.equals(type) || LONG.equals(type))
-            return PropertyUtils.asLongArray(value)[rev];
+            return PropertyUtils.atLongArray(value, rev);
         if (FLOAT.equals(type) || DOUBLE.equals(type))
-            return PropertyUtils.asDoubleArray(value)[rev];
+            return PropertyUtils.atDoubleArray(value, rev);
         if (STRING.equals(type))
-            return PropertyUtils.asStringArray(value)[rev];
+            return PropertyUtils.atStringArray(value, rev);
         else
-            return PropertyUtils.asObjectArray(value)[rev];
+            return PropertyUtils.atObjectArray(value, rev);
     }
 
 

@@ -33,16 +33,16 @@ public class Param {
             param = param.substring(1);
 
         int pos = param.indexOf('[');
-        if (pos == -1)
-            pos = param.indexOf(" ");
-        if (pos == -1)
-            pos = param.indexOf("!");
-        if (pos == -1)
-            pos = param.indexOf("<");
-        if (pos == -1)
-            pos = param.indexOf(">");
-        if (pos == -1)
-            pos = param.indexOf("=");
+        // if (pos == -1)
+        //     pos = param.indexOf(" ");
+        // if (pos == -1)
+        //     pos = param.indexOf("!");
+        // if (pos == -1)
+        //     pos = param.indexOf("<");
+        // if (pos == -1)
+        //     pos = param.indexOf(">");
+        // if (pos == -1)
+        //     pos = param.indexOf("=");
         if (pos != -1)
             return param.substring(0, pos);
         else
@@ -85,11 +85,12 @@ public class Param {
             return keyed.substring(pos + 1, end);
     }
 
-    public static String pnameOf(String param, String index) {
-        if (param.startsWith("$"))
-            param = param.substring(1);
-        return String.format("%s%s", param, index);
-    }
+    // public static String pnameOf(String name) {
+    //     int p = name.indexOf('[');
+    //     if (p != -1)
+    //         name = name.substring(0, p);
+    //     return name;
+    // }
 
     // name             -> name
     // $name            -> name
@@ -99,30 +100,30 @@ public class Param {
     // name[index,!]    -> nameIndex_a
     // name[index,+]    -> nameIndex_a
     // name[idx1,idx2]  -> nameIdx1_Idx2
-    public static String pnameOf(String param) {
-        if (param.startsWith("$"))
-            param = param.substring(1);
-        if (param.indexOf(' ') != -1)
-            param = param.substring(0, param.indexOf(" "));
-
-        if (!param.contains("["))
-            return param;
-
-        if (param.endsWith("[!]"))
-            return param.replace("[!]", "_a");
-        if (param.endsWith("[+]"))
-            return param.replace("[+]", "_a");
-        if (param.endsWith(",!]"))
-            return param.replace("[", "").replace(",!]", "a");
-        if (param.endsWith(",+]"))
-            return param.replace("[", "").replace(",+]", "a");
-        if (param.contains("["))
-            return param.replace("[", "")
-                .replace(",", "_")
-                .replace("]", "");
-        else
-            return param;
-    }
+    // public static String pnameOf(String param) {
+    //     if (param.startsWith("$"))
+    //         param = param.substring(1);
+    //     if (param.indexOf(' ') != -1)
+    //         param = param.substring(0, param.indexOf(" "));
+    //
+    //     if (!param.contains("["))
+    //         return param;
+    //
+    //     if (param.endsWith("[!]"))
+    //         return param.replace("[!]", "_a");
+    //     if (param.endsWith("[+]"))
+    //         return param.replace("[+]", "_a");
+    //     if (param.endsWith(",!]"))
+    //         return param.replace("[", "").replace(",!]", "a");
+    //     if (param.endsWith(",+]"))
+    //         return param.replace("[", "").replace(",+]", "a");
+    //     if (param.contains("["))
+    //         return param.replace("[", "")
+    //             .replace(",", "_")
+    //             .replace("]", "");
+    //     else
+    //         return param;
+    // }
 
     // ----------------------------------------------------------------------
     //

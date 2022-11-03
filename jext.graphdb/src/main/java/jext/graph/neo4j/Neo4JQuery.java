@@ -6,6 +6,7 @@ import jext.graph.Limit;
 import jext.graph.Query;
 import jext.util.MapUtils;
 
+import org.neo4j.driver.Record;
 import org.neo4j.driver.types.Node;
 
 import java.util.ArrayList;
@@ -89,6 +90,8 @@ public class Neo4JQuery implements Query {
             s = String.format("%s DETACH DELETE %s", stmt, alias);
         else
             s = String.format("%s DELETE %s", stmt, alias);
+
+        // LIMIT not supported
 
         session.execute(s, params);
         return 0;
@@ -192,6 +195,7 @@ public class Neo4JQuery implements Query {
                     s.add(next());
                 return s;
             }
+
         };
     }
 

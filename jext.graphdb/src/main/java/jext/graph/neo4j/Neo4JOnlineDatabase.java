@@ -156,7 +156,7 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
         return namedQueries;
     }
 
-    String getQuery(String qname) {
+    public String getQuery(String qname) {
         return namedQueries.getQuery(qname, getVersion().getVersion());
     }
 

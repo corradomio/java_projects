@@ -11,23 +11,21 @@ import jext.graph.Param;
 import jext.logging.Logger;
 import jext.util.ArrayUtils;
 import jext.util.Parameters;
-import jext.util.StringUtils;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
-import static jext.graph.neo4j.Neo4JOnlineSession.WHERE_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.AND_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.END_BLOCK;
+import static jext.graph.neo4j.Neo4JOnlineSession.IN_REVISION;
 import static jext.graph.neo4j.Neo4JOnlineSession.N;
 import static jext.graph.neo4j.Neo4JOnlineSession.NONE;
 import static jext.graph.neo4j.Neo4JOnlineSession.REVISION;
-import static jext.graph.neo4j.Neo4JOnlineSession.IN_REVISION;
-import static jext.graph.neo4j.Neo4JOnlineSession.COUNT;
+import static jext.graph.neo4j.Neo4JOnlineSession.WHERE_BLOCK;
 
-class CypherFormatter {
+public class CypherFormatter {
 
     private static final Logger logger = Logger.getLogger(Neo4JOnlineSession.class);
 
@@ -64,13 +62,6 @@ class CypherFormatter {
             return String.format(":%s", type);
     }
 
-    static String name(String name) {
-        if (name.startsWith("$"))
-            return String.format("`%s`", name);
-        else
-            return name;
-    }
-
     /**
      * Create the PROPERTIES block:
      *
@@ -102,7 +93,6 @@ class CypherFormatter {
         // { param: $[n]param, ... }
         return brackets(sb);
     }
-    static String pblock(Map<String,Object> params) { return pblock(NONE, params); }
 
     /**
      * Create a WHERE block
@@ -122,8 +112,8 @@ class CypherFormatter {
         for (String param : new HashSet<>(params.keySet())) {
             String s;
             // strip 'name[...]' -> 'name'
-            // String  name = Param.nameOf(param);
-            String pname = Param.pnameOf(param);
+            // String pname = Param.pnameOf(param);
+            String pname = Param.nameOf(param);
             Object value = params.get(param);
             if (!params.containsKey(pname))
                 params.put(pname, value);
@@ -137,7 +127,10 @@ class CypherFormatter {
 
 
             if (isId(param)) {
-                s = String.format("id(%1$s) = $%1$s%2$s", alias, param);
+                if (isCollection(value))
+                    s = String.format("id(%1$s) IN $%1$s%2$s", alias, param);
+                else
+                    s = String.format("id(%1$s) = $%1$s%2$s", alias, param);
             }
 
             // [param, null] -> "EXISTS(n.param)"
@@ -182,9 +175,6 @@ class CypherFormatter {
         //   AND ...
         return where(sb, and);
     }
-    static String wblock(Map<String,Object> params, boolean and, boolean pblock) {
-        return wblock(NONE, params, and, pblock);
-    }
 
     private static String revisionCondition(String alias, Object value) {
         /*
@@ -200,8 +190,8 @@ class CypherFormatter {
 
         // rev:integer|long -> n.inRevision[rev]
         if (value instanceof Number) {
-            int rev = ((Number) value).intValue();
-            return String.format("%s.%s[%d]", alias, IN_REVISION, rev);
+            // int rev = ((Number) value).intValue();
+            return String.format("%1$s.%2$s[$%1$s%3$s]", alias, IN_REVISION, REVISION);
         }
 
         // convert single value of collection in int[]
@@ -215,9 +205,9 @@ class CypherFormatter {
         }
         else {
             StringBuilder sb = new StringBuilder();
-            for(int i=0; i< revs.length; ++i) {
+            for(int rev : revs) {
                 andor(sb, false);
-                sb.append(String.format("%s.%s[%d]", alias, IN_REVISION, revs[i]));
+                sb.append(String.format("%s.%s[%d]", alias, IN_REVISION, rev));
             }
             // ( ... )
             return parens(sb);
@@ -228,7 +218,8 @@ class CypherFormatter {
         // $degree[edge] = value
         String s;
         String edge = Param.keyOf(param);
-        String pname = Param.pnameOf(param);
+        // String pname = Param.pnameOf(param);
+        String pname = Param.nameOf(param);
 
         // ["$degree", d] -> apoc.node.degree(n) = $_degree
         // ["$degree[e]", d]
@@ -269,8 +260,8 @@ class CypherFormatter {
 
         StringBuilder sb = new StringBuilder();
         for(String param : new HashSet<>(params.keySet())) {
-            String name  = Param.nameOf(param);
-            String pname = Param.pnameOf(param);
+            String pname = Param.nameOf(param);
+            // String name  = Param.nameOf(param);
             Object value = params.get(param);
             if (!params.containsKey(pname))
                 params.put(pname, value);
@@ -299,8 +290,8 @@ class CypherFormatter {
             // name[!]  -> appendDistinct(alias.name, $[n]name)
             //          -> setAdd(alias.name, $[n]name
             else if (isAppendDistinct(param)) {
-                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct(%1$s.%2$s, $%1$s%3$s)",
-                    alias, name, pname));
+                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct(%1$s.%2$s, $%1$s%2$s)",
+                    alias, pname));
 
                 params.remove(param);
             }
@@ -308,8 +299,8 @@ class CypherFormatter {
             // name[+]  -> append(n.name, $pname)
             //          -> listAdd(
             else if (isAppend(param)) {
-                sb.append(String.format("%1$s.%2$s = apocx.coll.append(%1$s.%2$s, $%1$s%3$s)",
-                    alias, name, pname));
+                sb.append(String.format("%1$s.%2$s = apocx.coll.append(%1$s.%2$s, $%1$s%2$s)",
+                    alias, pname));
 
                 params.remove(param);
             }
@@ -322,8 +313,8 @@ class CypherFormatter {
             else if (isAppendDistinct2(param)) {
                 int index = Param.indexOf(param, 1);
 
-                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct2(%1$s.%2$s, %4$d, $%1$s%3$s)",
-                    alias, name, pname, index));
+                sb.append(String.format("%1$s.%2$s = apocx.coll.appendDistinct2(%1$s.%2$s, %3$d, $%1$s%2$s)",
+                    alias, pname, index));
 
                 params.remove(param);
             }
@@ -332,8 +323,8 @@ class CypherFormatter {
             else if (isAppend2(param)) {
                 int index = Param.indexOf(param, 1);
 
-                sb.append(String.format("%1$s.%2$s = apocx.coll.append2(%1$s.%2$s, %4$d, $%1$s%3$s)",
-                    alias, name, pname, index));
+                sb.append(String.format("%1$s.%2$s = apocx.coll.append2(%1$s.%2$s, %3$d, $%1$s%2$s)",
+                    alias, pname, index));
 
                 params.remove(param);
             }
@@ -343,8 +334,8 @@ class CypherFormatter {
                 int index1 = Param.indexOf(param, 1);
                 int index2 = Param.indexOf(param, 2);
 
-                sb.append(String.format("%1$s.%2$s = apocx.coll.array2Set(%1$s.%2$s, %4$d, %5$d, $%1$s%3$s)",
-                    alias, name, pname, index1, index2));
+                sb.append(String.format("%1$s.%2$s = apocx.coll.array2Set(%1$s.%2$s, %3$d, %4$d, $%1$s%2$s)",
+                    alias, pname, index1, index2));
 
                 params.remove(param);
             }
@@ -357,8 +348,8 @@ class CypherFormatter {
             else if (isArray(param)) {
                 int index = Param.indexOf(param, 0);
 
-                sb.append(String.format("%1$s.%2$s = apocx.coll.arraySet(%1$s.%2$s, %4$d, $%1$s%3$s)",
-                    alias, name, pname, index));
+                sb.append(String.format("%1$s.%2$s = apocx.coll.arraySet(%1$s.%2$s, %3$d, $%1$s%2$s)",
+                    alias, pname, index));
 
                 params.remove(param);
             }
@@ -369,9 +360,6 @@ class CypherFormatter {
         }
 
         return update(sb);
-    }
-    static String sblock(Map<String,Object> params, boolean pblock) {
-        return sblock(NONE, params, pblock);
     }
 
     /**
@@ -416,18 +404,17 @@ class CypherFormatter {
      *      n.att1, n.att2, ...
      *
      */
-    static String ablock(String alias, Collection<String> attributes) {
-        if (attributes.isEmpty())
-            return NONE;
-
-        StringBuilder sb = new StringBuilder();
-        for(String attr : attributes) {
-            comma(sb);
-            sb.append(alias).append(".").append(attr);
-        }
-        return sb.toString();
-    }
-    static String ablock(Collection<String> attributes) { return ablock(NONE, attributes); }
+    // static String ablock(String alias, Collection<String> attributes) {
+    //     if (attributes.isEmpty())
+    //         return NONE;
+    //
+    //     StringBuilder sb = new StringBuilder();
+    //     for(String attr : attributes) {
+    //         comma(sb);
+    //         sb.append(alias).append(".").append(attr);
+    //     }
+    //     return sb.toString();
+    // }
 
     // ----------------------------------------------------------------------
     // ${and:  [alias:][name]}
@@ -436,7 +423,7 @@ class CypherFormatter {
     /**
      * Create a USER WHERE block
      */
-    static String ublock(String stmt, Parameters params, boolean and) {
+    public static String ublock(String stmt, Parameters params, boolean and) {
         if (noParams(params))
             return NONE;
 
@@ -527,8 +514,6 @@ class CypherFormatter {
             return true;
         // in WHERE clause, null and collections have special handling
         if (value == null || value instanceof Collection || value.getClass().isArray())
-            return true;
-        if (name.contains("<") || name.contains(">") || name.contains("With") || name.contains("append"))
             return true;
         else
             return false;

@@ -11,6 +11,7 @@ import jext.util.MapUtils;
 import jext.util.Parameters;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class CheckRevNodes {
@@ -34,8 +35,9 @@ public class CheckRevNodes {
         //     ));
         // }
 
+        String n1, n2;
         try(GraphSession s = gdb.connect(REF_ID, "source", 1)) {
-            s.createNode("module", MapUtils.asMap(
+            n1 = s.createNode("module", MapUtils.asMap(
                 "name", "mymodule",
                 "fullname", "p.mymodule",
                 "digest", 111,
@@ -45,13 +47,17 @@ public class CheckRevNodes {
         }
 
         try(GraphSession s = gdb.connect(REF_ID, "source", 4)) {
-            s.createNode("module", MapUtils.asMap(
+            n2 = s.createNode("module", MapUtils.asMap(
                 "name", "mymodule",
                 "fullname", "p.mymodule",
                 "digest", 444,
                 "mrefId", "01",
                 "path", "mypath"
             ));
+        }
+
+        try(GraphSession s = gdb.connect(REF_ID, "source", 5)) {
+            s.deleteNodes(Arrays.asList(n1, n2));
         }
 
         try(GraphSession s = gdb.connect(REF_ID, "source", 5)) {
