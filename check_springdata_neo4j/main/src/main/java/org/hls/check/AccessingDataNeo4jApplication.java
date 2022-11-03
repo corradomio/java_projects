@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import org.hls.check.data.component.ComponentRepository;
+import org.hls.check.data.metrics.MetricRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -36,16 +37,32 @@ public class AccessingDataNeo4jApplication {
     //     };
     // }
 
+    // String REF_ID = "c678d100";
+    // String REF_ID = "dde55a05";
+    String REF_ID = "ac61e44a";
+
     @Bean
-    CommandLineRunner demo3(final ComponentRepository cr) {
+    CommandLineRunner demo4(final MetricRepository mr) {
         return args -> {
-            System.out.println(cr.countAllByRefId("dde55a05"));
-            System.out.println(cr.countUsingZero("dde55a05"));
-            System.out.println(cr.countUsingParam("dde55a05"));
-            // System.out.println(cr.countUsingName("dde55a05"));
-            System.out.println(cr.checkUsingNamedQuery("dde55a05"));
+            System.out.println(mr.countAllByRefIdAndMproviderId(REF_ID, "1795005"));
+
+            mr.findAllByRefIdAndMproviderId(REF_ID, "1795005").forEach(m -> {
+                System.out.println(m.getName());
+            });
         };
     }
+
+
+    // @Bean
+    // CommandLineRunner demo3(final ComponentRepository cr) {
+    //     return args -> {
+    //         System.out.println(cr.countAllByRefId(REF_ID));
+    //         System.out.println(cr.countUsingZero(REF_ID));
+    //         System.out.println(cr.countUsingParam(REF_ID));
+    //         // System.out.println(cr.countUsingName("dde55a05"));
+    //         System.out.println(cr.checkUsingNamedQuery(REF_ID));
+    //     };
+    // }
 
     // @Bean
     // CommandLineRunner demo3(final ApplicationContext ctx) {

@@ -58,6 +58,27 @@ public class Value {
             return value instanceof Collection || value.getClass().isArray();
     }
 
+    public int[] intArray() {
+        int[] a;
+        int i=0;
+        if (value instanceof Collection) {
+            Collection<Number> c = (Collection<Number>) value;
+            a = new int[c.size()];
+            for(Number e : c)
+                a[i++] = e.intValue();
+        }
+        if (value.getClass().equals(long[].class)) {
+            long[] l = (long[])value;
+            a = new int[l.length];
+            for(i=0; i<l.length; ++i)
+                a[i] = (int)l[i];
+        }
+        else {
+            a = (int[]) value;
+        }
+        return a;
+    }
+
     // ----------------------------------------------------------------------
 
     @Override

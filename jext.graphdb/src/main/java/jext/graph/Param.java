@@ -4,24 +4,60 @@ import java.util.Objects;
 
 public class Param {
 
-    public static Param of(String param) {
+    public static Param of(String alias, String param) {
         int p = param.indexOf('[');
-        if (p == -1)
-            return new Param(param, -1);
-        int e = param.indexOf(']');
-        
+        int index = -1;
+        String key = null;
+        if (p != -1) {
+            int e = param.indexOf(']');
+            key = param.substring(p + 1, e);
+            try {
+                index = Integer.parseInt(key);
+            }
+            catch (NumberFormatException ex) {
+                //
+            }
+            param = param.substring(0, p);
+        }
+        return new Param(alias, param, index, key);
     }
 
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
+    // $name | $name[index] | $name[key]
+    // name | name[index]
 
+    public final String alias;
     public final String name;
     public final int index;
+    public final String key;
 
-    private Param(String name, int index) {
+    // set:   [alias].[name]
+    public final String sname;
+    // get:   [alias].[name][index]
+    public final String aname;
+    // param: $[alias][name]
+    public final String pname;
+
+
+    private Param(String alias, String name, int index, String key) {
+        // $name
         this.name = name;
         this.index = index;
+        this.key = key;
+        this.alias = alias;
+        this.sname = String.format("%s.%s", alias, name);
+
+        if (name.startsWith("$"))
+            this.pname = String.format("$`%s%s`", alias, name);
+        else
+            this.pname = String.format("$%s%s", alias, name);
+
+        if (index == -1)
+            this.aname = this.sname;
+        else
+            this.aname = String.format("%s.%s[%d]", alias, name, index);
     }
 
     // ----------------------------------------------------------------------
@@ -29,14 +65,6 @@ public class Param {
     // compatibility
     public static String at(String name, int index) {
         return String.format("%s[%d]", name, index);
-    }
-
-    public static String appendDistinct(String name) {
-        return name + "[!]";
-    }
-
-    public static String appendDistinct(String name, int index) {
-        return String.format("%s[%d,!]", name, index);
     }
 
     // ----------------------------------------------------------------------
@@ -55,16 +83,6 @@ public class Param {
             param = param.substring(1);
 
         int pos = param.indexOf('[');
-        // if (pos == -1)
-        //     pos = param.indexOf(" ");
-        // if (pos == -1)
-        //     pos = param.indexOf("!");
-        // if (pos == -1)
-        //     pos = param.indexOf("<");
-        // if (pos == -1)
-        //     pos = param.indexOf(">");
-        // if (pos == -1)
-        //     pos = param.indexOf("=");
         if (pos != -1)
             return param.substring(0, pos);
         else
@@ -106,46 +124,6 @@ public class Param {
         else
             return keyed.substring(pos + 1, end);
     }
-
-    // public static String pnameOf(String name) {
-    //     int p = name.indexOf('[');
-    //     if (p != -1)
-    //         name = name.substring(0, p);
-    //     return name;
-    // }
-
-    // name             -> name
-    // $name            -> name
-    // name[index]      -> nameIndex
-    // name[!]          -> name_a
-    // name[+]          -> name_a
-    // name[index,!]    -> nameIndex_a
-    // name[index,+]    -> nameIndex_a
-    // name[idx1,idx2]  -> nameIdx1_Idx2
-    // public static String pnameOf(String param) {
-    //     if (param.startsWith("$"))
-    //         param = param.substring(1);
-    //     if (param.indexOf(' ') != -1)
-    //         param = param.substring(0, param.indexOf(" "));
-    //
-    //     if (!param.contains("["))
-    //         return param;
-    //
-    //     if (param.endsWith("[!]"))
-    //         return param.replace("[!]", "_a");
-    //     if (param.endsWith("[+]"))
-    //         return param.replace("[+]", "_a");
-    //     if (param.endsWith(",!]"))
-    //         return param.replace("[", "").replace(",!]", "a");
-    //     if (param.endsWith(",+]"))
-    //         return param.replace("[", "").replace(",+]", "a");
-    //     if (param.contains("["))
-    //         return param.replace("[", "")
-    //             .replace(",", "_")
-    //             .replace("]", "");
-    //     else
-    //         return param;
-    // }
 
     @Override
     public String toString() {

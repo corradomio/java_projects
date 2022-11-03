@@ -16,6 +16,7 @@
     </properties>
 
     <modules>
+        <module>../jext.commons</module>
         <module>../jext.springframework-data</module>
         <module>data-access</module>
         <module>main</module>
