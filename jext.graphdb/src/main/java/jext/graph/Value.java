@@ -1,5 +1,7 @@
 package jext.graph;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 public class Value {
@@ -45,6 +47,15 @@ public class Value {
     private Value(Op op, Object value) {
         this.op = op;
         this.value = value;
+    }
+
+    // ----------------------------------------------------------------------
+
+    public boolean isCollection() {
+        if (value == null)
+            return false;
+        else
+            return value instanceof Collection || value.getClass().isArray();
     }
 
     // ----------------------------------------------------------------------

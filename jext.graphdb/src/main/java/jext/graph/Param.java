@@ -4,6 +4,28 @@ import java.util.Objects;
 
 public class Param {
 
+    public static Param of(String param) {
+        int p = param.indexOf('[');
+        if (p == -1)
+            return new Param(param, -1);
+        int e = param.indexOf(']');
+        
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public final String name;
+    public final int index;
+
+    private Param(String name, int index) {
+        this.name = name;
+        this.index = index;
+    }
+
+    // ----------------------------------------------------------------------
+
     // compatibility
     public static String at(String name, int index) {
         return String.format("%s[%d]", name, index);
@@ -124,21 +146,6 @@ public class Param {
     //     else
     //         return param;
     // }
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
-    private final String name;
-    private final int index;
-
-    private Param(String name, int index) {
-        this.name = name;
-        this.index = index;
-    }
-
-    public String name() { return name; }
-    public int index() { return index; }
 
     @Override
     public String toString() {
