@@ -4,22 +4,34 @@ import java.util.Objects;
 
 public class Param {
 
+    public static Param of(String alias, Object param) {
+        if (param instanceof Param)
+            return (Param) param;
+        else
+            return new Param(alias, (String)param);
+    }
+
     public static Param of(String alias, String param) {
-        int p = param.indexOf('[');
-        int index = -1;
-        String key = null;
-        if (p != -1) {
-            int e = param.indexOf(']');
-            key = param.substring(p + 1, e);
-            try {
-                index = Integer.parseInt(key);
-            }
-            catch (NumberFormatException ex) {
-                //
-            }
-            param = param.substring(0, p);
-        }
-        return new Param(alias, param, index, key);
+        return new Param(alias, (String)param);
+    }
+
+    public static Param of(String alias, String param, int index) {
+        return new Param(alias, at(param, index));
+    }
+
+    public static Param of(String alias, String param, String key) {
+        return new Param(alias, at(param, key));
+    }
+
+    // ----------------------------------------------------------------------
+    // compatibility
+
+    public static String at(String name, int index) {
+        return String.format("%s[%d]", name, index);
+    }
+
+    public static String at(String name, String key) {
+        return String.format("%s[%s]", name, key);
     }
 
     // ----------------------------------------------------------------------
@@ -29,6 +41,9 @@ public class Param {
     // name | name[index]
 
     public final String alias;
+    public final String param;
+
+    // name
     public final String name;
     public final int index;
     public final String key;
@@ -40,13 +55,40 @@ public class Param {
     // param: $[alias][name]
     public final String pname;
 
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
-    private Param(String alias, String name, int index, String key) {
-        // $name
-        this.name = name;
+    private Param(String alias, String param) {
+        this.alias = alias;
+        this.param = param;
+
+        int index = -1;
+        String key = null;
+
+        if (param.startsWith("$"))
+            param = param.substring(1);
+
+        // param[i] | param[k]
+        if (param.contains("[")) {
+            int b = param.indexOf('[');
+            int e = param.indexOf(']');
+            key = param.substring(b+1, e);
+            param = param.substring(0, b);
+            try {
+                index = Integer.parseInt(key);
+                key = null;
+            }
+            catch (NumberFormatException ex) {
+                //
+            }
+        }
+
         this.index = index;
         this.key = key;
-        this.alias = alias;
+
+        // $name
+        this.name = param;
         this.sname = String.format("%s.%s", alias, name);
 
         if (name.startsWith("$"))
@@ -61,69 +103,16 @@ public class Param {
     }
 
     // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
-    // compatibility
-    public static String at(String name, int index) {
-        return String.format("%s[%d]", name, index);
+    public boolean isSpecial() {
+        return index != -1 || param.startsWith("$") || "revision".equals(param);
     }
 
     // ----------------------------------------------------------------------
-    // param ->
+    // Overrides
     // ----------------------------------------------------------------------
-    // == != < <= > >=
-    // in !in
-    // contains !contains
-
-
-    // name[index]  -> name
-    // name{op}     -> name
-    // $name        -> name
-    public static String nameOf(String param) {
-        if (param.startsWith("$"))
-            param = param.substring(1);
-
-        int pos = param.indexOf('[');
-        if (pos != -1)
-            return param.substring(0, pos);
-        else
-            return param;
-    }
-
-    // [name[index], 0] -> index
-    // name[idx1,idx2], 1] -> idx1
-    // name[idx1,idx2], 2] -> idx2
-    public static int indexOf(String indexed, int at) {
-        if (at == 0) {
-            int pos = indexed.indexOf('[');
-            int end = indexed.indexOf(']');
-            String index = indexed.substring(pos + 1, end);
-            return Integer.parseInt(index);
-        }
-        if (at == 1) {
-            int pos = indexed.indexOf('[');
-            int end = indexed.indexOf(',', pos);
-            String index = indexed.substring(pos + 1, end);
-            return Integer.parseInt(index);
-        }
-        if (at == 2) {
-            int pos = indexed.indexOf(',');
-            int end = indexed.indexOf(']', pos);
-            String index = indexed.substring(pos + 1, end);
-            return Integer.parseInt(index);
-        }
-        else
-            throw new IllegalArgumentException();
-    }
-
-    // name[key] -> key
-    public static String keyOf(String keyed) {
-        int pos = keyed.indexOf('[');
-        int end = keyed.indexOf(']');
-        if (pos == -1)
-            return "";
-        else
-            return keyed.substring(pos + 1, end);
-    }
 
     @Override
     public String toString() {

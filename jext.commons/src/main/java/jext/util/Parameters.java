@@ -9,10 +9,11 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class Parameters extends HashMap<String, Object> {
+public class Parameters extends TreeMap<String, Object> {
 
     private static final Parameters EMPTY = new Parameters() {
 
@@ -61,9 +62,9 @@ public class Parameters extends HashMap<String, Object> {
     public static Parameters params(Map<String, Object> params) {
         return params().add(params);
     }
-    public static Parameters params(String prefix, Map<String, Object> params) {
-        return params().add(prefix, params);
-    }
+    // public static Parameters params(String prefix, Map<String, Object> params) {
+    //     return params().add(prefix, params);
+    // }
 
     /**
      * Create an object populated with the list of key/value pairs

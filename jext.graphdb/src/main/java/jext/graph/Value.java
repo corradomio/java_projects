@@ -1,7 +1,6 @@
 package jext.graph;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
 public class Value {
@@ -12,7 +11,7 @@ public class Value {
         else
             return of(Op.EQ, value);
     }
-    public static Value of(String op, Object value) { return of(Op.valueOf(op), value); }
+    public static Value of(String op, Object value) { return of(Op.of(op), value); }
     public static Value of(Op op, Object value) { return new Value(op, value); }
 
     public static Value eq(Object value) { return of(Op.EQ, value); }
@@ -58,6 +57,10 @@ public class Value {
             return value instanceof Collection || value.getClass().isArray();
     }
 
+    public boolean isAssign() {
+        return Op.EQ == op || Op.ASSIGN == op;
+    }
+
     public int[] intArray() {
         int[] a;
         int i=0;
@@ -67,7 +70,7 @@ public class Value {
             for(Number e : c)
                 a[i++] = e.intValue();
         }
-        if (value.getClass().equals(long[].class)) {
+        else if (value.getClass().equals(long[].class)) {
             long[] l = (long[])value;
             a = new int[l.length];
             for(i=0; i<l.length; ++i)

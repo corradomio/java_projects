@@ -29,7 +29,7 @@ public enum Op {
     APPEND_DISTINCT("setAdd")
     ;
 
-    private String op;
+    private final String op;
 
     Op(String op) {
         this.op = op;
@@ -59,8 +59,11 @@ public enum Op {
             case "!contains": return NOT_CONTAINS;
             case "startsWith": return STARTS_WITH;
             case "endsWith": return ENDS_WITH;
+            case "add": return LIST_ADD;
+            case "!add": return SET_ADD;
             case "append": return LIST_ADD;
             case "!append": return SET_ADD;
+            case "incr": return INCR;
             default:
                 throw new IllegalArgumentException("Unknown '" + op + "'");
         }

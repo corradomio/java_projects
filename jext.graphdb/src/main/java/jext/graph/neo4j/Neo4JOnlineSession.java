@@ -34,12 +34,12 @@ import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.asIds;
 import static jext.graph.NodeId.invalidId;
 import static jext.graph.NodeId.toId;
-import static jext.graph.neo4j.CypherFormatter.eblock;
-import static jext.graph.neo4j.CypherFormatter.label;
-import static jext.graph.neo4j.CypherFormatter.pblock;
-import static jext.graph.neo4j.CypherFormatter.sblock;
-import static jext.graph.neo4j.CypherFormatter.ublock;
-import static jext.graph.neo4j.CypherFormatter.wblock;
+import static jext.graph.neo4j.WhereFormatter.eblock;
+import static jext.graph.neo4j.WhereFormatter.label;
+import static jext.graph.neo4j.WhereFormatter.pblock;
+import static jext.graph.neo4j.WhereFormatter.sblock;
+import static jext.graph.neo4j.WhereFormatter.ublock;
+import static jext.graph.neo4j.WhereFormatter.wblock;
 
 public class Neo4JOnlineSession implements GraphSession {
 

@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.function.LongConsumer;
 
 import static jext.graph.NodeId.asId;
-import static jext.graph.neo4j.CypherFormatter.label;
-import static jext.graph.neo4j.CypherFormatter.pblock;
-import static jext.graph.neo4j.CypherFormatter.wblock;
+import static jext.graph.neo4j.WhereFormatter.label;
+import static jext.graph.neo4j.WhereFormatter.pblock;
+import static jext.graph.neo4j.WhereFormatter.wblock;
 import static jext.graph.schema.NodeSchema.NO_REV;
 
 /*
