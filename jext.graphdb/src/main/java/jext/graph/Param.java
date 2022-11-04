@@ -107,7 +107,7 @@ public class Param {
     // ----------------------------------------------------------------------
 
     public boolean isSpecial() {
-        return index != -1 || param.startsWith("$") || "revision".equals(param);
+        return index != -1 || param.startsWith("$") || "revision".equals(param) || "id".equals(param);
     }
 
     // ----------------------------------------------------------------------

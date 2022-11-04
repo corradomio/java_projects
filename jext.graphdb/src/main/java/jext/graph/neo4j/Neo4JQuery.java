@@ -93,8 +93,7 @@ public class Neo4JQuery implements Query {
 
         // LIMIT not supported
 
-        session.execute(s, params);
-        return 0;
+        return session.execute(s, params);
     }
 
     @Override
@@ -117,6 +116,7 @@ public class Neo4JQuery implements Query {
     @Override
     public Map<String,Object> values(String alias) {
         String s = String.format("%s RETURN %s", stmt, alias);
+        s = setLimit(s);
         return session.retrieve(alias, s, params);
     }
 

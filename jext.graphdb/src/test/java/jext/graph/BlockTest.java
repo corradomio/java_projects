@@ -16,10 +16,10 @@ public class BlockTest {
     void testPblock() {
         Parameters params;
         params = Parameters.params("name", 1);
-        Assert.assertEquals(pblock("n", params), "{name:$nname}");
+        Assert.assertEquals(pblock("n", params), " {name:$nname}");
 
         params = Parameters.params("name", 1, "$label", "l", "revision", 1);
-        Assert.assertEquals(pblock("n", params), "{name:$nname}");
+        Assert.assertEquals(pblock("n", params), " {name:$nname}");
 
         Assert.assertEquals(wblock("n", params, false, true),
             " WHERE labels(n)[0] = $nlabel AND n.inRevision[$nrevision]");
@@ -40,7 +40,7 @@ public class BlockTest {
             "revision", 1,
             "digest[3]", 123
         );
-        Assert.assertEquals(pblock("n", params), "{name:$nname}");
+        Assert.assertEquals(pblock("n", params), " {name:$nname}");
 
         Assert.assertEquals(wblock("n", params, false, true),
             " WHERE labels(n)[0] = $nlabel AND n.digest[3] = $ndigest AND n.inRevision[$nrevision]");

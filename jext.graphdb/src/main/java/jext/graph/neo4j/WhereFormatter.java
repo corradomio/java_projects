@@ -279,7 +279,7 @@ public class WhereFormatter {
         if (sb.length() == 0)
             return NONE;
         else
-            return sb.insert(0,"{").append("}").toString();
+            return sb.insert(0," {").append("}").toString();
     }
 
     private static String update(StringBuilder sb) {

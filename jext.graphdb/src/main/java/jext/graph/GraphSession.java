@@ -546,7 +546,7 @@ public interface GraphSession extends AutoCloseable {
      * Execute the CYPHER statement specified
      */
     Query  query(String stmt, Map<String,Object> queryParams);
-    void execute(String stmt, Map<String,Object> queryParams);
+    long execute(String stmt, Map<String,Object> queryParams);
 
     // ----------------------------------------------------------------------
     // End

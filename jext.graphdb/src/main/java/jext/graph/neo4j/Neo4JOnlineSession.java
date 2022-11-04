@@ -15,6 +15,7 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.exceptions.TransientException;
+import org.neo4j.driver.summary.SummaryCounters;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 
@@ -476,7 +477,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         String pblock = pblock(N, nodeProps);
         String wblock = wblock(N, nodeProps, false, true);
-        String s = String.format("MATCH (n%s %s) %s", label(nodeType), pblock, wblock);
+        String s = String.format("MATCH (n%s%s)%s", label(nodeType), pblock, wblock);
 
         Parameters params = Parameters.params().add(N, nodeProps);
 
@@ -1274,17 +1275,26 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public void execute(String s, Map<String,Object> params) {
+    public long execute(String s, Map<String,Object> params) {
         logStmt(s, params);
 
         try {
             s = StringUtils.format(s, params);
             Result result = session_run(s, params);
+            return total(result);
         }
         catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
+    }
+
+    private static long total(Result result) {
+        SummaryCounters summary = result.consume().counters();
+        return summary.nodesDeleted()
+            + summary.relationshipsDeleted()
+            + summary.nodesCreated()
+            + summary.relationshipsCreated();
     }
 
     // ----------------------------------------------------------------------
