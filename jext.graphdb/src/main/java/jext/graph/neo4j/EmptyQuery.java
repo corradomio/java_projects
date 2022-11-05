@@ -40,8 +40,8 @@ public class EmptyQuery implements Query {
     }
 
     @Override
-    public Query assign(Map<String,Object> values) {
-        return this;
+    public long update(Map<String, Object> values) {
+        return 0;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class EmptyQuery implements Query {
 
     @Nullable
     @Override
-    public Map<String,Object> values() {
+    public Map<String, Object> values() {
         return null;
     }
 
@@ -97,12 +97,12 @@ public class EmptyQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> allValues() {
+    public GraphIterator<Map<String, Object>> allValues() {
         return new EmptyIterator<>();
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> result() {
+    public GraphIterator<Map<String, Object>> result() {
         return new EmptyIterator<>();
     }
 

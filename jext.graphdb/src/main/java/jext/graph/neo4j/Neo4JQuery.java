@@ -4,19 +4,11 @@ import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
 import jext.graph.Limit;
 import jext.graph.Query;
-import jext.util.MapUtils;
 import jext.util.Parameters;
-import org.neo4j.driver.types.Node;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static jext.graph.neo4j.Neo4JOnlineSession.E;
 import static jext.graph.neo4j.WhereFormatter.sblock;
 
 /*
@@ -28,19 +20,19 @@ public class Neo4JQuery implements Query {
     private final Neo4JOnlineSession session;
     private final String stmt;
     private final String alias;
-    private final Map<String,Object> params;
-    private final Map<String,Object> assign;
+    private final Map<String, Object> params;
+    private final Map<String, Object> update;
     private boolean edge;
 
     private Limit limit;
     private boolean distinct;
 
-    public Neo4JQuery(GraphSession session, String alias, String stmt, Map<String,Object> p) {
+    public Neo4JQuery(GraphSession session, String alias, String stmt, Map<String, Object> p) {
         this.session = (Neo4JOnlineSession) session;
         this.stmt = stmt;
         this.alias = alias;
         this.params = p;
-        this.assign = new HashMap<>();
+        this.update = new HashMap<>();
         this.limit = null;
     }
 
@@ -50,9 +42,9 @@ public class Neo4JQuery implements Query {
     }
 
     @Override
-    public Query assign(Map<String,Object> values) {
-        assign.putAll(values);
-        return this;
+    public long update(Map<String, Object> values) {
+        update.putAll(values);
+        return execute();
     }
 
     @Override
@@ -74,7 +66,7 @@ public class Neo4JQuery implements Query {
 
     @Override
     public long execute() {
-        String s = String.format("%1$s RETURN count(%2$s)", setAssign(stmt), alias);
+        String s = String.format("%1$s RETURN count(%2$s)", setUpdate(stmt), alias);
         return session.execute(s, params);
     }
 
@@ -122,14 +114,14 @@ public class Neo4JQuery implements Query {
     }
 
     @Override
-    public Map<String,Object> values() {
+    public Map<String, Object> values() {
         String s = String.format("%s RETURN %s", stmt, alias);
         s = setLimit(s);
         return session.retrieve(alias, s, params);
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> allValues() {
+    public GraphIterator<Map<String, Object>> allValues() {
         String s;
         if (distinct)
             s = String.format("%s RETURN DISTINCT %s", stmt, alias);
@@ -140,32 +132,32 @@ public class Neo4JQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> result() {
+    public GraphIterator<Map<String, Object>> result() {
         String s = setLimit(stmt);
         return session.resultIter(alias, s, params, edge);
     }
 
-    private static Object asMap(Object value) {
-        if (value == null)
-            return null;
-        if (value instanceof Node) {
-            return Neo4JOnlineSession.toNodeMap((Node)value);
-        }
-        if (value instanceof List)
-            return ((List)value).stream()
-                .map(v -> asMap(v))
-                .collect(Collectors.toList());
-        else
-            return value;
-    }
+    // private static Object asMap(Object value) {
+    //     if (value == null)
+    //         return null;
+    //     if (value instanceof Node) {
+    //         return Neo4JOnlineSession.toNodeMap((Node)value);
+    //     }
+    //     if (value instanceof List)
+    //         return ((List)value).stream()
+    //             .map(v -> asMap(v))
+    //             .collect(Collectors.toList());
+    //     else
+    //         return value;
+    // }
 
     // @Override
-    // public GraphIterator<Map<String,Object>> result() {
+    // public GraphIterator<Map<String, Object>> result() {
     //     String s = setLimit(stmt);
     //
-    //     GraphIterator<Map<String,Object>> git = session.resultIter(alias, s, params, edge);
+    //     GraphIterator<Map<String, Object>> git = session.resultIter(alias, s, params, edge);
     //
-    //     return new GraphIterator<Map<String,Object>>() {
+    //     return new GraphIterator<Map<String, Object>>() {
     //
     //         @Override
     //         public boolean hasNext() {
@@ -173,9 +165,9 @@ public class Neo4JQuery implements Query {
     //         }
     //
     //         @Override
-    //         public Map<String,Object> next() {
-    //             Map<String,Object> tmp = git.next();
-    //             Map<String,Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, alias));
+    //         public Map<String, Object> next() {
+    //             Map<String, Object> tmp = git.next();
+    //             Map<String, Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, alias));
     //
     //             for (String key : tmp.keySet()) {
     //                 if (key.equals(alias))
@@ -189,16 +181,16 @@ public class Neo4JQuery implements Query {
     //         }
     //
     //         @Override
-    //         public List<Map<String,Object>> toList() {
-    //             List<Map<String,Object>> l = new ArrayList<>();
+    //         public List<Map<String, Object>> toList() {
+    //             List<Map<String, Object>> l = new ArrayList<>();
     //             while(hasNext())
     //                 l.add(next());
     //             return l;
     //         }
     //
     //         @Override
-    //         public Set<Map<String,Object>> toSet() {
-    //             Set<Map<String,Object>> s = new HashSet<>();
+    //         public Set<Map<String, Object>> toSet() {
+    //             Set<Map<String, Object>> s = new HashSet<>();
     //             while(hasNext())
     //                 s.add(next());
     //             return s;
@@ -222,13 +214,13 @@ public class Neo4JQuery implements Query {
         return s;
     }
 
-    private String setAssign(String s) {
-        if (assign.isEmpty())
+    private String setUpdate(String s) {
+        if (update.isEmpty())
             return s;
 
-        String sblock = sblock(alias, assign, false);
+        String sblock = sblock(alias, update, false);
 
-        Parameters nparams = Parameters.params().add(params).add(alias, assign);
+        Parameters nparams = Parameters.params().add(params).add(alias, update);
         params.clear();
         params.putAll(nparams);
         return String.format("%s%s", s, sblock);

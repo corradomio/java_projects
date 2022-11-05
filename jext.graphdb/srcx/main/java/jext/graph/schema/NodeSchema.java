@@ -59,11 +59,11 @@ public class NodeSchema extends ObjectSchema {
     // Utilities
     // ----------------------------------------------------------------------
 
-    public Map<String,Object> uniqueProperties(Map<String,Object> props) {
+    public Map<String, Object> uniqueProperties(Map<String, Object> props) {
         if (props.isEmpty() || unique.isEmpty())
             return Collections.emptyMap();
 
-        Map<String,Object> uprops = new HashMap<>();
+        Map<String, Object> uprops = new HashMap<>();
         for (String uname : unique)
             uprops.put(uname, props.get(uname));
 

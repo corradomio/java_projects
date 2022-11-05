@@ -92,7 +92,7 @@ public class WhereFormatter {
      *
      * However, we can limit the 'pblock' only to 'properties with simple values'
      */
-    public static String pblock(String alias, Map<String,Object> params) {
+    public static String pblock(String alias, Map<String, Object> params) {
         // (... { ... })
         // if (params.isEmpty())
         //     return NONE;
@@ -127,7 +127,7 @@ public class WhereFormatter {
      * @param and if to include the WHERE keyword or AND
      * @param pblock if to exclude simple (name, value)
      */
-    public static String wblock(String alias, Map<String,Object> params, boolean and, boolean pblock) {
+    public static String wblock(String alias, Map<String, Object> params, boolean and, boolean pblock) {
         // WHERE ...
         //   AND ...
         // if (params.isEmpty())
@@ -158,7 +158,7 @@ public class WhereFormatter {
      *
      * @param pblock specify if some parameters are already used in 'pblock'
      */
-    public static String sblock(String alias, Map<String,Object> params, boolean pblock) {
+    public static String sblock(String alias, Map<String, Object> params, boolean pblock) {
         // SET ...
         // if (params.isEmpty())
         //     return NONE;
@@ -194,7 +194,7 @@ public class WhereFormatter {
      */
     public static String eblock(String alias, String edgeType,
                                 Direction direction, boolean recursive,
-                                Map<String,Object> edgeProps) {
+                                Map<String, Object> edgeProps) {
         String eblock;
 
         switch (direction) {
@@ -219,13 +219,13 @@ public class WhereFormatter {
     // ----------------------------------------------------------------------
     // special cases
 
-    private static void normalizeParam(Param param, Map<String,Object> params) {
+    private static void normalizeParam(Param param, Map<String, Object> params) {
         normalizeValue(param, params);
         normalizeId(param, params);
         normalizeArray(param, params);
     }
 
-    private static void normalizeId(Param param, Map<String,Object> params) {
+    private static void normalizeId(Param param, Map<String, Object> params) {
         if (!ID.equals(param.param))
             return;
 
@@ -267,7 +267,7 @@ public class WhereFormatter {
         }
     }
 
-    private static void normalizeArray(Param param, Map<String,Object> params) {
+    private static void normalizeArray(Param param, Map<String, Object> params) {
         if (!param.isArray())
             return;
 
@@ -276,7 +276,7 @@ public class WhereFormatter {
         params.put(param.name, value);
     }
 
-    private static void normalizeValue(Param param, Map<String,Object> params) {
+    private static void normalizeValue(Param param, Map<String, Object> params) {
         Object value = params.get(param.param);
         if (value instanceof Value)
             params.put(param.param, ((Value)value).value);
@@ -314,7 +314,7 @@ public class WhereFormatter {
         //
         // params['name'] is ANOTHER map
         //
-        Map<String,Object> uparams = (Map<String,Object>) params.getOrDefault(name, Collections.emptyMap());
+        Map<String, Object> uparams = (Map<String, Object>) params.getOrDefault(name, Collections.emptyMap());
         params.remove(name);
         params.add(alias, uparams);
 

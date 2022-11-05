@@ -78,9 +78,9 @@ public class CheckRevEdges {
         // }
         //
         // try(GraphSession s = gdb.connect(REF_ID, "source", 1)) {
-        //     Map<String,Object> nv = s.getNodeProperties(m1);
+        //     Map<String, Object> nv = s.getNodeProperties(m1);
         //     System.out.println(nv);
-        //     Map<String,Object> ev = s.getEdgeProperties(e12);
+        //     Map<String, Object> ev = s.getEdgeProperties(e12);
         //     System.out.println(ev);
         // }
         //

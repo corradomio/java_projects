@@ -6,14 +6,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
-public class Parameters extends TreeMap<String,Object> {
+public class Parameters extends TreeMap<String, Object> {
 
     private static final Parameters EMPTY = new Parameters() {
 
@@ -23,12 +20,17 @@ public class Parameters extends TreeMap<String,Object> {
         }
 
         @Override
-        public Parameters add(Map<String,Object> map) {
+        public Parameters add(Map<String, Object> map) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Parameters add(String prefix, Map<String,Object> map) {
+        public Parameters add(String prefix, Map<String, Object> map) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Parameters add(String name, Object value, Object... a) {
             throw new UnsupportedOperationException();
         }
 
@@ -39,10 +41,9 @@ public class Parameters extends TreeMap<String,Object> {
     // ----------------------------------------------------------------------
 
     /**
-     * Create an empty map.
-     * In the origin, it was a red-only object
-     * 
-     * @return an empty map
+     * Create an empty read-only map.
+     *
+     * @return an empty read-only map
      */
     public static Parameters empty()    { return EMPTY; }
     public static Parameters emptyMap() { return EMPTY; }
@@ -55,17 +56,14 @@ public class Parameters extends TreeMap<String,Object> {
     public static Parameters params() { return new Parameters(); }
 
     /**
-     * Create an object populated with the specified map
+     * Create a map populated with the specified initial values
      *
      * @param params map used for initialization
      * @return the map
      */
-    public static Parameters params(Map<String,Object> params) {
+    public static Parameters params(Map<String, Object> params) {
         return params().add(params);
     }
-    // public static Parameters params(String prefix, Map<String,Object> params) {
-    //     return params().add(prefix, params);
-    // }
 
     /**
      * Create an object populated with the list of key/value pairs
@@ -77,30 +75,34 @@ public class Parameters extends TreeMap<String,Object> {
      */
     public static Parameters params(String name, Object value, Object... a) {
         return params().add(name, value, a);
-        // Parameters params = params();
-        // params.put(name, value);
-        //
-        // int at = 0;
-        // while (at < a.length-1) {
-        //     String key = a[at++].toString();
-        //     Object val = a[at++];
-        //
-        //     params.put(key, val);
-        // }
-        // return params;
     }
 
     /**
      * Select a subset of keys
      * 
-     * @param params map
+     * @param params parameters
      * @param keys keys to select
      * @return a new map with the selected keys (can be empty)
      */
-    public static Parameters select(Map<String, ?> params, String... keys) {
+    public static Parameters select(Map<String, Object> params, String... keys) {
         Parameters nparams = params();
         for (String key : keys)
-            nparams.put(key, params.get(key));
+            if (params.containsKey(key))
+                nparams.put(key, params.get(key));
+        return nparams;
+    }
+
+    /**
+     * Remove a subset of keys
+     *
+     * @param params parameters
+     * @param keys keys to remove
+     * @return a new map with the remaining keys (can be empty)
+     */
+    public static Parameters exclude(Map<String, Object> params, String... keys) {
+        Parameters nparams = params(params);
+        for (String key : keys)
+            nparams.remove(key);
         return nparams;
     }
 
@@ -114,51 +116,19 @@ public class Parameters extends TreeMap<String,Object> {
     // Operations
     // ----------------------------------------------------------------------
 
-    // /**
-    //  * Add one or more key/value pairs
-    //  *
-    //  * @param name first key
-    //  * @param value first value
-    //  * @param a remaining key/values
-    //  * @return itself
-    //  */
-    // public Parameters add(String name, Object value, Object... a) {
-    //     this.put(name, value);
-    //
-    //     int at = 0;
-    //     while (at < a.length-1) {
-    //         String key = a[at++].toString();
-    //         Object val = a[at++];
-    //
-    //         this.put(key, val);
-    //     }
-    //     return this;
-    // }
-
-    /**
-     * Add the content of the properties object 
-     * 
-     * @param properties properties to add
-     * @return itself
-     */
-    public Parameters add(Properties properties) {
-        properties.forEach((k, v) -> {
-            put(k.toString(), v);
-        });
-        return this;
-    }
-
-    /**
-     * Add the content of the map
-     * 
-     * @param map map to add
-     * @return itself
-     */
-    public Parameters add(Map<String,Object> map) {
+    public Parameters add(Map<String, Object> map) {
         if (map == null)
             return this;
 
         super.putAll(map);
+        return this;
+    }
+    
+    public Parameters add(Properties props) {
+        if (props == null)
+            return this;
+        for(String key : props.stringPropertyNames())
+            put(key, props.get(key));
         return this;
     }
 
@@ -178,7 +148,7 @@ public class Parameters extends TreeMap<String,Object> {
      * @param map map to add
      * @return itself
      */
-    public Parameters add(String prefix, Map<String,Object> map) {
+    public Parameters add(String prefix, Map<String, Object> map) {
         if (map == null)
             return this;
 
@@ -194,7 +164,7 @@ public class Parameters extends TreeMap<String,Object> {
      * @param map map to add
      * @return itself
      */
-    public Parameters addIfMissing(Map<String,Object> map) {
+    public Parameters addIfMissing(Map<String, Object> map) {
         for (String key : map.keySet())
             if (!containsKey(key))
                 put(key, map.get(key));
@@ -343,9 +313,13 @@ public class Parameters extends TreeMap<String,Object> {
     public Properties toProperties() {
         Properties props = new Properties();
         keySet().forEach(k -> {
-            props.put(k, get(k).toString());
+            props.put(k, toString(get(k)));
         });
         return props;
+    }
+
+    private static String toString(Object o) {
+        return o == null ? null : o.toString();
     }
 
     // ----------------------------------------------------------------------
@@ -388,10 +362,6 @@ public class Parameters extends TreeMap<String,Object> {
     // IO
     // ----------------------------------------------------------------------
 
-    // public static Parameters load(String paramsPath) {
-    //     return load(new File(paramsPath));
-    // }
-
     /**
      * Fill a Properties object with the content of the file
      *
@@ -399,7 +369,6 @@ public class Parameters extends TreeMap<String,Object> {
      * @return Properties object
      */
     public static Parameters load(File propertiesFile) {
-        Parameters params = new Parameters();
         Properties props = new Properties();
         try(InputStream in = new FileInputStream(propertiesFile)) {
             props.load(in);
@@ -408,11 +377,7 @@ public class Parameters extends TreeMap<String,Object> {
             Logger.getLogger(Parameters.class).error("Unable to read properties file " + propertiesFile, e);
         }
 
-        props.forEach((k, v) -> {
-            params.put(k.toString(), v);
-        });
-
-        return params;
+        return params().add(props);
     }
 
     // ----------------------------------------------------------------------

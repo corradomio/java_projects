@@ -87,7 +87,7 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
         try(GraphSession session = this.connect()) {
             String s = "CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition";
-            Map<String,Object> result = session.query(s, Collections.emptyMap()).result().next();
+            Map<String, Object> result = session.query(s, Collections.emptyMap()).result().next();
             this.version = new GraphVersion(result.get("version").toString());
         }
 

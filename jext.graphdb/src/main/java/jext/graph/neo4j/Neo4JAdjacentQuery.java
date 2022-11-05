@@ -28,14 +28,14 @@ public class Neo4JAdjacentQuery implements Query {
     private final String edgeType;
     private final Direction direction;
     private final String nodeType;
-    private final Map<String,Object> nodeProps;
-    private final Map<String,Object> edgeProps;
+    private final Map<String, Object> nodeProps;
+    private final Map<String, Object> edgeProps;
 
     public Neo4JAdjacentQuery(
         GraphSession session,
         Collection<String> fromIds, String edgeType, Direction direction,
-        String nodeType, Map<String,Object> nodeProps,
-        Map<String,Object> edgeProps)
+        String nodeType, Map<String, Object> nodeProps,
+        Map<String, Object> edgeProps)
     {
         this.session = (Neo4JOnlineSession) session;
 
@@ -48,8 +48,9 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public Query assign(Map<String,Object> values) {
-        return this;
+    public long update(Map<String, Object> values) {
+
+        return execute();
     }
 
     @Override
@@ -96,7 +97,7 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public Map<String,Object> values() {
+    public Map<String, Object> values() {
         return scanAdjacentNodes().values();
     }
 
@@ -106,12 +107,12 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> allValues() {
+    public GraphIterator<Map<String, Object>> allValues() {
         return scanAdjacentNodes().allValues();
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> result() {
+    public GraphIterator<Map<String, Object>> result() {
         return allValues();
     }
 

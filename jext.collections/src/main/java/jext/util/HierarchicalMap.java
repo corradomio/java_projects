@@ -12,7 +12,7 @@ public class HierarchicalMap<V> extends AbstractMap<String, V> implements Map<St
     private static final String VALUE = "$value";
 
     private String separator = "/";
-    private Map<String,Object> root = new HashMap<>();
+    private Map<String, Object> root = new HashMap<>();
     private int size = 0;
 
     public HierarchicalMap() {
@@ -35,12 +35,12 @@ public class HierarchicalMap<V> extends AbstractMap<String, V> implements Map<St
         int n = parts.length;
         String key;
 
-        Map<String,Object> current = root;
+        Map<String, Object> current = root;
         for(int i=0; i<n; ++i) {
             key = parts[i];
             if (!current.containsKey(key))
                 current.put(key, new java.util.HashMap<>());
-            current = (Map<String,Object>) current.get(key);
+            current = (Map<String, Object>) current.get(key);
         }
         if (!current.containsKey(VALUE)) {
             size += 1;
@@ -53,10 +53,10 @@ public class HierarchicalMap<V> extends AbstractMap<String, V> implements Map<St
         String[] parts = ((String)path).split(separator);
         int n = parts.length;
 
-        Map<String,Object> current = root;
+        Map<String, Object> current = root;
         for(int i=0; i<n; ++i) {
             String key = parts[i];
-            current = (Map<String,Object>) current.get(key);
+            current = (Map<String, Object>) current.get(key);
             if (current == null)
                 return null;
         }

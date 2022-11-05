@@ -5,9 +5,6 @@ import java.util.Map;
 
 public interface Query {
 
-    Query assign(Map<String,Object> values);
-    long execute();
-
     /**
      * Add a limit on the query result: start and count
      * @param limit
@@ -36,6 +33,11 @@ public interface Query {
     long delete();
 
     /**
+     * Update some properties
+     */
+    long update(Map<String, Object> update);
+
+    /**
      * Return a single id
      */
     @Nullable String id();
@@ -43,7 +45,7 @@ public interface Query {
     /**
      * Return the values of SINGLE element
      */
-    @Nullable Map<String,Object> values();
+    @Nullable Map<String, Object> values();
 
     /**
      * Return the id of the selected elements
@@ -51,13 +53,18 @@ public interface Query {
     GraphIterator<String> ids();
 
     /**
-     * Return the value of the selected elements
+     * Return the values of the selected elements
      */
-    GraphIterator<Map<String,Object>> allValues();
+    GraphIterator<Map<String, Object>> allValues();
 
     /**
      * Return the result of the query
      */
-    GraphIterator<Map<String,Object>> result();
+    GraphIterator<Map<String, Object>> result();
+
+    /**
+     * Execute everything
+     */
+    long execute();
 
 }

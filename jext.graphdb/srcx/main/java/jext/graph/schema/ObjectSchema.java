@@ -86,7 +86,7 @@ public abstract class ObjectSchema {
         return REVISION.equals(name) || REVISIONS.equals(name);
     }
 
-    public Map<String,Object> normalizeCreate(Map<String,Object> props, int rev) {
+    public Map<String, Object> normalizeCreate(Map<String, Object> props, int rev) {
         for (String name : new ArrayList<>(props.keySet())) {
             // skip special names
             if (skip(name))
@@ -104,8 +104,8 @@ public abstract class ObjectSchema {
         return props;
     }
 
-    public Map<String,Object> normalizeUpdate(Map<String,Object> cprops, Map<String,Object> pprops, int rev) {
-        Map<String,Object> uprops = new HashMap<>();
+    public Map<String, Object> normalizeUpdate(Map<String, Object> cprops, Map<String, Object> pprops, int rev) {
+        Map<String, Object> uprops = new HashMap<>();
         for (String name : cprops.keySet()) {
             // skip special names
             if (skip(name))
@@ -124,8 +124,8 @@ public abstract class ObjectSchema {
         return uprops;
     }
 
-    public Map<String,Object> normalizeQuery(Map<String,Object> qprops, int rev) {
-        Map<String,Object> nprops = new HashMap<>();
+    public Map<String, Object> normalizeQuery(Map<String, Object> qprops, int rev) {
+        Map<String, Object> nprops = new HashMap<>();
         for (String name : qprops.keySet()) {
             Object value = qprops.get(name);
             if (skip(name))

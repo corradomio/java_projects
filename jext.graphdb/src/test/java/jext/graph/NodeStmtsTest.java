@@ -76,7 +76,7 @@ public class NodeStmtsTest {
     void testIdList() {
         try(GraphSession s = gdb.connect()) {
             createNodes();
-            List<Map<String,Object>> values = s.getNodesProperties(ids);
+            List<Map<String, Object>> values = s.getNodesProperties(ids);
 
             Assert.assertEquals(values.size(), ids.size());
         }
@@ -87,7 +87,7 @@ public class NodeStmtsTest {
         try(GraphSession s = gdb.connect()) {
             createNodes();
             long n = s.setNodesProperties(ids, Parameters.params("example", true));
-            List<Map<String,Object>> values = s.getNodesProperties(ids);
+            List<Map<String, Object>> values = s.getNodesProperties(ids);
 
             Assert.assertEquals(values.size(), ids.size());
             Assert.assertEquals(values.size(), n);

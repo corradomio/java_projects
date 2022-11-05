@@ -58,7 +58,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     //      where:  inRevision[rev]
 
     // add 'refId' is not present
-    private Map<String,Object> check(Map<String,Object> props) {
+    private Map<String, Object> check(Map<String, Object> props) {
         // add 'refId'
         if (refId == null)
             return props;
@@ -73,7 +73,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     }
 
     // query + revision
-    private Map<String,Object> check(String nodeType, Map<String,Object> props, boolean create) {
+    private Map<String, Object> check(String nodeType, Map<String, Object> props, boolean create) {
         // FIRST: add refId is available
         props = check(props);
 
@@ -100,7 +100,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         return props;
     }
 
-    private Map<String,Object> qcheck(Map<String,Object> props) {
+    private Map<String, Object> qcheck(Map<String, Object> props) {
         // add 'refId'
         if (refId == null)
             return props;
@@ -119,7 +119,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryNodes(@Nullable String nodeType, Map<String,Object> nodeProps) {
+    public Query queryNodes(@Nullable String nodeType, Map<String, Object> nodeProps) {
         nodeProps = check(nodeType, nodeProps, false);
         return super.queryNodes(nodeType, nodeProps);
     }
@@ -129,30 +129,30 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // ----------------------------------------------------------------------
 
     @Override
-    public String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps) {
+    public String/*nodeId*/ createNode(String nodeType, Map<String, Object> nodeProps) {
         nodeProps = check(nodeProps);
         // check if the node is already present
-        Map<String,Object> prevProps = findPrevious(nodeType, nodeProps);
+        Map<String, Object> prevProps = findPrevious(nodeType, nodeProps);
         if (prevProps == null)
             return super.createNode(nodeType, check(nodeType, nodeProps, true));
         else
             return updateNode(nodeType, nodeProps, prevProps);
     }
 
-    private Map<String,Object> findPrevious(String nodeType, Map<String,Object> nodeProps) {
+    private Map<String, Object> findPrevious(String nodeType, Map<String, Object> nodeProps) {
         if (rev <= 0)
             return null;
 
         NodeSchema nschema = schema.nodeSchema(nodeType);
-        Map<String,Object> findProps = nschema.uniqueProperties(nodeProps);
+        Map<String, Object> findProps = nschema.uniqueProperties(nodeProps);
         String nodeId = super.queryNodes(nodeType, check(findProps)).id();
         return getNodeProperties(nodeId);
     }
 
-    private String/*nodeId*/ updateNode(String nodeType,  Map<String,Object> nodeProps, Map<String,Object> prevProps) {
+    private String/*nodeId*/ updateNode(String nodeType,  Map<String, Object> nodeProps, Map<String, Object> prevProps) {
         String nodeId = (String) prevProps.get(GRAPH_ID);
         NodeSchema nschema = schema.nodeSchema(nodeType);
-        Map<String,Object> updateProps = nschema.normalizeUpdate(nodeProps, prevProps, rev);
+        Map<String, Object> updateProps = nschema.normalizeUpdate(nodeProps, prevProps, rev);
         if (nschema.isRevisioned())
             updateProps.put(REVISION, rev);
         super.setNodeProperties(nodeId, updateProps);
@@ -165,7 +165,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
 
     @Override
     public boolean deleteNode(String nodeId) {
-        Map<String,Object> nodeProps = super.getNodeProperties(nodeId);
+        Map<String, Object> nodeProps = super.getNodeProperties(nodeId);
         String nodeType = (String)nodeProps.get(GRAPH_TYPE);
         return deleteNode(nodeType, nodeId);
     }
@@ -201,7 +201,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     }
 
     @Override
-    public long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callback) {
+    public long deleteNodes(@Nullable String nodeType, Map<String, Object> nodeProps, LongConsumer callback) {
         if (rev == NO_REV || nodeType == null)
             return super.deleteNodes(nodeType, check(nodeType, nodeProps, false), callback);
 
@@ -217,7 +217,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         return count;
     }
 
-    private void deleteIncidentEdges(@Nullable String nodeType, Map<String,Object> nodeProps) {
+    private void deleteIncidentEdges(@Nullable String nodeType, Map<String, Object> nodeProps) {
         // MATCH (n:type {...})-[e]->()
         // WHERE n.inRevision[rev] AND e.inRevision[rev]
         //   AND ...
@@ -248,13 +248,13 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // Edges
     // ----------------------------------------------------------------------
 
-    private Map<String,Object> echeck(Map<String,Object> props) {
+    private Map<String, Object> echeck(Map<String, Object> props) {
         if (props.isEmpty())
             props = new HashMap<>();
         return props;
     }
 
-    private Map<String,Object> echeck(String edgeType, Map<String,Object> props, boolean create) {
+    private Map<String, Object> echeck(String edgeType, Map<String, Object> props, boolean create) {
         // FIRST: check is props is empty
         props = echeck(props);
 
@@ -278,7 +278,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
 
     @Nullable
     @Override
-    public String findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps) {
+    public String findEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps) {
         if (rev == NO_REV)
             return super.findEdge(edgeType, fromId, toId, edgeProps);
 
@@ -289,7 +289,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // ----------------------------------------------------------------------
 
     @Override
-    public String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps) {
+    public String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps) {
         if (rev == NO_REV)
             return super.createEdge(edgeType, fromId, toId, edgeProps);
 
@@ -308,7 +308,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         if (rev == NO_REV)
             return super.deleteEdge(edgeId);
 
-        Map<String,Object> edgeProps = super.getEdgeProperties(edgeId);
+        Map<String, Object> edgeProps = super.getEdgeProperties(edgeId);
         String edgeType = (String)edgeProps.get(GRAPH_TYPE);
         return deleteEdge(edgeType, edgeId);
     }
@@ -331,9 +331,9 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     @Override
     public Query queryEdges(
         @Nullable String edgeType,
-        @Nullable String fromType, Map<String,Object> fromProps,
-        @Nullable String toType,   Map<String,Object> toProps,
-        Map<String,Object> edgeProps) {
+        @Nullable String fromType, Map<String, Object> fromProps,
+        @Nullable String toType,   Map<String, Object> toProps,
+        Map<String, Object> edgeProps) {
         return super.queryEdges(edgeType,
             fromType, check(fromType, fromProps, false),
             toType,   check(toType,   toProps, false),
@@ -343,9 +343,9 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     @Override
     public long deleteEdges(
         @Nullable String edgeType,  // can be null
-        String fromType, Map<String,Object> fromProps,
-        String toType, Map<String,Object> toProps,
-        Map<String,Object> edgeProps) {
+        String fromType, Map<String, Object> fromProps,
+        String toType, Map<String, Object> toProps,
+        Map<String, Object> edgeProps) {
         return super.deleteEdges(edgeType,
             fromType, check(fromType, fromProps, false),
             toType,   check(toType,   toProps, false),
@@ -358,17 +358,17 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryUsing(String queryName, Map<String,Object> queryParams) {
+    public Query queryUsing(String queryName, Map<String, Object> queryParams) {
         return super.queryUsing(queryName, qcheck(queryParams));
     }
 
     @Override
-    public long executeUsing(String queryName, Map<String,Object> queryParams) {
+    public long executeUsing(String queryName, Map<String, Object> queryParams) {
         return super.executeUsing(queryName, qcheck(queryParams));
     }
 
     @Override
-    public Query queryUsingFullText(String query,  Map<String,Object> params) {
+    public Query queryUsingFullText(String query,  Map<String, Object> params) {
         return super.queryUsingFullText(query, qcheck(params));
     }
 
@@ -384,7 +384,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
     }
 
     @Override
-    protected Map<String,Object> postProcess(@Nullable Map<String,Object> map) {
+    protected Map<String, Object> postProcess(@Nullable Map<String, Object> map) {
         if (rev == NO_REV || map == null)
             return super.postProcess(map);
         if (map.containsKey(LABELS))
@@ -395,7 +395,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
             return super.postProcess(map);
     }
 
-    private Map<String,Object> processNode(Map<String,Object> map) {
+    private Map<String, Object> processNode(Map<String, Object> map) {
         String nodeType = (String) map.get(TYPE);
         NodeSchema nschema = schema.nodeSchema(nodeType);
 
@@ -414,7 +414,7 @@ public class VNeo4JOnlineSession extends Neo4JOnlineSession implements VGraphSes
         return map;
     }
 
-    private Map<String,Object> processEdge(Map<String,Object> map) {
+    private Map<String, Object> processEdge(Map<String, Object> map) {
         String edgeType = (String) map.get(TYPE);
         EdgeSchema eschema = schema.edgeSchema(edgeType);
 

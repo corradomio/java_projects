@@ -94,87 +94,127 @@ public interface GraphSession extends AutoCloseable {
     void deleteAll();
 
     // ----------------------------------------------------------------------
-    // Node
+    // Node by [nodeType/nodeProps]
     // ----------------------------------------------------------------------
 
     /**
      * Create a new node
      */
-    String/*nodeId*/ createNode(String nodeType, Map<String,Object> nodeProps);
+    String/*nodeId*/ createNode(String nodeType, Map<String, Object> nodeProps);
+
+    /**
+     * Select the nodes with the specified type and properties.
+     * Notes:
+     *    1) if nodeType and nodeProps are null, select ALL nodes in the database
+     *    2) if the value of a property is 'null' the property is checked for
+     *       its existence.
+     * Using the Query object it is possible to do
+     *    1) count() : long
+     *    2) exists() : bool
+     *    3) update({...}) : long
+     *    4) id() : String
+     *    5) ids() : iter[String]
+     *    6) values() : iter[Map]
+     *    7) allValues() : iter[Map]
+     *    8) result() : iter[Map]
+     *    9) execute() : long
+     *
+     * @param nodeType node type or null
+     * @param nodeProps node properties
+     * @return a Query object
+     */
+    Query queryNodes(@Nullable String nodeType, Map<String, Object> nodeProps);
+
+    // ----------------------------------------------------------------------
+    // Create/update
 
     /**
      * Create or update a node.
-     * Note: the node is created using the union of findProps and updateProps.
-     * If already present, only updateProps are updated
+     * If not present, it is created with findProps
+     * If already present, or already created, only updateProps are updated
      */
-    String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
+    String/*nodeId*/ createNode(String nodeType, Map<String, Object> findProps, Map<String, Object> updateProps);
 
-    /**
-     * Find the node with the specified properties.
-     * Equivalent to 'queryNodes(...).id()'
-     *
-     * @param nodeType  node type or null
-     * @param nodeProps node properties
-     * @return the nodeId or null
-     */
-    @Nullable
-    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String,Object> nodeProps);
-
-    /**
-     *
-     * @param nodeType node type
-     * @param nodeProps node properties
-     * @return the node properties or the empty map
-     */
-    @Nullable
-    Map<String,Object> getNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps);
-
-    boolean setNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps, Map<String,Object> updateProps);
-
+    // ----------------------------------------------------------------------
+    // Other operations
     // ----------------------------------------------------------------------
 
     /**
-     * Check if the node there exists
+     * Alias: queryNodes(nodeType, nodeProps).delete()
+     */
+    boolean deleteNode(@Nullable String nodeType, Map<String, Object> nodeProps);
+
+    /**
+     * Alias: queryNodes(nodeType, nodeProps).id()
+     */
+    @Nullable
+    String/*nodeId*/ findNode(@Nullable String nodeType, Map<String, Object> nodeProps);
+
+    /**
+     * Alias: queryNodes(nodeType, nodeProps).exists()
+     */
+    boolean existsNode(@Nullable String nodeType, Map<String, Object> nodeProps);
+
+    /**
+     * Alias: queryNodes(nodeType, nodeProps).values()
+     */
+    @Nullable
+    Map<String, Object> getNodeProperties(@Nullable String nodeType, Map<String, Object> nodeProps);
+
+    /**
+     * Alias: queryNodes(nodeType, nodeProps).update(updateProps)
+     */
+    boolean setNodeProperties(@Nullable String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps);
+
+    // ----------------------------------------------------------------------
+    // Node by [nodeId]
+    // ----------------------------------------------------------------------
+    // It is equivalent to: [null, {id, nodeId}]
+    //
+
+    /**
+     * Alias: queryNodes(null, {'id', nodeId}).exists()
      */
     boolean existsNode(String nodeId);
 
     /**
-     * Delete the node
+     * Alias: queryNodes(null, {'id', nodeId}).delete()
      */
     boolean deleteNode(String nodeId);
 
     /**
-     * Get the property values of the node
-     * @return the node properties or the empty map
+     * Alias: queryNodes(null, {'id', nodeId}).values()
      */
     @Nullable
-    Map<String,Object> getNodeProperties(String nodeId);
+    Map<String, Object> getNodeProperties(String nodeId);
 
     /**
-     * Insert/update/delete (using null) the node property
-     *
-     * @param nodeId node id
-     * @param name name of the property
-     * @param value values of the property
+     * Alias: queryNodes(null, {'id', nodeId}).update({name, value})
      */
     long setNodeProperty(String nodeId, String name, Object value);
 
     /**
-     * Insert/update/delete (using null) the node properties with 'updateProps'
-     *
-     * @param nodeId node id
-     * @param updateProps properties to update
+     * Alias: queryNodes(null, {'id', nodeId}).update(updateProps)
      */
-    long setNodeProperties(String nodeId, Map<String,Object> updateProps);
+    long setNodeProperties(String nodeId, Map<String, Object> updateProps);
 
     // ----------------------------------------------------------------------
-    // Multiple nodes
+    // Nodes by {id1,...}
     // ----------------------------------------------------------------------
-
-    long setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
+    // It is equivalent to: [null, {id, nodeIds}]
 
     /**
-     * Delete the nodes
+     * Alias: queryNodes(null, {'id', nodeIds}).allValues().toList()
+     */
+    List<Map<String, Object>> getNodesProperties(Collection<String> nodeIds);
+
+    /**
+     * Alias: queryNodes(null, {'id', nodeIds}).update(updateProps)
+     */
+    long setNodesProperties(Collection<String> nodeIds, Map<String, Object> updateProps);
+
+    /**
+     * Alias: queryNodes(null, {'id', nodeIds}).delete()
      */
     long deleteNodes(Collection<String> nodeIds);
     long deleteNodes(Collection<String> nodeIds, LongConsumer callback);
@@ -184,54 +224,25 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     /**
-     * Select the nodes with the specified type and properties.
-     *
-     * @param nodeType node type or null
-     * @param nodeProps node properties
-     *
-     * Notes:
-     *    1) if nodeType and nodeProps are null, select ALL nodes in the database
-     *    2) if the value of a property is 'null' the property is checked for
-     *       its existence.
+     * Alias: queryNodes(nodeType, nodeProps).count()
      */
-    Query queryNodes(@Nullable String nodeType, Map<String,Object> nodeProps);
+    long countNodes(String nodeType, Map<String, Object> nodeProps);
 
     /**
-     * Efficient methods to find if there exists at minimum a node with the specified
-     * properties.
-     * Note: it is an alias for countNodes() > 0
-     *
-     * @param nodeType node type or null
-     * @param nodeProps node properties
-     * @return true if there exist one or more nodes
+     * Alias: queryNodes(nodeType, nodeProps).delete()
      */
-    boolean existsNode(@Nullable String nodeType, Map<String,Object> nodeProps);
+    long deleteNodes(@Nullable String nodeType, Map<String, Object> nodeProps);
+    long deleteNodes(@Nullable String nodeType, Map<String, Object> nodeProps, LongConsumer callback);
 
     /**
-     * Count the number of nodes with the specified
-     * properties.
-     *
-     * @param nodeType node type or null
-     * @param nodeProps node properties
-     * @return number of nodes
+     * Alias: queryNodes(nodeType, nodeProps).update({name, value})
      */
-    long countNodes(String nodeType, Map<String,Object> nodeProps);
+    void setNodesProperty(String nodeType, Map<String, Object> nodeProps, String name, Object value);
 
     /**
-     * Get the property values for the nodes
+     * Alias: queryNodes(nodeType, nodeProps).update(updateProps)
      */
-    List<Map<String,Object>> getNodesProperties(Collection<String> nodeIds);
-
-    /**
-     * Delete the nodes with the specified properties
-     */
-    long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps);
-    long deleteNodes(@Nullable String nodeType, Map<String,Object> nodeProps, LongConsumer callback);
-
-    // ----------------------------------------------------------------------
-
-    void setNodesProperty(String nodeType, Map<String,Object> nodeProps, String name, Object value);
-    long setNodesProperties(String nodeType, Map<String,Object> nodeProps, Map<String,Object> updateProps);
+    long setNodesProperties(String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps);
 
     // ----------------------------------------------------------------------
     // Special node queries
@@ -255,7 +266,7 @@ public interface GraphSession extends AutoCloseable {
     Query queryAdjacentNodes(
         String fromId,
         @Nullable String edgeType, Direction direction, boolean recursive,
-        String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps);
+        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
     /**
      * Select the adjacent nodes to the specified node, following the
@@ -273,7 +284,7 @@ public interface GraphSession extends AutoCloseable {
     Query queryAdjacentNodes(
         Collection<String> fromIds,
         @Nullable String edgeType, Direction direction, boolean recursive,
-        String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps);
+        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Edges
@@ -291,85 +302,9 @@ public interface GraphSession extends AutoCloseable {
      * @return edge id
      */
     String/*edgeId*/ createEdge(String edgeType,
-                                @Nullable String fromType, Map<String,Object> fromProps,
-                                @Nullable String toType,   Map<String,Object> toProps,
-                                Map<String,Object> edgeProps);
-
-    // ----------------------------------------------------------------------
-
-    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId);
-    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
-
-    /**
-     * Create or update an edge.
-     *
-     * @param edgeType edge type
-     * @param fromId source node id
-     * @param toId targe node id
-     * @param findProps edge properties used to find it
-     * @param updateProps edge properties to update
-     * @return edgeId
-     */
-    String/*edgeId*/ createEdge(String edgeType,
-                                String fromId,
-                                String toId,
-                                Map<String,Object> findProps,
-                                Map<String,Object> updateProps);
-
-    // ----------------------------------------------------------------------
-
-    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId);
-
-    /**
-     * Find the edge between the specified nodes with the specified type and
-     * properties.
-     *
-     * @param edgeType edge type
-     * @param fromId source node id
-     * @param toId target node id
-     * @param edgeProps edge properties
-     * @return edgeId or null
-     */
-    @Nullable
-    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
-
-    /**
-     * Delete the edge
-     */
-    boolean deleteEdge(String edgeType, @Nullable String fromId, @Nullable String toId);
-
-    boolean deleteEdge(String edgeId);
-
-    // ----------------------------------------------------------------------
-
-    /**
-     * Retrieve the properties of the edge
-     *
-     * @param edgeId edgeId
-     * @return the edge properties or the empty map;
-     */
-    Map<String,Object> getEdgeProperties(String edgeId);
-
-    /**
-     * Insert/update/delete (using null) the edge property
-     *
-     * @param edgeId edge id
-     * @param name name of the property
-     * @param value values of the property
-     */
-    boolean   setEdgeProperty(String edgeId, String name, Object value);
-
-    /**
-     * Insert/update/delete (using null) the edge properties with 'updateProps'
-     *
-     * @param edgeId edge id
-     * @param updateProps properties to update
-     */
-    boolean setEdgeProperties(String edgeId, Map<String,Object> updateProps);
-
-    // ----------------------------------------------------------------------
-    // Multiple edges
-    // ----------------------------------------------------------------------
+                                @Nullable String fromType, Map<String, Object> fromProps,
+                                @Nullable String toType,   Map<String, Object> toProps,
+                                Map<String, Object> edgeProps);
 
     /**
      * General form to create edges. All other methods delegate to this
@@ -383,80 +318,34 @@ public interface GraphSession extends AutoCloseable {
      * @return number of edges created
      */
     long createEdges(String edgeType,
-                     String fromType, Map<String,Object> fromProps,
-                     String toType, Map<String,Object> toProps,
-                     Map<String,Object> edgeProps);
+                     @Nullable String fromType, Map<String, Object> fromProps,
+                     @Nullable String toType,   Map<String, Object> toProps,
+                     Map<String, Object> edgeProps);
 
-    /**
-     * General form to delete edges
-     *
-     * @param edgeType edge type
-     * @param fromType source node type
-     * @param fromProps source node properties
-     * @param toType target node type
-     * @param toProps target node properties
-     * @param edgeProps edge properties
-     */
-    long deleteEdges(@Nullable String edgeType,
-                     @Nullable String fromType, Map<String,Object> fromProps,
-                     @Nullable String toType,   Map<String,Object> toProps,
-                     Map<String,Object> edgeProps);
-
-    // ----------------------------------------------------------------------
-    // Variants
-
-    /**
-     * Create multiple edges.
-     *
-     * @param edgeType edge type
-     * @param fromId source node id
-     * @param toIds destination node id list
-     * @param edgeProps properties of the edge
-     */
-    long createEdges(String edgeType,
-                     String fromId,
-                     Collection<String> toIds,
-                     Map<String,Object> edgeProps);
-
-    /**
-     * Create or update multiple edges.
-     * The algorithm is:
-     *  1) 'findProps' are used to identify the list of nodes already reached
-     *  2) it is identified the set of nodes in 'toId' without an edge
-     *  3) it is create the edges between 'fromId' and the missing edges
-     *  4) the edges are updated with 'updateProps'
-     *
-     * @param edgeType edge type
-     * @param fromId source node id
-     * @param toIds destination node id list
-     * @param findProps edge properties used to find the edges
-     * @param updateProps edge properties to update
-     */
-    long createEdges(String edgeType,
-                     String fromId,
-                     Collection<String> toIds,
-                     Map<String,Object> findProps,
-                     Map<String,Object> updateProps);
-
-    /**
-     * Delete the edges from the specified nodes
-     *
-     * @param edgeType edge type (can be null)
-     * @param fromId source node id
-     * @param toIds target node ids (can be null)
-     * @param edgeProps edge properties
-     */
-    long deleteEdges(@Nullable String edgeType,
-                     @Nullable String fromId,
-                     List<String> toIds,
-                     Map<String,Object> edgeProps);
-
-    // ----------------------------------------------------------------------
-    // Query edges
-    // ----------------------------------------------------------------------
+    // /**
+    //  * General form to create edges. All other methods delegate to this
+    //  *
+    //  * @param edgeType edge type
+    //  * @param fromType source node type
+    //  * @param fromProps source node properties
+    //  * @param toType target node type
+    //  * @param toProps target node properties
+    //  * @param findProps edges' properties
+    //  * @param updateProps edges' properties
+    //  * @return number of edges created
+    //  */
+    // long createEdges(String edgeType,
+    //                  @Nullable String fromType, Map<String, Object> fromProps,
+    //                  @Nullable String toType,   Map<String, Object> toProps,
+    //                  Map<String, Object> findProps,
+    //                  Map<String, Object> updateProps);
 
     /**
      * Retrieve the edge list: the list of pairs (from -> to)
+     * Special properties:
+     *      idfrom: long                id from node
+     *      idto:   long                id to node
+     *      edge: Map[String,Object]    edge properties
      *
      * @param edgeType edge type (can be null)
      * @param fromType source nodes type (can be null)
@@ -464,49 +353,160 @@ public interface GraphSession extends AutoCloseable {
      * @param toType target nodes type
      * @param toProps target nodes properties
      * @param edgeProps edge properties
-     * @return a list of maps with keys:
-     *
-     *      idfrom: long                id from node
-     *      idto:   long                id to node
-     *      edge: Map[String,Object]    edge properties
+     * @return a list of edges:
      */
     Query queryEdges(@Nullable String edgeType,
-                     @Nullable String fromType, Map<String,Object> fromProps,
-                     @Nullable String toType,   Map<String,Object> toProps,
-                     Map<String,Object> edgeProps);
+                     @Nullable String fromType, Map<String, Object> fromProps,
+                     @Nullable String toType,   Map<String, Object> toProps,
+                     Map<String, Object> edgeProps);
 
+    // ----------------------------------------------------------------------
+    // Other operations
+    // ----------------------------------------------------------------------
+
+    /**
+     * Alias: createEdge(edgeType, null, {'id', fromId}, null, {'id', toId}, {})
+     */
+    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId);
+
+    /**
+     * Alias: createEdge(edgeType, null, {'id', fromId}, null, {'id', toId}, edgeProps)
+     */
+    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps);
+
+    /**
+     * Alias: createEdge(edgeType, null, {'id', fromId}, null, {'id', toId'}, findProps, updateProps)
+     */
+    String/*edgeId*/ createEdge(String edgeType,
+                                String fromId,
+                                String toId,
+                                Map<String, Object> findProps,
+                                Map<String, Object> updateProps);
+
+    /**
+     * Alias: createEdge(edgeType, null, {'id', fromId}, null, {'id', toIds}, edgeProps)
+     */
+    long createEdges(String edgeType,
+                     String fromId,
+                     Collection<String> toIds,
+                     Map<String, Object> edgeProps);
+
+    /**
+     * Alias: createEdge(edgeType, null, {'id', fromId}, null, {'id', toIds}, findProps, updateProps)
+     */
+    long createEdges(String edgeType,
+                     String fromId,
+                     Collection<String> toIds,
+                     Map<String, Object> findProps,
+                     Map<String, Object> updateProps);
+
+    /**
+     * Alias: queryEdges(edgeType, null, {'id', fromId}, null, {'id', toIds}, edgeProps).delete()
+     */
+    long deleteEdges(@Nullable String edgeType,
+                     @Nullable String fromId,
+                     List<String> toIds,
+                     Map<String, Object> edgeProps);
+
+    /**
+     * Alias: queryEdges(edgeType, null, {'id', fromId}, null, {'id', toIds}, edgeProps).update(updateProps)
+     */
+    long setEdgesProperties(String edgeType,
+                            String fromId,
+                            Collection<String> toIds,
+                            Map<String, Object> edgeProps,
+                            Map<String, Object> updateProps);
+
+    /**
+     * Alias: queryEdges(edgeType, null, {'id', fromId}, null, {'id', toIds}, {}).update(updateProps)
+     */
+    long setEdgesProperties(String edgeType,
+                            String fromId,
+                            Collection<String> toIds,
+                            Map<String, Object> updateProps);
+
+    // ----------------------------------------------------------------------
+    // Edge by [edgeType, fromId, toId, edgeProps]
+    // ----------------------------------------------------------------------
+
+    /**
+     * Alias: queryEdges(edgeType, null, {'id', fromId}, null, {'id', toId}, {}).id()
+     */
+    String/*edgeId*/ findEdge(@Nullable String edgeType, @Nullable String fromId, @Nullable String toId);
+
+    /**
+     * Alias: queryEdges(edgeType, null, {'id', fromId}, null, {'id', toId}, edgeProps).id()
+     */
+    @Nullable
+    String/*edgeId*/ findEdge(@Nullable String edgeType, @Nullable String fromId, @Nullable String toId, Map<String, Object> edgeProps);
+
+    /**
+     * Alias: queryEdges(edgeType, null {'id', fromId}, null, {'id', toId}, {}).delete()
+     */
+    boolean deleteEdge(@Nullable String edgeType, @Nullable String fromId, @Nullable String toId);
+
+    // ----------------------------------------------------------------------
+    // Edge by [edgeId]
+    // ----------------------------------------------------------------------
+
+    /**
+     * Alias: queryEdges(edgeType, null, {}, null, {}, {'id', edgeId}).delete()
+     */
+    boolean deleteEdge(String edgeId);
+
+    /**
+     * Alias: queryEdges(edgeType, null, {}, null, {}, {'id', edgeId}).values()
+     */
+    @Nullable
+    Map<String, Object> getEdgeProperties(String edgeId);
+
+    /**
+     * Alias: queryEdges(edgeType, null, {}, null, {}, {'id', edgeId}).update({name, value})
+     */
+    boolean   setEdgeProperty(String edgeId, String name, Object value);
+
+    /**
+     * Alias: queryEdges(edgeType, null, {}, null, {}, {'id', edgeId}).update(updateProps)
+     */
+    boolean setEdgeProperties(String edgeId, Map<String, Object> updateProps);
+
+    // ----------------------------------------------------------------------
+    // Multiple edges
+    // ----------------------------------------------------------------------
+
+    /**
+     * Alias: queryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps).delete()
+     */
+    long deleteEdges(@Nullable String edgeType,
+                     @Nullable String fromType, Map<String, Object> fromProps,
+                     @Nullable String toType,   Map<String, Object> toProps,
+                     Map<String, Object> edgeProps);
+
+    /**
+     * Alias: queryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps).update(updateProps)
+     */
+    long setEdgesProperties(@Nullable String edgeType,
+                            @Nullable String fromType, Map<String, Object> fromProps,
+                            @Nullable String toType, Map<String, Object> toProps,
+                            Map<String, Object> edgeProps,
+                            Map<String, Object> updateProps);
+
+    /**
+     * Alias: queryEdges(edgeType, null, fromProps, null, toProps, edgeProps)
+     */
     Query queryEdges(@Nullable String edgeType,
-                     Map<String,Object> fromProps,
-                     Map<String,Object> toProps,
-                     Map<String,Object> edgeProps);
+                     Map<String, Object> fromProps,
+                     Map<String, Object> toProps,
+                     Map<String, Object> edgeProps);
 
-    // ----------------------------------------------------------------------
-
+    /**
+     * Alias: queryEdges(edgeType, null, fromProps, null, toProps, edgeProps).update(updateProps)
+     */
     long setEdgesProperties(@Nullable String edgeType,
-                            @Nullable String fromType, Map<String,Object> fromProps,
-                            @Nullable String toType, Map<String,Object> toProps,
-                            Map<String,Object> edgeProps,
-                            Map<String,Object> updateProps);
-
-    long setEdgesProperties(@Nullable String edgeType,
-                            Map<String,Object> fromProps,
-                            Map<String,Object> toProps,
-                            Map<String,Object> edgeProps,
-                            Map<String,Object> updateProps);
-
-    // ----------------------------------------------------------------------
-    // Variants
-
-    long setEdgesProperties(String edgeType,
-                            String fromId,
-                            Collection<String> toIds,
-                            Map<String,Object> edgeProps,
-                            Map<String,Object> updateProps);
-
-    long setEdgesProperties(String edgeType,
-                            String fromId,
-                            Collection<String> toIds,
-                            Map<String,Object> updateProps);
+                            Map<String, Object> fromProps,
+                            Map<String, Object> toProps,
+                            Map<String, Object> edgeProps,
+                            Map<String, Object> updateProps);
 
     // ----------------------------------------------------------------------
     // Query using named queries
@@ -527,8 +527,8 @@ public interface GraphSession extends AutoCloseable {
     // a map containing pairs [name, value]
     //
 
-    Query  queryUsing(String queryName, Map<String,Object> queryParams);
-    long executeUsing(String queryName, Map<String,Object> queryParams);
+    Query  queryUsing(String queryName, Map<String, Object> queryParams);
+    long executeUsing(String queryName, Map<String, Object> queryParams);
 
     // ----------------------------------------------------------------------
     // Query using fulltext
@@ -543,7 +543,7 @@ public interface GraphSession extends AutoCloseable {
      * @param query fulltext query as specified in Lucene
      * @param queryParams query parameters
      */
-    Query queryUsingFullText(String query,  Map<String,Object> queryParams);
+    Query queryUsingFullText(String query,  Map<String, Object> queryParams);
 
     // ----------------------------------------------------------------------
     // Low level
@@ -552,8 +552,8 @@ public interface GraphSession extends AutoCloseable {
     /**
      * Execute the CYPHER statement specified
      */
-    Query  query(String stmt, Map<String,Object> queryParams);
-    long execute(String stmt, Map<String,Object> queryParams);
+    Query  query(String stmt, Map<String, Object> queryParams);
+    long execute(String stmt, Map<String, Object> queryParams);
 
     // ----------------------------------------------------------------------
     // End
