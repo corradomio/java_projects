@@ -19,17 +19,17 @@ public class NodeId {
         return Long.valueOf(id);
     }
 
-    public static String toId(long id) {
-        return Long.toString(id);
-    }
-
-    public static Set<Long> asIds(Collection<String> ids) {
+    public static Set<Long> asId(Collection<String> ids) {
         if (ids == null)
             return null;
         return ids
             .stream()
             .map(Long::valueOf)
             .collect(Collectors.toSet());
+    }
+
+    public static String toId(long id) {
+        return Long.toString(id);
     }
 
 }

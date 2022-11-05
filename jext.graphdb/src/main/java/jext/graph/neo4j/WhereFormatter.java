@@ -4,23 +4,25 @@ import jext.graph.Direction;
 import jext.graph.Op;
 import jext.graph.Param;
 import jext.graph.Value;
-import jext.util.Assert;
 import jext.util.Parameters;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static jext.graph.neo4j.Neo4JOnlineSession.AND_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.END_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.N;
-import static jext.graph.neo4j.Neo4JOnlineSession.NONE;
 import static jext.graph.neo4j.Neo4JOnlineSession.WHERE_BLOCK;
 
 public class WhereFormatter {
 
     private static final String NONE = "";
     private static final String ID = "id";
+    private static final String FROM = "from";
+    private static final String TO = "to";
     private static final String LABEL = "$label";
     private static final String REVISION = "revision";
     private static final String IN_REVISION = "inRevision";
@@ -30,6 +32,17 @@ public class WhereFormatter {
     private static final String DEGREE = "degree";
     private static final String IN_DEGREE = "indegree";
     private static final String OUT_DEGREE = "outdegree";
+
+    private static final Set<String> ID_NAMES = new HashSet<String>(){{
+        add(ID);
+        add(FROM);
+        add(TO);
+    }};
+    private static final Set<String> DEGREE_NAMES = new HashSet<String>(){{
+        add(DEGREE);
+        add(IN_DEGREE);
+        add(OUT_DEGREE);
+    }};
 
     // ----------------------------------------------------------------------
     // Implementation
@@ -43,6 +56,7 @@ public class WhereFormatter {
     //      SET   n.slot = $param,
     //            n.slot = function(n.slot, index, $param),
     //            n.slot = function(n.slot, $param)
+    //      RETURN n | id(n) | f1(n),f2(n),...
     //
     //  There are some 'special' (s)slots:
     //
@@ -92,6 +106,8 @@ public class WhereFormatter {
             if (isSpecial(param, value))
                 continue;
 
+            // normalizeParam(param, params);
+
             // ... ,
             comma(sb);
             sb.append(formatProp(param, value));
@@ -126,6 +142,8 @@ public class WhereFormatter {
             if (pblock && !isSpecial(param, value))
                 continue;
 
+            normalizeParam(param, params);
+
             and(sb);
             sb.append(formatClause(param, value));
         }
@@ -153,9 +171,11 @@ public class WhereFormatter {
             // skip if already used in pblock
             if (pblock && !isSpecial(param, value))
                 continue;
-            // skip if special
-            if (isSetSpecial(param))
+            // skip is a parameter not used in assignment
+            if (isNotAssign(param))
                 continue;
+
+            normalizeParam(param, params);
 
             comma(sb);
             sb.append(formatAssign(param, value));
@@ -196,9 +216,71 @@ public class WhereFormatter {
             pblock(alias, edgeProps));
     }
 
-
     // ----------------------------------------------------------------------
     // special cases
+
+    private static void normalizeParam(Param param, Map<String,Object> params) {
+        normalizeValue(param, params);
+        normalizeId(param, params);
+        normalizeArray(param, params);
+    }
+
+    private static void normalizeId(Param param, Map<String,Object> params) {
+        if (!ID.equals(param.param))
+            return;
+
+        Object value = params.get(ID);
+        if (value == null)
+            return;
+
+        Class vclass = value.getClass();
+        if (vclass == String.class) {
+            Long id = Long.valueOf((String)value);
+            params.put(ID, id);
+            return;
+        }
+
+        if (vclass == String[].class) {
+            String[] sids = (String[]) value;
+            long[] lids = new long[sids.length];
+            for (int i=0; i<sids.length; ++i)
+                lids[i] = Long.parseLong(sids[i]);
+            params.put(ID, lids);
+            return;
+        }
+
+        if (!(value instanceof Collection))
+            return;
+
+        Collection c = (Collection)value;
+        if (c.isEmpty())
+            return;
+
+        if (c.iterator().next().getClass() == String.class) {
+            long[] lids = new long[c.size()];
+            int i=0;
+            for(Object e : c) {
+                lids[i] = Long.parseLong((String)e);
+                i++;
+            }
+            params.put(ID, lids);
+        }
+    }
+
+    private static void normalizeArray(Param param, Map<String,Object> params) {
+        if (!param.isArray())
+            return;
+
+        Object value = params.get(param.param);
+        params.remove(param.param);
+        params.put(param.name, value);
+    }
+
+    private static void normalizeValue(Param param, Map<String,Object> params) {
+        Object value = params.get(param.param);
+        if (value instanceof Value)
+            params.put(param.param, ((Value)value).value);
+    }
 
     // ----------------------------------------------------------------------
     // ${and:  [alias:][name]}
@@ -251,7 +333,7 @@ public class WhereFormatter {
         return param.isSpecial() || value.isCollection() || !value.isAssign();
     }
 
-    private static boolean isSetSpecial(Param param) {
+    private static boolean isNotAssign(Param param) {
         return param.param.startsWith("$");
     }
 
@@ -320,7 +402,7 @@ public class WhereFormatter {
         //
 
         // [id, value | {...}]
-        else if (ID.equals(param.param)) {
+        else if (ID_NAMES.contains(param.param)) {
             return formatId(param, value);
         }
         // [$label, label | {...}]
@@ -436,10 +518,15 @@ public class WhereFormatter {
 
     // [id, value | {...}]
     private static String formatId(Param param, Value value) {
-        if (value.isCollection())
-            return String.format("id(%1$s) IN %2$s", param.alias, param.pname);
-        else
-            return String.format("id(%1$s) = %2$s", param.alias, param.pname);
+        String alias = param.alias;
+        String pname = param.pname;
+
+        if (value.isCollection()) {
+            return String.format("id(%1$s) IN %2$s", alias, pname);
+        }
+        else {
+            return String.format("id(%1$s) = %2$s", alias, pname);
+        }
     }
 
     // [$label, label | {l1, ...}]

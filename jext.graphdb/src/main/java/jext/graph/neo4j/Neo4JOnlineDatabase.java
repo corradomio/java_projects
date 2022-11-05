@@ -17,6 +17,7 @@ import org.neo4j.driver.Driver;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -152,8 +153,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     }
 
     @Override
-    public NamedQueries getNamedQueries() {
-        return namedQueries;
+    public Optional<NamedQueries> getNamedQueries() {
+        return Optional.ofNullable(namedQueries);
     }
 
     public String getQuery(String qname) {
@@ -165,8 +166,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     // ----------------------------------------------------------------------
 
     @Override
-    public NamedIndices getNamedIndices() {
-        return namedIndices;
+    public Optional<NamedIndices> getNamedIndices() {
+        return Optional.ofNullable(namedIndices);
     }
 
     @Override

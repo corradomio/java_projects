@@ -106,6 +106,10 @@ public class Param {
     //
     // ----------------------------------------------------------------------
 
+    public boolean isArray() {
+        return index != -1;
+    }
+
     public boolean isSpecial() {
         return index != -1 || param.startsWith("$") || "revision".equals(param) || "id".equals(param);
     }
@@ -116,10 +120,7 @@ public class Param {
 
     @Override
     public String toString() {
-        if (index == -1)
-            return name;
-        else
-            return String.format("%s[%d]", name, index);
+        return param;
     }
 
     @Override

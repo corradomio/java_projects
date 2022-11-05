@@ -30,27 +30,13 @@ public class CheckNeo4J {
         NamedQueries.load(new File("config/nqueries.xml"));
         GraphSchema.load(new File("config/dbschema.xml"));
 
-
         VGraphDatabase gdb = (VGraphDatabase) GraphDatabases.create(props);
 
         gdb.setGraphSchema(GraphSchema.load(new File("config/dbschema.xml")));
         gdb.setNamedQueries(NamedQueries.load(new File("config/nqueries.xml")));
         gdb.setNamedIndices(NamedIndices.load(new File("config/nindices.xml")));
 
-        gdb.getNamedQueries().registerQueries(MapUtils.asMap("test", "MATCH (n:source {refId:$refId}) RETURN n"));
-
-        // Map<String,Object> p = MapUtils.asMap(
-        //     "other", MapUtils.asMap(
-        //         "refId", REF_ID
-        //     )
-        // );
-
-        // try(GraphSession s = gdb.connect(REF_ID)) {
-        //     s.queryUsing("test", Collections.emptyMap())
-        //         .result().forEach(nv -> {
-        //             System.out.println(nv);
-        //         });
-        // }
+        gdb.getNamedQueries().get().registerQueries(MapUtils.asMap("test", "MATCH (n:source {refId:$refId}) RETURN n"));
 
         try(GraphSession s = gdb.connect(REF_ID, "source", 2)) {
             s.queryUsing("test", Collections.emptyMap())

@@ -178,7 +178,7 @@ public class StringUtils {
      * @param params parameters
      * @return
      */
-    public static String replace(String template, Map<String, Object> params) {
+    public static String replace(String template, Map<String,Object> params) {
         String t = template;
         int pos = t.indexOf("${");
         while (pos != -1) {
@@ -211,7 +211,7 @@ public class StringUtils {
     // ----------------------------------------------------------------------
     // Replace "${name}" with the value in the dictionary
 
-    public static String format(String template, Map<String, Object> params) {
+    public static String format(String template, Map<String,Object> params) {
         return replace(template, params);
     }
 

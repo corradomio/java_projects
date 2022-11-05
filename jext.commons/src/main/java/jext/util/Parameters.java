@@ -13,7 +13,7 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class Parameters extends TreeMap<String, Object> {
+public class Parameters extends TreeMap<String,Object> {
 
     private static final Parameters EMPTY = new Parameters() {
 
@@ -23,12 +23,12 @@ public class Parameters extends TreeMap<String, Object> {
         }
 
         @Override
-        public Parameters add(Map<String, Object> map) {
+        public Parameters add(Map<String,Object> map) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Parameters add(String prefix, Map<String, Object> map) {
+        public Parameters add(String prefix, Map<String,Object> map) {
             throw new UnsupportedOperationException();
         }
 
@@ -44,7 +44,8 @@ public class Parameters extends TreeMap<String, Object> {
      * 
      * @return an empty map
      */
-    public static Parameters empty() { return  EMPTY; /*params();*/ }   // could be updated
+    public static Parameters empty()    { return EMPTY; }
+    public static Parameters emptyMap() { return EMPTY; }
 
     /**
      * Create an empty map
@@ -59,10 +60,10 @@ public class Parameters extends TreeMap<String, Object> {
      * @param params map used for initialization
      * @return the map
      */
-    public static Parameters params(Map<String, Object> params) {
+    public static Parameters params(Map<String,Object> params) {
         return params().add(params);
     }
-    // public static Parameters params(String prefix, Map<String, Object> params) {
+    // public static Parameters params(String prefix, Map<String,Object> params) {
     //     return params().add(prefix, params);
     // }
 
@@ -153,7 +154,7 @@ public class Parameters extends TreeMap<String, Object> {
      * @param map map to add
      * @return itself
      */
-    public Parameters add(Map<String, Object> map) {
+    public Parameters add(Map<String,Object> map) {
         if (map == null)
             return this;
 
@@ -177,7 +178,7 @@ public class Parameters extends TreeMap<String, Object> {
      * @param map map to add
      * @return itself
      */
-    public Parameters add(String prefix, Map<String, Object> map) {
+    public Parameters add(String prefix, Map<String,Object> map) {
         if (map == null)
             return this;
 
@@ -193,7 +194,7 @@ public class Parameters extends TreeMap<String, Object> {
      * @param map map to add
      * @return itself
      */
-    public Parameters addIfMissing(Map<String, Object> map) {
+    public Parameters addIfMissing(Map<String,Object> map) {
         for (String key : map.keySet())
             if (!containsKey(key))
                 put(key, map.get(key));
@@ -204,6 +205,12 @@ public class Parameters extends TreeMap<String, Object> {
         for (String key : properties.stringPropertyNames())
             if (!containsKey(key))
                 put(key, properties.get(key));
+        return this;
+    }
+
+    public Parameters addNotNull(String name, Object value) {
+        if (value != null)
+            put(name, value);
         return this;
     }
 

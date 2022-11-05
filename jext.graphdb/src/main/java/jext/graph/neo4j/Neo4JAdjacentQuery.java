@@ -48,6 +48,16 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
+    public Query assign(Map<String,Object> values) {
+        return this;
+    }
+
+    @Override
+    public long execute() {
+        return 0;
+    }
+
+    @Override
     public Query limit(Limit limit) {
         this.limit = limit;
         return this;
@@ -64,45 +74,6 @@ public class Neo4JAdjacentQuery implements Query {
         distinct = true;
         return this;
     }
-
-    // -- with alias
-
-    @Override
-    public long count(String alias) {
-        return count();
-    }
-
-    @Override
-    public boolean exists(String alias) {
-        return exists();
-    }
-
-    @Override
-    public long delete(String alias) {
-        return delete();
-    }
-
-    @Override
-    public String id(String alias) {
-        return id();
-    }
-
-    @Override
-    public Map<String,Object> values(String alias) {
-        return values();
-    }
-
-    @Override
-    public GraphIterator<String> ids(String alias) {
-        return ids();
-    }
-
-    @Override
-    public GraphIterator<Map<String,Object>> allValues(String alias) {
-        return allValues();
-    }
-
-    // -- without alias
 
     @Override
     public long count() {
@@ -141,12 +112,7 @@ public class Neo4JAdjacentQuery implements Query {
 
     @Override
     public GraphIterator<Map<String,Object>> result() {
-        return allValues(alias);
-    }
-
-    @Override
-    public GraphIterator<Map<String,Object>> result(String alias) {
-        return allValues(alias);
+        return allValues();
     }
 
     private Query scanAdjacentNodes() {

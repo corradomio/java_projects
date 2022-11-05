@@ -85,19 +85,6 @@ public interface GraphSession extends AutoCloseable {
     void close();
 
     // ----------------------------------------------------------------------
-    // Transactions
-    // ----------------------------------------------------------------------
-    // Transaction is not ""necessary"": it is handled internally by the
-    // session
-
-    //
-    // Unsupported (for now)
-    //
-    // void beginTransaction();
-    // void commit();
-    // void rollback();
-
-    // ----------------------------------------------------------------------
     // DeleteAll (DANGEROUS)
     // ----------------------------------------------------------------------
 
@@ -123,15 +110,6 @@ public interface GraphSession extends AutoCloseable {
     String/*nodeId*/ createNode(String nodeType, Map<String,Object> findProps, Map<String,Object> updateProps);
 
     /**
-     *
-     * @param nodeType node type
-     * @param nodeProps node properties
-     * @return the node properties or the empty map
-     */
-    @Nullable
-    Map<String,Object> findNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps);
-
-    /**
      * Find the node with the specified properties.
      * Equivalent to 'queryNodes(...).id()'
      *
@@ -142,6 +120,17 @@ public interface GraphSession extends AutoCloseable {
     @Nullable
     String/*nodeId*/ findNode(@Nullable String nodeType, Map<String,Object> nodeProps);
 
+    /**
+     *
+     * @param nodeType node type
+     * @param nodeProps node properties
+     * @return the node properties or the empty map
+     */
+    @Nullable
+    Map<String,Object> getNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps);
+
+    boolean setNodeProperties(@Nullable String nodeType, Map<String,Object> nodeProps, Map<String,Object> updateProps);
+
     // ----------------------------------------------------------------------
 
     /**
@@ -150,17 +139,16 @@ public interface GraphSession extends AutoCloseable {
     boolean existsNode(String nodeId);
 
     /**
-     * Get the property values of the node
-     * @return the node properties or the empty map
-     */
-    Map<String,Object> getNodeProperties(String nodeId);
-
-    /**
      * Delete the node
      */
     boolean deleteNode(String nodeId);
 
-    // ----------------------------------------------------------------------
+    /**
+     * Get the property values of the node
+     * @return the node properties or the empty map
+     */
+    @Nullable
+    Map<String,Object> getNodeProperties(String nodeId);
 
     /**
      * Insert/update/delete (using null) the node property
@@ -169,7 +157,7 @@ public interface GraphSession extends AutoCloseable {
      * @param name name of the property
      * @param value values of the property
      */
-    void setNodeProperty(String nodeId, String name, Object value);
+    long setNodeProperty(String nodeId, String name, Object value);
 
     /**
      * Insert/update/delete (using null) the node properties with 'updateProps'
@@ -177,20 +165,19 @@ public interface GraphSession extends AutoCloseable {
      * @param nodeId node id
      * @param updateProps properties to update
      */
-    void setNodeProperties(String nodeId, Map<String,Object> updateProps);
-    // void deleteNodeProperty(String nodeId, String name);
+    long setNodeProperties(String nodeId, Map<String,Object> updateProps);
 
     // ----------------------------------------------------------------------
     // Multiple nodes
     // ----------------------------------------------------------------------
+
+    long setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
 
     /**
      * Delete the nodes
      */
     long deleteNodes(Collection<String> nodeIds);
     long deleteNodes(Collection<String> nodeIds, LongConsumer callback);
-
-    void setNodesProperties(Collection<String> nodeIds, Map<String,Object> nodeProps);
 
     // ----------------------------------------------------------------------
     // Query Nodes
@@ -210,7 +197,7 @@ public interface GraphSession extends AutoCloseable {
     Query queryNodes(@Nullable String nodeType, Map<String,Object> nodeProps);
 
     /**
-     * Effcient methods to find if there exists at minimum a node with the specified
+     * Efficient methods to find if there exists at minimum a node with the specified
      * properties.
      * Note: it is an alias for countNodes() > 0
      *
@@ -244,7 +231,7 @@ public interface GraphSession extends AutoCloseable {
     // ----------------------------------------------------------------------
 
     void setNodesProperty(String nodeType, Map<String,Object> nodeProps, String name, Object value);
-    void setNodesProperties(String nodeType, Map<String,Object> nodeProps, Map<String,Object> updateProps);
+    long setNodesProperties(String nodeType, Map<String,Object> nodeProps, Map<String,Object> updateProps);
 
     // ----------------------------------------------------------------------
     // Special node queries
@@ -289,11 +276,49 @@ public interface GraphSession extends AutoCloseable {
         String nodeType, Map<String,Object> nodeProps, Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
-    // Edge
+    // Edges
     // ----------------------------------------------------------------------
 
-    String/*edgeId*/ findEdge(  String edgeType, String fromId, String toId);
+    /**
+     * General form to create a single edge. All other methods delegate to this
+     *
+     * @param edgeType edge type
+     * @param fromType source node type
+     * @param fromProps source node properties
+     * @param toType target node type
+     * @param toProps target node properties
+     * @param edgeProps edge properties
+     * @return edge id
+     */
+    String/*edgeId*/ createEdge(String edgeType,
+                                @Nullable String fromType, Map<String,Object> fromProps,
+                                @Nullable String toType,   Map<String,Object> toProps,
+                                Map<String,Object> edgeProps);
+
+    // ----------------------------------------------------------------------
+
     String/*edgeId*/ createEdge(String edgeType, String fromId, String toId);
+    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
+
+    /**
+     * Create or update an edge.
+     *
+     * @param edgeType edge type
+     * @param fromId source node id
+     * @param toId targe node id
+     * @param findProps edge properties used to find it
+     * @param updateProps edge properties to update
+     * @return edgeId
+     */
+    String/*edgeId*/ createEdge(String edgeType,
+                                String fromId,
+                                String toId,
+                                Map<String,Object> findProps,
+                                Map<String,Object> updateProps);
+
+    // ----------------------------------------------------------------------
+
+    String/*edgeId*/ findEdge(String edgeType, String fromId, String toId);
 
     /**
      * Find the edge between the specified nodes with the specified type and
@@ -309,53 +334,13 @@ public interface GraphSession extends AutoCloseable {
     String/*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
 
     /**
-     * Create a new edge.
-     *
-     * @param edgeType edge type
-     * @param fromId source node id
-     * @param toId target node id
-     * @param edgeProps edge properties
-     * @return edgeId
-     */
-    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId, Map<String,Object> edgeProps);
-
-    /**
-     * Create or update an edge.
-     *
-     * @param edgeType edge type
-     * @param fromId source node id
-     * @param toId targe node id
-     * @param findProps edge properties used to find it
-     * @param updateProps edge properties to update
-     * @return edgeId
-     */
-    String/*edgeId*/ createEdge(String edgeType, String fromId, String toId,
-                                Map<String,Object> findProps, Map<String,Object> updateProps);
-
-    /**
      * Delete the edge
      */
-    boolean deleteEdge(String nodeId);
-    boolean deleteEdge(String edgeType, String fromId, String toId);
+    boolean deleteEdge(String edgeType, @Nullable String fromId, @Nullable String toId);
+
+    boolean deleteEdge(String edgeId);
 
     // ----------------------------------------------------------------------
-
-    /**
-     * Insert/update/delete (using null) the edge property
-     *
-     * @param edgeId edge id
-     * @param name name of the property
-     * @param value values of the property
-     */
-    void   setEdgeProperty(String edgeId, String name, Object value);
-
-    /**
-     * Insert/update/delete (using null) the edge properties with 'updateProps'
-     *
-     * @param edgeId edge id
-     * @param updateProps properties to update
-     */
-    void setEdgeProperties(String edgeId, Map<String,Object> updateProps);
 
     /**
      * Retrieve the properties of the edge
@@ -365,9 +350,60 @@ public interface GraphSession extends AutoCloseable {
      */
     Map<String,Object> getEdgeProperties(String edgeId);
 
+    /**
+     * Insert/update/delete (using null) the edge property
+     *
+     * @param edgeId edge id
+     * @param name name of the property
+     * @param value values of the property
+     */
+    boolean   setEdgeProperty(String edgeId, String name, Object value);
+
+    /**
+     * Insert/update/delete (using null) the edge properties with 'updateProps'
+     *
+     * @param edgeId edge id
+     * @param updateProps properties to update
+     */
+    boolean setEdgeProperties(String edgeId, Map<String,Object> updateProps);
+
     // ----------------------------------------------------------------------
     // Multiple edges
     // ----------------------------------------------------------------------
+
+    /**
+     * General form to create edges. All other methods delegate to this
+     *
+     * @param edgeType edge type
+     * @param fromType source node type
+     * @param fromProps source node properties
+     * @param toType target node type
+     * @param toProps target node properties
+     * @param edgeProps edges' properties
+     * @return number of edges created
+     */
+    long createEdges(String edgeType,
+                     String fromType, Map<String,Object> fromProps,
+                     String toType, Map<String,Object> toProps,
+                     Map<String,Object> edgeProps);
+
+    /**
+     * General form to delete edges
+     *
+     * @param edgeType edge type
+     * @param fromType source node type
+     * @param fromProps source node properties
+     * @param toType target node type
+     * @param toProps target node properties
+     * @param edgeProps edge properties
+     */
+    long deleteEdges(@Nullable String edgeType,
+                     @Nullable String fromType, Map<String,Object> fromProps,
+                     @Nullable String toType,   Map<String,Object> toProps,
+                     Map<String,Object> edgeProps);
+
+    // ----------------------------------------------------------------------
+    // Variants
 
     /**
      * Create multiple edges.
@@ -377,7 +413,10 @@ public interface GraphSession extends AutoCloseable {
      * @param toIds destination node id list
      * @param edgeProps properties of the edge
      */
-    void createEdges(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
+    long createEdges(String edgeType,
+                     String fromId,
+                     Collection<String> toIds,
+                     Map<String,Object> edgeProps);
 
     /**
      * Create or update multiple edges.
@@ -393,23 +432,11 @@ public interface GraphSession extends AutoCloseable {
      * @param findProps edge properties used to find the edges
      * @param updateProps edge properties to update
      */
-    void createEdges(String edgeType, String fromId, Collection<String> toIds,  Map<String,Object> findProps, Map<String,Object> updateProps);
-
-    /**
-     * Delete the edges with the specified properties
-     *
-     * @param edgeType  edge type
-     * @param fromType source node type
-     * @param fromProps source node properties
-     * @param toType to node type
-     * @param toProps to node properties
-     * @param edgeProps edge properties
-     */
-    long deleteEdges(@Nullable String edgeType,  // can be null
-                     String fromType, Map<String,Object> fromProps,
-                     String toType, Map<String,Object> toProps,
-                     Map<String,Object> edgeProps,
-                     LongConsumer callback);
+    long createEdges(String edgeType,
+                     String fromId,
+                     Collection<String> toIds,
+                     Map<String,Object> findProps,
+                     Map<String,Object> updateProps);
 
     /**
      * Delete the edges from the specified nodes
@@ -420,10 +447,9 @@ public interface GraphSession extends AutoCloseable {
      * @param edgeProps edge properties
      */
     long deleteEdges(@Nullable String edgeType,
-                     String fromId,
-                     @Nullable List<String> toIds,
-                     Map<String,Object> edgeProps,
-                     LongConsumer callback);
+                     @Nullable String fromId,
+                     List<String> toIds,
+                     Map<String,Object> edgeProps);
 
     // ----------------------------------------------------------------------
     // Query edges
@@ -433,11 +459,11 @@ public interface GraphSession extends AutoCloseable {
      * Retrieve the edge list: the list of pairs (from -> to)
      *
      * @param edgeType edge type (can be null)
-     * @param fromType node type (can be null)
-     * @param fromProps properties of the 'from' nodes
-     * @param toType node type (can be null)
-     * @param toProps properties of the 'to' nodes
-     * @param edgeProps properties of the edges
+     * @param fromType source nodes type (can be null)
+     * @param fromProps source nodes properties
+     * @param toType target nodes type
+     * @param toProps target nodes properties
+     * @param edgeProps edge properties
      * @return a list of maps with keys:
      *
      *      idfrom: long                id from node
@@ -449,57 +475,38 @@ public interface GraphSession extends AutoCloseable {
                      @Nullable String toType,   Map<String,Object> toProps,
                      Map<String,Object> edgeProps);
 
-    /**
-     * Retrieve the edges between the specified nodes
-     *
-     * @param edgeType edge type (can be null)
-     * @param fromIds source node ids
-     * @param toIds target node ids
-     * @param edgeProps properties of the edges
-     * @return a list of maps with keys:
-     *
-     *      idfrom: long                id from node
-     *      idto: long                  id to node
-     *      edge: Map[String,Object]    edge properties
-     *
-     */
-    Query queryEdges(@Nullable String edgeType, Collection<String> fromIds, Collection<String> toIds,
-                     Map<String,Object> edgeProps);
-    Query queryEdges(@Nullable String edgeType, String fromId, Collection<String> toIds,
+    Query queryEdges(@Nullable String edgeType,
+                     Map<String,Object> fromProps,
+                     Map<String,Object> toProps,
                      Map<String,Object> edgeProps);
 
-    // /**
-    //  * Select the edges between the specified nodes
-    //  *
-    //  * @param edgeType edge type (can be null)
-    //  * @param fromId source node
-    //  * @param toId destination node
-    //  * @param direction direction of the edge (Input, Output, Any)
-    //  * @param recursive if to select the edges in a recursive way
-    //  * @param edgeProps edge properties
-    //  * @return
-    //  */
-    // Query  queryPath(@Nullable String edgeType,
-    //                  String fromId, String toId, Direction direction, boolean recursive,
-    //                  Map<String,Object> edgeProps);
+    // ----------------------------------------------------------------------
 
-    /**
-     * Insert/update edge properties based on the source/target nodes and the edge type.
-     */
-    void setEdgeProperties(String edgeType, String fromId, String toId,
-                           Map<String,Object> edgeProps, Map<String,Object> updateProps);
-    void setEdgeProperties(String edgeType, String fromId, Collection<String> toIds,
-                           Map<String,Object> edgeProps, Map<String,Object> updateProps);
+    long setEdgesProperties(@Nullable String edgeType,
+                            @Nullable String fromType, Map<String,Object> fromProps,
+                            @Nullable String toType, Map<String,Object> toProps,
+                            Map<String,Object> edgeProps,
+                            Map<String,Object> updateProps);
 
-    /**
-     * Set the edge properties to the edges connecting fromId with toIds
-     *
-     * @param edgeType edge type
-     * @param fromId source node
-     * @param toIds destination nodes (can be null)
-     * @param edgeProps edge properties
-     */
-    void setEdgesProperties(String edgeType, String fromId, Collection<String> toIds, Map<String,Object> edgeProps);
+    long setEdgesProperties(@Nullable String edgeType,
+                            Map<String,Object> fromProps,
+                            Map<String,Object> toProps,
+                            Map<String,Object> edgeProps,
+                            Map<String,Object> updateProps);
+
+    // ----------------------------------------------------------------------
+    // Variants
+
+    long setEdgesProperties(String edgeType,
+                            String fromId,
+                            Collection<String> toIds,
+                            Map<String,Object> edgeProps,
+                            Map<String,Object> updateProps);
+
+    long setEdgesProperties(String edgeType,
+                            String fromId,
+                            Collection<String> toIds,
+                            Map<String,Object> updateProps);
 
     // ----------------------------------------------------------------------
     // Query using named queries
@@ -521,7 +528,7 @@ public interface GraphSession extends AutoCloseable {
     //
 
     Query  queryUsing(String queryName, Map<String,Object> queryParams);
-    void executeUsing(String queryName, Map<String,Object> queryParams);
+    long executeUsing(String queryName, Map<String,Object> queryParams);
 
     // ----------------------------------------------------------------------
     // Query using fulltext

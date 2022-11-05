@@ -5,6 +5,7 @@ import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.graph.Param;
+import jext.graph.Value;
 import jext.logging.Logger;
 import jext.util.Parameters;
 import jext.util.PropertiesUtils;
@@ -25,44 +26,43 @@ public class CreateEdges {
         String sourceId;
         List<String> targetIds;
 
+        Parameters p1 = Parameters.params("index", 1);
+        Parameters p2 = Parameters.params("index", 2);
+
         try(GraphSession s = gdb.connect()) {
-            sourceId = s.queryNodes("S", Parameters.empty()).id();
-            targetIds = s.queryNodes("T", Parameters.empty()).ids().toList();
+            sourceId = s.queryNodes("test", p1).id();
+            targetIds = s.queryNodes("test", p2).ids().toList();
 
             if (sourceId == null) {
-                s.createNode("S", Parameters.empty());
+                sourceId = s.createNode("test", p1);
             }
             if (targetIds.isEmpty()) {
-                for (int id = 1; id < 5000; ++id)
-                    s.createNode("T", Parameters.params("id", id));
+                s.createNode("test", p2);
+                targetIds = s.queryNodes("test", p2).ids().toList();
             }
 
-            s.deleteEdges("E", sourceId, null, Parameters.empty(), (v)->{});
-
-            List<Integer> ids = new ArrayList<>();
-            for (int i = 0; i < 5000; i += 2)
-                ids.add(i);
+            s.deleteEdges("edge", sourceId, null, Parameters.empty());
 
             // T pari
-            targetIds = s.queryNodes("T", Parameters.params("id", ids)).ids().toList();
+            targetIds = s.queryNodes("test", Parameters.params("index", new int[]{2})).ids().toList();
 
-            s.createEdges("E", sourceId, targetIds, Parameters.params(
-                //"revision", 1
-                Param.at("inRevision", 3), true
+            s.createEdges("edge", sourceId, targetIds, Parameters.params(
+                "revision", 1
+                // Param.at("inRevision", 3), true
             ));
 
         }
         try(GraphSession s = gdb.connect()) {
 
-            s.setEdgeProperties("E", sourceId, (Collection<String>)null, Parameters.empty(),
+            s.setEdgesProperties("edge", sourceId, (Collection<String>)null, Parameters.empty(),
                 Parameters.params(
                 //"revision", 1
                 Param.at("inRevision", 4), false
             ));
 
             // tutti i T
-            targetIds = s.queryNodes("T", Parameters.params()).ids().toList();
-            s.createEdges("E", sourceId, targetIds, Parameters.params(
+            targetIds = s.queryNodes("test", Parameters.params("index", Value.gt(1))).ids().toList();
+            s.createEdges("edge", sourceId, targetIds, Parameters.params(
                 //"revision", 1
                 Param.at("inRevision", 4), true
             ));
