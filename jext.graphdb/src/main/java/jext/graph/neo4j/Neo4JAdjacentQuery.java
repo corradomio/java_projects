@@ -124,9 +124,9 @@ public class Neo4JAdjacentQuery implements Query {
                 .distinct().ids().toSet();
 
             visited.addAll(toVisit);
+            toVisit.clear();
 
             // visit only nodes not already visited
-            toVisit.clear();
             adjIds.removeAll(visited);
             toVisit.addAll(adjIds);
         }
@@ -134,6 +134,7 @@ public class Neo4JAdjacentQuery implements Query {
         // remove starting nodes
         visited.removeAll(fromIds);
 
+        // select only the nodes with the specified properties
         return session.selectNodes(visited, nodeType, nodeProps);
     }
 
