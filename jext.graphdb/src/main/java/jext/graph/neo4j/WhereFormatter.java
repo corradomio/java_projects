@@ -8,10 +8,12 @@ import jext.util.Parameters;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static jext.graph.NodeId.asId;
 import static jext.graph.neo4j.Neo4JOnlineSession.AND_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.END_BLOCK;
 import static jext.graph.neo4j.Neo4JOnlineSession.N;
@@ -235,17 +237,12 @@ public class WhereFormatter {
 
         Class vclass = value.getClass();
         if (vclass == String.class) {
-            Long id = Long.valueOf((String)value);
-            params.put(ID, id);
+            params.put(ID, asId((String)value));
             return;
         }
 
         if (vclass == String[].class) {
-            String[] sids = (String[]) value;
-            long[] lids = new long[sids.length];
-            for (int i=0; i<sids.length; ++i)
-                lids[i] = Long.parseLong(sids[i]);
-            params.put(ID, lids);
+            params.put(ID, asId((String[]) value));
             return;
         }
 
@@ -253,17 +250,8 @@ public class WhereFormatter {
             return;
 
         Collection c = (Collection)value;
-        if (c.isEmpty())
-            return;
-
         if (c.iterator().next().getClass() == String.class) {
-            long[] lids = new long[c.size()];
-            int i=0;
-            for(Object e : c) {
-                lids[i] = Long.parseLong((String)e);
-                i++;
-            }
-            params.put(ID, lids);
+            params.put(ID, asId((Collection<String>)c));
         }
     }
 
@@ -316,7 +304,7 @@ public class WhereFormatter {
         //
         Map<String, Object> uparams = (Map<String, Object>) params.getOrDefault(name, Collections.emptyMap());
         params.remove(name);
-        params.add(alias, uparams);
+        params.prefix(alias, uparams);
 
         String wblock = wblock(alias, uparams, and, false);
 

@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class NodeStmtsTest {
 
+    String TEST = "test";
     int N = 10;
     GraphDatabase gdb;
     List<String> ids = new ArrayList<>();
@@ -33,7 +34,7 @@ public class NodeStmtsTest {
     void createNodes() {
         try(GraphSession s = gdb.connect()) {
             for (int i=0; i<N; ++i) {
-                String id = s.createNode("test", Parameters.params("index", i));
+                String id = s.createNode(TEST, Parameters.params("index", i));
                 ids.add(id);
             }
         }
@@ -41,17 +42,8 @@ public class NodeStmtsTest {
 
     void deleteNodes() {
         try(GraphSession s = gdb.connect()) {
-            s.deleteNodes("test", Parameters.empty());
+            s.deleteNodes(TEST, Parameters.empty());
         }
-    }
-
-    @Test
-    void testCreateEdge() {
-        String nodeId;
-        try(GraphSession s = gdb.connect()) {
-            s.deleteEdges("edge", null, null, Parameters.empty());
-        }
-
     }
 
     @Test
@@ -83,7 +75,7 @@ public class NodeStmtsTest {
     }
 
     @Test
-    void setSetProperties() {
+    void testSetSetProperties() {
         try(GraphSession s = gdb.connect()) {
             createNodes();
             long n = s.setNodesProperties(ids, Parameters.params("example", true));
@@ -97,15 +89,15 @@ public class NodeStmtsTest {
     @Test
     void testCreateOrUpdateNode() {
         try(GraphSession s = gdb.connect()) {
-            s.deleteNodes("test", Parameters.params("index", 11));
-            Assert.assertFalse(s.existsNode("test", Parameters.params("index", 11)));
-            String id1 = s.createNode("test",
+            s.deleteNodes(TEST, Parameters.params("index", 11));
+            Assert.assertFalse(s.existsNode(TEST, Parameters.params("index", 11)));
+            String id1 = s.createNode(TEST,
                 Parameters.params("index", 11),
                 Parameters.params("update", 1));
-            Assert.assertTrue(s.existsNode("test", Parameters.params("index", 11)));
+            Assert.assertTrue(s.existsNode(TEST, Parameters.params("index", 11)));
             Assert.assertEquals(((Number)s.getNodeProperties(id1).get("update")).intValue(), 1);
 
-            String id2 = s.createNode("test",
+            String id2 = s.createNode(TEST,
                 Parameters.params("index", 11),
                 Parameters.params("update", 2));
 
@@ -117,9 +109,35 @@ public class NodeStmtsTest {
     @Test
     void testSetNodeProperties() {
         try(GraphSession s = gdb.connect()) {
-            s.setNodesProperty("test", Parameters.params("index", 11), "update", 12);
-            Assert.assertEquals(((Number)s.getNodeProperties("test", Parameters.params("index", 11))
+            s.setNodesProperty(TEST, Parameters.params("index", 11), "update", 12);
+            Assert.assertEquals(((Number)s.getNodeProperties(TEST, Parameters.params("index", 11))
                 .get("update")).intValue(), 12);
+        }
+    }
+
+    @Test
+    void testCreateDelete() {
+        try(GraphSession s = gdb.connect()) {
+            String nodeId = s.createNode(TEST, Parameters.params("index", 13));
+            Assert.assertNotNull(nodeId);
+            Assert.assertTrue(s.existsNode(nodeId));
+            Assert.assertNotNull(s.findNode(TEST, Parameters.params("index", 13)));
+            Assert.assertTrue(s.deleteNode(nodeId));
+            Assert.assertFalse(s.existsNode(nodeId));
+            Assert.assertFalse(s.deleteNode(nodeId));
+            Assert.assertNull(s.findNode(TEST, Parameters.params("index", 13)));
+        }
+    }
+
+    @Test
+    void testSetProperty() {
+        try(GraphSession s = gdb.connect()) {
+            String nodeId = s.findNode(TEST, Parameters.params("index", 13));
+            Assert.assertNull(nodeId);
+            nodeId = s.createNode(TEST, Parameters.params("index", 13));
+            Assert.assertNotNull(nodeId);
+            Assert.assertTrue(s.setNodeProperty(nodeId, "index", 14));
+            Assert.assertTrue(s.setNodeProperty(nodeId, "index", 13));
         }
     }
 

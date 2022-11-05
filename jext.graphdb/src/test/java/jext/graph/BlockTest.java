@@ -31,7 +31,7 @@ public class BlockTest {
     }
 
     @Test
-    void testPblockTwo() {
+    void testPblockTwo1() {
         Parameters params;
 
         params = Parameters.params(
@@ -44,6 +44,18 @@ public class BlockTest {
 
         Assert.assertEquals(wblock("n", params, false, true),
             " WHERE labels(n)[0] = $nlabel AND n.digest[3] = $ndigest AND n.inRevision[$nrevision]");
+    }
+
+    @Test
+    void testPblockTwo2() {
+        Parameters params;
+
+        params = Parameters.params(
+            "name", 1,
+            "$label", "l",
+            "revision", 1,
+            "digest[3]", 123
+        );
 
         Assert.assertEquals(sblock("n", params, true),
             " SET n.digest = apoc.coll.set(n.digest, 3, $ndigest), n.inRevision = apocx.coll.arraySet(n.inRevision, $nrevision, true)");

@@ -25,12 +25,12 @@ public class Parameters extends TreeMap<String, Object> {
         }
 
         @Override
-        public Parameters add(String prefix, Map<String, Object> map) {
+        public Parameters add(String name, Object value, Object... a) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Parameters add(String name, Object value, Object... a) {
+        public Parameters prefix(String prefix, Map<String, Object> map) {
             throw new UnsupportedOperationException();
         }
 
@@ -148,7 +148,7 @@ public class Parameters extends TreeMap<String, Object> {
      * @param map map to add
      * @return itself
      */
-    public Parameters add(String prefix, Map<String, Object> map) {
+    public Parameters prefix(String prefix, Map<String, Object> map) {
         if (map == null)
             return this;
 

@@ -220,7 +220,7 @@ public class Neo4JQuery implements Query {
 
         String sblock = sblock(alias, update, false);
 
-        Parameters nparams = Parameters.params().add(params).add(alias, update);
+        Parameters nparams = Parameters.params().add(params).prefix(alias, update);
         params.clear();
         params.putAll(nparams);
         return String.format("%s%s", s, sblock);

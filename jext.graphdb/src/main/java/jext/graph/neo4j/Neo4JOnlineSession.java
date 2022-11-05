@@ -1,9 +1,11 @@
 package jext.graph.neo4j;
 
+import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
 import jext.graph.Direction;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
+import jext.graph.NodeId;
 import jext.graph.Query;
 import jext.logging.Logger;
 import jext.util.Assert;
@@ -32,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.LongConsumer;
 
+import static jext.graph.NodeId.asId;
 import static jext.graph.NodeId.invalidId;
 import static jext.graph.NodeId.toId;
 import static jext.graph.neo4j.WhereFormatter.eblock;
@@ -58,8 +61,8 @@ public class Neo4JOnlineSession implements GraphSession {
     static final String WHERE_BLOCK = "${where:";
     static final String END_BLOCK = "}";
 
-    public static final int MAX_STATEMENTS = 8*1024;
-    public static final int MAX_DELETE_NODES = 16*1024;
+    public static final int MAX_STATEMENTS = 8 * 1024;
+    public static final int MAX_DELETE_NODES = 16 * 1024;
 
     public static final String REF_ID = "refId";
     public static final String REVISION = "revision";
@@ -93,7 +96,9 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public GraphDatabase getDatabase() { return graphdb; }
+    public GraphDatabase getDatabase() {
+        return graphdb;
+    }
 
     // ----------------------------------------------------------------------
     // Connect/Disconnect
@@ -135,7 +140,7 @@ public class Neo4JOnlineSession implements GraphSession {
     //
 
     @Override
-    public Query queryUsing(String queryName,  Map<String, Object> params) {
+    public Query queryUsing(String queryName, Map<String, Object> params) {
         String s = composeQuery(queryName, params);
         return new Neo4JQuery(this, N, s, params);
     }
@@ -168,11 +173,12 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryUsingFullText(String query,  Map<String, Object> params) {
+    public Query queryUsingFullText(String query, Map<String, Object> params) {
 
         // $label = l | {l1,...}
         // refId  = r | {r1,...}
-        String wblock = wblock(NONE, params, false, false);
+        String wblock = wblock(NONE,
+            Parameters.exclude(params, "$indexName", "$query"), false, false);
 
         String s = String.format("CALL db.index.fulltext.queryNodes($indexName, $query) YIELD node AS n %s", wblock);
 
@@ -185,31 +191,24 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Nonnull
     @Override
-    public String createNode(String nodeType, Map<String, Object> nodeProps) {
-        Assert.notNull(nodeType, "nodeType is null");
-        Assert.notNull(nodeProps, "nodeProps is null");
-
+    public String/*nodeId*/ createNode(String nodeType, Map<String, Object> nodeProps) {
         String pblock = pblock(N, nodeProps);
         String sblock = sblock(N, nodeProps, true);
 
         String s = String.format("CREATE (n:%s %s) %s RETURN id(n)", nodeType, pblock, sblock);
 
-        Parameters params = Parameters.params().add(N, nodeProps);
+        Parameters params = Parameters.params().prefix(N, nodeProps);
 
         return this.create(s, params);
     }
 
     @Override
-    public String/*nodeId*/ createNode(String nodeType, Map<String, Object> findProps, Map<String, Object> updateProps) {
-        Assert.notNull(nodeType, "nodeType is null");
-        Assert.notNull(findProps, "findProps is null");
-        Assert.notNull(updateProps, "updateProps is null");
-
-        String nodeId = findNode(nodeType, findProps);
+    public String/*nodeId*/ createNode(String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps) {
+        String nodeId = queryNodes(nodeType, nodeProps).id();
         if (invalidId(nodeId))
-            nodeId = createNode(nodeType, findProps);
+            nodeId = createNode(nodeType, nodeProps);
 
-        setNodeProperties(nodeId, updateProps);
+        queryNodes(null, nodeId(nodeId)).update(updateProps);
         return nodeId;
     }
 
@@ -225,7 +224,7 @@ public class Neo4JOnlineSession implements GraphSession {
         String wblock = wblock(N, nodeProps, false, true);
         String s = String.format("MATCH (n%s%s)%s", label(nodeType), pblock, wblock);
 
-        Parameters params = Parameters.params().add(N, nodeProps);
+        Parameters params = Parameters.params().prefix(N, nodeProps);
 
         return new Neo4JQuery(this, N, s, params);
     }
@@ -233,11 +232,6 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
     // Single node by [nodeType, nodeProps]
     // ----------------------------------------------------------------------
-
-    @Override
-    public boolean deleteNode(@Nullable String nodeType, Map<String, Object> nodeProps) {
-        return deleteNodes(nodeType, nodeProps) > 0;
-    }
 
     @Override
     public boolean existsNode(@Nullable String nodeType, Map<String, Object> nodeProps) {
@@ -250,6 +244,11 @@ public class Neo4JOnlineSession implements GraphSession {
     public String/*nodeId*/ findNode(@Nullable String nodeType, Map<String, Object> nodeProps) {
         Query query = queryNodes(nodeType, nodeProps).limit(1);
         return query.id();
+    }
+
+    @Override
+    public boolean deleteNode(@Nullable String nodeType, Map<String, Object> nodeProps) {
+        return deleteNodes(nodeType, nodeProps) > 0;
     }
 
     @Override
@@ -270,14 +269,14 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public long setNodesProperties(String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps) {
-        Query query = queryNodes(nodeType, nodeProps);
-        return query.update(updateProps);
+    public void setNodesProperty(String nodeType, Map<String, Object> nodeProps, String name, Object value) {
+        setNodesProperties(nodeType, nodeProps, Parameters.params(name, value));
     }
 
     @Override
-    public void setNodesProperty(String nodeType, Map<String, Object> nodeProps, String name, Object value) {
-        setNodesProperties(nodeType, nodeProps, Parameters.params(name, value));
+    public long setNodesProperties(String nodeType, Map<String, Object> nodeProps, Map<String, Object> updateProps) {
+        Query query = queryNodes(nodeType, nodeProps);
+        return query.update(updateProps);
     }
 
     @Override
@@ -288,7 +287,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long deleteNodes(@Nullable String nodeType, Map<String, Object> nodeProps) {
-        return deleteNodes(nodeType, nodeProps, (count) -> { });
+        return deleteNodes(nodeType, nodeProps, (count) -> {
+        });
     }
 
     @Override
@@ -315,10 +315,6 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
     // Single node by [nodeId]
     // ----------------------------------------------------------------------
-
-    private static Map<String, Object> nodeId(Object id) {
-        return id == null ? Parameters.empty() : Parameters.params(ID, id);
-    }
 
     @Override
     public boolean existsNode(String nodeId) {
@@ -350,14 +346,17 @@ public class Neo4JOnlineSession implements GraphSession {
     }
 
     @Override
-    public long setNodeProperty(String nodeId, String name, Object value) {
+    public boolean setNodeProperty(String nodeId, String name, Object value) {
         return setNodeProperties(nodeId, Parameters.params(name, value));
     }
 
     @Override
-    public long setNodeProperties(String nodeId, Map<String, Object> nodeProps) {
+    public boolean setNodeProperties(String nodeId, Map<String, Object> nodeProps) {
+        if (invalidId(nodeId))
+            return false;
+
         Query query = queryNodes(null, nodeId(nodeId));
-        return query.update(nodeProps);
+        return query.update(nodeProps) > 0;
     }
 
     // ----------------------------------------------------------------------
@@ -378,7 +377,8 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public long deleteNodes(Collection<String> nodeIds) {
-        return deleteNodes(nodeIds, (count) -> {});
+        return deleteNodes(nodeIds, (count) -> {
+        });
     }
 
     @Override
@@ -392,13 +392,13 @@ public class Neo4JOnlineSession implements GraphSession {
             nodeIds = new ArrayList<>(nodeIds);
 
         int total = 0;
-        while(nodeIds.size() > maxdelete) {
+        while (nodeIds.size() > maxdelete) {
             int n = nodeIds.size();
             commitAndBegin();
 
-            total += deleteSomeNodes(((List<String>)nodeIds).subList(0, maxdelete), callable);
+            total += deleteSomeNodes(((List<String>) nodeIds).subList(0, maxdelete), callable);
             callable.accept(total);
-            nodeIds = ((List<String>)nodeIds).subList(maxdelete, n);
+            nodeIds = ((List<String>) nodeIds).subList(maxdelete, n);
         }
         if (!nodeIds.isEmpty()) {
             total += deleteSomeNodes(nodeIds, callable);
@@ -418,7 +418,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public void deleteAll() {
-        queryNodes(null, Parameters.emptyMap()).delete();
+        queryNodes(null, Parameters.empty()).delete();
     }
 
     // ----------------------------------------------------------------------
@@ -426,49 +426,45 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public String/*edgeId*/ createEdge(
-        String edgeType,
-        String fromType, Map<String, Object> fromProps,
-        String toType,   Map<String, Object> toProps,
-        Map<String, Object> edgeProps) {
+    public String/*edgeId*/ createEdge(String edgeType,
+                                       @Nullable String fromType, Map<String, Object> fromProps,
+                                       @Nullable String toType, Map<String, Object> toProps,
+                                       Map<String, Object> edgeProps) {
 
         String s = innerCreateEdge(edgeType, fromType, fromProps, toType, toProps, edgeProps)
             + " RETURN id(e)";
 
         Parameters params = Parameters.params()
-            .add(FROM, fromProps)
-            .add(TO, toProps)
-            .add(E, edgeProps);
+            .prefix(FROM, fromProps)
+            .prefix(TO, toProps)
+            .prefix(E, edgeProps);
 
         return this.create(s, params);
     }
 
     @Override
-    public long createEdges(
-        String edgeType,
-        String fromType, Map<String, Object> fromProps,
-        String toType,   Map<String, Object> toProps,
-        Map<String, Object> edgeProps) {
+    public long createEdges(String edgeType,
+                            @Nullable String fromType, Map<String, Object> fromProps,
+                            @Nullable String toType, Map<String, Object> toProps,
+                            Map<String, Object> edgeProps) {
 
         String s = innerCreateEdge(edgeType, fromType, fromProps, toType, toProps, edgeProps)
             + " RETURN count(e)";
 
         Parameters params = Parameters.params()
-            .add(FROM, fromProps)
-            .add(TO, toProps)
-            .add(E, edgeProps);
+            .prefix(FROM, fromProps)
+            .prefix(TO, toProps)
+            .prefix(E, edgeProps);
 
-        return this.execute(s, params);
+        return this.count(s, params);
     }
 
-    private String innerCreateEdge(
-        String edgeType,
-        String fromType, Map<String, Object> fromProps,
-        String toType,   Map<String, Object> toProps,
-        Map<String, Object> edgeProps)
-    {
+    private String innerCreateEdge(String edgeType,
+                                   @Nullable String fromType, Map<String, Object> fromProps,
+                                   @Nullable String toType, Map<String, Object> toProps,
+                                   Map<String, Object> edgeProps) {
         String eblock = eblock(E, edgeType, Direction.Output, false, edgeProps);
-        String esblock = sblock(E, edgeProps,  true);
+        String esblock = sblock(E, edgeProps, true);
 
         String m = innerQueryEdges(edgeType, fromType, fromProps, toType, toProps, null);
         String s = String.format("%s CREATE (from)%s(to)%s",
@@ -479,53 +475,98 @@ public class Neo4JOnlineSession implements GraphSession {
         return s;
     }
 
+    @Override
+    public String/*edgeId*/ createEdge(String edgeType,
+                                       @Nullable String fromType, Map<String, Object> fromProps,
+                                       @Nullable String toType, Map<String, Object> toProps,
+                                       Map<String, Object> edgeProps,
+                                       Map<String, Object> updateProps) {
+        String edgeId = queryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps).id();
+        if (invalidId(edgeId))
+            edgeId = createEdge(edgeType, fromType, fromProps, toType, toProps, edgeProps);
+
+        queryEdges(edgeId, Parameters.empty(), Parameters.empty(), nodeId(edgeId))
+            .update(updateProps);
+
+        return edgeId;
+    }
+
     // ----------------------------------------------------------------------
     // Query edges
     // ----------------------------------------------------------------------
 
     @Override
     public Query queryEdges(String edgeType,
-                            String fromType, Map<String, Object> fromProps,
-                            String toType,   Map<String, Object> toProps,
+                            @Nullable String fromType, Map<String, Object> fromProps,
+                            @Nullable String toType, Map<String, Object> toProps,
                             Map<String, Object> edgeProps) {
 
         String s = innerQueryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps);
 
         Parameters allProps = Parameters.params()
-            .add(FROM, fromProps)
-            .add(TO, toProps)
-            .add(E, edgeProps);
+            .prefix(FROM, fromProps)
+            .prefix(TO, toProps)
+            .prefix(E, edgeProps);
 
         return new Neo4JQuery(this, E, s, allProps).edge();
     }
 
     private static String innerQueryEdges(String edgeType,
                                           String fromType, Map<String, Object> fromProps,
-                                          String toType,   Map<String, Object> toProps,
+                                          String toType, Map<String, Object> toProps,
                                           Map<String, Object> edgeProps) {
 
         boolean edge = edgeProps != null;
-        String fblock  = pblock(FROM, fromProps);
-        String tblock  = pblock(TO, toProps);
-        String eblock  = edge
+        String fblock = pblock(FROM, fromProps);
+        String tblock = pblock(TO, toProps);
+        String eblock = edge
             ? eblock(E, edgeType, Direction.Output, false, edgeProps)
             : ",";
 
         String wfblock = wblock(FROM, fromProps, false, true);
-        String wtblock = wblock(TO,   toProps,   !wfblock.isEmpty(), true);
+        String wtblock = wblock(TO, toProps, !wfblock.isEmpty(), true);
         String weblock = edge
-            ? wblock(E,    edgeProps, !wtblock.isEmpty(), true)
+            ? wblock(E, edgeProps, !wtblock.isEmpty(), true)
             : NONE;
 
         String wblock = String.format("%s%s%s", wfblock, wtblock, weblock);
 
         return String.format(
             "MATCH (from%s%s)%s(to%s%s)%s ",
-            label(fromType),  fblock,
+            label(fromType), fblock,
             eblock,
             label(toType), tblock,
             wblock
         );
+    }
+
+    // ----------------------------------------------------------------------
+    // Query edges
+    // ----------------------------------------------------------------------
+
+    @Override
+    public String findEdge(String edgeType,
+                           Map<String, Object> fromProps,
+                           Map<String, Object> toProps,
+                           Map<String, Object> edgeProps) {
+        return queryEdges(edgeType, fromProps, toProps, edgeProps).id();
+    }
+
+    @Override
+    public String/*edgeId*/ createEdge(String edgeType,
+                                       Map<String, Object> fromProps,
+                                       Map<String, Object> toProps,
+                                       Map<String, Object> edgeProps) {
+        return createEdge(edgeType, null, fromProps, null, toProps, edgeProps);
+    }
+
+    @Override
+    public String createEdge(String edgeType,
+                      Map<String, Object> fromProps,
+                      Map<String, Object> toProps,
+                      Map<String, Object> edgeProps,
+                      Map<String, Object> updateProps) {
+        return createEdge(edgeType, null, fromProps, null, toProps, edgeProps, updateProps);
     }
 
     @Override
@@ -533,10 +574,7 @@ public class Neo4JOnlineSession implements GraphSession {
                             Map<String, Object> fromProps,
                             Map<String, Object> toProps,
                             Map<String, Object> edgeProps) {
-        return queryEdges(edgeType,
-            null, fromProps,
-            null, toProps,
-            edgeProps);
+        return queryEdges(edgeType, fromProps, toProps, edgeProps);
     }
 
     // ----------------------------------------------------------------------
@@ -546,17 +584,13 @@ public class Neo4JOnlineSession implements GraphSession {
     @Nullable
     @Override
     public String/*edgeId*/ findEdge(String edgeType, String fromId, String toId) {
-        return findEdge(edgeType, fromId, toId, Parameters.emptyMap());
+        return findEdge(edgeType, fromId, toId, Parameters.empty());
     }
 
     @Nullable
     @Override
     public String/*edgeId*/ findEdge(String edgeType, String fromId, String toId, Map<String, Object> edgeProps) {
-        Query query = queryEdges(edgeType,
-            null, nodeId(fromId),
-            null, nodeId(toId),
-            edgeProps);
-
+        Query query = queryEdges(edgeType, nodeId(fromId), nodeId(toId), edgeProps);
         return query.id();
     }
 
@@ -566,9 +600,9 @@ public class Neo4JOnlineSession implements GraphSession {
             return null;
 
         return createEdge(edgeType,
-            null, nodeId(fromId),
-            null, nodeId(toId),
-            Parameters.emptyMap());
+            nodeId(fromId),
+            nodeId(toId),
+            Parameters.empty());
     }
 
     @Override
@@ -579,29 +613,23 @@ public class Neo4JOnlineSession implements GraphSession {
         if (invalidId(fromId) || invalidId(toId) || fromId.equals(toId))
             return null;
 
-        return createEdge(
-            edgeType,
-            null, nodeId(fromId),
-            null, nodeId(toId),
-            edgeProps);
+        return createEdge(edgeType, nodeId(fromId), nodeId(toId), edgeProps);
     }
 
     @Override
     public String createEdge(String edgeType,
                              String fromId,
                              String toId,
-                             Map<String, Object> findProps,
-                             Map<String, Object> updateProps)
-    {
+                             Map<String, Object> edgeProps,
+                             Map<String, Object> updateProps) {
         if (invalidId(fromId) || invalidId(toId) || fromId.equals(toId))
             return null;
 
-        String edgeId = findEdge(edgeType, fromId, toId);
+        String edgeId = queryEdges(edgeType, nodeId(fromId), nodeId(toId), Parameters.empty()).id();
         if (invalidId(edgeId))
-            edgeId = createEdge(edgeType, fromId, toId, findProps);
+            edgeId = createEdge(edgeType, fromId, toId, edgeProps);
 
-        setEdgeProperties(edgeId, updateProps);
-
+        queryEdges(null, Parameters.empty(), Parameters.empty(), nodeId(edgeId)).update(updateProps);
         return edgeId;
     }
 
@@ -610,11 +638,7 @@ public class Neo4JOnlineSession implements GraphSession {
         if (invalidId(fromId) || invalidId(toId))
             return false;
 
-        Query query = queryEdges(edgeType,
-            nodeId(fromId),
-            nodeId(toId),
-            Parameters.empty());
-
+        Query query = queryEdges(edgeType, nodeId(fromId), nodeId(toId), Parameters.empty());
         return query.delete() > 0;
     }
 
@@ -628,23 +652,20 @@ public class Neo4JOnlineSession implements GraphSession {
                             Collection<String> toIds,
                             Map<String, Object> edgeProps) {
 
-        return createEdges(edgeType,
-            null, nodeId(fromId),
-            null, nodeId(toIds),
-            edgeProps);
+        return createEdges(edgeType, null, nodeId(fromId), null, nodeId(toIds), edgeProps);
     }
 
     @Override
     public long createEdges(String edgeType,
                             String fromId,
                             Collection<String> toIds,
-                            Map<String, Object> findProps,
+                            Map<String, Object> edgeProps,
                             Map<String, Object> updateProps) {
 
         //
         // 1) find the reachable nodes
         //
-        Set<String> reachableIds = queryEdges(edgeType, nodeId(fromId), nodeId(toIds), findProps).ids().toSet();
+        Set<String> reachableIds = queryEdges(edgeType, nodeId(fromId), nodeId(toIds), edgeProps).ids().toSet();
 
         //
         // 2) nodes not connected
@@ -655,7 +676,7 @@ public class Neo4JOnlineSession implements GraphSession {
         //
         // 3) create the missing edges
         //
-        long count = createEdges(edgeType, fromId, missingIds, findProps);
+        long count = createEdges(edgeType, fromId, missingIds, edgeProps);
 
         //
         // 4) set the properties for all edges
@@ -679,10 +700,7 @@ public class Neo4JOnlineSession implements GraphSession {
                                    Collection<String> toIds,
                                    Map<String, Object> edgeProps,
                                    Map<String, Object> updateProps) {
-        Query query = queryEdges(edgeType,
-            nodeId(fromId),
-            nodeId(toIds),
-            edgeProps);
+        Query query = queryEdges(edgeType, nodeId(fromId), nodeId(toIds), edgeProps);
         return query.update(updateProps);
     }
 
@@ -692,11 +710,7 @@ public class Neo4JOnlineSession implements GraphSession {
                             List<String> toIds,
                             Map<String, Object> edgeProps) {
 
-        Query query = queryEdges(edgeType,
-            null, nodeId(fromId),
-            null, nodeId(toIds),
-            edgeProps);
-
+        Query query = queryEdges(edgeType, nodeId(fromId), nodeId(toIds), edgeProps);
         return query.delete();
     }
 
@@ -709,22 +723,17 @@ public class Neo4JOnlineSession implements GraphSession {
         if (invalidId(edgeId))
             return false;
 
-        Query queryEdge = queryEdges(null,
-            Parameters.empty(),
-            Parameters.empty(),
-            Parameters.params(ID, edgeId));
-
-        return queryEdge.delete() > 0;
+        Query query = queryEdges(null, Parameters.empty(), Parameters.empty(), nodeId(edgeId));
+        return query.delete() > 0;
     }
 
     @Nullable
     @Override
     public Map<String, Object> getEdgeProperties(String edgeId) {
-        Query query = queryEdges(null,
-            Parameters.empty(),
-            Parameters.empty(),
-            nodeId(edgeId));
+        if (invalidId(edgeId))
+            return null;
 
+        Query query = queryEdges(null, Parameters.empty(), Parameters.empty(), nodeId(edgeId));
         Map<String, Object> map = query.values();
         return postProcess(map);
     }
@@ -736,11 +745,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     @Override
     public boolean setEdgeProperties(String edgeId, Map<String, Object> updateProps) {
-        Query query = queryEdges(null,
-            Parameters.empty(),
-            Parameters.empty(),
-            nodeId(edgeId));
-
+        Query query = queryEdges(null, Parameters.empty(), Parameters.empty(), nodeId(edgeId));
         return query.update(updateProps) > 0;
     }
 
@@ -754,10 +759,7 @@ public class Neo4JOnlineSession implements GraphSession {
                                    @Nullable String toType, Map<String, Object> toProps,
                                    Map<String, Object> edgeProps,
                                    Map<String, Object> updateProps) {
-        Query query = queryEdges(edgeType,
-            fromType, fromProps,
-            toType, toProps,
-            edgeProps);
+        Query query = queryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps);
         return query.update(updateProps);
     }
 
@@ -767,27 +769,18 @@ public class Neo4JOnlineSession implements GraphSession {
                                    Map<String, Object> toProps,
                                    Map<String, Object> edgeProps,
                                    Map<String, Object> updateProps) {
-        Query query = queryEdges(edgeType,
-            fromProps,
-            toProps,
-            edgeProps);
+        Query query = queryEdges(edgeType, fromProps, toProps, edgeProps);
         return query.update(updateProps);
     }
 
     // ----------------------------------------------------------------------
 
     @Override
-    public long deleteEdges(
-            @Nullable String edgeType,
-            @Nullable String fromType, Map<String, Object> fromProps,
-            @Nullable String toType,   Map<String, Object> toProps,
-            Map<String, Object> edgeProps) {
-
-        Query query = queryEdges(edgeType,
-            fromType, fromProps,
-            toType, toProps,
-            edgeProps);
-
+    public long deleteEdges(@Nullable String edgeType,
+                            @Nullable String fromType, Map<String, Object> fromProps,
+                            @Nullable String toType, Map<String, Object> toProps,
+                            Map<String, Object> edgeProps) {
+        Query query = queryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps);
         return query.delete();
     }
 
@@ -796,18 +789,20 @@ public class Neo4JOnlineSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public Query queryAdjacentNodes(
-        String fromId, String edgeType, Direction direction, boolean recursive,
-        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps) {
+    public Query queryAdjacentNodes(String fromId,
+                                    String edgeType, Direction direction, boolean recursive,
+                                    String nodeType, Map<String, Object> nodeProps,
+                                    Map<String, Object> edgeProps) {
 
         return queryAdjacentNodes(Collections.singletonList(fromId), edgeType, direction, recursive,
             nodeType, nodeProps, edgeProps);
     }
 
     @Override
-    public Query queryAdjacentNodes(
-        Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
-        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps) {
+    public Query queryAdjacentNodes(Collection<String> fromIds,
+                                    String edgeType, Direction direction, boolean recursive,
+                                    String nodeType, Map<String, Object> nodeProps,
+                                    Map<String, Object> edgeProps) {
 
         if (!recursive)
             return queryAdjacentNodesImpl(fromIds, edgeType, direction, recursive, nodeType,
@@ -817,9 +812,10 @@ public class Neo4JOnlineSession implements GraphSession {
                 nodeProps, edgeProps);
     }
 
-    Query queryAdjacentNodesImpl(
-        Collection<String> fromIds, String edgeType, Direction direction, boolean recursive,
-        String nodeType, Map<String, Object> nodeProps, Map<String, Object> edgeProps) {
+    Query queryAdjacentNodesImpl(Collection<String> fromIds,
+                                 String edgeType, Direction direction, boolean recursive,
+                                 String nodeType, Map<String, Object> nodeProps,
+                                 Map<String, Object> edgeProps) {
 
         String eblock = eblock(E, edgeType, direction, recursive, edgeProps);
         String pblock = pblock(N, nodeProps);
@@ -829,37 +825,38 @@ public class Neo4JOnlineSession implements GraphSession {
         if (recursive) {
             s = String.format("MATCH shortestPath( (t) %s (n:%s %s) ) WHERE id(t) in $id %s",
                 eblock, nodeType, pblock, wblock);
-        }
-        else {
+        } else {
             s = String.format("MATCH (t) %s (n:%s %s) WHERE id(t) in $id %s",
                 eblock, nodeType, pblock, wblock);
         }
 
-        Parameters params = Parameters.params(ID, fromIds)
-            .add(N, nodeProps)
-            .add(E, edgeProps);
+        Parameters params = Parameters.params(ID, normalizeId(fromIds))
+            .prefix(N, nodeProps)
+            .prefix(E, edgeProps);
 
         return new Neo4JQuery(this, N, s, params);
     }
 
-    Query queryAdjacentNodesStep(Collection<String> fromIds, String edgeType, Direction direction, Map<String, Object> edgeProps) {
+    Query queryAdjacentNodesStep(Collection<String> fromIds,
+                                 String edgeType, Direction direction,
+                                 Map<String, Object> edgeProps) {
         String eblock = eblock(E, edgeType, direction, false, edgeProps);
         String wblock = wblock(E, edgeProps, true, false);
         String s = String.format("MATCH (s) %s (n) WHERE id(s) in $id %s",
             eblock, wblock);
 
-        Parameters params = Parameters.params(ID, fromIds)
-            .add(E, edgeProps);
+        Parameters params = Parameters.params(ID, asId(fromIds))
+            .prefix(E, edgeProps);
 
         return new Neo4JQuery(this, N, s, params).distinct();
     }
 
-    Query selectNodes(Collection<String> ids, String nodeType,  Map<String, Object> nodeProps) {
+    Query selectNodes(Collection<String> ids, String nodeType, Map<String, Object> nodeProps) {
         String pblock = pblock(N, nodeProps);
         String s = String.format("MATCH (n%s %s) WHERE id(n) IN $id", label(nodeType), pblock);
 
-        Parameters params = Parameters.params(ID, ids)
-            .add(N, nodeProps);
+        Parameters params = Parameters.params(ID, asId(ids))
+            .prefix(N, nodeProps);
 
         return new Neo4JQuery(this, N, s, params);
     }
@@ -868,8 +865,47 @@ public class Neo4JOnlineSession implements GraphSession {
     // Post processing
     // ----------------------------------------------------------------------
 
+    protected Map<String, Object> preProcess(Map<String, Object> map) {
+        // if contains 'id', convert the is in a set of long
+        if (map.containsKey(ID))
+            map.put(ID, normalizeId(map.get(ID)));
+
+        return map;
+    }
+
     protected Map<String, Object> postProcess(Map<String, Object> map) {
         return map;
+    }
+
+    // ----------------------------------------------------------------------
+    // Pre processing
+    // ----------------------------------------------------------------------
+
+    private static Map<String, Object> nodeId(Object id) {
+        return id == null ? Parameters.empty() : Parameters.params(ID, id);
+    }
+
+    private static Object/*Long or long[]*/ normalizeId(Object id) {
+        if (id == null)
+            return null;
+        if (id instanceof String)
+            return asId((String) id);
+        if (id instanceof String[])
+            return asId((String[]) id);
+        // if (id instanceof Long)
+        //     return id;
+        // if (id instanceof long[])
+        //     return id;
+        // if (id instanceof Long[])
+        //     return id;
+        if (!(id instanceof Collection))
+            return id;
+        if (((Collection) id).isEmpty())
+            return id;
+        if ((((Collection) id).iterator().next()) instanceof String)
+            return asId((Collection<String>) id);
+        else
+            return id;
     }
 
     // ----------------------------------------------------------------------
@@ -882,8 +918,7 @@ public class Neo4JOnlineSession implements GraphSession {
         try {
             Result result = session_run(s, params);
             return toId(result.next().get(0).asLong());
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -906,8 +941,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 return toEdgeMap(alias, r);
             else
                 return toNodeMap(alias, r);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -922,8 +956,7 @@ public class Neo4JOnlineSession implements GraphSession {
                 return null;
             else
                 return toId(result.next().get(0).asLong());
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -939,8 +972,7 @@ public class Neo4JOnlineSession implements GraphSession {
                     return toId(r.get(0).asLong());
                 }
             };
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -960,8 +992,7 @@ public class Neo4JOnlineSession implements GraphSession {
                     return nv;
                 }
             };
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -980,8 +1011,7 @@ public class Neo4JOnlineSession implements GraphSession {
                     return nv;
                 }
             };
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -994,8 +1024,7 @@ public class Neo4JOnlineSession implements GraphSession {
             Result result = session_run(s, params);
 
             return result.single().get(0).asLong();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -1020,7 +1049,7 @@ public class Neo4JOnlineSession implements GraphSession {
             sb.append("\n    ").append(t.getMessage()).append("\n");
 
         if (params != null && params.size() > 0) {
-            for(String key : params.keySet())
+            for (String key : params.keySet())
                 sb.append("\n    ")
                     .append(key)
                     .append("=")
@@ -1057,8 +1086,7 @@ public class Neo4JOnlineSession implements GraphSession {
             s = StringUtils.format(s, params);
 
             return new Neo4JQuery(this, N, s, params);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -1072,8 +1100,7 @@ public class Neo4JOnlineSession implements GraphSession {
             s = StringUtils.format(s, params);
             Result result = session_run(s, params);
             return total(result);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
         }
@@ -1105,14 +1132,14 @@ public class Neo4JOnlineSession implements GraphSession {
 
     private static Map<String, Object> toNodeMap(String alias, Record r) {
         if (r == null)
-            return Parameters.emptyMap();
+            return Parameters.empty();
 
         Node node = r.get(alias).asNode();
         return toNodeMap(node);
 
     }
 
-    public static  Map<String, Object> toNodeMap(Node node) {
+    public static Map<String, Object> toNodeMap(Node node) {
         Map<String, Object> body = new HashMap<>();
 
         // put $id
@@ -1121,7 +1148,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
         body.put(GRAPH_ID, toId(node.id()));
         body.put(GRAPH_LABELS, node.labels());
-        body.put(GRAPH_TYPE, ((List<String>)body.get(GRAPH_LABELS)).get(0));
+        body.put(GRAPH_TYPE, ((List<String>) body.get(GRAPH_LABELS)).get(0));
 
         // put properties
         body.putAll(node.asMap());
@@ -1131,7 +1158,7 @@ public class Neo4JOnlineSession implements GraphSession {
 
     private static Map<String, Object> toEdgeMap(String alias, Record r) {
         if (r == null)
-            return Parameters.emptyMap();
+            return Parameters.empty();
 
         Relationship edge = r.get(alias).asRelationship();
         return toEdgeMap(edge);
@@ -1155,7 +1182,7 @@ public class Neo4JOnlineSession implements GraphSession {
         // put toId
         body.putAll(edge.asMap());
         body.put("fromId", toId(edge.startNodeId()));
-        body.put("toId",   toId(edge.endNodeId()));
+        body.put("toId", toId(edge.endNodeId()));
 
         return body;
     }
@@ -1169,7 +1196,7 @@ public class Neo4JOnlineSession implements GraphSession {
         body.putAll(r.asMap());
 
         Set<String> keys = new HashSet<>(body.keySet());
-        for(String k : keys) {
+        for (String k : keys) {
             Object v = body.get(k);
             if (v instanceof Relationship)
                 body.put(k, toEdgeMap((Relationship) v));
