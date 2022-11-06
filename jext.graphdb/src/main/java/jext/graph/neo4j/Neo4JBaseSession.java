@@ -21,6 +21,7 @@ import org.neo4j.driver.types.Relationship;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import static jext.graph.neo4j.WhereFormatter.pblock;
 import static jext.graph.neo4j.WhereFormatter.sblock;
 import static jext.graph.neo4j.WhereFormatter.ublock;
 import static jext.graph.neo4j.WhereFormatter.wblock;
+import static jext.util.Parameters.empty;
 
 public abstract class Neo4JBaseSession implements GraphSession {
 
@@ -230,69 +232,29 @@ public abstract class Neo4JBaseSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     @Override
-    public String/*edgeId*/ createEdge(String edgeType,
-                                       @Nullable String fromType, Map<String, Object> fromProps,
-                                       @Nullable String toType, Map<String, Object> toProps,
-                                       Map<String, Object> edgeProps) {
+    public List<String> createEdges(String edgeType,
+                                    @Nullable String fromType, Map<String, Object> fromProps,
+                                    @Nullable String toType, Map<String, Object> toProps,
+                                    Map<String, Object> edgeProps) {
 
-        String s = innerCreateEdge(edgeType, fromType, fromProps, toType, toProps, edgeProps)
-            + " RETURN id(e)";
-
-        Parameters params = Parameters.params()
-            .prefix(FROM, fromProps)
-            .prefix(TO, toProps)
-            .prefix(E, edgeProps);
-
-        return this.create(s, params);
-    }
-
-    @Override
-    public long createEdges(String edgeType,
-                            @Nullable String fromType, Map<String, Object> fromProps,
-                            @Nullable String toType, Map<String, Object> toProps,
-                            Map<String, Object> edgeProps) {
-
-        String s = innerCreateEdge(edgeType, fromType, fromProps, toType, toProps, edgeProps)
-            + " RETURN count(e)";
-
-        Parameters params = Parameters.params()
-            .prefix(FROM, fromProps)
-            .prefix(TO, toProps)
-            .prefix(E, edgeProps);
-
-        return this.count(s, params);
-    }
-
-    private String innerCreateEdge(String edgeType,
-                                   @Nullable String fromType, Map<String, Object> fromProps,
-                                   @Nullable String toType, Map<String, Object> toProps,
-                                   Map<String, Object> edgeProps) {
         String eblock = eblock(E, edgeType, Direction.Output, false, edgeProps);
         String esblock = sblock(E, edgeProps, true);
 
         String m = innerQueryEdges(edgeType, fromType, fromProps, toType, toProps, null);
-        String s = String.format("%s CREATE (from)%s(to)%s",
+
+        String s = String.format("%s CREATE (from)%s(to)%s RETURN id(%s)",
             m,
             eblock,
-            esblock
+            esblock,
+            E
         );
-        return s;
-    }
 
-    @Override
-    public String/*edgeId*/ createEdge(String edgeType,
-                                       @Nullable String fromType, Map<String, Object> fromProps,
-                                       @Nullable String toType, Map<String, Object> toProps,
-                                       Map<String, Object> edgeProps,
-                                       Map<String, Object> updateProps) {
-        String edgeId = queryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps).id();
-        if (invalidId(edgeId))
-            edgeId = createEdge(edgeType, fromType, fromProps, toType, toProps, edgeProps);
+        Parameters params = Parameters.params()
+            .prefix(FROM, fromProps)
+            .prefix(TO, toProps)
+            .prefix(E, edgeProps);
 
-        queryEdges(null, Parameters.empty(), Parameters.empty(), nodeId(edgeId))
-            .update(updateProps);
-
-        return edgeId;
+        return this.creates(s, params);
     }
 
     // ----------------------------------------------------------------------
@@ -307,12 +269,12 @@ public abstract class Neo4JBaseSession implements GraphSession {
 
         String s = innerQueryEdges(edgeType, fromType, fromProps, toType, toProps, edgeProps);
 
-        Parameters allProps = Parameters.params()
+        Parameters params = Parameters.params()
             .prefix(FROM, fromProps)
             .prefix(TO, toProps)
             .prefix(E, edgeProps);
 
-        return new Neo4JQuery(this, E, s, allProps).edge();
+        return new Neo4JQuery(this, E, s, params).edge();
     }
 
     private static String innerQueryEdges(String edgeType,
@@ -472,7 +434,7 @@ public abstract class Neo4JBaseSession implements GraphSession {
     // ----------------------------------------------------------------------
 
     protected static Map<String, Object> nodeId(Object id) {
-        return id == null ? Parameters.empty() : Parameters.params(ID, id);
+        return id == null ?  empty() : Parameters.params(ID, id);
     }
 
     private static Object/*Long or long[]*/ normalizeId(Object id) {
@@ -513,11 +475,22 @@ public abstract class Neo4JBaseSession implements GraphSession {
         }
     }
 
-    protected Map<String, Object> retrieve(String alias, String s, Map<String, Object> params) {
-        return retrieve(alias, s, params, false);
+    protected List<String> creates(String s, Map<String, Object> params) {
+        logStmt(s, params);
+        try {
+            List<String> ids = new ArrayList<>();
+            Result result = session_run(s, params);
+            while(result.hasNext())
+                ids.add(result.next().get(0).toString());
+            return ids;
+        } catch (Throwable t) {
+            logStmt(s, params, t);
+            throw t;
+        }
     }
 
-    protected Map<String, Object> retrieve(String alias, String s, Map<String, Object> params, boolean edge) {
+    protected Map<String, Object> retrieve(String s, Map<String, Object> params) {
+        Map<String, Object> nv;
         logStmt(s, params);
         try {
             Result result = session_run(s, params);
@@ -525,10 +498,8 @@ public abstract class Neo4JBaseSession implements GraphSession {
                 return null;
 
             Record r = result.single();
-            if (edge)
-                return toEdgeMap(alias, r);
-            else
-                return toNodeMap(alias, r);
+            nv = toResultMap(r);
+            return postProcess(nv);
         } catch (Throwable t) {
             logStmt(s, params, t);
             throw t;
@@ -564,7 +535,7 @@ public abstract class Neo4JBaseSession implements GraphSession {
         }
     }
 
-    protected GraphIterator<Map<String, Object>> retrieveAllIter(String alias, String s, Map<String, Object> params, boolean edge) {
+    protected GraphIterator<Map<String, Object>> retrieveAllIter(String s, Map<String, Object> params) {
         logStmt(s, params);
         try {
             Result result = session_run(s, params);
@@ -572,9 +543,8 @@ public abstract class Neo4JBaseSession implements GraphSession {
             return new Neo4JResultSet<Map<String, Object>>(result) {
                 @Override
                 protected Map<String, Object> compose(Record r) {
-                    Map<String, Object> nv = edge ? toEdgeMap(alias, r) : toNodeMap(alias, r);
-                    Neo4JBaseSession.this.postProcess(nv);
-                    return nv;
+                    Map<String, Object> nv = toResultMap(r);
+                    return postProcess(nv);
                 }
             };
         } catch (Throwable t) {
@@ -583,23 +553,23 @@ public abstract class Neo4JBaseSession implements GraphSession {
         }
     }
 
-    protected GraphIterator<Map<String, Object>> resultIter(String alias, String s, Map<String, Object> params, boolean edge) {
-        logStmt(s, params);
-        try {
-            Result result = session_run(s, params);
-
-            return new Neo4JResultSet<Map<String, Object>>(result) {
-                protected Map<String, Object> compose(Record r) {
-                    Map<String, Object> nv = toResultMap(alias, r);
-                    nv = Neo4JBaseSession.this.postProcess(nv);
-                    return nv;
-                }
-            };
-        } catch (Throwable t) {
-            logStmt(s, params, t);
-            throw t;
-        }
-    }
+    // protected GraphIterator<Map<String, Object>> resultIter(String s, Map<String, Object> params) {
+    //     logStmt(s, params);
+    //     try {
+    //         Result result = session_run(s, params);
+    //
+    //         return new Neo4JResultSet<Map<String, Object>>(result) {
+    //             @Override
+    //             protected Map<String, Object> compose(Record r) {
+    //                 Map<String, Object> nv = toResultMap(r);
+    //                 return postProcess(nv);
+    //             }
+    //         };
+    //     } catch (Throwable t) {
+    //         logStmt(s, params, t);
+    //         throw t;
+    //     }
+    // }
 
     protected long count(String s, Map<String, Object> params) {
         logStmt(s, params);
@@ -711,14 +681,35 @@ public abstract class Neo4JBaseSession implements GraphSession {
         return transaction.run(s, params);
     }
 
-    private static Map<String, Object> toNodeMap(String alias, Record r) {
+    private static Map<String, Object> toResultMap(Record r) {
+        Map<String, Object> body = new HashMap<>();
+
         if (r == null)
-            return Parameters.empty();
+            return body;
 
-        Node node = r.get(alias).asNode();
-        return toNodeMap(node);
+        body.putAll(r.asMap());
 
+        Set<String> keys = new HashSet<>(body.keySet());
+        for (String k : keys) {
+            Object v = body.get(k);
+            if (v instanceof Relationship)
+                body.put(k, toEdgeMap((Relationship) v));
+            else if (v instanceof Node)
+                body.put(k, toNodeMap((Node) v));
+            else
+                body.put(k, v);
+        }
+
+        return body;
     }
+
+    // private static Map<String, Object> toNodeMap(String alias, Record r) {
+    //     if (r == null)
+    //         return empty();
+    //
+    //     Node node = r.get(alias).asNode();
+    //     return toNodeMap(node);
+    // }
 
     public static Map<String, Object> toNodeMap(Node node) {
         Map<String, Object> body = new HashMap<>();
@@ -737,13 +728,13 @@ public abstract class Neo4JBaseSession implements GraphSession {
         return body;
     }
 
-    private static Map<String, Object> toEdgeMap(String alias, Record r) {
-        if (r == null)
-            return Parameters.empty();
-
-        Relationship edge = r.get(alias).asRelationship();
-        return toEdgeMap(edge);
-    }
+    // private static Map<String, Object> toEdgeMap(String alias, Record r) {
+    //     if (r == null)
+    //         return empty();
+    //
+    //     Relationship edge = r.get(alias).asRelationship();
+    //     return toEdgeMap(edge);
+    // }
 
     private static Map<String, Object> toEdgeMap(Relationship edge) {
         Map<String, Object> body = new HashMap<>();
@@ -764,28 +755,6 @@ public abstract class Neo4JBaseSession implements GraphSession {
         body.putAll(edge.asMap());
         body.put("fromId", toId(edge.startNodeId()));
         body.put("toId", toId(edge.endNodeId()));
-
-        return body;
-    }
-
-    private static Map<String, Object> toResultMap(String alias, Record r) {
-        Map<String, Object> body = new HashMap<>();
-
-        if (r == null)
-            return body;
-
-        body.putAll(r.asMap());
-
-        Set<String> keys = new HashSet<>(body.keySet());
-        for (String k : keys) {
-            Object v = body.get(k);
-            if (v instanceof Relationship)
-                body.put(k, toEdgeMap((Relationship) v));
-            else if (v instanceof Node)
-                body.put(k, toNodeMap((Node) v));
-            else
-                body.put(k, v);
-        }
 
         return body;
     }

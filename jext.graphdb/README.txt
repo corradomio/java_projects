@@ -164,7 +164,7 @@ revisionedEdge
 
 special properties:
 
-    1) $count: it is increamented on each "create"
+    1) $count: it is incremented on each "create"
     2) versioned T[]: it must be implemented with an extra node with name VT
 
         VT {

@@ -18,7 +18,9 @@ import java.util.Map;
 
 public class DumpGraphs {
 
-    static String REF_ID = "dde55a05";
+    static String REF_ID =
+        "dde55a05"
+        ;
 
     static void dumpNodes(String label) {
         System.out.printf("dump %s%n", label);
@@ -54,7 +56,7 @@ public class DumpGraphs {
             }
             return map;
         });
-        exp.exportGraph(g, new File(String.format("graph-%s.dot", label)));
+        exp.exportGraph(g, new File(String.format("graph-%s-%s.dot", REF_ID, label)));
 
         System.out.println();
     }

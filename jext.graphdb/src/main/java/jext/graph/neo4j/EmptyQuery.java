@@ -50,12 +50,12 @@ public class EmptyQuery implements Query {
     }
 
     @Override
-    public Query limit(Limit limit) {
+    public Query limit(long limit) {
         return this;
     }
 
     @Override
-    public Query limit(long limit) {
+    public Query limit(long start, long limit) {
         return this;
     }
 

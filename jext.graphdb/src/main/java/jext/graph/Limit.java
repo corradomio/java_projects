@@ -2,32 +2,33 @@ package jext.graph;
 
 public class Limit {
 
-    public long start = 0;
-    public long count = 0;
-
-    public Limit(long c) {
-        count = c;
+    public static Limit of(long limit) {
+        return new Limit(0, limit);
     }
+
+    public static Limit of(long start, long limit) {
+        return new Limit(start, limit);
+    }
+
+    public long start;
+    public long limit;
 
     public Limit(long s, long c) {
-        start = s;
-        count = c;
+        this.start = s;
+        this.limit = c;
     }
 
-    public boolean isAll() { return count == 0; }
-
-    public Limit start(long s) {
-        start = s;
-        return this;
+    public boolean isAll() {
+        return limit == 0;
     }
 
     public Limit page(long p) {
-        start = p*count;
+        start = p*limit;
         return this;
     }
 
     public Limit next() {
-        start += count;
+        start += limit;
         return this;
     }
 }

@@ -56,13 +56,13 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public Query limit(Limit limit) {
-        // this.limit = limit;
+    public Query limit(long count) {
+        // this.limit = new Limit(count);
         return this;
     }
 
     @Override
-    public Query limit(long count) {
+    public Query limit(long start, long count) {
         // this.limit = new Limit(count);
         return this;
     }

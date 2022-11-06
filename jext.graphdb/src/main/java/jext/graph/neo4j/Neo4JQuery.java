@@ -47,14 +47,13 @@ public class Neo4JQuery implements Query {
         return execute();
     }
 
-    @Override
-    public Query limit(Limit limit) {
-        this.limit = limit;
+    public Query limit(long limit) {
+        this.limit = new Limit(0, limit);
         return this;
     }
 
-    public Query limit(long limit) {
-        this.limit = new Limit(limit);
+    public Query limit(long start, long limit) {
+        this.limit = new Limit(start, limit);
         return this;
     }
 
@@ -117,7 +116,7 @@ public class Neo4JQuery implements Query {
     public Map<String, Object> values() {
         String s = String.format("%s RETURN %s", stmt, alias);
         s = setLimit(s);
-        return session.retrieve(alias, s, params);
+        return session.retrieve(s, params);
     }
 
     @Override
@@ -128,76 +127,14 @@ public class Neo4JQuery implements Query {
         else
             s = String.format("%s RETURN %s", stmt, alias);
         s = setLimit(s);
-        return session.retrieveAllIter(alias, s, params, edge);
+        return session.retrieveAllIter(s, params);
     }
 
     @Override
     public GraphIterator<Map<String, Object>> result() {
         String s = setLimit(stmt);
-        return session.resultIter(alias, s, params, edge);
+        return session.retrieveAllIter(s, params);
     }
-
-    // private static Object asMap(Object value) {
-    //     if (value == null)
-    //         return null;
-    //     if (value instanceof Node) {
-    //         return Neo4JOnlineSession.toNodeMap((Node)value);
-    //     }
-    //     if (value instanceof List)
-    //         return ((List)value).stream()
-    //             .map(v -> asMap(v))
-    //             .collect(Collectors.toList());
-    //     else
-    //         return value;
-    // }
-
-    // @Override
-    // public GraphIterator<Map<String, Object>> result() {
-    //     String s = setLimit(stmt);
-    //
-    //     GraphIterator<Map<String, Object>> git = session.resultIter(alias, s, params, edge);
-    //
-    //     return new GraphIterator<Map<String, Object>>() {
-    //
-    //         @Override
-    //         public boolean hasNext() {
-    //             return git.hasNext();
-    //         }
-    //
-    //         @Override
-    //         public Map<String, Object> next() {
-    //             Map<String, Object> tmp = git.next();
-    //             Map<String, Object> nv = Neo4JOnlineSession.toNodeMap(MapUtils.get(tmp, alias));
-    //
-    //             for (String key : tmp.keySet()) {
-    //                 if (key.equals(alias))
-    //                     continue;
-    //
-    //                 Object value = asMap(tmp.get(key));
-    //                 nv.put(key, value);
-    //             }
-    //
-    //             return session.postProcess(nv);
-    //         }
-    //
-    //         @Override
-    //         public List<Map<String, Object>> toList() {
-    //             List<Map<String, Object>> l = new ArrayList<>();
-    //             while(hasNext())
-    //                 l.add(next());
-    //             return l;
-    //         }
-    //
-    //         @Override
-    //         public Set<Map<String, Object>> toSet() {
-    //             Set<Map<String, Object>> s = new HashSet<>();
-    //             while(hasNext())
-    //                 s.add(next());
-    //             return s;
-    //         }
-    //
-    //     };
-    // }
 
     // ----------------------------------------------------------------------
     // Implementation
@@ -208,9 +145,9 @@ public class Neo4JQuery implements Query {
             return s;
 
         if (limit.start == 0)
-            s = String.format("%s LIMIT %d", s, limit.count);
+            s = String.format("%s LIMIT %d", s, limit.limit);
         else
-            s = String.format("%s SKIP %d LIMIT %d", s, limit.start, limit.count);
+            s = String.format("%s SKIP %d LIMIT %d", s, limit.start, limit.limit);
         return s;
     }
 
@@ -225,4 +162,9 @@ public class Neo4JQuery implements Query {
         params.putAll(nparams);
         return String.format("%s%s", s, sblock);
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

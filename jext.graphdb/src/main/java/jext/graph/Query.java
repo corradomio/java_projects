@@ -7,10 +7,9 @@ public interface Query {
 
     /**
      * Add a limit on the query result: start and count
-     * @param limit
      */
-    Query limit(Limit limit);
     Query limit(long limit);
+    Query limit(long start, long limit);
 
     /**
      * If the results must be unique

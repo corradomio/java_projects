@@ -12,29 +12,30 @@ public class Value {
             return of(Op.EQ, value);
     }
     public static Value of(String op, Object value) { return of(Op.of(op), value); }
-    public static Value of(Op op, Object value) { return new Value(op, value); }
+    public static Value of(Op op,     Object value) { return new Value(op, value); }
 
-    public static Value eq(Object value) { return of(Op.EQ, value); }
+    public static Value assign(Object value) { return of(Op.ASSIGN, value); }
+    public static Value   incr(Object value) { return of(Op.INCR, value); }
+
+    public static Value  eq(Object value) { return of(Op.EQ, value); }
     public static Value neq(Object value) { return of(Op.NEQ, value); }
-    public static Value gt(Object value) { return of(Op.GT, value); }
+    public static Value  gt(Object value) { return of(Op.GT, value); }
     public static Value geq(Object value) { return of(Op.GEQ, value); }
-    public static Value lt(Object value) { return of(Op.LT, value); }
+    public static Value  lt(Object value) { return of(Op.LT, value); }
     public static Value leq(Object value) { return of(Op.LEQ, value); }
 
-    public static Value append(Object value) { return of(Op.APPEND, value); }
-    public static Value appendDistinct(Object value) { return of(Op.APPEND_DISTINCT, value); }
     public static Value ladd(Object value) { return of(Op.LIST_ADD, value); }
     public static Value sadd(Object value) { return of(Op.SET_ADD, value); }
+    public static Value append(Object value) { return of(Op.APPEND, value); }
+    public static Value appendDistinct(Object value) { return of(Op.APPEND_DISTINCT, value); }
 
-    public static Value incr(Object value) { return of(Op.INCR, value); }
-
-    public static Value in(Object value) { return of(Op.IN, value); }
-    public static Value nin(Object value) { return of(Op.NOT_IN, value); }
-    public static Value contains(Object value) { return of(Op.CONTAINS, value); }
+    public static Value        in(Object value) { return of(Op.IN, value); }
+    public static Value       nin(Object value) { return of(Op.NOT_IN, value); }
+    public static Value  contains(Object value) { return of(Op.CONTAINS, value); }
     public static Value ncontains(Object value) { return of(Op.NOT_CONTAINS, value); }
 
     public static Value startsWith(Object value) { return of(Op.STARTS_WITH, value); }
-    public static Value endsWith(Object value) { return of(Op.ENDS_WITH, value); }
+    public static Value   endsWith(Object value) { return of(Op.ENDS_WITH, value); }
 
     // ----------------------------------------------------------------------
 
