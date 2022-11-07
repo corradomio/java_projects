@@ -1,10 +1,10 @@
-package jext.graph.util;
+package jext.util;
 
 
 import java.util.Arrays;
 import java.util.List;
 
-public class PropertyUtils {
+public class ParametersUtils {
 
     private static final boolean[] NO_BOOLS = new boolean[0];
     private static final long[] NO_LONGS = new long[0];

@@ -4,8 +4,11 @@ import jext.graph.Param;
 import jext.logging.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static jext.graph.neo4j.Neo4JOnlineSession.REVISION;
 import static jext.graph.neo4j.Neo4JOnlineSession.REVISIONS;
@@ -27,7 +30,8 @@ public abstract class ObjectSchema {
     protected String  name;
     protected boolean revisioned;
     protected boolean counted;
-    protected boolean revisionedProperties;
+    protected final Set<String> revisionedProperties = new HashSet<>();
+    protected final Set<String> revisionedArrays = new HashSet<>();
     protected final Map<String, PropertySchema> properties = new HashMap<>();
 
     // ----------------------------------------------------------------------
@@ -47,7 +51,11 @@ public abstract class ObjectSchema {
     }
 
     public boolean hasRevisionedProperties() {
-        return revisionedProperties;
+        return !revisionedProperties.isEmpty();
+    }
+
+    public boolean hasRevisionedArrayProperties() {
+        return !revisionedArrays.isEmpty();
     }
 
     public PropertySchema propertySchema(String name) {
@@ -60,11 +68,26 @@ public abstract class ObjectSchema {
         return pschema;
     }
 
-    public void addProperty(PropertySchema pschema) {
-        properties.put(pschema.name(), pschema);
-        if (pschema.isRevisioned())
-            revisionedProperties = true;
+    // ----------------------------------------------------------------------
+    // Utilities
+    // ----------------------------------------------------------------------
+
+    public Map<String, Object> revisionedArrays(Map<String, Object> props) {
+        if (props.isEmpty() || revisionedArrays.isEmpty())
+            return Collections.emptyMap();
+
+        Map<String, Object> aprops = new HashMap<>();
+        for (String param : props.keySet()) {
+            String aname = Param.anameOf(param);
+            if (revisionedArrays.contains(param))
+                aprops.put(param, props.get(param));
+        }
+        return aprops;
     }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
 
     public void setName(String name) {
         this.name = name;
@@ -76,6 +99,15 @@ public abstract class ObjectSchema {
 
     public void setCounted(boolean counted) {
         this.counted = counted;
+    }
+
+    public void addProperty(PropertySchema pschema) {
+        properties.put(pschema.name(), pschema);
+        if (pschema.isRevisioned()) {
+            revisionedProperties.add(pschema.name());
+            if (pschema.isArray())
+                revisionedArrays.add(pschema.name());
+        }
     }
 
     // ----------------------------------------------------------------------

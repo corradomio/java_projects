@@ -1,6 +1,6 @@
 package jext.graph.schema;
 
-import jext.graph.util.PropertyUtils;
+import jext.util.ParametersUtils;
 
 import static jext.graph.schema.NodeSchema.NO_REV;
 
@@ -94,15 +94,15 @@ public class PropertySchema {
         if (!revisioned || rev == NO_REV)
             return value;
         if (BOOLEAN.equals(type))
-            return PropertyUtils.boolArray(rev, (Boolean) value);
+            return ParametersUtils.boolArray(rev, (Boolean) value);
         if (INTEGER.equals(type) || LONG.equals(type))
-            return PropertyUtils.longArray(rev, ((Number)value).longValue());
+            return ParametersUtils.longArray(rev, ((Number)value).longValue());
         if (FLOAT.equals(type) || DOUBLE.equals(type))
-            return PropertyUtils.doubleArray(rev, ((Number)value).doubleValue());
+            return ParametersUtils.doubleArray(rev, ((Number)value).doubleValue());
         if (STRING.equals(type))
-            return PropertyUtils.stringArray(rev, (String)value);
+            return ParametersUtils.stringArray(rev, (String)value);
         else
-            return PropertyUtils.objectArray(rev, value);
+            return ParametersUtils.objectArray(rev, value);
     }
 
     // public Object asRevisioned(Object value, Object prev, int rev) {
@@ -128,15 +128,15 @@ public class PropertySchema {
         if (!revisioned || rev == NO_REV)
             return value;
         if (BOOLEAN.equals(type))
-            return PropertyUtils.atBoolArray(value, rev);
+            return ParametersUtils.atBoolArray(value, rev);
         if (INTEGER.equals(type) || LONG.equals(type))
-            return PropertyUtils.atLongArray(value, rev);
+            return ParametersUtils.atLongArray(value, rev);
         if (FLOAT.equals(type) || DOUBLE.equals(type))
-            return PropertyUtils.atDoubleArray(value, rev);
+            return ParametersUtils.atDoubleArray(value, rev);
         if (STRING.equals(type))
-            return PropertyUtils.atStringArray(value, rev);
+            return ParametersUtils.atStringArray(value, rev);
         else
-            return PropertyUtils.atObjectArray(value, rev);
+            return ParametersUtils.atObjectArray(value, rev);
     }
 
 

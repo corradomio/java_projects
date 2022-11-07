@@ -102,6 +102,11 @@ public class Param {
             this.aname = String.format("%s.%s[%d]", alias, name, index);
     }
 
+    public static String anameOf(String param) {
+        int p = param.indexOf('[');
+        return p != -1 ? param.substring(0, p) : param;
+    }
+
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------
