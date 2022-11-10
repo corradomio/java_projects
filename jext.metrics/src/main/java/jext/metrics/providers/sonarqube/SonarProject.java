@@ -116,8 +116,8 @@ public class SonarProject extends SonarObject implements MetricsProject {
     }
 
     private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
-        add(ObjectType.FILE);
-        add(ObjectType.DIRECTORY);
+        add(ObjectType.SOURCE);
+        add(ObjectType.MODULE);
     }};
 
     private static boolean validateType(ObjectType type) {
@@ -133,6 +133,17 @@ public class SonarProject extends SonarObject implements MetricsProject {
         Set<Metric> metrics = new HashSet<>();
 
         getMetricsValues(ObjectType.ALL, null).forEach(mv -> {
+            metrics.add(mv.getMetric());
+        });
+
+        return metrics;
+    }
+
+    @Override
+    public Set<Metric> getMetrics(ObjectType otype) {
+        Set<Metric> metrics = new HashSet<>();
+
+        getMetricsValues(otype, null).forEach(mv -> {
             metrics.add(mv.getMetric());
         });
 

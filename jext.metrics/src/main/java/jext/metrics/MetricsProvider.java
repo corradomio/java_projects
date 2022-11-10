@@ -2,11 +2,14 @@ package jext.metrics;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 public interface MetricsProvider {
 
-    String ALL_METRICS = "";
+    String ALL_METRICS = "all";
+
+    String getId();
 
     /**
      * Provider name
@@ -32,6 +35,7 @@ public interface MetricsProvider {
      * containing all metrics
      */
     Collection<String> getCategories();
+
     boolean hasCategory(String category);
 
     /**
@@ -41,6 +45,11 @@ public interface MetricsProvider {
      * @param measures list of measure ids/names belonging to the category
      */
     void registerCategory(String category, Collection<String> measures);
+
+    /**
+     * List of supported object types
+     */
+    List<ObjectType> getSupportedTypes();
 
     /**
      * List of all metrics. It is the content of category ''

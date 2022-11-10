@@ -26,4 +26,9 @@ public interface Metric {
      */
     String getDescription();
 
+    /**
+     * Metric type
+     */
+    String getType();
+
 }

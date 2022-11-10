@@ -16,6 +16,14 @@ public interface MetricsProject extends MetricsObject {
     Set<Metric> getMetrics();
 
     /**
+     * Retrieve the list of all metrics used in the specified object type
+     * Note: projects based on different programing languages use different metrics
+     *
+     * @return list of all metrics used in the project
+     */
+    Set<Metric> getMetrics(ObjectType type);
+
+    /**
      * retrieve all metrics objects
      *
      * @param type object type

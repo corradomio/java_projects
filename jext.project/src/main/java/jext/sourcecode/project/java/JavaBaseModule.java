@@ -338,7 +338,7 @@ public class JavaBaseModule extends BaseModule {
 
         // cache names:
         //
-        //      dependency.{project}.module.types
+        //      dependency.[project].module.types
         //
 
         String cacheName = String.format("dependency.%s.module.types", project.getId());
@@ -361,7 +361,7 @@ public class JavaBaseModule extends BaseModule {
 
         // cache names:
         //
-        //      dependency.{project}.module.usedTypes
+        //      dependency.[project].module.usedTypes
         //
 
         String cacheName = String.format("dependency.%s.module.usedTypes", project.getId());

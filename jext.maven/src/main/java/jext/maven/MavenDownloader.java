@@ -985,12 +985,12 @@ public class MavenDownloader implements MavenConst {
      * @param coordsList list of coordinates to check
      */
     public void checkArtifacts(Collection<MavenCoords> coordsList, boolean parallel) {
-        logger.infof("Checking %d artifacts ...", coordsList.size());
+        logger.debugf("Checking %d artifacts ...", coordsList.size());
         if (parallel)
             Parallel.forEach(coordsList, this::checkArtifact);
         else
             Serial.forEach(coordsList, this::checkArtifact);
-        logger.infof("Checked %d artifacts", coordsList.size());
+        logger.debugf("Checked  %d artifacts", coordsList.size());
     }
 
     public void checkArtifact(MavenCoords artifact) {

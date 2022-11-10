@@ -5,7 +5,9 @@ import jext.metrics.Metric;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
+import jext.metrics.ObjectType;
 import jext.util.Assert;
+import jext.util.DefaultHashMap;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 import org.sonar.wsclient.SonarClient;
@@ -34,14 +36,14 @@ public class SonarProvider implements MetricsProvider {
 
     static final String NAME = "sonarqube";
 
-    private static final String ROOT = "";
     private static final String SONAR_NAME = "sonar.name";
     private static final String SONAR_URL = "sonar.url";
-    // used also for token
+    // used also for SonarQube token
     private static final String SONAR_USERNAME = "sonar.username";
     // with token, password must be the empty string
     private static final String SONAR_PASSWORD = "sonar.password";
 
+    // some metrics to exclude because they don't have a numeric value
     static List<String> INVALID_METRIC_KEYS = Arrays.asList(
             "ncloc_language_distribution",
             "duplications_data",
@@ -55,7 +57,7 @@ public class SonarProvider implements MetricsProvider {
     private static final Logger logger = Logger.getLogger(SonarProvider.class);
 
     private Properties properties;
-    private final Map<String, Set<String>> categories = new TreeMap<>();
+    private final Map<String, Set<String>> categories = new DefaultHashMap<>((key) -> new TreeSet<>());
     private Map<String, Metric> metricsById = new TreeMap<>();
     private Map<String, Metric> metricsByName = new TreeMap<>();
 
@@ -85,6 +87,8 @@ public class SonarProvider implements MetricsProvider {
         Assert.notNull(properties.getProperty(SONAR_USERNAME), SONAR_USERNAME);
         Assert.notNull(properties.getProperty(SONAR_PASSWORD), SONAR_PASSWORD);
         Assert.notNull(properties.getProperty(SONAR_NAME), SONAR_NAME);
+
+        categories.put(ALL_METRICS, new HashSet<>());
     }
 
     private void loadCategories() {
@@ -132,15 +136,10 @@ public class SonarProvider implements MetricsProvider {
             String domain = MapUtils.get(data,"domain");
             Metric metric = new SonarMetric(this, data);
             addMetric(metric);
-            addMetricToCategory(ROOT, metric);
-            addMetricToCategory(domain, metric);
+            categories.get(ALL_METRICS).add(metric.getId());
+            categories.get(domain).add(metric.getId());
         });
 
-    }
-
-    private void addMetricToCategory(String category, Metric metric) {
-        categories.computeIfAbsent(category, par -> new TreeSet<>());
-        categories.get(category).add(metric.getId());
     }
 
     private void addMetric(Metric metric) {
@@ -156,6 +155,11 @@ public class SonarProvider implements MetricsProvider {
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public String getId() {
+        return NAME;
+    }
 
     @Override
     public String getName() {
@@ -211,6 +215,11 @@ public class SonarProvider implements MetricsProvider {
         ));
         addMetric(metric);
         return metric;
+    }
+
+    @Override
+    public List<ObjectType> getSupportedTypes() {
+        return Arrays.asList(ObjectType.PROJECT, ObjectType.MODULE, ObjectType.SOURCE);
     }
 
     // ----------------------------------------------------------------------

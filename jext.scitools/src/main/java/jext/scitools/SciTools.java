@@ -7,6 +7,7 @@ import jext.scitools.util.OutputStreamToConsumer;
 import jext.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
+import org.zeroturnaround.exec.StartedProcess;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -232,6 +233,26 @@ public abstract class SciTools {
         public void exec(Collection<String> args) throws IOException {
             super.und(args);
         }
+
+        @Override
+        public StartedProcess start(String... sargs) throws IOException {
+            Collection<String> uargs = Arrays.asList(sargs);
+
+            logger.infof("und %s", uargs.toString());
+            List<String> args = new ArrayList<>();
+            args.add(undApp);
+            args.addAll(uargs);
+
+            ProcessExecutor pe = new ProcessExecutor();
+            return pe.command(args)
+                    .redirectOutput(new OutputStreamToConsumer(this::handleMessage))
+                    .environment("PATH", "")
+                    .environment("JAVA_HOME", "")
+                    .timeout(3, TimeUnit.SECONDS)
+                    .start()
+                    ;
+        }
+
     }
 
     private static class SciToolsUPython extends SciTools {
@@ -249,6 +270,26 @@ public abstract class SciTools {
             int n = args.size();
             List<String> largs = new ArrayList<>(args);
             super.upython(largs.get(0), largs.subList(1, n));
+        }
+
+        @Override
+        public StartedProcess start(String... sargs) throws IOException {
+            String command = sargs[0];
+            List<String> uargs = Arrays.asList(sargs);
+            uargs = uargs.subList(1, uargs.size());
+            // compose:  <scitools-dir>/upython <splpython-dir>/main.py arg1 ...
+            List<String> args = new ArrayList<>();
+            args.add(upythonApp);
+            args.add(String.format("%s/%s", pyappDirectory, command));
+
+            args.addAll(uargs);
+
+            logger.infof("upython %s", args.toString());
+
+            ProcessExecutor pe = new ProcessExecutor().directory(pyappDirectory);
+            return pe.command(args)
+                    .redirectOutput(new OutputStreamToConsumer(this::handleMessage))
+                    .start();
         }
     }
 
@@ -273,6 +314,8 @@ public abstract class SciTools {
 
     public abstract void exec(Collection<String> args) throws IOException;
 
+    public abstract StartedProcess start(String... args) throws IOException;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -291,6 +334,8 @@ public abstract class SciTools {
             logger.error(message.substring(5+1));
         else if (message.startsWith("INFO"))
             logger.info(message.substring(4+1));
+        else if (message.startsWith("EVENT task"))
+            logger.info(message);
         else if (message.startsWith("EVENT"))
             logger.debug(message);
         else if (message.contains("Warning:")) {
@@ -323,12 +368,15 @@ public abstract class SciTools {
                     .redirectOutput(new OutputStreamToConsumer(this::handleMessage))
                     .environment("PATH", "")
                     .environment("JAVA_HOME", "")
-                    .executeNoTimeout();
+                    .timeout(3, TimeUnit.SECONDS)
+                    .executeNoTimeout()
+                    ;
+
+            if (pr.getExitValue() != 0)
+                logger.errorf("Und process terminated with code %d", pr.getExitValue());
 
             // just to be sure that the process is terminated
-            pe.closeTimeout(3, TimeUnit.SECONDS);
-            // just to be sure that the process is terminated
-        } catch (InterruptedException /* | TimeoutException */ e) {
+        } catch (InterruptedException e) {
             throw new IOException(e);
         }
     }
@@ -369,7 +417,7 @@ public abstract class SciTools {
     // Handle messages
     // ----------------------------------------------------------------------
 
-    private void handleMessage(String message) {
+    protected void handleMessage(String message) {
         this.messageHandlers.forEach(mh -> mh.accept(message));
     }
 

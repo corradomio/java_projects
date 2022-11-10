@@ -6,11 +6,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
-public class Parameters extends TreeMap<String, Object> {
+public class Parameters extends HashMap<String, Object> {
 
     private static final Parameters EMPTY = new Parameters() {
 
@@ -39,6 +44,14 @@ public class Parameters extends TreeMap<String, Object> {
     // ----------------------------------------------------------------------
     // Factory methods
     // ----------------------------------------------------------------------
+
+    public static Parameters of(Map<String, ?> map) {
+        return params().add((Map<String, Object>)map);
+    }
+
+    public static Parameters of(Properties properties) {
+        return params().add(properties);
+    }
 
     /**
      * Create an empty read-only map.
@@ -84,7 +97,7 @@ public class Parameters extends TreeMap<String, Object> {
      * @param keys keys to select
      * @return a new map with the selected keys (can be empty)
      */
-    public static Parameters select(Map<String, Object> params, String... keys) {
+    public static Parameters select(Map<String, ?> params, String... keys) {
         Parameters nparams = params();
         for (String key : keys)
             if (params.containsKey(key))
@@ -116,6 +129,21 @@ public class Parameters extends TreeMap<String, Object> {
     // Operations
     // ----------------------------------------------------------------------
 
+    // /**
+    //  * Add one or more key/value pairs
+    //  *
+    //  * @param name first key
+    //  * @param value first value
+    //  * @param a remaining key/values
+    //  * @return itself
+    //  */
+
+    /**
+     * Add the content of the map
+     * 
+     * @param map map to add
+     * @return itself
+     */
     public Parameters add(Map<String, Object> map) {
         if (map == null)
             return this;
@@ -192,6 +220,27 @@ public class Parameters extends TreeMap<String, Object> {
     //  1) any object type -> String
     //  2) any object type -> same type
     //  2) String -> String, int, float, boolean, String[]
+
+    public List<String> getListString(String name) {
+        if (!super.containsKey(name))
+            return Collections.emptyList();
+        Object obj = super.get(name);
+        if (obj instanceof String[]) {
+            String[] value = (String[]) obj;
+            return Arrays.asList(value);
+        }
+        if (obj instanceof String) {
+            String value = obj.toString();
+            String[] a = value.split(",");
+            List<String> list = new ArrayList<>();
+            for (String s : a) {
+                list.add(s.trim());
+            }
+            return list;
+        }
+        else
+            return (List<String>) obj;
+    }
 
     /**
      * Retrieve a string array, encoded as a string sequence separated by ','

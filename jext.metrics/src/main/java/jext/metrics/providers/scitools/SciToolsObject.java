@@ -35,7 +35,7 @@ public class SciToolsObject implements MetricsObject {
         if (type.equals(QUAL_MODULE))
             return ObjectType.MODULE;
         if (type.equals(QUAL_SOURCE))
-            return ObjectType.FILE;
+            return ObjectType.SOURCE;
         if (type.equals(QUAL_TYPE))
             return ObjectType.TYPE;
         if (type.equals(QUAL_METHOD))
@@ -61,7 +61,7 @@ public class SciToolsObject implements MetricsObject {
     private static final Map<String, ObjectType> TYPES;
     static {
         TYPES = new HashMap<>();
-        TYPES.put("File", ObjectType.FILE);
+        TYPES.put("File", ObjectType.SOURCE);
 
         TYPES.put("Type", ObjectType.TYPE);
         TYPES.put("Class", ObjectType.TYPE);

@@ -47,6 +47,11 @@ public class SciToolsMetric implements Metric {
     }
 
     @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
     public String getDescription() {
         return description;
     }

@@ -9,6 +9,7 @@ import jext.xml.XPathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Element;
+import org.zeroturnaround.exec.StartedProcess;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -175,7 +176,7 @@ public class UndDatabase implements AutoCloseable {
                     "-db", undPath.getAbsolutePath()
             );
             SciTools.und().exec(SETTINGS,
-                    "-UseInstalledStanderd", "ON",
+                    "-UseInstalledStandard", "ON",
                     "-db", undPath.getAbsolutePath()
             );
         }
@@ -500,11 +501,11 @@ public class UndDatabase implements AutoCloseable {
        und -db myProject.und analyze -changed
        analyze -files file1.cpp file2.cpp file3.cpp    (Interactive mode)
      */
-    public void analyze(boolean update) throws IOException {
+    public StartedProcess analyze(boolean update) throws IOException {
         if (!exists())
             throw new IOException("Database '" + undPath.getAbsolutePath() + "' not existent");
 
-        SciTools.und().exec(
+        return SciTools.und().start(
             "-verbose",
                 "analyze", update ? "-changed" : "-all",
                 "-db",

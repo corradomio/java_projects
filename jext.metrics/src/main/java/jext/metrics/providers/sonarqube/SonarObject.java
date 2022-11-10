@@ -35,11 +35,11 @@ public class SonarObject implements MetricsObject {
 
     public static ObjectType toType(String qualifier) {
         if (qualifier.equals(QUAL_FIL))
-            return ObjectType.FILE;
+            return ObjectType.SOURCE;
         if (qualifier.equals(QUAL_TRK))
             return ObjectType.PROJECT;
         if (qualifier.equals(QUAL_DIR))
-            return ObjectType.DIRECTORY;
+            return ObjectType.MODULE;
         else
             return ObjectType.UNKNOWN;
     }

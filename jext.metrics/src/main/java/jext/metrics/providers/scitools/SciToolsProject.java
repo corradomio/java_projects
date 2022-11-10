@@ -88,7 +88,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
-        add(ObjectType.FILE);
+        add(ObjectType.SOURCE);
         add(ObjectType.TYPE);
         add(ObjectType.METHOD);
     }};
@@ -110,6 +110,27 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         while(!queue.isEmpty()) {
             MetricsObject mo = queue.remove();
             queue.addAll(mo.getChildren());
+
+            mo.getMetricValues().forEach(mv -> {
+                metrics.add(mv.getMetric());
+            });
+        }
+
+        return metrics;
+    }
+
+    @Override
+    public Set<Metric> getMetrics(ObjectType otype) {
+        Set<Metric> metrics = new HashSet<>();
+
+        Queue<MetricsObject> queue = new LinkedList<>();
+        queue.add(this);
+        while(!queue.isEmpty()) {
+            MetricsObject mo = queue.remove();
+            queue.addAll(mo.getChildren());
+
+            if (mo.getType() != otype)
+                continue;
 
             mo.getMetricValues().forEach(mv -> {
                 metrics.add(mv.getMetric());

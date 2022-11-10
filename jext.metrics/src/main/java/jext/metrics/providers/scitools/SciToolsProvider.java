@@ -5,6 +5,7 @@ import jext.metrics.Metric;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
+import jext.metrics.ObjectType;
 import jext.util.Assert;
 import jext.util.BidiMap;
 import jext.util.DefaultHashMap;
@@ -19,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,7 +35,6 @@ import java.util.stream.Collectors;
 
 public class SciToolsProvider implements MetricsProvider {
 
-    static final String ROOT = "";
     static final String NAME = "scitools";
     static final String PROJECT_NAME = "scitools.name";
     static final String METRICS_HOME = "scitools.metrics.home";
@@ -59,8 +60,7 @@ public class SciToolsProvider implements MetricsProvider {
 
     private final Map<String, Metric> metricsById = new TreeMap<>();
     private final Map<String, Metric> metricsByName = new TreeMap<>();
-    private final Map<String, Set<String>> categories = new TreeMap<>();
-    private final Map<String, BidiMap<String, Long>> idMaps = new DefaultHashMap<>((key) -> new HashBidiMap<>());
+    private final Map<String, Set<String>> categories = new DefaultHashMap<>((key) -> new TreeSet<>());
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -102,13 +102,18 @@ public class SciToolsProvider implements MetricsProvider {
             Assert.notNull(properties.getProperty(METRICS_EDGES), METRICS_EDGES);
         }
         {
-            categories.put("", new HashSet<>());
+            categories.put(ALL_METRICS, new HashSet<>());
         }
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
+
+    @Override
+    public String getId() {
+        return NAME;
+    }
 
     @Override
     public String getName() {
@@ -160,6 +165,11 @@ public class SciToolsProvider implements MetricsProvider {
         Metric metric = new SciToolsMetric(this, nameOrId, nameOrId, "", "");
         addMetric(metric);
         return metric;
+    }
+
+    @Override
+    public List<ObjectType> getSupportedTypes() {
+        return Arrays.asList(ObjectType.PROJECT, ObjectType.SOURCE, ObjectType.TYPE, ObjectType.METHOD);
     }
 
     // ----------------------------------------------------------------------
@@ -233,7 +243,7 @@ public class SciToolsProvider implements MetricsProvider {
                 String category = XPathUtils.getValue(cat, "@name");
                 List<String> metrics = StringUtils.split(cat.getTextContent(), ",");
 
-                addCategory(category, metrics);
+                categories.get(category).addAll(metrics);
             });
         }
         catch(IOException | SAXException | ParserConfigurationException e) {
@@ -254,13 +264,11 @@ public class SciToolsProvider implements MetricsProvider {
     void addMetric(Metric metric) {
         metricsById.put(metric.getId(), metric);
         metricsByName.put(metric.getName(), metric);
-        categories.get(ROOT).add(metric.getId());
+        categories.get(ALL_METRICS).add(metric.getId());
+        categories.get(metric.getType()).add(metric.getId());
     }
 
-    void addCategory(String name, Collection<String> metrics) {
-        if (!ROOT.equals(name))
-            categories.put(name, new TreeSet<>(metrics));
-    }
+
 
     // ----------------------------------------------------------------------
     // End

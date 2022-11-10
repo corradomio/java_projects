@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>ae.ebtic.spl</groupId>
+        <artifactId>splproject3.3</artifactId>
+        <version>3.3-DEV</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>jext-springframework</artifactId>
+
+    <dependencies>
+        <!--
+            Spring framework
+          -->
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.hateoas/spring-hateoas -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.hateoas</groupId>-->
+<!--            <artifactId>spring-hateoas</artifactId>-->
+<!--            <version>1.2.1</version>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ae.ebtic.spl</groupId>
+            <artifactId>jext-cache</artifactId>
+            <version>3.3-DEV</version>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

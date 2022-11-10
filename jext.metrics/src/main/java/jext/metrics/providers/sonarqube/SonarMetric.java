@@ -58,6 +58,11 @@ public class SonarMetric implements Metric {
     }
 
     @Override
+    public String getType() {
+        return MapUtils.get(data, "type");
+    }
+
+    @Override
     public String getDescription() {
         return MapUtils.get(data, "description");
     }

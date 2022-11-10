@@ -3,9 +3,10 @@ package jext.metrics;
 public enum ObjectType {
     UNKNOWN,
     PROJECT,
-    MODULE,
-    FILE,
-    DIRECTORY,
+    // FILE,
+    // DIRECTORY,
+    MODULE, // alias for DIRECTORY
+    SOURCE, // alias for FILE
     TYPE,
     METHOD,
     FIELD,

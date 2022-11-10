@@ -73,7 +73,8 @@ public class XMLConfiguration implements HierarchicalConfiguration {
     public void load() {
         try {
             if (configurationFile.exists()) {
-                doc = XPathUtils.parse(configurationFile);
+                Document tdoc = XPathUtils.parse(configurationFile);
+                doc = tdoc;
                 root = doc.getDocumentElement();
             } else {
                 doc = XPathUtils.parse("<configuration/>");
