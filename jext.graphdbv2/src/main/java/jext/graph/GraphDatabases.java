@@ -38,7 +38,7 @@ public class GraphDatabases {
         }
     }
 
-    protected GraphDatabases factory = new GraphDatabases();
+    // protected GraphDatabases factory = new GraphDatabases();
 
     // ----------------------------------------------------------------------
     // Factory Methods

@@ -3,6 +3,8 @@ package jext.graph;
 import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
 
+import java.util.Optional;
+
 public interface GraphDatabase {
 
     /**
@@ -34,10 +36,18 @@ public interface GraphDatabase {
      */
     void destroy();
 
+    /**
+     * Set the registered named queries
+     * @param namedQueries named queries registry
+     */
     GraphDatabase setNamedQueries(NamedQueries namedQueries);
-    NamedQueries getNamedQueries();
+    Optional<NamedQueries> getNamedQueries();
 
+    /**
+     * Set the list of mandatory indices
+     * @param nindices list of mandatory indices
+     */
     GraphDatabase setNamedIndices(NamedIndices nindices);
-    NamedIndices getNamedIndices();
+    Optional<NamedIndices> getNamedIndices();
 
 }

@@ -15,7 +15,7 @@
     </properties>
 
     <modules>
-        <module>../jext.graphdb</module>
+        <module>../jext.graphdbv2</module>
         <module>../jext.commons</module>
         <module>../jext.collections</module>
         <module>../jext.cache</module>
@@ -33,7 +33,7 @@
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.graphdb</artifactId>
+            <artifactId>jext.graphdbv2</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

@@ -5,7 +5,6 @@ import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
 import jext.graph.Limit;
 import jext.graph.Query;
-import jext.util.SetUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,23 +19,22 @@ public class Neo4JAdjacentQuery implements Query {
 
     private final Neo4JOnlineSession session;
 
-    private Limit limit;
-    private String alias;
-    private boolean distinct;
+    // private Limit limit;
+    // private String alias;
+    // private boolean distinct;
 
     private final Collection<String> fromIds;
     private final String edgeType;
     private final Direction direction;
     private final String nodeType;
-    private final Map<String,Object> nodeProps;
-    private final Map<String,Object> edgeProps;
+    private final Map<String, Object> nodeProps;
+    private final Map<String, Object> edgeProps;
 
-    public Neo4JAdjacentQuery(
-        GraphSession session,
-        Collection<String> fromIds, String edgeType, Direction direction,
-        String nodeType, Map<String,Object> nodeProps,
-        Map<String,Object> edgeProps)
-    {
+    public Neo4JAdjacentQuery(GraphSession session,
+                              Collection<String> fromIds,
+                              String edgeType, Direction direction,
+                              String nodeType, Map<String, Object> nodeProps,
+                              Map<String, Object> edgeProps) {
         this.session = (Neo4JOnlineSession) session;
 
         this.fromIds = fromIds;
@@ -48,61 +46,32 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public Query limit(Limit limit) {
-        this.limit = limit;
+    public long update(Map<String, Object> values) {
+        return execute();
+    }
+
+    @Override
+    public long execute() {
+        return 0;
+    }
+
+    @Override
+    public Query limit(long count) {
+        // this.limit = new Limit(count);
         return this;
     }
 
     @Override
-    public Query limit(int count) {
-        this.limit = new Limit(count);
+    public Query limit(long start, long count) {
+        // this.limit = new Limit(count);
         return this;
     }
 
     @Override
     public Query distinct() {
-        distinct = true;
+        // distinct = true;
         return this;
     }
-
-    // -- with alias
-
-    @Override
-    public long count(String alias) {
-        return count();
-    }
-
-    @Override
-    public boolean exists(String alias) {
-        return exists();
-    }
-
-    @Override
-    public long delete(String alias) {
-        return delete();
-    }
-
-    @Override
-    public String id(String alias) {
-        return id();
-    }
-
-    @Override
-    public Map<String,Object> values(String alias) {
-        return values();
-    }
-
-    @Override
-    public GraphIterator<String> ids(String alias) {
-        return ids();
-    }
-
-    @Override
-    public GraphIterator<Map<String,Object>> allValues(String alias) {
-        return allValues();
-    }
-
-    // -- without alias
 
     @Override
     public long count() {
@@ -125,7 +94,7 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public Map<String,Object> values() {
+    public Map<String, Object> values() {
         return scanAdjacentNodes().values();
     }
 
@@ -135,18 +104,13 @@ public class Neo4JAdjacentQuery implements Query {
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> allValues() {
+    public GraphIterator<Map<String, Object>> allValues() {
         return scanAdjacentNodes().allValues();
     }
 
     @Override
-    public GraphIterator<Map<String,Object>> result() {
-        return allValues(alias);
-    }
-
-    @Override
-    public GraphIterator<Map<String,Object>> result(String alias) {
-        return allValues(alias);
+    public GraphIterator<Map<String, Object>> result() {
+        return allValues();
     }
 
     private Query scanAdjacentNodes() {
@@ -155,17 +119,22 @@ public class Neo4JAdjacentQuery implements Query {
         // initial list of nodes to visit
         Queue<String> toVisit = new LinkedList<>(this.fromIds);
 
-        while(!toVisit.isEmpty()) {
+        while (!toVisit.isEmpty()) {
             Set<String> adjIds = session.queryAdjacentNodesStep(toVisit, edgeType, direction, edgeProps)
                 .distinct().ids().toSet();
 
             visited.addAll(toVisit);
+            toVisit.clear();
 
             // visit only nodes not already visited
-            toVisit.clear();
-            toVisit.addAll(SetUtils.difference(adjIds, visited));
+            adjIds.removeAll(visited);
+            toVisit.addAll(adjIds);
         }
 
+        // remove starting nodes
+        visited.removeAll(fromIds);
+
+        // select only the nodes with the specified properties
         return session.selectNodes(visited, nodeType, nodeProps);
     }
 

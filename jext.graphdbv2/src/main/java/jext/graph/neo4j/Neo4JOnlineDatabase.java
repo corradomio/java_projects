@@ -9,6 +9,7 @@ import jext.graph.named.NamedQueries;
 import jext.logging.Logger;
 import jext.net.URL;
 import jext.util.MapUtils;
+import jext.util.Parameters;
 import jext.util.PropertiesUtils;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
@@ -16,6 +17,7 @@ import org.neo4j.driver.Driver;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -85,7 +87,7 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
 
         try(GraphSession session = this.connect()) {
             String s = "CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition";
-            Map<String,Object> result = session.query(s, Collections.emptyMap()).result().next();
+            Map<String, Object> result = session.query(s, Collections.emptyMap()).result().next();
             this.version = new GraphVersion(result.get("version").toString());
         }
 
@@ -151,11 +153,11 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     }
 
     @Override
-    public NamedQueries getNamedQueries() {
-        return namedQueries;
+    public Optional<NamedQueries> getNamedQueries() {
+        return Optional.ofNullable(namedQueries);
     }
 
-    String getQuery(String qname) {
+    public String getQuery(String qname) {
         return namedQueries.getQuery(qname, getVersion().getVersion());
     }
 
@@ -164,8 +166,8 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
     // ----------------------------------------------------------------------
 
     @Override
-    public NamedIndices getNamedIndices() {
-        return namedIndices;
+    public Optional<NamedIndices> getNamedIndices() {
+        return Optional.ofNullable(namedIndices);
     }
 
     @Override
@@ -202,7 +204,7 @@ public class Neo4JOnlineDatabase implements GraphDatabase {
                 continue;
 
             try(GraphSession session = connect()) {
-                session.execute(nindex.getBody(), MapUtils.asMap(NAME, nindex.getName()));
+                session.execute(nindex.getBody(), Parameters.params(NAME, nindex.getName()));
             }
         }
 
