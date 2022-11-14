@@ -44,20 +44,22 @@ public class SonarObject implements MetricsObject {
             return ObjectType.UNKNOWN;
     }
 
+    public static String toQualifier(ObjectType type) {
+        if (type == ObjectType.ALL)
+            return null;
+        if (type == ObjectType.PROJECT)
+            return QUAL_TRK;
+        if (type == ObjectType.SOURCE)
+            return QUAL_FIL;
+        if (type == ObjectType.MODULE)
+            return QUAL_DIR;
+        else
+            throw new RuntimeException(String.format("Unsupported type %s", type));
+    }
+
     // -----------------------------------------------------------------------
     // Conversions
     // -----------------------------------------------------------------------
-
-    // public static String fromType(ObjectType type) {
-    //     if(type == ObjectType.FILE)
-    //         return QUAL_FIL;
-    //     if (type == ObjectType.DIRECTORY)
-    //         return QUAL_DIR;
-    //     if (type == ObjectType.PROJECT)
-    //         return QUAL_TRK;
-    //     else
-    //         throw new RuntimeException(String.format("Unsupported type %s", type));
-    // }
 
     // ----------------------------------------------------------------------
     // Private fields
@@ -178,7 +180,7 @@ public class SonarObject implements MetricsObject {
         }
 
         MetricsClient metricsClient = client.metricsClient();
-        metricsClient.list(getId(), mkeys, false, measure -> {
+        metricsClient.list(getId(), null, mkeys, false, measure -> {
             MetricValue mvalue = SonarMetricValue.of(this,mmap.get(measure.getMetricKey()), measure);
 
             callback.accept(mvalue);

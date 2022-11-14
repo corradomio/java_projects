@@ -1,6 +1,7 @@
 package jext.metrics;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Set;
 
 public interface MetricsProject extends MetricsObject {
@@ -14,6 +15,12 @@ public interface MetricsProject extends MetricsObject {
      * @return list of all metrics used in the project
      */
     Set<Metric> getMetrics();
+
+    /**
+     * Retrieve the object types supported
+     * @return llist of object types supported
+     */
+    Set<ObjectType> getObjectTypes();
 
     /**
      * Retrieve the list of all metrics used in the specified object type

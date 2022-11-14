@@ -1,5 +1,6 @@
 package org.hls.check;
 
+import jext.metrics.Metric;
 import jext.metrics.MetricsObject;
 import jext.metrics.MetricsObjects;
 import jext.metrics.MetricsProject;
@@ -10,6 +11,7 @@ import jext.metrics.providers.scitools.SciToolsObjects;
 import jext.util.PropertiesUtils;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class CheckSciToolsObjects {
 
@@ -32,12 +34,19 @@ public class CheckSciToolsObjects {
                 ));
 
         MetricsProject project = provider.getProject();
-        MetricsObjects mobjects = project.getMetricsObjects(ObjectType.TYPE);
-        Optional<MetricsObject> mo = mobjects.findObject(SciToolsObjects.ID, "525296");
 
-        mo.ifPresent(o -> o.getMetricValues().forEach(mv -> {
-            System.out.printf("%s: %d\n", mv.getMetric().getId(), mv.getIntValue());
-        }));
+        for(ObjectType ot : project.getObjectTypes()) {
+            MetricsObjects mobjects = project.getMetricsObjects(ot);
+            Set<Metric> metrics = project.getMetrics(ot);
+            System.out.printf(">> %s: %d, %d\n",ot, mobjects.size(), metrics.size());
+        }
+
+        // MetricsObjects mobjects = project.getMetricsObjects(ObjectType.TYPE);
+        // Optional<MetricsObject> mo = mobjects.findObject(SciToolsObjects.ID, "525296");
+        //
+        // mo.ifPresent(o -> o.getMetricValues().forEach(mv -> {
+        //     System.out.printf("%s: %d\n", mv.getMetric().getId(), mv.getIntValue());
+        // }));
 
     }
 }

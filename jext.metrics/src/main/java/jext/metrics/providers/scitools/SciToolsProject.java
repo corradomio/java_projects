@@ -30,6 +30,13 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     private static final Logger logger = Logger.getLogger(SciToolsProject.class);
 
+    private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
+        add(ObjectType.SOURCE);
+        add(ObjectType.TYPE);
+        add(ObjectType.METHOD);
+        add(ObjectType.PROJECT);
+    }};
+
     private final Map<String, SciToolsObject> objects = new HashMap<>();
     private final IdMaps idmaps = new IdMaps();
 
@@ -73,9 +80,13 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     @Override
     public MetricsObjects getMetricsObjects(ObjectType type) {
-        Assert.verify(validateType(type), String.format("%s is not available as type to search objects", type));
-
         MetricsObjects metricsObjects = new SciToolsObjects(type, idmaps);
+
+        if (!validateType(type)) {
+            Assert.check(false, String.format("%s is not available as type to search objects", type));
+            return metricsObjects;
+        }
+
         Queue<MetricsObject> queue = new LinkedList<>();
         queue.add(this);
         while(!queue.isEmpty()) {
@@ -87,12 +98,6 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         return metricsObjects;
     }
 
-    private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
-        add(ObjectType.SOURCE);
-        add(ObjectType.TYPE);
-        add(ObjectType.METHOD);
-    }};
-
     private static boolean validateType(ObjectType type) {
         return SUPPORTED_TYPES.contains(type);
     }
@@ -100,6 +105,11 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     // ----------------------------------------------------------------------
     // Metrics/MetricsValues
     // ----------------------------------------------------------------------
+
+    @Override
+    public Set<ObjectType> getObjectTypes() {
+        return SUPPORTED_TYPES;
+    }
 
     @Override
     public Set<Metric> getMetrics() {
@@ -243,9 +253,14 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
                     float value = Float.parseFloat(parts[4]);
 
                     SciToolsObject object = objects.get(id);
+                    // special handling for the object with id '0' (the project)
                     // some object are not useful
-                    if (object == null)
-                        continue;
+                    if (object == null) {
+                        if (!"0".equals(id))
+                            continue;
+
+                        object = new SciToolsObject(id, getName(), "project");
+                    }
 
                     SciToolsMetric metric = (SciToolsMetric) provider.getMetric(mname);
                     if (metric == null) {

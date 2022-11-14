@@ -34,12 +34,15 @@ public class DefaultMetricsClient implements MetricsClient {
     }
 
     @Override
-    public List<Measure> list(String id, Collection<String> metricKeys, boolean recursive) {
+    public List<Measure> list(String id,
+                              String qualifier,
+                              Collection<String> metricKeys,
+                              boolean recursive) {
         if (metricKeys.isEmpty())
             return Collections.emptyList();
 
         List<Measure> allMeasures = new ArrayList<>();
-        list(id, metricKeys, recursive, allMeasures::add);
+        list(id, qualifier, metricKeys, recursive, allMeasures::add);
         return allMeasures;
     }
 
@@ -62,9 +65,13 @@ public class DefaultMetricsClient implements MetricsClient {
     // }
 
     @Override
-    public void list(String id, Collection<String> metricKeys, boolean recursive, Consumer<Measure> callback) {
+    public void list(String id,
+                     String qualifier,
+                     Collection<String> metricKeys,
+                     boolean recursive,
+                     Consumer<Measure> callback) {
         if (metricKeys.size() <= 15) {
-            list15(id, metricKeys, recursive, callback);
+            list15(id, qualifier, metricKeys, recursive, callback);
             return;
         }
 
@@ -72,7 +79,7 @@ public class DefaultMetricsClient implements MetricsClient {
         int i,e,n = metricKeys.size();
         for(i=0; i<n; i+= 15) {
             e = Math.min(i+15, n);
-            list15(id, allKeys.subList(i, e), recursive, callback);
+            list15(id, qualifier, allKeys.subList(i, e), recursive, callback);
         }
     }
 
@@ -96,13 +103,21 @@ public class DefaultMetricsClient implements MetricsClient {
     }
      */
 
-    private void list15(String id, Collection<String> metricKeys, boolean recursive, Consumer<Measure> callback) {
+    private void list15(String id,
+                        String qualifier,
+                        Collection<String> metricKeys,
+                        boolean recursive,
+                        Consumer<Measure> callback) {
         String json;
         if (!recursive) {
-            json = requestFactory.get(COMPONENT_MEASURES, MapUtils.asMap(
+            Map<String, Object> params = MapUtils.asMap(
                     "component", id,
-                    "metricKeys", toMetricKeys(metricKeys))
-            );
+                    "metricKeys", toMetricKeys(metricKeys));
+
+            if (qualifier != null)
+                params.put("qualifier", qualifier);
+
+            json = requestFactory.get(COMPONENT_MEASURES, params);
             jsonToList(json).forEach(callback::accept);
         }
         else {
@@ -110,10 +125,15 @@ public class DefaultMetricsClient implements MetricsClient {
             int nPages = 1;
 
             for(int p=1; p <= nPages; p++) {
-                json = requestFactory.get(HERARCHICAL_MEASURES, MapUtils.asMap(
+                Map<String, Object> params = MapUtils.asMap(
                         "component", id,
                         "metricKeys", mkeys,
-                        "p", p));
+                        "p", p);
+
+                if (qualifier != null)
+                    params.put("qualifier", qualifier);
+
+                json = requestFactory.get(HERARCHICAL_MEASURES, params);
 
                 Map jsonRoot = (Map) JSONValue.parse(json);
 
@@ -150,13 +170,13 @@ public class DefaultMetricsClient implements MetricsClient {
     private List<Measure> jsonToList(String json) {
         Map jsonRoot = (Map) JSONValue.parse(json);
         Map cmap = (Map) jsonRoot.get("component");
-        return measures(cmap, false);
+        return measures(cmap, true);
     }
 
-    private List<Measure> toList(Map jsonRoot) {
-        Map cmap = (Map) jsonRoot.get("component");
-        return measures(cmap, false);
-    }
+    // private List<Measure> toList(Map jsonRoot) {
+    //     Map cmap = (Map) jsonRoot.get("component");
+    //     return measures(cmap, false);
+    // }
 
     private List<Measure> measures(Map cmap, boolean component) {
         List<Map> measures = (List<Map>) cmap.get("measures");

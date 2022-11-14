@@ -5,14 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.hls</groupId>
-    <artifactId>jext.jgrapht_spl</artifactId>
+    <artifactId>jext.jgrapht</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
+    <modules>
+        <!--<module>color-clustering</module>-->
+        <module>jgrapht-core</module>
+        <module>jgrapht-io</module>
+        <module>jgrapht-neo4j</module>
+        <module>jgrapht-clustering</module>
+    </modules>
+
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <jgrapht.version>1.4.0</jgrapht.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <jgrapht.version>1.5.1</jgrapht.version>
     </properties>
 
     <dependencies>
@@ -50,7 +58,29 @@
             <artifactId>jgrapht-io</artifactId>
             <version>${jgrapht.version}</version>
         </dependency>
-        
+
+        <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-guava -->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-guava</artifactId>
+            <version>${jgrapht.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-opt -->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-opt</artifactId>
+            <version>${jgrapht.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jgrapht/jgrapht-unimi-dsi -->
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-unimi-dsi</artifactId>
+            <version>${jgrapht.version}</version>
+        </dependency>
+
+
+
+
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>

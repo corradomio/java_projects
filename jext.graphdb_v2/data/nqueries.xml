@@ -1,0 +1,1094 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphdb>
+    <namedqueries>
+        <!--
+            There are TWO type of parameters:
+
+            1) ${name}:  is a TEXT parameters, resolved during the statement preparation
+            2) $name:    is a QUERY parameter, resolved by the database driver
+
+            Note: it is possible doesn't specify the RETURN part.
+                  Based on the method used, this part will be added automatically
+
+            Uses 'n' as the ALIAS for the node to return
+          -->
+        <query name="connectSourceToSource">
+            MATCH (s:source {refId:$refId})&lt;-[m1:memberOf]-(u:type {refId:$refId})
+            -[uses]->
+            (v:type {refId:$refId})-[m2:memberOf]-&gt;(t:source {refId:$refId})
+            WHERE id(s) &lt;&gt; id(t)
+            WITH DISTINCT s, t
+            CREATE (s)-[r:uses {type:"dependsOn",uses:"dependsOn"}]->(t)
+            RETURN r
+        </query>
+        <query name="connectSourceToLibrary">
+            MATCH (s:source {refId:$refId})&lt;-[m1:memberOf]-(u:type {refId:$refId})
+            -[uses]->
+            (v:type {refId:$refId})-[m2:memberOf]-&gt;(t:library {refId:$refId})
+            WITH DISTINCT s, t
+            CREATE (s)-[r:uses {type:"dependsOn",uses:"dependsOn"}]->(t)
+            RETURN r
+        </query>
+
+        <!--
+            There are TWO type of parameters:
+
+            1) ${name}:  is a TEXT parameters, resolved during the statement preparation
+            2) $name:    is a QUERY parameter, resolved by the database driver
+
+            Note: it is possible doesn't specify the RETURN part.
+                  Based on the method used, this part will be added automatically
+
+            Uses 'n' as the ALIAS for the node to return
+          -->
+        <query name="findTypeClosure">
+            MATCH (f:type {refId:$refId}) -[:uses*]-> (n:type {refId:$refId}
+        </query>
+        <query name="findConnectedComponents">
+            MATCH (n:component {refId:$refId, depth: $depth})
+            WITH n, size( (n) -[:uses]- () ) AS degree
+            WHERE degree > 0
+        </query>
+        <query name="findSingletonComponents">
+            MATCH (n:component {refId:$refId, depth: $depth})
+            WITH n, size( (n) -[:contains]-> () ) AS idegree,
+            size( (n) -[:uses]- () ) AS odegree
+            WHERE idegree = 1 AND odegree = 0
+        </query>
+        <query name="findOneInOneOutComponents">
+            MATCH (p:component {refId:$refId, depth: $depth})
+            -[:uses]->
+            (n:component {refId:$refId, depth: $depth})
+            WITH p,n, size( (p) -[:uses]-> ( ) ) AS podegree,
+            size( ( ) -[:uses]-> (n) ) AS nidegree,
+            size( (n) -[:uses]-> ( ) ) AS nodegree
+            WHERE podegree = 1 AND nidegree = 1 AND nodegree &lt;= 1
+            RETURN id(p) AS pid, id(n) AS nid
+        </query>
+        <query name="collapseCycleIntoOneComponent">
+            MATCH (c:component) WHERE id(c) IN $ids AS nodes
+            CALL apoc.refactor.mergeNodes( nodes, {properties:"discard", mergeRels:true} )
+            YIELD node
+            MATCH (n:component) WHERE id(n) = $id
+            RETURN id(n)
+        </query>
+        <query name="findComponentTypes">
+            MATCH (c:component {refId:$refId, depth:0})
+            -[:contains]->(n:type {refId:$refId})
+            WHERE n.role &lt;&gt; "UNKNOWN"
+        </query>
+        <query name="findTypesByComponentId">
+            MATCH (c:component {refId:$refId, depth:0})
+            -[:contains]->(n:type {refId:$refId})
+            WHERE n.role &lt;&gt; "UNKNOWN" AND id(c) = $componentId
+        </query>
+        <query name="findRecursiveComponentTypes">
+            MATCH (c:component {refId:$refId, depth:$depth})
+            -[:contains*${depth}]->(u:component {refId:$refId,depth:0})
+            -[:contains]->(n:type {refId:$refId})
+            WHERE n.role &lt;&gt; "UNKNOWN"
+        </query>
+        <query name="findRecursiveTypeFromComponentId">
+            MATCH (c:component {refId:$refId, depth:$depth})
+            -[:contains*${depth}]->(u:component {refId:$refId,depth:0})
+            -[:contains]->(n:type {refId:$refId})
+            WHERE n.role &lt;&gt; "UNKNOWN" AND id(c) = $componentId
+        </query>
+
+        <!--
+                delete the nodes with id in 'ids' list
+          -->
+        <query name="deleteComponents">
+            MATCH (c:component) WHERE id(c) IN $ids DETACH DELETE(c)
+        </query>
+
+        <!--
+                nodes without INPUT edges
+          -->
+        <query name="findTypesWithoutInEdge">
+            MATCH (n:type {refId:$refId}, type='type' )
+            WITH n, size( ()-[:uses]->(n) ) as idegree
+            WHERE idegree=0
+        </query>
+
+        <!--
+                nodes without OUTPUT edges
+                Note: ANY node type
+          -->
+        <query name="findTypesWithoutOutEdge">
+            MATCH (n:type {refId:$refId} )
+            WITH n, size((n)-[:uses]->()) as odegree
+            WHERE odegree=0
+        </query>
+
+        <!--
+                VALID types (with 'role'<>'UNKNOWN')
+          -->
+        <query name="findValidTypes">
+            MATCH (n:type {refId:$refId, type:'type'})
+        </query>
+
+        <!--
+                nodes WITH OUTPUT edges towards VALID nodes (with 'role'<>'UNKNOWN' or 'type'=="type")
+          -->
+        <query name="findTypesWithValidOutEdges">
+            MATCH (n:type {refId:$refId, type:'type'}) -[:uses]-> (t:type {refId:$refId, type:'type'})
+        </query>
+        <!--
+                VALID nodes (with 'role' <> 'UNKNOWN') WITH INPUT edges
+          -->
+        <query name="findValidTypesWithInEdges">
+            MATCH (t:type {refId:$refId, type:'type'}) -[:uses]-> (n:type {refId:$refId, type:'type'})
+        </query>
+        <!--
+                find the component with the highest degree
+          -->
+        <query name="findNodeWithHighestDegree">
+            MATCH (n) WHERE toString(id(n)) IN $ids
+            WITH n
+            MATCH (u)-[:uses]->(n)
+            WHERE NOT toString(id(u)) IN $ids
+            WITH n, count(*) AS degree
+            RETURN n.name AS name
+            ORDER BY degree DESC, n.name
+            LIMIT 1
+        </query>
+
+        <!--
+          -->
+        <query name="findComponentsLevelOne">
+            MATCH (c:feature {refId:$refId})
+            -[:contains]->(u:component {refId:$refId})
+            -[:contains]->(n:component {refId:$refId})
+            WHERE id(c) = $featureId
+        </query>
+
+        <!--<query name="findProjectGraph">-->
+        <!--MATCH (n {refId:$refId})-->
+        <!--WHERE n:type OR n:component OR n:feature-->
+        <!--</query>-->
+        <!--                <query name="findProjectGraph">-->
+        <!--                    MATCH (n {refId:$refId})-->
+        <!--                    WHERE (n:type AND (n.role="CLASS" OR n.role="INTERFACE" OR n.role="ENUM")) OR (n:component AND n.depth &lt;&gt; 0)-->
+        <!--                </query>-->
+        <query name="findProjectGraph">
+            OPTIONAL MATCH (n1:feature {refId:$refId, role:"FEATURE"})
+            WITH collect(distinct n1) as c1
+
+            OPTIONAL MATCH (n2:component {refId:$refId, depth: 1})
+            WITH collect(distinct n2) + c1 as c2
+
+            OPTIONAL MATCH (n3:type {refId:$refId})
+            WHERE (n3.role="CLASS" OR n3.role="INTERFACE" OR n3.role="ENUM")
+            WITH collect(distinct n3) + c2 as c3
+
+            UNWIND c3 as n
+        </query>
+        <query name="findComponentsByDepth">
+            MATCH (n:component {refId:$refId})
+            WHERE n.depth = $depth
+        </query>
+        <query name="findEdgesBetweenFeatureAndDepthOne">
+            MATCH (from:feature {refId:$refId})
+            -[n:contains*2]->(to:component {refId:$refId, depth: 1})
+            RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+        </query>
+        <query name="findEdgesBetweenDepthTwoAndOne">
+            MATCH (from:component {refId:$refId, depth: 2})
+            -[n:contains]->(to:component {refId:$refId, depth: 1})
+            RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+        </query>
+        <query name="findEdgesBetweenComponentsAndTypes">
+            MATCH (from:component {refId:$refId})
+            -[n:contains*2]->(to:type {refId:$refId})
+            WHERE id(from) in $id
+            RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+        </query>
+        <query name="findFeaturesWithIDs">
+            MATCH (n:feature {refId:$refId})
+            WHERE id(n) in $id
+        </query>
+        <query name="findComponentsWithIDs">
+            MATCH (n:component {refId:$refId})
+            WHERE id(n) in $id
+        </query>
+        <query name="findComponentsConnectedtoFeaturesWithIDs">
+            MATCH (m:feature {refId:$refId})
+            -[:contains*2]->(n:component {refId:$refId, depth:1})
+            WHERE id(m) in $id
+        </query>
+        <query name="findComponentsConnectedWithIDs">
+            MATCH (m:component {refId:$refId})
+            -[:contains]->(n:component {refId:$refId})
+            WHERE id(m) in $id
+        </query>
+        <query name="findTypesFromComponentsWithIDs">
+            MATCH (m:component {refId:$refId})
+            -[:contains*]->(n:type {refId:$refId})
+            WHERE id(m) in $id
+        </query>
+        <query name="findTypesFromFeaturesWithIDs">
+            MATCH (m:feature {refId:$refId})
+            -[:contains*]->(n:type {refId:$refId})
+            WHERE id(m) in $id
+        </query>
+        <query name="findEdgesBetweenFeatureAndDepthOneWithIDs">
+            MATCH (from:feature {refId:$refId})
+            -[n:contains*2]->(to:component {refId:$refId, depth: 1})
+            WHERE id(from) in $id
+            RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+        </query>
+        <query name="findEdgesBetweenDepthTwoAndOneWithIDs">
+            MATCH (from:component {refId:$refId, depth: 2})
+            -[n:contains]->(to:component {refId:$refId, depth: 1})
+            WHERE id(from) in $id
+            RETURN DISTINCT id(from) AS idfrom, id(to) AS idto
+        </query>
+        <query name="findFeaturesfromComponents">
+            MATCH (n:feature {refId:$refId})-[:contains*]->(m:component {refId:$refId})
+            WHERE id(m) in [x in $id | toInt(x)]
+        </query>
+        <query name="getTypeModules">
+            MATCH (n:type {refId:$refId})
+            OPTIONAL MATCH (n)-[]->(m:source)-[]->(o:module)
+            return distinct id(n) as id,o.name as name
+        </query>
+        <query name="getTypeModulesWithIDs">
+            MATCH (n:type {refId:$refId})
+            WHERE id(n) in $id
+            OPTIONAL MATCH (n)-[]->(m:source)-[]->(o:module)
+            return distinct id(n) as id,o.name as name
+        </query>
+        <query name="getNodeNeighbors">
+            MATCH (p1:type {refId:$refId}), (p2:type {refId:$refId})
+            WITH p1, p2
+            MATCH p = (p1)-[:uses]-(p2)
+            WITH p1, p2
+            ORDER BY id(p2)
+            WITH p1, COLLECT(id(p2)) as neighbors
+            Return id(p1) as id, p1.fullname as name, neighbors
+            Order by id(p1)
+        </query>
+        <!--                <query name="getNodeNeighborsType">-->
+        <!--                    MATCH (p1:type {refId:$refId, type: "type"}), (p2:type {refId:$refId, type: "type"})-->
+        <!--                    WITH p1, p2-->
+        <!--                    MATCH p = (p1)-[:uses]-(p2)-->
+        <!--                    WITH p1, p2-->
+        <!--                    ORDER BY id(p2)-->
+        <!--                    WITH p1, COLLECT(id(p2)) as neighbors-->
+        <!--                    Return id(p1) as id, p1.fullname as name, neighbors-->
+        <!--                    Order by id(p1)-->
+        <!--                </query>-->
+
+        <!--
+            params:
+                refId
+                revision
+          -->
+        <query name="getNodeNeighborsType">
+            MATCH (p1:type {refId:$refId, type: "type"})
+            WHERE p1.inRevision[$revision]
+            OPTIONAL MATCH p = (p1)-[r:uses]-(p2:type {refId:$refId, type: "type"})
+            WHERE r.inRevision[$revision]
+            WITH p1, p2
+            ORDER BY id(p2)
+            WITH p1, COLLECT(id(p2)) as neighbors
+            Return id(p1) as id, p1.fullname as name, neighbors
+            Order by id(p1)
+        </query>
+        <!--                <query name="getNodeFeatureCount">-->
+        <!--                    MATCH (m:feature {refId:$refId})-[:contains*]->(n:type {refId:$refId})-->
+        <!--                    With n, count(distinct m) as features-->
+        <!--                    return id(n) as id, n.fullname as name, features Order by id(n)-->
+        <!--                </query>-->
+        <!--                <query name="getNodeFeatureCount">-->
+        <!--                    MATCH (n:type {refId:$refId, type:"type"})-->
+        <!--                    WHERE n.inRevision[$revision]-->
+        <!--                    OPTIONAL MATCH (m:feature {refId:$refId})-[r:contains*4]->(n)-->
+        <!--                    WHERE reduce(present = true, link in r | present AND link.inRevision[$revision]) = true-->
+        <!--                    WITH n, COUNT(DISTINCT m) AS features-->
+        <!--                    RETURN id(n) AS id, n.fullname AS name, features-->
+        <!--                    ORDER BY id(n)-->
+        <!--                </query>-->
+        <query name = "getNodeFeatureCount">
+            MATCH (n:feature {refId:$refId}), (c:component {refId:$refId, depth:0})
+            WHERE n.inRevision[$revision] and c.typeId = n.typeId
+            MATCH (c)-[r:contains]->(m:type)
+            WHERE r.inRevision[$revision]
+            WITH m, COUNT(DISTINCT c) AS features
+            RETURN id(m) AS id, m.fullname AS name, features
+            ORDER BY id(m)
+        </query>
+        <query name="setCoreScores">
+            UNWIND $nodes as n
+            MATCH (m)
+            WHERE id(m) = toInt(n.id)
+            SET m.featureScore = n.featureScore, m.kCoreScore = n.kCoreScore
+        </query>
+
+        <query name="setCoreScoresRevision">
+            UNWIND $nodes as n
+            MATCH (m)
+            WHERE id(m) = toInt(n.id)
+            SET m.featureScore = apocx.coll.setOrExtend(m.featureScore,$revision,n.featureScore),
+            m.kCoreScore = apocx.coll.setOrExtend(m.kCoreScore,$revision,n.kCoreScore)
+        </query>
+
+        <!--
+            params:
+                refId
+                alpha
+                revision
+          -->
+        <query name="getCoreScores">
+            MATCH (n:type {refId:$refId})
+            RETURN id(n) AS id, n.fullname AS name, ((toFloat($alpha)*n.featureScore[$revision]) +
+            ((1.0-toFloat($alpha))*n.kCoreScore[$revision])) AS score
+            ORDER BY score DESC
+        </query>
+        <query name="getCoreScoresRevision">
+            MATCH(n:type {refId:$refId, type: 'type'})
+            WHERE n.inRevision[$revision]
+            RETURN id(n) AS id, n.fullname AS name, ((toFloat($alpha)*n.featureScore[$revision]) +
+            ((1.0-toFloat($alpha))*n.kCoreScore[$revision])) AS score
+            Order by score DESC
+        </query>
+        <!--
+            params:
+                refId
+                revision
+                threshold
+          -->
+        <query name="findTypesWithKCore">
+            MATCH (n:type {refId:$refId})
+            WHERE n.kCoreScore[$revision] > $threshold
+        </query>
+        <!--
+            params:
+                refId
+                revision
+          -->
+        <query name="getCoreScoresType">
+            MATCH (n:type {refId:$refId, type: "type"})
+            RETURN id(n) AS id, n.fullname AS name, ((toFloat($alpha)*n.featureScore[$revision]) +
+            ((1.0-toFloat($alpha))*n.kCoreScore[$revision])) AS score
+            ORDER BY score DESC
+        </query>
+
+        <query name="DeleteCoreScores">
+            MATCH (n:type {refId:$refId})
+            REMOVE n.featureScore, n.kCoreScore
+        </query>
+        <query name="DeleteComponentComplexity">
+            MATCH(n:component {refId:$refId})
+            REMOVE n.complexity
+        </query>
+        <query name="DeleteFeatureComplexity">
+            MATCH(n:feature {refId:$refId})
+            REMOVE n.complexity, n.fat
+        </query>
+        <query name="findIntegrationPoints">
+            With $id as ids
+            Match p=shortestPath((f2)-[r:contains*]->(t:type {refId:$refId, type:'type'}))
+            where id(f2) in [i in ids| toInt(i)]
+            WITH t, size(ids) as inputCnt, count(DISTINCT f2) as cnt,collect ([n in nodes(p) where "feature" in
+            labels(n) OR "type" in labels(n) or ("component" in labels(n) and n.depth = 1)| n]) as paths
+            where inputCnt = cnt
+            unwind paths as pat
+            return pat[0].name as Features, pat[1].name as Components, pat[2].name as Types
+        </query>
+        <query name="findIntegrationPointsWithLibraries">
+            With $id as ids
+            Match p=shortestPath((f2)-[r:contains*]->(t:type {refId:$refId, type:'type'}))
+            where id(f2) in [i in ids| toInt(i)]
+            WITH t, size(ids) as inputCnt, count(DISTINCT f2) as cnt,collect ([f2,t]) as paths
+            where inputCnt = cnt
+            unwind paths as pat
+            Optional MATCH (x)-[:uses]->(:type {refId:$refId,type:"reftype"})-[:memberOf]->(l:library
+            {refId:$refId})
+            where id(x) = id(last(pat))
+            with pat, collect(distinct l.name) as libs
+            unwind (CASE libs WHEN [] then [null] else libs end) as lib
+            return head(labels(head(pat))) as elementType, head(pat).name as Elements, last(pat).name as Types,
+            lib as Libraries
+        </query>
+        <query name="checkSetFeatureTypesCount">
+            MATCH (n:feature {refId:$refId})
+            where (NOT exists(n.classes) OR NOT exists(n.complexity))
+        </query>
+
+        <!--
+            params:
+                refId
+                revision
+          -->
+        <query name="setFeatureTypesCount">
+            MATCH (f:feature {refId:$refId})-[:contains*4]->(t:type {refId:$refId,type:'type'})
+            WITH f, collect(distinct t) as types, count(distinct t) AS cnt
+            WITH f, cnt, reduce(total = 0, type IN types | total + type.kCoreScore[$revision]) AS complexity
+            SET f.classes = cnt, f.complexity = apocx.coll.setOrExtend(f.complexity,$revision,complexity),
+        </query>
+        <query name="setFeatureTypesCountByID">
+            Match(f:feature {refId:$refId})-[r:contains*4]->(t:type {refId:$refId,type:'type'})
+            where id(f) in [x in $ids| toInt(x)] AND t.inRevision[$revision] = true
+            AND reduce(present = true, link in r | present AND link.inRevision[$revision]) = true
+            with f, count(distinct t) as types
+            set f.classes = apocx.coll.setOrExtend(f.classes,$revision,types)
+        </query>
+        <query name="setFeatureComplexityByID">
+            Match(f:feature {refId:$refId})-[r:contains*4]->(t:type {refId:$refId,type:'type'})
+            where id(f) in $ids AND t.inRevision[$revision] = true
+            AND reduce(present = true, link in r | present AND link.inRevision[$revision]) = true
+            with f, collect(distinct t) as types
+            with f, reduce(total = 0, type IN types | total + type.kCoreScore[$revision]) as complexity
+            set f.complexity = apocx.coll.setOrExtend(f.complexity,$revision,complexity)
+        </query>
+        <!--propagate complexity from component depth 0-->
+        <query name="setFeatureComplexity">
+            MATCH (f:feature {refId:$refId}),(c:component {refId:$refId, depth: 0})
+            WHERE f.inRevision[$revision] AND c.typeId = f.typeId
+            WITH f, collect(DISTINCT c) as comps
+            SET f.complexity = apocx.coll.setOrExtend(f.complexity,$revision,comps[0].complexity[$revision])
+        </query>
+        <!--
+            params:
+                refId
+                revision
+          -->
+        <query name="getFeatureTypesCount">
+            MATCH (n:feature {refId:$refId, role:"FEATURE"})
+            WHERE n.inRevision[$revision]
+            RETURN id(n) AS id, n.fullname AS fullName, n.name AS name, n.countTypes[$revision] AS classes,
+            n.complexity[$revision] AS complexity
+            ORDER BY classes DESC, complexity DESC
+        </query>
+        <!--                <query name="getFeatureFattiness">-->
+        <!--                    Match(n:feature {refId:$refId})-->
+        <!--                    where exists(n.complexity)-->
+        <!--                    with max(n.complexity) as maxC-->
+        <!--                    Match(n:feature {refId:$refId})-->
+        <!--                    where exists(n.complexity)-->
+        <!--                    return id(n) as id, n.complexity as complexity, n.name as name, n.fullname as fullname, (n.complexity >= 0.7*maxC) as fat-->
+        <!--                    order by complexity desc-->
+        <!--                </query>-->
+        <query name="getFeatureFattiness">
+            MATCH(n:feature {refId:$refId})
+            WHERE n.inRevision[$revision] = true AND exists(n.complexity)
+            WITH max(n.complexity[$revision]) AS maxC
+            MATCH(n:feature {refId:$refId})
+            WHERE n.inRevision[$revision] = true AND exists(n.complexity)
+            RETURN id(n) AS id, n.complexity[$revision] AS complexity, n.name AS name, n.fullname AS fullname, (n.complexity[$revision] >= 0.7*maxC) AS fat
+            ORDER BY complexity DESC
+        </query>
+        <query name="setFeatureFattiness">
+            MATCH(n:feature {refId:$refId})
+            WHERE n.inRevision[$revision] = true AND exists(n.complexity)
+            WITH max(n.complexity[$revision]) AS maxC
+            MATCH(n:feature {refId:$refId})
+            WHERE n.inRevision[$revision] = true AND exists(n.complexity)
+            SET n.fat = apocx.coll.setOrExtend(n.fat,$revision,n.complexity[$revision] >= $threshold*maxC)
+        </query>
+        <query name="checkSetComponentTypesCount">
+            MATCH (n:component {refId:$refId})
+            where NOT exists(n.classes)
+        </query>
+        <query name="setComponentTypesCount">
+            MATCH(c:component {refId:$refId})-[:contains*]->(t:type {refId:$refId,type:'type'})
+            WITH c, count(distinct t) as types
+            SET c.classes = apocx.coll.setOrExtend(c.classes,$revision,types)
+        </query>
+        <query name="setComponentTypesCountByID">
+            MATCH(c:component {refId:$refId})-[r:contains*]->(t:type {refId:$refId,type:'type'})
+            WHERE id(c) in [x in $ids| toInt(x)] AND t.inRevision[$revision] = true
+            AND reduce(present = true, link in r | present AND link.inRevision[$revision]) = true
+            WITH c, count(distinct t) AS types
+            SET c.classes = apocx.coll.setOrExtend(c.classes,$revision,types)
+        </query>
+        <query name="setComponentComplexityByID">
+            MATCH(c:component {refId:$refId})-[r:contains*]->(t:type {refId:$refId,type:'type'})
+            WHERE id(c) in $ids AND t.inRevision[$revision] = true
+            AND reduce(present = true, link in r | present AND link.inRevision[$revision]) = true
+            WITH c, collect(distinct t) as types
+            WITH c, reduce(total = 0, type IN types | total + type.kCoreScore[$revision]) as complexity
+            SET c.complexity = apocx.coll.setOrExtend(c.complexity,$revision,complexity)
+        </query>
+        <!-- propagate complexity for components depth 1 and 2 from components depth 0 -->
+        <query name="setComponentComplexity">
+            MATCH(c:component {refId:$refId}),(c2:component {refId:$refId, depth:0})
+            WHERE c.inRevision[$revision] AND c.depth &lt;&gt; 0 AND c.typeId = c2.typeId
+            WITH c,collect(DISTINCT c2.complexity[$revision]) AS comps
+            SET c.complexity = apocx.coll.setOrExtend(c.complexity,$revision,comps[0])
+        </query>
+        <query name="setComponentDepth0Complexity">
+            MATCH(c:component {refId:$refId,depth:0})-[r:contains]->(t:type {refId:$refId,type:'type'})
+            WHERE c.inRevision[$revision] AND r.inRevision[$revision]
+            WITH c, collect(distinct t) as types
+            WITH c, reduce(total = 0, type IN types | total + type.kCoreScore[$revision]) as complexity
+            SET c.complexity = apocx.coll.setOrExtend(c.complexity,$revision,complexity)
+        </query>
+        <!--
+            params:
+                refId
+                revision
+                depth
+          -->
+        <query name="getComponentTypesCount">
+            MATCH (c:component {refId:$refId})
+            WHERE ($all OR c.depth = $depth) AND c.inRevision[$revision]
+            RETURN id(c) AS id, c.fullname AS fullName, c.name AS name, c.countTypes[$revision] AS classes,
+            c.complexity[$revision] AS complexity, c.depth AS depth
+            ORDER BY classes DESC
+        </query>
+        <!--
+            params:
+                refId
+                id
+                revision
+          -->
+        <query name="getFeatureTypes">
+            MATCH (f:feature {refId:$refId})-[:contains*4]->(t:type {refId:$refId,type:'type'})
+            WHERE id(f) = $id
+            RETURN distinct id(t) AS id, t.fullname AS fullName, t.name AS name, t.kCoreScore[$revision] AS
+            kCore
+            ORDER BY id
+        </query>
+        <query name="getTypeFeatures">
+            MATCH (f:feature {refId:$refId})-[:contains*4]->(t:type {refId:$refId,type:'type'})
+            WHERE id(t) = $id
+            RETURN distinct id(f) AS id, f.fullname AS fullName, f.name AS name, f.classes as classes
+            ORDER BY id
+        </query>
+        <query name="getModulesWTypes">
+            MATCH (s:source {refId:$refId})-[:memberOf]->(n:module {refId:$refId})
+            return distinct id(n) as id, n.name as name, n.fullname as fullName
+        </query>
+        <query name="findModulesIP">
+            MATCH (t1:type {refId:$refId, type:"type"})-[:memberOf*2]->(n1:module), (t2:type {refId:$refId,
+            type:"type"})-[:memberOf*2]->(n2:module)
+            where id(n1) = toInt($id1) and id(n2) = toInt($id2)
+            with t1,t2, n1.name as n1n, n2.name as n2n
+            MATCH p = (t1)-[:uses]-(t2)
+            WITH t1, t2, n1n, n2n
+            ORDER BY id(t2)
+            WITH t1, COLLECT(t2.name) as neighbors, n1n, n2n
+            unwind neighbors as nbr
+            return n1n as Modules1, t1.name as Types1,nbr as Types2, n2n as Modules2
+        </query>
+        <query name="getModelsSize">
+            MATCH (t:type {refId:$refId})
+            where t.type &lt;&gt; "reftype"
+            with count(t) as types
+            OPTIONAL MATCH (c:component {refId:$refId})
+            with types, count(c) as components
+            OPTIONAL MATCH (f:feature {refId:$refId})
+            with types, components, count(f) as features
+            return types, components, features
+        </query>
+        <query name="mergeTokens">
+            MATCH (n:token {refId:$refId})
+            WITH n.name as name, collect(n) as nodes
+            CALL apoc.refactor.mergeNodes(nodes) yield node
+            return count(*)
+        </query>
+        <query name="deleteDuplicateTokenRelationships">
+            MATCH (n:token {refId:$refId})-[relation:follows]->(t:token {refId:$refId})
+            WITH n, t, tail(collect(relation)) AS surplusRelations
+            UNWIND surplusRelations AS surplusRelation
+            DELETE surplusRelation
+            return count(n)
+        </query>
+        <query name="deleteTokensWithoutRelationships">
+            MATCH (n:token {refId:$refId})
+            WHERE NOT (n)-[]-()
+            DELETE n
+            return count(n)
+        </query>
+        <!--                <query name="clusterFeaturesByDesignPatterns">-->
+        <!--                    Call algo.louvain.stream('MATCH (n:feature {refId:$refId})-[r:contains*4]->(m:type {refId:$refId})-->
+        <!--                    WHERE n.name = m.name AND n.inRevision[$revision]-->
+        <!--                    AND reduce(present = true, link in r | present AND link.inRevision[$revision]) = true-->
+        <!--                    RETURN distinct id(m) as id-->
+        <!--                    UNION MATCH (t:token {refId:$refId}) where t.name in $keywords return distinct id(t) as id',-->
+        <!--                    'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId})-->
+        <!--                    WHERE n1.inRevision[$revision]-->
+        <!--                    RETURN id(n1) as source, id(n2) as target-->
+        <!--                    UNION MATCH (n1:type {refId:$refId})-[r:uses]->(n2:type {refId:$refId})-->
+        <!--                    WHERE n1.inRevision[$revision] AND r.inRevision[$revision]-->
+        <!--                    RETURN id(n1) as source, id(n2) as target',-->
+        <!--                    {graph:"cypher",params:{refId:$refId,keywords:$keywords,revision:$revision}})-->
+        <!--                    YIELD nodeId, community-->
+        <!--                    With community, collect(distinct nodeId) as ids-->
+        <!--                    return community, ids-->
+        <!--                    Order by community-->
+        <!--                </query>-->
+        <query name="clusterFeaturesByDesignPatterns">
+            Call algo.louvain.stream('MATCH (n:feature {refId:$refId, role:"FEATURE"})
+            WHERE n.inRevision[$revision] AND NOT (n.name STARTS WITH "$")
+            RETURN distinct toInt(n.typeId) as id
+            UNION MATCH (t:token {refId:$refId}) where t.name in $keywords return distinct id(t) as id',
+            'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId})
+            WHERE n1.inRevision[$revision]
+            RETURN id(n1) as source, id(n2) as target',
+            {graph:"cypher",params:{refId:$refId,keywords:$keywords,revision:$revision}})
+            YIELD nodeId, community
+            With community, collect(distinct nodeId) as ids
+            return community, ids
+            Order by community
+        </query>
+        <query name="clusterTypesByDesignPatterns">
+            Call algo.louvain.stream('MATCH (m:type {refId:$refId,type:"type"})
+            WHERE m.role&lt;&gt;"ANNOTATION" AND m.inRevision[$revision]
+            RETURN DISTINCT id(m) AS id
+            UNION
+            MATCH (m:type {refId:$refId})-[:context]->(t:token {refId:$refId})
+            WHERE m.role&lt;&gt;"ANNOTATION" AND m.inRevision[$revision] AND t.name IN $keywords
+            RETURN DISTINCT id(t) AS id',
+            'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId})
+            WHERE n1.inRevision[$revision]
+            RETURN id(n1) as source, id(n2) as target',
+            {graph:"cypher",params:{refId:$refId,keywords:$keywords,revision:$revision}})
+            YIELD nodeId, community
+            With community, collect(distinct nodeId) as ids
+            return community, ids
+            Order by community
+        </query>
+        <query name="clusterNodesByTokensInitial">
+            Call algo.louvain.stream('
+            MATCH (m:type {refId:$refId})
+            WHERE id(m) IN [x IN $ids| toInt(x)]
+            RETURN DISTINCT id(m) AS id
+            UNION
+            MATCH (m:type {refId:$refId})-[:context]->(t:token {refId:$refId})
+            WHERE id(m) IN [x IN $ids| toInt(x)] AND NOT t.name IN $keywords
+            RETURN DISTINCT id(t) AS id',
+            'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId}) where id(n1) in [x in $ids|
+            toInt(x)] RETURN id(n1) as source, id(n2) as target',
+            {graph:"cypher",params:{refId:$refId,ids:$id,keywords:$keywords}})
+            YIELD nodeId, community
+            With community, collect(distinct nodeId) as ids
+            return community, ids
+            Order by community
+        </query>
+        <query name="clusterNodesByTokens">
+            Call algo.louvain.stream('MATCH (m {refId:$refId}) where id(m) in [x in $ids| toInt(x)] return
+            distinct id(m) as id',
+            'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId}) where id(n1) in [x in $ids|
+            toInt(x)] RETURN id(n1) as source, id(n2) as target',
+            {graph:"cypher",params:{refId:$refId,ids:$id}})
+            YIELD nodeId, community
+            With community, collect(distinct nodeId) as ids
+            return community, ids
+            Order by community
+        </query>
+        <!--                <query name="clusterNodesByTokensInitialWithPercentage">-->
+        <!--                    Call algo.louvain.stream('MATCH (m:type {refId:$refId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id UNION MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId}) where id(m) in [x in $ids| toInt(x)] WITH n, COUNT(DISTINCT id(m)) as count with max(count) as Max MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId}) where id(m) in [x in $ids| toInt(x)] With n, Count(DISTINCT id(m)) as count, Max where (count &lt; $percentage*Max) AND (NOT n.name IN $keywords) return id(n) as id',-->
+        <!--                    'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',-->
+        <!--                    {graph:"cypher",params:{refId:$refId,ids:$id,keywords:$keywords,percentage:$percentage}})-->
+        <!--                    YIELD nodeId, community-->
+        <!--                    With community, collect(distinct nodeId) as ids-->
+        <!--                    return community, ids-->
+        <!--                    Order by community-->
+        <!--                </query>-->
+        <!--                <query name="clusterNodesByTokensInitialWithPercentageReverse">-->
+        <!--                    Call algo.louvain.stream('MATCH (m:type {refId:$refId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id UNION MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId}) where id(m) in [x in $ids| toInt(x)] WITH n, COUNT(DISTINCT id(m)) as count with max(count) as Max MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId}) where id(m) in [x in $ids| toInt(x)] With n, Count(DISTINCT id(m)) as count, Max where (count >= $percentage*Max) AND (NOT n.name IN $keywords) return id(n) as id',-->
+        <!--                    'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',-->
+        <!--                    {graph:"cypher",params:{refId:$refId,ids:$id,keywords:$keywords,percentage:$percentage}})-->
+        <!--                    YIELD nodeId, community-->
+        <!--                    With community, collect(distinct nodeId) as ids-->
+        <!--                    return community, ids-->
+        <!--                    Order by community-->
+        <!--                </query>-->
+        <!--                <query name="clusterNodesByTokensWithPercentage">-->
+        <!--                    Call algo.louvain.stream('MATCH (m:type {refId:$refId}) where id(m) in [x in $ids| toInt(x)] return distinct id(m) as id UNION MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId}) where id(m) in [x in $ids| toInt(x)] AND id(n) in [x in $ids| toInt(x)] WITH n, COUNT(DISTINCT id(m)) as count with max(count) as Max MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId}) where id(m) in [x in $ids| toInt(x)] With n, Count(DISTINCT id(m)) as count, Max where (count &lt; $percentage*Max) return id(n) as id',-->
+        <!--                    'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId}) where id(n1) in [x in $ids| toInt(x)] RETURN id(n1) as source, id(n2) as target',-->
+        <!--                    {graph:"cypher",params:{refId:$refId,ids:$id,percentage:$percentage}})-->
+        <!--                    YIELD nodeId, community-->
+        <!--                    With community, collect(distinct nodeId) as ids-->
+        <!--                    return community, ids-->
+        <!--                    Order by community-->
+        <!--                </query>-->
+        <query name="clusterNodesByTokensWithPercentage">
+            Call algo.louvain.stream('MATCH (m:type {refId:$refId}) where id(m) in [x in $ids| toInteger(x)]
+            return distinct id(m) as id UNION MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            Where id(m) in [x in $ids| toInteger(x)] AND id(n) in [x in $ids| toInteger(x)] WITH n,
+            COUNT(DISTINCT id(m)) as count return id(n) as id order by count, n.name limit
+            toInteger(ceil($percentage*$nToken))',
+            'MATCH (n1:type {refId:$refId})-[:context]->(n2:token {refId:$refId}) where id(n1) in [x in $ids|
+            toInt(x)] RETURN id(n1) as source, id(n2) as target',
+            {graph:"cypher",params:{refId:$refId,ids:$id,percentage:$percentage,nToken:$nToken}})
+            YIELD nodeId, community
+            With community, collect(distinct nodeId) as ids
+            return community, ids
+            Order by community
+        </query>
+        <query name="writeTypeClusters1">
+            unwind $nodes as n
+            MATCH (m)
+            Where id(m) = toInt(n.id)
+            set m.clusterT = n.cluster
+        </query>
+        <query name="writeFeatureClusters1">
+            unwind $nodes as n
+            MATCH (m)
+            Where id(m) = toInt(n.id)
+            set m.clusterF = n.cluster
+        </query>
+        <query name="writeTypeClusters2">
+            unwind $nodes as n
+            MATCH (m)
+            Where id(m) = toInt(n.id)
+            set m.clusterT2 = n.cluster
+        </query>
+        <query name="writeFeatureClusters2">
+            unwind $nodes as n
+            MATCH (m)
+            Where id(m) = toInt(n.id)
+            set m.clusterF2 = n.cluster
+        </query>
+        <!--                <query name="writeFeatureClusters">-->
+        <!--                    unwind $nodes as n-->
+        <!--                    MATCH (m) where id(m) = toInt(n.id)-->
+        <!--                    CALL apoc.do.when(labels(m)[0] = "token","set n.clusterF = $cluster","MATCH (m)-[:contains*]->(n) Where n.name = m.name set m.clusterF = $cluster", {n:m, cluster:n.cluster}) YIELD value-->
+        <!--                    return value-->
+        <!--                </query>-->
+        <!--                <query name="getTokenClusterCount">-->
+        <!--                    MATCH (m:type {refId:$refId}) where EXISTS(m.cluster)-->
+        <!--                    with m.cluster as cluster, count(distinct id(m)) as count-->
+        <!--                    MATCH (n:token {refId:$refId})-->
+        <!--                    where n.cluster = cluster-->
+        <!--                    return n.name as name, n.cluster as cluster, count-->
+        <!--                    order by cluster-->
+        <!--                </query>-->
+
+        <!--
+            params:
+                refId
+                revision
+          -->
+        <query name="getTypeClusters1">
+            MATCH (m:type {refId:$refId})
+            WHERE EXISTS(m.clusterT) AND m.inRevision[$revision]
+            RETURN id(m) AS id, m.name AS name, m.fullname AS fullname, m.clusterT AS cluster,
+            0.75*m.featureScore[$revision]+0.25*m.kCoreScore[$revision] AS score
+            ORDER BY cluster, name
+        </query>
+        <query name="getFeatureClusters1">
+            MATCH (m:type {refId:$refId})
+            WHERE EXISTS(m.clusterF) AND m.inRevision[$revision]
+            RETURN id(m) AS id, m.name AS name, m.fullname AS fullname, m.clusterF AS cluster
+            ORDER BY cluster, name
+        </query>
+        <!--
+            params:
+                refId
+                revision
+          -->
+        <query name="getTypeClusters2">
+            MATCH (m:type {refId:$refId})
+            WHERE EXISTS(m.clusterT2) AND m.inRevision[$revision]
+            RETURN id(m) AS id, m.name AS name, m.fullname AS fullname, m.clusterT2 AS cluster,
+            0.75*m.featureScore[$revision]+0.25*m.kCoreScore[$revision] AS score
+            ORDER BY cluster, name
+        </query>
+        <query name="getFeatureClusters2">
+            MATCH (m:type {refId:$refId})
+            WHERE EXISTS(m.clusterF2) AND m.inRevision[$revision]
+            RETURN id(m) AS id, m.name AS name, m.fullname AS fullname, m.clusterF2 AS cluster
+            ORDER BY cluster, name
+        </query>
+        <query name="DeleteClusters">
+            MATCH (n {refId:$refId})
+            REMOVE n.clusterT,n.clusterF,n.clusterT2,n.clusterF2
+        </query>
+        <query name="findTypeClusterToken1">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT STARTS WITH $cluster AND m.clusterT STARTS with $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT STARTS WITH $cluster AND m.clusterT STARTS with $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="findTypeClusterTokenExact1">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT = $cluster AND m.clusterT = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT = $cluster AND m.clusterT = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="findFeatureClusterToken1">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterF STARTS WITH $cluster AND m.clusterF STARTS with $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterF STARTS WITH $cluster AND m.clusterF STARTS with $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="findFeatureClusterTokenExact1">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterF = $cluster AND m.clusterF = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterF = $cluster AND m.clusterF = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="findTypeClusterToken2">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT2 STARTS WITH $cluster AND m.clusterT2 STARTS with $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT2 STARTS WITH $cluster AND m.clusterT2 STARTS with $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="findTypeClusterTokenExact2">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT2 = $cluster AND m.clusterT2 = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterT2 = $cluster AND m.clusterT2 = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="findFeatureClusterToken2">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE substring(n.clusterF2,0,length($cluster))=$cluster AND substring(m.clusterF2,0,length($cluster))=$cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE substring(n.clusterF2,0,length($cluster))=$cluster AND substring(m.clusterF2,0,length($cluster))=$cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="findFeatureClusterTokenExact2">
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterF2 = $cluster AND m.clusterF2 = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count
+            with max(count) as Max
+            MATCH (m:type {refId:$refId})-[:context]->(n:token {refId:$refId})
+            WHERE n.clusterF2 = $cluster AND m.clusterF2 = $cluster
+            WITH n, COUNT(DISTINCT id(m)) as count, Max
+            where count = Max
+            return n.name as name
+        </query>
+        <query name="getClusterNames">
+            MATCH(n:token {refId:$refId})
+            OPTIONAL MATCH(t:type {refId:$refId})-[:context]->(n)
+            WHERE t.inRevision[$revision] AND EXISTS(t.${prop}) AND n.${prop} = t.${prop}
+            WITH n, COUNT(DISTINCT t) AS count
+            WITH n.${prop} AS cluster, n.name AS token, count
+            ORDER BY count DESC, n.name
+            RETURN cluster, collect(token)[0] AS cToken, max(count) AS mCount
+            ORDER BY cluster
+        </query>
+        <query name="findClusterNameByIds">
+            MATCH(n:token {refId:$refId})
+            WHERE id(n) IN [x IN $ids | toInt(x)]
+            OPTIONAL MATCH(t:type {refId:$refId})-[:context]->(n)
+            WHERE id(t) IN [x IN $ids | toInt(x)]
+            WITH n, count(distinct t) AS count
+            RETURN n.name AS name, count
+            ORDER BY count DESC, name
+        </query>
+        <query name="getDependencyGraph">
+            MATCH (from:type {refId:$refId,type:'type'}) -[:uses]-> (to:type {refId:$refId,type:'type'})
+            RETURN id(from) AS idFrom,id(to) AS idTo
+        </query>
+        <query name="getComponentGraph">
+            MATCH (from:component {refId:$refId, depth:$depth})
+            -[:uses]->
+            (to:component {refId:$refId, depth:$depth})
+            RETURN id(from) AS idFrom,id(to) AS idTo
+        </query>
+        <query name="getIsInterfaceOrExtended">
+            MATCH (n:type {refId:$refId})-[r:uses]->(m:type {refId:$refId})
+            with m, collect(distinct(r.type)) as uses
+            return m.fullname as fullname, ('implements' in uses) as isInterface, ('extends' in uses) as
+            isExtended
+        </query>
+        <query name="getTypeImplementationsById">
+            MATCH (n:type {refId:$refId})-[r:uses]->(m:type {refId:$refId})
+            where id(m) = $id AND r.type = "implements"
+        </query>
+        <query name="getTypeImplementationsByIds">
+            MATCH (n:type {refId:$refId})-[r:uses]->(m:type {refId:$refId})
+            where id(m) in $id AND r.type = "implements"
+        </query>
+        <query name="getTypeImplementationsAndExtendsByIds">
+            MATCH (n:type {refId:$refId})-[r:uses]->(m:type {refId:$refId})
+            where id(m) in $id AND (r.type = "implements" OR r.type = "extends")
+        </query>
+        <query name="findTypeClosureAlgorithm">
+            MATCH (from) where id(from) = $id
+            CALL algo.shortestPaths.stream(from, null,{nodeQuery:'MATCH (n:type {refId:$refId}) return id(n) as
+            id',relationshipQuery: 'MATCH (n1:type {refId:$refId})-[e:uses]->(n2:type {refId:$refId}) RETURN
+            id(n1) as source, id(n2) as target',graph:'cypher',params:{refId:$refId}})
+            YIELD nodeId as ids, distance
+            Where algo.isFinite(distance) = true
+            with ids
+            MATCH (n) where id(n) = ids
+        </query>
+        <query name="getTypeOutgoingNeighbors">
+            MATCH (t:type {refId:$refId})-[uses]->(n:type {refId:$refId})
+            where id(t) = $id
+        </query>
+        <query name="getTokenCount">
+            MATCH (n:token {refId:$refId})
+            OPTIONAL MATCH (t:type {refId:$refId})-[:context]->(n)
+            WHERE t.inRevision[$revision]
+            WITH n, COUNT(distinct t) AS count
+            RETURN id(n) AS id, n.name AS name, count
+            ORDER BY count, name
+        </query>
+
+        <query name="findTypesWithoutCountMethods">
+            MATCH (n:type {refId:$refId}) WHERE NOT EXISTS(n.countMethods)
+        </query>
+        <query name="countEntryPointsAndMethods">
+            MATCH (n:type {refId:$refId}) WHERE id(n) IN $ids RETURN
+            sum(n.countMethods) AS nMethods,
+            sum(n.countEntryPoints) as nEpMethods
+        </query>
+
+        <query name="findTypesWithComponentFeatureIds">
+            MATCH (n:type {refId:$refId, type:'type'})
+            ${where:cond}
+            WITH n, toString(id(n)) AS typeId
+            OPTIONAL MATCH (c:component {refId:$refId}) WHERE c.typeId=typeId AND c.depth=1
+            OPTIONAL MATCH (f:feature {refId:$refId}) WHERE f.typeId=typeId
+            RETURN n, toString(id(c)) AS componentId, toString(id(f)) AS featureId
+        </query>
+
+        <query name="findTypeWithComponentFeatureIds">
+            MATCH (n:type)
+            WHERE id(n) = $id
+            WITH n, toString($id) AS typeId
+            OPTIONAL MATCH (c:component {refId:$refId}) WHERE c.typeId=typeId AND c.depth=1
+            OPTIONAL MATCH (f:feature {refId:$refId}) WHERE f.typeId=typeId
+            RETURN n, toString(id(c)) AS componentId, toString(id(f)) AS featureId
+        </query>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           REVISION support
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+        <!--
+            append the revision number '$revision' to the array 'n.revisions'
+            in the node 'label' (msource, project, mcomponent, mfeature, ...)\
+            Parameters:
+            - refId: string
+            - label: string
+            - revision: int
+          -->
+        <query name="appendRevision">
+            MATCH (n:${label} {refId:$refId})
+            SET n.revisions = apocx.coll.appendDistinct(n.revisions, $revision)
+            RETURN n
+        </query>
+
+        <!--
+            resize the length of the array 'n.[field]'.
+            'length' can be greater or lower than the current array length
+            Parameters:
+            - refId: string
+            - labels: [string, ...]
+            - field: string
+            - length: int
+          -->
+        <query name="resizeNodeFieldArray">
+            MATCH (n {refId:$refId})
+            WHERE labels(n)[0] IN $labels
+            AND EXISTS(n.${field})
+            SET n.${field} = apocx.coll.resize(n.${field}, $length)
+            RETURN n
+        </query>
+
+        <!--
+            Parameters
+            - refId: string
+            - labels: [string, ...]
+            - field: string
+            - length: int
+          -->
+        <query name="resizeEdgeFieldArray">
+            MATCH (n {refId:$refId})-[e]->(m)
+            WHERE labels(n)[0] IN $labels
+            AND EXISTS(e.${field})
+            SET e.${field} = apocx.coll.resize(e.${field}, $length)
+        </query>
+
+        <query name="extendCallEdges">
+            MATCH (n {refId:$refId})-[e:call]->(m {refId:$refId})
+            SET e.index = apocx.coll.resize(e.index, $length)
+            RETURN n
+        </query>
+
+        <!--
+            Parameters:
+            - refId
+            - field   'moduleId' or 'sourceId'
+            - fieldId the object id
+          -->
+        <query name="resetNodeInRevisionRecursive">
+            MATCH (n {refId:$refId})
+            WHERE EXISTS(n.${field})
+            AND n.${field}=$fieldId
+            SET n.inRevision = apocx.coll.setOrExtend(n.inRevision, $revision, false)
+            RETURN id(n)
+        </query>
+
+        <query name="resetEdgeInRevisionRecursive">
+            MATCH (n {refId:$refId})-[e]->(m)
+            WHERE EXISTS(n.${field})
+            AND n.${field}=$fieldId
+            AND EXISTS(e.inRevision)
+            SET e.inRevision = apocx.coll.setOrExtend(e.inRevision, $revision, false)
+            RETURN id(n)
+        </query>
+
+        <query name="resetMethodCallInRevision">
+            MATCH (n:method {refId:$refId, sourceId:$sourceId})-[c:call]->(m:method {refId:$refId})
+            SET c.index = apocx.coll.setOrExtend(c.index, $revision, [])
+            RETURN id(c)
+        </query>
+
+        <!--
+            Queries on types used in 'versioned' component analysis
+            Parameters:
+            - refId
+            - srev: source revision
+            - sstatus: source revision status (false|true)
+            - trev: target revision
+            - tstatus: target revision status (false|true)
+          -->
+        <query name="typesAddedDeletedBetweenRevisions">
+            MATCH (n:type {refId:$refId, type:'type'})
+            WHERE n.inRevision[$srev] = $sstatus
+            AND n.inRevision[$trev] = $tstatus
+        </query>
+        <query name="typesChangedBetweenRevisions">
+            MATCH (n:type {refId:$refId, type:'type'})
+            WHERE n.inRevision[$srev] = true
+            AND n.inRevision[$trev] = true
+            AND n.digest[$srev] &lt;&gt; n.digest[$trev]
+        </query>
+
+    </namedqueries>
+</graphdb>

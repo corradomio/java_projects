@@ -33,6 +33,12 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
     private static final Logger logger = Logger.getLogger(SonarProject.class);
 
+    private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
+        add(ObjectType.SOURCE);
+        add(ObjectType.MODULE);
+        add(ObjectType.PROJECT);
+    }};
+
     private final String name;
 
     // ----------------------------------------------------------------------
@@ -102,10 +108,19 @@ public class SonarProject extends SonarObject implements MetricsProject {
     // ----------------------------------------------------------------------
 
     @Override
-    public MetricsObjects getMetricsObjects(ObjectType type) {
-        Assert.verify(validateType(type), String.format("%s is not available as type to search objects", type));
+    public Set<ObjectType> getObjectTypes() {
+        return SUPPORTED_TYPES;
+    }
 
+    @Override
+    public MetricsObjects getMetricsObjects(ObjectType type) {
         MetricsObjects metricsObjects = new SonarObjects(type);
+
+        if (!validateType(type)) {
+            Assert.check(false, String.format("%s is not available as type to search objects", type));
+            return metricsObjects;
+        }
+
         ComponentClient cclient = client.componentClient();
         cclient.list(getId(), true)
                 .forEach(c -> {
@@ -114,11 +129,6 @@ public class SonarProject extends SonarObject implements MetricsProject {
                 });
         return metricsObjects;
     }
-
-    private static final Set<ObjectType> SUPPORTED_TYPES = new HashSet<>(){{
-        add(ObjectType.SOURCE);
-        add(ObjectType.MODULE);
-    }};
 
     private static boolean validateType(ObjectType type) {
         return SUPPORTED_TYPES.contains(type);
@@ -167,25 +177,51 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
         MetricsValues metricsValues = new SonarValues();
         MetricsClient metricClient = client.metricsClient();
-        metricClient.list(getId(), mkeys, true)
-                .stream()
-                // select ONLY the specified object types
-                .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
-                .forEach(measure -> {
-                    SonarObject so;
-                    DefaultMetricsClient.CMeasure cmeasure = (DefaultMetricsClient.CMeasure) measure;
-                    // check if the component is available
-                    if (!cmap.containsKey(cmeasure.getComponent().key())) {
-                        Component c = cmeasure.getComponent();
-                        so = new SonarObject(c, this);
-                        cmap.put(so.getId(), so);
-                    }
-                    so = cmap.get(cmeasure.getComponent().key());
+        String qualifier = SonarObject.toQualifier(type);
 
-                    SonarMetricValue metricValue = SonarMetricValue.of(so, mmap.get(measure.getMetricKey()), measure);
+        if (type == ObjectType.PROJECT) {
+            metricClient.list(getId(), qualifier, mkeys, false)
+                    .stream()
+                    // select ONLY the specified object types
+                    .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
+                    .forEach(measure -> {
+                        SonarObject so;
+                        DefaultMetricsClient.CMeasure cmeasure = (DefaultMetricsClient.CMeasure) measure;
+                        // check if the component is available
+                        if (!cmap.containsKey(cmeasure.getComponent().key())) {
+                            Component c = cmeasure.getComponent();
+                            so = new SonarObject(c, this);
+                            cmap.put(so.getId(), so);
+                        }
+                        so = cmap.get(cmeasure.getComponent().key());
 
-                    metricsValues.add(metricValue);
-                });
+                        SonarMetricValue metricValue = SonarMetricValue.of(so, mmap.get(measure.getMetricKey()), measure);
+
+                        metricsValues.add(metricValue);
+                    });
+        }
+        else {
+            metricClient.list(getId(), qualifier, mkeys, true)
+                    .stream()
+                    // select ONLY the specified object types
+                    .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
+                    .forEach(measure -> {
+                        SonarObject so;
+                        DefaultMetricsClient.CMeasure cmeasure = (DefaultMetricsClient.CMeasure) measure;
+                        // check if the component is available
+                        if (!cmap.containsKey(cmeasure.getComponent().key())) {
+                            Component c = cmeasure.getComponent();
+                            so = new SonarObject(c, this);
+                            cmap.put(so.getId(), so);
+                        }
+                        so = cmap.get(cmeasure.getComponent().key());
+
+                        SonarMetricValue metricValue = SonarMetricValue.of(so, mmap.get(measure.getMetricKey()), measure);
+
+                        metricsValues.add(metricValue);
+                    });
+
+        }
 
         return metricsValues;
     }

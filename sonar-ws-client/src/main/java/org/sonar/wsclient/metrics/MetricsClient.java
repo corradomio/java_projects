@@ -8,6 +8,6 @@ import java.util.function.Consumer;
 
 public interface MetricsClient {
 
-    List<Measure> list(String id, Collection<String> metrics, boolean recursive);
-    void list(String id, Collection<String> metrics, boolean recursive, Consumer<Measure> callback);
+    List<Measure> list(String id, String qualifier, Collection<String> metrics, boolean recursive);
+    void list(String id, String qualifier, Collection<String> metrics, boolean recursive, Consumer<Measure> callback);
 }
