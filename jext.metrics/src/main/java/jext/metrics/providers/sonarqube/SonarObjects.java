@@ -18,10 +18,10 @@ public class SonarObjects extends ArrayList<MetricsObject> implements MetricsObj
 
     public static final String PATH = "path";
 
-    private ObjectType type;
+    private final ObjectType type;
 
     // keep the map: object path -> object
-    private Map<String/*path*/, MetricsObject> pathMap = new HierarchicalMap<>();
+    private final Map<String/*path*/, MetricsObject> pathMap = new HierarchicalMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor

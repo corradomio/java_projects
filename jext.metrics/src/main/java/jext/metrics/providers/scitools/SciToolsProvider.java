@@ -9,7 +9,9 @@ import jext.metrics.ObjectType;
 import jext.util.Assert;
 import jext.util.BidiMap;
 import jext.util.DefaultHashMap;
+import jext.util.FileUtils;
 import jext.util.HashBidiMap;
+import jext.util.PathUtils;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;
@@ -37,6 +39,7 @@ public class SciToolsProvider implements MetricsProvider {
 
     static final String NAME = "scitools";
     static final String PROJECT_NAME = "scitools.name";
+    static final String PROJECT_HOME = "scitools.project.home";
     static final String METRICS_HOME = "scitools.metrics.home";
     static final String METRICS_REVISION = "scitools.metrics.revision";
 
@@ -103,6 +106,16 @@ public class SciToolsProvider implements MetricsProvider {
         }
         {
             categories.put(ALL_METRICS, new HashSet<>());
+        }
+        if (!properties.containsKey(PROJECT_HOME))
+        {
+            File projectHome = new File(properties.getProperty(METRICS_HOME)).getParentFile().getParentFile();
+            String phome = FileUtils.getAbsolutePath(projectHome);
+            properties.setProperty(PROJECT_HOME, phome);
+        }
+        else {
+            String phome = properties.getProperty(PROJECT_HOME);
+            properties.setProperty(PROJECT_HOME, PathUtils.normalize(phome));
         }
     }
 
@@ -182,6 +195,10 @@ public class SciToolsProvider implements MetricsProvider {
         SciToolsProject project = new SciToolsProject(projectName, this);
         project.initialize();
         return project;
+    }
+
+    String getProjectHome() {
+        return properties.getProperty(PROJECT_HOME);
     }
 
     private String getProjectName() {

@@ -45,7 +45,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     // ----------------------------------------------------------------------
 
     SciToolsProject(String name, SciToolsProvider provider) {
-        super("0", name, "");
+        super(null, "0", name, name, "project");
         this.provider = provider;
         this.objects.put(this.getId(), this);
         this.project = this;
@@ -185,15 +185,14 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         logger.debugf("... load nodes from %s", nodesFile);
 
         // 0  1    3
-        // id,name,type
+        // id,name,longname,type
         try(LineNumberReader rdr = new LineNumberReader(new FileReader(nodesFile))) {
             // skip header
             String line = rdr.readLine();
-            int count = 1;
             while((line = rdr.readLine()) != null) {
                 String[] parts = line.split(",");
 
-                SciToolsObject object = SciToolsObject.of(parts[0], parts[1], parts[2]);
+                SciToolsObject object = SciToolsObject.of(this, parts[0], parts[1], parts[2], parts[3]);
                 objects.put(object.getId(), object);
             }
         }
@@ -259,7 +258,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
                         if (!"0".equals(id))
                             continue;
 
-                        object = new SciToolsObject(id, getName(), "project");
+                        object = new SciToolsObject(this, id, getName(), getName(), "project");
                     }
 
                     SciToolsMetric metric = (SciToolsMetric) provider.getMetric(mname);

@@ -25,6 +25,7 @@ public interface MetricsObject {
      * @return object name
      */
     String getName();
+    String getLongname();
 
     /**
      * Object type.

@@ -7,9 +7,9 @@ import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
 import jext.metrics.ObjectType;
-import jext.metrics.providers.scitools.SciToolsObjects;
 import jext.util.PropertiesUtils;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,7 +20,8 @@ public class CheckSciToolsObjects {
         MetricsProvider provider = MetricsProviders.getProvider("scitools",
                 PropertiesUtils.properties(
                         "scitools.name", "lucene",
-                        "scitools.metrics.home", "D:\\Projects\\CSharp\\Apache-Lucene.Net-4.8.0\\.spl\\scitools.dump",
+                        "scitools.metrics.home", "D:\\Projects\\Java\\hibernate-orm-5.2.0\\.spl\\scitools.dump",
+                        // "scitools.project.home", "D:\\Projects\\Java\\hibernate-orm-5.2.0",
                         "scitools.metrics.revision", "0"
 
                         // "scitools.name", "csvquickview",
@@ -35,7 +36,10 @@ public class CheckSciToolsObjects {
 
         MetricsProject project = provider.getProject();
 
-        for(ObjectType ot : project.getObjectTypes()) {
+        Optional<MetricsObject> object = project.getMetricsObjects(ObjectType.SOURCE)
+                .findObject("path", "hibernate-core/src/main/java/org/hibernate/AnnotationException.java");
+
+        for(ObjectType ot : Arrays.asList(ObjectType.SOURCE)/*project.getObjectTypes()*/) {
             MetricsObjects mobjects = project.getMetricsObjects(ot);
             Set<Metric> metrics = project.getMetrics(ot);
             System.out.printf(">> %s: %d, %d\n",ot, mobjects.size(), metrics.size());

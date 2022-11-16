@@ -25,6 +25,14 @@ import java.util.stream.Collectors;
 
 public class SonarObject implements MetricsObject {
 
+    public static SonarObject of(Component c, SonarProvider provider, SonarClient client) {
+        return new SonarObject(c, provider, client);
+    }
+
+    public static SonarObject of(Component c, SonarObject parent) {
+        return new SonarObject(c, parent);
+    }
+
     // -----------------------------------------------------------------------
     // Constants
     // -----------------------------------------------------------------------
@@ -57,10 +65,6 @@ public class SonarObject implements MetricsObject {
             throw new RuntimeException(String.format("Unsupported type %s", type));
     }
 
-    // -----------------------------------------------------------------------
-    // Conversions
-    // -----------------------------------------------------------------------
-
     // ----------------------------------------------------------------------
     // Private fields
     // ----------------------------------------------------------------------
@@ -74,14 +78,14 @@ public class SonarObject implements MetricsObject {
     // Constructor
     // ----------------------------------------------------------------------
 
-    SonarObject(Component c, SonarProvider provider, SonarClient client) {
+    protected SonarObject(Component c, SonarProvider provider, SonarClient client) {
         this.component = c;
         this.provider = provider;
         this.client = client;
         this.project = (SonarProject) this;
     }
 
-    SonarObject(Component c, SonarObject parent) {
+    protected SonarObject(Component c, SonarObject parent) {
         this.component = c;
         this.provider = parent.provider;
         this.client = parent.client;
@@ -105,6 +109,11 @@ public class SonarObject implements MetricsObject {
     @Override
     public String getName() {
         return component.name();
+    }
+
+    @Override
+    public String getLongname() {
+        return component.longName();
     }
 
     @Override

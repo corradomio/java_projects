@@ -5,6 +5,7 @@ import jext.metrics.MetricsObject;
 import jext.metrics.MetricsProject;
 import jext.metrics.ObjectType;
 import jext.util.MapUtils;
+import jext.util.PathUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class SciToolsObject implements MetricsObject {
 
-    public static SciToolsObject of(String id, String name, String kname) {
-        return new SciToolsObject(id, name, kname);
+    public static SciToolsObject of(SciToolsObject parent, String id, String name, String longname, String kname) {
+        return new SciToolsObject(parent, id, name, longname, kname);
     }
 
     // ----------------------------------------------------------------------
@@ -31,7 +32,7 @@ public class SciToolsObject implements MetricsObject {
     private static final String QUAL_TYPE = "type";
     private static final String QUAL_METHOD = "method";
 
-    public static ObjectType toType(String type) {
+    public  static ObjectType toType(String type) {
         if (type.equals(QUAL_MODULE))
             return ObjectType.MODULE;
         if (type.equals(QUAL_SOURCE))
@@ -50,7 +51,9 @@ public class SciToolsObject implements MetricsObject {
 
     private final String id;
     private final String name;
+    private String longname;
     private final String kname;
+    private final ObjectType type;
 
     protected SciToolsProvider provider;
     protected SciToolsProject project;
@@ -58,36 +61,56 @@ public class SciToolsObject implements MetricsObject {
     private final List<MetricsObject> children = new ArrayList<>();
     private final List<MetricValue> metricValues = new ArrayList<>();
 
-    private static final Map<String, ObjectType> TYPES;
+    private static final Map<String, ObjectType> SCITOOLS_TYPES;
     static {
-        TYPES = new HashMap<>();
-        TYPES.put("File", ObjectType.SOURCE);
+        SCITOOLS_TYPES = new HashMap<>() {{
+            put("File", ObjectType.SOURCE);
 
-        TYPES.put("Type", ObjectType.TYPE);
-        TYPES.put("Class", ObjectType.TYPE);
-        TYPES.put("Interface", ObjectType.TYPE);
-        TYPES.put("Struct", ObjectType.TYPE);
-        TYPES.put("Enum", ObjectType.TYPE);
+            put("Type", ObjectType.TYPE);
+            put("Class", ObjectType.TYPE);
+            put("Interface", ObjectType.TYPE);
+            put("Struct", ObjectType.TYPE);
+            put("Enum", ObjectType.TYPE);
 
-        TYPES.put("Method", ObjectType.METHOD);
-        TYPES.put("Indexer", ObjectType.METHOD);
-        TYPES.put("Constructor", ObjectType.METHOD);
-        TYPES.put("Finalizer", ObjectType.METHOD);
-        TYPES.put("Static", ObjectType.METHOD);
+            put("Method", ObjectType.METHOD);
+            put("Indexer", ObjectType.METHOD);
+            put("Constructor", ObjectType.METHOD);
+            put("Finalizer", ObjectType.METHOD);
+            put("Static", ObjectType.METHOD);
 
-        TYPES.put("Delegate", ObjectType.FIELD);
-        TYPES.put("Property", ObjectType.FIELD);
-        TYPES.put("Event", ObjectType.FIELD);
+            put("Delegate", ObjectType.FIELD);
+            put("Property", ObjectType.FIELD);
+            put("Event", ObjectType.FIELD);
+        }};
+    }
+
+    private static ObjectType fromKname(String kname) {
+        for (String k : SCITOOLS_TYPES.keySet())
+            if (kname.contains(k))
+                return SCITOOLS_TYPES.get(k);
+
+        return ObjectType.UNKNOWN;
     }
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    protected SciToolsObject(String id, String name, String kname) {
+    protected SciToolsObject(SciToolsObject parent, String id, String name, String longname, String kname) {
         this.id = id;
         this.name = name;
+        this.longname = longname;
         this.kname = kname;
+        this.type = fromKname(kname);
+
+        if (parent != null) {
+            this.parent = parent;
+            this.project = parent.project;
+            this.provider = parent.provider;
+        }
+
+        if (this.type == ObjectType.SOURCE)
+            normalizePath();
     }
 
     void setParent(SciToolsObject parent) {
@@ -95,6 +118,12 @@ public class SciToolsObject implements MetricsObject {
         this.project = parent.project;
         this.provider = parent.provider;
         this.parent.children.add(this);
+    }
+
+    private void normalizePath() {
+        String projectHome = provider.getProjectHome();
+        longname = PathUtils.normalize(longname);
+        longname = PathUtils.relativePath(projectHome, longname);
     }
 
     // ----------------------------------------------------------------------
@@ -117,12 +146,13 @@ public class SciToolsObject implements MetricsObject {
     }
 
     @Override
-    public ObjectType getType() {
-        for (String k : TYPES.keySet())
-            if (kname.contains(k))
-                return TYPES.get(k);
+    public String getLongname() {
+        return longname;
+    }
 
-        return ObjectType.UNKNOWN;
+    @Override
+    public ObjectType getType() {
+        return type;
     }
 
     @Override
@@ -184,6 +214,10 @@ public class SciToolsObject implements MetricsObject {
     // ----------------------------------------------------------------------
     // Implementation
     // ----------------------------------------------------------------------
+
+    String getPath() {
+        return longname;
+    }
 
     void addMetricValue(MetricValue metricValue) {
         this.metricValues.add(metricValue);
