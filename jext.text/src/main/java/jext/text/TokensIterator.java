@@ -15,8 +15,9 @@ public class TokensIterator implements Iterator<String>, AutoCloseable {
     private int last = 0;
 
     public TokensIterator(File file) throws FileNotFoundException {
-        this(new FileReader(file));
-        owner = true;
+        this.reader = new FileReader(file);
+        this.owner = true;
+        findToken();
     }
 
     public TokensIterator(Reader reader) {
