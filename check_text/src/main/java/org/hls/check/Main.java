@@ -88,7 +88,7 @@ public class Main {
         // }
 
         tc.counters(3, 3).forEach(c -> {
-            System.out.printf("%s: (%d, %d) tdifd: %f\n", c.token, c.documents, c.count, tc.tfidf(c));
+            System.out.printf("%s: (%d, %d) tdifd: %f\n", c.token, c.documents, c.count, tc.tfidf(c.token));
         });
     }
 }

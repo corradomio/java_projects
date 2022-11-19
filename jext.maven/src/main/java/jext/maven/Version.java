@@ -60,12 +60,14 @@ package jext.maven;
 
  */
 
-import jext.util.Assert;
+import jext.logging.Logger;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Version implements Comparable<Version> {
+
+    private static final Logger logger = Logger.getLogger(Version.class);
 
     // ----------------------------------------------------------------------
     //
@@ -127,6 +129,8 @@ public class Version implements Comparable<Version> {
     private static final Pattern Version4Pattern = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)");
     private static final Pattern SemVerPattern = Pattern.compile("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?");
 
+    private static final Pattern QuotedVersionPattern = Pattern.compile("\"(.+)\"");
+
     private String version;
     private Scheme scheme = Scheme.StringVersion;
 
@@ -152,110 +156,123 @@ public class Version implements Comparable<Version> {
     private void parse() {
         Matcher matcher;
 
-        matcher = Version4Pattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.NumericVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            subver= Integer.parseInt(matcher.group(3));
-            patch = Integer.parseInt(matcher.group(4));
-            return;
-        }
+        try {
+            matcher = QuotedVersionPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.StringVersion;
+                this.version = matcher.group(1);
+                return;
+            }
 
-        matcher = PythonMajorVersionPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.QualifiedVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            subver= Integer.parseInt(matcher.group(3));
-            qualifier = matcher.group(4);
-            return;
-        }
+            matcher = Version4Pattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.NumericVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                subver = Integer.parseInt(matcher.group(3));
+                patch = Integer.parseInt(matcher.group(4));
+                return;
+            }
 
-        matcher = MainVersionPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.NumericVersion;
-            major = Integer.parseInt(matcher.group(1));
-            return;
-        }
+            matcher = PythonMajorVersionPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.QualifiedVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                subver = Integer.parseInt(matcher.group(3));
+                qualifier = matcher.group(4);
+                return;
+            }
 
-        matcher = PythonMinorVersionPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.QualifiedVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            qualifier = matcher.group(3);
-            return;
-        }
+            matcher = MainVersionPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.NumericVersion;
+                major = Integer.parseInt(matcher.group(1));
+                return;
+            }
 
-        matcher = MajorVersionPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.NumericVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            subver= Integer.parseInt(matcher.group(3));
-            return;
-        }
+            matcher = PythonMinorVersionPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.QualifiedVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                qualifier = matcher.group(3);
+                return;
+            }
 
-        matcher = MinorVersionPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.NumericVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            return;
-        }
+            matcher = MajorVersionPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.NumericVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                subver = Integer.parseInt(matcher.group(3));
+                return;
+            }
 
-        matcher = BuildNumberPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.NumericVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            subver= Integer.parseInt(matcher.group(3));
-            build = Integer.parseInt(matcher.group(4));
-            return;
-        }
+            matcher = MinorVersionPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.NumericVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                return;
+            }
 
-        matcher = PatchNumberPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.NumericVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            subver= Integer.parseInt(matcher.group(3));
-            build = Integer.parseInt(matcher.group(4));
-            patch = Integer.parseInt(matcher.group(5));
-            return;
-        }
+            matcher = BuildNumberPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.NumericVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                subver = Integer.parseInt(matcher.group(3));
+                build = Integer.parseInt(matcher.group(4));
+                return;
+            }
 
-        matcher = MajorQualifierPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.QualifiedVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            subver = Integer.parseInt(matcher.group(3));
-            qualifier = matcher.group(4);
-            return;
-        }
+            matcher = PatchNumberPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.NumericVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                subver = Integer.parseInt(matcher.group(3));
+                build = Integer.parseInt(matcher.group(4));
+                patch = Integer.parseInt(matcher.group(5));
+                return;
+            }
 
-        matcher = QualifierPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.QualifiedVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            qualifier = matcher.group(3);
-            return;
-        }
+            matcher = MajorQualifierPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.QualifiedVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                subver = Integer.parseInt(matcher.group(3));
+                qualifier = matcher.group(4);
+                return;
+            }
 
-        matcher = SemVerPattern.matcher(version);
-        if (matcher.matches()) {
-            this.scheme = Scheme.QualifiedVersion;
-            major = Integer.parseInt(matcher.group(1));
-            minor = Integer.parseInt(matcher.group(2));
-            subver = Integer.parseInt(matcher.group(3));
-            qualifier = matcher.group(4);
-            return;
-        }
+            matcher = QualifierPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.QualifiedVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                qualifier = matcher.group(3);
+                return;
+            }
 
-        {
+            matcher = SemVerPattern.matcher(version);
+            if (matcher.matches()) {
+                this.scheme = Scheme.QualifiedVersion;
+                major = Integer.parseInt(matcher.group(1));
+                minor = Integer.parseInt(matcher.group(2));
+                subver = Integer.parseInt(matcher.group(3));
+                qualifier = matcher.group(4);
+                return;
+            }
+
+            {
+                this.scheme = Scheme.StringVersion;
+            }
+        }
+        catch (Exception e) {
+            logger.errorf("Unable to parse '%s'", version);
             this.scheme = Scheme.StringVersion;
         }
     }

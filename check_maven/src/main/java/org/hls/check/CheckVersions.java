@@ -6,6 +6,8 @@ public class CheckVersions {
 
     public static void main(String[] args) {
 
+        Version.dump(Version.of("7.6.0.v20120127"));
+
         Version.dump(Version.of("1.2"));
         Version.dump(Version.of("1.2.3"));
         Version.dump(Version.of("1.2.3-4"));

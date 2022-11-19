@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public class WildcardFileFilter implements FileFilter, Predicate<String> {
 
-    private static class PrefixMatcher {
+    protected static class PrefixMatcher {
         private String prefix;
 
         private PrefixMatcher(String prefix) {
@@ -25,7 +25,7 @@ public class WildcardFileFilter implements FileFilter, Predicate<String> {
         }
     }
 
-    private static class WildcardMatcher {
+    protected static class WildcardMatcher {
 
         private final boolean recursive;
         private final Wildcard wildcard;
@@ -61,8 +61,8 @@ public class WildcardFileFilter implements FileFilter, Predicate<String> {
 
     }
 
-    private final List<PrefixMatcher> prefixes = new ArrayList<>();
-    private final List<WildcardMatcher> matchers = new ArrayList<>();
+    protected final List<PrefixMatcher> prefixes = new ArrayList<>();
+    protected final List<WildcardMatcher> matchers = new ArrayList<>();
 
     // ----------------------------------------------------------------------
     // Constructor

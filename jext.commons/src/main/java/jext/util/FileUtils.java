@@ -1,6 +1,7 @@
 package jext.util;
 
 import jext.io.filters.FalseFileFilter;
+import jext.io.filters.FileFilters;
 import jext.logging.Logger;
 
 import java.io.BufferedReader;
@@ -470,18 +471,23 @@ public class FileUtils {
 
     // Recursive!
     public static List<File> listFiles(File directory, FileFilter filter) {
-        if (directory == null) return Collections.emptyList();
+        return listFiles(directory, filter, FileFilters.TRUE);
+    }
+
+    public static List<File> listFiles(File directory, FileFilter filter, FileFilter directoryFilter) {
+        Assert.notNull(directory, "directory");
         List<File> collectedFiles = new ArrayList<>();
-        listFiles(collectedFiles, directory, filter);
+        listFiles(collectedFiles, directory, filter, directoryFilter);
         return collectedFiles;
     }
 
     // Recursive!
-    public static void listFiles(List<File> collectedFiles, File directory, FileFilter filter) {
+    public static void listFiles(List<File> collectedFiles, File directory, FileFilter fileFilter, FileFilter directoryFilter) {
         if (directory == null) return;
-        collectedFiles.addAll(asList(directory.listFiles(file -> file.isFile() && filter.accept(file))));
+        collectedFiles.addAll(asList(directory.listFiles(file -> file.isFile() && fileFilter.accept(file))));
         asList(directory.listFiles(File::isDirectory))
-            .forEach(sundir -> listFiles(collectedFiles, sundir, filter));
+            .stream().filter(directoryFilter::accept)
+            .forEach(sundir -> listFiles(collectedFiles, sundir, fileFilter, directoryFilter));
     }
 
     // ----------------------------------------------------------------------

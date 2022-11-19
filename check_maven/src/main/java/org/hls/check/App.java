@@ -20,9 +20,9 @@ public class App {
         Logger.configure();
         Caches.configure();
 
-        MavenDownloader md = new MavenDownloader()
-            .addRepository("https://repo1.maven.org/maven2")
-            .addRepository("http://repository.primefaces.org")
+        MavenDownloader md = new MavenDownloader();
+        md.addRepository("https://repo1.maven.org/maven2");
+        md.addRepository("http://repository.primefaces.org");
             ;
         MavenPom pom = new MavenPom(new File(
             //"C:\\Users\\Corrado Mio\\.spl\\.extlib\\org\\nd4j\\nd4j-api\\1.0.0-beta7\\nd4j-api-1.0.0-beta7.pom"
@@ -44,10 +44,9 @@ public class App {
         Logger.configure();
         Caches.configure();
 
-        MavenDownloader md = new MavenDownloader()
-            .addRepository("https://repo1.maven.org/maven2")
-            .addRepository("http://repository.primefaces.org")
-            ;
+        MavenDownloader md = new MavenDownloader();
+        md.addRepository("https://repo1.maven.org/maven2");
+        md.addRepository("http://repository.primefaces.org");
 
         // MavenCoords mc = new MavenCoords("org.bytedeco", "opencv");
         MavenCoords mc = MavenCoords.of("joda-time:joda-time:2.2");
@@ -87,14 +86,13 @@ public class App {
     public static void main2(String[] args) {
         Logger.configure();
 
-        MavenDownloader md = new MavenDownloader()
-            .addRepository("https://repo1.maven.org/maven2")
-            .addRepository("http://repository.primefaces.org")
-            ;
+        MavenDownloader md = new MavenDownloader();
+        md.addRepository("https://repo1.maven.org/maven2");
+        md.addRepository("http://repository.primefaces.org");
 
         MavenCoords mc =
             // new MavenCoords("bouncycastle", "bctsp-jdk14", "138")
-            new MavenCoords("asm", "asm-parent")
+            MavenCoords.of("asm", "asm-parent")
             ;
         System.out.println(md.getArtifacts(mc));
     }
@@ -102,12 +100,11 @@ public class App {
     public static void main1(String[] args) throws Exception {
         Logger.configure();
 
-        MavenDownloader md = new MavenDownloader()
-            .addRepository("https://repo1.maven.org/maven2")
-            .addRepository("http://repository.primefaces.org")
-            ;
+        MavenDownloader md = new MavenDownloader();
+        md.addRepository("https://repo1.maven.org/maven2");
+        md.addRepository("http://repository.primefaces.org");
 
-        MavenCoords mc = new MavenCoords("org.bouncycastle", "bctsp-jdk14");
+        MavenCoords mc = MavenCoords.of("org.bouncycastle", "bctsp-jdk14");
         // mc = new MavenCoords("log4j","log4j");
         System.out.println(md.getLatestVersion(mc));
 
