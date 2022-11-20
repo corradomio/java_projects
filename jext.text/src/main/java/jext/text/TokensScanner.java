@@ -124,7 +124,7 @@ public class TokensScanner {
 
         try(Writer wrt = new FileWriter(outputFile)) {
             wrt.write("token,count,docs\n");
-            wrt.write(String.format("$counters,%d,%d\n", tc.tokens(), tc.documents()));
+            wrt.write(String.format("$counters,%d,%d\n", tc.count(), tc.documents()));
             tc.counters().forEach(c -> {
                 try {
                     wrt.write(String.format("%s,%d,%d\n", c.token, c.count,c.documents));
