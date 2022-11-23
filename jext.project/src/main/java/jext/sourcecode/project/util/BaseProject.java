@@ -124,15 +124,6 @@ public abstract class BaseProject extends NamedObject implements Project {
         return projectHome;
     }
 
-    // @Override
-    // public String getRuntimeLibrary() {
-    //     String rtLibrary = properties.getProperty(RUNTIME_LIBRARY, null);
-    //
-    //     if (rtLibrary == null)
-    //         rtLibrary = JavaGuessRuntimeLibrary.DEFAULT_JAVA_RUNTIME_LIBRARY;
-    //
-    //     return rtLibrary;
-    // }
     @Override
     public abstract String getRuntimeLibrary();
 
@@ -301,19 +292,19 @@ public abstract class BaseProject extends NamedObject implements Project {
         libraries.checkArtifacts(downloader, true);
 
         // add the missing libraries used
-        resolveRecursiveDependencies(libraries, remoteLibraries, 1);
+        // resolveRecursiveDependencies(libraries, remoteLibraries, 1);
 
         logger.debugf("check %d libraries", libraries.size());
 
         return libraries;
     }
 
-    private void resolveRecursiveDependencies(Set<Library> allLibraries, Set<Library> remoteLibraries, int depth) {
-        // for now it retrieve ONLY the first level of recursive dependencies
-        remoteLibraries.forEach(remoteLibrary -> {
-            allLibraries.addAll(remoteLibrary.getDependencies());
-        });
-    }
+    // private void resolveRecursiveDependencies(Set<Library> allLibraries, Set<Library> remoteLibraries, int depth) {
+    //     // for now it retrieve ONLY the first level of recursive dependencies
+    //     remoteLibraries.forEach(remoteLibrary -> {
+    //         allLibraries.addAll(remoteLibrary.getDependencies());
+    //     });
+    // }
 
     @Override
     public Set<Library> getLibraries(Module module) {
@@ -354,15 +345,6 @@ public abstract class BaseProject extends NamedObject implements Project {
                 public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                     File dir = path.toFile();
 
-                    // if (dir.equals(baseDirectory))
-                    //     return FileVisitResult.CONTINUE;
-                    //
-                    // if (fpExcludes.accept(baseDirectory, dir))
-                    //     return FileVisitResult.SKIP_SUBTREE;
-                    //
-                    // if (isModuleDir(dir))
-                    //     return FileVisitResult.SKIP_SUBTREE;
-
                     if (!isValidDir(baseDirectory, dir))
                         return FileVisitResult.SKIP_SUBTREE;
 
@@ -378,30 +360,33 @@ public abstract class BaseProject extends NamedObject implements Project {
 
     public boolean isValidDir(File baseDirectory, File dir) {
 
+        // the directory is the root (base directory)
         if (dir.equals(baseDirectory))
             return true;
 
+        // the directory is excluded based on the base directory
         if (fpExcludes.accept(baseDirectory, dir))
             return false;
 
+        // the directory is excluded respect 1 or 2 levels up parent directories
+        // this try to resolve exclusions as '/test' and '/src/test' respect
+        // the module home directory.
+        File parent1 = dir.getParentFile();
+        File parent2 = parent1.getParentFile();
+        if (fpExcludes.accept(parent1, dir) || fpExcludes.accept(parent2, dir))
+            return false;
+
+        // it is the project home directory
         if (dir.equals(projectHome))
             return false;
 
+        // the directory is the home directory of some other module
         for (Module module : this.getModules())
             if (dir.equals(module.getModuleHome()))
                 return false;
 
         return true;
     }
-
-    // public boolean isModuleDir(File directory) {
-    //     if (directory.equals(projectHome))
-    //         return false;
-    //     for (Module module : this.getModules())
-    //         if (directory.equals(module.getModuleHome()))
-    //             return true;
-    //     return false;
-    // }
 
     // ----------------------------------------------------------------------
     // Sources

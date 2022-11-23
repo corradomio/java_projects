@@ -29,8 +29,8 @@ public class Wildcard implements Predicate<String> {
     // ----------------------------------------------------------------------
 
     public Wildcard(String pattern) {
-        if (isExtension(pattern))
-            pattern = "*" + pattern;
+        if (isFileExtension(pattern))
+            pattern = "**/*" + pattern;
         this.pattern = pattern;
         compile();
     }
@@ -137,7 +137,7 @@ public class Wildcard implements Predicate<String> {
         return (i<0 || i>= pattern.length()) ? 0 : pattern.charAt(i);
     }
 
-    private static boolean isExtension(String pattern) {
+    private static boolean isFileExtension(String pattern) {
         return pattern.startsWith(".") &&
             !pattern.contains("*") &&
             !pattern.contains("?") &&

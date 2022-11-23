@@ -38,6 +38,11 @@
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
             <artifactId>jext.project</artifactId>
             <version>1.0</version>
         </dependency>

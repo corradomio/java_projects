@@ -29,9 +29,9 @@ public class PatternSet {
         patterns.add(new FilePattern(pattern));
     }
 
-    public boolean accept(File baseDir, File file) {
-        return patterns.accept(baseDir, file);
-    }
+    // public boolean accept(File baseDir, File file) {
+    //     return patterns.accept(baseDir, file);
+    // }
 
     public boolean accept(String name) {
         return patterns.accept(name);

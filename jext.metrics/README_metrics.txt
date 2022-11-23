@@ -1,3 +1,22 @@
+Metric types (SonarQube):
+
+    WORK_DUR
+    BOOL        true/false
+    INT         123
+    PERCENT     [0..100]
+    DATA        ?? 21/12/202 ??
+    FLOAT       0.,...
+    MILLIS      integer
+    STRING      '...'
+    DISTRIB     ???
+    RATING      ??? float
+    LEVEL       ??? enumeration (ON, OFF)
+
+    count, integer, int
+    ratio, float, double, real
+
+
+
 1) to classify the metrics in different categories
 2) each tool has different set of metrics
 3) to retrieve

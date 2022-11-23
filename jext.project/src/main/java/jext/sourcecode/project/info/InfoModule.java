@@ -158,7 +158,35 @@ public class InfoModule implements Module, Comparable<Named> {
 
     @Override
     public Set<Library> getDeclaredLibraries() {
-        List<String> libraryNames = MapUtils.get(info, "declaredLibraries");
+        // List<String> libraryNames = MapUtils.get(info, "declaredLibraries");
+        // Set<Library> libraries = new HashSet<>();
+        // libraryNames.forEach(libraryName -> {
+        //     Library library = project.getLibraries().getLibrary(libraryName);
+        //     if (library != null)
+        //         libraries.add(library);
+        // });
+        // return libraries;
+        return getLibraries(MapUtils.get(info, "declaredLibraries"));
+    }
+
+    @Override
+    public Set<Library> getLocalLibraries() {
+        // List<String> libraryNames = MapUtils.get(info, "localLibraries");
+        // Set<Library> libraries = new HashSet<>();
+        // libraryNames.forEach(libraryName -> {
+        //     Library library = project.getLibraries().getLibrary(libraryName);
+        //     if (library != null)
+        //         libraries.add(library);
+        // });
+        // return libraries;
+        return getLibraries(MapUtils.get(info, "localLibraries"));
+    }
+
+    private Set<Library> getLibraries(List<String> libraryNames) {
+        // for back compatibility
+        if (libraryNames == null || libraryNames.isEmpty())
+            return Collections.emptySet();
+
         Set<Library> libraries = new HashSet<>();
         libraryNames.forEach(libraryName -> {
             Library library = project.getLibraries().getLibrary(libraryName);
@@ -166,11 +194,6 @@ public class InfoModule implements Module, Comparable<Named> {
                 libraries.add(library);
         });
         return libraries;
-    }
-
-    @Override
-    public Set<Library> getLocalLibraries() {
-        return Collections.emptySet();
     }
 
     @Override

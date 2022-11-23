@@ -27,8 +27,9 @@ public class LibraryLicense {
     }
 
     public static LibraryLicense of(String type, String url) {
-        if (type == null)
-            type = "";
+        if (type == null) type = "";
+        if (url  == null) url  = "";
+
         if (type.isEmpty() && url.isEmpty())
             return NO_LICENSE;
         else

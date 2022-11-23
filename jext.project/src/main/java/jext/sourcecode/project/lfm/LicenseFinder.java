@@ -1,5 +1,6 @@
 package jext.sourcecode.project.lfm;
 
+import jext.compress.Archives;
 import jext.logging.Logger;
 import jext.net.RemoteFileDownloader;
 import jext.util.FileUtils;
@@ -9,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -19,11 +21,9 @@ public class LicenseFinder {
     // Find a license
     // ----------------------------------------------------------------------
 
-    public static LibraryLicense findLicense(File libraryDirectory) {
-        if (libraryDirectory.isFile())
-            libraryDirectory = libraryDirectory.getParentFile();
+    public static LibraryLicense findLicense(File file) {
 
-        LibraryLicense license = new LicenseFinder(libraryDirectory).find();
+        LibraryLicense license = new LicenseFinder(file).find();
         if (!license.isValid())
             logger.warnf("Invalid license: %s", license.getUrl());
 
@@ -36,16 +36,18 @@ public class LicenseFinder {
 
     private static final Logger logger =Logger.getLogger(LicenseFinder.class);
 
+    private final File file;
     private final File directory;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    private LicenseFinder(File directory) {
-        if (directory.isFile())
-            directory = directory.getParentFile();
-        this.directory = directory;
+    private LicenseFinder(File fileOrDirectory) {
+        this.file = fileOrDirectory;
+        this.directory = fileOrDirectory.isDirectory()
+                ? fileOrDirectory
+                : fileOrDirectory.getParentFile();
     }
 
     // ----------------------------------------------------------------------
@@ -54,8 +56,13 @@ public class LicenseFinder {
 
     private LibraryLicense find() {
         LibraryLicense license = null;
+
         if (license == null)
-            license = findLicenseUsingLicenseFile();
+            license = findFromCompressedFile();
+        if (license == null)
+            license = findUsingFile();
+        if (license == null)
+            license = findUsingLicenseFile();
         if (license == null)
             license = findUsingMavenPom();
         if (license == null)
@@ -66,6 +73,46 @@ public class LicenseFinder {
             return LibraryLicense.none();
         else
             return license;
+    }
+
+    // -----------------------------------------------------------------------------------
+
+    @Nullable
+    private LibraryLicense findFromCompressedFile() {
+        if (!Archives.isCompressed(file))
+            return null;
+
+        // check for META-INF/MANIFEST.MF
+        try {
+            String line;
+            BufferedReader rdr = Archives.openText(file,"META-INF/MANIFEST.MF");
+            for(line=rdr.readLine(); line != null; line=rdr.readLine()) {
+                if (line.contains("Bundle-License"))
+                    break;
+            }
+
+            if (line == null)
+                return null;
+
+            int p = line.indexOf(':');
+            String url = line.substring(p+1).trim();
+            String license = findLicenseUsingUrl(url);
+
+            return LibraryLicense.of(license, url);
+
+        } catch (IOException e) {
+            ;
+        }
+        return null;
+    }
+
+    @Nullable
+    private LibraryLicense findUsingFile() {
+        String license = findLicenseFromFile(file);
+        if (license == null)
+            return null;
+        else
+            return LibraryLicense.of(license, file);
     }
 
     // -----------------------------------------------------------------------------------
@@ -86,15 +133,15 @@ public class LicenseFinder {
          */
         try {
             Element root = XPathUtils.parse(nuspecFile).getDocumentElement();
-            String type = XPathUtils.getValue(root, "metadata/license/#text", null);
+            String license = XPathUtils.getValue(root, "metadata/license/#text", null);
             String url  = XPathUtils.getValue(root, "metadata/licenseUrl/#text");
 
-            if (type == null)
-                type = findLicenseTypeFromUrl(url);
-            if (type == null)
-                type = findLicenseUsingUrl(url);
+            if (license == null)
+                license = findLicenseTypeFromUrl(url);
+            if (license == null)
+                license = findLicenseUsingUrl(url);
 
-            return LibraryLicense.of(type, url);
+            return LibraryLicense.of(license, url);
 
         } catch (ParserConfigurationException | IOException | SAXException e) {
             // none to do
@@ -106,10 +153,22 @@ public class LicenseFinder {
 
     @Nullable
     private LibraryLicense findUsingMavenPom() {
+        String license = null;
         File pomFile = FileUtils.findFile(directory, ".pom");
         if (pomFile == null)
             return null;
 
+        // if (license == null)
+        license = findLicenseFromMavenXML(pomFile);
+
+        // not necessary: already tested
+        // if (license == null)
+        //     license = findLicenseFromFile(pomFile);
+
+        return license != null ? LibraryLicense.of(license, pomFile) : null;
+    }
+
+    private String findLicenseFromMavenXML(File pomFile) {
         /*
             <licenses>
                 <license>
@@ -119,35 +178,37 @@ public class LicenseFinder {
                 </license>
             </licenses>
          */
-
         try {
             Element root = XPathUtils.parse(pomFile).getDocumentElement();
-            String type = XPathUtils.getValue(root, "/licenses/license/name/#text");
-            String url  = XPathUtils.getValue(root, "/licenses/license/url/#text");
-            if (type.isEmpty())
-                type = findLicenseTypeFromUrl(url);
-
-            return LibraryLicense.of(type, url);
+            String license = XPathUtils.getValue(root, "licenses/license/name/#text", null);
+            String url  = XPathUtils.getValue(root, "licenses/license/url/#text");
+            if (license == null)
+                license = findLicenseTypeFromUrl(url);
+            if (license == null)
+                return null;
+            else
+                return license;
 
         } catch (ParserConfigurationException | IOException | SAXException e) {
             // none to do
         }
+
         return null;
     }
 
     // -----------------------------------------------------------------------------------
 
     @Nullable
-    private LibraryLicense findLicenseUsingLicenseFile() {
+    private LibraryLicense findUsingLicenseFile() {
         File[] files = directory.listFiles((dir, name) -> name.toLowerCase().contains("license"));
         if (files == null || files.length == 0)
             return null;
 
         for(File file : files) {
-            String type = findLicenseFromFile(file);
-            if (type != null) {
+            String license = findLicenseFromFile(file);
+            if (license != null) {
                 String url = String.format("file:///%s", FileUtils.getAbsolutePath(file));
-                return LibraryLicense.of(type, url);
+                return LibraryLicense.of(license, url);
             }
         }
 
@@ -266,14 +327,14 @@ public class LicenseFinder {
         for(File file : files) {
             List<String> lines = FileUtils.toStrings(file);
             int iline =0;
-            for (String type : lines) {
+            for (String line : lines) {
                 if (iline >= MAX_LINES)
                     break;
 
-                String lcline = type.trim().toLowerCase();
+                String lcline = line.trim().toLowerCase();
                 if (lcline.endsWith("license")) {
                     String url = String.format("file:///%s", FileUtils.getAbsolutePath(file));
-                    return LibraryLicense.of(type, url);
+                    return LibraryLicense.of(line, url);
                 }
 
                 iline += 1;

@@ -5,9 +5,7 @@ import jext.metrics.MetricValue;
 import jext.metrics.MetricsObject;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
-import jext.metrics.MetricsValues;
 import jext.metrics.ObjectType;
-import jext.util.HashSet;
 import jext.util.MapUtils;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
@@ -19,7 +17,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 

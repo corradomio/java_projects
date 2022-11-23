@@ -7,10 +7,8 @@ import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
 import jext.metrics.ObjectType;
 import jext.util.Assert;
-import jext.util.BidiMap;
 import jext.util.DefaultHashMap;
 import jext.util.FileUtils;
-import jext.util.HashBidiMap;
 import jext.util.PathUtils;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
@@ -42,6 +40,8 @@ public class SciToolsProvider implements MetricsProvider {
     static final String PROJECT_HOME = "scitools.project.home";
     static final String METRICS_HOME = "scitools.metrics.home";
     static final String METRICS_REVISION = "scitools.metrics.revision";
+    static final String GENERIC_CATEGORY = "generic";
+    static final String DEFAULT_TYPE = "count";
 
     static final String METRICS_VALUES = "scitools.metrics.values";
     static final String METRICS_NODES  = "scitools.metrics.nodes";
@@ -175,8 +175,8 @@ public class SciToolsProvider implements MetricsProvider {
             return metricsByName.get(nameOrId);
 
         logger.errorf("Unknown metric '%s'", nameOrId);
-        Metric metric = new SciToolsMetric(this, nameOrId, nameOrId, "", "");
-        addMetric(metric);
+        Metric metric = new SciToolsMetric(this, nameOrId, nameOrId, DEFAULT_TYPE, "");
+        addMetric(GENERIC_CATEGORY, metric);
         return metric;
     }
 
@@ -240,11 +240,12 @@ public class SciToolsProvider implements MetricsProvider {
             XPathUtils.selectElements(root, "metrics/metric").forEach(elt -> {
                 String id = XPathUtils.getValue(elt, "@id");
                 String name = XPathUtils.getValue(elt, "@name");
-                String type = XPathUtils.getValue(elt, "@type", "count");
+                String category = XPathUtils.getValue(elt, "@category", GENERIC_CATEGORY);
+                String type = XPathUtils.getValue(elt, "@type", DEFAULT_TYPE);
                 String description = XPathUtils.getValue(elt, "#text");
 
                 Metric metric = new SciToolsMetric(this, id, name, type, description);
-                addMetric(metric);
+                addMetric(category, metric);
             });
         }
         catch(IOException | SAXException | ParserConfigurationException e) {
@@ -278,11 +279,11 @@ public class SciToolsProvider implements MetricsProvider {
         categories.put(category, new HashSet<>(metrics));
     }
 
-    void addMetric(Metric metric) {
+    void addMetric(String category, Metric metric) {
         metricsById.put(metric.getId(), metric);
         metricsByName.put(metric.getName(), metric);
         categories.get(ALL_METRICS).add(metric.getId());
-        categories.get(metric.getType()).add(metric.getId());
+        categories.get(category).add(metric.getId());
     }
 
 

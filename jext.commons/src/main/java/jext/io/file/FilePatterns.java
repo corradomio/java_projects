@@ -1,5 +1,7 @@
 package jext.io.file;
 
+import jext.util.FileUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,13 +39,8 @@ public class FilePatterns {
     }
 
     public boolean accept(File baseDir, File file) {
-        for(FilePattern pattern : patterns)
-            if (pattern.accept(baseDir, file))
-                return true;
-        return false;
+        String relativePath = FileUtils.relativePath(baseDir, file);
+        return accept(relativePath);
     }
 
-    public boolean accept(String stext, String ltext) {
-        return accept(stext) || accept(ltext);
-    }
 }

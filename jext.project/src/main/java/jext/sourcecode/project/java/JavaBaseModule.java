@@ -239,17 +239,27 @@ public class JavaBaseModule extends BaseModule {
 
     @Override
     public Set<Library> getDeclaredLibraries() {
-        if (libraries != null)
-            return libraries;
+        if (declaredLibraries != null)
+            return declaredLibraries;
 
-        libraries = new HashSet<>();
+        declaredLibraries = new HashSet<>();
 
-        collectEclipseLibraries(libraries);
-        collectIvyLibraries(libraries);
-        collectMavenLibraries(libraries);
-        collectGradleLibraries(libraries);
+        collectEclipseLibraries(declaredLibraries);
+        collectIvyLibraries(declaredLibraries);
+        collectMavenLibraries(declaredLibraries);
+        collectGradleLibraries(declaredLibraries);
 
-        return libraries;
+        resolveRecursiveDependencies(1);
+
+        return declaredLibraries;
+    }
+
+    private void resolveRecursiveDependencies(int depth) {
+        // for now it retrieve ONLY the first level of recursive dependencies
+        Set<Library> remoteLibraries = new HashSet<>(declaredLibraries);
+        remoteLibraries.forEach(remoteLibrary -> {
+            declaredLibraries.addAll(remoteLibrary.getDependencies());
+        });
     }
 
     @Override

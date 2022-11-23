@@ -183,15 +183,15 @@ public class CSharpModule extends BaseModule {
 
     @Override
     public Set<Library> getDeclaredLibraries() {
-        if (libraries != null)
-            return libraries;
+        if (declaredLibraries != null)
+            return declaredLibraries;
 
-        libraries = new HashSet<>();
+        declaredLibraries = new HashSet<>();
 
         collectLibrariesFromPackagesConfig();
         collectLibrariesFromPackageReference();
 
-        return libraries;
+        return declaredLibraries;
     }
 
     public Set<Library> getLocalLibraries() {
@@ -265,7 +265,7 @@ public class CSharpModule extends BaseModule {
 
             Library library = lfinder.getLibrary(coords);
 
-            libraries.add(library);
+            declaredLibraries.add(library);
         });
     }
     private void collectLocalLibrariesFromReference() {
@@ -329,7 +329,7 @@ public class CSharpModule extends BaseModule {
 
                 Library library = lfinder.getLibrary(coords);
 
-                this.libraries.add(library);
+                declaredLibraries.add(library);
             });
         });
     }

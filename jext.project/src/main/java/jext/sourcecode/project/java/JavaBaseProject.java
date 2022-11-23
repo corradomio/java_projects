@@ -136,7 +136,7 @@ public abstract class JavaBaseProject extends BaseProject {
                 public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                     File dir = path.toFile();
 
-                    if (fpExcludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
+                    if (fpExcludes.accept(projectHome, dir))
                         return FileVisitResult.SKIP_SUBTREE;
 
                     File isModule = new File(dir, moduleFile);
@@ -241,7 +241,7 @@ public abstract class JavaBaseProject extends BaseProject {
                 public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) {
                     File dir = path.toFile();
 
-                    if (fpExcludes.accept(dir.getName(), FileUtils.getAbsolutePath(dir)))
+                    if (fpExcludes.accept(projectHome, dir))
                         return FileVisitResult.SKIP_SUBTREE;
 
                     return FileVisitResult.CONTINUE;

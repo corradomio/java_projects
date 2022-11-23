@@ -187,6 +187,11 @@ public class ProjectAnalyzer {
             .map(library -> library.getName().getFullName())
             .collect(Collectors.toList()));
 
+        minfo.put("localLibraries", m.getLocalLibraries()
+                .stream()
+                .map(library -> library.getName().getFullName())
+                .collect(Collectors.toList()));
+
         return minfo;
     }
 

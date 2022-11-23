@@ -10,12 +10,13 @@ import jext.metrics.MetricsValues;
 import jext.metrics.ObjectType;
 import jext.util.Assert;
 import org.sonar.wsclient.SonarClient;
+import org.sonar.wsclient.base.HttpException;
 import org.sonar.wsclient.component.Component;
 import org.sonar.wsclient.component.ComponentClient;
 import org.sonar.wsclient.metrics.MetricsClient;
 import org.sonar.wsclient.metrics.internal.DefaultMetricsClient;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
     }};
 
     private final String name;
+    private boolean valid;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -49,6 +51,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
         super(null, provider, client);
         Assert.notNull(name, "name");
         this.name = name;
+        this.valid = true;
     }
 
     void initialize() {
@@ -96,6 +99,9 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
     @Override
     public List<MetricsObject> getChildren() {
+        if (!valid)
+            return Collections.emptyList();
+
         ComponentClient cclient = client.componentClient();
         return cclient.list(getId(), false)
                 .stream()
@@ -115,6 +121,9 @@ public class SonarProject extends SonarObject implements MetricsProject {
     @Override
     public MetricsObjects getMetricsObjects(ObjectType type) {
         MetricsObjects metricsObjects = new SonarObjects(type);
+        if (!valid)
+            return metricsObjects;
+
 
         if (!validateType(type)) {
             Assert.check(false, String.format("%s is not available as type to search objects", type));
@@ -140,6 +149,9 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
     @Override
     public Set<Metric> getMetrics() {
+        if (!valid)
+            return Collections.emptySet();
+
         Set<Metric> metrics = new HashSet<>();
 
         getMetricsValues(ObjectType.ALL, null).forEach(mv -> {
@@ -151,17 +163,30 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
     @Override
     public Set<Metric> getMetrics(ObjectType otype) {
+        if (!valid)
+            return Collections.emptySet();
+
         Set<Metric> metrics = new HashSet<>();
 
-        getMetricsValues(otype, null).forEach(mv -> {
-            metrics.add(mv.getMetric());
-        });
+        try {
+            getMetricsValues(otype, null).forEach(mv -> {
+                metrics.add(mv.getMetric());
+            });
+        }
+        catch (HttpException e) {
+            logger.errorf("Project %s not found", project.getName());
+            valid = false;
+        }
 
         return metrics;
     }
 
     @Override
     public MetricsValues getMetricsValues(ObjectType type, String category) {
+        MetricsValues metricsValues = new SonarValues();
+        if (!valid)
+            return metricsValues;
+
         Map<String, SonarMetric> mmap = new HashMap<>();
         Set<String> mkeys = new HashSet<>();
         for(Metric metric : provider.getMetrics(category)) {
@@ -169,13 +194,15 @@ public class SonarProject extends SonarObject implements MetricsProject {
             mkeys.add(metric.getId());
         }
 
+        if (mkeys.isEmpty())
+            return metricsValues;
+
         // Remove some invalid metrics
-        mkeys.removeAll(INVALID_METRIC_KEYS);
+        INVALID_METRIC_KEYS.forEach(mkeys::remove);
 
         // Initialize the component map with the current prokect component
         Map<String, SonarObject> cmap = new HashMap<>();
 
-        MetricsValues metricsValues = new SonarValues();
         MetricsClient metricClient = client.metricsClient();
         String qualifier = SonarObject.toQualifier(type);
 
@@ -183,7 +210,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
             metricClient.list(getId(), qualifier, mkeys, false)
                     .stream()
                     // select ONLY the specified object types
-                    .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
+                    .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure) measure).getComponent().qualifier()))
                     .forEach(measure -> {
                         SonarObject so;
                         DefaultMetricsClient.CMeasure cmeasure = (DefaultMetricsClient.CMeasure) measure;
@@ -204,7 +231,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
             metricClient.list(getId(), qualifier, mkeys, true)
                     .stream()
                     // select ONLY the specified object types
-                    .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure)measure).getComponent().qualifier()))
+                    .filter(measure -> type == ObjectType.ALL || type == SonarObject.toType(((DefaultMetricsClient.CMeasure) measure).getComponent().qualifier()))
                     .forEach(measure -> {
                         SonarObject so;
                         DefaultMetricsClient.CMeasure cmeasure = (DefaultMetricsClient.CMeasure) measure;
@@ -220,7 +247,6 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
                         metricsValues.add(metricValue);
                     });
-
         }
 
         return metricsValues;

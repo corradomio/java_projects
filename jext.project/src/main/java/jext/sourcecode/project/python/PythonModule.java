@@ -143,18 +143,18 @@ public class PythonModule extends BaseModule {
 
     @Override
     public Set<Library> getDeclaredLibraries() {
-        if (libraries != null)
-            return libraries;
+        if (declaredLibraries != null)
+            return declaredLibraries;
 
-        libraries = new HashSet<>();
+        declaredLibraries = new HashSet<>();
 
         // sometime a project can contains multiple "requirement.txt".
         // We collect all of them
         List<File> requirementFiles = collectRequirementsFiles();
         for(File requirementFile : requirementFiles)
-            collectLibrariesFromRequirement(requirementFile);
+            collectLibrariesFromRequirements(requirementFile);
 
-        return libraries;
+        return declaredLibraries;
     }
 
     private List<File> collectRequirementsFiles() {
@@ -162,7 +162,7 @@ public class PythonModule extends BaseModule {
         return FileUtils.asList(files);
     }
 
-    private void collectLibrariesFromRequirement(File requirementsFile) {
+    private void collectLibrariesFromRequirements(File requirementsFile) {
         // Requirements requirements = new Requirements(moduleHome);
         Requirements requirements = new Requirements(requirementsFile);
         PythonLibraryFinder lfinder = (PythonLibraryFinder) project.getLibraryFinder();
@@ -172,7 +172,7 @@ public class PythonModule extends BaseModule {
             coords = lfinder.normalize(coords);
 
             Library library = lfinder.getLibrary(coords);
-            libraries.add(library);
+            declaredLibraries.add(library);
         });
     }
 

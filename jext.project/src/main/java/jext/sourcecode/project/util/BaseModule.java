@@ -10,11 +10,11 @@ import jext.sourcecode.project.Project;
 import jext.sourcecode.project.RefType;
 import jext.sourcecode.project.Resources;
 import jext.sourcecode.project.Sources;
-import jext.sourcecode.project.Type;
 import jext.sourcecode.project.java.maven.MavenRepository;
 import jext.util.FileUtils;
 import jext.util.LongHash;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,7 +35,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     protected File moduleHome;
 
     protected List<File> directories;
-    protected Set<Library> libraries;
+    protected Set<Library> declaredLibraries;
     protected Set<Library> localLibraries;
     protected SourcesImpl sources;
     protected ResourcesImpl resources;
@@ -124,6 +124,7 @@ public abstract class BaseModule extends ReferencedObject implements Module {
     @Override
     public abstract Set<Library> getLocalLibraries();
 
+    @Nullable
     @Override
     public Library getLibrary(String nameOrId) {
         Library selected = project.getLibraries().getLibrary(nameOrId);

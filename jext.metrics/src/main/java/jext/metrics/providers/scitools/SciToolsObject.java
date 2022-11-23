@@ -64,6 +64,9 @@ public class SciToolsObject implements MetricsObject {
     private static final Map<String, ObjectType> SCITOOLS_TYPES;
     static {
         SCITOOLS_TYPES = new HashMap<>() {{
+            put("Module", ObjectType.MODULE);
+            put("Module File", ObjectType.MODULE);
+
             put("File", ObjectType.SOURCE);
 
             put("Type", ObjectType.TYPE);
@@ -77,6 +80,8 @@ public class SciToolsObject implements MetricsObject {
             put("Constructor", ObjectType.METHOD);
             put("Finalizer", ObjectType.METHOD);
             put("Static", ObjectType.METHOD);
+
+            put("Function", ObjectType.METHOD);
 
             put("Delegate", ObjectType.FIELD);
             put("Property", ObjectType.FIELD);

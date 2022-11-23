@@ -17,7 +17,6 @@ public class CheckLicenses {
 
         LicenseFinder.findLicense(new File("d:\\Etc\\tabby\\resources\\app.asar.unpacked\\node_modules\\libnpmorg\\LICENSE"));
 
-
         Files.walkFileTree(new File("d:/").toPath(), new FileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {

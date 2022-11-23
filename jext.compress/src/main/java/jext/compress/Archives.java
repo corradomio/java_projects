@@ -53,6 +53,21 @@ public class Archives {
     // ----------------------------------------------------------------------
 
     /**
+     * Check, based on the file extension, if the file is a supported compressed
+     * file
+     *
+     * @param file file to check
+     * @return true if it is a supported compressed file
+     */
+    public static boolean isCompressed(File file) {
+        String name = file.getName();
+        for(String ext : archivers.keySet())
+            if (name.endsWith(ext))
+                return true;
+        return false;
+    }
+
+    /**
      * Read the compressed stream as a text stream
      * @param compressedFile compressed file
      * @param path internal entry's path as 'key1/key2/...'
@@ -61,7 +76,13 @@ public class Archives {
      */
     public static BufferedReader openText(File compressedFile, String path) throws IOException {
         ArchiveInputStream stream = openArchive(compressedFile);
-        ArchiveEntry entry = selectFirst(stream);
+        ArchiveEntry entry;
+        if (path == null || path.isEmpty())
+            entry = selectFirst(stream);
+        else
+            entry = select(stream, path);
+        if (entry == null)
+            throw new IOException(String.format("Entry %s not found in file %s", path, compressedFile.getAbsolutePath()));
         return new BufferedReader(new InputStreamReader(stream));
     }
 
