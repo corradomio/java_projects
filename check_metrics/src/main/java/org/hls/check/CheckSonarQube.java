@@ -20,7 +20,7 @@ public class CheckSonarQube extends CheckBase {
                         "sonar.url", "http://localhost:9000",
                         "sonar.username", "sonaruser",
                         "sonar.password", "sonaruser",
-                        "sonar.name", "Lucene"
+                        "sonar.name", "acme-beta4"
                 ));
 
         MetricsProject project = provider.getProject();

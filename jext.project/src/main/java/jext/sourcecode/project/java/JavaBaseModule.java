@@ -277,7 +277,7 @@ public class JavaBaseModule extends BaseModule {
     protected void collectLocalLibraries(Set<Library> collectedLibraries) {
         List<File> jarFiles = new ArrayList<>();
         getDirectories().forEach(dir ->{
-            FileUtils.listFiles(jarFiles, dir, FileFilters.IS_JAR);
+            FileUtils.listFiles(jarFiles, dir, FileFilters.IS_JAR, FileFilters.TRUE);
         });
 
         jarFiles.stream()

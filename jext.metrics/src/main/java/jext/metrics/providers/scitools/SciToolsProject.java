@@ -40,6 +40,11 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     private final Map<String, SciToolsObject> objects = new HashMap<>();
     private final IdMaps idmaps = new IdMaps();
 
+    private final File nodesFile;
+    private final File edgesFile;
+    private final File metricsFile;
+    private final File idmapsFile;
+
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
@@ -49,6 +54,11 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         this.provider = provider;
         this.objects.put(this.getId(), this);
         this.project = this;
+
+        this.nodesFile = new File(provider.getProperty(SciToolsProvider.METRICS_NODES));
+        this.edgesFile = new File(provider.getProperty(SciToolsProvider.METRICS_EDGES));
+        this.metricsFile = new File(provider.getProperty(SciToolsProvider.METRICS_VALUES));
+        this.idmapsFile = new File(provider.getProperty(SciToolsProvider.METRICS_IDMAPS));
     }
 
     // ----------------------------------------------------------------------
@@ -173,15 +183,25 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
     void initialize() {
         logger.info("initialize");
-        loadNodes();
-        loadEdges();
-        loadMeasures();
-        loadIdMaps();
+
+        if (metricsAvailable()) {
+            loadNodes();
+            loadEdges();
+            loadMeasures();
+            loadIdMaps();
+        }
         logger.info("done");
     }
 
+    private boolean metricsAvailable() {
+        return nodesFile.exists()
+                && edgesFile.exists()
+                && metricsFile.exists()
+                && idmapsFile.exists();
+    }
+
     private void loadNodes() {
-        File nodesFile = new File(provider.getProperty(SciToolsProvider.METRICS_NODES));
+        // File nodesFile = new File(provider.getProperty(SciToolsProvider.METRICS_NODES));
         logger.debugf("... load nodes from %s", nodesFile);
 
         // 0  1    3
@@ -202,7 +222,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     private void loadEdges() {
-        File edgesFile = new File(provider.getProperty(SciToolsProvider.METRICS_EDGES));
+        // File edgesFile = new File(provider.getProperty(SciToolsProvider.METRICS_EDGES));
         logger.debugf("... load edges from %s", edgesFile);
 
         // 0      1
@@ -231,7 +251,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     private void loadMeasures() {
-        File metricsFile = new File(provider.getProperty(SciToolsProvider.METRICS_VALUES));
+        // File metricsFile = new File(provider.getProperty(SciToolsProvider.METRICS_VALUES));
         logger.debugf("... load metrics from %s", metricsFile);
 
         // 0  1    2     3   4
@@ -281,7 +301,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     }
 
     private void loadIdMaps() {
-        File idmapsFile = new File(provider.getProperty(SciToolsProvider.METRICS_IDMAPS));
+        // File idmapsFile = new File(provider.getProperty(SciToolsProvider.METRICS_IDMAPS));
         if (!idmapsFile.exists())
             return;
         else

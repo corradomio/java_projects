@@ -173,7 +173,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
                 metrics.add(mv.getMetric());
             });
         }
-        catch (HttpException e) {
+        catch (RuntimeException e) {
             logger.errorf("Project %s not found", project.getName());
             valid = false;
         }

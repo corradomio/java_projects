@@ -47,7 +47,8 @@ public class SonarProvider implements MetricsProvider {
     static List<String> INVALID_METRIC_KEYS = Arrays.asList(
             "ncloc_language_distribution",
             "duplications_data",
-            "quality_gate_details"
+            "quality_gate_details",
+            "alert_status"
     );
 
     // ----------------------------------------------------------------------
