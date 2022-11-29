@@ -7,11 +7,13 @@ import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.ObjectType;
 import jext.util.MapUtils;
+import jext.util.PathUtils;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.component.Component;
 import org.sonar.wsclient.component.ComponentClient;
 import org.sonar.wsclient.metrics.MetricsClient;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -149,6 +151,37 @@ public class SonarObject implements MetricsObject {
                 .stream()
                 .map(c -> new SonarObject(c, provider, client))
                 .collect(Collectors.toList());
+    }
+
+    @Nullable
+    @Override
+    public MetricsObject getMetricsObject(ObjectType type, String path) {
+
+        String id = String.format("%s:%s", getName(), path);
+        Component c = client.componentClient().get(id);
+
+        if (c == null)
+            return null;
+        else
+            return SonarObject.of(c, this);
+    }
+
+    @Override
+    public MetricsObject newMetricsObject(ObjectType type, String path) {
+        // "key": "Lucene:dotnet/tools/Lucene.Net.Tests.Cli/Commands/Analysis/AnalysisStempelPatchStemsCommandTest.cs",
+        // "name": "AnalysisStempelPatchStemsCommandTest.cs",
+        // "qualifier": "UTS",
+        // "path": "dotnet/tools/Lucene.Net.Tests.Cli/Commands/Analysis/AnalysisStempelPatchStemsCommandTest.cs",
+        // "language": "cs"
+        Component c = new Component(MapUtils.asMap(
+                "key", String.format("%s:%s", getName(), path),
+                "name", PathUtils.getName(path),
+                "qualifier", toQualifier(type),
+                "path", path,
+                "language", ""
+        ));
+
+        return SonarObject.of(c, this);
     }
 
     // ----------------------------------------------------------------------

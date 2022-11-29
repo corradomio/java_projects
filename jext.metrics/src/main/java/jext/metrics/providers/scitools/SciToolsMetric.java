@@ -1,7 +1,9 @@
 package jext.metrics.providers.scitools;
 
+import jext.metrics.AggregateMode;
 import jext.metrics.Metric;
 import jext.metrics.MetricsProvider;
+import jext.metrics.ValueType;
 
 public class SciToolsMetric implements Metric {
 
@@ -11,9 +13,10 @@ public class SciToolsMetric implements Metric {
 
     private final String id;
     private final String name;
-    private final String type;
+    private final ValueType type;
     private final String description;
     private final SciToolsProvider provider;
+    private String aggregate;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -22,9 +25,21 @@ public class SciToolsMetric implements Metric {
     SciToolsMetric(SciToolsProvider provider, String id, String name, String type, String description) {
         this.id = id;
         this.name = name;
-        this.type = type;
+        this.type = typeOf(type);
         this.description = description;
         this.provider = provider;
+        this.aggregate = null;
+    }
+
+    private static ValueType typeOf(String type) {
+        if ("count".equals(type))
+            return ValueType.COUNT;
+        if ("float".equals(type))
+            return ValueType.FLOAT;
+        if ("int".equals(type))
+            return ValueType.INTEGER;
+        else
+            return ValueType.FLOAT;
     }
 
     // ----------------------------------------------------------------------
@@ -47,13 +62,29 @@ public class SciToolsMetric implements Metric {
     }
 
     @Override
-    public String getType() {
+    public ValueType getType() {
         return type;
     }
 
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public AggregateMode getAggregateMode() {
+        if (aggregate != null)
+            return AggregateMode.valueOf(aggregate);
+
+        ValueType type = getType();
+        switch (type) {
+            case FLOAT:
+                return AggregateMode.MEAN;
+            case COUNT:
+                return AggregateMode.SUM;
+            default:
+                return AggregateMode.SUM;
+        }
     }
 
     // ----------------------------------------------------------------------

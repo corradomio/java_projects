@@ -10,9 +10,14 @@ import jext.util.Assert;
 import jext.util.DefaultHashMap;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
+import jext.util.StringUtils;
+import jext.xml.XPathUtils;
 import org.sonar.wsclient.SonarClient;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import javax.annotation.Nullable;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -27,6 +32,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
 
 public class SonarProvider implements MetricsProvider {
 
@@ -50,6 +56,11 @@ public class SonarProvider implements MetricsProvider {
             "quality_gate_details",
             "alert_status"
     );
+
+    private static final String DEFAULT_AGGREGATE = "";
+
+    private static final String SONAR_METRICS_JSON = "sonarmetrics.json";
+    private static final String SONAR_METRICS_XML  = "sonarmetrics.xml";
 
     // ----------------------------------------------------------------------
     // Private properties
@@ -79,8 +90,8 @@ public class SonarProvider implements MetricsProvider {
         this.properties = properties;
 
         validate();
-        loadCategories();
         loadMetrics();
+        loadCategories();
     }
 
     private void validate() {
@@ -92,13 +103,9 @@ public class SonarProvider implements MetricsProvider {
         categories.put(ALL_METRICS, new HashSet<>());
     }
 
-    private void loadCategories() {
-
-    }
-
     private void loadMetrics() {
         Map<String, Object> sonarmetrics = null;
-        try(InputStream stream = MetricsProviders.class.getResourceAsStream("sonarmetrics.json")) {
+        try(InputStream stream = MetricsProviders.class.getResourceAsStream(SONAR_METRICS_JSON)) {
             sonarmetrics = JSONUtils.parse(stream, HashMap.class);
         }
         catch(IOException e) {
@@ -151,6 +158,60 @@ public class SonarProvider implements MetricsProvider {
     @Override
     public void registerCategory(String category, Collection<String> metrics) {
         categories.put(category, new HashSet<>(metrics));
+    }
+
+    // ----------------------------------------------------------------------
+    // Extra configuration
+    // ----------------------------------------------------------------------
+
+    private void loadCategories() {
+        setMetricsAggregateMode();
+        setCustomCategories();
+    }
+
+    private void setMetricsAggregateMode() {
+        // set the metric's aggregate mode
+        try(InputStream stream = MetricsProviders.class.getResourceAsStream(SONAR_METRICS_XML)) {
+            Element root = XPathUtils.parse(stream).getDocumentElement();
+            XPathUtils.selectElements(root, "metrics/metric").forEach(elt -> {
+                String id = XPathUtils.getValue(elt, "@id");
+                String aggregate = XPathUtils.getValue(elt, "@aggregate", DEFAULT_AGGREGATE);
+
+                SonarMetric metric = (SonarMetric) getMetric(id);
+                if (metric == null) {
+                    logger.errorf("Unknown SonarQube metric %s", id);
+                    connect();
+                }
+                metric.setAggregate(aggregate);
+            });
+        }
+        catch(IOException | SAXException | ParserConfigurationException e) {
+            // in theory never happen
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void setCustomCategories() {
+        // set the metric's aggregate mode
+        try(InputStream stream = MetricsProviders.class.getResourceAsStream(SONAR_METRICS_XML)) {
+            Element root = XPathUtils.parse(stream).getDocumentElement();
+            XPathUtils.selectElements(root, "categories/category").forEach(cat -> {
+                String category = XPathUtils.getValue(cat, "@name");
+                List<String> metrics = StringUtils.split(cat.getTextContent(), ",");
+
+                // remove invalid metrics
+                metrics = metrics.stream()
+                        .filter(metric -> metricsById.containsKey(metric) || metricsByName.containsKey(metric))
+                        .collect(Collectors.toList());
+
+                if (!metrics.isEmpty())
+                    categories.get(category).addAll(metrics);
+            });
+        }
+        catch(IOException | SAXException | ParserConfigurationException e) {
+            // in theory never happen
+            logger.error(e.getMessage());
+        }
     }
 
     // ----------------------------------------------------------------------

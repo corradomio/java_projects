@@ -1,5 +1,6 @@
 package jext.metrics;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,25 @@ public interface MetricsObject {
      * @return map with all data offered by the tool
      */
     Map<String, Object> getData();
+
+    /**
+     * Retrieve the specified object
+     * @param type objectType
+     * @param path relative path respect the current object
+     * @return the object, if found
+     */
+    @Nullable
+    MetricsObject getMetricsObject(ObjectType type, String path);
+
+    /**
+     * Used to create 'virtual' project objects, not existent in the provider,
+     * but useful to implement the 'aggregate values'.
+     *
+     * @param type object type
+     * @param path relative path respect the current object
+     * @return the 'virtual object'
+     */
+    MetricsObject newMetricsObject(ObjectType type, String path);
 
     /**
      * Check if the object has children or it is a leaf.

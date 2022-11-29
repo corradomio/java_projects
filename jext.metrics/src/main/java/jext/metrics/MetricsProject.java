@@ -1,6 +1,7 @@
 package jext.metrics;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Set;
 
 public interface MetricsProject extends MetricsObject {
@@ -30,10 +31,11 @@ public interface MetricsProject extends MetricsObject {
     Set<Metric> getMetrics(ObjectType type);
 
     /**
-     * retrieve all metrics objects
+     * Retrieve all metrics objects.
+     * Note: the object are retrieved recursively starting from the project root
      *
      * @param type object type
-     * @return
+     * @return list of all project objects of the specified type
      */
     MetricsObjects getMetricsObjects(ObjectType type);
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<categories>
+<configuration>
     <!-- the root category contains all metrics -->
     <!--
-        Metric types: int float
+        Metric types: count int float
       -->
     <metrics>
         <metric id="CountDeclPropertyAuto" name="Auto Implemented Properties" category="count" type="count">
@@ -398,35 +398,38 @@ statement 'if (a &amp;&amp; b || c)' would have a cyclomatic of 1 but a strict c
         Sum of strict cyclomatic complexity of all nested functions or methods.
         </metric>
     </metrics>
-    <!--<category name="Complexity">
-        Average Cyclomatic Complexity,
-        Average Essential Cyclomatic Complexity,
-        Average Essential Strict Modified Complexity,
-        Average Modified Cyclomatic Complexity,
-        Average Strict Cyclomatic Complexity,
 
-        Cyclomatic Complexity,
+    <categories>
+        <!--<category name="Complexity">
+            Average Cyclomatic Complexity,
+            Average Essential Cyclomatic Complexity,
+            Average Essential Strict Modified Complexity,
+            Average Modified Cyclomatic Complexity,
+            Average Strict Cyclomatic Complexity,
 
-        Essential Complexity,
-        Essential Strict Modified Complexity,
+            Cyclomatic Complexity,
 
-        Max Cyclomatic Complexity,
-        Max Essential Complexity,
-        Max Essential Strict Modified Complexity,
-        Max Modified Cyclomatic Complexity,
-        Max Strict Cyclomatic Complexity,
+            Essential Complexity,
+            Essential Strict Modified Complexity,
 
-        Strict Cyclomatic Complexity,
-        Sum Cyclomatic Complexity,
-        Sum Essential Complexity,
-        Sum Essential Strict Modified Complexity,
-        Sum Modified Cyclomatic Complexity,
-        Sum Strict Cyclomatic Complexity,
-    </category>-->
-    <category name="Code">
-        AvgLineCode,
-        CountLineBlank,
-        RatioCommentToCode,
-        CountLineCodeDecl
-    </category>
-</categories>
+            Max Cyclomatic Complexity,
+            Max Essential Complexity,
+            Max Essential Strict Modified Complexity,
+            Max Modified Cyclomatic Complexity,
+            Max Strict Cyclomatic Complexity,
+
+            Strict Cyclomatic Complexity,
+            Sum Cyclomatic Complexity,
+            Sum Essential Complexity,
+            Sum Essential Strict Modified Complexity,
+            Sum Modified Cyclomatic Complexity,
+            Sum Strict Cyclomatic Complexity,
+        </category>-->
+        <category name="Code">
+            AvgLineCode,
+            CountLineBlank,
+            RatioCommentToCode,
+            CountLineCodeDecl
+        </category>
+    </categories>
+</configuration>

@@ -9,6 +9,10 @@ public interface MetricsProvider {
 
     String ALL_METRICS = "all";
 
+    /**
+     * Provider Id
+     * @return
+     */
     String getId();
 
     /**
@@ -17,17 +21,15 @@ public interface MetricsProvider {
      */
     String getName();
 
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
     /**
      * Properties used to configure the provider
      * @return configuration properties
      */
     Properties getProperties();
-
-    /** Used for provider initialization 
-     * It is atumatically called quen a provider is requested
-     * @param properties configuration properties
-     */
-    void initialize(Properties properties);
 
     /**
      * List of metric categories.
@@ -36,15 +38,13 @@ public interface MetricsProvider {
      */
     Collection<String> getCategories();
 
-    boolean hasCategory(String category);
-
     /**
-     * Register a new category
+     * Check if it contains the specified category
      *
-     * @param category category name
-     * @param measures list of measure ids/names belonging to the category
+     * @param category categor id or name
+     * @return true if the category is present
      */
-    void registerCategory(String category, Collection<String> measures);
+    boolean hasCategory(String category);
 
     /**
      * List of supported object types
@@ -65,7 +65,8 @@ public interface MetricsProvider {
 
     /**
      * Properties of the metric with the specified name or id.
-     * Note: it is possible to have multiple metrics with the same name but different id
+     * Note: it is possible to have multiple metrics with the same name but different id.
+     * In this case the metric selected is not specified (randomly)
      *
      * @param nameOrId id of the metric
      * @return Metric object
@@ -74,12 +75,35 @@ public interface MetricsProvider {
 
     /**
      * Navigate the hierarchical structure.
-     * Note: if necessary it open a connection with the metric provider for this
-     * project.
+     * Note: if necessary it open a connection with the metric provider for this project.
      * When the project is not more necessary, it is useful to call 'MetricsProject.close()'
      *
      * @return root object of the metrics project
      */
     MetricsProject getProject();
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    /**
+     * Used for provider initialization
+     * It is automatically called when a provider is requested
+     * @param properties configuration properties
+     */
+    void initialize(Properties properties);
+
+    /**
+     * Register a new custom category.
+     * Note: it can override a already defined category
+     *
+     * @param category category name
+     * @param measures list of measure ids/names belonging to the category
+     */
+    void registerCategory(String category, Collection<String> measures);
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

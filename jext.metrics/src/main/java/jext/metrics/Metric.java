@@ -29,6 +29,11 @@ public interface Metric {
     /**
      * Metric type
      */
-    String getType();
+    ValueType getType();
+
+    /**
+     * How to aggregate multime metrics
+     */
+    AggregateMode getAggregateMode();
 
 }

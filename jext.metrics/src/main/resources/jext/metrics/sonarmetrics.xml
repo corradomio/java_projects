@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <!--
+        How to aggregate the metrics.
+        If no specified, the aggregate method is the empty string.
+        In this case it depends on the metric type
+
+        value types:
+            WORK_DUR
+            BOOL
+            INT
+            PERCENT
+            DATA
+            FLOAT
+            MILLIS
+            STRING
+            DISTRIB
+            RATING
+            LEVEL
+    -->
+    <metrics>
+        <metric id="blocker_violations" aggregate="SUM"/>
+    </metrics>
+
+    <!--
+        Custom categories
+
+    -->
+    <categories>
+        <category name="Code">
+            code_smells,new_code_smells
+        </category>
+    </categories>
+</configuration>

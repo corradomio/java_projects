@@ -11,5 +11,6 @@ public enum ObjectType {
     METHOD,
     FIELD,
     NAMESPACE,
-    ALL
+    ALL,
+    VIRTUAL
 }

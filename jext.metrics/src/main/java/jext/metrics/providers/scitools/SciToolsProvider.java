@@ -257,11 +257,12 @@ public class SciToolsProvider implements MetricsProvider {
     private void loadCategories() {
         try(InputStream stream = MetricsProviders.class.getResourceAsStream("scitoolsmetrics.xml")) {
             Element root = XPathUtils.parse(stream).getDocumentElement();
-            XPathUtils.selectElements(root, "category").forEach(cat -> {
+            XPathUtils.selectElements(root, "categories/category").forEach(cat -> {
                 String category = XPathUtils.getValue(cat, "@name");
                 List<String> metrics = StringUtils.split(cat.getTextContent(), ",");
 
-                categories.get(category).addAll(metrics);
+                if (!metrics.isEmpty())
+                    categories.get(category).addAll(metrics);
             });
         }
         catch(IOException | SAXException | ParserConfigurationException e) {

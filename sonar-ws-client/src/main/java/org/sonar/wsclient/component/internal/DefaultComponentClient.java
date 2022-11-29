@@ -13,12 +13,27 @@ import java.util.Map;
 public class DefaultComponentClient implements ComponentClient {
 
     private static final String TREE_URL = "/api/components/tree";
+    private static final String SHOW_URL = "/api/components/show";
 
     private final HttpRequestFactory requestFactory;
 
 
     public DefaultComponentClient(HttpRequestFactory requestFactory) {
         this.requestFactory = requestFactory;
+    }
+
+    @Override
+    public Component get(String id) {
+        String json = requestFactory.get(SHOW_URL, MapUtils.asMap(
+                "component", id
+        ));
+
+        Map jsonRoot = (Map) JSONValue.parse(json);
+        Map jsonc = (Map) jsonRoot.get("component");
+        if (jsonc != null && !jsonc.isEmpty())
+            return new Component(jsonc);
+        else
+            return null;
     }
 
     @Override

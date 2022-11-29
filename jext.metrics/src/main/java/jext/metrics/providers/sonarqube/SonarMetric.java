@@ -1,9 +1,12 @@
 package jext.metrics.providers.sonarqube;
 
+import jext.metrics.AggregateMode;
 import jext.metrics.Metric;
 import jext.metrics.MetricsProvider;
+import jext.metrics.ValueType;
 import jext.util.MapUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SonarMetric implements Metric {
@@ -27,15 +30,55 @@ public class SonarMetric implements Metric {
      */
 
     private final SonarProvider provider;
-    private final Map<String, Object> data;
+    private final Map<String, Object> data = new HashMap<>();
+    private final ValueType type;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     SonarMetric(SonarProvider provider, Map<String, Object> data) {
-        this.data = data;
+        this.data.putAll(data);
         this.provider = provider;
+        this.type = typeOf(MapUtils.get(data, "type"));
+    }
+
+    private static ValueType typeOf(String type) {
+        // WORK_DUR
+        // BOOL
+        // INT
+        // PERCENT
+        // DATA
+        // FLOAT
+        // MILLIS
+        // STRING
+        // DISTRIB
+        // RATING
+        // LEVEL
+        if ("WORK_DUR".equals(type))
+            return ValueType.INTEGER;
+        if ("BOOL".equals(type))
+            return ValueType.BOOLEAN;
+        if ("INT".equals(type))
+            return ValueType.INTEGER;
+        if ("PERCENT".equals(type))
+            return ValueType.PERCENT;
+        if ("DATA".equals(type))
+            return ValueType.NOT_A_NUMBER;
+        if ("FLOAT".equals(type))
+            return ValueType.FLOAT;
+        if ("MILLIS".equals(type))
+            return ValueType.INTEGER;
+        if ("STRING".equals(type))
+            return ValueType.NOT_A_NUMBER;
+        if ("DISTRIB".equals(type))
+            return ValueType.NOT_A_NUMBER;
+        if ("RATING".equals(type))
+            return ValueType.FLOAT;
+        if ("LEVEL".equals(type))
+            return ValueType.NOT_A_NUMBER;
+        else
+            return ValueType.FLOAT;
     }
 
     // ----------------------------------------------------------------------
@@ -58,13 +101,42 @@ public class SonarMetric implements Metric {
     }
 
     @Override
-    public String getType() {
-        return MapUtils.get(data, "type");
+    public ValueType getType() {
+        return type;
     }
 
     @Override
     public String getDescription() {
         return MapUtils.get(data, "description");
+    }
+
+    @Override
+    public AggregateMode getAggregateMode() {
+        String mode = MapUtils.get(data, "aggregate");
+        if (mode != null)
+            return AggregateMode.valueOf(mode);
+
+        ValueType type = getType();
+        switch (type) {
+            case COUNT:
+                return AggregateMode.SUM;
+            case INTEGER:
+                return AggregateMode.MEAN;
+            case FLOAT:
+                return AggregateMode.MEAN;
+            case PERCENT:
+                return AggregateMode.MEAN;
+            default:
+                return AggregateMode.SUM;
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Operations
+    // ----------------------------------------------------------------------
+
+    public void setAggregate(String aggregate) {
+        data.put("aggregate", aggregate);
     }
 
     // ----------------------------------------------------------------------

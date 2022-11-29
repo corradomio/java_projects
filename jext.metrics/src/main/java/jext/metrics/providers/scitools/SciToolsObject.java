@@ -7,6 +7,7 @@ import jext.metrics.ObjectType;
 import jext.util.MapUtils;
 import jext.util.PathUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,6 +44,19 @@ public class SciToolsObject implements MetricsObject {
             return ObjectType.METHOD;
         else
             return ObjectType.UNKNOWN;
+    }
+
+    public static String toKname(ObjectType type) {
+        if (type == ObjectType.TYPE)
+            return QUAL_TYPE;
+        if (type == ObjectType.METHOD)
+            return QUAL_METHOD;
+        if (type == ObjectType.SOURCE)
+            return QUAL_SOURCE;
+        if (type == ObjectType.MODULE)
+            return QUAL_MODULE;
+        else
+            throw new RuntimeException(String.format("Unsupported type %s", type));
     }
 
     // ----------------------------------------------------------------------
@@ -177,6 +191,38 @@ public class SciToolsObject implements MetricsObject {
     @Override
     public List<MetricsObject> getChildren() {
         return children;
+    }
+
+    @Nullable
+    @Override
+    public MetricsObject getMetricsObject(ObjectType type, String path) {
+        String[] parts = path.split("/");
+        int l = parts.length-1;
+
+        SciToolsObject current = this;
+        for(int i=0; i<l && current != null; ++i) {
+            current = current.getChild(parts[i]);
+        }
+
+        if (current != null && l >= 0)
+            return current.getChild(parts[l]);
+        else // in "theory" never happen
+            return null;
+    }
+
+    private SciToolsObject getChild(String name) {
+        List<MetricsObject> children = getChildren();
+        for (MetricsObject child : children)
+            if (child.getName().equals(name))
+                return (SciToolsObject) child;
+        return null;
+    }
+
+    @Override
+    public MetricsObject newMetricsObject(ObjectType type, String path) {
+        String name = PathUtils.getName(path);
+
+        return SciToolsObject.of(this, path, name, path, toKname(type));
     }
 
     // ----------------------------------------------------------------------
