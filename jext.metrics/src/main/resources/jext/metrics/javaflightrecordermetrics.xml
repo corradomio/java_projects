@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <!-- the root category contains all metrics -->
+    <!--
+        Metric types: count int float
+      -->
+    <metrics>
+        <metric id="CpuTime" name="CPU execution time" category="runtime" type="float">
+            The time a method/type spends running on the CPU in nanoseconds.
+        </metric>
+        <metric id="TotalTime" name="Total execution time" category="runtime" type="float">
+            The time a method/type spends in memory (running + waiting) on the CPU.
+        </metric>
+        <metric id="ExecCount" name="Execution count" category="runtime" type="count">
+            Number of executions of a method in a stacktrace.
+        </metric>
+        <metric id="DeadCodeProb" name="Dead code probability" category="runtime" type="float">
+            The probability a method/type is dead code (0 - Not dead code, 0.5 - needs further investigation, 1.0 - Dead code).
+        </metric>
+        <metric id="CpuUsage" name="CPU usage" category="runtime" type="float">
+            The percent of CPU resources used by a method when executing.
+        </metric>
+    </metrics>
+    <categories>
+        <category name="timing">
+            <description>
+                Metrics related to timing info
+            </description>
+            <metrics>
+            CpuTime
+            TotalTime
+            ExecCount
+            </metrics>
+        </category>
+        <category name="coverage">
+            <description>
+                Metrics related to code coverage
+            </description>
+            <metrics>
+                DeadCodeProb
+            </metrics>
+        </category>
+        <category name="resource">
+            <description>
+                Metrics about to resources
+            </description>
+            <metrics>
+                CpuUsage
+            </metrics>
+        </category>
+    </categories>
+</configuration>
