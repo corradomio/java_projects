@@ -40,7 +40,7 @@ public interface Library extends IdNamed {
      * Retrieve the library license
      * @return a string describing the license
      */
-    LibraryLicense getLibraryLicense();
+    LibraryLicense getLicense();
 
     /**
      * Library status

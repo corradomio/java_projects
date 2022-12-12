@@ -82,7 +82,7 @@ public abstract class BaseLibrary extends NamedObject implements Library {
     }
 
     @Override
-    public LibraryLicense getLibraryLicense() {
+    public LibraryLicense getLicense() {
         return LibraryLicense.none();
     }
 

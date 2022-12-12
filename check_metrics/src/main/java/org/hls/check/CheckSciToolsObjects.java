@@ -1,6 +1,7 @@
 package org.hls.check;
 
 import jext.metrics.Metric;
+import jext.metrics.MetricsCategory;
 import jext.metrics.MetricsObject;
 import jext.metrics.MetricsObjects;
 import jext.metrics.MetricsProject;
@@ -33,6 +34,11 @@ public class CheckSciToolsObjects {
                         // "scitools.metrics.edges",  "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-metrics-edges-r00.csv",
                         // "scitools.metrics.idmaps",  "D:\\Projects\\CSharp\\RNoeldner-CSVQuickViewer-d110a80\\.spl\\scitools.dump\\scitools-idmaps-r00.csv"
                 ));
+
+        provider.getCategories().forEach(category -> {
+            MetricsCategory cat = provider.getCategory(category);
+            System.out.printf("%s: %s\n", cat.getName(), cat.getDescription());
+        });
 
         MetricsProject project = provider.getProject();
 

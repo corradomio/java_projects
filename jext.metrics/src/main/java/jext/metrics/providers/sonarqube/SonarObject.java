@@ -39,6 +39,7 @@ public class SonarObject implements MetricsObject {
     private static final String QUAL_FIL = "FIL";
     private static final String QUAL_DIR = "DIR";
     private static final String QUAL_TRK = "TRK";
+    private static final String QUAL_UNK = "UNK";
 
     public static ObjectType toType(String qualifier) {
         if (qualifier.equals(QUAL_FIL))
@@ -52,8 +53,10 @@ public class SonarObject implements MetricsObject {
     }
 
     public static String toQualifier(ObjectType type) {
-        if (type == ObjectType.ALL)
-            return null;
+        // special case used in aggregate values
+        if (type == ObjectType.VIRTUAL)
+            return QUAL_UNK;
+
         if (type == ObjectType.PROJECT)
             return QUAL_TRK;
         if (type == ObjectType.SOURCE)
@@ -213,7 +216,7 @@ public class SonarObject implements MetricsObject {
     public void getMetricValues(String category, Consumer<MetricValue> callback) {
         Map<String, SonarMetric> mmap = new HashMap<>();
         List<String> mkeys = new ArrayList<>();
-        for(Metric metric : provider.getMetrics(category)) {
+        for(Metric metric : provider.getCategory(category).getMetrics()) {
             mmap.put(metric.getId(), (SonarMetric)metric);
             mkeys.add(metric.getId());
         }

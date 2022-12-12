@@ -13,7 +13,9 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -84,6 +86,15 @@ public class Archives {
         if (entry == null)
             throw new IOException(String.format("Entry %s not found in file %s", path, compressedFile.getAbsolutePath()));
         return new BufferedReader(new InputStreamReader(stream));
+    }
+
+    public static String readText(File compressedFile, String path) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        try(BufferedReader rdr = openText(compressedFile, path)) {
+            for(String line = rdr.readLine(); line != null; line = rdr.readLine())
+                sb.append(line);
+        }
+        return sb.toString();
     }
 
     /**
@@ -162,6 +173,22 @@ public class Archives {
                 Files.copy(ais, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         }
+    }
+
+    public static List<ArchiveEntry> listEntries(File compressedFile, String prefix) throws IOException {
+        List<ArchiveEntry> entries = new ArrayList<>();
+        ArchiveEntry entry;
+        try (ArchiveInputStream ais = openArchive(compressedFile)) {
+            while ((entry = ais.getNextEntry()) != null) {
+                if (entry.isDirectory())
+                    continue;
+                if (!entry.getName().startsWith(prefix))
+                    continue;
+
+                entries.add(entry);
+            }
+        }
+        return entries;
     }
 
     // ----------------------------------------------------------------------

@@ -27,8 +27,10 @@
 
     -->
     <categories>
-        <category name="Code">
-            code_smells,new_code_smells
+        <category name="Issues">
+            <description>
+                Project issues
+            </description>
         </category>
     </categories>
 </configuration>

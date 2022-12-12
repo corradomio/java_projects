@@ -13,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class LicenseFinder {
@@ -22,8 +23,15 @@ public class LicenseFinder {
     // ----------------------------------------------------------------------
 
     public static LibraryLicense findLicense(File file) {
-
         LibraryLicense license = new LicenseFinder(file).find();
+        if (!license.isValid())
+            logger.warnf("Invalid license: %s", license.getUrl());
+
+        return license;
+    }
+
+    public static LibraryLicense findLicense(String licenseText, String url) {
+        LibraryLicense license = new LicenseFinder().findUsingText(licenseText, url);
         if (!license.isValid())
             logger.warnf("Invalid license: %s", license.getUrl());
 
@@ -42,6 +50,11 @@ public class LicenseFinder {
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
+
+    private LicenseFinder() {
+        file = null;
+        directory = null;
+    }
 
     private LicenseFinder(File fileOrDirectory) {
         this.file = fileOrDirectory;
@@ -66,7 +79,7 @@ public class LicenseFinder {
         if (license == null)
             license = findUsingMavenPom();
         if (license == null)
-            license = findUnsingNugetNuspec();
+            license = findUsingNugetNuspec();
         if (license == null)
             license = findUsingLastWord();
         if (license == null)
@@ -115,10 +128,20 @@ public class LicenseFinder {
             return LibraryLicense.of(license, file);
     }
 
+    @Nullable
+    private LibraryLicense findUsingText(String licenseText, String url) {
+        List<String> lines = Arrays.asList(licenseText.split("\n"));
+        String type = findLicenseFromText(lines);
+        if (type == null)
+            return LibraryLicense.NO_LICENSE;
+        else
+            return LibraryLicense.of(type, url);
+    }
+
     // -----------------------------------------------------------------------------------
 
     @Nullable
-    private LibraryLicense findUnsingNugetNuspec() {
+    private LibraryLicense findUsingNugetNuspec() {
         File nuspecFile = FileUtils.findFile(directory, ".nuspec");
         if (nuspecFile == null)
             return null;
@@ -159,7 +182,7 @@ public class LicenseFinder {
             return null;
 
         // if (license == null)
-        license = findLicenseFromMavenXML(pomFile);
+        license = findFromMavenXML(pomFile);
 
         // not necessary: already tested
         // if (license == null)
@@ -168,7 +191,7 @@ public class LicenseFinder {
         return license != null ? LibraryLicense.of(license, pomFile) : null;
     }
 
-    private String findLicenseFromMavenXML(File pomFile) {
+    private String findFromMavenXML(File pomFile) {
         /*
             <licenses>
                 <license>
@@ -284,6 +307,11 @@ public class LicenseFinder {
             return null;
 
         List<String> lines = FileUtils.toStrings(file);
+        return findLicenseFromText(lines);
+    }
+
+    @Nullable
+    private String findLicenseFromText(List<String> lines) {
         int iline =0;
         for (String line : lines) {
             if (iline >= MAX_LINES)

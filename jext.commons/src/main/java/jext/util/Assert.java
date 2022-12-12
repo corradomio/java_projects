@@ -27,7 +27,7 @@ public class Assert {
     }
 
     public static void nop() {
-
+        // used in DEBUG mode to create a place where to put a breakpoint
     }
 
 }

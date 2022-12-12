@@ -96,7 +96,7 @@ public abstract class InfoLibrary extends NamedObject implements Library {
     }
 
     @Override
-    public LibraryLicense getLibraryLicense() {
+    public LibraryLicense getLicense() {
         String type = MapUtils.getOrDefault(info, "licenseType", "");
         String url  = MapUtils.getOrDefault(info, "licenseUrl", "");
         return LibraryLicense.of(type, url);

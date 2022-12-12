@@ -37,6 +37,7 @@ public interface MetricsProvider {
      * containing all metrics
      */
     Collection<String> getCategories();
+    MetricsCategory getCategory(String category);
 
     /**
      * Check if it contains the specified category
@@ -56,12 +57,12 @@ public interface MetricsProvider {
      */
     Collection<Metric> getMetrics();
 
-    /**
-     * List of metrics classified under the specified category
-     * If the category doesn't exists, it returns the empty list.
-     * The category '' (or null) contains all metrics
-     */
-    Collection<Metric> getMetrics(@Nullable String category);
+    // /**
+    //  * List of metrics classified under the specified category
+    //  * If the category doesn't exists, it returns the empty list.
+    //  * The category '' (or null) contains all metrics
+    //  */
+    // Collection<Metric> getMetrics(@Nullable String category);
 
     /**
      * Properties of the metric with the specified name or id.
@@ -97,10 +98,9 @@ public interface MetricsProvider {
      * Register a new custom category.
      * Note: it can override a already defined category
      *
-     * @param category category name
-     * @param measures list of measure ids/names belonging to the category
+     * @param category category object
      */
-    void registerCategory(String category, Collection<String> measures);
+    void registerCategory(MetricsCategory category);
 
     // ----------------------------------------------------------------------
     // End

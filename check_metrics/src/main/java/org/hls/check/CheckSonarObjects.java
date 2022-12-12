@@ -13,6 +13,7 @@ public class CheckSonarObjects {
 
         MetricsProvider provider = MetricsProviders.getProvider("sonarqube",
                 PropertiesUtils.properties(
+                        "sonar.projectHome", "D:\\SPLGroup\\spl-workspaces\\java\\ACME-Beta-a4-spl33\\sonar-project.properties",
                         "sonar.url", "http://localhost:9000",
                         "sonar.username", "sonaruser",
                         "sonar.password", "sonaruser",

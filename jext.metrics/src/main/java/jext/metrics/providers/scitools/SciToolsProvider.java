@@ -2,6 +2,7 @@ package jext.metrics.providers.scitools;
 
 import jext.logging.Logger;
 import jext.metrics.Metric;
+import jext.metrics.MetricsCategory;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
@@ -23,14 +24,11 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class SciToolsProvider implements MetricsProvider {
@@ -63,7 +61,7 @@ public class SciToolsProvider implements MetricsProvider {
 
     private final Map<String, Metric> metricsById = new TreeMap<>();
     private final Map<String, Metric> metricsByName = new TreeMap<>();
-    private final Map<String, Set<String>> categories = new DefaultHashMap<>((key) -> new TreeSet<>());
+    private final Map<String, MetricsCategory> categories = new DefaultHashMap<>((name) -> new MetricsCategory(this, name));
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -105,7 +103,7 @@ public class SciToolsProvider implements MetricsProvider {
             Assert.notNull(properties.getProperty(METRICS_EDGES), METRICS_EDGES);
         }
         {
-            categories.put(ALL_METRICS, new HashSet<>());
+            registerCategory(new MetricsCategory(this, ALL_METRICS));
         }
         if (!properties.containsKey(PROJECT_HOME))
         {
@@ -144,6 +142,16 @@ public class SciToolsProvider implements MetricsProvider {
     }
 
     @Override
+    public MetricsCategory getCategory(String category) {
+        if (category == null)
+            category = ALL_METRICS;
+        if (!categories.containsKey(category))
+            return new MetricsCategory(this, category);
+        else
+            return categories.get(category);
+    }
+
+    @Override
     public boolean hasCategory(String category) {
         return categories.containsKey(category);
     }
@@ -153,19 +161,16 @@ public class SciToolsProvider implements MetricsProvider {
         return metricsById.values();
     }
 
-    @Override
-    public Collection<Metric> getMetrics(@Nullable String category) {
-        if (category == null)
-            category = MetricsProvider.ALL_METRICS;
-
-        if (!categories.containsKey(category))
-            return Collections.emptyList();
-
-        return categories.get(category).stream()
-                .map(this::getMetric)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
+    // @Override
+    // public Collection<Metric> getMetrics(@Nullable String category) {
+    //     if (category == null)
+    //         category = MetricsProvider.ALL_METRICS;
+    //
+    //     if (!categories.containsKey(category))
+    //         return Collections.emptyList();
+    //
+    //     return categories.get(category).getMetrics();
+    // }
 
     @Override
     public Metric getMetric(String nameOrId) {
@@ -226,7 +231,7 @@ public class SciToolsProvider implements MetricsProvider {
     }
 
     Set<String> getMetricNames(String category) {
-        return categories.get(category);
+        return categories.get(category).getMetricNames();
     }
 
     /*
@@ -259,10 +264,17 @@ public class SciToolsProvider implements MetricsProvider {
             Element root = XPathUtils.parse(stream).getDocumentElement();
             XPathUtils.selectElements(root, "categories/category").forEach(cat -> {
                 String category = XPathUtils.getValue(cat, "@name");
-                List<String> metrics = StringUtils.split(cat.getTextContent(), ",");
+                String description = XPathUtils.getValue(cat, "description/#text");
+                List<String> metrics = StringUtils.split(XPathUtils.getValue(cat, "metrics", ""), "\n");
 
-                if (!metrics.isEmpty())
-                    categories.get(category).addAll(metrics);
+                // remove invalid metrics
+                metrics = metrics.stream()
+                        .filter(metric -> metricsById.containsKey(metric) || metricsByName.containsKey(metric))
+                        .collect(Collectors.toList());
+
+                MetricsCategory mcat = categories.get(category);
+                mcat.setDescription(description);
+                categories.get(category).addAll(metrics);
             });
         }
         catch(IOException | SAXException | ParserConfigurationException e) {
@@ -275,9 +287,8 @@ public class SciToolsProvider implements MetricsProvider {
     // Operations/configuration
     // ----------------------------------------------------------------------
 
-    @Override
-    public void registerCategory(String category, Collection<String> metrics) {
-        categories.put(category, new HashSet<>(metrics));
+    public void registerCategory(MetricsCategory category) {
+        categories.put(category.getName(), category);
     }
 
     void addMetric(String category, Metric metric) {

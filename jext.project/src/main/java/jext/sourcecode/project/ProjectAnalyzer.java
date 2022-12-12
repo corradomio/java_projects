@@ -214,8 +214,8 @@ public class ProjectAnalyzer {
             "valid", l.isValid(),
             "file", FileUtils.getAbsolutePath(l.getFile()),
             "files", FileUtils.getAbsolutePaths(l.getFiles()),
-            "licenseType", l.getLibraryLicense().getType(),
-            "licenseUrl", l.getLibraryLicense().getUrl(),
+            "licenseType", l.getLicense().getType(),
+            "licenseUrl", l.getLicense().getUrl(),
             "type", "library"
         );
     }

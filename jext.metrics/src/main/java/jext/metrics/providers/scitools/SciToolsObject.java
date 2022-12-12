@@ -32,6 +32,7 @@ public class SciToolsObject implements MetricsObject {
     private static final String QUAL_SOURCE = "source";
     private static final String QUAL_TYPE = "type";
     private static final String QUAL_METHOD = "method";
+    private static final String QUAL_UNK = "unk";
 
     public  static ObjectType toType(String type) {
         if (type.equals(QUAL_MODULE))
@@ -47,14 +48,18 @@ public class SciToolsObject implements MetricsObject {
     }
 
     public static String toKname(ObjectType type) {
+        // special case used in aggregate values
+        if (type == ObjectType.VIRTUAL)
+            return QUAL_UNK;
+
         if (type == ObjectType.TYPE)
             return QUAL_TYPE;
         if (type == ObjectType.METHOD)
             return QUAL_METHOD;
         if (type == ObjectType.SOURCE)
             return QUAL_SOURCE;
-        if (type == ObjectType.MODULE)
-            return QUAL_MODULE;
+        // if (type == ObjectType.MODULE)
+        //     return QUAL_MODULE;
         else
             throw new RuntimeException(String.format("Unsupported type %s", type));
     }
@@ -196,6 +201,15 @@ public class SciToolsObject implements MetricsObject {
     @Nullable
     @Override
     public MetricsObject getMetricsObject(ObjectType type, String path) {
+        if (type == ObjectType.SOURCE)
+            return project.getObjectByName(path);
+        if (type == ObjectType.TYPE)
+            return project.getObjectByName(path);
+        else
+            throw new RuntimeException(String.format("Unsupported type %s", type));
+    }
+
+    private SciToolsObject findFileObject(String path) {
         String[] parts = path.split("/");
         int l = parts.length-1;
 
@@ -208,6 +222,10 @@ public class SciToolsObject implements MetricsObject {
             return current.getChild(parts[l]);
         else // in "theory" never happen
             return null;
+    }
+
+    private SciToolsObject findTypeObject(String qualifiedName) {
+        return project.getObjectByName(qualifiedName);
     }
 
     private SciToolsObject getChild(String name) {

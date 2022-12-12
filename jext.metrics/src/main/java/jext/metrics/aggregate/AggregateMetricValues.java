@@ -6,6 +6,7 @@ import jext.metrics.MetricsValues;
 
 import java.util.AbstractList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class AggregateMetricValues extends AbstractList<MetricValue> implements MetricsValues {
@@ -42,6 +43,11 @@ public class AggregateMetricValues extends AbstractList<MetricValue> implements 
     @Override
     public int size() {
         return avmap.size();
+    }
+
+    @Override
+    public Iterator<MetricValue> iterator() {
+        return (Iterator)avmap.values().iterator();
     }
 
 }

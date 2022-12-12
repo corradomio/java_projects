@@ -42,7 +42,7 @@ public class PyPiLibrary extends PythonLibrary {
     // ----------------------------------------------------------------------
 
     @Override
-    public LibraryLicense getLibraryLicense() {
+    public LibraryLicense getLicense() {
         if (license == null)
             license = LicenseFinder.findLicense(libraryFile);
         return license;

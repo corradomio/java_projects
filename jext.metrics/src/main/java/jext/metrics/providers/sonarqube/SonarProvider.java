@@ -2,6 +2,7 @@ package jext.metrics.providers.sonarqube;
 
 import jext.logging.Logger;
 import jext.metrics.Metric;
+import jext.metrics.MetricsCategory;
 import jext.metrics.MetricsProject;
 import jext.metrics.MetricsProvider;
 import jext.metrics.MetricsProviders;
@@ -10,27 +11,24 @@ import jext.util.Assert;
 import jext.util.DefaultHashMap;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
+import jext.util.PropertiesUtils;
 import jext.util.StringUtils;
 import jext.xml.XPathUtils;
 import org.sonar.wsclient.SonarClient;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import javax.annotation.Nullable;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -42,12 +40,15 @@ public class SonarProvider implements MetricsProvider {
 
     static final String NAME = "sonarqube";
 
-    private static final String SONAR_NAME = "sonar.name";
-    private static final String SONAR_URL = "sonar.url";
+    public static final String SONAR_URL_HOST = "sonar.url.host";
     // used also for SonarQube token
-    private static final String SONAR_USERNAME = "sonar.username";
+    public static final String SONAR_LOGIN = "sonar.login";
     // with token, password must be the empty string
-    private static final String SONAR_PASSWORD = "sonar.password";
+    public static final String SONAR_PASSWORD = "sonar.password";
+    public static final String SONAR_PROJECT_HOME = "sonar.projectHome";
+    public static final String SONAR_PROJECT_KEY = "sonar.projectKey";
+
+    private static final String SONAR_PROJECT_PROPERTIES = "sonar-project.properties";
 
     // some metrics to exclude because they don't have a numeric value
     static List<String> INVALID_METRIC_KEYS = Arrays.asList(
@@ -68,10 +69,10 @@ public class SonarProvider implements MetricsProvider {
 
     private static final Logger logger = Logger.getLogger(SonarProvider.class);
 
-    private Properties properties;
-    private final Map<String, Set<String>> categories = new DefaultHashMap<>((key) -> new TreeSet<>());
-    private Map<String, Metric> metricsById = new TreeMap<>();
-    private Map<String, Metric> metricsByName = new TreeMap<>();
+    private final Properties properties = new Properties();
+    private final Map<String, MetricsCategory> categories = new DefaultHashMap<>((name) -> new MetricsCategory(this, name));
+    private final Map<String, Metric> metricsById = new TreeMap<>();
+    private final Map<String, Metric> metricsByName = new TreeMap<>();
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -87,7 +88,7 @@ public class SonarProvider implements MetricsProvider {
 
     @Override
     public void initialize(Properties properties) {
-        this.properties = properties;
+        this.properties.putAll(properties);
 
         validate();
         loadMetrics();
@@ -95,12 +96,19 @@ public class SonarProvider implements MetricsProvider {
     }
 
     private void validate() {
-        Assert.notNull(properties.getProperty(SONAR_URL), SONAR_URL);
-        Assert.notNull(properties.getProperty(SONAR_USERNAME), SONAR_USERNAME);
-        Assert.notNull(properties.getProperty(SONAR_PASSWORD), SONAR_PASSWORD);
-        Assert.notNull(properties.getProperty(SONAR_NAME), SONAR_NAME);
+        Assert.notNull(properties.getProperty(SONAR_PROJECT_HOME), SONAR_PROJECT_HOME);
+        // Assert.notNull(properties.getProperty(SONAR_URL), SONAR_URL);
+        // Assert.notNull(properties.getProperty(SONAR_USERNAME), SONAR_USERNAME);
+        // Assert.notNull(properties.getProperty(SONAR_PASSWORD), SONAR_PASSWORD);
+        // Assert.notNull(properties.getProperty(SONAR_NAME), SONAR_NAME);
 
-        categories.put(ALL_METRICS, new HashSet<>());
+        File sonarProjectFile = new File(properties.getProperty(SONAR_PROJECT_HOME));
+        if (sonarProjectFile.isDirectory())
+            sonarProjectFile = new File(sonarProjectFile, SONAR_PROJECT_PROPERTIES);
+        if (sonarProjectFile.exists())
+            properties.putAll(PropertiesUtils.load(sonarProjectFile));
+
+        registerCategory(new MetricsCategory(this, ALL_METRICS));
     }
 
     private void loadMetrics() {
@@ -143,21 +151,21 @@ public class SonarProvider implements MetricsProvider {
 
             String domain = MapUtils.get(data,"domain");
             Metric metric = new SonarMetric(this, data);
-            addMetric(metric);
+            registerMetric(metric);
             categories.get(ALL_METRICS).add(metric.getId());
             categories.get(domain).add(metric.getId());
         });
 
     }
 
-    private void addMetric(Metric metric) {
+    private void registerMetric(Metric metric) {
         metricsById.put(metric.getId(), metric);
         metricsByName.put(metric.getName(), metric);
     }
 
     @Override
-    public void registerCategory(String category, Collection<String> metrics) {
-        categories.put(category, new HashSet<>(metrics));
+    public void registerCategory(MetricsCategory category) {
+        categories.put(category.getName(), category);
     }
 
     // ----------------------------------------------------------------------
@@ -197,15 +205,17 @@ public class SonarProvider implements MetricsProvider {
             Element root = XPathUtils.parse(stream).getDocumentElement();
             XPathUtils.selectElements(root, "categories/category").forEach(cat -> {
                 String category = XPathUtils.getValue(cat, "@name");
-                List<String> metrics = StringUtils.split(cat.getTextContent(), ",");
+                String description = XPathUtils.getValue(cat, "description/#text");
+                List<String> metrics = StringUtils.split(XPathUtils.getValue(cat, "metrics", ""), "\n");
 
                 // remove invalid metrics
                 metrics = metrics.stream()
                         .filter(metric -> metricsById.containsKey(metric) || metricsByName.containsKey(metric))
                         .collect(Collectors.toList());
 
-                if (!metrics.isEmpty())
-                    categories.get(category).addAll(metrics);
+                MetricsCategory mcat = categories.get(category);
+                mcat.setDescription(description);
+                categories.get(category).addAll(metrics);
             });
         }
         catch(IOException | SAXException | ParserConfigurationException e) {
@@ -239,6 +249,16 @@ public class SonarProvider implements MetricsProvider {
     }
 
     @Override
+    public MetricsCategory getCategory(String category) {
+        if (category == null)
+            category = ALL_METRICS;
+        if (!categories.containsKey(category))
+            return new MetricsCategory(this, category);
+        else
+            return categories.get(category);
+    }
+
+    @Override
     public boolean hasCategory(String category) {
         return categories.containsKey(category);
     }
@@ -248,19 +268,18 @@ public class SonarProvider implements MetricsProvider {
         return metricsById.values();
     }
 
-    @Override
-    public Collection<Metric> getMetrics(@Nullable String category) {
-        if (category == null)
-            category = MetricsProvider.ALL_METRICS;
-
-        if (!categories.containsKey(category))
-            return Collections.emptyList();
-
-        return categories.get(category).stream()
-                .filter(mkey -> !INVALID_METRIC_KEYS.contains(mkey))
-                .map(this::getMetric)
-                .collect(Collectors.toList());
-    }
+    // @Override
+    // public Collection<Metric> getMetrics(@Nullable String category) {
+    //     if (category == null)
+    //         category = MetricsProvider.ALL_METRICS;
+    //
+    //     if (!categories.containsKey(category))
+    //         return Collections.emptyList();
+    //
+    //     return categories.get(category).getMetrics().stream()
+    //             .filter(metric -> !INVALID_METRIC_KEYS.contains(metric.getName()))
+    //             .collect(Collectors.toList());
+    // }
 
     @Override
     public Metric getMetric(String nameOrId) {
@@ -275,7 +294,7 @@ public class SonarProvider implements MetricsProvider {
                 "name", nameOrId,
                 "descrition", ""
         ));
-        addMetric(metric);
+        registerMetric(metric);
         return metric;
     }
 
@@ -290,7 +309,7 @@ public class SonarProvider implements MetricsProvider {
 
     @Override
     public MetricsProject getProject() {
-        String name = properties.getProperty(SONAR_NAME);
+        String name = properties.getProperty(SONAR_PROJECT_KEY);
         SonarClient client = connect();
         SonarProject project = new SonarProject(name, this, client);
         project.initialize();
@@ -314,11 +333,11 @@ public class SonarProvider implements MetricsProvider {
     // ----------------------------------------------------------------------
 
     String getUrl() {
-        return properties.getProperty(SONAR_URL);
+        return properties.getProperty(SONAR_URL_HOST);
     }
 
     String getUsername() {
-        return properties.getProperty(SONAR_USERNAME);
+        return properties.getProperty(SONAR_LOGIN);
     }
 
     String getPassword() {

@@ -18,7 +18,6 @@ import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -38,7 +37,8 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         add(ObjectType.PROJECT);
     }};
 
-    private final Map<String, SciToolsObject> objects = new HashMap<>();
+    private final Map<String, SciToolsObject> objectsById = new HashMap<>();
+    private final Map<String, SciToolsObject> objectsByName = new HashMap<>();
     private final IdMaps idmaps = new IdMaps();
 
     private final File nodesFile;
@@ -53,7 +53,8 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
     SciToolsProject(String name, SciToolsProvider provider) {
         super(null, "0", name, name, "project");
         this.provider = provider;
-        this.objects.put(this.getId(), this);
+        this.objectsById.put(this.getId(), this);
+        this.objectsByName.put(name, this);
         this.project = this;
 
         this.nodesFile = new File(provider.getProperty(SciToolsProvider.METRICS_NODES));
@@ -204,7 +205,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         // File nodesFile = new File(provider.getProperty(SciToolsProvider.METRICS_NODES));
         logger.debugf("... load nodes from %s", nodesFile);
 
-        // 0  1    3
+        // 0  1    2        3
         // id,name,longname,type
         try(LineNumberReader rdr = new LineNumberReader(new FileReader(nodesFile))) {
             // skip header
@@ -212,8 +213,15 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
             while((line = rdr.readLine()) != null) {
                 String[] parts = line.split(",");
 
+                // OLD files!!
+                // in the old files it is missing 'fullname'
+                // check to avoid a 'ArrayIndexOutOfBoundException'
+                if (parts.length < 4)
+                    continue;
+
                 SciToolsObject object = SciToolsObject.of(this, parts[0], parts[1], parts[2], parts[3]);
-                objects.put(object.getId(), object);
+                objectsById.put(object.getId(), object);
+                objectsByName.put(object.getLongname(), object);
             }
         }
         catch (IOException e) {
@@ -233,8 +241,8 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
             int count = 1;
             while((line = rdr.readLine()) != null) {
                 String[] parts = line.split(",");
-                SciToolsObject child = objects.get(parts[0]);
-                SciToolsObject parent = objects.get(parts[1]);
+                SciToolsObject child = objectsById.get(parts[0]);
+                SciToolsObject parent = objectsById.get(parts[1]);
 
                 if (child == null)
                     logger.errorf("Missing object with id %s", parts[0]);
@@ -271,9 +279,9 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
                     String mname = parts[3];
                     float value = Float.parseFloat(parts[4]);
 
-                    SciToolsObject object = objects.get(id);
+                    SciToolsObject object = objectsById.get(id);
                     // special handling for the object with id '0' (the project)
-                    // some object are not useful
+                    // some objects are not useful
                     if (object == null) {
                         if (!"0".equals(id))
                             continue;
@@ -283,7 +291,7 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
 
                     SciToolsMetric metric = (SciToolsMetric) provider.getMetric(mname);
                     if (metric == null) {
-                        logger.errorf("Unknown metric %s", mname);
+                        logger.errorf("Unknown metric '%s'", mname);
                         continue;
                     }
 
@@ -336,6 +344,10 @@ public class SciToolsProject extends SciToolsObject implements MetricsProject {
         catch (IOException e) {
             throw new MetricsException(e);
         }
+    }
+
+    SciToolsObject getObjectByName(String longname) {
+        return objectsByName.get(longname);
     }
 
     // ----------------------------------------------------------------------

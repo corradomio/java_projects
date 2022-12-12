@@ -102,7 +102,7 @@ public class NuGetLibrary extends CSharpLibrary {
     // ----------------------------------------------------------------------
 
     @Override
-    public LibraryLicense getLibraryLicense() {
+    public LibraryLicense getLicense() {
         if (license == null)
             license = LicenseFinder.findLicense(libraryFile);
         return license;

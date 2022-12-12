@@ -39,6 +39,10 @@ public class ProjectComparator {
     /** Destination project revision */
     private Project pdst;
     /** number of project changes (at the moment, n of files added/removed/changed */
+
+    // 2022/12/06: REMOVED: the JSONUtils.load doesn't initialize correctly this field
+    // however it is not necessary because it is enough to know if there is at minimum
+    // ONE SINGLE change (isEmpty() implementation).
     private int nchanges;
 
     // ----------------------------------------------------------------------
@@ -144,7 +148,12 @@ public class ProjectComparator {
 
     @JsonIgnore
     public boolean isEmpty() {
-        return nchanges == 0;
+
+        for(ModuleInfo minfo : modules.values()) {
+            if(!minfo.sources.isEmpty())
+                return false;
+        }
+        return true;
     }
 
     @JsonIgnore
@@ -245,8 +254,8 @@ public class ProjectComparator {
 
         // if psrc is null, pdst is the first revision
         if (psrc == null) {
-            nchanges += addModules(pdst.getModules(), RevisionStatus.ADDED);
-            nchanges += addLibraries(pdst.getLibraries(), RevisionStatus.ADDED);
+            addModules(pdst.getModules(), RevisionStatus.ADDED);
+            addLibraries(pdst.getLibraries(), RevisionStatus.ADDED);
             return;
         }
 
@@ -256,8 +265,8 @@ public class ProjectComparator {
         Set<Module> deletedModules = SetUtils.difference(psrc.getModules(), pdst.getModules());
         Set<Module> commonModules  = SetUtils.intersection(pdst.getModules(), psrc.getModules());
 
-        nchanges += addModules(addedModules, RevisionStatus.ADDED);
-        nchanges += addModules(deletedModules, RevisionStatus.DELETED);
+        addModules(addedModules, RevisionStatus.ADDED);
+        addModules(deletedModules, RevisionStatus.DELETED);
 
         // check added libraries
         Set<Library> addedLibraries = SetUtils.difference(pdst.getLibraries(), psrc.getLibraries());
@@ -274,8 +283,8 @@ public class ProjectComparator {
             Set<Source> commonSources  = SetUtils.intersection(mdst.getSources(), msrc.getSources());
             Set<Source> changedSources = new HashSet<>();
 
-            nchanges += addSources(module, addedSources, RevisionStatus.ADDED);
-            nchanges += addSources(module, deletedSources, RevisionStatus.DELETED);
+            addSources(module, addedSources, RevisionStatus.ADDED);
+            addSources(module, deletedSources, RevisionStatus.DELETED);
 
             // check for changed sources
             for (Source source : commonSources) {
@@ -287,7 +296,7 @@ public class ProjectComparator {
                     changedSources.add(sdst);
             }
 
-            nchanges += addSources(module, changedSources, RevisionStatus.CHANGED);
+            addSources(module, changedSources, RevisionStatus.CHANGED);
         }
 
     }

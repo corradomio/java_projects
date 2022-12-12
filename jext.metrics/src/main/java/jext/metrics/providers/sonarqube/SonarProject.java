@@ -189,7 +189,7 @@ public class SonarProject extends SonarObject implements MetricsProject {
 
         Map<String, SonarMetric> mmap = new HashMap<>();
         Set<String> mkeys = new HashSet<>();
-        for(Metric metric : provider.getMetrics(category)) {
+        for(Metric metric : provider.getCategory(category).getMetrics()) {
             mmap.put(metric.getId(), (SonarMetric)metric);
             mkeys.add(metric.getId());
         }

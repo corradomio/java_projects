@@ -23,7 +23,7 @@ public class CheckMetrics {
 
         provider.getCategories().forEach(cat -> {
             System.out.printf("category '%s'\n", cat);
-            provider.getMetrics(cat).forEach(m -> {
+            provider.getCategory(cat).getMetrics().forEach(m -> {
                 System.out.printf("  %s\n", m.getName());
             });
         });
@@ -49,7 +49,7 @@ public class CheckMetrics {
 
         provider.getCategories().forEach(cat -> {
             System.out.printf("category '%s'\n", cat);
-            provider.getMetrics(cat).forEach(m -> {
+            provider.getCategory(cat).getMetrics().forEach(m -> {
                 System.out.printf("  %s\n", m.getName());
             });
         });

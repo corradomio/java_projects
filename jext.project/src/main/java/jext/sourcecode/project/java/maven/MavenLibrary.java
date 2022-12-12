@@ -51,7 +51,7 @@ public class MavenLibrary extends JavaLibrary {
     // ----------------------------------------------------------------------
 
     @Override
-    public LibraryLicense getLibraryLicense() {
+    public LibraryLicense getLicense() {
         if (license == null)
             license = LicenseFinder.findLicense(libraryFile);
         return license;

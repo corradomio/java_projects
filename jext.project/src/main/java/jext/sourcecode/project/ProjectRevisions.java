@@ -73,24 +73,29 @@ public class ProjectRevisions implements Revisions {
      * 'project-info-[revision].json', DELETE 'project-info-[revision].json'
      *
      * @return true if the new revision is equals to the previous one
-     *         false othwrwise
+     *         false otherwise
      */
     public ProjectComparator compareRevisions(int srcRevision, int dstRevision) {
         this.srcRevision = srcRevision;
         this.dstRevision = dstRevision;
 
-        File differencesInfo = getDifferenceInfoFile();
-        if (differencesInfo.exists()) {
-            try {
-                return JSONUtils.load(differencesInfo, ProjectComparator.class);
-            } catch (IOException e) {
-                Logger.getLogger(getClass()).error(e, e);
-            }
-        }
-
-        Project psrc = null, pdst = null;
         File srcRevisionInfo = getProjectInfoFile(srcRevision);
         File dstRevisionInfo = getProjectInfoFile(dstRevision);
+        File differencesInfo = getDifferenceInfoFile();
+
+        // ERROR: it is NOT enough to check if the file already exists,
+        // BUT it is necessary to check IF the timestamp follow the timestamp
+        // of dstRevisionInfo
+        // OR, better, this test has no sense
+        // if (differencesInfo.exists()) {
+        //     try {
+        //         return JSONUtils.load(differencesInfo, ProjectComparator.class);
+        //     } catch (IOException e) {
+        //         Logger.getLogger(getClass()).error(e, e);
+        //     }
+        // }
+
+        Project psrc = null, pdst = null;
         LibraryFinderManager lfm = this.libraryFinderManager;
 
         if (srcRevisionInfo.exists())
