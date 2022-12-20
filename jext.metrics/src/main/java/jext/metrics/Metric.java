@@ -18,6 +18,7 @@ public interface Metric {
      * @return full metric name
      */
     String getName();
+    String getFullName();
 
     /**
      * Metric description

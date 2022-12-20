@@ -400,6 +400,11 @@ statement 'if (a &amp;&amp; b || c)' would have a cyclomatic of 1 but a strict c
     </metrics>
 
     <categories>
+        <category name="all">
+            <description>
+                This category contains all metrics supported by SciTools and used in at minimum one project
+            </description>
+        </category>
         <category name="complexity">
             <description>
                 Complexity category is used to evaluate the code complexity
@@ -408,6 +413,10 @@ statement 'if (a &amp;&amp; b || c)' would have a cyclomatic of 1 but a strict c
 
             </metrics>
         </category>
-
+        <category name="Invalid">
+            <description>
+                List of SonarQube metrics unsupported (for now)
+            </description>
+        </category>
     </categories>
 </configuration>

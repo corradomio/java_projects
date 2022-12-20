@@ -48,7 +48,7 @@ public class SonarProvider implements MetricsProvider {
     public static final String SONAR_PROJECT_HOME = "sonar.projectHome";
     public static final String SONAR_PROJECT_KEY = "sonar.projectKey";
 
-    private static final String SONAR_PROJECT_PROPERTIES = "sonar-project.properties";
+    public static final String SONAR_PROJECT_PROPERTIES = "sonar-project.properties";
 
     // some metrics to exclude because they don't have a numeric value
     static List<String> INVALID_METRIC_KEYS = Arrays.asList(

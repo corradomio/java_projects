@@ -12,23 +12,30 @@ public class MetricsCategory {
 
     private final MetricsProvider provider;
     private final String name;
+    private final String fullname;
     private String description = "";
     private final Set<String> metricNames = new TreeSet<>();
     private final List<Metric> metrics = new ArrayList<>();
 
-    public MetricsCategory(String name, Collection<Metric> metrics) {
+    public MetricsCategory(String name, String fullname, Collection<Metric> metrics) {
         this.provider = null;
         this.name = name;
+        this.fullname = fullname;
         this.metrics.addAll(metrics);
     }
 
     public MetricsCategory(MetricsProvider provider, String name) {
         this.provider = provider;
         this.name = name;
+        this.fullname = String.format("%s.%s", provider.getName(), name);
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getFullName() {
+        return fullname;
     }
 
     public String getDescription() {

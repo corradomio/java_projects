@@ -8,10 +8,11 @@ public class LanguageUtils {
 
     private static final String UNKNOWN = "unknown";
 
-    private static Map<String,String> LANGUAGES = new HashMap<String,String>(){{
+    private static final Map<String,String> LANGUAGES = new HashMap<String,String>(){{
         put(".py", "python");
         put(".java", "java");
         put(".scala", "scala");
+        put(".cs", "csharp");
         put(".c", "c");
         put(".h", "c");
         put(".cpp", "c++");
@@ -34,6 +35,6 @@ public class LanguageUtils {
 
     private static String extensionOf(String name) {
         int sep = name.lastIndexOf('.');
-        return sep != -1 ? name.substring(sep+1) : "";
+        return sep != -1 ? name.substring(sep) : "";
     }
 }

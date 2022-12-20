@@ -85,6 +85,8 @@ public class CSharpProjectFile {
         populate();
 
         List<MavenCoords> references = new ArrayList<>();
+        if (!projectFile.exists())
+            return references;
 
         try {
             // <Project>
@@ -137,6 +139,8 @@ public class CSharpProjectFile {
         populate();
 
         List<LocalReference> references = new ArrayList<>();
+        if (!projectFile.exists())
+            return references;
 
         try {
             // <Project>
@@ -257,6 +261,9 @@ public class CSharpProjectFile {
 
      */
     private void scanForProperties() {
+        if (!projectFile.exists())
+            return;
+
         try {
             // <Project>
             Element project = XPathUtils.parse(projectFile).getDocumentElement();
@@ -287,6 +294,9 @@ public class CSharpProjectFile {
 
      */
     private void scanForImports() {
+        if (!projectFile.exists())
+            return;
+
         try {
             // <Project>
             Element project = XPathUtils.parse(projectFile).getDocumentElement();

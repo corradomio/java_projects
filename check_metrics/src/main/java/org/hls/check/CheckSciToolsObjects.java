@@ -21,7 +21,9 @@ public class CheckSciToolsObjects {
         MetricsProvider provider = MetricsProviders.getProvider("scitools",
                 PropertiesUtils.properties(
                         "scitools.name", "lucene",
-                        "scitools.metrics.home", "D:\\Projects\\Java\\hibernate-orm-5.2.0\\.spl\\scitools.dump",
+                        // "scitools.metrics.home", "D:\\Projects\\Java\\hibernate-orm-5.2.0\\.spl\\scitools.dump",
+                        // "scitools.metrics.home", "D:\\SPLGroup\\spl-workspaces.tmp\\dev-ws-2\\ACME-Modified\\.spl\\scitools.dump",
+                        "scitools.metrics.home", "D:\\SPLGroup\\spl-workspaces.tmp\\dev-ws-2\\ACME-Modified\\.spl\\scitools.dump",
                         // "scitools.project.home", "D:\\Projects\\Java\\hibernate-orm-5.2.0",
                         "scitools.metrics.revision", "0"
 
@@ -42,14 +44,18 @@ public class CheckSciToolsObjects {
 
         MetricsProject project = provider.getProject();
 
-        Optional<MetricsObject> object = project.getMetricsObjects(ObjectType.SOURCE)
-                .findObject("path", "hibernate-core/src/main/java/org/hibernate/AnnotationException.java");
+        project.getMetricsObjects(ObjectType.METHOD).forEach(mo -> {
+            System.out.printf("%s: %d\n", mo.getLongname(), mo.getMetricValues().size());
+        });
 
-        for(ObjectType ot : Arrays.asList(ObjectType.SOURCE)/*project.getObjectTypes()*/) {
-            MetricsObjects mobjects = project.getMetricsObjects(ot);
-            Set<Metric> metrics = project.getMetrics(ot);
-            System.out.printf(">> %s: %d, %d\n",ot, mobjects.size(), metrics.size());
-        }
+        // Optional<MetricsObject> object = project.getMetricsObjects(ObjectType.METHOD)
+        //         .findObject("path", "hibernate-core/src/main/java/org/hibernate/AnnotationException.java");
+
+        // for(ObjectType ot : Arrays.asList(ObjectType.SOURCE)/*project.getObjectTypes()*/) {
+        //     MetricsObjects mobjects = project.getMetricsObjects(ot);
+        //     Set<Metric> metrics = project.getMetrics(ot);
+        //     System.out.printf(">> %s: %d, %d\n",ot, mobjects.size(), metrics.size());
+        // }
 
         // MetricsObjects mobjects = project.getMetricsObjects(ObjectType.TYPE);
         // Optional<MetricsObject> mo = mobjects.findObject(SciToolsObjects.ID, "525296");

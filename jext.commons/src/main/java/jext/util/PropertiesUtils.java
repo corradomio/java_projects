@@ -43,8 +43,13 @@ public class PropertiesUtils {
     // ----------------------------------------------------------------------
 
     public static Properties save(File propertiesFile, Properties properties) {
+        return save(propertiesFile, properties, null);
+    }
+
+    public static Properties save(File propertiesFile, Properties properties, String comments) {
+        if (comments == null) comments = "";
         try (OutputStream stream = new FileOutputStream(propertiesFile)) {
-            properties.store(stream, "");
+            properties.store(stream, comments);
         } catch (IOException e) {
             Logger.getLogger(PropertiesUtils.class).error(e, e);
         }
@@ -69,10 +74,10 @@ public class PropertiesUtils {
 
     public static Properties load(File propertiesFile, String prefix) {
         Properties props = load(propertiesFile);
-        return filterProperties(props, prefix);
+        return filter(props, prefix);
     }
 
-    public static Properties filterProperties(Properties props, String prefix) {
+    public static Properties filter(Properties props, String prefix) {
         Properties filtered = new Properties();
         if (prefix == null)
             prefix = "";
@@ -88,6 +93,15 @@ public class PropertiesUtils {
                 filtered.setProperty(fname, value);
             }
         return filtered;
+    }
+
+    public static Properties select(Properties properties, String prefix) {
+        Properties selected = new Properties();
+        for (String name : properties.stringPropertyNames()) {
+            if (name.startsWith(prefix))
+                selected.put(name, properties.get(name));
+        }
+        return selected;
     }
 
     // ----------------------------------------------------------------------

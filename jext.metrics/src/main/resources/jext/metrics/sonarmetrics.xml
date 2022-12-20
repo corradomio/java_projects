@@ -27,9 +27,19 @@
 
     -->
     <categories>
+        <category name="all">
+            <description>
+                This category contains all metrics supported by SonarQube  and used in at minimum one project
+            </description>
+        </category>
         <category name="Issues">
             <description>
                 Project issues
+            </description>
+        </category>
+        <category name="Invalid">
+            <description>
+                List of SonarQube metrics unsupported (for now)
             </description>
         </category>
     </categories>

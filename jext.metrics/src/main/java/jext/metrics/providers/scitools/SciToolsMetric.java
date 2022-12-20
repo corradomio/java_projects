@@ -62,6 +62,11 @@ public class SciToolsMetric implements Metric {
     }
 
     @Override
+    public String getFullName() {
+        return String.format("%s.%s", provider.getName(), getId());
+    }
+
+    @Override
     public ValueType getType() {
         return type;
     }

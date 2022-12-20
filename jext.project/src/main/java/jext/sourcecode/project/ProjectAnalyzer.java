@@ -67,6 +67,7 @@ public class ProjectAnalyzer {
         // pinfo.put("type", project.getProjectType());
         pinfo.put("projectHome", FileUtils.getAbsolutePath(project.getProjectHome()));
         pinfo.put("properties", project.getProperties());
+        pinfo.put("language", project.getLanguage());
 
         List<Module> modules = project.getModules();
         LibrarySet libraries = project.getLibraries();
@@ -84,7 +85,6 @@ public class ProjectAnalyzer {
             "sources", project.getSources().size(),
             "mavenRepositories", mavenRepos.size(),
             "libraryRepositories", libRepos.size()
-
         ));
 
         List<Map<String, Object>> minfoList = modules

@@ -1,6 +1,5 @@
 package jext.metrics;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;

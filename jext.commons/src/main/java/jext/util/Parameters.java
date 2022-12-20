@@ -55,7 +55,7 @@ public class Parameters extends HashMap<String, Object> {
 
     /**
      * Create an empty read-only map.
-     *
+     * 
      * @return an empty read-only map
      */
     public static Parameters empty()    { return EMPTY; }
@@ -80,7 +80,7 @@ public class Parameters extends HashMap<String, Object> {
 
     /**
      * Create an object populated with the list of key/value pairs
-     *
+     * 
      * @param name first key
      * @param value first value
      * @param a remaining key/values
@@ -151,7 +151,7 @@ public class Parameters extends HashMap<String, Object> {
         super.putAll(map);
         return this;
     }
-    
+
     public Parameters add(Properties props) {
         if (props == null)
             return this;
@@ -405,6 +405,18 @@ public class Parameters extends HashMap<String, Object> {
         }
 
         return this;
+    }
+
+    // ----------------------------------------------------------------------
+    // Filter
+    // ----------------------------------------------------------------------
+
+    public Parameters filter(String prefix) {
+        Parameters filtered = new Parameters();
+        for (String name : keySet())
+            if (name.startsWith(prefix))
+                filtered.put(name, get(name));
+        return filtered;
     }
 
     // ----------------------------------------------------------------------

@@ -303,7 +303,7 @@ public class LicenseFinder {
 
     @Nullable
     private String findLicenseFromFile(File file) {
-        if (!file.exists())
+        if (!file.exists() || file.isDirectory())
             return null;
 
         List<String> lines = FileUtils.toStrings(file);

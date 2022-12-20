@@ -61,6 +61,11 @@ public class JavaFlightRecorderMetric implements Metric {
     }
 
     @Override
+    public String getFullName() {
+        return String.format("%s.%s", provider.getName(), getName());
+    }
+
+    @Override
     public ValueType getType() {
         return type;
     }
