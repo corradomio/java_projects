@@ -16,6 +16,7 @@ import org.sonar.wsclient.metrics.MetricsClient;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,10 +151,16 @@ public class SonarObject implements MetricsObject {
     @Override
     public List<MetricsObject> getChildren() {
         ComponentClient cclient = client.componentClient();
-        return cclient.list(getId(), false)
-                .stream()
-                .map(c -> new SonarObject(c, provider, client))
-                .collect(Collectors.toList());
+        try {
+            return cclient.list(getId(), false)
+                    .stream()
+                    .map(c -> new SonarObject(c, provider, client))
+                    .collect(Collectors.toList());
+        }
+        catch (Exception e) {
+            project.getLogger().error(e, e);
+            return Collections.emptyList();
+        }
     }
 
     @Nullable

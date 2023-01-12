@@ -9,6 +9,7 @@ import jext.metrics.MetricsProviders;
 import jext.metrics.ObjectType;
 import jext.util.Assert;
 import jext.util.DefaultHashMap;
+import jext.util.FileUtils;
 import jext.util.JSONUtils;
 import jext.util.MapUtils;
 import jext.util.PropertiesUtils;
@@ -40,7 +41,8 @@ public class SonarProvider implements MetricsProvider {
 
     static final String NAME = "sonarqube";
 
-    public static final String SONAR_URL_HOST = "sonar.url.host";
+    public static final String SONAR_HOST_URL = "sonar.host.url";
+    public static final String WRONG_SONAR_URL_HOST = "sonar.url.host";
     // used also for SonarQube token
     public static final String SONAR_LOGIN = "sonar.login";
     // with token, password must be the empty string
@@ -105,10 +107,20 @@ public class SonarProvider implements MetricsProvider {
         File sonarProjectFile = new File(properties.getProperty(SONAR_PROJECT_HOME));
         if (sonarProjectFile.isDirectory())
             sonarProjectFile = new File(sonarProjectFile, SONAR_PROJECT_PROPERTIES);
-        if (sonarProjectFile.exists())
+        if (sonarProjectFile.exists()) {
+            logger.infof("Loading SonarQube properties from %s", FileUtils.getAbsolutePath(sonarProjectFile));
             properties.putAll(PropertiesUtils.load(sonarProjectFile));
+        }
+        else {
+            logger.warnf("No SonarQube properties file found at %s", FileUtils.getAbsolutePath(sonarProjectFile));
+        }
 
         registerCategory(new MetricsCategory(this, ALL_METRICS));
+
+        if (properties.contains(WRONG_SONAR_URL_HOST) && !properties.contains(SONAR_HOST_URL))
+            properties.put(SONAR_HOST_URL, properties.get(WRONG_SONAR_URL_HOST));
+
+        logger.infof("Connected to SonaQube server at %s", properties.getProperty(SONAR_HOST_URL));
     }
 
     private void loadMetrics() {
@@ -333,7 +345,7 @@ public class SonarProvider implements MetricsProvider {
     // ----------------------------------------------------------------------
 
     String getUrl() {
-        return properties.getProperty(SONAR_URL_HOST);
+        return properties.getProperty(SONAR_HOST_URL);
     }
 
     String getUsername() {
@@ -342,6 +354,10 @@ public class SonarProvider implements MetricsProvider {
 
     String getPassword() {
         return properties.getProperty(SONAR_PASSWORD);
+    }
+
+    Logger getLogger() {
+        return logger;
     }
 
     // ----------------------------------------------------------------------

@@ -131,11 +131,16 @@ public class SonarProject extends SonarObject implements MetricsProject {
         }
 
         ComponentClient cclient = client.componentClient();
-        cclient.list(getId(), true)
-                .forEach(c -> {
-                    SonarObject so = new SonarObject(c, this);
-                    metricsObjects.add(so);
-                });
+        try {
+            cclient.list(getId(), true)
+                    .forEach(c -> {
+                        SonarObject so = new SonarObject(c, this);
+                        metricsObjects.add(so);
+                    });
+        }
+        catch(Exception e) {
+            logger.errorf("Unable to retrieve metrics for objects type '%s' (continue)", type);
+        }
         return metricsObjects;
     }
 
@@ -250,6 +255,14 @@ public class SonarProject extends SonarObject implements MetricsProject {
         }
 
         return metricsValues;
+    }
+
+    // ----------------------------------------------------------------------
+    // Utilities
+    // ----------------------------------------------------------------------
+
+    Logger getLogger() {
+        return logger;
     }
 
     // ----------------------------------------------------------------------
