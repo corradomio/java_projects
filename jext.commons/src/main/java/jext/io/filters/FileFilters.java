@@ -18,6 +18,14 @@ public class FileFilters {
         return FalseFileFilter.INSTANCE;
     }
 
+    public static FileFilter of(String ext) {
+        return  file -> file.getName().endsWith(ext);
+    }
+
+    public static FileFilter excluding(String... pattern) {
+        return not(wildcards(pattern));
+    }
+
     public static FileFilter and(FileFilter ... filters) {
         AndFileFilter andff = new AndFileFilter();
         for (FileFilter filter : filters)

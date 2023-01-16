@@ -1,6 +1,5 @@
 package org.hls.check;
 
-import jext.text.TokensCounter;
 import jext.text.TokensScanner;
 
 import java.io.File;
@@ -12,7 +11,8 @@ public class TokenizeFiles {
         TokensScanner.scan(new File(
             // "D:\\Projects.github.2\\elasticsearch-8.5.1"
             // "D:\\Projects.github.2\\deeplearning4j-1.0.0-M2.1"
-            "D:\\Projects.github.2\\hibernate-orm-5.2.0"
+            // "D:\\Projects.github.2\\hibernate-orm-5.2.0"
+                "D:\\Projects\\Java\\elasticsearch-8.6.0"
         ), ".java");
         System.out.println("done");
 
