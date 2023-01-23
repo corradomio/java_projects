@@ -19,7 +19,16 @@ public class FileFilters {
     }
 
     public static FileFilter of(String ext) {
-        return  file -> file.getName().endsWith(ext);
+        if (ext.contains(",") || ext.contains(" ") || ext.contains("|")) {
+            String[] exts = ext.split("[, |]");
+            OrFileFilter orfilter = (OrFileFilter) or();
+            for(String ext1: exts)
+                orfilter.add(of(ext1));
+            return orfilter;
+        }
+        else {
+            return file -> file.getName().endsWith(ext);
+        }
     }
 
     public static FileFilter excluding(String... pattern) {
