@@ -1,4 +1,4 @@
-package jext.text;
+package jext.text.tokens;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class Tokenizer {
         return tokens;
     }
 
-    //ensures that there are no tokens of length 1
+    // ensures that there are no tokens of length 1
     private static String[] normalize(String[] array){
         List<String> newArray = new ArrayList<>();
         for(int i=0;i<array.length;i++){

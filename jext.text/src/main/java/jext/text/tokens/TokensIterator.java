@@ -1,4 +1,4 @@
-package jext.text;
+package jext.text.tokens;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -107,9 +107,8 @@ public class TokensIterator implements Iterator<String>, AutoCloseable {
                 }
             }
         }
-        catch(IOException e) {
+        catch(IOException e) { }
 
-        }
         this.token = sb.length() > 0 ? sb.toString() : null;
     }
 

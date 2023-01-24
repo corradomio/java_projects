@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hls.check</groupId>
+    <artifactId>check_embeddings</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <modules>
+        <module>..\jext.commons</module>
+        <module>..\jext.concurrent</module>
+        <module>..\jext.collections</module>
+        <module>..\jext.compress</module>
+        <module>..\jext.jgrapht_v2</module>
+        <module>..\jext.text</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.collections</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.text</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.compress</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jgrapht-io</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jgrapht-neo4j</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jgrapht-clustering</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.concurrent</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

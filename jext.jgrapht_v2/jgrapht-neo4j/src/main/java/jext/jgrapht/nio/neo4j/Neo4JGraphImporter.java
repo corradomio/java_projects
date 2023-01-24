@@ -8,20 +8,15 @@ import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.internal.value.IntegerValue;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 
 public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
@@ -66,26 +61,36 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
     }
 
     public Neo4JGraphImporter<V, E> vertices(String cypher) {
+        String label = cypher;
+
         if (isCypher(cypher)) {
             this.vertices = cypher;
             return this;
         }
-        else
-        {
-            String label = cypher;
-            if (label == null || label.isEmpty()) {
-                vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
-                edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t");
-            } else if ("type" .equals(label)) {
-                vertices(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) RETURN id(s) AS s, s.fullname AS name", label));
-                edges(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
-            } else {
-                vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
-                edges(String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
-            }
-            labels("s", "t");
-            return this;
+        else if (label == null || label.isEmpty()) {
+            vertices("MATCH (s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
+            edges("MATCH (s {refId:$refId}) --> (t) RETURN id(s) AS s, id(t) AS t");
         }
+        // multiple labels
+        else if (cypher.contains(",")) {
+            String[] labels = cypher.split(",");
+            vertices("MATCH (s {refId:$refId}) WHERE labels(s)[0] IN $labels RETURN id(s) AS s, s.fullname AS name, labels(s)[0] AS type");
+            edges("MATCH (s {refId:$refId}) --> (t) WHERE labels(s)[0] IN $labels AND labels(t)[0] IN $labels RETURN id(s) AS s, id(t) AS t");
+            parameters.put("labels", labels);
+        }
+        // single label
+        else if ("type".equals(label)) {
+            vertices(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) RETURN id(s) AS s, s.fullname AS name", label));
+            edges(   String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
+        } if ("source".equals(label)) {
+            vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.path AS name", label));
+            edges(   String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
+        } else {
+            vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
+            edges(   String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
+        }
+        labels("s", "t");
+        return this;
     }
 
     public Neo4JGraphImporter<V, E> toVertex(BiFunction<String, Map<String, Object>, V> converter) {

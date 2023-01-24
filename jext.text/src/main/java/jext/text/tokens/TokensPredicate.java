@@ -1,4 +1,4 @@
-package jext.text;
+package jext.text.tokens;
 
 import java.util.ArrayList;
 import java.util.Arrays;
