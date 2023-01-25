@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    NOTE:   THIS file HAS PRIORITY on the configuration in 'splserver.xml'
+  -->
+<configuration>
+    <properties>
+        <property name="rtlibs" value="D:/SPLGroup/runtime-windows/devkits"/>
+
+        <property name="extlibs-home" value="D:/SPLGroup/repos"/>
+        <property name="java-home"    value="${rtlibs}/java"/>
+        <property name="android-home" value="${rtlibs}/android"/>
+        <property name="python-home"  value="${rtlibs}/python"/>
+        <property name="dotnet-home"  value="${rtlibs}/dotnet"/>
+    </properties>
+
+    <extlibsManager path="">
+
+        <language name="java">
+
+            <downloader name="maven">
+                <download timeout="500ms" path="${extlibs-home}/.m2/repository" parallel="5" />
+                <check    timeout="24h"/>
+
+                <!-- extra local directories where to search local libraries -->
+                <local path="${sys:user.home}/.spl/.libs"/>
+                <local path=".libs"/>
+
+                <!-- repository url="http://central.maven.org/maven2/"/ -->
+                <repository name="maven1"         url="https://repo1.maven.org/maven2"/>
+                <repository name="maven2"         url="https://repo.maven.apache.org/maven2"/>
+                <repository name="mvnrepository"  url="https://mvnrepository.com/artifact/" />
+                <repository name="repo.spring.io" url="https://repo.spring.io/plugins-release/" />
+                <repository name="gradle"         url="https://plugins.gradle.org/m2/" />
+                <repository name="gradle-release" url="https://repo.gradle.org/gradle/libs-releases-local/" />
+            </downloader>
+
+            <!-- NEW syntax -->
+            <!--<library name="jdk6,jdk1.6" version="6.0" ref="jdk8"/>
+            <library name="jdk7,jdk1.7" version="7.0" ref="jdk8"/>-->
+
+            <library name="jdk8,jdk8.0,jdk1.8" version="8.0">
+                <path value="${java-home}/jdk8"/>
+            </library>
+
+            <!--<library name="jdk9,jdk9.0" version="9.0"    ref="jdk11"/>
+            <library name="jdk10,jdk10.0" version="10.0" ref="jdk11"/>-->
+
+            <library name="jdk11,jdk11.0" version="11.0">
+                <path value="${java-home}/jdk11"/>
+            </library>
+
+
+            <!--<library name="jdk12,jdk12.0" version="12.0" ref="jdk17"/>
+            <library name="jdk13,jdk13.0" version="13.0" ref="jdk17"/>
+            <library name="jdk14,jdk14.0" version="14.0" ref="jdk17"/>
+            <library name="jdk15,jdk15.0" version="15.0" ref="jdk17"/>
+            <library name="jdk16,jdk16.0" version="16.0" ref="jdk17"/>-->
+
+            <library name="jdk17,jdk17.0" version="17.0">
+                <path value="${java-home}/jdk17"/>
+            </library>
+
+        </language>
+
+        <language name="android">
+
+            <downloader name="maven">
+                <download timeout="500ms" path="${extlibs-home}/.m2/android" parallel="5" />
+                <check    timeout="24h"/>
+
+                <!-- extra local directories where to search local libraries -->
+                <local path="${sys:user.home}/.spl/.libs"/>
+                <local path=".libs"/>
+
+                <!-- repository url="http://central.maven.org/maven2/"/ -->
+                <repository url="https://repo1.maven.org/maven2"/>
+                <repository url="https://repo.maven.apache.org/maven2"/>
+                <repository url="https://mvnrepository.com/artifact/" />
+                <repository url="https://repo.spring.io/plugins-release/" />
+                <repository url="https://plugins.gradle.org/m2/" />
+                <repository url="https://repo.gradle.org/gradle/libs-releases-local/" />
+            </downloader>
+
+            <!-- Android -->
+            <!--
+                https://www.javatpoint.com/android-versions
+                Code name       Version         Api
+                no_name         1.0             1
+                no_name         1.1             2
+                Cupcake         1.5             3
+                Donut           1.6             4
+                Eclair          2.0 - 2.1       5 - 7
+                Froyo           2.2 - 2.2.3     8
+                Gingerbread     2.3 - 2.3.7     9 - 10
+                Honeycomb       3.0 - 3.2.6     11 - 13
+                Ice Cream       4.0 - 4.0.4     14 - 15
+                Jelly Bean      4.1 - 4.3.1     16 - 18
+                KitKat          4.4 - 4.4.4     19 - 20
+                Lollipop        5.0 - 5.1.1     21 - 22
+                Marshmallow     6.0 - 6.0.1     23
+                Nougat          7.0             24
+                Nougat          7.1.0 - 7.1.2   25
+                Oreo            8.0 - 8.1       26 - 27
+                Pie             9.0             28
+                Android 10      10.0            29
+                Android 11      11.0            30
+              -->
+            <path value="${android-home}/api30"
+                  name="marshmallow,lollipop,adk5,adk4,adk3,oreo,nougart,adk8,adk6,r,q,pie,adk10,adk9"
+            />
+        </language>
+
+        <language name="python">
+
+            <downloader name="pip">
+                <download timeout="500ms" path="${extlibs-home}/.pip" parallel="5" />
+                <check    timeout="24h"/>
+
+                <!-- Configuration -->
+                <repository name="pypi" url="https://pypi.org/"/>
+            </downloader>
+
+            <!--<library name="python3.9,py39" version="3.9" ref="py310"/>-->
+
+            <library name="python3.10,py310"  version="3.10">
+                <path value="${python-home}/python-3.10.7"/>
+            </library>
+        </language>
+
+        <language name="csharp">
+
+            <downloader name="nuget">
+                <download timeout="500ms" path="${extlibs-home}/.nuget" parallel="5" />
+                <check    timeout="24h"/>
+
+                <repository name="nuget" url="https://www.nuget.org/"/>
+            </downloader>
+
+            <!--
+                C# 1.0          .NET Framework 1.0
+                C# 1.1          .NET Framework 1.1
+                C# 1.2          .NET Framework 1.1
+                C# 2.0          .NET Framework 2.0 / 3.0
+                C# 3.0          .NET Framework 2.0 / 3.0 / 3.5
+                C# 4.0          .NET Framework 4
+                C# 5.0          .NET Framework 4.5
+                C# 6.0          .NET Framework 4.6 /
+                                .NET Core 1.0 / 1.1
+                C# 7.0          .NET Framework 4.7
+                C# 7.1          .NET Core 2.0
+                C# 7.2          .NET Core 2.0
+                C# 7.3          .NET Framework 4.8     (use .NET Core 2.2)
+                                .NET Core 2.1 / 2.2
+                C# 8.0          .NET Core 3.0 / 3.1    (use .NET Core 3.1)
+                C# 9.0          .NET 5.0
+                C# 10.0         .NET 6.0
+            -->
+
+            <!--
+                net40
+                net45
+                net451
+                net461
+                net472
+                net5
+                net5.0
+                net6
+                net6.0
+                net6.0-android
+                net6.0-ios
+                net6.0-maccatalyst
+                net6.0-tizen
+                net6.0-windows
+                net6.0-windows10.0.19041
+                net6.0-windows7.0
+                net7.0
+                netcoreapp2.0
+                netcoreapp2.1
+                netcoreapp3.1
+                netcoreapp6.0
+                netstandard1.3
+                netstandard2.0
+                netstandard2.1
+              -->
+
+            <!-- NEW syntax, to support libraries with other names/versions but based on the same
+                 list of assemblies -->
+            <!--<library name=".NET Core 2.0,netstandard2.0" version="2.0" ref=".NET Core 2.2"/>
+            <library name=".NET Core 2.1,netstandard2.1" version="2.1" ref=".NET Core 2.2"/>-->
+
+            <library name=".NET Core 2.2,net2.2,netstandard2.2" version="2.2">
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.All/2.2.8"/>
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/2.2.8"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/2.2.8"/>
+                <path value="${dotnet-home}/sdk/2.2.207"/>
+            </library>
+
+            <library name=".NET Core 3.1,net3.1,netcore3.1,netcoreapp3.1" version="3.1">
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/3.1.29"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/3.1.29"/>
+                <path value="${dotnet-home}/sdk/3.1.423"/>
+            </library>
+
+            <library name=".NET 5.0,net5,net5.0" version="5.0">
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/5.0.17"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/5.0.17"/>
+                <path value="${dotnet-home}/sdk/5.0.408"/>
+            </library>
+
+            <library name=".NET 6.0,net6,net6.0" version="6.0">
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/6.0.8"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/6.0.8"/>
+                <path value="${dotnet-home}/sdk/6.0.400"/>
+            </library>
+
+            <library name=".NET 7.0,net7,net7.0" version="7.0">
+                <path value="${dotnet-home}/shared/Microsoft.AspNetCore.App/7.0.0-preview.7.22376.6"/>
+                <path value="${dotnet-home}/shared/Microsoft.NETCore.App/7.0.0-preview.7.22375.6"/>
+                <path value="${dotnet-home}/sdk/7.0.100-preview.7.22377.5"/>
+            </library>
+
+        </language>
+
+    </extlibsManager>
+</configuration>

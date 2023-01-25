@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.logging.v2.Logger;
-import jext.text.TokensScanner;
+import jext.text.tokens.TokensScanner;
 
 import java.io.File;
 import java.io.IOException;

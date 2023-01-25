@@ -1,8 +1,8 @@
 package org.hls.check;
 
-import jext.text.TokensCounter;
-import jext.text.TokensIterator;
-import jext.text.TokensPredicate;
+import jext.text.tokens.TokensCounter;
+import jext.text.tokens.TokensIterator;
+import jext.text.tokens.TokensPredicate;
 
 import java.io.File;
 import java.io.IOException;

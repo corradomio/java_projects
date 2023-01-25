@@ -20,6 +20,8 @@ public class WordEmbedding {
 
     private final Map<String, double[]> embeddings;
     private double[] ZERO = new double[0];
+    private double[][] E_MIN_MAX = new double[0][0];
+    private double[] D_MIN_MAX = new double[2];
     private int length;
 
     // ----------------------------------------------------------------------
@@ -50,6 +52,9 @@ public class WordEmbedding {
         if (length == 0) {
             length = embedding.length;
             ZERO = new double[length];
+            E_MIN_MAX = new double[2][];
+            E_MIN_MAX[0] = new double[length];
+            E_MIN_MAX[1] = new double[length];
         }
 
         if (embedding.length != length)
@@ -57,6 +62,22 @@ public class WordEmbedding {
                     word, embedding.length, length);
 
         this.embeddings.put(word, embedding);
+
+        for(int i=0; i<length; ++i) {
+            double v = embedding[i];
+            if (v < E_MIN_MAX[0][i]) E_MIN_MAX[0][i] = v;
+            if (v > E_MIN_MAX[1][i]) E_MIN_MAX[1][i] = v;
+            if (v < D_MIN_MAX[0]) D_MIN_MAX[0] = v;
+            if (v > D_MIN_MAX[1]) D_MIN_MAX[1] = v;
+        }
+    }
+
+    public double[/*min,max*/] dimensionsMinMax() {
+        return D_MIN_MAX;
+    }
+
+    public double[/*min,max*/][/*length*/] embeddingMinMax() {
+        return E_MIN_MAX;
     }
 
     public double[] embedding(String word) {
@@ -78,7 +99,6 @@ public class WordEmbedding {
         }
         return normOne(emb, false);
     }
-
 
     // ----------------------------------------------------------------------
     // Implementation

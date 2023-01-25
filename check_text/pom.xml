@@ -19,6 +19,7 @@
         <module>..\jext.commons</module>
         <module>..\jext.concurrent</module>
         <module>..\jext.collections</module>
+        <module>..\jext.compress</module>
     </modules>
 
     <dependencies>

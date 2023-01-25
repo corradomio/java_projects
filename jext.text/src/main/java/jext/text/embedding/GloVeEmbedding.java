@@ -8,58 +8,35 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class GloVeEmbedding {
+public class GloVeEmbedding extends WordEmbeddingLoader {
 
-    private static Logger logger = Logger.getLogger(GloVeEmbedding.class);
+    static {
+        logger = Logger.getLogger(GloVeEmbedding.class);
+    }
+
+    public static WordEmbeddingLoader loader() {
+        return new GloVeEmbedding();
+    }
 
     public static WordEmbedding load(File embeddingFile) throws IOException {
         if (Archives.isCompressed(embeddingFile))
-            return load(embeddingFile, changeExt(embeddingFile.getName(), ".txt"));
+            return load(embeddingFile, changeExt(embeddingFile.getName(), ".txt"), 0, false);
         else
-            return loadText(embeddingFile);
+            return loadText(embeddingFile, 0, false);
     }
 
     public static WordEmbedding load(File zippedFile, int length) throws IOException {
-        String ext = String.format(".%dd.txt", length);
-        return load(zippedFile, changeExt(zippedFile.getName(), ext));
+        String path = changeExt(zippedFile.getName(), length);
+        return load(zippedFile, path, 0, false);
     }
 
     public static WordEmbedding load(File zippedFile, String path) throws IOException {
-        WordEmbedding emb;
-        logger.infof("Loading GloVe embedding from '%s[%s]'", zippedFile, path);
-        try(BufferedReader rdr = Archives.openText(zippedFile, path)) {
-            emb = load(rdr);
-        }
-        logger.infof("done (%d/%d)", emb.size(), emb.length());
-        return emb;
+        return load(zippedFile, path, 0, false);
     }
 
-    private static WordEmbedding loadText(File embeddingFile) throws IOException {
-        WordEmbedding emb;
-        logger.infof("Loading GloVe embedding from '%s'", embeddingFile);
-        try (BufferedReader rdr = new BufferedReader(new FileReader(embeddingFile))) {
-            emb = load(rdr);
-        }
-        logger.infof("done (%d/%d)", emb.size(), emb.length());
-        return emb;
-    }
-
-    private static WordEmbedding load(BufferedReader rdr) throws IOException {
-        WordEmbedding emb = new WordEmbedding();
-
-        for(String line = rdr.readLine(); line != null; line = rdr.readLine()) {
-            String[] parts = line.split(" ");
-            int n = parts.length;;
-            double[] vec = new double[n-1];
-
-            String word = parts[0];
-            for (int i=1; i<n; ++i)
-                vec[i-1] = Double.parseDouble(parts[i]);
-
-            emb.put(word, vec);
-            logger.debugft("... loaded %6d tokens", emb.size());
-        }
-        return emb;
+    private static String changeExt(String name, int length) {
+        int p = name.lastIndexOf('.');
+        return name.substring(0, p) + String.format(".%dd.txt", length);
     }
 
     private static String changeExt(String name, String ext) {

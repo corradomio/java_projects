@@ -78,14 +78,17 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
             edges("MATCH (s {refId:$refId}) --> (t) WHERE labels(s)[0] IN $labels AND labels(t)[0] IN $labels RETURN id(s) AS s, id(t) AS t");
             parameters.put("labels", labels);
         }
-        // single label
+        // special case: 'type'
         else if ("type".equals(label)) {
             vertices(String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) RETURN id(s) AS s, s.fullname AS name", label));
             edges(   String.format("MATCH (s:%1$s {refId:$refId, type:'type'}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
-        } if ("source".equals(label)) {
+        }
+        // special case 'source'
+        else if ("source".equals(label)) {
             vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.path AS name", label));
-            edges(   String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s {type:'type'}) RETURN id(s) AS s, id(t) AS t", label));
-        } else {
+            edges(   String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
+        }
+        else {
             vertices(String.format("MATCH (s:%1$s {refId:$refId}) RETURN id(s) AS s, s.fullname AS name", label));
             edges(   String.format("MATCH (s:%1$s {refId:$refId}) --> (t:%1$s) RETURN id(s) AS s, id(t) AS t", label));
         }
