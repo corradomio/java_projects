@@ -232,6 +232,9 @@ public class Neo4JGraphImporter<V, E> implements GraphImporter<V, E> {
             V sourceVertex = get(rec, slabel);
             V targetVertex = get(rec, tlabel);
 
+            if (sourceVertex == null || targetVertex == null)
+                continue;
+
             if (!vertices.contains(sourceVertex)) {
                 vertices.add(sourceVertex);
                 graph.addVertex(sourceVertex);

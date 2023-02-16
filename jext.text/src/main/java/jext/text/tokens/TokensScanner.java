@@ -22,6 +22,12 @@ public class TokensScanner {
 
     private static Logger logger = Logger.getLogger(TokensScanner.class);
 
+    public static void scan(List<File> scanDirs, String ext) throws IOException {
+        for(File dir : scanDirs)
+            scan(dir, ext);
+
+    }
+
     public static TokensScanner scan(File scanDirectory, String ext) throws IOException {
         return scan(scanDirectory, new File(scanDirectory, ".tokens"), ext);
     }
@@ -154,7 +160,7 @@ public class TokensScanner {
                     logger.debugft("... processed %d files", gtc.size());
                 }
 
-                save(tc, file);
+                save(tc, file, false);
                 return FileVisitResult.CONTINUE;
             }
 
@@ -169,40 +175,43 @@ public class TokensScanner {
             }
         });
 
-        save(gtc, new File(scanDirectory, "counts.csv"));
+        save(gtc, new File(scanDirectory, "tokens-count"), true);
 
         logger.infof("done (%d)", gtc.size());
 
         return this;
     }
 
-    private void save(TokensCounter tc, File file) {
+    private void save(TokensCounter tc, File file, boolean saveCounts) {
         if (outputDirectory == null)
             return;
 
         String bdir = scanDirectory.getAbsolutePath().replace('\\', '/');
         String fdir = file.getAbsolutePath().replace('\\', '/');
         String rdir = fdir.substring(bdir.length());
-        File countFile = new File(outputDirectory, rdir + ".count");
-        File tokensFile = new File(outputDirectory, rdir + ".tokens");
-        countFile.getParentFile().mkdirs();
 
+        File tokensFile = new File(outputDirectory, rdir + ".tokens");
+        tokensFile.getParentFile().mkdirs();
+
+        try(Writer wrt = new FileWriter(tokensFile)) {
+            // wrt.write("token\n");
+            tc.words().forEach(word -> {
+                try {
+                    wrt.write(String.format("%s\n", word));
+                } catch (IOException e) { }
+            });
+        }
+        catch(IOException e) { }
+
+        if (!saveCounts) return;
+
+        File countFile = new File(outputDirectory, rdir + ".count");
         try(Writer wrt = new FileWriter(countFile)) {
             wrt.write("token,count,docs\n");
             wrt.write(String.format("$counters,%d,%d\n", tc.count(), tc.documents()));
             tc.counters().forEach(c -> {
                 try {
                     wrt.write(String.format("%s,%d,%d\n", c.token, c.count,c.documents));
-                } catch (IOException e) { }
-            });
-        }
-        catch(IOException e) { }
-
-        try(Writer wrt = new FileWriter(tokensFile)) {
-            wrt.write("token\n");
-            tc.words().forEach(word -> {
-                try {
-                    wrt.write(String.format("%s\n", word));
                 } catch (IOException e) { }
             });
         }
