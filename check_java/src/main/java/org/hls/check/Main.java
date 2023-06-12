@@ -1,9 +1,9 @@
 package org.hls.check;
 
-import jext.nio.file.WildcardFileFilter;
+import jext.io.filters.WildcardFileFilter;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
-import jext.util.Wildcard;
+import jext.util.function.Wildcard;
 
 import java.io.File;
 import java.util.Optional;
@@ -14,10 +14,10 @@ public class Main {
 
         WildcardFileFilter wcff = new WildcardFileFilter();
 
-        wcff.addPattern("D:/Projects.github/java_projects/jext.*/src/main/java/jext/nio/file/Ciccio.java");
+        wcff.add("D:/Projects.github/java_projects/jext.*/src/main/java/jext/nio/file/Ciccio.java");
 
-        System.out.println(wcff.accept("D:/Projects.github/java_projects/jext.commons/src/main/java/jext/nio/file/Ciccio.java"));
-        System.out.println(wcff.accept("D:/Projects.github/java_projects/jext.commons/src/main/java/jext/nio/pinco/Ciccio.java"));
+        System.out.println(wcff.test("D:/Projects.github/java_projects/jext.commons/src/main/java/jext/nio/file/Ciccio.java"));
+        System.out.println(wcff.test("D:/Projects.github/java_projects/jext.commons/src/main/java/jext/nio/pinco/Ciccio.java"));
 
     }
 }
