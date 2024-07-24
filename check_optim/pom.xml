@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>check_optim</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!--
+         -  opt4j
+         -->
+        <!-- https://mvnrepository.com/artifact/org.opt4j/opt4j-core -->
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-core</artifactId>
+            <version>3.1.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.opt4j/opt4j-optimizers -->
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-optimizers</artifactId>
+            <version>3.1.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.opt4j/opt4j-operators -->
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-operators</artifactId>
+            <version>3.1.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.opt4j/opt4j-satdecoding -->
+        <dependency>
+            <groupId>org.opt4j</groupId>
+            <artifactId>opt4j-satdecoding</artifactId>
+            <version>3.1.4</version>
+        </dependency>
+
+        <!--
+         -  ECJ
+         -->
+        <!-- https://mvnrepository.com/artifact/edu.gmu.cs/ecj -->
+        <dependency>
+            <groupId>edu.gmu.cs</groupId>
+            <artifactId>ecj</artifactId>
+            <version>22</version>
+        </dependency>
+
+        <!--
+         -  jMetal
+         -->
+        <!-- https://mvnrepository.com/artifact/org.uma.jmetal/jmetal-core -->
+        <dependency>
+            <groupId>org.uma.jmetal</groupId>
+            <artifactId>jmetal-core</artifactId>
+            <version>6.6</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.uma.jmetal/jmetal-problem -->
+        <dependency>
+            <groupId>org.uma.jmetal</groupId>
+            <artifactId>jmetal-problem</artifactId>
+            <version>6.6</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.uma.jmetal/jmetal-algorithm -->
+        <dependency>
+            <groupId>org.uma.jmetal</groupId>
+            <artifactId>jmetal-algorithm</artifactId>
+            <version>6.6</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.uma.jmetal/jmetal-lab -->
+        <dependency>
+            <groupId>org.uma.jmetal</groupId>
+            <artifactId>jmetal-lab</artifactId>
+            <version>6.6</version>
+        </dependency>
+
+        <!--
+         -  MOEA Framework
+         -->
+        <!-- https://mvnrepository.com/artifact/org.moeaframework/moeaframework -->
+        <dependency>
+            <groupId>org.moeaframework</groupId>
+            <artifactId>moeaframework</artifactId>
+            <version>4.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.moeaframework/jmetal-plugin -->
+        <dependency>
+            <groupId>org.moeaframework</groupId>
+            <artifactId>jmetal-plugin</artifactId>
+            <version>6.2.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.moeaframework/gd -->
+        <dependency>
+            <groupId>org.moeaframework</groupId>
+            <artifactId>gd</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.moeaframework/pisa-plugin -->
+        <dependency>
+            <groupId>org.moeaframework</groupId>
+            <artifactId>pisa-plugin</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <!--
+         -  Jenetics
+         -->
+        <!-- https://mvnrepository.com/artifact/io.jenetics/jenetics -->
+        <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics</artifactId>
+            <version>8.0.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jenetics/jenetics.ext -->
+        <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics.ext</artifactId>
+            <version>8.0.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jenetics/jenetics.prog -->
+        <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics.prog</artifactId>
+            <version>8.0.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jenetics/jenetics.prog -->
+        <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics.prog</artifactId>
+            <version>8.0.0</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
