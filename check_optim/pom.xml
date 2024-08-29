@@ -138,6 +138,16 @@
             <version>8.0.0</version>
         </dependency>
 
+        <!--
+          - SAT4J
+          -->
+        <!-- https://mvnrepository.com/artifact/org.ow2.sat4j/org.ow2.sat4j.core -->
+        <dependency>
+            <groupId>org.ow2.sat4j</groupId>
+            <artifactId>org.ow2.sat4j.core</artifactId>
+            <version>2.3.6</version>
+        </dependency>
+
     </dependencies>
 
 </project>
