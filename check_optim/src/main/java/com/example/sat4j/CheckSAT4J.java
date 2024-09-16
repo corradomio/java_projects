@@ -1,4 +1,4 @@
-package com.example;
+package com.example.sat4j;
 
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.reader.DimacsReader;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
-public class SATExample {
+public class CheckSAT4J {
     public static void main(String[] args) {
 
         args = new String[]{
