@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import jext.logging.Logger;
+//import jext.logging.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,7 +16,7 @@ import java.nio.file.Files;
 
 public class JSONUtils {
 
-    private static Logger logger = Logger.getLogger(JSONUtils.class);
+    //private static Logger logger = Logger.getLogger(JSONUtils.class);
 
     // ----------------------------------------------------------------------
     // read
@@ -42,7 +42,7 @@ public class JSONUtils {
         try {
             return (T) mapper.readValue(content, objectType);
         } catch (JsonProcessingException e) {
-            logger.error(e, e);
+            //logger.error(e, e);
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class JSONUtils {
             mapper.writeValue(jsonFile, item);
         }
         catch (IOException e) {
-            logger.errorf("Unable to write file %s: %s", jsonFile, e);
+            //logger.errorf("Unable to write file %s: %s", jsonFile, e);
         }
     }
 
@@ -76,7 +76,7 @@ public class JSONUtils {
         try {
             return mapper.writeValueAsString(data);
         } catch (JsonProcessingException e) {
-            logger.error(e, e);
+            //logger.error(e, e);
             return "{}";
         }
     }
