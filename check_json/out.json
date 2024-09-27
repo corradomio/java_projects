@@ -1,0 +1,5 @@
+{
+  "topolino" : 4.5,
+  "pluto" : { },
+  "pippo" : [ 1, true, null, "pasticcio" ]
+}

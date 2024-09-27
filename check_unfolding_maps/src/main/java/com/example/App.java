@@ -1,0 +1,59 @@
+package com.example;
+
+import de.fhpotsdam.unfolding.providers.OpenStreetMap;
+import processing.core.PApplet;
+import de.fhpotsdam.unfolding.UnfoldingMap;
+import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.utils.MapUtils;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
+/**
+ * Hello world!
+ *
+ */
+public class App extends PApplet
+{
+
+    UnfoldingMap map;
+
+    public void setup() {
+        size(1440, 900, OPENGL);
+
+        // map = new UnfoldingMap(this, new Google.GoogleMapProvider());
+        // map = new UnfoldingMap(this, new Microsoft.RoadProvider());
+        map = new UnfoldingMap(this, new OpenStreetMap.OpenStreetMapProvider());
+        map.zoomAndPanTo(10, new Location(52.5f, 13.4f));
+
+        MapUtils.createDefaultEventDispatcher(this, map);
+    }
+
+    public void draw() {
+        background(0);
+        map.draw();
+    }
+
+    public InputStream createInputRaw(String filename) {
+        if (filename == null || filename.indexOf(':') == -1)
+            return super.createInputRaw(filename);
+
+        try {
+            URL url = new URL(filename);
+            URLConnection connection = url.openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla");
+            InputStream stream = connection.getInputStream();
+            return stream;
+        } catch (Exception e) {
+
+        }
+
+        return null;
+    }
+
+    public static void main(String[] args) {
+        PApplet.main(new String[] { App.class.getName() });
+    }
+
+}
