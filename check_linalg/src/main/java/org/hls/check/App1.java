@@ -3,19 +3,20 @@ package org.hls.check;
 
 import jext.math.linear.Linalg;
 import jext.math.linear.Matrix;
+import jext.math.linear.RealVector;
 import jext.math.linear.Vector;
 
 public class App1 {
 
     public static void main(String[] args) {
 
-        Vector u = Linalg.ones(10);
-        Vector v = Linalg.ones(10);
+        RealVector u = Linalg.ones(10, float.class);
+        RealVector v = Linalg.ones(10, float.class);
 
-        Vector r = u.linear(2, 3, v);
+        RealVector r = u.linear(2, 3, v);
         System.out.println(r);
 
-        Matrix m = Linalg.matrix(2,3);
+        Matrix m = Linalg.matrix(2,3, float.class);
         System.out.println(m);
 
         // Random rnd = new Random();

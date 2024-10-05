@@ -1,18 +1,15 @@
 package jext.math.linear.sparse;
 
-import jext.math.linear.Dim;
-import jext.math.linear.Linalg;
-import jext.math.linear.Matrix;
-import jext.math.linear.Vector;
+import jext.math.linear.*;
 
-public class SparseVector extends BaseSparse implements Vector {
+public class SparseRealVector extends BaseSparse implements RealVector {
 
-    public SparseVector(Dim dim) {
+    public SparseRealVector(Dim dim) {
         this.dim = dim;
         this.data = new Data();
     }
 
-    public SparseVector(Data data, Dim dim) {
+    public SparseRealVector(Data data, Dim dim) {
         this.dim = dim;
         this.data = data;
     }
@@ -20,7 +17,7 @@ public class SparseVector extends BaseSparse implements Vector {
     // ----------------------------------------------------------------------
 
     @Override
-    public Vector set(int i, float v) {
+    public RealVector set(int i, float v) {
         data.set(i, 0, v);
         return this;
     }
@@ -40,31 +37,31 @@ public class SparseVector extends BaseSparse implements Vector {
     @Override
     public Vector versor() {
         float s = this.norm();
-        SparseVector r = Linalg.sparse(dim);
+        SparseRealVector r = Linalg.sparse(dim);
         Linear.linear(r.data, 1/s, this.data, 0, null);
         return r;
     }
 
     @Override
-    public Vector linear(float s, float t, Vector v) {
-        SparseVector that = (SparseVector) v;
-        SparseVector res = Linalg.sparse(dim);
+    public RealVector linear(float s, float t, RealVector v) {
+        SparseRealVector that = (SparseRealVector) v;
+        SparseRealVector res = Linalg.sparse(dim);
         Linear.linear(res.data, s, this.data, t, that.data);
         return res;
     }
 
     @Override
-    public float dot(Vector v) {
-        SparseVector that = (SparseVector) v;
+    public float dot(RealVector v) {
+        SparseRealVector that = (SparseRealVector) v;
         return Linear.dot(this.data, that.data);
     }
 
     @Override
     public Matrix outer(Vector v) {
-        SparseVector that = (SparseVector) v;
+        SparseRealVector that = (SparseRealVector) v;
         Data r = new Data();
         Linear.outer(r, this.data, that.data);
-        return new SparseMatrix(r, new Dim(this.dim(0), that.dim(0)));
+        return new SparseRealMatrix(r, new Dim(this.dim(0), that.dim(0)));
     }
 
     @Override
@@ -76,9 +73,18 @@ public class SparseVector extends BaseSparse implements Vector {
 
     @Override
     public boolean equals(Object obj) {
-        SparseVector that = (SparseVector) obj;
-        return this.dim.equals(that.dim)
-            && this.data.equals(that.data);
+        SparseRealVector that = (SparseRealVector) obj;
+
+        if (!this.dim.equals(that.dim))
+            return false;
+        if (this.data.equals(that.data))
+            return true;
+
+        Coords u = this.data.union(that.data);
+        for (Loc l : u)
+            if (this.get(l.r) != that.get(l.r))
+                return false;
+        return true;
     }
 
     @Override

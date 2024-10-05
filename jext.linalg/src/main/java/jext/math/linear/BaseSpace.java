@@ -1,12 +1,7 @@
-package jext.math.linear.dense;
+package jext.math.linear;
 
-import jext.math.linear.Dim;
-import jext.math.linear.Type;
-
-public class BaseDense {
-
+public class BaseSpace {
     public Dim dim;
-    public float[] data;
 
     // @Override
     public Type type() {
@@ -21,11 +16,6 @@ public class BaseDense {
     // @Override
     public int dim(int idim) {
         return dim.dims[idim];
-    }
-
-    // @Override
-    public int length() {
-        return data.length;
     }
 
 }

@@ -1,22 +1,13 @@
 package jext.math.linear;
 
-public interface Vector {
+public interface Vector extends VSpace {
 
-    Type type();
-    Dim  dim();
-    int  dim(int idim);
-    int  length();
-
-    Vector set(int i, float v);
-    float  get(int i);
-
-    float norm();
-    // versor
+    // a' = a/|a|
     Vector versor();
 
-    // r = s*u + t*v
-    Vector linear(float s, float t, Vector v);
-    float  dot(Vector v);
+    // outer product
     Matrix outer(Vector v);
+
+    // convert the vector in a diagonal matrix
     Matrix diag();
 }

@@ -9,8 +9,8 @@
     <version>1.0</version>
 
     <properties>
-        <maven.compiler.target>8</maven.compiler.target>
-        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
         <spring.boot.version>2.3.7.RELEASE</spring.boot.version>
         <cypherdsl.version>2020.1.6</cypherdsl.version>
         <neo4j.java.driver.version>4.2.7.0</neo4j.java.driver.version>

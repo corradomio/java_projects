@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>check_linalg_libs</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>check_linalg_libs</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <url>https://repo.clojars.org/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.ejml/ejml-core -->
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-core</artifactId>
+            <version>0.43.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.ejml/ejml-ddense -->
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-ddense</artifactId>
+            <version>0.43.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.ejml/ejml-simple -->
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-simple</artifactId>
+            <version>0.43.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.ejml/ejml-fdense -->
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-fdense</artifactId>
+            <version>0.43.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/dev.secondsun/org.la4j.la4j -->
+        <dependency>
+            <groupId>dev.secondsun</groupId>
+            <artifactId>org.la4j.la4j</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math4-core -->
+        <!--<dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-core</artifactId>
+            <version>4.0-beta1</version>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.lambdaschmiede/maja -->
+        <!--<dependency>
+            <groupId>com.lambdaschmiede</groupId>
+            <artifactId>maja</artifactId>
+            <version>0.1.2</version>
+        </dependency>-->
+
+    </dependencies>
+</project>

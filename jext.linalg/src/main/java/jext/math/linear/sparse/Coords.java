@@ -237,8 +237,10 @@ public class Coords implements Iterable<Loc> {
     }
 
     protected void allocate() {
-        rows = Arrays.copyOf(rows, n + 15);
-        cols = Arrays.copyOf(cols, n + 15);
+        int c = rows.length;
+        c += (8 - c%8);
+        rows = Arrays.copyOf(rows, c);
+        cols = Arrays.copyOf(cols, c);
     }
 
     // ----------------------------------------------------------------------
@@ -259,8 +261,13 @@ public class Coords implements Iterable<Loc> {
         Coords that = (Coords) obj;
         if (this.n != that.n)
             return false;
-        return Arrays.equals(this.rows, that.rows, n)
-            && Arrays.equals(this.cols, that.cols, n);
+        if (Arrays.equals(this.rows, that.rows, n)
+            && Arrays.equals(this.cols, that.cols, n))
+            return true;
+        for (Loc l : this)
+            if (that.find(l) == -1)
+                return false;
+        return true;
     }
 
 }

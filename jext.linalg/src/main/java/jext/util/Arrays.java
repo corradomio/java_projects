@@ -26,17 +26,17 @@ public class Arrays {
         return n + ((r != 0) ? f - r : 0);
     }
 
-    public static int lengthSum(int n1, int n2) {
-        return lengthOf(n1+n2);
-    }
+    // public static int lengthSum(int n1, int n2) {
+    //     return lengthOf(n1+n2);
+    // }
 
-    public static int lengthMin(int n1, int n2) {
-        return lengthOf(Math.min(n1, n2));
-    }
+    // public static int lengthMin(int n1, int n2) {
+    //     return lengthOf(Math.min(n1, n2));
+    // }
 
-    public static int lengthMax(int n1, int n2) {
-        return lengthOf(Math.max(n1, n2));
-    }
+    // public static int lengthMax(int n1, int n2) {
+    //     return lengthOf(Math.max(n1, n2));
+    // }
 
     // ----------------------------------------------------------------------
 

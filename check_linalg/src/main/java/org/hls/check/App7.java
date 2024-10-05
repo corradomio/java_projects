@@ -2,18 +2,16 @@ package org.hls.check;
 
 import jext.math.linear.Linalg;
 import jext.math.linear.Matrix;
-import jext.math.linear.Vector;
-import jext.math.linear.sparse.Linear;
-import jext.math.linear.sparse.SparseMatrix;
-import jext.math.linear.sparse.SparseVector;
+import jext.math.linear.RealMatrix;
+import jext.math.linear.sparse.SparseRealVector;
 
 public class App7 {
 
     public static void main(String[] args) {
 
         Matrix mm;
-        SparseVector u = Linalg.sparse(5);
-        SparseVector v = Linalg.sparse(5);
+        SparseRealVector u = Linalg.sparse(5);
+        SparseRealVector v = Linalg.sparse(5);
 
         u.set(1, 1);
         u.set(2, 1);
@@ -39,6 +37,6 @@ public class App7 {
         v = Linalg.sparse(new float[]{1,0,3,0});
 
         mm = v.outer(v);
-        Linalg.print(mm);
+        Linalg.print((RealMatrix)mm);
     }
 }

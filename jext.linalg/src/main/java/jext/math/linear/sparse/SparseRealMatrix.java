@@ -1,17 +1,14 @@
 package jext.math.linear.sparse;
 
-import jext.math.linear.Dim;
-import jext.math.linear.Linalg;
-import jext.math.linear.Matrix;
-import jext.math.linear.Vector;
+import jext.math.linear.*;
 
-public class SparseMatrix extends BaseSparse implements Matrix {
+public class SparseRealMatrix extends BaseSparse implements RealMatrix {
 
-    public SparseMatrix(Dim dim) {
+    public SparseRealMatrix(Dim dim) {
         this(new Data(), dim);
     }
 
-    public SparseMatrix(Data data, Dim dim) {
+    public SparseRealMatrix(Data data, Dim dim) {
         this.dim = dim;
         this.data = data;
     }
@@ -19,7 +16,7 @@ public class SparseMatrix extends BaseSparse implements Matrix {
     // ----------------------------------------------------------------------
 
     @Override
-    public Matrix set(int i, int j, float v) {
+    public RealMatrix set(int i, int j, float v) {
         data.set(i, j, v);
         return this;
     }
@@ -50,25 +47,25 @@ public class SparseMatrix extends BaseSparse implements Matrix {
     // ----------------------------------------------------------------------
 
     @Override
-    public Matrix dot(Matrix B) {
-        SparseMatrix that = (SparseMatrix) B;
-        SparseMatrix r = Linalg.sparse(this.dim(0), that.dim(1));
+    public RealMatrix dot(RealMatrix B) {
+        SparseRealMatrix that = (SparseRealMatrix) B;
+        SparseRealMatrix r = Linalg.sparse(this.dim(0), that.dim(1));
         Linear.dot(r.data, this.data, that.data);
         return r;
     }
 
     @Override
-    public Matrix linear(float s, float t, Matrix B) {
+    public RealMatrix linear(float s, float t, RealMatrix B) {
         return null;
     }
 
     @Override
-    public Vector linear(float s, Vector u, float t, Vector v) {
+    public RealVector linear(float s, RealVector u, float t, RealVector v) {
         return null;
     }
 
     @Override
-    public Matrix linear(float s, Matrix C, float t, Matrix B) {
+    public RealMatrix linear(float s, RealMatrix C, float t, RealMatrix B) {
         return null;
     }
 }

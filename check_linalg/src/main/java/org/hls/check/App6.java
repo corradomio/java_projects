@@ -3,13 +3,13 @@ package org.hls.check;
 import jext.math.linear.Dim;
 import jext.math.linear.Linalg;
 import jext.math.linear.sparse.Loc;
-import jext.math.linear.sparse.SparseMatrix;
+import jext.math.linear.sparse.SparseRealMatrix;
 
 public class App6 {
 
     public static void main(String[] args) {
 
-        SparseMatrix m = (SparseMatrix)new SparseMatrix(new Dim(4,4))
+        SparseRealMatrix m = (SparseRealMatrix)new SparseRealMatrix(new Dim(4,4))
             .set(0,0,0)
             .set(1, 1,1)
             .set(2,2,2)

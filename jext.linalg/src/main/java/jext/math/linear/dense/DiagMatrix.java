@@ -1,11 +1,8 @@
 package jext.math.linear.dense;
 
-import jext.math.linear.Dim;
-import jext.math.linear.Matrix;
-import jext.math.linear.Type;
-import jext.math.linear.Vector;
+import jext.math.linear.*;
 
-public class DiagMatrix extends BaseDense implements Matrix {
+public class DiagMatrix extends RealSpace implements RealMatrix {
 
     public DiagMatrix(float[] data) {
         int n = data.length;
@@ -21,7 +18,7 @@ public class DiagMatrix extends BaseDense implements Matrix {
     }
 
     @Override
-    public Matrix set(int i, int j, float v) {
+    public RealMatrix set(int i, int j, float v) {
         if (i == j)
             data[i] = v;
         return this;
@@ -35,25 +32,25 @@ public class DiagMatrix extends BaseDense implements Matrix {
     // ----------------------------------------------------------------------
 
     @Override
-    public Matrix dot(Matrix B) {
+    public RealMatrix dot(RealMatrix B) {
         return null;
     }
 
     // R = s*A + t*B
     @Override
-    public Matrix linear(float s, float t, Matrix B) {
+    public RealMatrix linear(float s, float t, RealMatrix B) {
         return null;
     }
 
     // r = s*A.u + t*v
     @Override
-    public Vector linear(float s, Vector u, float t, Vector v) {
+    public RealVector linear(float s, RealVector u, float t, RealVector v) {
         return null;
     }
 
     // R = s*C.A + t*B
     @Override
-    public Matrix linear(float s, Matrix C, float t, Matrix B) {
+    public RealMatrix linear(float s, RealMatrix C, float t, RealMatrix B) {
         return null;
     }
 }

@@ -7,48 +7,48 @@ public class TestDenseVector extends Assertions {
 
     @Test
     void testLength() {
-        Vector v = Linalg.vector(10);
+        Vector v = Linalg.vector(10, float.class);
         assertEquals(10, v.length());
         assertEquals(new Dim(10), v.dim());
     }
 
     @Test
     void testSum() {
-        Vector v1 = Linalg.vector(new float[]{ 1,0,1,0});
-        Vector v2 = Linalg.vector(new float[]{ 0,1,0,1});
-        Vector r = v1.linear(1, 1, v2);
-        Vector v3 = Linalg.ones(4);
+        RealVector v1 = Linalg.vector(new float[]{ 1,0,1,0});
+        RealVector v2 = Linalg.vector(new float[]{ 0,1,0,1});
+        RealVector r = v1.linear(1, 1, v2);
+        RealVector v3 = Linalg.ones(4, float.class);
 
         assertEquals(v3, r);
     }
 
     @Test
     void testLinear() {
-        Vector v1 = Linalg.vector(new float[]{ 2,0,2,0});
-        Vector v2 = Linalg.vector(new float[]{ 0,1,0,1});
-        Vector r = v1.linear(0.5f, 2, v2);
-        Vector v3 = Linalg.vector(new float[]{1,2,1,2});
+        RealVector v1 = Linalg.vector(new float[]{ 2,0,2,0});
+        RealVector v2 = Linalg.vector(new float[]{ 0,1,0,1});
+        RealVector r = v1.linear(0.5f, 2, v2);
+        RealVector v3 = Linalg.vector(new float[]{1,2,1,2});
 
         assertEquals(v3, r);
     }
 
     @Test
     void testZero() {
-        Vector v1 = Linalg.vector(new float[]{ 2,0,2,0});
-        Vector v2 = Linalg.vector(new float[]{ 0,1,0,1});
-        Vector r = v1.linear(0,0,v2);
-        Vector v3 = Linalg.vector(v1.dim());
+        RealVector v1 = Linalg.vector(new float[]{ 2,0,2,0});
+        RealVector v2 = Linalg.vector(new float[]{ 0,1,0,1});
+        RealVector r = v1.linear(0,0,v2);
+        RealVector v3 = (RealVector) Linalg.vector(v1.dim(), float.class);
 
         assertEquals(v3, r);
     }
 
     @Test
     void testassignment() {
-        Vector v1 = Linalg.vector(new float[]{ 2,0,2,0});
-        Vector v2 = Linalg.vector(new float[]{ 0,1,0,1});
-        Vector r1 = v1.linear(1,0,v2);
+        RealVector v1 = Linalg.vector(new float[]{ 2,0,2,0});
+        RealVector v2 = Linalg.vector(new float[]{ 0,1,0,1});
+        RealVector r1 = v1.linear(1,0,v2);
         assertEquals(v1, r1);
-        Vector r2 = v1.linear(0,1,v2);
+        RealVector r2 = v1.linear(0,1,v2);
         assertEquals(v2, r2);
     }
 }

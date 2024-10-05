@@ -1,20 +1,17 @@
 package jext.math.linear.dense;
 
-import jext.math.linear.Dim;
-import jext.math.linear.Linalg;
-import jext.math.linear.Matrix;
-import jext.math.linear.Vector;
+import jext.math.linear.*;
 
 import java.util.Arrays;
 
-public class DenseVector extends BaseDense implements Vector {
+public class DenseRealVector extends RealSpace implements RealVector {
 
-    public DenseVector(Dim dim) {
+    public DenseRealVector(Dim dim) {
         this.dim = dim;
         this.data = new float[dim.dims[0]];
     }
 
-    public DenseVector(float[] v) {
+    public DenseRealVector(float[] v) {
         this.dim = new Dim(v.length);
         this.data = v;
     }
@@ -22,7 +19,7 @@ public class DenseVector extends BaseDense implements Vector {
     // ----------------------------------------------------------------------
 
     @Override
-    public Vector set(int i, float v) {
+    public RealVector set(int i, float v) {
         data[i] = v;
         return this;
     }
@@ -42,28 +39,28 @@ public class DenseVector extends BaseDense implements Vector {
     @Override
     public Vector versor() {
         float s = this.norm();
-        DenseVector r = Linalg.vector(dim);
+        DenseRealVector r = (DenseRealVector) Linalg.vector(dim, float.class);
         Linear.linear(r.data, 1/s, this.data, 0, null);
         return r;
     }
 
     @Override
-    public Vector linear(float s, float t, Vector v) {
-        DenseVector that = (DenseVector) v;
-        DenseVector r = Linalg.vector(dim);
+    public RealVector linear(float s, float t, RealVector v) {
+        DenseRealVector that = (DenseRealVector) v;
+        DenseRealVector r = (DenseRealVector) Linalg.vector(dim, float.class);
         Linear.linear(r.data, s, this.data, t, that.data);
         return r;
     }
 
     @Override
-    public float dot(Vector v) {
-        DenseVector that = (DenseVector) v;
+    public float dot(RealVector v) {
+        DenseRealVector that = (DenseRealVector) v;
         return Linear.dot(this.data, that.data);
     }
 
     @Override
     public Matrix outer(Vector v) {
-        DenseVector that = (DenseVector) v;
+        DenseRealVector that = (DenseRealVector) v;
         int r = this.length()*that.length();
         float[] R = new float[r];
         Linear.outer(R, this.data, that.data);
@@ -84,7 +81,7 @@ public class DenseVector extends BaseDense implements Vector {
 
     @Override
     public boolean equals(Object obj) {
-        DenseVector that = (DenseVector) obj;
+        DenseRealVector that = (DenseRealVector) obj;
         return this.dim.equals(that.dim)
             && Arrays.equals(this.data, that.data);
     }

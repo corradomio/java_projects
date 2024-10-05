@@ -11,8 +11,8 @@
 
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <spring.boot.version>2.4.1</spring.boot.version>
         <!-- start-class> org.hls.check.SpringBootTomcatApplication</start-class -->
     </properties>
