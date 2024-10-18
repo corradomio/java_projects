@@ -31,14 +31,14 @@ public class SparseRealVector extends BaseSparse implements RealVector {
 
     @Override
     public float norm() {
-        return (float) Math.sqrt(Linear.dot(data, data));
+        return (float) Math.sqrt(RealLinear.dot(data, data));
     }
 
     @Override
     public Vector versor() {
         float s = this.norm();
         SparseRealVector r = Linalg.sparse(dim);
-        Linear.linear(r.data, 1/s, this.data, 0, null);
+        RealLinear.linear(r.data, 1/s, this.data, 0, null);
         return r;
     }
 
@@ -46,21 +46,21 @@ public class SparseRealVector extends BaseSparse implements RealVector {
     public RealVector linear(float s, float t, RealVector v) {
         SparseRealVector that = (SparseRealVector) v;
         SparseRealVector res = Linalg.sparse(dim);
-        Linear.linear(res.data, s, this.data, t, that.data);
+        RealLinear.linear(res.data, s, this.data, t, that.data);
         return res;
     }
 
     @Override
     public float dot(RealVector v) {
         SparseRealVector that = (SparseRealVector) v;
-        return Linear.dot(this.data, that.data);
+        return RealLinear.dot(this.data, that.data);
     }
 
     @Override
     public Matrix outer(Vector v) {
         SparseRealVector that = (SparseRealVector) v;
         Data r = new Data();
-        Linear.outer(r, this.data, that.data);
+        RealLinear.outer(r, this.data, that.data);
         return new SparseRealMatrix(r, new Dim(this.dim(0), that.dim(0)));
     }
 

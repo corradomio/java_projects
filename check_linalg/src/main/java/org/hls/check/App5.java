@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.util.Arrays;
+import jext.math.util.Arrays;
 
 public class App5 {
 

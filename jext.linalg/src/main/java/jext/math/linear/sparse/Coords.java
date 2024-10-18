@@ -1,6 +1,6 @@
 package jext.math.linear.sparse;
 
-import jext.util.Arrays;
+import jext.math.util.Arrays;
 
 import java.util.HashSet;
 import java.util.Iterator;

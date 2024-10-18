@@ -1,10 +1,6 @@
 package jext.math.linear.sparse;
 
-import jext.util.Arrays;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import jext.math.util.Arrays;
 
 public class Data extends Coords {
 

@@ -37,7 +37,7 @@ public class DenseRealMatrix extends RealSpace implements RealMatrix {
     public RealMatrix dot(RealMatrix B) {
         DenseRealMatrix that = (DenseRealMatrix) B;
         DenseRealMatrix res = (DenseRealMatrix) Linalg.matrix(dim.dims[0], B.dim(1), float.class);
-        Linear.dot(res.data, this.data, that.data, dim(1));
+        RealLinear.dot(res.data, this.data, that.data, dim(1));
         return res;
     }
 
@@ -49,7 +49,7 @@ public class DenseRealMatrix extends RealSpace implements RealMatrix {
 
         DenseRealMatrix that = (DenseRealMatrix) B;
         DenseRealMatrix res = (DenseRealMatrix) Linalg.matrix(dim, float.class);
-        Linear.linear(res.data, s, this.data, t, that.data);
+        RealLinear.linear(res.data, s, this.data, t, that.data);
         return res;
     }
 
@@ -62,7 +62,7 @@ public class DenseRealMatrix extends RealSpace implements RealMatrix {
         DenseRealVector du = (DenseRealVector) u;
         DenseRealVector dv = (DenseRealVector) v;
         DenseRealVector res = (DenseRealVector) Linalg.vector(v.dim(), float.class);
-        Linear.linear(res.data, s, this.data, du.data, t, dv.data);
+        RealLinear.linear(res.data, s, this.data, du.data, t, dv.data);
         return res;
     }
 
@@ -72,7 +72,7 @@ public class DenseRealMatrix extends RealSpace implements RealMatrix {
         DenseRealMatrix dc = (DenseRealMatrix) C;
         DenseRealMatrix db = (DenseRealMatrix) B;
         DenseRealMatrix res = (DenseRealMatrix) Linalg.matrix(B.dim(), float.class);
-        Linear.linear(res.data, s, dc.data, this.data, t, db.data, C.dim().dims[1]);
+        RealLinear.linear(res.data, s, dc.data, this.data, t, db.data, C.dim().dims[1]);
         return res;
     }
 

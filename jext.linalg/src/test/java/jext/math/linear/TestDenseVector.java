@@ -17,7 +17,7 @@ public class TestDenseVector extends Assertions {
         RealVector v1 = Linalg.vector(new float[]{ 1,0,1,0});
         RealVector v2 = Linalg.vector(new float[]{ 0,1,0,1});
         RealVector r = v1.linear(1, 1, v2);
-        RealVector v3 = Linalg.ones(4, float.class);
+        RealVector v3 = (RealVector) Linalg.ones(4, float.class);
 
         assertEquals(v3, r);
     }

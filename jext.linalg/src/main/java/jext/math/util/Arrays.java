@@ -1,4 +1,4 @@
-package jext.util;
+package jext.math.util;
 
 import static java.lang.Math.abs;
 

@@ -33,14 +33,14 @@ public class DenseRealVector extends RealSpace implements RealVector {
 
     @Override
     public float norm() {
-        return (float) Math.sqrt(Linear.dot(data, data));
+        return (float) Math.sqrt(RealLinear.dot(data, data));
     }
 
     @Override
     public Vector versor() {
         float s = this.norm();
         DenseRealVector r = (DenseRealVector) Linalg.vector(dim, float.class);
-        Linear.linear(r.data, 1/s, this.data, 0, null);
+        RealLinear.linear(r.data, 1/s, this.data, 0, null);
         return r;
     }
 
@@ -48,14 +48,14 @@ public class DenseRealVector extends RealSpace implements RealVector {
     public RealVector linear(float s, float t, RealVector v) {
         DenseRealVector that = (DenseRealVector) v;
         DenseRealVector r = (DenseRealVector) Linalg.vector(dim, float.class);
-        Linear.linear(r.data, s, this.data, t, that.data);
+        RealLinear.linear(r.data, s, this.data, t, that.data);
         return r;
     }
 
     @Override
     public float dot(RealVector v) {
         DenseRealVector that = (DenseRealVector) v;
-        return Linear.dot(this.data, that.data);
+        return RealLinear.dot(this.data, that.data);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DenseRealVector extends RealSpace implements RealVector {
         DenseRealVector that = (DenseRealVector) v;
         int r = this.length()*that.length();
         float[] R = new float[r];
-        Linear.outer(R, this.data, that.data);
+        RealLinear.outer(R, this.data, that.data);
         return Linalg.matrix(R, this.length());
     }
 

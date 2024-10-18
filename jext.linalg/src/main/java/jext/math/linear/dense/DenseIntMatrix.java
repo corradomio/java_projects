@@ -33,7 +33,13 @@ public class DenseIntMatrix extends IntSpace implements IntMatrix {
 
     @Override
     public IntMatrix linear(int s, int t, IntMatrix B) {
-        return null;
+        if (!dim.equals(B.dim()))
+            throw new IllegalArgumentException("Invalid dimensions");
+
+        DenseIntMatrix that = (DenseIntMatrix) B;
+        DenseIntMatrix res = (DenseIntMatrix) Linalg.matrix(dim, int.class);
+        IntLinear.linear(res.data, s, this.data, t, that.data);
+        return res;
     }
 
     @Override

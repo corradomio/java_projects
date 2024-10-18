@@ -50,7 +50,7 @@ public class SparseRealMatrix extends BaseSparse implements RealMatrix {
     public RealMatrix dot(RealMatrix B) {
         SparseRealMatrix that = (SparseRealMatrix) B;
         SparseRealMatrix r = Linalg.sparse(this.dim(0), that.dim(1));
-        Linear.dot(r.data, this.data, that.data);
+        RealLinear.dot(r.data, this.data, that.data);
         return r;
     }
 

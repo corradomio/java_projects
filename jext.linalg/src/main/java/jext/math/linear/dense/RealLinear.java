@@ -1,6 +1,8 @@
 package jext.math.linear.dense;
 
-public class Linear {
+import jext.math.util.*;
+
+public class RealLinear {
 
     // {0,...}
     public static float[] zeros(int n) {
@@ -194,6 +196,24 @@ public class Linear {
         }
     }
 
+    // ----------------------------------------------------------------------
+    // Elementwise
+    // ----------------------------------------------------------------------
+
+    public static void apply(float[] R, FloatUnaryOp f, float[] A) {
+        int n = R.length;
+        for (int i=0; i<n; ++i)
+            R[i] = f.apply(A[i]);
+    }
+
+    public static void apply(float[] R, FloatBinaryOp f, float[] A, float[] B) {
+        int n = R.length;
+        for (int i=0; i<n; ++i)
+            R[i] = f.apply(A[i], B[i]);
+    }
+
+    // ----------------------------------------------------------------------
+    // End
     // ----------------------------------------------------------------------
 
 }

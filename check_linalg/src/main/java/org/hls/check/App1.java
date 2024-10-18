@@ -10,8 +10,8 @@ public class App1 {
 
     public static void main(String[] args) {
 
-        RealVector u = Linalg.ones(10, float.class);
-        RealVector v = Linalg.ones(10, float.class);
+        RealVector u = (RealVector) Linalg.ones(10, float.class);
+        RealVector v = (RealVector) Linalg.ones(10, float.class);
 
         RealVector r = u.linear(2, 3, v);
         System.out.println(r);

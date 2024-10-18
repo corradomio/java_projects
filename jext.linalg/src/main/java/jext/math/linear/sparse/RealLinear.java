@@ -1,6 +1,6 @@
 package jext.math.linear.sparse;
 
-public class Linear {
+public class RealLinear {
 
     // s = u . v
     public static float dot(Data u, Data v) {
