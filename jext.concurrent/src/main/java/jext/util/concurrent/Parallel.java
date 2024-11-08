@@ -2,26 +2,18 @@ package jext.util.concurrent;
 
 import jext.exception.AbortedException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntConsumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.function.*;
+import java.util.stream.*;
 
 /*
-    In theory it is possible to use 'parallelStream()' a job in multiple threads using the ForkJoin pool.
+    In theory, it is possible to use 'parallelStream()' a job in multiple threads using the ForkJoin pool.
 
     We have observed, unfortunately, that IF the threads need to wait for an external resource, the number
     of threads in the ForkJoin pool increase. But there is also another problem: the pool is not reused.
@@ -33,7 +25,7 @@ import java.util.stream.Stream;
 
     1) it is NOT possible to use Parallel recursively. But this is reasonable
     2) obviously, the application wait until ALL threads have terminated
-    3) it is necessary to SHUTDOWN the pool at the end of the application. And also this is reasonable.
+    3) it is necessary to "shutdown" the pool at the end of the application. And also this is reasonable.
 
     Note: this class must be improved to support exceptions in some thread!
  */
@@ -167,6 +159,52 @@ public class Parallel {
         }
     }
 
+    private static class LongTask extends TaskBase implements Callable<Boolean> {
+        private long t;
+        private LongConsumer body;
+
+        LongTask(long t, LongConsumer body/*, Counters todo*/) {
+            // super(todo);
+            this.t = t;
+            this.body = body;
+        }
+
+        @Override
+        public Boolean call() {
+            try {
+                running();
+                body.accept(t);
+            }
+            finally {
+                done();
+            }
+            return true;
+        }
+    }
+
+    private static class DoubleTask extends TaskBase implements Callable<Boolean> {
+        private double t;
+        private DoubleConsumer body;
+
+        DoubleTask(double t, DoubleConsumer body/*, Counters todo*/) {
+            // super(todo);
+            this.t = t;
+            this.body = body;
+        }
+
+        @Override
+        public Boolean call() {
+            try {
+                running();
+                body.accept(t);
+            }
+            finally {
+                done();
+            }
+            return true;
+        }
+    }
+
     private static class RunnableTask extends TaskBase implements Callable<Boolean> {
 
         private Runnable runnable;
@@ -215,9 +253,53 @@ public class Parallel {
         invokeAll(tasks);
     }
 
+    public static <T> void forEach(T[] array, Consumer<T> body) {
+        List<Callable<Boolean>> tasks = new ArrayList<>();
+        for(T t : array) tasks.add(new Task<>(t, body));
+        invokeAll(tasks);
+    }
+
+    // ----------------------------------------------------------------------
+    // forEach native streams
+    // ----------------------------------------------------------------------
+
     public static void forEach(IntStream s, IntConsumer body) {
         List<Callable<Boolean>> tasks = s.mapToObj(t -> new IntTask(t, body))
             .collect(Collectors.toList());
+        invokeAll(tasks);
+    }
+
+    public static void forEach(LongStream s, LongConsumer body) {
+        List<Callable<Boolean>> tasks = s.mapToObj(t -> new LongTask(t, body))
+            .collect(Collectors.toList());
+        invokeAll(tasks);
+    }
+
+    public static void forEach(DoubleStream s, DoubleConsumer body) {
+        List<Callable<Boolean>> tasks = s.mapToObj(t -> new DoubleTask(t, body))
+            .collect(Collectors.toList());
+        invokeAll(tasks);
+    }
+
+    // ----------------------------------------------------------------------
+    // forEach native data
+    // ----------------------------------------------------------------------
+
+    public static void forEach(int[] array, IntConsumer body) {
+        List<Callable<Boolean>> tasks = new ArrayList<>();
+        for(int t : array) tasks.add(new IntTask(t, body));
+        invokeAll(tasks);
+    }
+
+    public static void forEach(long[] array, LongConsumer body) {
+        List<Callable<Boolean>> tasks = new ArrayList<>();
+        for(long t : array) tasks.add(new LongTask(t, body));
+        invokeAll(tasks);
+    }
+
+    public static void forEach(double[] array,DoubleConsumer body) {
+        List<Callable<Boolean>> tasks = new ArrayList<>();
+        for(double t : array) tasks.add(new DoubleTask(t, body));
         invokeAll(tasks);
     }
 
