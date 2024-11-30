@@ -268,11 +268,7 @@ public class Logger {
         return counts.get(category).incrementAndGet();
     }
 
-    // query
-
-    public void println(String message) {
-        info(message);
-    }
+    // print
 
     public void println(Object object) {
         info(object != null ? object.toString() : "null");

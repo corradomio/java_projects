@@ -20,11 +20,14 @@ public class Main {
 
         try(PersistentManager pm = pf.createManager()) {
             TypedQuery<Hierarchy> query = pm.createQuery("SELECT h FROM Hierarchy h", Hierarchy.class).query();
+            // query.setMaxResults(1);
             List<Hierarchy> results = query.getResultList();
             // give all those hard-working employees a raise
             for (Hierarchy hier : results) {
                 System.out.println(hier.getName());
             }
+
+            System.out.println("Done");
 
         }
 

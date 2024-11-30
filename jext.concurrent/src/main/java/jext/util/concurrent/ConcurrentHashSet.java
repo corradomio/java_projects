@@ -1,6 +1,6 @@
 package jext.util.concurrent;
 
-import jext.util.HashSet;
+import java.util.HashSet;
 
 public class ConcurrentHashSet<E> extends HashSet<E> {
 

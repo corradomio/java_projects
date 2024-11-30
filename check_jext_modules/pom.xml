@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>check_jext_modules</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>check_jext_modules</name>
+    <url>http://maven.apache.org</url>
+
+    <modules>
+        <module>../jext.antlr</module>
+        <module>../jext.cache</module>
+        <module>../jext.collections</module>
+        <module>../jext.commons</module>
+        <module>../jext.concurrent</module>
+        <module>../jext.configuration</module>
+        <module>../jext.compress</module>
+        <module>../jext.hash</module>
+        <module>../jext.java</module>
+        <module>../jext.logging</module>
+        <module>../jext.keyvalue</module>
+        <module>../jext.math</module>
+        <module>../jext.metrics</module>
+        <module>../jext.persistence</module>
+        <module>../jext.sql</module>
+        <module>../jext.tasks</module>
+        <module>../jext.text</module>
+        <module>../jext.vfs</module>
+        <module>../jext.jgit</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+
+    </dependencies>
+</project>

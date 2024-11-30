@@ -16,7 +16,7 @@ public class Main5 {
     public static void main(String[] args) {
         // get an EntityManagerFactory using the Persistence class
         // It is not recommended to obtain a factory often, as construction of a
-        // factory is a costly operation. Typically you will like to cache
+        // factory is a costly operation. Typically, you would like to cache
         // a factory and then refer it for repeated use
 
         Properties props = PropertiesUtils.load(new File("dbms.openjpa.properties"));

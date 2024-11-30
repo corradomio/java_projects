@@ -80,11 +80,11 @@
             <version>0.12</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/net.openhft/chronicle-map (2021) -->
+        <!-- https://mvnrepository.com/artifact/net.openhft/chronicle-map -->
         <dependency>
             <groupId>net.openhft</groupId>
             <artifactId>chronicle-map</artifactId>
-            <version>3.23ea2</version> <!-- 3.21ea3 -->
+            <version>3.27ea0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.rocksdb/rocksdbjni (2021) -->
