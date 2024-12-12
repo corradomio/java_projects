@@ -2,14 +2,38 @@ package org.hls.check;
 
 import jext.sql.DriverManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import jext.sql.Connection;
+import jext.sql.PreparedStatement;
+import jext.sql.ResultSet;
 import java.sql.SQLException;
 
 public class App {
 
     public static void main(String[] args) throws SQLException {
+
+        long count;
+        System.out.println("Connect ...");
+        try(Connection c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/spare-management",
+            "postgres", "p@stgres")) {
+
+            PreparedStatement s = c.prepareStatement("SELECT scenario_name FROM scenarios where total_equip = ?totalequip");
+            s.setInt("total_equip", 1);
+
+            System.out.println("... execute statement");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()) {
+                System.out.printf("... %s\n", rs.getString(1));
+            }
+            System.out.println("done");
+
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void mainOld(String[] args) throws SQLException {
 
         long count;
         System.out.println("Connect ...");

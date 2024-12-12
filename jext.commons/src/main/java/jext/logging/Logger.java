@@ -270,6 +270,10 @@ public class Logger {
 
     // print
 
+    public void println(String message) {
+        info(message);
+    }
+
     public void println(Object object) {
         info(object != null ? object.toString() : "null");
     }

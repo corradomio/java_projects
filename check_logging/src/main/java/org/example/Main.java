@@ -11,8 +11,8 @@ public class Main {
         //     System.out.println(arg);
         // System.out.println("-------------------------------");
 
-        Logger.configure(new File("logging.properties"));
-        Logger logger = Logger.getLogger(Main.class);
+        LogManager.configure(new File("logging.properties"));
+        Logger logger = LogManager.getLogger(Main.class);
 
         // debug
         // info

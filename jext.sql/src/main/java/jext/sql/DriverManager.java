@@ -1,29 +1,33 @@
 package jext.sql;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class DriverManager {
 
-    public static Connection getConnection(String url, Properties info_) throws SQLException {
+    public static jext.sql.Connection getConnection(String url, Properties info_) throws SQLException {
         Properties info = new Properties(info_);
         info.put("url", url);
-        return ConnectionWrapper.of(java.sql.DriverManager.getConnection(url, info_), info);
+        return ConnectionEx.of(java.sql.DriverManager.getConnection(url, info_), info);
     }
 
-    public static Connection getConnection(String url, String user, String password) throws SQLException {
+    public static jext.sql.Connection getConnection(String url, String user, String password) throws SQLException {
         Properties info = new Properties();
         info.put("url", url);
         info.put("user", user);
         info.put("password", password);
-        return ConnectionWrapper.of(java.sql.DriverManager.getConnection(url, user, password), info);
+        return getConnection(url, info);
     }
 
-    public static Connection getConnection(String url) throws SQLException {
+    public static jext.sql.Connection getConnection(String url) throws SQLException {
         Properties info = new Properties();
         info.put("url", url);
-        return ConnectionWrapper.of(java.sql.DriverManager.getConnection(url), info);
+        return getConnection(url, info);
+    }
+
+    public static jext.sql.Connection getConnection(Properties info) throws SQLException {
+        String url = (String) info.get("url");
+        return getConnection(url, info);
     }
 
 }

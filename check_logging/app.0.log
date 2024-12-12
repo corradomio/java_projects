@@ -1,0 +1,6 @@
+[11:56:00] DEBUG  : Debug - 500
+[11:56:00] INFO   : Info - 800
+[11:56:00] WARNING: Warning - 900
+[11:56:00] ERROR  : Error - 950
+[11:56:00] ERROR  : Fatal - 1000
+[11:56:00] SEVERE : Severe - 1000
