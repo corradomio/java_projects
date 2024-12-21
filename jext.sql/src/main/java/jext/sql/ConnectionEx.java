@@ -36,11 +36,16 @@ public class ConnectionEx implements Connection {
     private ConnectionEx(java.sql.Connection c, Properties info) {
         this.info = info;
         this.c = c;
+         registerNamedQueries();
     }
 
     // ----------------------------------------------------------------------
-    // Properties
+    // Named Queries
     // ----------------------------------------------------------------------
+
+    private void registerNamedQueries() {
+
+    }
 
     // ----------------------------------------------------------------------
     // createStatement

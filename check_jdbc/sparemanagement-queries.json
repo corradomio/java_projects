@@ -1,0 +1,1530 @@
+{
+    "api_query_endpoint": {
+        "namespace": "ae.ebtic.tools.sparemanagement",
+        "version": "1.0",
+        "language": "java",
+        "query": [
+
+            {
+                "query_id": "read-item-codes-filtered",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT t.item_no, t.icount FROM (",
+                    "    SELECT item_no, COUNT(1) AS icount FROM %s",
+                    "    WHERE locus_key IN (",
+                    "        SELECT DISTINCT location_locus_key FROM %s",
+                    "    )",
+                    "    -- AND count IS NOT NULL",
+                    "    GROUP BY item_no ",
+                    "    ORDER BY icount desc ",
+                    ") AS t",
+                    "WHERE t.icount <= ?",
+                    "ORDER BY t.item_no"
+                ],
+                "description": "Reading distinct item codes that have entry in travel matrix table",
+                "structure_parameters": [
+                    {
+                        "name": "%s",
+                        "index": 1
+                    },
+                    {
+                        "name": "%s",
+                        "index": 2
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "index": 1,
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-item-codes-network-name",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT t.item_no, t.icount FROM (",
+                    "    SELECT item_no, COUNT(1) AS icount FROM %s",
+                    "    WHERE locus_key IN (",
+                    "        SELECT DISTINCT location_locus_key FROM %s",
+                    "    )",
+                    "    -- AND count IS NOT NULL",
+                    "    GROUP BY item_no ",
+                    "    ORDER BY icount desc ",
+                    ") AS t",
+                    "JOIN %s AS n ON t.item_no = n.item_no",
+                    "WHERE t.icount <= ? ",
+                    "  AND n.network_name = ?",
+                    "ORDER BY t.item_no"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-item-codes-network-id",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT t.item_no, t.icount FROM (",
+                    "    SELECT item_no, COUNT(1) AS icount FROM %s",
+                    "    WHERE locus_key IN (",
+                    "        SELECT DISTINCT location_locus_key FROM %s",
+                    "    )",
+                    "    -- AND count IS NOT NULL",
+                    "    GROUP BY item_no ",
+                    "    ORDER BY icount desc ",
+                    ") AS t",
+                    "JOIN %s AS n ON t.item_no = n.item_no",
+                    "WHERE t.icount <= ? ",
+                    "  AND n.network_id = ?",
+                    "ORDER BY t.item_no"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-center-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT plant_code, sta_code, name, town, postcode, postcode_latitude, postcode_longitude",
+                    "FROM %s"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-location-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT DISTINCT locus_key, longitude, latitude",
+                    "FROM %s"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-travel-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT plant_plant_code, location_locus_key, duration_min, journey_type",
+                    "FROM %s",
+                    "WHERE description = ?"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-travel-list-for-item",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT plant_plant_code, location_locus_key, duration_min, journey_type",
+                    "FROM %s",
+                    "WHERE description = ?",
+                    "AND location_locus_key IN (",
+                    "    SELECT locus_key FROM %s",
+                    "    WHERE item_no = ?",
+                    "    -- AND count IS NOT NULL",
+                    ")"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-intra-warehouse-travel-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT from_plant_plant_code, to_plant_plant_code, duration_min, journey_type",
+                    "FROM %s",
+                    "WHERE description = ?"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-node-list-for-item",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT latitude, longitude, locus_key, item_no, count, sla_time, sla_mkr_count, sla_parm, bh_count, ah_count, sla_unit",
+                    "FROM %1$s",
+                    "WHERE locus_key IN (",
+                    "    SELECT DISTINCT location_locus_key ",
+                    "    FROM %2$s ",
+                    "    WHERE description = ?",
+                    ")",
+                    "AND %3$s IS NOT NULL",
+                    "AND %3$s > 0",
+                    "AND item_no = ?"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%1$s"
+                    },
+                    {
+                        "name": "%2$s"
+                    },
+                    {
+                        "name": "%3$s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-node-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT latitude, longitude, locus_key, item_no, count, sla_time, sla_mkr_count, sla_parm, bh_count, ah_count, sla_unit",
+                    "FROM %1$s",
+                    "WHERE locus_key IN (",
+                    "    SELECT DISTINCT location_locus_key ",
+                    "    FROM %2$s ",
+                    "    WHERE description = ?",
+                    ")",
+                    "AND %3$s IS NOT NULL",
+                    "AND %3$s > 0"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%1$s"
+                    },
+                    {
+                        "name": "%2$s"
+                    },
+                    {
+                        "name": "%3$s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "insert-scenario-allocation",
+                "query_type": "INSERT",
+                "statement": [
+                    "INSERT INTO scenario_allocations (",
+                    "    scenario_id, item_code_item_no, location_locus_key, location_longitude, location_latitude,",
+                    "    plant_name, plant_plant_code, distance_min, plant_longitude, plant_latitude)",
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-next-sequence",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT nextval('%s')"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "insert-scenario",
+                "query_type": "INSERT",
+                "statement": [
+                    "INSERT INTO scenarios (",
+                    "    id, scenario_name, created_by, ",
+                    "    max_dist_minutes, total_equip, total_dist, loc_exceeding_max_dist, no_warehouse, equal_coverage, stock_bias, unassigned_warehouses,",
+                    "    max_gen, pop_size, cr_prob, mt_prob, sel_opr, cr_opr, mt_opr, elitism, rand_seed,",
+                    "    ooh_type, travel_time_description, avoid_ferry, avoid_individual_slas",
+                    ") VALUES (?,?,?,  ?,?,?,?,?,?,?,?,  ?,?,?,?,?,?,?,?,?,  ?,?,?,?)"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "?",
+                        "type": "bool"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "insert-scenario-details",
+                "query_type": "INSERT",
+                "statement": [
+                    "INSERT INTO scenario_details (",
+                    "    scenario_id, item_code_item_no, number_of_plants,",
+                    "    total_distance, total_distance_multiplied_by_count,",
+                    "    locations_served_count_range, ",
+                    "    number_of_locations_exceeding_sla, number_of_unassigned_locations",
+                    ")",
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT distinct scenario_name",
+                    "FROM scenarios ",
+                    "ORDER BY scenario_name"
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-id",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT distinct id",
+                    "FROM scenarios",
+                    "WHERE scenario_name = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-allocations",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT location_locus_key, location_longitude, location_latitude,",
+                    "       plant_name, plant_plant_code, distance_min, plant_longitude, plant_latitude",
+                    "FROM scenario_allocations",
+                    "WHERE scenario_id = ?",
+                    "  AND item_code_item_no = ?",
+                    "ORDER BY plant_plant_code"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-parameters",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT",
+                    "    max_dist_minutes,",
+                    "    total_equip, total_dist, loc_exceeding_max_dist, no_warehouse, equal_coverage, stock_bias, unassigned_warehouses,",
+                    "    max_gen, pop_size, cr_prob, mt_prob, sel_opr, cr_opr, mt_opr, elitism, rand_seed,",
+                    "    ooh_type, travel_time_description, avoid_ferry, avoid_individual_slas,",
+                    "    status, created_by",
+                    "FROM scenarios",
+                    "WHERE id = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-details",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT number_of_plants, total_distance, total_distance_multiplied_by_count,",
+                    "       locations_served_count_range, ",
+                    "       number_of_locations_exceeding_sla, number_of_unassigned_locations",
+                    "FROM scenario_details",
+                    "WHERE scenario_id = ?",
+                    "  AND item_code_item_no = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-item-codes",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT DISTINCT item_code_item_no ",
+                    "FROM scenario_details ",
+                    "WHERE scenario_id = ?",
+                    "ORDER BY item_code_item_no"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-scenario-details-for-item",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_details",
+                    "WHERE scenario_id = ?",
+                    "  AND item_code_item_no = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-scenario-allocations",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_allocations",
+                    "WHERE scenario_id = ?",
+                    "  AND item_code_item_no = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-stock-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT item_code_item_no, plant_plant_code, quantity",
+                    "FROM %s",
+                    "WHERE plant_plant_code IN (%s)"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-stock-list-using-param",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT item_code_item_no, plant_plant_code, quantity",
+                    "FROM %s",
+                    "WHERE plant_plant_code IN ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string",
+                        "scalar": false
+                    }
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-stock-list-for-item",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT item_code_item_no, plant_plant_code, quantity, quantity_frozen, quantity_qc",
+                    "FROM %s",
+                    "WHERE plant_plant_code IN (%s)",
+                    "  AND item_code_item_no = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-travel-times",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT DISTINCT description ",
+                    "FROM %s"
+                ],
+                "query_parameters": [],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-network-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT n.network_id, n.network_name, COUNT(1) FROM (",
+                    "    SELECT item_no, COUNT(1) AS icount FROM %s",
+                    "    WHERE locus_key IN (",
+                    "        SELECT DISTINCT location_locus_key FROM %s",
+                    "    )",
+                    "    -- AND count IS NOT NULL",
+                    "    GROUP BY item_no ",
+                    "    ORDER BY icount desc ",
+                    ") AS t",
+                    "JOIN %s AS n ON t.item_no = n.item_no",
+                    "WHERE t.icount <= ?",
+                    "GROUP BY n.network_id, n.network_name"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-plant-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT scenario_name, plant_plant_code, plant_name, network_names,",
+                    "       num_locations, num_footprint, num_faults, country_wide_faults,",
+                    "       first_fault,num_stock, country_wide_stock, num_movement_requests,",
+                    "       country_wide_movement_requests, minimum_stock_level,",
+                    "       faults_per_day_per_footprint, country_wide_faults_per_day,",
+                    "       country_wide_faults_per_day_parameter, footprint_per_stock,",
+                    "       required_stock, act_stock_as_pct_of_footprint, ooh_type",
+                    "FROM %s",
+                    "WHERE id = ?",
+                    "  AND item_code_item_no = ?"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-plant-stock-move-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT",
+                    "   a.scenario_name,",
+                    "   a.plant_plant_code,",
+                    "   a.plant_name,",
+                    "   a.country_wide_stock * (a.num_footprint/b.total_footprints) AS stock_to_move",
+                    "FROM  (",
+                    "   SELECT scenario_name, plant_plant_code, plant_name, num_footprint, country_wide_stock ",
+                    "   FROM %1$s",
+                    "   WHERE item_code_item_no = ?",
+                    "    AND scenario_name  = ?",
+                    ") a,  (",
+                    "   SELECT sum(num_footprint) AS total_footprints",
+                    "   FROM %1$s",
+                    "   WHERE item_code_item_no  = ?",
+                    "     AND scenario_name  = ?",
+                    ") b ",
+                    "WHERE a.plant_plant_code IS NOT NULL"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-names",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT scenario_name",
+                    "FROM scenarios"
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-id",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT id",
+                    "FROM scenarios",
+                    "WHERE scenario_name = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "write-solution-status",
+                "query_type": "UPDATE",
+                "statement": [
+                    "UPDATE scenarios",
+                    "SET status = ? ",
+                    "WHERE scenario_name = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-solution-status",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT status scenarios",
+                    "FROM scenarios",
+                    "WHERE scenario_name = ?"
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-names-from-table",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT scenario_name",
+                    "FROM %s",
+                    "ORDER BY scenario_name ASC"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-items-from-table",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT DISTINCT item_code_item_no",
+                    "FROM %s",
+                    "WHERE scenario_name  = ?",
+                    "ORDER BY item_code_item_no ASC"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution-movements",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distribution_movements ",
+                    "WHERE scenario_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution-details",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distribution_details ",
+                    "WHERE scenario_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distributions ",
+                    "WHERE scenario_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-scenario-allocation",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_allocations ",
+                    "WHERE scenario_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-scenario-details",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_details ",
+                    "WHERE scenario_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-scenario",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenarios ",
+                    "WHERE id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-id-from-table",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT DISTINCT scenario_id",
+                    "FROM %s",
+                    "WHERE scenario_name = ?"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-spare-distribution-id",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT id",
+                    "FROM scenario_spare_distributions",
+                    "WHERE distribution_name = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-spare-distribution-name-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT id, distribution_name",
+                    "FROM scenario_spare_distributions",
+                    "ORDER BY distribution_name"
+                ],
+                "structure_parameters": [],
+                "query_parameters": []
+            },
+
+            {
+                "query_id": "read-spare-distribution-item-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT DISTINCT item_code_item_no",
+                    "FROM scenario_spare_distribution_movements",
+                    " WHERE distribution_id = ?",
+                    "ORDER BY item_code_item_no"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "write-spare-distribution-parameter",
+                "query_type": "INSERT",
+                "statement": [
+                    "INSERT INTO scenario_spare_distributions (",
+                    "    id, distribution_name, scenario_id, travel_time_description,",
+                    "    max_gen, pop_size, cr_prob, mt_prob, sel_opr, cr_opr, mt_opr, elitism, rand_seed,",
+                    "    created_at, updated_at, created_by",
+                    ")",
+                    "VALUES (?,?,?,?,  ?,?,?,?,?,?,?,?,?,  ?,?,?)"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "timestamp"
+                    },
+                    {
+                        "name": "?",
+                        "type": "timestamp"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "write-spare-distribution-details",
+                "query_type": "INSERT",
+                "statement": [
+                    "INSERT INTO scenario_spare_distribution_details (",
+                    "    distribution_id, scenario_id, item_code_item_no, fitness, total_distance, created_at, updated_at",
+                    ")",
+                    "VALUES (?,?,?, ?,?, ?,?)"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "timestamp"
+                    },
+                    {
+                        "name": "?",
+                        "type": "timestamp"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "write-spare-distribution-movements",
+                "query_type": "INSERT",
+                "statement": [
+                    "INSERT INTO scenario_spare_distribution_movements (",
+                    "    distribution_id, scenario_id, ",
+                    "    item_code_item_no, seq,",
+                    "    plant_center_code, center_name, center_longitude, center_latitude,",
+                    "    plant_stock_code,  stock_name,  stock_longitude,  stock_latitude,",
+                    "    distance,",
+                    "    center_required, stock_available, stock_moved,",
+                    "    created_at, updated_at",
+                    ")",
+                    "VALUES",
+                    "(?, ?,   ?, ?,   ?, ?, ?, ?,   ?, ?, ?, ?,   ?,   ?, ?, ?,  ?, ?)"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "timestamp"
+                    },
+                    {
+                        "name": "?",
+                        "type": "timestamp"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-spare-distribution-movements",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT scenario_id, item_code_item_no,",
+                    "       plant_center_code, center_name, center_longitude, center_latitude,",
+                    "       plant_stock_code,  stock_name,  stock_longitude, stock_latitude, ",
+                    "       distance, ",
+                    "       center_required, stock_available, stock_moved",
+                    "FROM scenario_spare_distribution_movements",
+                    "WHERE distribution_id = ? ",
+                    "  AND item_code_item_no = ?",
+                    "ORDER BY seq"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-spare-distribution-details",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT scenario_id, item_code_item_no, fitness, total_distance, created_at",
+                    "FROM scenario_spare_distribution_details",
+                    "WHERE distribution_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-spare-distribution",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT id, scenario_id, travel_time_description,",
+                    "       max_gen, pop_size, cr_prob, mt_prob, sel_opr, cr_opr, mt_opr, elitism, rand_seed, created_at, created_by",
+                    "FROM scenario_spare_distributions",
+                    "WHERE distribution_name = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution-movements-by-id",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distribution_movements ",
+                    "WHERE distribution_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution-details-by-id",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distribution_details ",
+                    "WHERE distribution_id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution-by-id",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distributions ",
+                    "WHERE id = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution-movements-by-name-and-id",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distribution_movements ",
+                    "WHERE distribution_id = ?",
+                    "  AND item_code_item_no = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "delete-spare-distribution-details-by-name-and-id",
+                "query_type": "DELETE",
+                "statement": [
+                    "DELETE FROM scenario_spare_distribution_details ",
+                    "WHERE distribution_id = ?",
+                    "  AND item_code_item_no = ?"
+                ],
+                "structure_parameters": [],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            },
+
+            {
+                "query_id": "read-scenario-plants-stock-list-from-table",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT plant_plant_code, num_stock, num_footprint",
+                    "  FROM %s",
+                    "WHERE scenario_name = ?",
+                    "  AND item_code_item_no = ?",
+                    "  AND plant_plant_code IN (%s)"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    },
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "string"
+                    }
+                ]
+            }
+
+        ]
+    }
+}

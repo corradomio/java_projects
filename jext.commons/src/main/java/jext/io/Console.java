@@ -7,9 +7,11 @@ import java.util.Locale;
 
 public class Console {
 
-    private static PrintStream out = System.out;
-    private static InputStream in = System.in;
-    private static Console self = new Console();
+    public static InputStream in = System.in;
+    public static PrintStream out = System.out;
+    public static PrintStream err = System.err;
+
+    public static Console self = new Console();
 
     public static Console printfln(String format, Object... args) {
         out.printf(format, args);
@@ -186,7 +188,7 @@ public class Console {
     }
 
     public static void readKey(String message) throws IOException {
-        if (message != null && message.length() > 0)
+        if (message != null && !message.isEmpty())
             System.out.println(message);
         in.read();
     }
