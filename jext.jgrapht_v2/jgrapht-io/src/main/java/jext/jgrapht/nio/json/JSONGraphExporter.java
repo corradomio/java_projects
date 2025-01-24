@@ -46,7 +46,8 @@ public class JSONGraphExporter<V, E> extends BaseExporter<V, E> implements Graph
                 edges.add(MapUtils.asMap(
                     "source", wrap(g.getEdgeSource(e)),
                     "target", wrap(g.getEdgeTarget(e)),
-                    "directed", t.isDirected()
+                    "directed", t.isDirected(),
+                    "weight", g.getEdgeWeight(e)
                 ));
             });
 

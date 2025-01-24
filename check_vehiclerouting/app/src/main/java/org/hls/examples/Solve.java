@@ -6,8 +6,11 @@ import jext.jgrapht.edges.Edge;
 import jext.jgrapht.edges.WeighedDirectedEdge;
 import jext.jgrapht.edges.WeightedEdge;
 import jext.jgrapht.nio.adjacent.EdgesGraphImporter;
+import jext.jgrapht.nio.json.JSONGraphExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.nio.GraphExporter;
+import org.jgrapht.nio.GraphImporter;
 import org.locationtech.jts.edgegraph.EdgeGraph;
 
 import java.io.File;
@@ -25,7 +28,7 @@ public class Solve {
 
         // Distance d = Distance.distanceMatrix(locations);
 
-        EdgesGraphImporter egi = new EdgesGraphImporter()
+        GraphImporter egi = new EdgesGraphImporter()
             .withSkipLines(1)
             .withSeparator(",")
             .withToVertex(s -> Integer.parseInt((String)s))
@@ -40,6 +43,10 @@ public class Solve {
 
         for(WeighedDirectedEdge e : g.edgeSet())
             System.out.printf("%s: %f\n", e, e.getWeight());
+
+        GraphExporter<Integer, WeighedDirectedEdge> ge = new JSONGraphExporter<>();
+        ge.exportGraph(g, new File("uae-edges.json"));
+
 
         System.out.println("Done");
     }
