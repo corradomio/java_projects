@@ -9,11 +9,6 @@
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <!--modules>
-        <module>.</module>
-        <module>../jext.util</module>
-    </modules-->
-
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -24,61 +19,7 @@
         <module>../jext.collections</module>
         <module>../jext.concurrent</module>
         <module>../jext.jgrapht_v2</module>
+        <module>app</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.commons</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.collections</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht-core</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht-io</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht-neo4j</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.jgrapht-clustering</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.concurrent</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
-        </dependency>
-
-    </dependencies>
 
 </project>

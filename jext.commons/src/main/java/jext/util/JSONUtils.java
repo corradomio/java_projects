@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.LinkedHashMap;
 
 public class JSONUtils {
 
@@ -20,6 +21,10 @@ public class JSONUtils {
 
     // ----------------------------------------------------------------------
     // read
+
+    public static LinkedHashMap load(File jsonFile) throws IOException {
+        return load(jsonFile, LinkedHashMap.class);
+    }
 
     public static <T> T load(File jsonFile, Class<T> objectType) throws IOException {
         return parse(jsonFile, objectType);

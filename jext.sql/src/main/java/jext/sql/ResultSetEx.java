@@ -23,9 +23,9 @@ import java.util.Map;
 
 public class ResultSetEx implements ResultSet {
 
-    static ResultSetEx of(StatementEx s, java.sql.ResultSet rs) {
-        return new ResultSetEx(s, rs);
-    }
+    // static ResultSetEx of(StatementEx s, java.sql.ResultSet rs) {
+    //     return new ResultSetEx(s, rs);
+    // }
 
     // ----------------------------------------------------------------------
     // Fields
@@ -38,7 +38,7 @@ public class ResultSetEx implements ResultSet {
     // Constructor
     // ----------------------------------------------------------------------
 
-    private ResultSetEx(StatementEx s, java.sql.ResultSet rs) {
+    ResultSetEx(StatementEx s, java.sql.ResultSet rs) {
         this.s = s;
         this.rs = rs;
     }
@@ -1022,4 +1022,9 @@ public class ResultSetEx implements ResultSet {
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return rs.isWrapperFor(iface);
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+
 }

@@ -1,0 +1,103 @@
+city,lat,lng,country,iso2,admin_name,capital,population,population_proper
+Dubai,25.2631,55.2972,United Arab Emirates,AE,Dubayy,admin,3331420,3331420
+Abu Dhabi,24.4667,54.3667,United Arab Emirates,AE,AbU Z.aby,primary,1483000,1483000
+Sharjah,25.3575,55.3908,United Arab Emirates,AE,Ash Shariqah,admin,1247749,1247749
+Al 'Ayn,24.2075,55.7447,United Arab Emirates,AE,AbU Z.aby,,766936,766936
+'Ajman,25.4136,55.4456,United Arab Emirates,AE,'Ajman,admin,490035,490035
+Ra's al Khaymah,25.7667,55.9500,United Arab Emirates,AE,Ra's al Khaymah,admin,115949,115949
+Al Fujayrah,25.1222,56.3344,United Arab Emirates,AE,Al Fujayrah,admin,93673,93673
+Umm al Qaywayn,25.5533,55.5475,United Arab Emirates,AE,Umm al Qaywayn,admin,59098,59098
+Kalba,25.0742,56.3553,United Arab Emirates,AE,Ash Shariqah,,51000,51000
+Khawr Fakkan,25.3333,56.3500,United Arab Emirates,AE,Ash Shariqah,,43223,43223
+Madinat Zayid,23.6522,53.6536,United Arab Emirates,AE,AbU Z.aby,,29095,29095
+Al Jazirah al hamra',25.7089,55.7972,United Arab Emirates,AE,Ra's al Khaymah,,10190,10190
+Masafi,25.3133,56.1628,United Arab Emirates,AE,Ra's al Khaymah,,7637,7637
+Badiyah,25.4314,56.3483,United Arab Emirates,AE,Al Fujayrah,,7153,7153
+Zubarah,25.4025,56.3614,United Arab Emirates,AE,Al Fujayrah,,3779,3779
+Al Faq',24.7133,55.6231,United Arab Emirates,AE,Dubayy,,2291,2291
+Ash Sha'm,26.0244,56.0839,United Arab Emirates,AE,Ra's al Khaymah,,1550,1550
+Huwaylat,24.8772,56.1733,United Arab Emirates,AE,Ra's al Khaymah,,789,789
+Nahwah,25.2683,56.2803,United Arab Emirates,AE,Ash Shariqah,,302,302
+Shariyah,24.8151,56.0986,United Arab Emirates,AE,'Ajman,,,
+hasat al Bidiyah,25.3273,55.9799,United Arab Emirates,AE,Ash Shariqah,,,
+MasfUt,24.8109,56.1066,United Arab Emirates,AE,'Ajman,,,
+Qaraytaysah,24.8708,55.5491,United Arab Emirates,AE,Dubayy,,,
+Margham,24.8987,55.6240,United Arab Emirates,AE,Dubayy,,,
+Qimah,24.7867,56.1414,United Arab Emirates,AE,Dubayy,,,
+'Ud al Bayda',25.0162,55.4553,United Arab Emirates,AE,Dubayy,,,
+Ferij al Muhadham,25.2875,55.3175,United Arab Emirates,AE,Dubayy,,,
+Hunaywah,25.1947,55.5945,United Arab Emirates,AE,Dubayy,,,
+sufayri,24.8117,56.1265,United Arab Emirates,AE,'Ajman,,,
+'UrqUb Juwayza,24.9333,55.4667,United Arab Emirates,AE,Dubayy,,,
+hatta,24.8007,56.1273,United Arab Emirates,AE,Dubayy,,,
+Al Lusayli,24.9314,55.4753,United Arab Emirates,AE,Dubayy,,,
+hayl,24.7892,56.1146,United Arab Emirates,AE,Dubayy,,,
+Warisan,25.1674,55.4071,United Arab Emirates,AE,Dubayy,,,
+Mudayfi,25.3617,56.3447,United Arab Emirates,AE,Ash Shariqah,,,
+Rafa',25.3470,56.3501,United Arab Emirates,AE,Ash Shariqah,,,
+LUlayyah,25.3926,56.3546,United Arab Emirates,AE,Ash Shariqah,,,
+Wadi Shi,25.3500,56.3167,United Arab Emirates,AE,Ash Shariqah,,,
+Ash Shu'ayb,24.7471,55.8163,United Arab Emirates,AE,Ash Shariqah,,,
+hiyawah,25.3604,56.3477,United Arab Emirates,AE,Ash Shariqah,,,
+Ar Rufaysah,25.3452,56.3225,United Arab Emirates,AE,Ash Shariqah,,,
+Shis,25.2914,56.2455,United Arab Emirates,AE,Ash Shariqah,,,
+Al Jazirah,25.3500,55.3667,United Arab Emirates,AE,Ash Shariqah,,,
+Al hamriyah,25.4782,55.5338,United Arab Emirates,AE,Ash Shariqah,,,
+Adh Dhayd,25.2881,55.8816,United Arab Emirates,AE,Ash Shariqah,,,
+Al 'Awdah,25.3807,56.3092,United Arab Emirates,AE,Ash Shariqah,,,
+Qidfa,25.3000,56.3583,United Arab Emirates,AE,Ash Shariqah,,,
+tayyibah,25.4038,56.1678,United Arab Emirates,AE,Al Fujayrah,,,
+Bitnah,25.1889,56.2328,United Arab Emirates,AE,Al Fujayrah,,,
+Mu'taridah,25.5000,56.1000,United Arab Emirates,AE,Al Fujayrah,,,
+Theeb,25.2450,56.3421,United Arab Emirates,AE,Al Fujayrah,,,
+Wa'bayn,25.5705,56.1354,United Arab Emirates,AE,Al Fujayrah,,,
+Al Qurayyah,25.2394,56.3606,United Arab Emirates,AE,Al Fujayrah,,,
+Al Manamah,25.3299,56.0219,United Arab Emirates,AE,Al Fujayrah,,,
+'Abadilah,25.4535,56.1899,United Arab Emirates,AE,Al Fujayrah,,,
+Ghurfah,25.5977,56.2767,United Arab Emirates,AE,Al Fujayrah,,,
+hayl,25.1036,56.2872,United Arab Emirates,AE,Al Fujayrah,,,
+Ghayl,25.0068,56.3329,United Arab Emirates,AE,Ash Shariqah,,,
+Sa'if,25.1842,56.2421,United Arab Emirates,AE,Al Fujayrah,,,
+Far'ah,25.1368,56.2373,United Arab Emirates,AE,Al Fujayrah,,,
+Mukhtaraqah,25.5409,56.1307,United Arab Emirates,AE,Al Fujayrah,,,
+Yalah,25.4152,56.1550,United Arab Emirates,AE,Al Fujayrah,,,
+Rughaylat,25.1055,56.3563,United Arab Emirates,AE,Al Fujayrah,,,
+Tawian,25.5568,56.0765,United Arab Emirates,AE,Al Fujayrah,,,
+hafarah,25.0411,56.3149,United Arab Emirates,AE,Al Fujayrah,,,
+harat ZutUt,25.6071,56.2957,United Arab Emirates,AE,Al Fujayrah,,,
+Khawr Kalba,25.0384,56.3626,United Arab Emirates,AE,Ash Shariqah,,,
+Al 'Uyaynah,25.4528,56.1688,United Arab Emirates,AE,Al Fujayrah,,,
+RUl dadna,25.5548,56.3455,United Arab Emirates,AE,Al Fujayrah,,,
+'Uqayr,25.2830,56.3644,United Arab Emirates,AE,Ash Shariqah,,,
+Al Fuqait,25.5997,56.3425,United Arab Emirates,AE,Al Fujayrah,,,
+Shawiyah,25.2679,56.0815,United Arab Emirates,AE,Al Fujayrah,,,
+harrah,24.9904,56.2167,United Arab Emirates,AE,Ash Shariqah,,,
+Diba,25.6167,56.2667,United Arab Emirates,AE,Al Fujayrah,,,
+Sinnah,25.5087,56.1677,United Arab Emirates,AE,Al Fujayrah,,,
+DUb,25.6130,56.2772,United Arab Emirates,AE,Al Fujayrah,,,
+Sram,25.4982,56.0572,United Arab Emirates,AE,Al Fujayrah,,,
+'Asamah,25.3983,56.1507,United Arab Emirates,AE,Ra's al Khaymah,,,
+Al 'Ayn al GhumUr,24.9595,56.3159,United Arab Emirates,AE,Ra's al Khaymah,,,
+sUr,25.0941,56.3483,United Arab Emirates,AE,Ash Shariqah,,,
+Wahlah,24.9090,56.3032,United Arab Emirates,AE,Ra's al Khaymah,,,
+Thoban,25.3033,56.0279,United Arab Emirates,AE,Al Fujayrah,,,
+Al Gissemari,25.1434,56.2484,United Arab Emirates,AE,Al Fujayrah,,,
+Murbah,25.2762,56.3626,United Arab Emirates,AE,Ash Shariqah,,,
+hayat,25.0581,56.3457,United Arab Emirates,AE,Ash Shariqah,,,
+Khulaybiyah,25.3812,56.1736,United Arab Emirates,AE,Al Fujayrah,,,
+Z.anhah,25.5659,56.2022,United Arab Emirates,AE,Al Fujayrah,,,
+Saqamqam,25.1731,56.3349,United Arab Emirates,AE,Al Fujayrah,,,
+dahir,25.5334,56.1550,United Arab Emirates,AE,Al Fujayrah,,,
+Jareef,25.5142,56.0719,United Arab Emirates,AE,Al Fujayrah,,,
+Girath,25.2609,56.3543,United Arab Emirates,AE,Ash Shariqah,,,
+Riyamah,25.5456,56.0584,United Arab Emirates,AE,Al Fujayrah,,,
+Al KubUs,25.6015,56.3047,United Arab Emirates,AE,Al Fujayrah,,,
+'Ashashah,25.4593,56.1640,United Arab Emirates,AE,Al Fujayrah,,,
+dadna,25.5225,56.3556,United Arab Emirates,AE,Al Fujayrah,,,
+'Aqqah,25.4987,56.3583,United Arab Emirates,AE,Al Fujayrah,,,
+Ras Dibba,25.6055,56.3050,United Arab Emirates,AE,Al Fujayrah,,,
+Nuhayy,25.2707,56.3624,United Arab Emirates,AE,Ash Shariqah,,,
+dab'ah,25.4825,56.1387,United Arab Emirates,AE,Ra's al Khaymah,,,
+Murbad,25.3254,56.1331,United Arab Emirates,AE,Al Fujayrah,,,
+safad,25.2231,56.2994,United Arab Emirates,AE,Al Fujayrah,,,
+tariqat Ja'd,25.5285,56.1514,United Arab Emirates,AE,Al Fujayrah,,,

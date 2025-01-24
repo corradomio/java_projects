@@ -18,26 +18,29 @@ import java.util.concurrent.Executor;
 
 public class ConnectionEx implements Connection {
 
-    static ConnectionEx of(java.sql.Connection c, Properties info) {
-        return new ConnectionEx(c, info);
-    }
+    // static ConnectionEx of(java.sql.Connection c, Properties info) {
+    //     return new ConnectionEx(c, info);
+    // }
 
     // ----------------------------------------------------------------------
     // Fields
     // ----------------------------------------------------------------------
 
-    Properties info;
+    private Properties info;
     java.sql.Connection c;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
-    private ConnectionEx(java.sql.Connection c, Properties info) {
+    ConnectionEx(java.sql.Connection c, Properties info) {
         this.info = info;
         this.c = c;
-         registerNamedQueries();
     }
+
+    // ----------------------------------------------------------------------
+    // Named Queries
+    // ----------------------------------------------------------------------
 
     // ----------------------------------------------------------------------
     // Named Queries
@@ -53,20 +56,23 @@ public class ConnectionEx implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {
-        java.sql.Statement s = c.createStatement();
-        return StatementEx.of(this, s, "");
+        // java.sql.Statement s = c.createStatement();
+        // return StatementEx.of(this, s, "");
+        return new StatementEx(this);
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        java.sql.Statement s = c.createStatement(resultSetType, resultSetConcurrency);
-        return StatementEx.of(this, s, "");
+        // java.sql.Statement s = c.createStatement(resultSetType, resultSetConcurrency);
+        // return StatementEx.of(this, s, "");
+        return new StatementEx(this, resultSetType, resultSetConcurrency);
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        java.sql.Statement s = c.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
-        return StatementEx.of(this, s, "");
+        // java.sql.Statement s = c.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+        // return StatementEx.of(this, s, "");
+        return new StatementEx(this, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
     // ----------------------------------------------------------------------
@@ -74,21 +80,24 @@ public class ConnectionEx implements Connection {
     // ----------------------------------------------------------------------
 
     @Override
-    public CallableStatement prepareCall(String sql) throws SQLException {
-        java.sql.CallableStatement cs = c.prepareCall(sql);
-        return CallableStatementEx.of(this, cs, sql);
+    public CallableStatement prepareCall(String sqlx) throws SQLException {
+        // java.sql.CallableStatement cs = c.prepareCall(sql);
+        // return CallableStatementEx.of(this, cs, sql);
+        return new CallableStatementEx(this, sqlx);
     }
 
     @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        java.sql.CallableStatement cs = c.prepareCall(sql, resultSetType, resultSetConcurrency);
-        return CallableStatementEx.of(this, cs, sql);
+    public CallableStatement prepareCall(String sqlx, int resultSetType, int resultSetConcurrency) throws SQLException {
+        // java.sql.CallableStatement cs = c.prepareCall(sql, resultSetType, resultSetConcurrency);
+        // return CallableStatementEx.of(this, cs, sql);
+        return new CallableStatementEx(this, sqlx, resultSetType, resultSetConcurrency);
     }
 
     @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        java.sql.CallableStatement cs = c.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
-        return CallableStatementEx.of(this, cs, sql);
+    public CallableStatement prepareCall(String sqlx, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+        // java.sql.CallableStatement cs = c.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+        // return CallableStatementEx.of(this, cs, sql);
+        return new CallableStatementEx(this, sqlx, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
     // ----------------------------------------------------------------------
@@ -97,108 +106,65 @@ public class ConnectionEx implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sqlx) throws SQLException {
-        Map<String, int[]> names = new LinkedHashMap<>();
-        String sql = parseSqlx(sqlx, names);
-
-        java.sql.PreparedStatement ps = c.prepareStatement(sql);
-        return PreparedStatementEx.of(this, ps, sqlx, names);
+        // Map<String, int[]> names = new LinkedHashMap<>();
+        // String sql = parseSqlx(sqlx, names);
+        //
+        // java.sql.PreparedStatement ps = c.prepareStatement(sql);
+        // return PreparedStatementEx.of(this, ps, sqlx, names);
+        return new PreparedStatementEx(this, sqlx);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sqlx, int resultSetType, int resultSetConcurrency) throws SQLException {
-        Map<String, int[]> names = new LinkedHashMap<>();
-        String sql = parseSqlx(sqlx, names);
-
-        java.sql.PreparedStatement ps = c.prepareStatement(sql, resultSetType, resultSetConcurrency);
-        return PreparedStatementEx.of(this, ps, sqlx, names);
+        // Map<String, int[]> names = new LinkedHashMap<>();
+        // String sql = parseSqlx(sqlx, names);
+        //
+        // java.sql.PreparedStatement ps = c.prepareStatement(sql, resultSetType, resultSetConcurrency);
+        // return PreparedStatementEx.of(this, ps, sqlx, names);
+        return new PreparedStatementEx(this, sqlx, resultSetType, resultSetConcurrency);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sqlx, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        Map<String, int[]> names = new LinkedHashMap<>();
-        String sql = parseSqlx(sqlx, names);
-
-        java.sql.PreparedStatement ps = c.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
-        return PreparedStatementEx.of(this, ps, sqlx, names);
+        // Map<String, int[]> names = new LinkedHashMap<>();
+        // String sql = parseSqlx(sqlx, names);
+        //
+        // java.sql.PreparedStatement ps = c.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+        // return PreparedStatementEx.of(this, ps, sqlx, names);
+        return new PreparedStatementEx(this, sqlx, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sqlx, int autoGeneratedKeys) throws SQLException {
-        Map<String, int[]> names = new LinkedHashMap<>();
-        String sql = parseSqlx(sqlx, names);
-
-        java.sql.PreparedStatement ps = c.prepareStatement(sql, autoGeneratedKeys);
-        return PreparedStatementEx.of(this, ps, sqlx, names);
+        // Map<String, int[]> names = new LinkedHashMap<>();
+        // String sql = parseSqlx(sqlx, names);
+        //
+        // java.sql.PreparedStatement ps = c.prepareStatement(sql, autoGeneratedKeys);
+        // return PreparedStatementEx.of(this, ps, sqlx, names);
+        return new PreparedStatementEx(this, sqlx, autoGeneratedKeys);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sqlx, int[] columnIndexes) throws SQLException {
-        Map<String, int[]> names = new LinkedHashMap<>();
-        String sql = parseSqlx(sqlx, names);
-
-        java.sql.PreparedStatement ps = c.prepareStatement(sql, columnIndexes);
-        return PreparedStatementEx.of(this, ps, sqlx, names);
+        // Map<String, int[]> names = new LinkedHashMap<>();
+        // String sql = parseSqlx(sqlx, names);
+        //
+        // java.sql.PreparedStatement ps = c.prepareStatement(sql, columnIndexes);
+        // return PreparedStatementEx.of(this, ps, sqlx, names);
+        return new PreparedStatementEx(this, sqlx, columnIndexes);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sqlx, String[] columnNames) throws SQLException {
-        Map<String, int[]> names = new LinkedHashMap<>();
-        String sql = parseSqlx(sqlx, names);
-
-        java.sql.PreparedStatement ps = c.prepareStatement(sql, columnNames);
-        return PreparedStatementEx.of(this, ps, sqlx, names);
+        // Map<String, int[]> names = new LinkedHashMap<>();
+        // String sql = parseSqlx(sqlx, names);
+        //
+        // java.sql.PreparedStatement ps = c.prepareStatement(sql, columnNames);
+        // return PreparedStatementEx.of(this, ps, sqlx, names);
+        return new PreparedStatementEx(this, sqlx, columnNames);
     }
 
     // ----------------------------------------------------------------------
-
-    private static final int[] NO_INDICES = new int[0];
-
-    private static String parseSqlx(String sqlx, Map<String, int[]> names) {
-        // scan the statement for '?name'
-        //
-        int index = 0;
-        int pos = 0, len = sqlx.length(), at;
-        StringBuilder sql = new StringBuilder();
-        StringBuilder builder;
-        while (true) {
-            // scan for '?...'
-            at = sqlx.indexOf('?', pos);
-            if (at == -1) break;
-            index++;
-
-            // append '...?'
-            sql.append(sqlx, pos, at+1);
-
-            // scan for ?name
-            pos = at+1;
-            builder = new StringBuilder();
-            while(pos < len && Character.isLetterOrDigit(sqlx.charAt(pos))){
-                builder.append(sqlx.charAt(pos));
-                pos++;
-            }
-
-            // if it was '?name', register name & index
-            if (builder.length() > 0) {
-                String name = builder.toString();
-                addName(names, name, index);
-            }
-        }
-        // append the remaining part of the statement
-        sql.append(sqlx, pos, len);
-        return sql.toString();
-    }
-
-    private static void addName(Map<String, int[]> names, String name, int index){
-        if (!names.containsKey(name))
-            names.put(name, new int[0]);
-        int[] old_indices = names.getOrDefault(name, NO_INDICES);
-        int[] new_indices = new int[old_indices.length + 1];
-        for(int i=0; i<old_indices.length; i++){
-            new_indices[i] = old_indices[i];
-        }
-        new_indices[old_indices.length] = index;
-        names.put(name, new_indices);
-    }
 
     // ----------------------------------------------------------------------
     // Connection
@@ -425,5 +391,9 @@ public class ConnectionEx implements Connection {
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return c.isWrapperFor(iface);
     }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
 
 }

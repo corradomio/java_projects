@@ -11,8 +11,9 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.util.Calendar;
 
-public interface PreparedStatement extends java.sql.PreparedStatement {
+public interface PreparedStatement extends jext.sql.Statement, java.sql.PreparedStatement {
 
+    // DON'T REMOVE
     jext.sql.ResultSet executeQuery() throws SQLException;
 
     void setNull(String parameterName, int sqlType) throws SQLException;

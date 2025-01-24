@@ -1,0 +1,597 @@
+I am sure you have already analyzed how to implement your DBMS Proxy.
+Because I don't know your documentation, I will describe to you how I would implement this architecture
+
+-----------------------------------------------------------------------------
+- Configuration File
+-----------------------------------------------------------------------------
+
+
+0) it is necessary to simplify the life of (young) programmers.
+   This means: it is necessary to support the SAME syntax used by programmers when they use the DBMS.
+   Each programming language has a "native" mechanism (Java: JDBC, Python: using DBMS's drivers, C/C++: using DBMS's drivers, etc)
+   But there exist several ORM (Object Relational Mappers) with the responsibility to create an "uniform" mechanism to access to the DBMS.
+   For now, we can suppose to use the most low level access type, where it is necessary to use the SQL language for the SPECIFIC DBMS.
+   In Java: JDBC, in Python/C++/.. the native DBMS's drivers
+   Why is this important?
+   Because it is reasonable to suppose that the programmer uses the native access to the DBMS during the development, and not the proxy.
+   To use the proxy it is enough to configure the JSON file with the SAME statement used in the direct access.
+
+1) Based on statement 0), there are TWO/three problems:
+
+    a) the SQL syntax used depends on the programming language, BUT NOT ONLY
+    b) the SQL syntax depends on the DBMS (PostgreSQL, MySQL, SQL Server, Oracle, DB2, ...)
+    c) the SQL syntax can depend on the DBMS version!
+
+   We can suppose each configuration file is "specific" for language/DBMS/DBMS-version.
+   However it could be necessary to maintain the SAME list of queries for DIFFERENT DBMSs or versions (more probable)
+   The proxy has the responsibility to understand the SQL statement syntax (for parameter) based on the "language"
+   AND if the SQL statements are specific for that specific DBMS/version
+   
+   We can suppose it is not responsibility of the DBMS Proxy to "convert" the statements from a syntax to another one.
+   
+   The JSON file could start with:
+       
+       {
+            "api_query_endpoint": {
+                "namespace": "ae.ebtic.tools.sparemanagement",
+                "version": "1.0",
+                "language": "java",
+                "dbms": "postgresql",
+                "dbms_version": "9.1"
+                ...
+            }
+       }
+
+2) Queries' "namespace"
+    The "namespace" has the same role as in Java/C++/...: it permits to avoid conflicts in the query's names.
+    Why do we need to use a "namespace" and not directly associate it with the query name?
+    
+    a) to reduce the replication of the SAME information
+    b) to reduce the probability of errors (copy/past is the Evil :-))
+
+3) List of queries:
+    The list of queries can be specified AS a list OR as a dictionary (question: WHY "query"? :-)):
+    
+    [as list]
+    
+    {
+        ...
+        "query": [
+            {
+                "query_id": "read-item-codes-filtered",
+                "query_type": "SELECT",
+                "statement": [
+                    ...
+                ],
+                "description": "Reading distinct item codes that have entry in travel matrix table",
+                "structure_parameters": [ ...]
+                "query_parameters": [ ...]
+            }
+        ]
+    }
+    
+    [as dictionary]
+    
+    {
+        ...
+        "query": {
+            "read-item-codes-filtered":  {
+                "query_type": "SELECT",
+                "statement": [
+                    ...
+                ],
+                "description": "Reading distinct item codes that have entry in travel matrix table",
+                "structure_parameters": [ ...]
+                "query_parameters": [ ...]
+            }
+        }
+    }
+
+
+    Note: Why is "query_type" necessary?
+        In "theory" it is enough to collect the FIRST token (OR the first 2 tokens) of the statement to retrieve the "query_type":
+        "SELECT", "INSERT", "DELETE", "UPDATE", "CALL", "CREATE TABLE", "DROP TABLE", ...
+        
+        We can suppose IF "query_type" is NOT specified, it is derived "automatically" from the statement
+
+4) the "statement"
+    A SQL statement could be very complex. To write it on a SINGLE line is not reasonable.
+    For example:
+
+
+        CREATE OR REPLACE VIEW public.vw_scenario_plants_dummy AS SELECT a.scenario_id, a.scenario_name, a.ooh_type, a.plant_plant_code, a.plant_name, a.item_code_item_no, trunc(random() * 9::double precision)::text || 'dummy'::text AS network_names, a.num_locations, a.num_footprint, a.num_faults, trunc(random() * 9::double precision) AS country_wide_faults, now()::timestamp without time zone AS first_fault, trunc(random() * 9::double precision) AS num_stock, trunc(random() * 9::double precision) AS country_wide_stock, trunc(random() * 9::double precision)::bigint AS num_movement_requests, trunc(random() * 9::double precision)::bigint AS country_wide_movement_requests, trunc(random() * 9::double precision)::integer AS minimum_stock_level, random() AS faults_per_day_per_footprint, random() AS country_wide_faults_per_day, random() AS country_wide_faults_per_day_parameter, trunc(random() * 9::double precision) AS footprint_per_stock, ceiling(a.num_footprint::double precision / trunc(random() * 9::double precision + 1::double precision))::numeric AS required_stock, round(ceiling(a.num_footprint::double precision / trunc(random() * 9::double precision + 1::double precision))::numeric / a.num_footprint * 100::numeric, 0) AS act_stock_as_pct_of_footprint FROM ( SELECT a_1.scenario_id, a_1.scenario_name, a_1.ooh_type, a_1.item_code_item_no, a_1.plant_plant_code, a_1.plant_name, count(*) AS num_locations, sum(a_1.num_footprint) AS num_footprint, COALESCE(sum(a_1.num_faults), 0::double precision) AS num_faults FROM ( SELECT b.scenario_id, a_2.scenario_name, a_2.ooh_type, b.item_code_item_no, b.location_locus_key, b.plant_name, b.plant_plant_code, c.count AS num_footprint, trunc(random() * 9::double precision) AS num_faults FROM scenarios a_2, scenario_allocations b, tb_vw_installation_bases_slas c WHERE a_2.id = b.scenario_id AND b.item_code_item_no::text = c.item_no::text AND b.location_locus_key = c.locus_key) a_1 GROUP BY a_1.scenario_id, a_1.scenario_name, a_1.ooh_type, a_1.item_code_item_no, a_1.plant_name  a_1.plant_plant_code) a;
+
+
+    It contains ONE single error!
+    Now you have to compare the SAME statement but written as:
+
+
+        CREATE OR REPLACE VIEW public.vw_scenario_plants_dummy
+        AS SELECT a.scenario_id,
+            a.scenario_name,
+            a.ooh_type,
+            a.plant_plant_code,
+            a.plant_name,
+            a.item_code_item_no,
+            trunc(random() * 9::double precision)::text || 'dummy'::text AS network_names,
+            a.num_locations,
+            a.num_footprint,
+            a.num_faults,
+            trunc(random() * 9::double precision) AS country_wide_faults,
+            now()::timestamp without time zone AS first_fault,
+            trunc(random() * 9::double precision) AS num_stock,
+            trunc(random() * 9::double precision) AS country_wide_stock,
+            trunc(random() * 9::double precision)::bigint AS num_movement_requests,
+            trunc(random() * 9::double precision)::bigint AS country_wide_movement_requests,
+            trunc(random() * 9::double precision)::integer AS minimum_stock_level,
+            random() AS faults_per_day_per_footprint,
+            random() AS country_wide_faults_per_day,
+            random() AS country_wide_faults_per_day_parameter,
+            trunc(random() * 9::double precision) AS footprint_per_stock,
+            ceiling(a.num_footprint::double precision / trunc(random() * 9::double precision + 1::double precision))::numeric AS required_stock,
+            round(ceiling(a.num_footprint::double precision / trunc(random() * 9::double precision + 1::double precision))::numeric / a.num_footprint * 100::numeric, 0) AS act_stock_as_pct_of_footprint
+           FROM ( SELECT a_1.scenario_id,
+                    a_1.scenario_name,
+                    a_1.ooh_type,
+                    a_1.item_code_item_no,
+                    a_1.plant_plant_code,
+                    a_1.plant_name,
+                    count(*) AS num_locations,
+                    sum(a_1.num_footprint) AS num_footprint,
+                    COALESCE(sum(a_1.num_faults), 0::double precision) AS num_faults
+                   FROM ( SELECT b.scenario_id,
+                            a_2.scenario_name,
+                            a_2.ooh_type,
+                            b.item_code_item_no,
+                            b.location_locus_key,
+                            b.plant_name,
+                            b.plant_plant_code,
+                            c.count AS num_footprint,
+                            trunc(random() * 9::double precision) AS num_faults
+                           FROM scenarios a_2,
+                            scenario_allocations b,
+                            tb_vw_installation_bases_slas c
+                          WHERE a_2.id = b.scenario_id AND b.item_code_item_no::text = c.item_no::text AND b.location_locus_key = c.locus_key) a_1
+                  GROUP BY a_1.scenario_id,
+                    a_1.scenario_name,
+                    a_1.ooh_type,
+                    a_1.item_code_item_no,
+                    a_1.plant_name
+                    a_1.plant_plant_code
+            ) a;
+
+
+    containing the SAME error!
+
+    The "trick" is very simple. Because JSON doesn't permit to write "multiline" strings, it is enough to use "a list of strings".
+    In this way, instead to write (it is used another statement):
+    
+    {
+        ...
+        {
+            ...
+            "statement": "SELECT t.item_no, t.icount FROM ( SELECT item_no, COUNT(1) AS icount FROM %s WHERE locus_key IN (SELECT DISTINCT location_locus_key FROM %s) GROUP BY item_no  ORDER BY icount desc  ) AS  WHERE t.icount <= ? ORDER BY t.item_no"
+            ...
+        }
+        ...
+    }
+    
+    it is enough to write:
+    
+    {
+        ...
+        {
+            ...
+            "statement": [
+                    "SELECT t.item_no, t.icount FROM (",
+                    "    SELECT item_no, COUNT(1) AS icount FROM %s",
+                    "    WHERE locus_key IN (",
+                    "        SELECT DISTINCT location_locus_key FROM %s",
+                    "    )",
+                    "    -- AND count IS NOT NULL",
+                    "    GROUP BY item_no ",
+                    "    ORDER BY icount desc ",
+                    ") AS t",
+                    "WHERE t.icount <= ?",
+                    "ORDER BY t.item_no"
+                ],
+            ...
+        }
+        ...
+    }
+    
+    It is "extremely" simple to convert "a list of strings" in a "string": it is enough to concatenate all strings 
+    ADDING a "newline" (IF NOT ALREADY PRESENT) between them.
+    This resolve the problem of "-- AND count IS NOT NULL", because in SQL a line starting with "--" (excluding previous spaces)
+    is a "line comment".
+
+
+5) statement parameters:
+    
+    We consider the statement:
+
+        SELECT t.item_no, t.icount FROM (
+            SELECT item_no, COUNT(1) AS icount FROM %s
+            WHERE locus_key IN (
+                SELECT DISTINCT location_locus_key FROM %s
+            )
+            -- AND count IS NOT NULL
+            GROUP BY item_no 
+            ORDER BY icount desc 
+        ) AS t
+        JOIN %s AS n ON t.item_no = n.item_no
+        WHERE t.icount <= ? 
+          AND n.network_name = ?
+        ORDER BY t.item_no
+
+    we can consider it contains TWO type of parameters:
+    
+    1) "%s" is a "string/text" parameter used to "parametrize" the statement on parts where the "standard"
+       parameter mechanism doesn't work. 
+       
+       We can suppose to use ONLY PURE text replacement.
+       
+       There are at minimum 2 cases where this mechanism is used:
+       
+       1) the table name to use, (problem present in ALL programming languages/drivers)
+       2) the operator IN: "SELECT ... FROM ... WHERE col IN (...)"
+       
+       JDBC doesn't support "multivalue" parameters. But, for example, SQLALchemy, the Python library used to access to the databases, has no problems.
+       The solution is to use a "text replacement" and to insert in the correct position the "string" representing the list of values to consider.
+       
+       Note: JDBC is able to support:  "SELECT ... FROM ... WHERE col IN (?, ?, ?, ?)"
+       
+             with a PREDEFINED number of '?'. BUT in the 99.999% of cases this number IS NOT CONSTANT!
+       
+    2) "?" is the "query parameter". The "parametric" statements are supported on all DBMS drivers. 
+       The only differece is the "syntax" used.
+       
+       For example, in JDBC it is used "?"
+       In Python it is used ":param_name", OR "%(param_name)s"
+
+    
+    The parameters can be specified in "positional way" OR "by name".
+    We can consider the "positional" way as a "shortcut" to "by name" way, where the name is "1", "2", that is, the "position", used as "name".
+    
+    Based on this idea, it is simple to support in an uniform way "positional" and "by name"  parameters.
+    
+
+5.1) statement parameters in Java:
+
+    Java natively supports:
+    
+        %s:         positional parameter
+        %<pos>$s    positional parameter where the position is specified with <pos>
+    
+    and
+    
+        ?           positional query parameter.
+    
+
+    We CAN SUPPOSE to extend this syntax to
+    
+        %<name>$s   named text parameter
+
+        ?<name>     named query parameter
+
+
+    This is possible because I ALREADY HAVE a small library able to parse "?<name>" and "%<name>$s".
+
+
+5.2) statement parameters in Python
+
+    The syntax supported depends on the driver. However, SQLAlchemy permits to use the DBMS driver 
+    using an "uniform" SQL syntax. We can suppose that THIS is the syntax used in Python, because
+    SQLAlchemy is a very famous library and it is simple to use.
+    
+    The query parameters are specified as 
+    
+        :<name>
+        
+    For the "text parameters", it is possible to use:
+    
+        "...{}..."              positional
+        "...{<index>}..."       positional with specific index
+        "...{name}..."          by name
+
+
+6.1) structure parameter types:
+
+    we can suppose that the ONLY text parameter type is "string". 
+    Eventually it can be the EMPTY string BUT NOT NULL
+
+6.2) query parameter types:
+
+    we can suppose to support ONLY a subset of parameter/column types, compatible with ALL DBMS and ALL languages.
+    
+        the NULL value
+        boolean values      true/false
+        integer values
+        real values
+        string/text
+        timestamp (date + time)
+            it is simple to extract only the date part or the time part
+    
+    At the moment, more complex data types (CLOB, BLOB, stream, ...) are not necessary
+    (at our side, obviously).
+    
+    BUT it is very useful to support ARRAY/LIST of values. 
+    We can suppose to support ONLY ARRAY/LIST of simple types. 
+    
+    New types will be added if necessary.
+
+    The other problem is to support OPTIONAL parameters.
+    
+    This information is necessary because it is reasonable that the Proxy DBMS will check
+    NOT only the "query_id" but also the parameters types.
+    
+    The syntax used in the configuration file could be as a LIST or a DICTIONARY.
+    
+        "structure_parameters": [
+            {
+                "name": "%s"
+            },
+            {
+                "name": "%s"
+            }
+        ],
+        "query_parameters": [
+            {
+                "name": "?alpha",
+                "type": "int",
+                "nullable": true,               OR "optional"
+            },
+            {
+                "name": "?beta",
+                "type": "string",
+                "scalar": false,                OR "array" OR "string[]"
+            }
+        ]
+    
+    
+    Note: to use "?alpha" instead than "alpha" can help in the consistency check between
+          the statement's text and the list of parameters. 
+          It must be consistent with the "language" used.
+
+
+-----------------------------------------------------------------------------
+- POST Request
+-----------------------------------------------------------------------------
+
+All requests must be sent using the POST verb. The POST body could be:
+
+    {
+        "namespace": "ae.ebtic.tools.sparemanagement",
+        "query_id": "read-item-codes-network-name",
+        "structure_parameters": [
+            "ciccio",
+            "pasticcio"
+        ],
+        "query_parameters": [
+            10,
+            "pippo"
+        ]
+    }
+    
+    
+    If the parameters are specified by name (OR "named position"), the syntax could be:
+    
+    
+    {
+        "namespace": "ae.ebtic.tools.sparemanagement",
+        "query_id": "read-item-codes-network-name",
+        "structure_parameters": {
+            "1": "ciccio",
+            "2": "pasticcio"
+        },
+        "query_parameters": {
+            "1": 10,
+            "2": "pippo"
+        }
+    }
+    
+    Note: in this case, for the automatic mapping "positional patrameter -> named parameter"
+          these two formats MUST BE equivalent
+
+
+    The number of values is THE SAME of the number of parameter. 
+    An optional argument is specified as value OR as "null"
+    
+    A "multivalue" parameter is passed as LIST of values, eventually the EMPTY LIST of values
+    
+    For example, we consider the query:
+    
+            {
+                "query_id": "read-stock-list",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT item_code_item_no, plant_plant_code, quantity",
+                    "FROM %table$s",
+                    "WHERE plant_plant_code IN (?codes)"
+                ],
+                "structure_parameters": [
+                    {
+                        "name": "%table$s"
+                    }
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?codes",
+                        "type": "string[]"
+                    }
+                ]
+            },
+
+    The POST body will be:
+        
+        {
+            "namespace": "ae.ebtic.tools.sparemanagement",
+            "query_id": "read-stock-list",
+            "structure_parameters": {
+                "table": "ciccio",
+            },
+            "query_parameters": {
+                "codes": ['ABC', 'CDE', 'EFG']
+            },
+            "response_type": "row"
+        }
+     
+     
+     Note: a extension could be to use 
+        
+        {
+            "query_id": "ae.ebtic.tools.sparemanagement.read-stock-list",
+            "structure_parameters": {
+                "table": "ciccio",
+            },
+            "query_parameters": {
+                "codes": ['ABC', 'CDE', 'EFG']
+            }
+        }
+
+        in this case, the namespace can be extracted from the "query_id"
+
+    The "response_type" is used to specify the response's "format".
+
+
+-----------------------------------------------------------------------------
+- JSON Response
+-----------------------------------------------------------------------------
+
+    The most complex part is the RESPONSE.
+    It is necessary to consider TWO cases
+    
+        1) a response for a VALID result
+        2) a response for an exception
+
+    There exist some "REST standards". 
+
+    The "standard" I found "useful" is based on HATEOAS + HAL
+
+
+-----------------------------------------------------------------------------
+- JSON Response for exception
+-----------------------------------------------------------------------------
+
+
+    HTTP code 400 ...
+    
+    {
+        "status": "ERROR",
+        "data": ...
+        "error" {
+            "errorCode": 23,
+            "description": "..."
+        }
+    }
+    
+    It can be useful to add the "callstack" of the exception.
+    It is not necessary client side, BUT it is necessary server side.
+    
+    Another problem is exceptions generated by the SQL statements.
+    It is necessary to return NOT ONLY the exception, BUT ALSO the statement
+    generating it AND the list of parameters.
+    
+    And exception as "Table not existent" it is not very useful IF it is not possible
+    to know WHICH table is not existent.!
+
+
+-----------------------------------------------------------------------------
+- JSON Response "format" for VALID result
+-----------------------------------------------------------------------------
+
+    There are some problems to consider:
+    
+    
+        1) it is necessary to "paginate" the result.
+           The pagesize could be specified in the request BUT it is just a PROPOSAL
+
+        2) the format of the result DEPENDS on the client.
+        
+    The most interesting result is the resultset from a SELECT.
+    
+    The structure of a paginated response is:
+    
+
+        {
+            "content": [
+                ...
+            ]
+            "meta": {
+                "pagination" : {
+                    "page": 1,              1-based or 0-based ????
+                    "pageSize": 10,
+                    "pageCount": 5,
+                    "total": 48
+                }
+            }
+            "links": {
+                "self": ...
+                "next": ...
+                "prev": ...
+                "first": ...
+                "last": ..
+            }
+        }
+        
+    where the link to go to the next page is specified in under the "links"  tag.
+    
+    In "content" it is necessary to specify the list of columns AND "column's type",
+    using the simplified list of types.
+    
+    The data can be returned in different formats:
+    
+        1) by "column":
+        
+            {
+                "col1": [v11, v12, v13, ...],
+                "col2": [v21, v22, v23, ...],
+                "col3": [v31, v32, v33, ...],
+                ...
+            }
+    
+        2) by "row":
+        
+            {
+                "columns": ["col1", "col2", "col3", ...],
+                "data":  [
+                        [v11, v12, v13, ...],
+                        [v21, v22, v23, ...]
+                    ]
+            }
+
+        3) by "object"
+        
+            [
+                {
+                    "col1": v11,
+                    "col2": v12,
+                    "col3": v13,
+                    ...
+                },
+                {
+                    "col1": v21,
+                    "col2": v22,
+                    "col3": v23,
+                    ...
+                },
+                {
+                    "col1": v31,
+                    "col2": v32,
+                    "col3": v33,
+                    ...
+                },                
+                ...
+            ]
+
+    Which format to use depends on the client.
+    Methods 1) and 2) are the most efficient methods.
+    Method 3) is expensive because the name of the columns is replicated for each element.
+    BUT it is very useful when used with an ORM used to convert automatically the JSON object in a class's instance.
+
+
+
+
+-----------------------------------------------------------------------------
+- End
+-----------------------------------------------------------------------------

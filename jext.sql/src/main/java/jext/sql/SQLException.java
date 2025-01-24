@@ -1,11 +1,20 @@
 package jext.sql;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class SQLException extends java.sql.SQLException {
 
+    public static SQLException of(String reason, String sql) {
+        return new SQLException(reason, sql, Collections.emptyMap());
+    }
+
     public static SQLException of(String reason, String sql, Map<Object, Object> params) {
         return new SQLException(reason, sql, params);
+    }
+
+    public static SQLException of(java.sql.SQLException e, String sql) {
+        return new SQLException(e, sql, Collections.emptyMap());
     }
 
     public static SQLException of(java.sql.SQLException e, String sql, Map<Object, Object> params) {

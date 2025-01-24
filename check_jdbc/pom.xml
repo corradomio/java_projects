@@ -10,34 +10,14 @@
     <version>1.0</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <modules>
         <module>../jext.sql</module>
         <module>../jext.commons</module>
+        <module>app</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.sql</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.commons</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.4</version>
-        </dependency>
-
-    </dependencies>
 
 </project>

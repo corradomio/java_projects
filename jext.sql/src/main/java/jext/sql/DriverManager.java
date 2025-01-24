@@ -1,7 +1,6 @@
 package jext.sql;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -9,13 +8,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DriverManager {
-
-    public static jext.sql.Connection getConnection(String url, Properties info_) throws SQLException {
-        Properties info = new Properties(info_);
-        info.put("url", url);
-        java.sql.Connection con = DriverManager.getConnection(url, info);
-        return ConnectionEx.of(con, info);
-    }
 
     public static jext.sql.Connection getConnection(String url, String user, String password) throws SQLException {
         Properties info = new Properties();
@@ -44,6 +36,13 @@ public class DriverManager {
             throw new java.sql.SQLException(e);
         }
         return getConnection(info);
+    }
+
+    public static jext.sql.Connection getConnection(String url, Properties info_) throws SQLException {
+        Properties info = new Properties(info_);
+        info.put("url", url);
+        java.sql.Connection con = java.sql.DriverManager.getConnection(url, info);
+        return new ConnectionEx(con, info);
     }
 
 }

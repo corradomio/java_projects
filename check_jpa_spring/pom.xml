@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.example</groupId>
+    <groupId>org.hls.examples</groupId>
     <artifactId>check_jpa_spring</artifactId>
     <version>1.0</version>
 

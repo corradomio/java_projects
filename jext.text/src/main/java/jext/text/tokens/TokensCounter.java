@@ -2,7 +2,6 @@ package jext.text.tokens;
 
 import jext.util.Assert;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
