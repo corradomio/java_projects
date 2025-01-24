@@ -34,4 +34,9 @@ public class DirectedEdge extends DefaultEdge implements Directed {
             && this.getTarget().equals(that.getTarget());
     }
 
+    @Override
+    public String toString() {
+        return getSource() + "->" + getTarget();
+    }
+
 }

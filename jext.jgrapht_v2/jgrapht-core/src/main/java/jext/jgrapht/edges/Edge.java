@@ -31,11 +31,16 @@ public class Edge extends DefaultEdge {
 
     @Override
     public boolean equals(Object obj) {
-        DirectedEdge that = (DirectedEdge) obj;
+        Edge that = (Edge) obj;
         return this.getSource().equals(that.getSource())
                 && this.getTarget().equals(that.getTarget())
                 || this.getSource().equals(that.getTarget())
                 && this.getTarget().equals(that.getSource());
+    }
+
+    @Override
+    public String toString() {
+        return getSource() + "-" + getTarget();
     }
 
 }

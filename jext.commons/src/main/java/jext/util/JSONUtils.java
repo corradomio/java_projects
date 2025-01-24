@@ -10,6 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -33,6 +35,19 @@ public class JSONUtils {
     public static <T> T parse(File jsonFile, Class<T> objectType) throws IOException {
         ObjectMapper mapper = newObjectMapper();
         return (T) mapper.readValue(jsonFile, objectType);
+    }
+
+    public static <T> T parse(Reader reader, Class<T> objectType) throws IOException {
+        ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        copy(reader, ostream);
+        String content = new String(ostream.toByteArray(), StandardCharsets.UTF_8);
+        return parse(content, objectType);
+    }
+
+    private static void copy(Reader reader, OutputStream os) throws IOException {
+        for (int c = reader.read(); c != -1; c = reader.read()) {
+            os.write((byte)c);
+        }
     }
 
     public static <T> T parse(InputStream istream, Class<T> objectType) throws IOException {

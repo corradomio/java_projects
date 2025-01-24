@@ -15,11 +15,11 @@
     </properties>
 
     <modules>
+        <module>app</module>
         <module>../jext.commons</module>
         <module>../jext.collections</module>
         <module>../jext.concurrent</module>
         <module>../jext.jgrapht_v2</module>
-        <module>app</module>
     </modules>
 
 </project>

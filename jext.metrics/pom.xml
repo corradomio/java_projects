@@ -7,7 +7,6 @@
     <groupId>org.hls</groupId>
     <artifactId>jext.metrics</artifactId>
     <version>1.0</version>
-    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>check_maven_multi</artifactId>
-        <groupId>org.hls.check</groupId>
+        <groupId>org.hls.examples</groupId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
@@ -14,12 +14,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.hls.check</groupId>
+            <groupId>org.hls.examples</groupId>
             <artifactId>module2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.hls.check</groupId>
+            <groupId>org.hls.examples</groupId>
             <artifactId>module3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

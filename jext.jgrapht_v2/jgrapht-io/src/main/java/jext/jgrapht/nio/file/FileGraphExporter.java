@@ -17,7 +17,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * This class permit to use an GraphExporter exporting the graph
  * directly in a compressed file.
- *
+ * .
  * The compression algorithm is selected from the file extension.
  * The supported formats are: '.gz', '.zip'
  *

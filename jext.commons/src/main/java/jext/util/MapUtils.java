@@ -132,6 +132,20 @@ public class MapUtils {
             return Boolean.parseBoolean(value.toString());
     }
 
+    public static double getOrDefault(Map<String, Object> map, String key, double defaultValue) {
+        if (!map.containsKey(key))
+            return defaultValue;
+        Object value = map.get(key);
+        if (value instanceof Float)
+            return ((Float) value).doubleValue();
+        if (value instanceof Double)
+            return ((Double) value).doubleValue();
+        if (value instanceof Number)
+            return ((Number) value).doubleValue();
+        else
+            return Double.parseDouble(value.toString());
+    }
+
     // ----------------------------------------------------------------------
 
     public static double getOrDefault(Map<String, Object> map, String key, int index, double defaultValue){

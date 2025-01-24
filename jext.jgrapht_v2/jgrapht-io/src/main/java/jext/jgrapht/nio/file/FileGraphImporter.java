@@ -17,7 +17,7 @@ import java.util.zip.ZipInputStream;
 /**
  * This class permit to use an GraphImporter to import the graph
  * directly from a compressed file.
- *
+ * .
  * The compression algorithm is selected from the file extension.
  * The supported formats are: '.gz', '.zip'
  *

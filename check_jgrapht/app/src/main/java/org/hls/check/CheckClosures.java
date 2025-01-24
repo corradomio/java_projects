@@ -4,7 +4,7 @@ import jext.jgrapht.edges.DirectedEdge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.closure.ClosuresGraph;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
-import jext.jgrapht.nio.jsn.JSONGraphExporter;
+import jext.jgrapht.nio.json.JSONGraphExporter;
 import jext.logging.Logger;
 import jext.util.concurrent.Parallel;
 import org.jgrapht.Graph;

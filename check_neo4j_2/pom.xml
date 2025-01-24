@@ -8,7 +8,7 @@
         <version>2.3.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.hls.check</groupId>
+    <groupId>org.hls.examples</groupId>
     <artifactId>check_neo4j_2</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
