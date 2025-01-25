@@ -1,8 +1,8 @@
 package org.hls.examples;
 
-import org.delaunay.algorithm.Triangulation;
-import org.delaunay.model.Triangle;
-import org.delaunay.model.Vertex;
+import jext.geometry.delaunay.algorithm.Triangulation;
+import jext.geometry.delaunay.model.Triangle;
+import jext.geometry.delaunay.model.Vertex;
 import org.hls.examples.utils.LatLonUtils;
 
 import java.io.File;

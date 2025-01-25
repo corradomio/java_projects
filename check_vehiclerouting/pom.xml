@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>../jext.geometry</module>
         <module>../jext.jgrapht_v2</module>
         <module>app</module>
     </modules>

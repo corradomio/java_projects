@@ -1,7 +1,6 @@
 package jext.jgrapht;
 
 import jext.jgrapht.edges.Directed;
-import jext.jgrapht.edges.DirectedEdge;
 import jext.jgrapht.edges.EdgeType;
 import jext.jgrapht.edges.Weighted;
 import org.jgrapht.Graph;
@@ -9,6 +8,7 @@ import org.jgrapht.GraphType;
 import org.jgrapht.graph.AsSubgraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 
@@ -59,6 +59,16 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     // Graph constructors
     // ----------------------------------------------------------------------
 
+    /**
+     * Create a new graph.
+     * The class is directed or weighted based on the edge class properties
+     *
+     * @param vertexClass class of the vertex
+     * @param edgeClass class of the edge
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a new Graph object
+     */
     public static <V, E> Graph<V, E> newGraph(Class<V> vertexClass, Class<E> edgeClass) {
         boolean directed = Directed.class.isAssignableFrom(edgeClass);
         boolean weighed  = Weighted.class.isAssignableFrom(edgeClass);
@@ -66,13 +76,44 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         return newGraph(directed, weighed, vertexClass, edgeClass);
     }
 
-    public static <V, E> Graph<V, E> newGraph(boolean directed, boolean weighted, Class<V> vertexClass, Class<E> edgeClass) {
+    /**
+     * Create a new graph.
+     *
+     * @param directed    if directed
+     * @param weighted    if weighted
+     * @param vertexClass vertex class
+     * @param edgeClass   edge class
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a new Graph object
+     */
+    public static <V, E> Graph<V, E> newGraph(
+        boolean directed,
+        boolean weighted,
+        Class<V> vertexClass,
+        Class<E> edgeClass) {
         Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
         Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
 
         return newGraph(directed, false, false, weighted, true, vertexSupplier, edgeSupplier);
     }
 
+    /**
+     * Create a new graph.
+     * @param directed       if directed
+     * @param vertexSupplier vertex generator
+     * @param edgeSupplier   edge generator
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a new Graph object
+     */
+    public static <V, E> Graph<V, E> newGraph(
+        boolean directed,
+        Supplier<V> vertexSupplier,
+        Supplier<E> edgeSupplier) {
+
+        return newGraph(directed, false, false, false, true, vertexSupplier, edgeSupplier);
+    }
 
     /**
      * Create a new graph based on properties
@@ -106,19 +147,20 @@ public abstract class Graphs extends org.jgrapht.Graphs {
                     ? (Supplier<E>) SupplierUtil.createDefaultWeightedEdgeSupplier()
                     : (Supplier<E>) SupplierUtil.createDefaultEdgeSupplier();
 
-        return gtb.allowingSelfLoops(loop)
-                .allowingMultipleEdges(multiple)
-                .weighted(weighted)
-                .vertexSupplier(vertexSupplier)
-                .edgeSupplier(edgeSupplier)
-                .buildGraph();
-    }
+        if (directed && !cycles)
+            return new DirectedAcyclicGraph<>(
+                vertexSupplier,
+                edgeSupplier,
+                weighted,
+                multiple
+            );
 
-    public static <V, E> Graph<V, E> newGraph(
-        boolean directed,
-        Supplier<V> vertexSupplier,
-        Supplier<E> edgeSupplier) {
-        return newGraph(directed, false, false, false, true, vertexSupplier, edgeSupplier);
+        return gtb.allowingSelfLoops(loop)
+            .weighted(weighted)
+            .allowingMultipleEdges(multiple)
+            .vertexSupplier(vertexSupplier)
+            .edgeSupplier(edgeSupplier)
+            .buildGraph();
     }
 
     /**
@@ -156,7 +198,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      */
     public static <V> Supplier<V> vertexSupplier(Class<V> vertexClass) {
         if (vertexClass.equals(Integer.class) || vertexClass.equals(int.class))
-            return (Supplier<V>) SupplierUtil.createIntegerSupplier(1);
+            return (Supplier<V>) SupplierUtil.createIntegerSupplier();
         if (vertexClass.equals(Long.class) || vertexClass.equals(long.class))
             return (Supplier<V>) SupplierUtil.createLongSupplier();
         if (vertexClass.equals(String.class))
@@ -171,6 +213,7 @@ public abstract class Graphs extends org.jgrapht.Graphs {
 
     /**
      * Add the list of vertices
+     *
      * @param g the graph
      * @param vertices list of vertices
      * @param <V> vertices type
@@ -250,6 +293,12 @@ public abstract class Graphs extends org.jgrapht.Graphs {
      * @param <E> edges type
      */
     public static <E> Supplier<E> edgeSupplier(Class<E> edgeClass) {
+        if (edgeClass.equals(Integer.class) || edgeClass.equals(int.class))
+            return (Supplier<E>) SupplierUtil.createIntegerSupplier();
+        if (edgeClass.equals(Long.class) || edgeClass.equals(long.class))
+            return (Supplier<E>) SupplierUtil.createIntegerSupplier();
+        if (edgeClass.equals(String.class))
+            return (Supplier<E>) SupplierUtil.createStringSupplier();
         if (edgeClass.equals(DefaultEdge.class))
             return (Supplier<E>) SupplierUtil.createDefaultEdgeSupplier();
         if (edgeClass.equals(DefaultWeightedEdge.class))

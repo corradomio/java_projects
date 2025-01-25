@@ -4,11 +4,32 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.Objects;
 
-public class WeighedDirectedEdge extends DefaultWeightedEdge implements Weighted {
+public class WeighedDirectedEdge<V> extends DefaultWeightedEdge implements Edge<V>, Weighted, Directed {
 
+    @Override
+    public V getSource() {
+        return (V) super.getSource();
+    }
+
+    @Override
+    public V getTarget() {
+        return (V) super.getTarget();
+    }
+
+    @Override
     public double getWeight() {
         return super.getWeight();
     }
+
+    public Object getOpposite(Object v) {
+        if (v.equals(getSource()))
+            return getTarget();
+        if (v.equals(getTarget()))
+            return getSource();
+        throw new IllegalArgumentException("no such vertex: " + v);
+    }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public int hashCode() {

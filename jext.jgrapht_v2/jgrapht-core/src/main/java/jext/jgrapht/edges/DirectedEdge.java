@@ -4,23 +4,31 @@ import org.jgrapht.graph.DefaultEdge;
 
 import java.util.Objects;
 
-public class DirectedEdge extends DefaultEdge implements Directed {
+public class DirectedEdge<V> extends DefaultEdge implements Edge<V>, Directed {
 
-    public Object getSource() {
-        return super.getSource();
+    @Override
+    public V getSource() {
+        return (V) super.getSource();
     }
 
-    public Object getTarget() {
-        return super.getTarget();
+    @Override
+    public V getTarget() {
+        return (V) super.getTarget();
     }
 
-    public Object getOpposite(Object v) {
+    public double getWeight() {
+        return 1.;
+    }
+
+    public V getOpposite(V v) {
         if (v.equals(getSource()))
             return getTarget();
         if (v.equals(getTarget()))
             return getSource();
         throw new IllegalArgumentException("no such vertex: " + v);
     }
+
+    // ----------------------------------------------------------------------
 
     @Override
     public int hashCode() {
