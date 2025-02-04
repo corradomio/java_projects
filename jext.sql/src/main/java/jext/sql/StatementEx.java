@@ -83,13 +83,14 @@ public class StatementEx implements Statement {
     protected ConnectionEx c;
     protected String sqlx;
     protected Mode mode;
+    protected String namedQuery = "";
 
     protected String sql;
     protected java.sql.Statement stmt;
 
     protected Map<String, int[]> names = new HashMap<>();
     protected Map<Object, Object> params = new HashMap<>();
-    protected String[] sparams = new String[16];
+    protected String[] sparams = new String[32];
 
     protected int resultSetType;
     protected int resultSetConcurrency;
@@ -170,15 +171,20 @@ public class StatementEx implements Statement {
         this.sql = parseSqlx(sqlx, names);
     }
 
+    public StatementEx namedQuery(String namedQuery) {
+        this.namedQuery = namedQuery;
+        return this;
+    }
+
     // ----------------------------------------------------------------------
     // Package properties
     // ----------------------------------------------------------------------
 
-    @Override
-    public void setStatementParameter(int index, String value) {
-        if (index < 1) return;
-        this.sparams[index-1] = value;
-    }
+    // @Override
+    // public void setStatementParameter(int index, String value) {
+    //     if (index < 1) return;
+    //     this.sparams[index-1] = value;
+    // }
 
 
     @Override
@@ -205,7 +211,7 @@ public class StatementEx implements Statement {
         return this.stmt;
     }
 
-    protected java.sql.Connection conn() {
+    protected Connection conn() {
         return this.c.c;
     }
 

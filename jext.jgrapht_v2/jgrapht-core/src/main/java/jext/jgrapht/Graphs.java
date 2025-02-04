@@ -79,6 +79,33 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     /**
      * Create a new graph.
      *
+     * @param loop      if can have loops
+     * @param multiple  if can have multiple edges
+     * @param cycles    if can have cycles
+     * @param vertexClass vertex class
+     * @param edgeClass   edge class
+     * @param <V> vertices type
+     * @param <E> edges type
+     * @return a new Graph object
+     */
+    public static <V, E> Graph<V, E> newGraph(
+        boolean loop,
+        boolean multiple,
+        boolean cycles,
+        Class<V> vertexClass,
+        Class<E> edgeClass) {
+
+        boolean directed = Directed.class.isAssignableFrom(edgeClass);
+        boolean weighted  = Weighted.class.isAssignableFrom(edgeClass);
+        Supplier<V> vertexSupplier = vertexSupplier(vertexClass);
+        Supplier<E> edgeSupplier   = edgeSupplier(edgeClass);
+
+        return newGraph(directed, loop, multiple, weighted, cycles, vertexSupplier, edgeSupplier);
+    }
+
+    /**
+     * Create a new graph.
+     *
      * @param directed    if directed
      * @param weighted    if weighted
      * @param vertexClass vertex class
@@ -99,10 +126,11 @@ public abstract class Graphs extends org.jgrapht.Graphs {
     }
 
     /**
-     * Create a new graph.
-     * @param directed       if directed
-     * @param vertexSupplier vertex generator
-     * @param edgeSupplier   edge generator
+     * Create a new graph based on properties
+     *
+     * @param directed if directed
+     * @param vertexSupplier vertex factory
+     * @param edgeSupplier edge factory
      * @param <V> vertices type
      * @param <E> edges type
      * @return a new Graph object
@@ -111,7 +139,6 @@ public abstract class Graphs extends org.jgrapht.Graphs {
         boolean directed,
         Supplier<V> vertexSupplier,
         Supplier<E> edgeSupplier) {
-
         return newGraph(directed, false, false, false, true, vertexSupplier, edgeSupplier);
     }
 

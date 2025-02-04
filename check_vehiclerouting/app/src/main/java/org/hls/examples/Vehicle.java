@@ -32,8 +32,7 @@ public class Vehicle extends Coords {
     // ----------------------------------------------------------------------
 
     private int id;
-    private int location_id;
-    private List<Coords> locationsVisited = new ArrayList<>();
+    private Location start;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -44,37 +43,25 @@ public class Vehicle extends Coords {
     }
 
     public Vehicle(int id, Location l) {
+        super(l.longitude, l.latitude);
         this.id = id;
-        this.location_id = l.getId();
-        this.longitude = l.getLongitude();
-        this.latitude = l.getLatitude();
+        this.start = l;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
-    public int getId() {
+    public int id() {
         return id;
     }
 
-    // public void setId(int id) {
-    //     this.id = id;
-    // }
-
-    public int getLocationId() {
-        return location_id;
+    public int locationId() {
+        return start.id;
     }
 
-    // public void setLocation_id(int location_id) {
-    //     this.location_id = location_id;
-    // }
-
-    public List<Coords> getLocationsVisited() {
-        return locationsVisited;
+    public Location location() {
+        return start;
     }
 
-    // public void setLocationsVisited(List<Coords> locationsVisited) {
-    //     this.locationsVisited = locationsVisited;
-    // }
 }

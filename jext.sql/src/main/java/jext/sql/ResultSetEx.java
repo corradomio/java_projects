@@ -54,10 +54,10 @@ public class ResultSetEx implements ResultSet {
     // Close
     // ----------------------------------------------------------------------
 
-    @Override
-    public boolean hasNext() throws SQLException {
-        return rs.next();
-    }
+    // @Override
+    // public boolean hasNext() throws SQLException {
+    //     return rs.next();
+    // }
 
     @Override
     public boolean next() throws SQLException {

@@ -15,8 +15,9 @@
     </properties>
 
     <modules>
+        <!--<module>../jext.commons</module>-->
         <module>../jext.sql</module>
-        <module>../jext.commons</module>
+        <module>../ebtic.jdbc-proxy</module>
         <module>app</module>
     </modules>
 

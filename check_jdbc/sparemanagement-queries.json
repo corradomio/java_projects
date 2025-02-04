@@ -4,7 +4,35 @@
         "version": "1.0",
         "language": "java",
         "query": [
+            {
+                "query_id": "test",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT scenario_name FROM scenarios"
+                ],
+                "description": "Test",
+                "structure_parameters": [
 
+                ],
+                "query_parameters": [
+
+                ]
+            },
+            {
+                "query_id": "check_database",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT COUNT(1) ",
+                    "  FROM %s"
+                ],
+                "description": "Check the DB connectivity",
+                "structure_parameters": [
+                    {
+                        "name": "%s"
+                    }
+                ],
+                "query_parameters": [ ]
+            },
             {
                 "query_id": "read-item-codes-filtered",
                 "query_type": "SELECT",

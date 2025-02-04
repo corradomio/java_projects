@@ -110,6 +110,9 @@ public class HelloWorld {
     }
 
     public static void main(String[] args) {
+
+        System.setProperty("org.lwjgl.librarypath", "D:\\Projects.github\\java_projects\\lwjgl\\bin-3.3.6");
+
         new HelloWorld().run();
     }
 

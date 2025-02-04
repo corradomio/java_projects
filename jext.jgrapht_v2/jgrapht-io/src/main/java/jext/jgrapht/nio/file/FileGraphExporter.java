@@ -1,5 +1,6 @@
 package jext.jgrapht.nio.file;
 
+import jext.jgrapht.nio.BaseExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.ExportException;
 import org.jgrapht.nio.GraphExporter;
@@ -22,7 +23,7 @@ import java.util.zip.ZipOutputStream;
  * The supported formats are: '.gz', '.zip'
  *
  */
-public class FileGraphExporter<V, E> implements GraphExporter<V, E> {
+public class FileGraphExporter<V, E> extends BaseExporter<V, E> {
 
     private GraphExporter<V, E> exporter;
 

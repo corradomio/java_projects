@@ -16,7 +16,6 @@ import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CallableStatementEx extends PreparedStatementEx implements CallableStatement {

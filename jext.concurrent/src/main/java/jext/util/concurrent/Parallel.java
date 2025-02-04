@@ -344,6 +344,84 @@ public class Parallel {
     }
 
     // ----------------------------------------------------------------------
+    // Parallel.apply
+    // ----------------------------------------------------------------------
+
+    private static class CallableTask<V, R> implements Callable<R> {
+
+        private V t;
+        private Function<V, R> function;
+
+        CallableTask(V t, Function<V, R> function) {
+            this.t = t;
+            this.function = function;
+        }
+
+        @Override
+        public R call() throws Exception {
+            return function.apply(t);
+        }
+    }
+
+    public static <V, R> List<R> apply(Collection<V> collection, Function<V, R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        collection.forEach(t -> {
+            tasks.add(new CallableTask<>(t, function));
+        });
+
+        return invokeAll(tasks);
+    }
+
+    // ----------------------------------------------------------------------
+    // Parallel.apply
+    // ----------------------------------------------------------------------
+
+    private static class EntryResult<K, R> {
+        private K k;
+        private R r;
+
+        public EntryResult(K k, R r) {
+            this.k = k;
+            this.r = r;
+        }
+    }
+
+    private static class CallableEntryTask<K, V, R> implements Callable<EntryResult<K, R>> {
+
+        private K k;
+        private V t;
+        private Function<V, R> function;
+
+        CallableEntryTask(K k, V t, Function<V, R> function) {
+            this.k = k;
+            this.t = t;
+            this.function = function;
+        }
+
+        @Override
+        public EntryResult<K, R> call() throws Exception {
+            R r = function.apply(t);
+            return new EntryResult<>(k, r);
+        }
+    }
+
+    public static <K, V, R> Map<K, R> apply(Map<K, V> dictionary, Function<V, R> function) {
+        List<Callable<EntryResult<K, R>>> tasks = new ArrayList<>();
+        dictionary.forEach((k, t) -> {
+            tasks.add(new CallableEntryTask<>(k, t, function));
+        });
+
+        List<EntryResult<K, R>> results = invokeAll(tasks);
+
+        Map<K, R> mapResult = new HashMap<>();
+        results.forEach(e -> {
+            mapResult.put(e.k, e.r);
+        });
+
+        return mapResult;
+    }
+
+    // ----------------------------------------------------------------------
     // Setup/shutdown
     // ----------------------------------------------------------------------
 

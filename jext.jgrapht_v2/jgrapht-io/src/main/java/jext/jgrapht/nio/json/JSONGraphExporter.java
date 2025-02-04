@@ -4,11 +4,12 @@ import jext.util.JSONUtils;
 import jext.util.MapUtils;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
-import org.jgrapht.nio.BaseExporter;
+import jext.jgrapht.nio.BaseExporter;
 import org.jgrapht.nio.ExportException;
 import org.jgrapht.nio.GraphExporter;
 import org.jgrapht.nio.IntegerIdProvider;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -23,10 +24,10 @@ import java.util.Map;
  * @param <V>
  * @param <E>
  */
-public class JSONGraphExporter<V, E> extends BaseExporter<V, E> implements GraphExporter<V, E> {
+public class JSONGraphExporter<V, E> extends BaseExporter<V, E> {
 
     public JSONGraphExporter() {
-        super(new IntegerIdProvider<>());
+        super();
     }
 
     @Override
@@ -46,7 +47,7 @@ public class JSONGraphExporter<V, E> extends BaseExporter<V, E> implements Graph
                 edges.add(MapUtils.asMap(
                     "source", wrap(g.getEdgeSource(e)),
                     "target", wrap(g.getEdgeTarget(e)),
-                    "directed", t.isDirected(),
+                    // "directed", t.isDirected(),
                     "weight", g.getEdgeWeight(e)
                 ));
             });
@@ -68,6 +69,11 @@ public class JSONGraphExporter<V, E> extends BaseExporter<V, E> implements Graph
         }
     }
 
+    @Override
+    public void exportGraph(Graph<V, E> g, File file) {
+        super.exportGraph(g, file);
+    }
+
     private Map<String, Object> graphAttributes(Graph<V, E> graph) {
         return Collections.emptyMap();
     }
@@ -80,12 +86,14 @@ public class JSONGraphExporter<V, E> extends BaseExporter<V, E> implements Graph
         return Collections.emptyMap();
     }
 
-    private String wrap(V v) {
-        // if (v == null)
-        //     return null;
-        // if (v instanceof Number)
-        //     return v;
-        // else
+    private Object wrap(V v) {
+        if (v == null)
+            return null;
+        if (v instanceof Number)
+            return v;
+        if (v instanceof Boolean)
+            return v;
+        else
             return v.toString();
     }
 }

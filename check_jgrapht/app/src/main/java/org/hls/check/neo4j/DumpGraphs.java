@@ -2,7 +2,7 @@ package org.hls.check.neo4j;
 
 import jext.jgrapht.Graphs;
 import jext.jgrapht.edges.DirectedEdge;
-import jext.jgrapht.nio.csv.VECSVExporter;
+import jext.jgrapht.nio.csv.VECSVGraphExporter;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
 import jext.jgrapht.util.GraphDescribe;
 import jext.jgrapht.vertices.Vertex;
@@ -46,7 +46,7 @@ public class DumpGraphs {
     }
 
     static void exportCsv(Graph<Vertex, DirectedEdge> g, String label) {
-        VECSVExporter<Vertex, DirectedEdge> exp = new VECSVExporter<>();
+        VECSVGraphExporter<Vertex, DirectedEdge> exp = new VECSVGraphExporter<>();
         exp.setVertexAttributeProvider((v) -> {
             Map<String, Attribute> map = new HashMap<>();
             Map<String, Object> data = v.data();

@@ -23,6 +23,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
+
     public PreparedStatementEx(ConnectionEx c, String sqlx) {
         super(c, sqlx);
     }
@@ -93,7 +94,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
             return new ResultSetEx(this, this.ps().executeQuery());
         }
         catch (java.sql.SQLException e) {
-            throw jext.sql.SQLException.of(e, this.sql, this.params);
+            throw SQLException.of(e, this.sql, this.params);
         }
     }
 
@@ -102,7 +103,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
         try {
             return this.ps().executeUpdate();
         } catch (java.sql.SQLException e) {
-            throw jext.sql.SQLException.of(e, this.sql, this.params);
+            throw SQLException.of(e, this.sql, this.params);
         }
     }
 
@@ -111,7 +112,24 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
         try {
             return this.ps().execute();
         } catch (java.sql.SQLException e) {
-            throw jext.sql.SQLException.of(e, this.sql, this.params);
+            throw SQLException.of(e, this.sql, this.params);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Special case
+    // ----------------------------------------------------------------------
+    // if parameterIndex is < 0, the parameter is used in the statement
+    // formatting
+
+    @Override
+    public void setString(int parameterIndex, String x) throws java.sql.SQLException {
+        if (parameterIndex < 0) {
+            this.sparams[-parameterIndex-1] = x;
+        }
+        else {
+            this.params.put(parameterIndex, x);
+            this.ps().setString(parameterIndex, x);
         }
     }
 
@@ -171,12 +189,6 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     public void setBigDecimal(int parameterIndex, BigDecimal x) throws java.sql.SQLException {
         this.params.put(parameterIndex, x);
         this.ps().setBigDecimal(parameterIndex, x);
-    }
-
-    @Override
-    public void setString(int parameterIndex, String x) throws java.sql.SQLException {
-        this.params.put(parameterIndex, x);
-        this.ps().setString(parameterIndex, x);
     }
 
     @Override
@@ -539,7 +551,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setDate(String parameterName, java.sql.Date x) throws java.sql.SQLException {
+    public void setDate(String parameterName, Date x) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -548,7 +560,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setTime(String parameterName, java.sql.Time x) throws java.sql.SQLException {
+    public void setTime(String parameterName, Time x) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -557,7 +569,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setTimestamp(String parameterName, java.sql.Timestamp x) throws java.sql.SQLException {
+    public void setTimestamp(String parameterName, Timestamp x) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -566,7 +578,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setAsciiStream(String parameterName, java.io.InputStream x, int length) throws java.sql.SQLException {
+    public void setAsciiStream(String parameterName, InputStream x, int length) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -575,7 +587,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setBinaryStream(String parameterName, java.io.InputStream x, int length) throws java.sql.SQLException {
+    public void setBinaryStream(String parameterName, InputStream x, int length) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -605,7 +617,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setCharacterStream(String parameterName, java.io.Reader x, int length) throws java.sql.SQLException {
+    public void setCharacterStream(String parameterName, Reader x, int length) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -632,7 +644,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setDate(String parameterName, java.sql.Date x, Calendar cal) throws java.sql.SQLException {
+    public void setDate(String parameterName, Date x, Calendar cal) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -641,7 +653,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setTime(String parameterName, java.sql.Time x, Calendar cal) throws java.sql.SQLException {
+    public void setTime(String parameterName, Time x, Calendar cal) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -650,7 +662,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setTimestamp(String parameterName, java.sql.Timestamp x, Calendar cal) throws java.sql.SQLException {
+    public void setTimestamp(String parameterName, Timestamp x, Calendar cal) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -668,7 +680,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setURL(String parameterName, java.net.URL x) throws java.sql.SQLException {
+    public void setURL(String parameterName, URL x) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -760,7 +772,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setAsciiStream(String parameterName, java.io.InputStream x, long length) throws java.sql.SQLException {
+    public void setAsciiStream(String parameterName, InputStream x, long length) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -769,7 +781,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setBinaryStream(String parameterName, java.io.InputStream x, long length) throws java.sql.SQLException {
+    public void setBinaryStream(String parameterName, InputStream x, long length) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -778,7 +790,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setCharacterStream(String parameterName, java.io.Reader x, long length) throws java.sql.SQLException {
+    public void setCharacterStream(String parameterName, Reader x, long length) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -787,7 +799,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setAsciiStream(String parameterName, java.io.InputStream x) throws java.sql.SQLException {
+    public void setAsciiStream(String parameterName, InputStream x) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -796,7 +808,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setBinaryStream(String parameterName, java.io.InputStream x) throws java.sql.SQLException {
+    public void setBinaryStream(String parameterName, InputStream x) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {
@@ -805,7 +817,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     }
 
     @Override
-    public void setCharacterStream(String parameterName, java.io.Reader x) throws java.sql.SQLException {
+    public void setCharacterStream(String parameterName, Reader x) throws java.sql.SQLException {
         this.params.put(parameterName, x);
         int[] indices = getIndices(parameterName);
         for(int parameterIndex : indices) {

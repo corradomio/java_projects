@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -57,6 +58,17 @@ public class Serial {
         if (!pe.isEmpty())
             throw pe;
 
+        return results;
+    }
+
+    // ----------------------------------------------------------------------
+    // apply
+    // ----------------------------------------------------------------------
+
+    public static <V, R> List<R> apply(List<V> list, Function<V, R> function) {
+        List<R> results = new ArrayList<>();
+        for(V v : list)
+            results.add(function.apply(v));
         return results;
     }
 

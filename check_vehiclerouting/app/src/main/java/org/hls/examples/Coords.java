@@ -26,11 +26,11 @@ public class Coords {
         return new double[][]{ x, y };
     }
 
-    public static double[][] getEdgeCoords(List<Edge> edges) {
+    public static Double[][] getEdgesCoords(List<Edge> edges) {
         int i = 0;
         int n = edges.size();
-        double[] x = new double[2*n];
-        double[] y = new double[2*n];
+        Double[] x = new Double[3*n];
+        Double[] y = new Double[3*n];
 
         for(Edge e : edges) {
             x[i] = e.l1.longitude;
@@ -39,6 +39,53 @@ public class Coords {
             x[i] = e.l2.longitude;
             y[i] = e.l2.latitude;
             ++i;
+            x[i] = null;
+            y[i] = null;
+            i++;
+        }
+
+        return new Double[][]{ x, y };
+    }
+
+    public static double[][] getPathsCoords(List<Location>[] vpaths) {
+        int m = vpaths.length;
+        // 1) count the number of 'edges' to create
+        int k = 0;
+        for(int j=0; j<m; ++j)
+            k += vpaths[j].size();  // (lj0-lj1),...(lj[n-1]-lj0)
+
+        // fill the coordinates
+        double[] x = new double[2*k];
+        double[] y = new double[2*k];
+
+        int h=0;
+        for(int j=0; j<m; ++j) {
+            Location l0, l1;
+            List<Location> toVisit = vpaths[j];
+            int l = toVisit.size()-1;
+            for(int i=0; i < l; ++i) {
+                l0 = toVisit.get(i);
+                l1 = toVisit.get(i+1);
+
+                x[h] = l0.longitude;
+                y[h] = l0.latitude;
+                h++;
+                x[h] = l1.longitude;
+                y[h] = l1.latitude;
+                h++;
+            }
+            // add last edge
+            {
+                l0 = toVisit.get(l);
+                l1 = toVisit.get(0);
+
+                x[h] = l0.longitude;
+                y[h] = l0.latitude;
+                h++;
+                x[h] = l1.longitude;
+                y[h] = l1.latitude;
+                h++;
+            }
         }
 
         return new double[][]{ x, y };
@@ -48,15 +95,16 @@ public class Coords {
     // Fields
     // ----------------------------------------------------------------------
 
-    protected double longitude;
-    protected double latitude;
+    protected final double longitude;
+    protected final double latitude;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public Coords() {
-
+        longitude = 0;
+        latitude = 0;
     }
 
     public Coords(double longitude, double latitude) {
@@ -68,20 +116,5 @@ public class Coords {
     // Properties
     // ----------------------------------------------------------------------
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    // public void setLongitude(double longitude) {
-    //     this.longitude = longitude;
-    // }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    // public void setLatitude(double latitude) {
-    //     this.latitude = latitude;
-    // }
 
 }

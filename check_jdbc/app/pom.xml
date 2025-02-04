@@ -28,6 +28,11 @@
             <artifactId>jext.commons</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>ae.ac.ebtic</groupId>
+            <artifactId>ebtic.jdbc-proxy</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>

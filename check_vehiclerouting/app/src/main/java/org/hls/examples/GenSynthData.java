@@ -1,5 +1,16 @@
 package org.hls.examples;
 
+import jext.jgrapht.Graphs;
+import jext.jgrapht.edges.UndirectedEdge;
+import jext.jgrapht.edges.WeightedUndirectedEdge;
+import jext.jgrapht.nio.adjacent.EdgesGraphExporter;
+import jext.jgrapht.nio.json.JSONGraphExporter;
+import org.delaunay.algorithm.Triangulation;
+import org.delaunay.model.Triangle;
+import org.delaunay.model.Vertex;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.nio.GraphExporter;
 import org.locationtech.spatial4j.context.SpatialContext;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContextFactory;
@@ -16,8 +27,10 @@ import java.io.FileWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class GenSynthData {
 
@@ -97,24 +110,72 @@ public class GenSynthData {
         return locations;
     }
 
+    private static void generateGraph(Location[] locations, double masDistance) throws Triangulation.InvalidVertexException {
+        Triangulation t = new Triangulation();
+        for (Location l : locations) {
+            t.addVertex(l.id(), l.x(), l.y());
+        }
+
+        t.triangulate();
+
+        Graph<Integer, WeightedUndirectedEdge> graph = Graphs.newGraph(Integer.class, WeightedUndirectedEdge.class);
+
+        Edge e;
+        for (Triangle tri : t.getTriangles()) {
+            List<Vertex> vertices = tri.getVertices().stream().toList();
+
+            Vertex v1 = vertices.get(0);
+            Vertex v2 = vertices.get(1);
+            Vertex v3 = vertices.get(2);
+
+            Location l1 = locations[v1.getVertexIndex()];
+            Location l2 = locations[v2.getVertexIndex()];
+            Location l3 = locations[v3.getVertexIndex()];
+
+            add(graph, l1, l2, masDistance);
+            add(graph, l2, l3, masDistance);
+            add(graph, l3, l1, masDistance);
+        }
+
+        new JSONGraphExporter<Integer, WeightedUndirectedEdge>()
+            .exportGraph(graph, new File("uae-graph.json"));
+
+        new EdgesGraphExporter<Integer, WeightedUndirectedEdge>()
+            .exportGraph(graph, new File("uae-graph.csv"));
+    }
+
+    private static void add(Graph<Integer, WeightedUndirectedEdge> graph, Location l1, Location l2, double masDistance) {
+        double distance = l1.distance(l2);
+        if (distance == 0 || distance > masDistance)
+            return;
+
+        Graphs.addEdgeWithVertices(graph, l1.id(), l2.id(), distance);
+    }
+
     private static void generateLocationsToVisit(int nLocationsToVisit, Location[] locations) throws Exception {
         System.out.println("... generateLocationsToVisit");
 
+        int i=0;
         int[] toVisit = new int[nLocationsToVisit];
+        Set<Integer> toVisitSet = new HashSet<>();
         int nLocations = locations.length;
 
-        for (int i=0; i<nLocationsToVisit; ++i)
-            toVisit[i] = rnd.nextInt(nLocations);
+        while (toVisitSet.size() < nLocationsToVisit)
+            toVisitSet.add(rnd.nextInt(nLocations));
+
+        i=0;
+        for(Integer lid : toVisitSet)
+            toVisit[i++] = lid;
 
         // Arrays.sort(toVisit);
 
         try(Writer wrt = new FileWriter("locations_to_visit.csv")) {
             wrt.write(String.format("id,longitude,latitude\n"));
 
-            for(int i=0; i<nLocationsToVisit; ++i) {
+            for(i=0; i<nLocationsToVisit; ++i) {
                 int lid = toVisit[i];
                 Location l = locations[lid];
-                wrt.write(String.format("%d,%f,%f\n", lid,l.getX(), l.getY()));
+                wrt.write(String.format("%d,%f,%f\n", lid,l.x(), l.y()));
             }
         }
     }
@@ -138,7 +199,7 @@ public class GenSynthData {
 
             for(int i=0; i<nCenters; ++i) {
                 Location l = centers[i];
-                wrt.write(String.format("%d,%f,%f\n", l.getId(),l.getX(), l.getY()));
+                wrt.write(String.format("%d,%f,%f\n", l.id(),l.x(), l.y()));
             }
         }
 
@@ -160,7 +221,7 @@ public class GenSynthData {
             for(int i=0; i<nVehicles; ++i) {
                 int cid = vehicles[i];
                 Location l = centers[cid];
-                wrt.write(String.format("%d,%d,%f,%f\n", i, l.getId(),l.getX(),l.getY()));
+                wrt.write(String.format("%d,%d,%f,%f\n", i, l.id(),l.x(),l.y()));
             }
         }
     }
@@ -177,6 +238,7 @@ public class GenSynthData {
 
         Shape UAE = loadUAE();
         Location[] locations = generateLocations(UAE, N_LOCATIONS);
+        generateGraph(locations, 10);
         generateLocationsToVisit(N_LOCATIONS_TO_VISIT, locations);
         Location[] centers = generateCenters(N_CENTERS, locations);
         generateVehicles(N_VEHICLES, centers);

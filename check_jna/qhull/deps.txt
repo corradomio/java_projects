@@ -1,0 +1,7 @@
+
+http://www.qhull.org/download/
+
+http://www.qhull.org/html/index.htm
+
+https://github.com/qhull/qhull/wiki
+

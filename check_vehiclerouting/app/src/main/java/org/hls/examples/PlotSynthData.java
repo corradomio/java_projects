@@ -1,5 +1,7 @@
 package org.hls.examples;
 
+import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.columns.Column;
 import tech.tablesaw.plotly.Plot;
 import tech.tablesaw.plotly.components.Axis;
 import tech.tablesaw.plotly.components.Figure;
@@ -9,6 +11,7 @@ import tech.tablesaw.plotly.components.Marker;
 import tech.tablesaw.plotly.traces.ScatterTrace;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlotSynthData {
@@ -19,10 +22,11 @@ public class PlotSynthData {
         List<Location> centers = Location.load(new File("centers.csv"));
         List<Vehicle> vehicles = Vehicle.load(new File("vehicles.csv"));
 
-        PlanarGraph pg = PlanarGraph.of(locations);
+        PlanarGraph pg = PlanarGraph.of(locations, 10);
         List<Edge> edges = pg.getEdges();
 
-        Distance d = Distance.distanceMatrix(locations);
+        // -------------------------------------------------
+        // Plotly
 
         double[][] lxy = Coords.getCoords(locations);
         double[] lx = lxy[0];
@@ -32,17 +36,18 @@ public class PlotSynthData {
         double[] tx = txy[0];
         double[] ty = txy[1];
 
-        double[][] vxy = Coords.getCoords(centers);
+        double[][] cxy = Coords.getCoords(centers);
+        double[] cx = cxy[0];
+        double[] cy = cxy[1];
+
+        double[][] vxy = Coords.getCoords(vehicles);
         double[] vx = vxy[0];
         double[] vy = vxy[1];
 
-        double[][] exy = Coords.getEdgeCoords(edges);
-        double[] ex = exy[0];
-        double[] ey = exy[1];
+        Double[][] exy = Coords.getEdgesCoords(edges);
+        Column<Double> ex = DoubleColumn.create("x", exy[0]);
+        Column<Double> ey = DoubleColumn.create("x", exy[1]);
 
-
-        // -------------------------------------------------
-        // Plotly
 
         // locations
         ScatterTrace ltrace =
@@ -92,18 +97,36 @@ public class PlotSynthData {
                         // .colorScale(Marker.Palette.BLUE_RED)
                         // .symbol(Symbol.DIAMOND_TALL)
                         .build())
+                .name(String.format("vehicles (%d)", vehicles.size()))
+                .build();
+
+        // centers
+        ScatterTrace ctrace =
+            ScatterTrace.builder(vx, vy)
+                .mode(ScatterTrace.Mode.MARKERS)
+                .marker(
+                    Marker.builder()
+                        // .size(size)
+                        .size(4)
+                        // .showScale(true)
+                        // .color(y)
+                        .color("orange")
+                        // .colorScale(Marker.Palette.BLUE_RED)
+                        // .symbol(Symbol.DIAMOND_TALL)
+                        .build())
                 .name(String.format("centers (%d)", centers.size()))
                 .build();
 
         // graph
         ScatterTrace graph = ScatterTrace.builder(ex, ey)
             .mode(ScatterTrace.Mode.LINE)
-            .name("roads")
+            .name(String.format("roads (%d)", exy.length/2))
             .marker(Marker.builder()
                 .line(Line.builder()
                     .width(1)
                     .build())
-                .color("AliceBlue")
+                // .color("aliceblue")
+                .color("gray")
                 .build())
             .build();
 
@@ -111,14 +134,17 @@ public class PlotSynthData {
             .title("UAE Locations and centers")
             .xAxis(Axis.builder().title("Longitude").build())
             .yAxis(Axis.builder().title("Latitude").build())
-            .width(700).height(600)
+            .width((int)(700*1.3)).height((int)(600*1.3))
             .build();
 
         Plot.show(Figure.builder()
-            .addTraces(graph)
-            .addTraces(ltrace)
-            .addTraces(ttrace)
-            .addTraces(vtrace)
+            .addTraces(
+                graph,
+                ltrace,
+                // ttrace,
+                vtrace
+                // ctrace
+            )
             .layout(layout).build(),
             "plot"
         );

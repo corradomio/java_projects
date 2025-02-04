@@ -1,0 +1,29 @@
+JFDML JFormDesigner: "8.2.4.0.393" Java: "21.0.5" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq l {space :0:0:p, comp tabbedPane1:::::x, space :0:0:p}}"
+			"$verticalGroup": "par l {seq l {space :0:0:p, comp tabbedPane1:::::x, space :0:0:p}}"
+		} ) {
+			name: "this"
+			"componentOrientation": sfield java.awt.ComponentOrientation LEFT_TO_RIGHT
+			"preferredSize": new java.awt.Dimension( 900, 700 )
+			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+				name: "tabbedPane1"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {space :0:883:x}"
+					"$verticalGroup": "par l {space :0:512:x}"
+				} ) {
+					name: "panel1"
+				}, new FormLayoutConstraints( null ) {
+					"title": "Panel1"
+				} )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 885, 575 )
+		} )
+	}
+}

@@ -32,6 +32,21 @@ Graph & Edge
     identificabile. SE non si reimplementa 'Object::equals(Object)' il confronto viene fatto
     in base all'indirizzo di memoria.
 
+    Il vertexSuppier e' usato con
+
+        V v = AbstractBaseGraph::addVertex()
+
+    L'edgeSupplier e' usato con
+
+        E e = AbstractBaseGraph::addEdge(V, V)
+
+    Il meccanismo usato e' il seguente:
+
+        addEgde(V u, V v)
+            E e = this.edgeSupplier.get()
+            this.addEdge(u, v, e)
+
+
         -- Vertices ---------------------------------------------------------
 
         Set<V> vertexSet();
@@ -82,11 +97,11 @@ Edge Hierarchy
     IntrusiveEdge                       (fields: source, target)
         DefaultEdge                         (methods: getSource(),getTarget())
             DirectedEdge                jext.jgrapht
-            Edge                        jext.jgrapht
+            UndirectedEdge              jext.jgrapht
         IntrusiveWeightedEdge           (fields: + weight)
             DefaultWeightedEdge             (methods: + getWeight())
                 WeightedDirectedEdge    jext.jgrapht
-                WeightedEdge            jext.jgrapht
+                WeightedUndirectedEdge  jext.jgrapht
 
     Edge<V>,
     Directed,

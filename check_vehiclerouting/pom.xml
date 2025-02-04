@@ -12,7 +12,11 @@
     <modules>
         <module>../jext.geometry</module>
         <module>../jext.jgrapht_v2</module>
+        <module>../jext.concurrent</module>
+        <module>../jext.commons</module>
+        <module>../jext.collections</module>
         <module>app</module>
+        <module>tsp</module>
     </modules>
 
     <properties>

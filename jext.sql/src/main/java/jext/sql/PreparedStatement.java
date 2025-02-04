@@ -11,10 +11,10 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.util.Calendar;
 
-public interface PreparedStatement extends jext.sql.Statement, java.sql.PreparedStatement {
+public interface PreparedStatement extends Statement, java.sql.PreparedStatement {
 
     // DON'T REMOVE
-    jext.sql.ResultSet executeQuery() throws SQLException;
+    ResultSet executeQuery() throws SQLException;
 
     void setNull(String parameterName, int sqlType) throws SQLException;
     void setBoolean(String parameterName, boolean x) throws SQLException;
@@ -30,15 +30,15 @@ public interface PreparedStatement extends jext.sql.Statement, java.sql.Prepared
     void setDate(String parameterName, java.sql.Date x) throws SQLException;
     void setTime(String parameterName, java.sql.Time x) throws SQLException;
     void setTimestamp(String parameterName, java.sql.Timestamp x) throws SQLException;
-    void setAsciiStream(String parameterName, java.io.InputStream x, int length) throws SQLException;
-    void setBinaryStream(String parameterName, java.io.InputStream x, int length) throws SQLException;
+    void setAsciiStream(String parameterName, InputStream x, int length) throws SQLException;
+    void setBinaryStream(String parameterName, InputStream x, int length) throws SQLException;
 
     //----------------------------------------------------------------------
     // Advanced features:
 
     void setObject(String parameterName, Object x, int targetSqlType) throws SQLException;
     void setObject(String parameterName, Object x) throws SQLException;
-    void setCharacterStream(String parameterName, java.io.Reader reader, int length) throws SQLException;
+    void setCharacterStream(String parameterName, Reader reader, int length) throws SQLException;
     // void setRef (String parameterName, Ref x) throws SQLException;
     void setBlob (String parameterName, Blob x) throws SQLException;
     void setClob (String parameterName, Clob x) throws SQLException;
@@ -60,12 +60,12 @@ public interface PreparedStatement extends jext.sql.Statement, java.sql.Prepared
     void setNClob(String parameterName, Reader reader, long length) throws SQLException;
     void setSQLXML(String parameterName, SQLXML xmlObject) throws SQLException;
     void setObject(String parameterName, Object x, int targetSqlType, int scaleOrLength) throws SQLException;
-    void setAsciiStream(String parameterName, java.io.InputStream x, long length) throws SQLException;
-    void setBinaryStream(String parameterName, java.io.InputStream x, long length) throws SQLException;
-    void setCharacterStream(String parameterName, java.io.Reader reader, long length) throws SQLException;
-    void setAsciiStream(String parameterName, java.io.InputStream x) throws SQLException;
-    void setBinaryStream(String parameterName, java.io.InputStream x) throws SQLException;
-    void setCharacterStream(String parameterName, java.io.Reader reader) throws SQLException;
+    void setAsciiStream(String parameterName, InputStream x, long length) throws SQLException;
+    void setBinaryStream(String parameterName, InputStream x, long length) throws SQLException;
+    void setCharacterStream(String parameterName, Reader reader, long length) throws SQLException;
+    void setAsciiStream(String parameterName, InputStream x) throws SQLException;
+    void setBinaryStream(String parameterName, InputStream x) throws SQLException;
+    void setCharacterStream(String parameterName, Reader reader) throws SQLException;
     void setNCharacterStream(String parameterName, Reader value) throws SQLException;
     void setClob(String parameterName, Reader reader) throws SQLException;
     void setBlob(String parameterName, InputStream inputStream) throws SQLException;

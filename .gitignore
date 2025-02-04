@@ -16,3 +16,4 @@ dll
 *.gz
 *.bak
 .spl
+lwjgl

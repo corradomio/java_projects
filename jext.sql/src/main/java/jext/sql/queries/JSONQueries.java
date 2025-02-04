@@ -1,6 +1,7 @@
 package jext.sql.queries;
 
-import jext.sql.SQLException;
+import jext.sql.Connection;
+import java.sql.SQLException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -157,12 +158,19 @@ public class JSONQueries implements NamedQueries {
 
         NamedQuery query = queries.getOrDefault(qname, null);
         if (query == null)
-            throw SQLException.of("Unknown named query", name, Collections.emptyMap());
+            throw jext.sql.SQLException.of("Unknown named query", name, Collections.emptyMap());
         return query;
     }
 
     public Iterator<NamedQuery> iterator() {
         return queries.values().iterator();
+    }
+
+    public void registerTo(Connection c) throws SQLException {
+        for(NamedQuery q : queries.values()) {
+            c.registerNamedQuery(q.name, q.statement);
+            c.registerNamedQuery(q.id, q.statement);
+        }
     }
 
     // ----------------------------------------------------------------------

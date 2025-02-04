@@ -1,6 +1,7 @@
 package org.hls.examples;
 
 import com.opencsv.bean.CsvToBeanBuilder;
+import org.hls.examples.utils.LatLonUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,37 +29,52 @@ public class Location extends Coords {
     // Fields
     // ----------------------------------------------------------------------
 
-    private int id;
+    public final int id;
 
     // ----------------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------------
 
     public Location() {
-
+        super();
+        this.id = 0;
     }
 
     public Location(int id, double longitude, double latitude) {
+        super(longitude, latitude);
         this.id = id;
-        this.longitude = longitude;
-        this.latitude = latitude;
     }
 
     // ----------------------------------------------------------------------
     // Properties
     // ----------------------------------------------------------------------
 
-    public int getId() {
+    public int id() {
         return id;
     }
 
-    // public void setId(int id) {
-    //     this.id = id;
-    // }
+    // public double longitude() { return longitude; }
+    // public double latitude() { return latitude; }
 
-    public double getLongitude() { return longitude; }
-    public double getLatitude() { return latitude; }
+    public double x() { return longitude; }
+    public double y() { return latitude; }
 
-    public double getX() { return longitude; }
-    public double getY() { return latitude; }
+    public double distance(Location other) {
+        return LatLonUtils.distance(this.latitude, this.longitude, other.latitude, other.longitude);
+    }
+
+    // ----------------------------------------------------------------------
+    // Properties
+    // ----------------------------------------------------------------------
+
+    @Override
+    public int hashCode() {
+        return this.id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Location that = (Location) obj;
+        return this.id == that.id;
+    }
 }

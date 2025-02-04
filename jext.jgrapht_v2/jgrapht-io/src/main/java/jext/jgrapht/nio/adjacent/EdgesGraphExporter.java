@@ -1,8 +1,10 @@
 package jext.jgrapht.nio.adjacent;
 
+import jext.jgrapht.nio.BaseExporter;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphExporter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.function.Function;
@@ -24,7 +26,7 @@ import java.util.function.Function;
  * @param <V>
  * @param <E>
  */
-public class EdgesGraphExporter<V, E> implements GraphExporter<V, E> {
+public class EdgesGraphExporter<V, E> extends BaseExporter<V, E> {
     private String header;
     private String separator = " ";
     private Function<V, String> vtoString = Object::toString;
@@ -94,4 +96,5 @@ public class EdgesGraphExporter<V, E> implements GraphExporter<V, E> {
         }
 
     }
+
 }
