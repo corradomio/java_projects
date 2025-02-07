@@ -74,26 +74,26 @@ public class JSONUtils {
     // ----------------------------------------------------------------------
     // write
 
-    public static <T> void store(File jsonFile, T item) throws IOException {
-        save(jsonFile, item);
-    }
+    // public static <T> void store(File jsonFile, T item) throws IOException {
+    //     save(jsonFile, item);
+    // }
 
-    public static <T> void save(File jsonFile, T item) {
-        try {
-            ObjectMapper mapper = newObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            mapper.writeValue(jsonFile, item);
-        }
-        catch (IOException e) {
-            //logger.errorf("Unable to write file %s: %s", jsonFile, e);
-        }
-    }
+    // public static <T> void save(File jsonFile, T item) {
+    //     try {
+    //         ObjectMapper mapper = newObjectMapper();
+    //         mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    //         mapper.writeValue(jsonFile, item);
+    //     }
+    //     catch (IOException e) {
+    //         //logger.errorf("Unable to write file %s: %s", jsonFile, e);
+    //     }
+    // }
 
-    public static <T> void save(Writer writer, T item) throws IOException {
-        ObjectMapper mapper = newObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.writeValue(writer, item);
-    }
+    // public static <T> void save(Writer writer, T data) throws IOException {
+    //     ObjectMapper mapper = newObjectMapper();
+    //     mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    //     mapper.writeValue(writer, data);
+    // }
 
     public static <T> String serialize(T data) {
         ObjectMapper mapper = newObjectMapper();
@@ -103,6 +103,12 @@ public class JSONUtils {
             //logger.error(e, e);
             return "{}";
         }
+    }
+
+    public static <T> void serialize(Writer writer, T data) throws IOException {
+        ObjectMapper mapper = newObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.writeValue(writer, data);
     }
 
     private static ObjectMapper newObjectMapper() {

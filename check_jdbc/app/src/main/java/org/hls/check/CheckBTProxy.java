@@ -1,5 +1,6 @@
 package org.hls.check;
 
+import ae.ac.ebtic.sql.bt.btproxy.BTResultSet;
 import jext.sql.DriverManager;
 
 import jext.sql.Connection;
@@ -15,6 +16,39 @@ import java.util.Map;
 public class CheckBTProxy {
 
     public static void main(String[] args) throws Exception {
+        Class.forName("ae.ac.ebtic.sql.bt.btproxy.Driver");
+
+
+        PreparedStatement statement;
+        Connection connection = DriverManager.getConnection("jdbc:btproxy://localhost:9002/spare-dimensioning-server", "ciccio", "pasticcio");
+
+        Map<String, Object> queries = JSONUtils.load(new File("sparemanagement-queries.json"));
+        NamedQueries jq = JSONQueries.of(queries);
+        jq.registerTo(connection);
+
+
+        statement = connection.prepareStatement("select_fields");
+        // statement.setString(1, "Exp_5_items");
+
+        BTResultSet dataSet = (BTResultSet) statement.executeQuery();
+
+        // dataSet.serialize(System.out);
+        dataSet.next();
+
+        System.out.println(dataSet.getDate("d"));
+        System.out.println(dataSet.getTime("t"));
+        System.out.println(dataSet.getTimestamp("dt"));
+
+        System.out.println(dataSet.getTimestamp("d"));
+        System.out.println(dataSet.getTimestamp("t"));
+
+        System.out.println(dataSet.getTime("d"));
+        System.out.println(dataSet.getTime("dt"));
+
+    }
+
+
+    public static void main3(String[] args) throws Exception {
         Class.forName("ae.ac.ebtic.sql.bt.btproxy.Driver");
 
         ResultSet dataSet;

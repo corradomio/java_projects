@@ -15,25 +15,30 @@ package ae.ac.ebtic.sql.bt.btproxy;
 
 import jext.sql.base.BaseResultSet;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class BTResultSet extends BaseResultSet {
-    private final Map<String, Object> resultSet;
+    private final Map<String, Object> response;
     private final int rowCount;
+
     private List<Map<String, Object>> rows;
     private int currIndex;
     private Map<String, Object> currRow;
     private List<String> columns;
 
-    BTResultSet(Map<String, Object> resultSet) {
-        this.resultSet = resultSet;
-        this.rowCount = MapUtils.getInt(resultSet, "results", "rowCount");
-        this.rows = MapUtils.get(resultSet, "results", "rows");
+    BTResultSet(Map<String, Object> response) {
+        this.response = response;
+        this.rowCount = MapUtils.getInt(response, "results", "rowCount");
+        this.rows = MapUtils.get(response, "results", "rows");
         this.currIndex = 0;
         this.currRow = null;
     }
@@ -62,14 +67,34 @@ public class BTResultSet extends BaseResultSet {
 
     // ----------------------------------------------------------------------
 
-    private void checkColumn(int columnIndex) throws java.sql.SQLException {
-        if (columnIndex > columns.size() || columnIndex < 1)
-            throw jext.sql.SQLException.of(String.format("The column index is out of range: 33, number of columns: 1.", currRow.size(), columnIndex));
+    public Map<String, Object> response() {
+        return response;
     }
 
-    private void checkColumn(String columName) throws java.sql.SQLException {
+    public void serialize(Writer writer) throws IOException {
+        JSONUtils.serialize(writer, response);
+    }
+
+    public void serialize(OutputStream ostream) throws IOException {
+        JSONUtils.serialize(new OutputStreamWriter(ostream), response);
+    }
+
+    // ----------------------------------------------------------------------
+
+    private void checkColumn(int columnIndex) throws SQLException {
+        if (columns == null)
+            throw new jext.sql.SQLException("ResultSet not positioned properly, perhaps you need to call next.");
+        if (columnIndex > columns.size() || columnIndex < 1)
+            throw new jext.sql.SQLException(String.format("The column index is out of range: %d, number of columns: %d.",
+                currRow.size(), columnIndex));
+    }
+
+    private void checkColumn(String columName) throws SQLException {
+        if (currRow == null)
+            throw new jext.sql.SQLException("ResultSet not positioned properly, perhaps you need to call next.");
         if (!currRow.containsKey(columName))
-            throw jext.sql.SQLException.of(String.format("The column name %s name was not found in this ResultSet.", columName));
+            throw new jext.sql.SQLException(String.format("The column name %s name was not found in this ResultSet.",
+                columName));
     }
 
     // ----------------------------------------------------------------------
@@ -103,12 +128,12 @@ public class BTResultSet extends BaseResultSet {
         if (value == null)
             return false;
         if (value instanceof Boolean)
-            return ((Boolean)value).booleanValue();
+            return (Boolean) value;
         if (value instanceof Number)
             return ((Number)value).doubleValue() != 0;
         if (value instanceof String)
             return "true".equals(value.toString());
-        throw jext.sql.SQLException.of(String.format("Unsupported boolean value %s", value));
+        throw new jext.sql.SQLException(String.format("Unsupported boolean value %s", value));
     }
 
     // -- int
@@ -128,8 +153,8 @@ public class BTResultSet extends BaseResultSet {
         if (value instanceof Number)
             return ((Number)value).intValue();
         if (value instanceof String)
-            return Integer.valueOf((String) value);
-        throw jext.sql.SQLException.of(String.format("Unsupported integer value %s", value));
+            return Integer.parseInt((String) value);
+        throw new jext.sql.SQLException(String.format("Unsupported integer value %s", value));
     }
 
     // -- long
@@ -149,8 +174,8 @@ public class BTResultSet extends BaseResultSet {
         if (value instanceof Number)
             return ((Number)value).longValue();
         if (value instanceof String)
-            return Long.valueOf((String) value);
-        throw jext.sql.SQLException.of(String.format("Unsupported integer value %s", value));
+            return Long.parseLong((String) value);
+        throw new jext.sql.SQLException(String.format("Unsupported integer value %s", value));
     }
 
     // -- float
@@ -170,8 +195,8 @@ public class BTResultSet extends BaseResultSet {
         if (value instanceof Number)
             return ((Number)value).floatValue();
         if (value instanceof String)
-            return Float.valueOf((String) value);
-        throw jext.sql.SQLException.of(String.format("Unsupported float value %s", value));
+            return Float.parseFloat((String) value);
+        throw new jext.sql.SQLException(String.format("Unsupported float value %s", value));
     }
 
     // -- double
@@ -191,8 +216,69 @@ public class BTResultSet extends BaseResultSet {
         if (value instanceof Number)
             return ((Number)value).doubleValue();
         if (value instanceof String)
-            return Double.valueOf((String) value);
-        throw jext.sql.SQLException.of(String.format("Unsupported double value %s", value));
+            return Double.parseDouble((String) value);
+        throw new jext.sql.SQLException(String.format("Unsupported double value %s", value));
     }
+
+    // -- Date
+
+    @Override
+    public Date getDate(int columIndex) throws SQLException {
+        checkColumn(columIndex);
+        return getDate(columns.get(columIndex-1));
+    }
+
+    @Override
+    public Date getDate(String columnName) throws SQLException {
+        checkColumn(columnName);
+        Object value = currRow.get(columnName);
+        if (value == null)
+            return null;
+        else if (value instanceof String)
+            return new Date(ISO8601DateFormat.parse((String)value).getTime());
+        else
+            throw new UnsupportedOperationException("Unsupported date type " + value.getClass());
+    }
+
+    // -- Time
+
+    @Override
+    public Time getTime(int columIndex) throws SQLException {
+        checkColumn(columIndex);
+        return getTime(columns.get(columIndex-1));
+    }
+
+    @Override
+    public Time getTime(String columnName) throws SQLException {
+        checkColumn(columnName);
+        Object value = currRow.get(columnName);
+        if (value == null)
+            return null;
+        else if (value instanceof String)
+            return new Time(ISO8601DateFormat.parse((String)value).getTime());
+        else
+            throw new UnsupportedOperationException("Unsupported date type " + value.getClass());
+    }
+
+    // -- Timestamp
+
+    @Override
+    public Timestamp getTimestamp(int columIndex) throws SQLException {
+        checkColumn(columIndex);
+        return getTimestamp(columns.get(columIndex-1));
+    }
+
+    @Override
+    public Timestamp getTimestamp(String columnName) throws SQLException {
+        checkColumn(columnName);
+        Object value = currRow.get(columnName);
+        if (value == null)
+            return null;
+        else if (value instanceof String)
+            return new Timestamp(ISO8601DateFormat.parse((String)value).getTime());
+        else
+            throw new UnsupportedOperationException("Unsupported date type " + value.getClass());
+    }
+
 
 }

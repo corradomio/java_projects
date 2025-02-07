@@ -32,6 +32,7 @@ public class CheckJDBC {
 
             PreparedStatement ps = c.prepareStatement("test");
             ResultSet rset = ps.executeQuery();
+            System.out.println(rset.getString(1));
 
             while (rset.next()) {
                 System.out.println(rset.getString(1));

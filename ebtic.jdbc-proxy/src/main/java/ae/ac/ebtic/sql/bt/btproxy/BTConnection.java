@@ -41,7 +41,7 @@ public class BTConnection extends BaseConnection {
     @Override
     public void registerNamedQuery(String name, String statement) throws SQLException {
         if (queries.containsKey(name))
-            throw jext.sql.SQLException.of("Duplicated named query", name);
+            throw new jext.sql.SQLException("Duplicated named query", name);
 
         this.queries.put(name, statement);
     }
@@ -76,7 +76,7 @@ public class BTConnection extends BaseConnection {
         String statement = this.queries.get(name);
         int spos = statement.indexOf(' ');
         int npos = statement.indexOf('\n');
-        int pos = java.lang.Math.max(spos, npos);
+        int pos = Math.max(spos, npos);
         if (spos > 0 && spos < pos) pos = spos;
         if (npos > 0 && npos < pos) pos = npos;
 

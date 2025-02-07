@@ -66,7 +66,7 @@ public class ConnectionEx implements Connection {
 
     // ----------------------------------------------------------------------
 
-    private String resolveNamedQuery(String sqlx) {
+    String resolveNamedQuery(String sqlx) {
         return queries.getOrDefault(sqlx, sqlx);
     }
 
@@ -406,17 +406,9 @@ public class ConnectionEx implements Connection {
 
     public void registerNamedQuery(String name, String statement) throws SQLException {
         if (queries.containsKey(name))
-            throw jext.sql.SQLException.of("Duplicated named query", name);
+            throw new jext.sql.SQLException("Duplicated named query", name);
 
         this.queries.put(name, statement);
-    }
-
-    public PreparedStatement namedStatement(String name) throws SQLException {
-        if (!this.queries.containsKey(name))
-            throw jext.sql.SQLException.of("Unknown named query", name);
-
-        String sqlx = this.queries.get(name);
-        return prepareStatement(sqlx);
     }
 
     // ----------------------------------------------------------------------

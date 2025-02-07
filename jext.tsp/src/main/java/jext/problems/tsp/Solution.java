@@ -5,14 +5,12 @@ package jext.problems.tsp;
  *
  */
 public class Solution {
-    public final double[][] distances;
+    public final Distances distances;
     public final int[] tour;
-    public final int size;
 
-    public Solution(double[][] distances, int[] tour) {
+    public Solution(Distances distances, int[] tour) {
         this.distances = distances;
         this.tour = tour;
-        this.size = tour.length;
     }
 
     /**
@@ -23,7 +21,7 @@ public class Solution {
     }
 
     /**
-     * Total distance. It is not included the distance from the last point to the first one
+     * Total distance. It is included the distance from the last point to the first one
      * @return total distance
      */
     public double length() {
@@ -36,9 +34,10 @@ public class Solution {
      * @return total distance
      */
     public double length(boolean closed) {
-        double length = closed ? distances[0][size-1] : 0;
-        for(int i = 0, j=1; j < distances.length; i++, j++)
-            length += distances[i][j];
+        int n = tour.length;
+        double length = closed ? distances.distance(tour[n-1], tour[0]) : 0;
+        for(int j=1; j < n; j++)
+            length += distances.distance(tour[j-1], tour[j]);
         return length;
     }
 

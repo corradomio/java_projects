@@ -158,7 +158,7 @@ public class JSONQueries implements NamedQueries {
 
         NamedQuery query = queries.getOrDefault(qname, null);
         if (query == null)
-            throw jext.sql.SQLException.of("Unknown named query", name, Collections.emptyMap());
+            throw new jext.sql.SQLException("Unknown named query", name);
         return query;
     }
 

@@ -18,6 +18,22 @@
 
                 ]
             },
+
+            {
+                "query_id": "select_fields",
+                "query_type": "SELECT",
+                "statement": [
+                    "SELECT * FROM test_proxy"
+                ],
+                "description": "Test different field types",
+                "structure_parameters": [
+
+                ],
+                "query_parameters": [
+
+                ]
+            },
+
             {
                 "query_id": "check_database",
                 "query_type": "SELECT",

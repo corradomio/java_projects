@@ -80,11 +80,11 @@ public class Driver  implements java.sql.Driver {
             jresponse = JSONUtils.parse(response.getEntity().getContent(), LinkedHashMap.class);
         }
         catch (Exception e) {
-            throw jext.sql.SQLException.of("Connection failed", e.getMessage());
+            throw new jext.sql.SQLException("Connection failed", e.getMessage());
         }
 
         if (statusLine.getStatusCode() >= 400) {
-            throw jext.sql.SQLException.of("Connection failed", statusLine.getReasonPhrase());
+            throw new jext.sql.SQLException("Connection failed", statusLine.getReasonPhrase());
         }
 
         String token = MapUtils.get(jresponse, "token");

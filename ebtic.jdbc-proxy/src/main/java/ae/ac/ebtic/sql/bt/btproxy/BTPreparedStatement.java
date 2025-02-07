@@ -7,7 +7,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -20,13 +19,15 @@ import static ae.ac.ebtic.sql.bt.btproxy.Driver.QUERY_SUFFIX;
 
 public class BTPreparedStatement extends BaseStatement {
 
-    private String name;
-    private String token;
-    private String httpUrl;
-    private HttpClient client;
-    private BTConnection conn;
-    private ArrayList<String> stmtParams = new ArrayList<>();
-    private ArrayList<Object> queryParams = new ArrayList<>();
+    private final String name;
+    private final String token;
+    private final String httpUrl;
+    private final HttpClient client;
+    private final BTConnection conn;
+
+    private final ArrayList<String> stmtParams = new ArrayList<>();
+    private final ArrayList<Object> queryParams = new ArrayList<>();
+    private final ArrayList<Integer> batchResults = new ArrayList<>();
 
     // ----------------------------------------------------------------------
 
@@ -44,97 +45,140 @@ public class BTPreparedStatement extends BaseStatement {
     }
 
     // ----------------------------------------------------------------------
-
-    // @Override
-    // public void setStatementParameter(int index, String value) {
-    //     // index starts from 1
-    //     stmtParams.set(index-1, value);
-    // }
-
-    // ----------------------------------------------------------------------
-
-    @Override
-    public void setNull(int parameterIndex, int sqlType) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, null);
-    }
-
-    @Override
-    public void setBoolean(int parameterIndex, boolean x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
-
-    @Override
-    public void setByte(int parameterIndex, byte x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
-
-    @Override
-    public void setShort(int parameterIndex, short x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
-
-    @Override
-    public void setInt(int parameterIndex, int x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
-
-    @Override
-    public void setLong(int parameterIndex, long x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
-
-    @Override
-    public void setFloat(int parameterIndex, float x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
-
-    @Override
-    public void setDouble(int parameterIndex, double x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
-
-    @Override
-    public void setBigDecimal(int parameterIndex, BigDecimal x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
-    }
+    // Special case
 
     @Override
     public void setString(int parameterIndex, String x) {
         if (parameterIndex < 0)
-            ArrayUtils.set(stmtParams, -parameterIndex-1, x);
+            set(stmtParams, -parameterIndex-1, x);
         else
-            ArrayUtils.set(queryParams, parameterIndex-1, x);
+            set(queryParams, parameterIndex-1, x);
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void setNull(int parameterIndex, int sqlType) {
+        set(queryParams, parameterIndex-1, null);
     }
 
     @Override
-    public void setDate(int parameterIndex, Date x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
+    public void setBoolean(int parameterIndex, boolean x) {
+        set(queryParams, parameterIndex-1, x);
     }
 
     @Override
-    public void setTime(int parameterIndex, Time x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
+    public void setByte(int parameterIndex, byte x) {
+        set(queryParams, parameterIndex-1, x);
     }
 
     @Override
-    public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
+    public void setShort(int parameterIndex, short x) {
+        set(queryParams, parameterIndex-1, x);
     }
 
     @Override
-    public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
+    public void setInt(int parameterIndex, int x) {
+        set(queryParams, parameterIndex-1, x);
     }
 
     @Override
-    public void setObject(int parameterIndex, Object x) throws SQLException {
-        ArrayUtils.set(queryParams, parameterIndex-1, x);
+    public void setLong(int parameterIndex, long x) {
+        set(queryParams, parameterIndex-1, x);
     }
 
     @Override
-    public void clearParameters() throws SQLException {
+    public void setFloat(int parameterIndex, float x) {
+        set(queryParams, parameterIndex-1, x);
+    }
+
+    @Override
+    public void setDouble(int parameterIndex, double x) {
+        set(queryParams, parameterIndex-1, x);
+    }
+
+    @Override
+    public void setDate(int parameterIndex, Date x) {
+        set(queryParams, parameterIndex-1, ISO8601DateFormat.formatDate(x));
+    }
+
+    @Override
+    public void setTime(int parameterIndex, Time x) {
+        set(queryParams, parameterIndex-1, ISO8601DateFormat.formatTime(x));
+    }
+
+    @Override
+    public void setTimestamp(int parameterIndex, Timestamp x) {
+        set(queryParams, parameterIndex-1, ISO8601DateFormat.formatTimestamp(x));
+    }
+
+    @Override
+    public void setObject(int parameterIndex, Object x, int targetSqlType) {
+        // set(queryParams, parameterIndex-1, ISO8601DateFormat.format(x));
+        setObject(parameterIndex, x);
+    }
+
+    @Override
+    public void setObject(int parameterIndex, Object x) {
+        if (x instanceof Time)
+            // java.sql.'Time: HH:mm:ss'
+            set(queryParams, parameterIndex-1, ISO8601DateFormat.formatTime((java.util.Date)x));
+        else if (x instanceof Date)
+            // java.sql.Date
+            // java.sql.Timestamp
+            set(queryParams, parameterIndex-1, ISO8601DateFormat.formatDate((java.util.Date)x));
+        else if (x instanceof Timestamp)
+            // java.sql.Date
+            // java.sql.Timestamp
+            set(queryParams, parameterIndex-1, ISO8601DateFormat.formatTimestamp((java.util.Date)x));
+        else
+            set(queryParams, parameterIndex-1, x);
+    }
+
+    // ----------------------------------------------------------------------
+    // Batch support
+    // ----------------------------------------------------------------------
+    // For now, the batch is implemented as multiple statements
+
+    @Override
+    public void addBatch() throws SQLException {
+        int ret = executeUpdate();
+        batchResults.add(ret);
+    }
+
+    @Override
+    public int[] executeBatch() {
+        int j = 0;
+        int[] ret = new int[batchResults.size()];
+        for(int br : batchResults)
+            ret[j++] = br;
+        batchResults.clear();
+        return ret;
+    }
+
+    @Override
+    public void clearBatch() {
+        batchResults.clear();
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public void clearParameters() {
         stmtParams.clear();
         queryParams.clear();
+    }
+
+    // ----------------------------------------------------------------------
+
+    private static <T> void set(ArrayList<T> array, int index, T value) {
+        checkIndex(array, index);
+        array.set(index, value);
+    }
+
+    private static <T> void checkIndex(ArrayList<T> array, int index) {
+        while (index >= array.size())
+            array.add(null);
     }
 
     // ----------------------------------------------------------------------
@@ -183,7 +227,7 @@ public class BTPreparedStatement extends BaseStatement {
             return jresponse;
         }
         catch (Exception e) {
-            throw jext.sql.SQLException.of("Connection failed", e.getMessage());
+            throw new jext.sql.SQLException("Connection failed", e.getMessage());
         }
     }
 
@@ -195,7 +239,8 @@ public class BTPreparedStatement extends BaseStatement {
         }
          */
         String errorMessage = MapUtils.get(response, "errorMessage");
-        throw jext.sql.SQLException.of(errorMessage, name, MapUtils.asMap(
+        throw new jext.sql.SQLException(errorMessage, name, MapUtils.asMap(
+            "name", name,
             "structure_parameters", stmtParams,
             "query_parameters", queryParams
         ));

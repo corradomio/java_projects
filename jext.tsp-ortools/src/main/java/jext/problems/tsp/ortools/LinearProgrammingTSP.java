@@ -10,24 +10,12 @@ import com.google.ortools.constraintsolver.main;
 import jext.problems.tsp.AbstractTSP;
 import jext.problems.tsp.Solution;
 
-import jext.util.logging.Logger;
-
 public class LinearProgrammingTSP extends AbstractTSP {
-
-    private static Logger logger = Logger.getLogger(LinearProgrammingTSP.class);
 
     static {
         //System.loadLibrary("jniortools");
         Loader.loadNativeLibraries();
     }
-
-    // ----------------------------------------------------------------------
-    //
-    // ----------------------------------------------------------------------
-
-    private static double DISTANCE_SCALE = 1;
-
-    private long[][] distanceMatrix;
 
     // ----------------------------------------------------------------------
     //
@@ -43,17 +31,15 @@ public class LinearProgrammingTSP extends AbstractTSP {
 
     @Override
     protected Solution solve() {
-        createIntegerDistanceMatrix();
-
-        RoutingIndexManager manager = new RoutingIndexManager(this.distanceMatrix.length, 1, 0);
+        RoutingIndexManager manager = new RoutingIndexManager(this.distances.size(), 1, 0);
         RoutingModel routing = new RoutingModel(manager);
 
         final int transitCallbackIndex =
             routing.registerTransitCallback((long fromIndex, long toIndex) -> {
                 // Convert from routing variable Index to user NodeIndex.
-                int fromNode = manager.indexToNode(fromIndex);
-                int toNode = manager.indexToNode(toIndex);
-                return this.distanceMatrix[fromNode][toNode];
+                int sloc = manager.indexToNode(fromIndex);
+                int dloc = manager.indexToNode(toIndex);
+                return (int)this.distances.distance(sloc, dloc);
             });
 
         RoutingSearchParameters searchParameters =
@@ -65,26 +51,13 @@ public class LinearProgrammingTSP extends AbstractTSP {
         routing.setArcCostEvaluatorOfAllVehicles(transitCallbackIndex);
         Assignment solution = routing.solveWithParameters(searchParameters);
 
-        printSolution(routing, manager, solution);
-
         int[] tour = composeTour(routing, manager, solution);
 
-        return new Solution(distances, tour);
-    }
-
-    private void createIntegerDistanceMatrix() {
-        double[][] distanceMatrix = createDistanceMatrix();
-        int n = distanceMatrix.length;
-
-        this.distanceMatrix = new long[n][n];
-
-        for (int i=0; i<n; ++i)
-            for(int j=0; j<n; ++j)
-                this.distanceMatrix[i][j] = (long)(DISTANCE_SCALE*distanceMatrix[i][j]);
+        return new Solution(distances.distances(), distances.resolve(tour));
     }
 
     private int[] composeTour(RoutingModel routing, RoutingIndexManager manager, Assignment solution) {
-        int[] tour = new int[locations.length];
+        int[] tour = new int[this.distances.size()];
 
         int i =0;
         long index = routing.start(0);
@@ -96,27 +69,6 @@ public class LinearProgrammingTSP extends AbstractTSP {
         return tour;
     }
 
-
-    /// @brief Print the solution.
-    static void printSolution(
-        RoutingModel routing, RoutingIndexManager manager, Assignment solution) {
-        // Solution cost.
-        logger.info("Objective: " + solution.objectiveValue() + "miles");
-        // Inspect solution.
-        logger.info("Route:");
-        long routeDistance = 0;
-        String route = "";
-        long index = routing.start(0);
-        while (!routing.isEnd(index)) {
-            route += manager.indexToNode(index) + " -> ";
-            long previousIndex = index;
-            index = solution.value(routing.nextVar(index));
-            routeDistance += routing.getArcCostForVehicle(previousIndex, index, 0);
-        }
-        route += manager.indexToNode(routing.end(0));
-        logger.info(route);
-        logger.info("Route distance: " + routeDistance/DISTANCE_SCALE + " miles");
-    }
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------

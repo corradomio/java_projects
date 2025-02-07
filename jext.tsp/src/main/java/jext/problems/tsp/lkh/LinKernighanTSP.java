@@ -2,6 +2,7 @@ package jext.problems.tsp.lkh;
 
 import jext.problems.tsp.AbstractTSP;
 import jext.problems.tsp.Solution;
+import jext.problems.tsp.TourUtils;
 
 import java.util.ArrayList;
 
@@ -105,6 +106,7 @@ public class LinKernighanTSP extends AbstractTSP {
     // ----------------------------------------------------------------------
 
     private int[] tour;
+    private int size;
     
     // ----------------------------------------------------------------------
     // 
@@ -120,13 +122,12 @@ public class LinKernighanTSP extends AbstractTSP {
 
     @Override
     protected Solution solve() {
-        tour = createRandomTour(this.locations);
+        size = distances.size();
+        tour = TourUtils.randomTour(size);
 
         runAlgorithm();
 
-        tour = reorderTour(this.tour, this.locations[0]);
-
-        return new Solution(distances, tour);
+        return new Solution(distances.distances(), distances.resolve(tour));
     }
 
     /**
@@ -157,7 +158,7 @@ public class LinKernighanTSP extends AbstractTSP {
         for(int i = 0; i < this.size; i++) {
             int a = tour[i];                  // <->
             int b = tour[(i+1)%this.size];    // <->
-            sum += this.distances[a][b];
+            sum += this.distances.distance(a, b);
         }
 
         return sum;
@@ -169,7 +170,6 @@ public class LinKernighanTSP extends AbstractTSP {
      * @return void
      */
     private void improve() {
-        //int i = 0;
         for(int i = 0; i < size; ++i) {
             improve(i);
         }
@@ -231,7 +231,7 @@ public class LinKernighanTSP extends AbstractTSP {
         int actualNode = tour[index];
         for(int i = 0; i < size; ++i) {
             if(i != actualNode) {
-                double distance = this.distances[i][actualNode];
+                double distance = this.distances.distance(i, actualNode);
                 if(distance < minDistance) {
                     nearestNode = getIndex(i);
                     minDistance = distance;
@@ -248,7 +248,7 @@ public class LinKernighanTSP extends AbstractTSP {
      * @return double the distance from node 1 to node 2
      */
     private double getDistance(int n1, int n2) {
-        return distances[tour[n1]][tour[n2]];
+        return distances.distance(tour[n1], tour[n2]);
     }
 
     /**

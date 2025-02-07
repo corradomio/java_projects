@@ -17,8 +17,16 @@ import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class PreparedStatementEx extends StatementEx implements PreparedStatement {
+
+    private static final Logger logger = Logger.getLogger(PreparedStatement.class.getCanonicalName());
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -91,29 +99,55 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
     @Override
     public ResultSet executeQuery() throws java.sql.SQLException {
         try {
+            logQuery();
             return new ResultSetEx(this, this.ps().executeQuery());
         }
         catch (java.sql.SQLException e) {
-            throw SQLException.of(e, this.sql, this.params);
+            throw new SQLException(e, this.sql, this.params);
         }
     }
 
     @Override
     public int executeUpdate() throws java.sql.SQLException {
         try {
+            logQuery();
             return this.ps().executeUpdate();
         } catch (java.sql.SQLException e) {
-            throw SQLException.of(e, this.sql, this.params);
+            throw new SQLException(e, this.sql, this.params);
         }
     }
 
     @Override
     public boolean execute() throws java.sql.SQLException {
         try {
+            logQuery();
             return this.ps().execute();
         } catch (java.sql.SQLException e) {
-            throw SQLException.of(e, this.sql, this.params);
+            throw new SQLException(e, this.sql, this.params);
         }
+    }
+
+    private void logQuery() {
+        if (!logger.isLoggable(Level.FINE))
+            return;
+
+        logger.fine(String.format("sql: %s", this.sqlx));
+
+        Map<Integer, String> _params = this._params();
+        if (!_params.isEmpty())
+            logger.fine(String.format("sparams: %s", _params));
+        if (!this.params.isEmpty())
+            logger.fine(String.format("qparams: %s", this.params));
+    }
+
+    private Map<Integer, String> _params() {
+        Map<Integer, String> map = new LinkedHashMap<>();
+        for (int i=0; i<sparams.length; ++i) {
+            if (sparams[i] == null)
+                break;
+            map.put((-i-1), sparams[i]);
+        }
+        return map;
     }
 
     // ----------------------------------------------------------------------
@@ -446,7 +480,7 @@ public class PreparedStatementEx extends StatementEx implements PreparedStatemen
 
     private int[] getIndices(String parameterName) throws java.sql.SQLException {
         if (!names.containsKey(parameterName))
-            throw SQLException.of("Invalid parameter name " + parameterName, this.sql, this.params);
+            throw new SQLException("Invalid parameter name " + parameterName, this.sql, this.params);
 
         return names.get(parameterName);
     }

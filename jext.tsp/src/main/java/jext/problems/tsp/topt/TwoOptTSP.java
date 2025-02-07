@@ -2,6 +2,7 @@ package jext.problems.tsp.topt;
 
 import jext.problems.tsp.AbstractTSP;
 import jext.problems.tsp.Solution;
+import jext.problems.tsp.TourUtils;
 
 /**
  * 2-Opt TSP algorithm
@@ -12,6 +13,7 @@ import jext.problems.tsp.Solution;
 public class TwoOptTSP extends AbstractTSP {
 
     private int[] tour;
+    private int size;
 
     // ----------------------------------------------------------------------
     //
@@ -27,13 +29,12 @@ public class TwoOptTSP extends AbstractTSP {
 
     @Override
     protected Solution solve() {
-        tour = createRandomTour(this.locations);
+        size = distances.size();
+        tour = TourUtils.randomTour(size);
 
         runAlgorithm();
 
-        tour = reorderTour(this.tour, this.locations[0]);
-
-        return new Solution(distances, tour);
+        return new Solution(distances.distances(), distances.resolve(tour));
     }
 
     // ----------------------------------------------------------------------
@@ -61,7 +62,7 @@ public class TwoOptTSP extends AbstractTSP {
     }
 
     private double distance(int i, int j) {
-        return distances[tour[i]][tour[j]];
+        return distances.distance(tour[i], tour[j]);
     }
 
     private void swap(int i, int j) {

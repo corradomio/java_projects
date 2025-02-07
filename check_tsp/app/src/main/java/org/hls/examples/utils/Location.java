@@ -1,20 +1,21 @@
 package org.hls.examples.utils;
 
 import com.opencsv.bean.CsvToBeanBuilder;
+import jext.problems.tsp.Point;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-public class Location extends Coords {
-    private int id;
+public class Location extends Point {
 
-    public Location() { }
+    public Location() {
+
+    }
 
     public Location(int id, double longitude, double latitude) {
-        super(longitude, latitude);
-        this.id = id;
+        super(id, longitude, latitude);
     }
 
     public static List<Location> load(File locationsFile) throws IOException {

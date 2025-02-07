@@ -23,24 +23,24 @@ public class NearestNeighborTSP extends AbstractTSP {
     @Override
     protected Solution solve() {
         int solved = 0;
-        int n = locations.length;
-        int m = distances.length;
-        int[] solution = new int[n];
+        int n = distances.size();
+        int m = distances.order();
+        int[] tour = new int[n];
         boolean[] visited = new boolean[m];
         double seldist;
-        int sel, curr = locations[0];
+        int sel, curr = 0;
 
 
         for(int i=1; i<n; i++) {
             visited[curr] = true;
-            solution[solved++] = curr;
+            tour[solved++] = curr;
 
             seldist = Double.MAX_VALUE;
             sel = curr;
             for(int j=0; j<n; j++) {
-                int next = locations[j];
+                int next = j;
                 if (visited[next]) continue;
-                double d = distances[curr][next];
+                double d = distances.distance(curr, next);
                 if (sel < seldist) {
                     seldist = d;
                     sel = next;
@@ -52,13 +52,13 @@ public class NearestNeighborTSP extends AbstractTSP {
 
         // add the last location
         for(int i=0; i<n; i++) {
-            if (!visited[locations[i]]) {
-                solution[n-1] = locations[i];
+            if (!visited[i]) {
+                tour[n-1] = i;
                 break;
             }
         }
 
-        return new Solution(distances, solution);
+        return new Solution(distances.distances(), distances.resolve(tour));
     }
 
     // ----------------------------------------------------------------------
