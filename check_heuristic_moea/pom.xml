@@ -10,6 +10,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>app</module>
+        <module>moea</module>
+        <module>moea-examples</module>
     </modules>
 
     <properties>
@@ -17,5 +19,13 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hls.examples</groupId>
+            <artifactId>moea</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>

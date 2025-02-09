@@ -6,7 +6,7 @@ package org.hls.examples;
 
 import javax.swing.*;
 
-public class SpringForm {
+public class SwingForm {
     /**
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the
@@ -27,7 +27,7 @@ public class SpringForm {
         }
 
         //Lay out the panel.
-        SpringUtilities.makeCompactGrid(p,
+        SwingUtilitiesEx.makeCompactGrid(p,
             numPairs, 2, //rows, cols
             6, 6,        //initX, initY
             6, 6);       //xPad, yPad
@@ -48,7 +48,7 @@ public class SpringForm {
     public static void main(String[] args) {
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
-        SwingUtilities.invokeLater(new Runnable() {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();
             }
