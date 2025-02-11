@@ -11,6 +11,7 @@
 
     <modules>
         <module>../jext.logging</module>
+        <module>app</module>
     </modules>
 
     <properties>

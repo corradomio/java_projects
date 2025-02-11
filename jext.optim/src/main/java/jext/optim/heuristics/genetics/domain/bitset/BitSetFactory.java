@@ -6,16 +6,16 @@ import java.util.random.RandomGenerator;
 
 public class BitSetFactory implements CandidateFactory<BitSet> {
 
-    private int n;
+    private final int nbits;
 
     public BitSetFactory(int n) {
-        this.n = n;
+        this.nbits = n;
     }
 
     @Override
     public BitSet candidate(RandomGenerator rng) {
-        BitSet bitSet = new BitSet(n);
-        for(int i = 0; i < n; i++)
+        BitSet bitSet = new BitSet(nbits);
+        for(int i = 0; i < nbits; i++)
             if (rng.nextBoolean())
                 bitSet.set(i);
         return bitSet;

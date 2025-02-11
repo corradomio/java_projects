@@ -10,8 +10,8 @@ import jext.optim.heuristics.genetics.domain.permutation.PermutationFactory;
 import jext.optim.heuristics.genetics.domain.permutation.PermutationFitnessFunction;
 import jext.optim.heuristics.genetics.filter.DropDuplicates;
 import jext.optim.heuristics.genetics.selection.TournamentSelection;
-import jext.optim.heuristics.genetics.stopping.ElapsedTime;
-import jext.optim.heuristics.genetics.stopping.GenerationCount;
+import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
+import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
 import jext.optim.heuristics.genetics.stopping.MultipleConditions;
 import jext.optim.heuristics.genetics.stopping.NeverStop;
 import jext.optim.heuristics.genetics.stopping.Patience;
@@ -37,8 +37,7 @@ public class CheckPermutation {
         System.out.println(fitnessFunction.getDefaultChromosome());
 
         Population<Permutation> pop = new Population<>(
-            100,
-            .5,
+            100, .10, .10,
             new PermutationFactory(SET_SIZE),
             fitnessFunction
         );
@@ -54,17 +53,16 @@ public class CheckPermutation {
             new DropDuplicates<>()
         ) {
             @Override
-            protected void onGeneration(int g, Population<Permutation> population, boolean isEnd) {
-                if (isEnd)
-                    TPrint.printf("[%7d]: %.6f\n", g, population.getFittestChromosome().getFitness());
+            protected void onGeneration(int g, Population<Permutation> population) {
+                TPrint.printf("[%7d]: %.6f\n", g, population.getFittestChromosome().fitness());
             }
         };
 
         Population<Permutation> bestPop = ga.maximize(pop,
             new MultipleConditions(new NeverStop()
-                , new GenerationCount(NUM_GENERATIONS)
+                , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
-                , new ElapsedTime(30)
+                , new FixedElapsedTime(30)
             )
         );
 
@@ -80,9 +78,9 @@ public class CheckPermutation {
 
         Population<Permutation> worstPop = ga.minimize(pop,
             new MultipleConditions(new NeverStop()
-                , new GenerationCount(NUM_GENERATIONS)
+                , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
-                , new ElapsedTime(30)
+                , new FixedElapsedTime(30)
             )
         );
 

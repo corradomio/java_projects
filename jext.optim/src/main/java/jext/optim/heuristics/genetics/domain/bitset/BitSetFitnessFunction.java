@@ -4,13 +4,12 @@ import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.FitnessFunction;
 import jext.optim.heuristics.genetics.GeneticAlgorithm;
 
-import java.util.Random;
 import java.util.random.RandomGenerator;
 
 public class BitSetFitnessFunction implements FitnessFunction<BitSet> {
 
     public static BitSetFitnessFunction random(int n) {
-        RandomGenerator rand = GeneticAlgorithm.getRandomNumberGenerator();
+        RandomGenerator rand = GeneticAlgorithm.getRandomGenerator();
         double[] values = new double[n];
         for (int i = 0; i < n; i++)
             values[i] = rand.nextDouble(-1, 1);

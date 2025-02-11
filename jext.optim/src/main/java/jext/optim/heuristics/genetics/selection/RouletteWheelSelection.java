@@ -3,12 +3,12 @@ package jext.optim.heuristics.genetics.selection;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.ChromosomePair;
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.SelectionPolicy;
+import jext.optim.heuristics.genetics.util.AbstractSelectionPolicy;
 
 import java.util.List;
 import java.util.random.RandomGenerator;
 
-public class RouletteWheelSelection<T> extends SelectionPolicy<T> {
+public class RouletteWheelSelection<T> extends AbstractSelectionPolicy<T> {
 
     @Override
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
@@ -16,10 +16,10 @@ public class RouletteWheelSelection<T> extends SelectionPolicy<T> {
         double total = total(chromosomes);
 
         for (Chromosome<T> chromosome : chromosomes)
-            total += chromosome.getFitness();
+            total += chromosome.fitness();
 
-        Chromosome<T> bs1 = rouletteSelect(chromosomes, total, rng).clone();
-        Chromosome<T> bs2 = rouletteSelect(chromosomes, total, rng).clone();
+        Chromosome<T> bs1 = rouletteSelect(chromosomes, total, rng);
+        Chromosome<T> bs2 = rouletteSelect(chromosomes, total, rng);
 
         return new ChromosomePair<>(bs1, bs2);
     }
@@ -29,7 +29,7 @@ public class RouletteWheelSelection<T> extends SelectionPolicy<T> {
         double cumulative = 0;
 
         for (Chromosome<T> chromosome : chromosomes) {
-            cumulative += chromosome.getFitness()/total;
+            cumulative += chromosome.fitness()/total;
             if (prob <= cumulative) {
                 return chromosome;
             }

@@ -1,7 +1,8 @@
 package jext.optim.heuristics.genetics.stopping;
 
+import jext.optim.heuristics.genetics.Population;
 import jext.optim.heuristics.genetics.StoppingCondition;
-import org.apache.commons.math4.legacy.genetics.Population;
+
 
 public class Patience implements StoppingCondition {
     private final int count;
@@ -16,7 +17,7 @@ public class Patience implements StoppingCondition {
 
     @Override
     public boolean isSatisfied(Population population) {
-        double fitness = population.getFittestChromosome().getFitness();
+        double fitness = population.getFittestChromosome().fitness();
         if (fitness > bestFitness) {
             bestFitness = fitness;
             current = 0;

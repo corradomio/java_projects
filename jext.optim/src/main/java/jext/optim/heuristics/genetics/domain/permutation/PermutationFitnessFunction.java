@@ -4,13 +4,12 @@ import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.FitnessFunction;
 import jext.optim.heuristics.genetics.GeneticAlgorithm;
 
-import java.util.Random;
 import java.util.random.RandomGenerator;
 
 public class PermutationFitnessFunction implements FitnessFunction<Permutation> {
 
     public static PermutationFitnessFunction random(int n) {
-        RandomGenerator rand = GeneticAlgorithm.getRandomNumberGenerator();
+        RandomGenerator rand = GeneticAlgorithm.getRandomGenerator();
         double[][] distances = new double[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; ++j) {

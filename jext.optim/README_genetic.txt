@@ -53,17 +53,17 @@ Candidati
 ---------
 
     Il candidato DEVE implementare "hashCode()" perche' viene usato per
-    eliminare i duplicati
-    Il candidato DEVE implementare "clone()" perche' serve per l'implementazione
-    dell'operatore SelectionPolicy. Questo puo' essere ftto implementando le
-    interfacce
+    eliminare i duplicati.
+    Il candidato e' un oggetto IMMUTABILE. Quindi MutatePolicy DEVE creare
+    un nuovo oggetto.
 
-        'java.lang.Cloneable'
-        'jext.lang.Cloneable'
+    Si suppone che 'CandidateFactory<T>' generi candidati 'validi'
+    Comunque, non necessariamente gli operatori di mutation/crossover generano
+    candidati validi. Potrebbe essere inutilmente complicato assicurarsi che
+    un candidato si valido.
 
-    'jext.lang.Cloneable<T>' e' usata per forzare il metodo 'clone()' ad
-    essere 'public', MA non sembra sia necessario. BASTA implementare
-    'java.lang.Cloneable' e rendere 'public' il metodo.
+    L'approccio e': avere mutation/crossover semplici, e prima della prossima
+    generazione, applicare un filtro o una patch ai candidati non validi.
 
 
 Operatori Genetici
@@ -75,9 +75,9 @@ Operatori Genetici
 
     GLi operatori vengono usati nel seguente ordine
 
-        1) select       [clone]
+        1) select
         2) crossover    per sua natura crea nuovi oggetti
-        3) mutation     puo' fare la modifica 'inplace'
+        3) mutation     DEVE creare un nuovo oggetto!
 
 
 Creazione della popolazione successiva
@@ -120,7 +120,7 @@ Apache Commons Genetic
 -----------------------------------------------------------------------------
 - Domains
 -----------------------------------------------------------------------------
-Lista di 'domini'  (usati in Mathematica)
+Lista di 'domini' (usati in Mathematica)
 
     Booleans([n1,...nk])
         generic tensor k-dim of binary values

@@ -3,25 +3,25 @@ package jext.optim.heuristics.genetics.selection;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.ChromosomePair;
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.SelectionPolicy;
+import jext.optim.heuristics.genetics.util.AbstractSelectionPolicy;
 
 import java.util.List;
 import java.util.random.RandomGenerator;
 
 /*
-    Introduction to Evolutionary COmputation - 2015
+    Introduction to Evolutionary Computing - 2015
     pag. 84
  */
 
-public class StochasticWheelSelection<T> extends SelectionPolicy<T> {
+public class StochasticWheelSelection<T> extends AbstractSelectionPolicy<T> {
 
     @Override
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
         List<Chromosome<T>> chromosomes = population.getChromosomes();
         double total = total(chromosomes);
 
-        Chromosome<T> bs1 = rouletteSelect(chromosomes, total, 0.0, rng).clone();
-        Chromosome<T> bs2 = rouletteSelect(chromosomes, total, 0.5, rng).clone();
+        Chromosome<T> bs1 = rouletteSelect(chromosomes, total, 0.0, rng);
+        Chromosome<T> bs2 = rouletteSelect(chromosomes, total, 0.5, rng);
 
         return new ChromosomePair<>(bs1, bs2);
     }
@@ -31,7 +31,7 @@ public class StochasticWheelSelection<T> extends SelectionPolicy<T> {
         double cumulative = 0;
 
         for (Chromosome<T> chromosome : chromosomes) {
-            cumulative += chromosome.getFitness()/total;
+            cumulative += chromosome.fitness()/total;
             if (prob <= cumulative) {
                 return chromosome;
             }

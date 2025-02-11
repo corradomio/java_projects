@@ -1,16 +1,20 @@
 package jext.optim.heuristics.genetics;
 
-public class ChromosomePair<T> extends org.apache.commons.math4.legacy.genetics.ChromosomePair {
+public class ChromosomePair<T> {
+
+    private final Chromosome<T> first;
+    private final Chromosome<T> second;
 
     public ChromosomePair(Chromosome<T> first, Chromosome<T> second) {
-        super(first, second);
+        this.first = first;
+        this.second = second;
     }
 
-    public Chromosome<T> getFirst() {
-        return (Chromosome<T>) super.getFirst();
+    public Chromosome<T> first() {
+        return first;
     }
-    public Chromosome<T> getSecond() {
-        return (Chromosome<T>) super.getSecond();
+    public Chromosome<T> second() {
+        return second;
     }
 
     public static <T> ChromosomePair<T> makePair(T first, T second, final Chromosome<T> template) {

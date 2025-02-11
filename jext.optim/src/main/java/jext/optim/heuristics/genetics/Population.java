@@ -1,21 +1,25 @@
 package jext.optim.heuristics.genetics;
 
-import jext.optim.heuristics.genetics.filter.AcceptPolicy;
-import org.apache.commons.math4.legacy.exception.NotPositiveException;
-import org.apache.commons.math4.legacy.exception.OutOfRangeException;
-import org.apache.commons.math4.legacy.exception.util.LocalizedFormats;
+import jext.math.exception.LocalizedFormats2;
+import jext.math.exception.NotPositiveException;
+import jext.math.exception.OutOfRangeException;
+import jext.math.exception.util.LocalizedFormats;
+import jext.optim.heuristics.genetics.filter.AcceptAll;
+import jext.optim.heuristics.genetics.util.QuickSort;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.random.RandomGenerator;
+import java.util.stream.Collectors;
 
 /// Expends Apache genetic.Population adding some useful features:
 ///
-///      - T: the candidate type
-///      - CandidateFactory[T]: a factory to generate random candidates
-///      - FitnessFunction[T]: the fitness function used to evaluate the candidate.
+///     - T: the candidate type
+///     - CandidateFactory[T]: a factory to generate random candidates
+///     - FitnessFunction[T]: the fitness function used to evaluate the candidate.
 ///
 /// The Population container must be ``initialized'' to create the first generation of
 /// chromosomes. The population for the next generation is implemented in
@@ -32,27 +36,38 @@ import java.util.random.RandomGenerator;
 ///      - decreasingOrder
 ///
 /// @param <T>
-public class Population<T> implements org.apache.commons.math4.legacy.genetics.Population {
+public class Population<T> implements Iterable<Chromosome<T>> {
+    /** global random number generator */
+    private static final RandomGenerator rng = GeneticAlgorithm.getRandomGenerator();
 
+    /** number of chromosomes/candidates in the population */
     private final int populationLimit;
+    /** quota of the best population to transfer in the next generation */
     private final double elitismRate;
+    /** quota of the population to add as new random candidates */
+    private final double foreignerRate;
+    /** candidate generator */
     private final CandidateFactory<T> candidateFactory;
+    /** function used to evaluate a candidate */
     private final FitnessFunction<T> fitnessFunction;
-    private static final RandomGenerator rng = GeneticAlgorithm.getRandomNumberGenerator();
+    /** if to order the candidates in increasing or decreasing order */
+    private boolean decreasingOrder = false;
+    /** used to remove invalid candidates */
+    private FilterPolicy<T> filterPolicy = new AcceptAll<>();
 
-    private boolean decreasingOrder;
-    private FilterPolicy<T> filterPolicy = new AcceptPolicy<>();
-    private final List<Chromosome<T>> population = new ArrayList<>();
+    /** current population of candidates */
+    private final List<Chromosome<T>> chromosomes = new ArrayList<>();
 
     // ----------------------------------------------------------------------
 
     public Population(
-        int populationSize, double elitismRate,
+        int populationSize, double elitismRate, double foreignerRate,
         CandidateFactory<T> candidateFactory,
         FitnessFunction<T> fitnessFunction
     ) {
         this.populationLimit = populationSize;
         this.elitismRate = elitismRate;
+        this.foreignerRate = foreignerRate;
         this.candidateFactory = candidateFactory;
         this.fitnessFunction = fitnessFunction;
 
@@ -60,6 +75,8 @@ public class Population<T> implements org.apache.commons.math4.legacy.genetics.P
             throw new NotPositiveException(LocalizedFormats.POPULATION_LIMIT_NOT_POSITIVE, populationLimit);
         if (elitismRate < 0 || elitismRate > 1)
             throw new OutOfRangeException(LocalizedFormats.ELITISM_RATE, elitismRate, 0, 1);
+        if (foreignerRate < 0 || foreignerRate > 1)
+            throw new OutOfRangeException(LocalizedFormats2.OFFSPRING_RATE, foreignerRate, 0, 1);
     }
 
     // ----------------------------------------------------------------------
@@ -78,12 +95,10 @@ public class Population<T> implements org.apache.commons.math4.legacy.genetics.P
 
     // ----------------------------------------------------------------------
 
-    @Override
     public int getPopulationSize() {
-        return population.size();
+        return chromosomes.size();
     }
 
-    @Override
     public int getPopulationLimit() {
         return populationLimit;
     }
@@ -94,7 +109,8 @@ public class Population<T> implements org.apache.commons.math4.legacy.genetics.P
      * @return sorted population
      */
     public List<Chromosome<T>> getChromosomes() {
-        return Collections.unmodifiableList(population);
+        // return Collections.unmodifiableList(population);
+        return chromosomes;
     }
 
     // ----------------------------------------------------------------------
@@ -104,60 +120,67 @@ public class Population<T> implements org.apache.commons.math4.legacy.genetics.P
      * @return self
      */
     public Population<T> initialize() {
-        population.clear();
-        for (int i = 0; i < populationLimit; i++) {
+        while (chromosomes.size() < populationLimit) {
             T candidate = candidateFactory.candidate(rng);
             addCandidate(candidate);
         }
         return this;
     }
 
-    /**
-     * Generate a new population
-     * @return self
-     */
-    @Override
+    /// This method has the following responsibility:
+    ///
+    ///  1) to transfer the elitismRate chromosomes in the new generation
+    ///  2) to add new random chromosomes based on offspringRate
+    ///
+    /// The missing chromosomes are added using the current population and using
+    /// the genetic operators.
+    ///
+    /// It is necessary to create a NEW population because the current one is used
+    /// to create the missing chromosomes
+    ///
+    /// @return self
     public Population<T> nextGeneration() {
         // keep at minimum the best solution
-        int elitism = Math.max(1, (int) Math.round(elitismRate*population.size()));
+        int elitism = Math.max(1, (int) Math.round(elitismRate* chromosomes.size()));
+        // add at minimum a new random candidate
+        int offspring = Math.max(1, (int) Math.round(foreignerRate * chromosomes.size()));
 
-        List<Chromosome<T>> population = filterPolicy.filter(this.population);
-        List<Chromosome<T>> nextPopulation = new ArrayList<>();
+        List<Chromosome<T>> chromosomes = filterPolicy.filter(this.chromosomes);
 
-        // Population<T> nextGen = new Population<>(
-        //     populationLimit,
-        //     elitismRate,
-        //     candidateFactory,
-        //     fitnessFunction
-        // ).withDecreasingOrder(decreasingOrder);
+        Population<T> newPopulation = new Population<>(
+            populationLimit,
+            elitismRate,
+            foreignerRate,
+            candidateFactory,
+            fitnessFunction
+        );
+        newPopulation.setDecreasingOrder(decreasingOrder);
+        newPopulation.setFilterPolicy(filterPolicy);
 
-        if (elitism <= population.size()) {
-            sort();
-            for (int i=0; i<elitism; i++)
-                // nextGen.addChromosome(population.get(i));
-                nextPopulation.add(population.get(i));
-        }
+        // add the best chromosomes
+        // WARNING: for some STRANGE reason, List::sort(), Collections::sort() raise the exception:
+        //
+        //     IllegalArgumentException("Comparison method violates its general contract!")
+        //
+        // Trick: used a 'custom' sorter (QuickSort)
+        chromosomes = QuickSort.sort(chromosomes);
 
-        // generate new random candidates
-        // for (; nextGen.getPopulationSize() < populationLimit; )
-        //     nextGen.addCandidate(candidateFactory.candidate(rng));
+        for (int i=0; i<elitism; i++)
+            newPopulation.addChromosome(chromosomes.get(i));
 
-        for (; nextPopulation.size() < populationLimit; )
-            nextPopulation.add(new Chromosome<>(candidateFactory.candidate(rng), fitnessFunction, decreasingOrder));
+        // add the new chromosomes
+        for (int i=0; i<offspring; i++)
+            newPopulation.addChromosome(new Chromosome<>(candidateFactory.candidate(rng), fitnessFunction, decreasingOrder));
 
-        // update THIS Population object
-        this.population.clear();
-        this.population.addAll(nextPopulation);
-
-        return this;
+        return newPopulation;
     }
 
-    private void addCandidate(T candidate) {
+    public void addCandidate(T candidate) {
         addChromosome(new Chromosome<>(candidate, fitnessFunction, decreasingOrder));
     }
 
-    private void addChromosome(Chromosome<T> chromosome) {
-        this.population.add(chromosome);
+    public void addChromosome(Chromosome<T> chromosome) {
+        this.chromosomes.add(chromosome);
     }
 
     // ----------------------------------------------------------------------
@@ -167,55 +190,21 @@ public class Population<T> implements org.apache.commons.math4.legacy.genetics.P
      * Note: it orders the chromosomes
      * @return the fittest chromosome
      */
-    @Override
     public Chromosome<T> getFittestChromosome() {
-        sort();
-        return population.get(0);
+        Chromosome<T> fittest = chromosomes.get(0);
+        for (Chromosome<T> chromosome : chromosomes)
+            if (chromosome.compareTo(fittest) < 0)
+                fittest = chromosome;
+
+        return fittest;
     }
 
-    /**
-     * Order the chromosomes on the fitness value AND if lowest or highest values are the best
-     * The top elements of the list are the best
-     *
-     */
-    public Population<T> sort() {
-        Collections.sort(population, Collections.reverseOrder());
-        return this;
+    public Iterator<Chromosome<T>> iterator() {
+        return chromosomes.iterator();
     }
 
-    /**
-     * Shuffle the chromosomes to avoid an order
-     */
-    public Population<T> shuffle() {
-        Collections.shuffle(population);
-        return this;
-    }
-
-    // ----------------------------------------------------------------------
-    // for compatibility
-
-    @Override
-    public void addChromosome(org.apache.commons.math4.legacy.genetics.Chromosome chromosome) {
-        this.addChromosome((Chromosome<T>) chromosome);
-    }
-
-    @Override
-    public Iterator<org.apache.commons.math4.legacy.genetics.Chromosome> iterator() {
-
-        final Iterator<Chromosome<T>> iter = population.iterator();
-
-        // adapter to convert 'Chromosome<T>' -> 'Chromosome'
-        return new Iterator<>() {
-            @Override
-            public boolean hasNext() {
-                return iter.hasNext();
-            }
-
-            @Override
-            public org.apache.commons.math4.legacy.genetics.Chromosome next() {
-                return iter.next();
-            }
-        };
+    public void forEach(Consumer<? super Chromosome<T>> action) {
+        chromosomes.forEach(action);
     }
 
 }

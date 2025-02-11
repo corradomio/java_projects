@@ -17,17 +17,16 @@ public class Check2 {
         BitSetFitnessFunction fitnessFunction = BitSetFitnessFunction.random(SET_SIZE);
 
         Population<BitSet> pop = new Population<>(
-            10,
-            2,
+            10, .10, .10,
             new BitSetFactory(SET_SIZE),
             fitnessFunction
         );
 
-        pop.setDecreasingOrder(false).initialize().sort();
+        pop.setDecreasingOrder(false).initialize();
         System.out.println("maximize");
         System.out.println(pop.getChromosomes().stream().map(c -> (float)c.fitness()).toList());
 
-        pop.setDecreasingOrder(true).initialize().sort();
+        pop.setDecreasingOrder(true).initialize();
         System.out.println("minimize");
         System.out.println(pop.getChromosomes().stream().map(c -> (float)c.fitness()).toList());
     }

@@ -2,7 +2,7 @@ package jext.optim.heuristics.genetics.domain.permutation;
 
 import java.util.Arrays;
 
-public class Permutation implements Cloneable {
+public class Permutation {
 
     private final int[] perm;
 
@@ -16,11 +16,6 @@ public class Permutation implements Cloneable {
 
     public int[] permutation() {
         return perm;
-    }
-
-    @Override
-    public Permutation clone() {
-        return new Permutation(Utils.clone(perm));
     }
 
     @Override

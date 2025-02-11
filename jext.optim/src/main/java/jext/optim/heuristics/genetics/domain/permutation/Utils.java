@@ -6,6 +6,8 @@ import java.util.random.RandomGenerator;
 
 public class Utils {
 
+    private static final Random RANDOM = new Random();
+
     // ----------------------------------------------------------------------
     // create permutations
     // ----------------------------------------------------------------------
@@ -37,7 +39,7 @@ public class Utils {
 
     /** random permutation */
     public static int[] random(int n, int start) {
-        return random(n, start, new Random());
+        return random(n, start, RANDOM);
     }
 
     /** random permutation */
@@ -48,30 +50,14 @@ public class Utils {
     /** random permutation */
     public static int[] random(int n, int start, RandomGenerator rng) {
         int[] perm = defaultPerm(n, start);
-        shuffle_(perm, 0, n-1, rng);
+        // shuffle_(perm, 0, n-1, rng);
+        jext.util.Arrays.shuffle(perm, rng);
         return perm;
-    }
-
-    /** clone the permutation */
-    public static int[] clone(int[] perm) {
-        int[] copy = new int[perm.length];
-        System.arraycopy(perm, 0, copy, 0, perm.length);
-        return copy;
-    }
-
-    public static int[] copy(int[] dest, int[] src, int i, int j) {
-        System.arraycopy(src, i, dest, i, j-i+1);
-        return dest;
     }
 
     // ----------------------------------------------------------------------
     // mutate permutations
     // ----------------------------------------------------------------------
-
-    /** swap element i with j */
-    public static void swap(int[] perm, int i, int j) {
-        swap_(perm, i, j);
-    }
 
     /** move element i near to j or j near to i (i < j) */
     public static void insert(int[] perm, int i, int j) {
@@ -90,38 +76,6 @@ public class Utils {
                 perm[k] = perm[k-1];
             perm[i+1] = t;
         }
-    }
-
-    /** invert the order of the elements in i:j */
-    public static void invert(int[] perm, int i, int j) {
-        if (i > j) { int t = i; i = j; j = t; }
-
-        for (; i < j; ++i,--j)
-            swap_(perm, i, j);
-    }
-
-    /** shuffle the elements in i:j */
-    public static void shuffle(int[] perm, int i, int j, RandomGenerator rng) {
-        // int[] nperm = clone(perm);
-        if (i > j) { int t = i; i = j; j = t; }
-        shuffle_(perm, i, j, rng);
-    }
-
-    /** shuffle in-place */
-    private static void shuffle_(int[] perm, int i, int j, RandomGenerator rng) {
-        if (i > j) { int t = i; i = j; j = t; }
-        int n = j - i + 1;
-        for(int h = 1; h < n; h++) {
-            int k = rng.nextInt(h);
-            swap_(perm, i+h, i+k);
-        }
-    }
-
-    /** swap in-place */
-    private static void swap_(int[] perm, int i, int j) {
-        int t = perm[i];
-        perm[i] = perm[j];
-        perm[j] = t;
     }
 
     // ----------------------------------------------------------------------

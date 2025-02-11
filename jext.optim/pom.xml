@@ -16,17 +16,17 @@
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math4-core -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math4-core</artifactId>
             <version>4.0-beta1</version>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math4-legacy -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math4-legacy</artifactId>
             <version>4.0-beta1</version>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 

@@ -3,25 +3,25 @@ package jext.optim.heuristics.genetics.selection;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.ChromosomePair;
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.SelectionPolicy;
+import jext.optim.heuristics.genetics.util.AbstractSelectionPolicy;
 
 import java.util.List;
 import java.util.random.RandomGenerator;
 
 /*
-    Introduction to Evolutionary Computation - 2015
+    Introduction to Evolutionary Computing - 2015
     pag. 80
  */
 
-public class LinearRankSelection<T> extends SelectionPolicy<T> {
+public class LinearRankSelection<T> extends AbstractSelectionPolicy<T> {
 
     @Override
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
         List<Chromosome<T>> chromosomes = population.getChromosomes();
         double total = total(chromosomes);
 
-        Chromosome<T> c1 = rankSelect(chromosomes, total, rng).clone();
-        Chromosome<T> c2 = rankSelect(chromosomes, total, rng).clone();
+        Chromosome<T> c1 = rankSelect(chromosomes, total, rng);
+        Chromosome<T> c2 = rankSelect(chromosomes, total, rng);
 
         return new ChromosomePair<>(c1, c2);
     }

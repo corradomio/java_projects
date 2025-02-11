@@ -3,14 +3,19 @@ package jext.optim.heuristics.genetics.selection;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.ChromosomePair;
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.SelectionPolicy;
+import jext.optim.heuristics.genetics.util.AbstractSelectionPolicy;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
-public class TournamentSelection<T> extends SelectionPolicy<T> {
+/*
+    Introduction to Evolutionary Computing - 2015
+    pag. 84
+ */
+
+public class TournamentSelection<T> extends AbstractSelectionPolicy<T> {
 
     private final int arity;
 
@@ -22,8 +27,8 @@ public class TournamentSelection<T> extends SelectionPolicy<T> {
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
         List<Chromosome<T>> chromosomes = population.getChromosomes();
 
-        Chromosome<T> c1 = tournamentSelect(chromosomes, rng).clone();
-        Chromosome<T> c2 = tournamentSelect(chromosomes, rng).clone();
+        Chromosome<T> c1 = tournamentSelect(chromosomes, rng);
+        Chromosome<T> c2 = tournamentSelect(chromosomes, rng);
 
         return new ChromosomePair<>(c1, c2);
     }
@@ -37,7 +42,7 @@ public class TournamentSelection<T> extends SelectionPolicy<T> {
         }
 
         // sort in decreasing order, in such way the best is the top
-        Collections.sort(selected, Collections.reverseOrder());
+        Collections.sort(selected);
 
         return selected.get(0);
     }

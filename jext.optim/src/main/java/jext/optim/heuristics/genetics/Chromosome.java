@@ -1,26 +1,18 @@
 package jext.optim.heuristics.genetics;
 
-import jext.lang.Cloneable;
+import jext.optim.heuristics.genetics.filter.FitnessComparators;
 
-public class Chromosome<T>
-    extends org.apache.commons.math4.legacy.genetics.Chromosome
-    implements jext.lang.Cloneable<Chromosome<T>>
-{
+public class Chromosome<T> implements Comparable<Chromosome<T>> {
+
+    /** Value assigned when no fitness has been computed yet. */
+    private static final double NO_FITNESS = Double.NEGATIVE_INFINITY;
+
     private final T candidate;
     private final FitnessFunction<T> fitnessFunction;
     private final boolean decreasingOrder;
-
-    // to support the concept of 'chromosome age'
-    // private final long timestamp = System.currentTimeMillis();
+    private double fitness = NO_FITNESS;
 
     // ----------------------------------------------------------------------
-
-    /** Constructor uset to clone a chromosome */
-    public Chromosome(Chromosome<T> chromosome) {
-        this.candidate = ((Cloneable<T>)chromosome.candidate).clone();
-        this.fitnessFunction = chromosome.fitnessFunction;
-        this.decreasingOrder = chromosome.decreasingOrder;
-    }
 
     /**
      * Constructor to create a new chromosome using a new candiate
@@ -43,13 +35,24 @@ public class Chromosome<T>
     // Properties
     // ----------------------------------------------------------------------
 
+    public double fitness() {
+        if (this.fitness == NO_FITNESS) {
+            this.fitness = fitnessFunction.fitness(candidate);
+        }
+        return fitness;
+    }
+
     public T candidate() {
         return this.candidate;
     }
 
-    @Override
-    public double fitness() {
-        return fitnessFunction.fitness(candidate);
+    public FitnessFunction<T> fitnessFunction() {
+        return this.fitnessFunction;
+    }
+
+    public FitnessComparator fitnessComparator() {
+        return (decreasingOrder) ? FitnessComparators.DECREASING_ORDER : FitnessComparators.INCREASING_ORDER;
+
     }
 
     // ----------------------------------------------------------------------
@@ -57,13 +60,8 @@ public class Chromosome<T>
     // ----------------------------------------------------------------------
 
     @Override
-    public Chromosome<T> clone() {
-        return new Chromosome<>(this);
-    }
-
-    @Override
-    public int compareTo(final org.apache.commons.math4.legacy.genetics.Chromosome another) {
-        int cmp = Double.compare(getFitness(), another.getFitness());
+    public int compareTo(final Chromosome<T> another) {
+        int cmp = Double.compare(fitness(), another.fitness());
         return decreasingOrder ? -cmp : cmp;
     }
 
