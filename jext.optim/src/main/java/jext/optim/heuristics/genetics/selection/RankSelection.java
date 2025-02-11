@@ -42,13 +42,13 @@ public class RankSelection<T> extends AbstractSelectionPolicy<T> {
         double s = sigma;
         double foffs = (2.-s)/n;
         double frank = 2*(s-1)/(n*(n-1));
-        double prob = rng.nextDouble();
         double cumulative = 0;
+        double r = rng.nextDouble();
 
         int i = 1;
         for (Chromosome<T> chromosome : chromosomes) {
             cumulative += foffs + (n-i)*frank;
-            if (prob <= cumulative)
+            if (r <= cumulative)
                 return chromosome;
             ++i;
         }

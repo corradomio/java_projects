@@ -11,6 +11,7 @@
     <modules>
         <module>app</module>
         <module>../jext.optim</module>
+        <module>../jext.linalg</module>
     </modules>
 
     <properties>

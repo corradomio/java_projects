@@ -6,18 +6,11 @@ import java.util.random.RandomGenerator;
 
 public class VectorFactory  implements CandidateFactory<Vector> {
     private final int length;
-    private final Range[] ranges;
+    private final Range range;
 
     public VectorFactory(int length, Range range) {
         this.length = length;
-        this.ranges = new Range[length];
-        for (int i=0; i<length; i++)
-            this.ranges[i] = range;
-    }
-
-    public VectorFactory(Range[] ranges) {
-        this.length = ranges.length;
-        this.ranges = ranges;
+        this.range = range;
     }
 
     @Override
@@ -25,9 +18,9 @@ public class VectorFactory  implements CandidateFactory<Vector> {
         double[] data = new double[length];
 
         for (int i=0; i<length; ++i)
-            data[i] = rng.nextDouble(ranges[i].min, ranges[i].max);
+            data[i] = rng.nextDouble(range.min, range.max);
 
-        return new Vector(data, ranges);
+        return new Vector(data, range);
     }
 
 }

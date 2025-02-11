@@ -4,26 +4,6 @@ import java.util.random.RandomGenerator;
 
 public class Arrays {
 
-    public static boolean[] copyOf(boolean[] arr) {
-        return java.util.Arrays.copyOf(arr, arr.length);
-    }
-
-    public static int[] copyOf(int[] arr) {
-        return java.util.Arrays.copyOf(arr, arr.length);
-    }
-
-    public static long[] copyOf(long[] arr) {
-        return java.util.Arrays.copyOf(arr, arr.length);
-    }
-
-    public static double[] copyOf(double[] arr) {
-        return java.util.Arrays.copyOf(arr, arr.length);
-    }
-
-    public static float[] copyOf(float[] arr) {
-        return java.util.Arrays.copyOf(arr, arr.length);
-    }
-
     public static void swap(int[] arr, int i, int j) {
         int t = arr[i];
         arr[i] = arr[j];

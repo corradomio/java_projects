@@ -25,12 +25,12 @@ public class RouletteWheelSelection<T> extends AbstractSelectionPolicy<T> {
     }
 
     private static <T> Chromosome<T> rouletteSelect(List<Chromosome<T>> chromosomes, double total, RandomGenerator rng) {
-        double prob = rng.nextDouble();
         double cumulative = 0;
+        double r = rng.nextDouble();
 
         for (Chromosome<T> chromosome : chromosomes) {
             cumulative += chromosome.fitness()/total;
-            if (prob <= cumulative) {
+            if (r <= cumulative) {
                 return chromosome;
             }
         }

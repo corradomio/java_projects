@@ -31,12 +31,12 @@ public class PowerRankSelection<T> extends AbstractSelectionPolicy<T> {
     private Chromosome<T> rankSelect(List<Chromosome<T>> chromosomes, double total, RandomGenerator rng) {
         int n = chromosomes.size();
         double cumulative = 0;
-        double prob = rng.nextDouble();
+        double r = rng.nextDouble();
 
         int i = 0;
         for (Chromosome<T> chromosome : chromosomes) {
             cumulative += (1 - exp(-i))/total;
-            if (prob <= cumulative)
+            if (r <= cumulative)
                 return chromosome;
             ++i;
         }
@@ -48,10 +48,10 @@ public class PowerRankSelection<T> extends AbstractSelectionPolicy<T> {
         int n = chromosomes.size();
         double total = 0;
 
-        int i = 0;
-        for (Chromosome<T> chromosome : chromosomes) {
+        for (int i=0; i<n; ++i) {
             total += 1 - exp(-i);
         }
+
         return total;
     }
 

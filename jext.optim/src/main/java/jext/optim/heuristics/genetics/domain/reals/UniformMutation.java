@@ -2,8 +2,8 @@ package jext.optim.heuristics.genetics.domain.reals;
 
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
-import jext.util.Arrays;
 
+import java.util.Arrays;
 import java.util.random.RandomGenerator;
 
 /*
@@ -13,25 +13,25 @@ import java.util.random.RandomGenerator;
 public class UniformMutation extends AbstractMutationPolicy<Vector> {
 
     private final double prob;
-    private final double delta;
+    private final double step;
 
     public UniformMutation(double prob, double noise) {
         this.prob = prob;
-        this.delta = noise;
+        this.step = noise;
     }
 
     @Override
     public Chromosome<Vector> mutate(Chromosome<Vector> original, RandomGenerator rng) {
         Vector vector = original.candidate();
-        Range[] ranges = vector.ranges();
-        double[] data = Arrays.copyOf(vector.data());
+        Range range = vector.range();
+        double[] data = Arrays.copyOf(vector.data(), vector.length());
         int n = data.length;
 
         for (int i=0; i<n; ++i) {
             double r = rng.nextDouble();
             if (r < prob) {
-                double offset = rng.nextDouble(-delta, delta);
-                data[i] = ranges[i].clip(data[i]+offset);
+                double offset = rng.nextDouble(-step, step);
+                data[i] = range.clip(data[i]+offset);
             }
         }
 

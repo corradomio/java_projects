@@ -1,4 +1,4 @@
-package jext.optim.heuristics.genetics.filter;
+package jext.optim.heuristics.genetics.util;
 
 import jext.optim.heuristics.genetics.FitnessComparator;
 

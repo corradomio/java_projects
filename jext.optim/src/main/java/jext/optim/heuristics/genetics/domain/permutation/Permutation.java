@@ -18,6 +18,23 @@ public class Permutation {
         return perm;
     }
 
+    public int length() {
+        return perm.length;
+    }
+
+    // ----------------------------------------------------------------------
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(perm);
+    }
+
+    @Override
+    public Permutation clone() {
+        int[] perm = Arrays.copyOf(this.perm, this.perm.length);
+        return new Permutation(perm);
+    }
+
     @Override
     public String toString() {
         return Arrays.toString(perm);

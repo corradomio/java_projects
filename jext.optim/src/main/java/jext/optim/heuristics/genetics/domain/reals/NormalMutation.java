@@ -2,36 +2,37 @@ package jext.optim.heuristics.genetics.domain.reals;
 
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
-import jext.util.Arrays;
 
+import java.util.Arrays;
 import java.util.random.RandomGenerator;
 
 /*
     Essentials of Metaheuristics - 2016
     pag. 23
  */
+
 public class NormalMutation extends AbstractMutationPolicy<Vector> {
 
     private final double prob;
-    private final double delta;
+    private final double variance;
 
     public NormalMutation(double prob, double variance) {
         this.prob = prob;
-        this.delta = variance;
+        this.variance = variance;
     }
 
     @Override
     public Chromosome<Vector> mutate(Chromosome<Vector> original, RandomGenerator rng) {
         Vector vector = original.candidate();
-        Range[] ranges = vector.ranges();
-        double[] data = Arrays.copyOf(vector.data());
+        Range range = vector.range();
+        double[] data = Arrays.copyOf(vector.data(), vector.length());
         int n = data.length;
 
         for (int i=0; i<n; ++i) {
             double r = rng.nextDouble();
             if (r < prob) {
-                double offset = rng.nextGaussian(0, delta);
-                data[i] = ranges[i].clip(data[i]+offset);
+                double offset = rng.nextGaussian(0, variance);
+                data[i] = range.clip(data[i]+offset);
             }
         }
 

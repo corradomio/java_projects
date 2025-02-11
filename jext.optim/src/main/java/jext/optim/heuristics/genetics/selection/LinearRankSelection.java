@@ -29,12 +29,12 @@ public class LinearRankSelection<T> extends AbstractSelectionPolicy<T> {
     private Chromosome<T> rankSelect(List<Chromosome<T>> chromosomes, double total, RandomGenerator rng) {
         int n = chromosomes.size();
         double cumulative = 0;
-        double prob = rng.nextDouble();
+        double r = rng.nextDouble();
 
         int i = 0;
         for (Chromosome<T> chromosome : chromosomes) {
             cumulative += (n-i)/total;
-            if (prob <= cumulative)
+            if (r <= cumulative)
                 return chromosome;
             ++i;
         }

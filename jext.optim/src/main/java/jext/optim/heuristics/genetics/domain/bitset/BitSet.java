@@ -105,14 +105,16 @@ public class BitSet implements Cloneable {
         return new BitSet(nbits, uwords);
     }
 
-    @Override
-    public BitSet clone() {
-        return new BitSet(nbits, Arrays.copyOf(words, words.length));
-    }
+    // ----------------------------------------------------------------------
 
     @Override
     public int hashCode() {
         return Arrays.hashCode(words);
+    }
+
+    @Override
+    public BitSet clone() {
+        return new BitSet(nbits, Arrays.copyOf(words, words.length));
     }
 
     @Override

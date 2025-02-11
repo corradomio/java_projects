@@ -5,40 +5,34 @@ import jext.optim.heuristics.genetics.ChromosomePair;
 import jext.optim.heuristics.genetics.util.AbstractCrossoverPolicy;
 
 import java.util.random.RandomGenerator;
+import java.util.Arrays;
 
-/*
-    Essentials of Metaheuristics - 2016
-    pag. 42
+public class UniformCrossover extends AbstractCrossoverPolicy<Vector> {
 
-    Line Recombination
- */
+    private double prob;
 
-public class LineCrossover extends AbstractCrossoverPolicy<Vector> {
-
-    private final double step;
-
-    public LineCrossover(final double step) {
-        this.step = step;
+    public UniformCrossover(double prob) {
+        this.prob = prob;
     }
 
     @Override
     public ChromosomePair<Vector> crossover(Chromosome<Vector> first, Chromosome<Vector> second, RandomGenerator rng) {
         Vector v1 = first.candidate();
         Vector v2 = second.candidate();
-        Range range = v1.range();
         double[] d1 = v1.data();
         double[] d2 = v2.data();
         int n = d1.length;
 
-        double[] r1 = new double[n];
-        double[] r2 = new double[n];
-
-        double alpha = rng.nextDouble(-step, 1+ step);
-        double beta = rng.nextDouble(-step, 1+ step);
+        double[] r1 = Arrays.copyOf(d1, n);
+        double[] r2 = Arrays.copyOf(d2, n);
 
         for (int i=0; i<n; ++i) {
-            r1[i] = range.clip(alpha*d1[i] + (1-alpha)*d2[i]);
-            r2[i] = range.clip(beta*d1[i] + (1-beta)*d2[i]);
+            double r = rng.nextDouble();
+            if (r < prob) {
+                double t = r1[i];
+                r1[i] = r2[i];
+                r2[i] = t;
+            }
         }
 
         return ChromosomePair.makePair(new Vector(r1, v1), new Vector(r2, v2), first);

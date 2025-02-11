@@ -4,27 +4,27 @@ import java.util.Arrays;
 
 public class Vector implements Cloneable{
 
-    private final Range[] ranges;
+    private final Range range;
     private final double[] data;
 
-    public Vector(int length, Range[] ranges) {
+    public Vector(int length, Range range) {
         this.data = new double[length];
-        this.ranges = ranges;
+        this.range = range;
     }
 
-    Vector(double[] data, Range[] ranges) {
+    Vector(double[] data, Range range) {
         this.data = data;
-        this.ranges = ranges;
+        this.range = range;
     }
 
 
     public Vector(double[] data, final Vector template) {
         this.data = data;
-        this.ranges = template.ranges;
+        this.range = template.range;
     }
 
-    public Range[] ranges() {
-        return ranges;
+    public Range range() {
+        return range;
     }
 
     public int length() {
@@ -35,6 +35,8 @@ public class Vector implements Cloneable{
         return data;
     }
 
+    // ----------------------------------------------------------------------
+
     @Override
     public int hashCode() {
         return Arrays.hashCode(data);
@@ -43,7 +45,7 @@ public class Vector implements Cloneable{
     @Override
     public Vector clone() {
         double[] data = Arrays.copyOf(this.data, this.data.length);
-        return new Vector(data, ranges);
+        return new Vector(data, range);
     }
 
     @Override

@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Remove duplicate candidates based ONLY on the hash code
+ * @param <T>
+ */
 public class DropDuplicates<T> implements FilterPolicy<T> {
 
     @Override
