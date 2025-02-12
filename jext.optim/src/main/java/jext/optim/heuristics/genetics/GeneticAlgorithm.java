@@ -2,6 +2,7 @@ package jext.optim.heuristics.genetics;
 
 import jext.math.exception.OutOfRangeException;
 import jext.math.exception.util.LocalizedFormats;
+import jext.optim.Solution;
 import jext.optim.heuristics.genetics.filter.AcceptAll;
 
 import java.util.Random;
@@ -43,6 +44,9 @@ public class GeneticAlgorithm<T> {
 
     /** the number of generations evolved to reach {@link StoppingCondition} in the last run. */
     private int generationsEvolved;
+
+    /** the current population */
+    private Population<T> population;
 
     /**
      * Create a new genetic algorithm.
@@ -106,18 +110,15 @@ public class GeneticAlgorithm<T> {
 
     // ----------------------------------------------------------------------
 
-    public Population<T> maximize(Population<T> population, StoppingCondition stoppingCondition) {
-        if (population.getPopulationSize() < population.getPopulationLimit())
-            population.initialize();
-        population.setDecreasingOrder(true);
-        population.setFilterPolicy(filterPolicy);
-        return evolve(population, stoppingCondition);
+    public Solution<T> solve(boolean maximize, Population<T> population, StoppingCondition stoppingCondition) {
+        this.population = evolve(maximize, population, stoppingCondition);
+        return this.population.getFittestChromosome();
     }
 
-    public Population<T> minimize(Population<T> population, StoppingCondition stoppingCondition) {
+    public Population<T> evolve(boolean maximize, Population<T> population, StoppingCondition stoppingCondition) {
         if (population.getPopulationSize() < population.getPopulationLimit())
             population.initialize();
-        population.setDecreasingOrder(false);
+        population.setDecreasingOrder(maximize);
         population.setFilterPolicy(filterPolicy);
         return evolve(population, stoppingCondition);
     }
@@ -249,6 +250,13 @@ public class GeneticAlgorithm<T> {
      */
     public int getGenerationsEvolved() {
         return generationsEvolved;
+    }
+
+    /**
+     * Last population before the solution.
+     */
+    public Population<T> getPopulation() {
+        return population;
     }
 
     // ----------------------------------------------------------------------

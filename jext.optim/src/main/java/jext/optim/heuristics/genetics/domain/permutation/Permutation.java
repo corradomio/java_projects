@@ -1,13 +1,16 @@
 package jext.optim.heuristics.genetics.domain.permutation;
 
-import java.util.Arrays;
+import jext.util.ArrayOps;
 
-public class Permutation {
+import java.util.Arrays;
+import java.util.random.RandomGenerator;
+
+public class Permutation implements Cloneable {
 
     private final int[] perm;
 
     public Permutation(int n) {
-        this.perm = Utils.defaultPerm(n);
+        this.perm = PermUtils.defaultPerm(n);
     }
 
     public Permutation(int[] perm) {
@@ -20,6 +23,39 @@ public class Permutation {
 
     public int length() {
         return perm.length;
+    }
+
+    // ----------------------------------------------------------------------
+
+    public void swap(int i, int j) {
+        ArrayOps.swap(perm, i, j);
+    }
+
+    public void shuffle(int i, int j, RandomGenerator rng) {
+        ArrayOps.shuffle(perm, i, j, rng);
+    }
+
+    public void insert(int i, int j) {
+        PermUtils.insert(perm, i, j);
+    }
+
+    public void reverse(int i, int j) {
+        ArrayOps.reverse(perm, i, j);
+    }
+
+    public Permutation cycx(Permutation that) {
+        int[] perm = PermUtils.cycx(this.perm, that.perm);
+        return new Permutation(perm);
+    }
+
+    public Permutation pmx(Permutation that, int i, int j) {
+        int[] perm = PermUtils.pmx(this.perm, that.perm, i, j);
+        return new Permutation(perm);
+    }
+
+    public Permutation ordx(Permutation that, int i, int j) {
+        int[] perm = PermUtils.ordx(this.perm, that.perm, i, j);
+        return new Permutation(perm);
     }
 
     // ----------------------------------------------------------------------

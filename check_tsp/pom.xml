@@ -11,13 +11,8 @@
 
     <modules>
         <module>app</module>
-        <!--<module>../jext.geo</module>-->
         <module>../jext.tsp</module>
-        <module>../jext.tsp-ortools</module>
         <module>../jext.logging</module>
-        <!--<module>../jext.linalg</module>-->
-        <!--<module>../jext.struct</module>-->
-        <module>tsp.ext</module>
     </modules>
 
     <properties>

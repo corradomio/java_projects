@@ -5,7 +5,7 @@ import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
 
 import java.util.random.RandomGenerator;
 
-public class NBitsMutation  extends AbstractMutationPolicy<BitSet> {
+public class NBitsMutation extends AbstractMutationPolicy<BitSet> {
 
     private final int nbits;
 

@@ -8,12 +8,10 @@ import jext.optim.heuristics.genetics.filter.AcceptAll;
 import jext.optim.heuristics.genetics.util.QuickSort;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.random.RandomGenerator;
-import java.util.stream.Collectors;
 
 /// Expends Apache genetic.Population adding some useful features:
 ///

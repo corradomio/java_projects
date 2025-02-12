@@ -1,19 +1,20 @@
 package org.hls.check;
 
-import org.apache.log4j.BasicConfigurator;
+import jext.util.logging.LogManager;
 import org.zeroturnaround.exec.ProcessExecutor;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class MainZT {
+public class CheckZT {
     public static void main(String[] args) throws InterruptedException, TimeoutException, IOException {
-        BasicConfigurator.configure();
+        LogManager.configure(new File("logging.properties"));
 
         System.out.println("Hello Cruel World");
 
         new ProcessExecutor()
-                .command("gradle.cmd", "--version")
+                .command("gradle.bat", "--version")
                 .redirectOutput(System.out)
                 .redirectError(System.err)
                 .execute();

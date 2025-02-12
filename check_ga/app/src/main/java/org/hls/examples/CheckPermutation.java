@@ -8,6 +8,7 @@ import jext.optim.heuristics.genetics.domain.permutation.OrderCrossover;
 import jext.optim.heuristics.genetics.domain.permutation.Permutation;
 import jext.optim.heuristics.genetics.domain.permutation.PermutationFactory;
 import jext.optim.heuristics.genetics.domain.permutation.PermutationFitnessFunction;
+import jext.optim.heuristics.genetics.filter.AcceptAll;
 import jext.optim.heuristics.genetics.filter.DropDuplicates;
 import jext.optim.heuristics.genetics.selection.TournamentSelection;
 import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
@@ -50,7 +51,7 @@ public class CheckPermutation {
             new OrderCrossover(), .25,
             new InversionMutation(), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY),
-            new DropDuplicates<>()
+            new AcceptAll<>()
         ) {
             @Override
             protected void onGeneration(int g, Population<Permutation> population) {
@@ -58,7 +59,8 @@ public class CheckPermutation {
             }
         };
 
-        Population<Permutation> bestPop = ga.maximize(pop,
+        Population<Permutation> bestPop = ga.evolve(true,
+            pop,
             new MultipleConditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
@@ -76,7 +78,8 @@ public class CheckPermutation {
 
         System.out.println(fitnessFunction.getDefaultChromosome());
 
-        Population<Permutation> worstPop = ga.minimize(pop,
+        Population<Permutation> worstPop = ga.evolve(false,
+            pop,
             new MultipleConditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)

@@ -3,7 +3,6 @@ package jext.optim.heuristics.genetics.domain.reals;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
 
-import java.util.Arrays;
 import java.util.random.RandomGenerator;
 
 public class OneUniformMutation extends AbstractMutationPolicy<Vector> {
@@ -16,15 +15,25 @@ public class OneUniformMutation extends AbstractMutationPolicy<Vector> {
 
     @Override
     public Chromosome<Vector> mutate(Chromosome<Vector> original, RandomGenerator rng) {
-        Vector vector = original.candidate();
-        Range range = vector.range();
-        double[] data = Arrays.copyOf(vector.data(), vector.length());
+        // Vector vector = original.candidate();
+        // Range range = vector.range();
+        // double[] data = Arrays.copyOf(vector.data(), vector.length());
+        //
+        // int i = rng.nextInt(data.length);
+        // double off = rng.nextDouble(-step, step);
+        //
+        // data[i] = range.clip(data[i] + off);
+        //
+        // return new Chromosome<>(new Vector(data, vector), original);
 
-        int i = rng.nextInt(data.length);
-        double off = rng.nextDouble(-step, step);
+        Vector vector = original.candidate().clone();
+        int n = vector.length();
 
-        data[i] = range.clip(data[i] + off);
+        int i = rng.nextInt(n);
+        double offset = rng.nextDouble(-step, step);
 
-        return new Chromosome<>(new Vector(data, vector), original);
+        vector.add(i, offset);
+
+        return new Chromosome<>(vector, original);
     }
 }

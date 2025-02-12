@@ -3,7 +3,6 @@ package jext.optim.heuristics.genetics.filter;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.FilterPolicy;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AcceptAll<T> implements FilterPolicy<T> {

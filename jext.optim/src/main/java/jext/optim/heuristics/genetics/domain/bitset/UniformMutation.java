@@ -25,9 +25,8 @@ public class UniformMutation extends AbstractMutationPolicy<BitSet> {
 
         for (int i = 0; i < n; i++) {
             double r = rng.nextDouble();
-            if (r < prob) {
+            if (r < prob)
                 bs.flip(i);
-            }
         }
 
         return new Chromosome<>(bs, original);

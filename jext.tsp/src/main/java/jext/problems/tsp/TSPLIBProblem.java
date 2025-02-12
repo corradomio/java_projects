@@ -1,7 +1,9 @@
 package jext.problems.tsp;
 
-import jext.problems.tsp.dist.DistanceMatrix;
-import jext.problems.tsp.dist.EuclideanSpace;
+import jext.problems.Distances;
+import jext.problems.dist.DistanceMatrix;
+import jext.problems.dist.EuclideanSpace;
+import jext.problems.dist.Point;
 
 import java.io.BufferedReader;
 import java.io.File;

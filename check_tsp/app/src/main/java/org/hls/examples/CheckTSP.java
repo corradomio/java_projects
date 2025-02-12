@@ -1,7 +1,7 @@
 package org.hls.examples;
 
-import jext.problems.tsp.Distances;
-import jext.problems.tsp.dist.EuclideanSpace;
+import jext.problems.Distances;
+import jext.problems.dist.EuclideanSpace;
 import jext.problems.tsp.TSPLIBProblem;
 import jext.problems.tsp.TSPSolver;
 import jext.problems.tsp.ch.ChristofidesTSP;

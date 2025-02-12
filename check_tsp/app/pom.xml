@@ -20,17 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.geo</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
             <artifactId>jext.tsp</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.tsp-ortools</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

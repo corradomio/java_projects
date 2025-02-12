@@ -1,8 +1,9 @@
 package jext.optim.heuristics.genetics;
 
+import jext.optim.Solution;
 import jext.optim.heuristics.genetics.util.FitnessComparators;
 
-public class Chromosome<T> implements Comparable<Chromosome<T>> {
+public class Chromosome<T> implements Comparable<Chromosome<T>>, Solution<T> {
 
     /** Value assigned when no fitness has been computed yet. */
     private static final double NO_FITNESS = Double.NEGATIVE_INFINITY;

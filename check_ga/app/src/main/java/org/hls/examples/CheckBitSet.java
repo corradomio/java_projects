@@ -16,6 +16,8 @@ import jext.optim.heuristics.genetics.stopping.NeverStop;
 import jext.optim.heuristics.genetics.stopping.Patience;
 import jext.optim.heuristics.genetics.util.TPrint;
 
+import java.util.Random;
+
 
 public class CheckBitSet {
 
@@ -25,7 +27,18 @@ public class CheckBitSet {
     static int SET_SIZE = 64;
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        // Random rng = new Random();
+        // System.out.println("Hello World!");
+        //
+        // BitSet bs = new BitSet(10);
+        //
+        // for (int i=0; i<10; ++i)
+        //     if (rng.nextBoolean())
+        //         bs.set(i);
+        //
+        // System.out.println(bs);
+        // System.out.println(bs.size());
+
 
         BitSetFitnessFunction fitnessFunction = BitSetFitnessFunction.random(SET_SIZE);
         BitSetFactory bitsetFactory = new BitSetFactory(SET_SIZE);
@@ -56,7 +69,8 @@ public class CheckBitSet {
             }
         };
 
-        Population<BitSet> bestPop = ga.maximize(pop,
+        Population<BitSet> bestPop = ga.evolve(true,
+            pop,
             new MultipleConditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
@@ -75,7 +89,8 @@ public class CheckBitSet {
 
         System.out.println(fitnessFunction.getWorstChromosome());
 
-        Population<BitSet> worstPop = ga.minimize(pop,
+        Population<BitSet> worstPop = ga.evolve(false,
+            pop,
             new MultipleConditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)

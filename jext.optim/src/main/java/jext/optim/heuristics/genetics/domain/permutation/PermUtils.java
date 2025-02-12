@@ -1,10 +1,12 @@
 package jext.optim.heuristics.genetics.domain.permutation;
 
+import jext.util.ArrayOps;
+
 import java.util.Arrays;
 import java.util.Random;
 import java.util.random.RandomGenerator;
 
-public class Utils {
+public class PermUtils {
 
     private static final Random RANDOM = new Random();
 
@@ -51,7 +53,7 @@ public class Utils {
     public static int[] random(int n, int start, RandomGenerator rng) {
         int[] perm = defaultPerm(n, start);
         // shuffle_(perm, 0, n-1, rng);
-        jext.util.Arrays.shuffle(perm, rng);
+        ArrayOps.shuffle(perm, rng);
         return perm;
     }
 

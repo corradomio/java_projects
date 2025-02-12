@@ -1,6 +1,6 @@
 package org.hls.examples;
 
-import jext.optim.heuristics.genetics.domain.permutation.Utils;
+import jext.optim.heuristics.genetics.domain.permutation.PermUtils;
 
 public class Check1 {
 
@@ -11,7 +11,7 @@ public class Check1 {
         // System.out.println(bs.cardinality());
         // System.out.println(bs.nbits());
 
-        int[] perm = Utils.defaultPerm(9, 1);
+        int[] perm = PermUtils.defaultPerm(9, 1);
         // int[] pr = Utils.random(9, 1, new Random());
         // int[] p1 = Utils.copy(perm);
         // int[] p2 = Utils.swap(perm, 1, 4);

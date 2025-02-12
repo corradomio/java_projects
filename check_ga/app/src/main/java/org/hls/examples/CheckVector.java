@@ -26,10 +26,10 @@ import static java.lang.Math.sin;
 public class CheckVector {
 
     static int TOURNAMENT_ARITY = 2;
-    static int NUM_GENERATIONS = 30;
-    static int PATIENCE = 100000;
+    static int NUM_GENERATIONS = 1000;
+    static int PATIENCE = 100;
     static int PROBLEM_SIZE = 2;
-    static int POPULATION_SIZE = 10;
+    static int POPULATION_SIZE = 30;
 
     public static void main(String[] args) {
 
@@ -64,7 +64,8 @@ public class CheckVector {
 
         System.out.println("-- Maximize --");
 
-        Population<Vector> bestPop = ga.maximize(pop,
+        Population<Vector> bestPop = ga.evolve(true,
+            pop,
             new MultipleConditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
@@ -80,7 +81,8 @@ public class CheckVector {
 
         System.out.println("-- Minimize --");
 
-        Population<Vector> worstPop = ga.minimize(pop,
+        Population<Vector> worstPop = ga.evolve(false,
+            pop,
             new MultipleConditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)

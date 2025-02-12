@@ -41,7 +41,7 @@ public class PermutationFitnessFunction implements FitnessFunction<Permutation> 
     }
 
     public Chromosome<Permutation> getDefaultChromosome() {
-        int[] perm = Utils.defaultPerm(distances.length);
+        int[] perm = PermUtils.defaultPerm(distances.length);
         return new Chromosome<>(new Permutation(perm), this, false);
     }
 }

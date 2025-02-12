@@ -14,7 +14,7 @@ public class PermutationFactory implements CandidateFactory<Permutation> {
 
     @Override
     public Permutation candidate(RandomGenerator rng) {
-        int[] perm = Utils.random(n, rng);
+        int[] perm = PermUtils.random(n, rng);
         return new Permutation(perm);
     }
 }

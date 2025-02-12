@@ -1,8 +1,8 @@
 package jext.optim.heuristics.genetics.stopping;
 
+import jext.math.exception.NumberIsTooSmallException;
 import jext.optim.heuristics.genetics.Population;
 import jext.optim.heuristics.genetics.StoppingCondition;
-import jext.math.exception.NumberIsTooSmallException;
 
 
 public class FixedGenerationCount implements StoppingCondition {

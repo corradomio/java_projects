@@ -1,7 +1,7 @@
 package org.hls.examples.utils;
 
 import com.opencsv.bean.CsvToBeanBuilder;
-import jext.problems.tsp.Point;
+import jext.problems.dist.Point;
 
 import java.io.File;
 import java.io.FileReader;

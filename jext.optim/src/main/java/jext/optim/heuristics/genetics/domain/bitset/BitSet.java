@@ -7,6 +7,16 @@ public class BitSet implements Cloneable {
     private static final int WORD_SHIFT = 6;
     private static final int WORD_MASK = 0x3F;
 
+    private static final int[] BIT_COUNTS = new int[]{
+        0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3,
+        3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4,
+        3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4,
+        4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5,
+        3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6,
+        6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5,
+        4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
+    };
+
     private final int nbits;
     private final long[] words;
 
@@ -22,6 +32,19 @@ public class BitSet implements Cloneable {
 
     public int length() {
         return nbits;
+    }
+
+    public int size() {
+        int n = words.length;
+        int size = 0;
+        for (int i=0; i<n; ++i) {
+            long bits = words[i];
+            while (bits != 0) {
+                size += BIT_COUNTS[(int)(bits & 0xFF)];
+                bits >>= 8;
+            }
+        }
+        return size;
     }
 
     public boolean get(int bitIndex) {
@@ -114,7 +137,8 @@ public class BitSet implements Cloneable {
 
     @Override
     public BitSet clone() {
-        return new BitSet(nbits, Arrays.copyOf(words, words.length));
+        int n = words.length;
+        return new BitSet(nbits, Arrays.copyOf(words, n));
     }
 
     @Override
@@ -132,83 +156,3 @@ public class BitSet implements Cloneable {
 
 }
 
-
-// public class BitSet extends java.util.BitSet {
-//     private final int nbits;
-//
-//     public BitSet(int nbits) {
-//         super(nbits);
-//         this.nbits = nbits;
-//     }
-//
-//     public BitSet(BitSet bs) {
-//         super(bs.nbits);
-//         this.nbits = bs.nbits;
-//         for(int i = 0; i < nbits; i++)
-//             set(i, bs.get(i));
-//     }
-//
-//     public int nbits() {
-//         return nbits;
-//     }
-//
-//     public void set(int bitIndex) {
-//         if (bitIndex > nbits)
-//             throw new IndexOutOfBoundsException("bitIndex > " + nbits + ": " + bitIndex);
-//         super.set(bitIndex);
-//     }
-//
-//     public void clear(int bitIndex) {
-//         if (bitIndex > nbits)
-//             throw new IndexOutOfBoundsException("bitIndex > " + nbits + ": " + bitIndex);
-//         super.set(bitIndex);
-//     }
-//
-//
-//     public BitSet set(int offset, BitSet bs, int start) {
-//         int length = Math.min(nbits-offset, bs.nbits - start);
-//         return set(offset, bs, start, length);
-//     }
-//
-//     public BitSet set(int offset, BitSet bs, int start, int length) {
-//         for(int i=0; i<length; i++) {
-//             set(offset+i, bs.get(start+i));
-//         }
-//         return this;
-//     }
-//
-//     public BitSet union(BitSet that) {
-//         BitSet br = new BitSet(nbits);
-//         br.or(this);
-//         br.or(that);
-//         return br;
-//     }
-//
-//     public BitSet intersection(BitSet that) {
-//         BitSet br = new BitSet(nbits);
-//         br.or(this);
-//         br.and(that);
-//         return br;
-//     }
-//
-//     public BitSet difference(BitSet that) {
-//         BitSet br = new BitSet(nbits);
-//         br.or(this);
-//         br.andNot(that);
-//         return br;
-//     }
-//
-//     public BitSet symdiff(BitSet that) {
-//         BitSet b1 = this.difference(that);
-//         BitSet b2 = that.difference(this);
-//         return b1.union(b2);
-//     }
-//
-//     @Override
-//     public BitSet clone() {
-//         BitSet br = new BitSet(nbits);
-//         br.or(this);
-//         return br;
-//     }
-//
-// }

@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.hls</groupId>
-    <artifactId>jext.tsp-ortools</artifactId>
+    <groupId>org.hls.examples</groupId>
+    <artifactId>jext.process</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -17,21 +17,28 @@
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.tsp</artifactId>
+            <artifactId>jext.commons</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-exec -->
         <dependency>
-            <groupId>org.hls</groupId>
-            <artifactId>jext.logging</artifactId>
-            <version>1.0</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.zeroturnaround/zt-exec -->
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-exec</artifactId>
+            <version>1.12</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.16</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.google.ortools/ortools-java -->
-        <dependency>
-            <groupId>com.google.ortools</groupId>
-            <artifactId>ortools-java</artifactId>
-            <version>9.11.4210</version>
-        </dependency>
     </dependencies>
 
 </project>

@@ -37,6 +37,38 @@ public class Vector implements Cloneable{
 
     // ----------------------------------------------------------------------
 
+    public Vector linear(Vector that, double alpha) {
+        int n = data.length;
+
+        double[] result = new double[n];
+        for (int i = 0; i < n; i++)
+            result[i] = range.clip(alpha * this.data[i] + (1-alpha) * that.data[i]);
+
+        return new Vector(result, range);
+    }
+
+    public void linear(int i, Vector that, double alpha) {
+        data[i] = range.clip(alpha * this.data[i] + (1-alpha) * that.data[i]);
+    }
+
+    public double get(int index) {
+        return data[index];
+    }
+
+    public void set(int index, double value) {
+        data[index] = range.clip(value);
+    }
+
+    public void set(int start, Vector that, int length) {
+        System.arraycopy(that.data, start, this.data, start, length);
+    }
+
+    public void add(int index, double step) {
+        data[index] = range.clip(data[index] + step);
+    }
+
+    // ----------------------------------------------------------------------
+
     @Override
     public int hashCode() {
         return Arrays.hashCode(data);

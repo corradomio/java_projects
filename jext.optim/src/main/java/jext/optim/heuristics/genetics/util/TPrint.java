@@ -1,7 +1,6 @@
 package jext.optim.heuristics.genetics.util;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class TPrint {
 

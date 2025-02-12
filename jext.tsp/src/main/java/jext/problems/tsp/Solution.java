@@ -1,5 +1,7 @@
 package jext.problems.tsp;
 
+import jext.problems.Distances;
+
 /**
  * TSP solver solution:
  *

@@ -3,7 +3,6 @@ package jext.optim.heuristics.genetics.domain.reals;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
 
-import java.util.Arrays;
 import java.util.random.RandomGenerator;
 
 /*
@@ -23,19 +22,32 @@ public class NormalMutation extends AbstractMutationPolicy<Vector> {
 
     @Override
     public Chromosome<Vector> mutate(Chromosome<Vector> original, RandomGenerator rng) {
-        Vector vector = original.candidate();
-        Range range = vector.range();
-        double[] data = Arrays.copyOf(vector.data(), vector.length());
-        int n = data.length;
+        // Vector vector = original.candidate();
+        // Range range = vector.range();
+        // double[] data = Arrays.copyOf(vector.data(), vector.length());
+        // int n = data.length;
+        //
+        // for (int i=0; i<n; ++i) {
+        //     double r = rng.nextDouble();
+        //     if (r < prob) {
+        //         double offset = rng.nextGaussian(0, variance);
+        //         data[i] = range.clip(data[i]+offset);
+        //     }
+        // }
+        //
+        // return new Chromosome<>(new Vector(data, vector), original);
+
+        Vector vector = original.candidate().clone();
+        int n = vector.length();
 
         for (int i=0; i<n; ++i) {
             double r = rng.nextDouble();
             if (r < prob) {
-                double offset = rng.nextGaussian(0, variance);
-                data[i] = range.clip(data[i]+offset);
+                double step = rng.nextGaussian(0, variance);
+                vector.add(i, step);
             }
         }
 
-        return new Chromosome<>(new Vector(data, vector), original);
+        return new Chromosome<>(vector, original);
     }
 }
