@@ -1,6 +1,7 @@
 package jext.problems.tsp;
 
 import jext.problems.Distances;
+import jext.util.ArrayOps;
 
 /**
  * TSP solver solution:
@@ -35,12 +36,17 @@ public class Solution {
      * @param closed if to include the distance from the last location to the first one
      * @return total distance
      */
-    public double length(boolean closed) {
+    public float length(boolean closed) {
         int n = tour.length;
-        double length = closed ? distances.distance(tour[n-1], tour[0]) : 0;
+        float length = closed ? distances.distance(tour[n-1], tour[0]) : 0;
         for(int j=1; j < n; j++)
             length += distances.distance(tour[j-1], tour[j]);
         return length;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s: %f", ArrayOps.asList(tour), length());
     }
 
 }

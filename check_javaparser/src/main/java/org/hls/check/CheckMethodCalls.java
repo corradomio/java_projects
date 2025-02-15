@@ -12,7 +12,7 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryType
 import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.JPUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 
 import java.io.File;

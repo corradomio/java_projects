@@ -4,7 +4,7 @@ import jext.cache.CacheManager;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.named.NamedQueries;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.PropertiesUtils;
 import org.xml.sax.SAXException;
 

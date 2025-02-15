@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.text.embedding.DocumentEmbedding;
 import jext.text.tokens.TokensCounter;
 import jext.text.tokens.TokensScanner;

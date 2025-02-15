@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;

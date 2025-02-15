@@ -1,6 +1,6 @@
 package jext.sourcecode.project.info;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.name.Name;
 import jext.name.Named;
 import jext.name.PathName;

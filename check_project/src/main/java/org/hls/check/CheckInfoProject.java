@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.cache.CacheManager;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.csharp.CSharpLibraryFinder;

@@ -1,6 +1,6 @@
 package jext.springframework.cache.guava;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractCacheManager;
 import org.springframework.lang.Nullable;

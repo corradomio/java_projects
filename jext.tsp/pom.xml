@@ -15,6 +15,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.google.ortools/ortools-java -->
         <dependency>
             <groupId>com.google.ortools</groupId>

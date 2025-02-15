@@ -13,7 +13,7 @@ import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.java.JavaUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.MapUtils;
 import jext.util.StringUtils;

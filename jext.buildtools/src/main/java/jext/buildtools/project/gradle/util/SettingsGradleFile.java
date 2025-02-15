@@ -1,6 +1,6 @@
 package jext.buildtools.project.gradle.util;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 
 import java.io.File;

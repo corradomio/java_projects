@@ -4,7 +4,7 @@ import jext.antlr.v4.CSharpParsing;
 import jext.antlr.v4.ParseResult;
 import jext.antlr.v4.csharp.CSharpParser;
 import jext.antlr.v4.csharp.CSharpParserBaseListener;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.name.Name;
 import jext.name.ObjectName;
 import jext.sourcecode.project.Module;

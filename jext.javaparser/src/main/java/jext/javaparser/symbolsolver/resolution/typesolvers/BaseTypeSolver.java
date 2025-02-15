@@ -5,7 +5,7 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import com.github.javaparser.symbolsolver.model.resolution.SymbolReference;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.util.Collections;
 import java.util.List;

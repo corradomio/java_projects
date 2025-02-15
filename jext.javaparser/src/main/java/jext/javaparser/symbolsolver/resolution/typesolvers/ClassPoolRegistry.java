@@ -5,7 +5,7 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 import jext.java.JavaConstants;
 import jext.java.JavaUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 
 import javax.annotation.Nullable;

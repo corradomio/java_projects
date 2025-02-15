@@ -1,7 +1,7 @@
 package jext.vfs.compress;
 
 import jext.compress.Archives;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.net.URL;
 import jext.util.PathUtils;
 import jext.util.PropertiesUtils;

@@ -1,7 +1,7 @@
 package jext.graph.schema;
 
 import jext.graph.GraphDatabaseException;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.ObjectCreateRule;
 import org.xml.sax.SAXException;

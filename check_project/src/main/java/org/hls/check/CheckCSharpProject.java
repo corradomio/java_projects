@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.Library;
 import jext.sourcecode.project.LibraryFinderManager;
 import jext.sourcecode.project.Project;

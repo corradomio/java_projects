@@ -1,6 +1,6 @@
 package jext.util;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 public class Assert {
 

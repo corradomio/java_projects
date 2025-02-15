@@ -1,6 +1,6 @@
 package jext.jfr;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.openjdk.jmc.common.item.IItem;
 import org.openjdk.jmc.common.item.IItemIterable;
 

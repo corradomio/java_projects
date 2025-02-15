@@ -1,6 +1,6 @@
 package jext.vfs;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.net.URL;
 import jext.vfs.exceptions.NotConnectedException;
 import jext.vfs.util.Authentication;

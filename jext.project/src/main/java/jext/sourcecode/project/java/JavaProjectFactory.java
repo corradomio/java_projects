@@ -1,6 +1,6 @@
 package jext.sourcecode.project.java;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.ProjectFactory;

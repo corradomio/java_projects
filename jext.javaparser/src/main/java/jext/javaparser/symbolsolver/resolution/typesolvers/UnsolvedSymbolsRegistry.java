@@ -3,7 +3,7 @@ package jext.javaparser.symbolsolver.resolution.typesolvers;
 import com.github.javaparser.resolution.declarations.ResolvedReferenceTypeDeclaration;
 import jext.javaparser.resolution.ReferencedTypeDeclaration;
 import jext.java.JavaUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.util.HashSet;
 import java.util.Map;

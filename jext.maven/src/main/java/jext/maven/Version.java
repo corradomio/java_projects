@@ -60,7 +60,7 @@ package jext.maven;
 
  */
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

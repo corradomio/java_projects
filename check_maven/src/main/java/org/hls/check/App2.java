@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.cache.Caches;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.MavenDownloader;
 

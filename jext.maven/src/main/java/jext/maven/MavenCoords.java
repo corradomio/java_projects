@@ -12,7 +12,7 @@ package jext.maven;
     <packagingType> ::= jar (default), pom, maven-plugin, ejb, war, ear, rar
  */
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 public class MavenCoords implements Comparable<MavenCoords>, MavenConst {
 

@@ -18,17 +18,17 @@ public class StochasticWheelSelection<T> extends AbstractSelectionPolicy<T> {
     @Override
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
         List<Chromosome<T>> chromosomes = population.getChromosomes();
-        double total = total(chromosomes);
+        float total = total(chromosomes);
 
-        Chromosome<T> bs1 = rouletteSelect(chromosomes, total, 0.0, rng);
-        Chromosome<T> bs2 = rouletteSelect(chromosomes, total, 0.5, rng);
+        Chromosome<T> bs1 = rouletteSelect(chromosomes, total, 0.0f, rng);
+        Chromosome<T> bs2 = rouletteSelect(chromosomes, total, 0.5f, rng);
 
         return new ChromosomePair<>(bs1, bs2);
     }
 
-    private static <T> Chromosome<T> rouletteSelect(List<Chromosome<T>> chromosomes, double total, double offset, RandomGenerator rng) {
-        double prob = rng.nextDouble(0.5) + offset;
-        double cumulative = 0;
+    private static <T> Chromosome<T> rouletteSelect(List<Chromosome<T>> chromosomes, float total, float offset, RandomGenerator rng) {
+        float prob = rng.nextFloat(0.5f) + offset;
+        float cumulative = 0;
 
         for (Chromosome<T> chromosome : chromosomes) {
             cumulative += chromosome.fitness()/total;
@@ -40,9 +40,9 @@ public class StochasticWheelSelection<T> extends AbstractSelectionPolicy<T> {
         return chromosomes.get(0);
     }
 
-    private double total(List<Chromosome<T>> chromosomes) {
+    private float total(List<Chromosome<T>> chromosomes) {
         int n = chromosomes.size();
-        return 0.5*n*(n+1);
+        return 0.5f*n*(n+1);
     }
 
 }

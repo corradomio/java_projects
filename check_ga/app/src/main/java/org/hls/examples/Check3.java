@@ -1,6 +1,6 @@
 package org.hls.examples;
 
-import jext.optim.heuristics.genetics.domain.bitset.BitSet;
+import jext.optim.domain.bitset.BitSet;
 
 import java.util.Random;
 

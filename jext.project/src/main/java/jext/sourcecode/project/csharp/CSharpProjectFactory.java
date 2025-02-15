@@ -1,6 +1,6 @@
 package jext.sourcecode.project.csharp;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.LibraryDownloader;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.Project;

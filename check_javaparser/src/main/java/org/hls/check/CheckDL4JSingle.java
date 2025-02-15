@@ -9,7 +9,7 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.util.PropertiesUtils;

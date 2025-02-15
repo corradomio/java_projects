@@ -1,7 +1,7 @@
 package jext.vfs.util;
 
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.MimeTypes;
 import jext.vfs.VFileName;
 

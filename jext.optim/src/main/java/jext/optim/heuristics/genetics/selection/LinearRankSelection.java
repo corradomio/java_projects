@@ -18,7 +18,7 @@ public class LinearRankSelection<T> extends AbstractSelectionPolicy<T> {
     @Override
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
         List<Chromosome<T>> chromosomes = population.getChromosomes();
-        double total = total(chromosomes);
+        float total = total(chromosomes);
 
         Chromosome<T> c1 = rankSelect(chromosomes, total, rng);
         Chromosome<T> c2 = rankSelect(chromosomes, total, rng);
@@ -26,10 +26,10 @@ public class LinearRankSelection<T> extends AbstractSelectionPolicy<T> {
         return new ChromosomePair<>(c1, c2);
     }
 
-    private Chromosome<T> rankSelect(List<Chromosome<T>> chromosomes, double total, RandomGenerator rng) {
+    private Chromosome<T> rankSelect(List<Chromosome<T>> chromosomes, float total, RandomGenerator rng) {
         int n = chromosomes.size();
-        double cumulative = 0;
-        double r = rng.nextDouble();
+        float cumulative = 0;
+        float r = rng.nextFloat();
 
         int i = 0;
         for (Chromosome<T> chromosome : chromosomes) {
@@ -42,9 +42,9 @@ public class LinearRankSelection<T> extends AbstractSelectionPolicy<T> {
         return chromosomes.get(n-1);
     }
 
-    private double total(List<Chromosome<T>> chromosomes) {
+    private float total(List<Chromosome<T>> chromosomes) {
         int n = chromosomes.size();
-        return 0.5*n*(n+1);
+        return 0.5f*n*(n+1);
     }
 
 }

@@ -1,6 +1,6 @@
 package jext.sourcecode.project.info.library;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.Version;
 import jext.sourcecode.project.Library;

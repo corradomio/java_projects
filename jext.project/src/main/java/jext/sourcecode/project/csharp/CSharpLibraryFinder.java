@@ -1,6 +1,6 @@
 package jext.sourcecode.project.csharp;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.Version;
 import jext.name.Name;

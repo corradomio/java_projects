@@ -148,26 +148,6 @@ public class MapUtils {
 
     // ----------------------------------------------------------------------
 
-    public static double getOrDefault(Map<String, Object> map, String key, int index, double defaultValue){
-        double[] dArray = getDoubleArray(map, key);
-
-        if(dArray == null || dArray.length<=index)
-            return defaultValue;
-
-        return dArray[index];
-    }
-
-    public static boolean getOrDefault(Map<String, Object> map, String key, int index, boolean defaultValue){
-        boolean[] dArray = getBooleanArray(map, key);
-
-        if(dArray == null || dArray.length<=index)
-            return defaultValue;
-
-        return dArray[index];
-    }
-
-    // ----------------------------------------------------------------------
-
     public static int getInt(Map<String, Object> map, String... keys) {
         Object value = get(map, keys);
         if (value == null) return 0;
@@ -194,24 +174,6 @@ public class MapUtils {
         Object value = get(map, keys);
         if (value == null) return null;
         else return value.toString();
-    }
-
-    // ----------------------------------------------------------------------
-
-    public static boolean[] getBooleanArray(Map<String, Object> map, String... keys) {
-        return ArrayUtils.asBooleanArray(get(map, keys));
-    }
-
-    public static int[] getIntArray(Map<String, Object> map, String... keys) {
-        return ArrayUtils.asIntArray(get(map, keys));
-    }
-
-    public static double[] getDoubleArray(Map<String, Object> map, String... keys) {
-        return ArrayUtils.asDoubleArray(get(map, keys));
-    }
-
-    public static String[] getStringArray(Map<String, Object> map, String... keys) {
-        return ArrayUtils.asStringArray(get(map, keys));
     }
 
     // ----------------------------------------------------------------------

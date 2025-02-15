@@ -127,7 +127,7 @@ public class LinKernighanTSP extends AbstractTSP {
 
         runAlgorithm();
 
-        return new Solution(distances.distances(), distances.resolve(tour));
+        return new Solution(distances.getDistances(), distances.resolve(tour));
     }
 
     /**

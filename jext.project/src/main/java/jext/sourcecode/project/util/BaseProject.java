@@ -1,7 +1,7 @@
 package jext.sourcecode.project.util;
 
 import jext.io.file.FilePatterns;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.name.Name;
 import jext.name.NamedObject;
 import jext.name.PathName;

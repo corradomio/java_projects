@@ -6,7 +6,7 @@ import jext.buildtools.project.ant.AntProject;
 import jext.buildtools.project.eclipse.EclipseProject;
 import jext.buildtools.project.gradle.GradleProject;
 import jext.buildtools.util.ProjectDump;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.PropertiesUtils;
 import jext.util.StringUtils;
 

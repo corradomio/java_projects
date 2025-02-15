@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.cache.CacheManager;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.scitools.SciTools;
 import jext.scitools.UndDatabase;
 

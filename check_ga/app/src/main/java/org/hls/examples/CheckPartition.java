@@ -5,17 +5,17 @@ import jext.optim.heuristics.genetics.GeneticAlgorithm;
 import jext.optim.heuristics.genetics.Population;
 import jext.optim.heuristics.genetics.domain.partition.NElementsMutation;
 import jext.optim.heuristics.genetics.domain.partition.OnePointCrossover;
-import jext.optim.heuristics.genetics.domain.partition.Partition;
-import jext.optim.heuristics.genetics.domain.partition.PartitionFactory;
-import jext.optim.heuristics.genetics.domain.partition.PartitionFitnessFunction;
+import jext.optim.domain.partition.Partition;
+import jext.optim.domain.partition.PartitionFactory;
+import jext.optim.domain.partition.PartitionFitnessFunction;
 import jext.optim.heuristics.genetics.filter.DropDuplicates;
 import jext.optim.heuristics.genetics.selection.TournamentSelection;
 import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
 import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
+import jext.optim.heuristics.genetics.stopping.LogGeneration;
 import jext.optim.heuristics.genetics.stopping.MultipleConditions;
 import jext.optim.heuristics.genetics.stopping.NeverStop;
 import jext.optim.heuristics.genetics.stopping.Patience;
-import jext.optim.heuristics.genetics.util.TPrint;
 import jext.util.ArrayOps;
 
 public class CheckPartition {
@@ -49,16 +49,12 @@ public class CheckPartition {
             new NElementsMutation(3), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY),
             new DropDuplicates<>()
-        ) {
-            @Override
-            protected void onGeneration(int g, Population<Partition> population) {
-                TPrint.printf("[%7d]: %.6f\n", g, population.getFittestChromosome().fitness());
-            }
-        };
+        );
 
         Population<Partition> bestPop = ga.evolve(true,
             pop,
             new MultipleConditions(new NeverStop()
+                , new LogGeneration()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)
@@ -66,7 +62,7 @@ public class CheckPartition {
         );
 
         Chromosome<Partition> bestChromosome = bestPop.getFittestChromosome();
-        double[] pvalues = fitnessFunction.values(bestChromosome.candidate());
+        float[] pvalues = fitnessFunction.values(bestChromosome.candidate());
 
         System.out.println(bestChromosome);
         System.out.println(ArrayOps.asList(pvalues));
@@ -90,16 +86,12 @@ public class CheckPartition {
             new NElementsMutation(3), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY),
             new DropDuplicates<>()
-        ) {
-            @Override
-            protected void onGeneration(int g, Population<Partition> population) {
-                TPrint.printf("[%7d]: %.6f\n", g, population.getFittestChromosome().fitness());
-            }
-        };
+        );
 
         bestPop = ga.evolve(false,
             pop,
             new MultipleConditions(new NeverStop()
+                , new LogGeneration()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)

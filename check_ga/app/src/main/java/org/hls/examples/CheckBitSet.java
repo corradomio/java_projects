@@ -3,20 +3,18 @@ package org.hls.examples;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.GeneticAlgorithm;
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.domain.bitset.BitSet;
-import jext.optim.heuristics.genetics.domain.bitset.BitSetFactory;
+import jext.optim.domain.bitset.BitSet;
+import jext.optim.domain.bitset.BitSetFactory;
 import jext.optim.heuristics.genetics.domain.bitset.OneBitMutation;
 import jext.optim.heuristics.genetics.domain.bitset.OnePointCrossover;
-import jext.optim.heuristics.genetics.domain.bitset.BitSetFitnessFunction;
+import jext.optim.domain.bitset.BitSetFitnessFunction;
 import jext.optim.heuristics.genetics.selection.TournamentSelection;
 import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
 import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
+import jext.optim.heuristics.genetics.stopping.LogGeneration;
 import jext.optim.heuristics.genetics.stopping.MultipleConditions;
 import jext.optim.heuristics.genetics.stopping.NeverStop;
 import jext.optim.heuristics.genetics.stopping.Patience;
-import jext.optim.heuristics.genetics.util.TPrint;
-
-import java.util.Random;
 
 
 public class CheckBitSet {
@@ -62,12 +60,7 @@ public class CheckBitSet {
             new OnePointCrossover(), .25,
             new OneBitMutation(), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY)
-        ) {
-            @Override
-            protected void onGeneration(int g, Population<BitSet> population) {
-                TPrint.printf("[%7d]: %.6f\n", g, population.getFittestChromosome().fitness());
-            }
-        };
+        );
 
         Population<BitSet> bestPop = ga.evolve(true,
             pop,
@@ -92,6 +85,7 @@ public class CheckBitSet {
         Population<BitSet> worstPop = ga.evolve(false,
             pop,
             new MultipleConditions(new NeverStop()
+                , new LogGeneration()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)

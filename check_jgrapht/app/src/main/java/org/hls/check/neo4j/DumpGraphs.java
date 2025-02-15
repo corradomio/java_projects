@@ -6,7 +6,7 @@ import jext.jgrapht.nio.csv.VECSVGraphExporter;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
 import jext.jgrapht.util.GraphDescribe;
 import jext.jgrapht.vertices.Vertex;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.AttributeType;

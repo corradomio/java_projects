@@ -3,7 +3,7 @@ package org.hls.check;
 
 import jext.buildtools.SourceProject;
 import jext.buildtools.gradle.GradleProject;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.File;
 import java.util.Properties;

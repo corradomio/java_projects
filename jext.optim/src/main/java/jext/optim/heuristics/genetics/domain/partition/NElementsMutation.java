@@ -1,5 +1,6 @@
 package jext.optim.heuristics.genetics.domain.partition;
 
+import jext.optim.domain.partition.Partition;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
 

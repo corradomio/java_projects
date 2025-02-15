@@ -2,7 +2,7 @@ package org.hls.check;
 
 import com.scitools.understand.UnderstandException;
 import jext.cache.CacheManager;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.scitools.und.Ent;
 import jext.scitools.und.Ref;
 import jext.scitools.UndDatabase;

@@ -1,7 +1,7 @@
 package jext.javaparser.util;
 
 import com.github.javaparser.ast.Node;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.File;
 import java.util.HashMap;

@@ -6,7 +6,7 @@ import jext.cache.CacheManager;
 import jext.io.filters.FileFilters;
 import jext.javaparser.JavaParserPool;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.concurrent.Parallel;
 import org.hls.java.analysis.MemberDeclarations;

@@ -5,7 +5,7 @@ import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
 import jext.graph.neo4j.VGraphDatabase;
 import jext.graph.schema.GraphSchema;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.MapUtils;
 
 import java.io.File;

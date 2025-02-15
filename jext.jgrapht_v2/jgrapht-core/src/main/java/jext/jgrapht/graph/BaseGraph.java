@@ -12,34 +12,22 @@ public class BaseGraph<V, E> implements Graph<V, E> {
 
     protected GraphType type = DefaultGraphType.simple();
 
+    @Override
+    public GraphType getType() {
+        return type;
+    }
+
+    //
+    // Vertices
+    //
 
     @Override
-    public Set<E> getAllEdges(V sourceVertex, V targetVertex) {
+    public Set<V> vertexSet() {
         return Set.of();
     }
 
     @Override
-    public E getEdge(V sourceVertex, V targetVertex) {
-        return null;
-    }
-
-    @Override
-    public Supplier<V> getVertexSupplier() {
-        return null;
-    }
-
-    @Override
-    public Supplier<E> getEdgeSupplier() {
-        return null;
-    }
-
-    @Override
-    public E addEdge(V sourceVertex, V targetVertex) {
-        return null;
-    }
-
-    @Override
-    public boolean addEdge(V sourceVertex, V targetVertex, E e) {
+    public boolean containsVertex(V v) {
         return false;
     }
 
@@ -54,6 +42,45 @@ public class BaseGraph<V, E> implements Graph<V, E> {
     }
 
     @Override
+    public boolean removeVertex(V v) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAllVertices(Collection<? extends V> vertices) {
+        return false;
+    }
+
+    //
+    // Degree
+    //
+
+    @Override
+    public int degreeOf(V vertex) {
+        return 0;
+    }
+
+    @Override
+    public int inDegreeOf(V vertex) {
+        return 0;
+    }
+
+    @Override
+    public int outDegreeOf(V vertex) {
+        return 0;
+    }
+
+
+    //
+    // Edges
+    //
+
+    @Override
+    public Set<E> edgeSet() {
+        return Set.of();
+    }
+
+    @Override
     public boolean containsEdge(V sourceVertex, V targetVertex) {
         return false;
     }
@@ -64,18 +91,23 @@ public class BaseGraph<V, E> implements Graph<V, E> {
     }
 
     @Override
-    public boolean containsVertex(V v) {
-        return false;
-    }
-
-    @Override
-    public Set<E> edgeSet() {
+    public Set<E> getAllEdges(V sourceVertex, V targetVertex) {
         return Set.of();
     }
 
     @Override
-    public int degreeOf(V vertex) {
-        return 0;
+    public E getEdge(V sourceVertex, V targetVertex) {
+        return null;
+    }
+
+    @Override
+    public E addEdge(V sourceVertex, V targetVertex) {
+        return null;
+    }
+
+    @Override
+    public boolean addEdge(V sourceVertex, V targetVertex, E e) {
+        return false;
     }
 
     @Override
@@ -84,38 +116,13 @@ public class BaseGraph<V, E> implements Graph<V, E> {
     }
 
     @Override
-    public int inDegreeOf(V vertex) {
-        return 0;
-    }
-
-    @Override
     public Set<E> incomingEdgesOf(V vertex) {
         return Set.of();
     }
 
     @Override
-    public int outDegreeOf(V vertex) {
-        return 0;
-    }
-
-    @Override
     public Set<E> outgoingEdgesOf(V vertex) {
         return Set.of();
-    }
-
-    @Override
-    public boolean removeAllEdges(Collection<? extends E> edges) {
-        return false;
-    }
-
-    @Override
-    public Set<E> removeAllEdges(V sourceVertex, V targetVertex) {
-        return Set.of();
-    }
-
-    @Override
-    public boolean removeAllVertices(Collection<? extends V> vertices) {
-        return false;
     }
 
     @Override
@@ -129,12 +136,12 @@ public class BaseGraph<V, E> implements Graph<V, E> {
     }
 
     @Override
-    public boolean removeVertex(V v) {
+    public boolean removeAllEdges(Collection<? extends E> edges) {
         return false;
     }
 
     @Override
-    public Set<V> vertexSet() {
+    public Set<E> removeAllEdges(V sourceVertex, V targetVertex) {
         return Set.of();
     }
 
@@ -149,11 +156,6 @@ public class BaseGraph<V, E> implements Graph<V, E> {
     }
 
     @Override
-    public GraphType getType() {
-        return type;
-    }
-
-    @Override
     public double getEdgeWeight(E e) {
         return 0;
     }
@@ -162,4 +164,19 @@ public class BaseGraph<V, E> implements Graph<V, E> {
     public void setEdgeWeight(E e, double weight) {
 
     }
+
+    //
+    // Utilities
+    //
+
+    @Override
+    public Supplier<V> getVertexSupplier() {
+        return null;
+    }
+
+    @Override
+    public Supplier<E> getEdgeSupplier() {
+        return null;
+    }
+
 }

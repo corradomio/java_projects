@@ -1,18 +1,26 @@
 package jext.optim.heuristics.genetics.util;
 
+import static jext.util.MathUtils.log2;
+
 public class Entropy {
 
-    private static double ILOG2 = 1./Math.log(2);
-    public static double log2(double x) {
-        return x == 0 ? 0 : ILOG2*Math.log(x);
-    }
-
-    public static double value(double[] values) {
+    public static float value(float[] values) {
         int n = values.length;
-        double total = 0;
+        float total = 0;
         for(int i=0; i<n; ++i)
             total += values[i];
         return value(values, total);
+    }
+
+    public static float value(float[] values, float total) {
+        int n = values.length;
+        float ent = 0;
+        for(int i=0; i<n; ++i) {
+            float p = values[i]/total;
+            ent -= p*log2(p);
+        }
+
+        return ent;
     }
 
     public static double value(double[] values, double total) {

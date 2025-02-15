@@ -29,13 +29,13 @@ public class ChristofidesTSP extends AbstractTSP {
     protected Solution solve() {
 
         // create the sub distance matrix used by Christofides
-        double[][] distanceMatrix = distances.distanceMatrix();
+        float[][] distanceMatrix = distances.getMatrix();
 
         Christofides ch = new Christofides();
 
         int[] chtour = ch.solve(distanceMatrix);
 
-        return new Solution(distances.distances(), distances.resolve(chtour));
+        return new Solution(distances.getDistances(), distances.resolve(chtour));
     }
 
     // ----------------------------------------------------------------------

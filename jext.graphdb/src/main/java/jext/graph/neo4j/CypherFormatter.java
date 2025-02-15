@@ -8,7 +8,7 @@ package jext.graph.neo4j;
 
 import jext.graph.Direction;
 import jext.graph.Param;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.ArrayUtils;
 import jext.util.Parameters;
 import jext.util.StringUtils;

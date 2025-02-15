@@ -4,7 +4,7 @@ import jext.cache.CacheManager;
 import jext.graph.GraphDatabase;
 import jext.graph.GraphDatabases;
 import jext.graph.GraphSession;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.PropertiesUtils;
 import jext.util.concurrent.Parallel;
 import org.neo4j.driver.types.Node;

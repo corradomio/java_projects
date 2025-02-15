@@ -1,6 +1,6 @@
 package jext.sourcecode.project.python.util;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.maven.Version;
 import jext.maven.Versions;
 import org.jsoup.Jsoup;

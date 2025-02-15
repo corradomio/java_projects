@@ -5,18 +5,17 @@ import jext.optim.heuristics.genetics.GeneticAlgorithm;
 import jext.optim.heuristics.genetics.Population;
 import jext.optim.heuristics.genetics.domain.permutation.InversionMutation;
 import jext.optim.heuristics.genetics.domain.permutation.OrderCrossover;
-import jext.optim.heuristics.genetics.domain.permutation.Permutation;
-import jext.optim.heuristics.genetics.domain.permutation.PermutationFactory;
-import jext.optim.heuristics.genetics.domain.permutation.PermutationFitnessFunction;
+import jext.optim.domain.permutation.Permutation;
+import jext.optim.domain.permutation.PermutationFactory;
+import jext.optim.domain.permutation.PermutationFitnessFunction;
 import jext.optim.heuristics.genetics.filter.AcceptAll;
-import jext.optim.heuristics.genetics.filter.DropDuplicates;
 import jext.optim.heuristics.genetics.selection.TournamentSelection;
 import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
 import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
+import jext.optim.heuristics.genetics.stopping.LogGeneration;
 import jext.optim.heuristics.genetics.stopping.MultipleConditions;
 import jext.optim.heuristics.genetics.stopping.NeverStop;
 import jext.optim.heuristics.genetics.stopping.Patience;
-import jext.optim.heuristics.genetics.util.TPrint;
 
 
 public class CheckPermutation {
@@ -52,19 +51,16 @@ public class CheckPermutation {
             new InversionMutation(), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY),
             new AcceptAll<>()
-        ) {
-            @Override
-            protected void onGeneration(int g, Population<Permutation> population) {
-                TPrint.printf("[%7d]: %.6f\n", g, population.getFittestChromosome().fitness());
-            }
-        };
+        );
 
         Population<Permutation> bestPop = ga.evolve(true,
             pop,
             new MultipleConditions(new NeverStop()
+                , new LogGeneration()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)
+                , new LogGeneration()
             )
         );
 
@@ -81,6 +77,7 @@ public class CheckPermutation {
         Population<Permutation> worstPop = ga.evolve(false,
             pop,
             new MultipleConditions(new NeverStop()
+                , new LogGeneration()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)

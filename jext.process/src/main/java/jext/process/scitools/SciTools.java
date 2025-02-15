@@ -2,7 +2,7 @@ package jext.process.scitools;
 
 import jext.lang.OperatingSystem;
 import jext.lang.OperatingSystemUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.process.OutputStreamToConsumer;
 import jext.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;

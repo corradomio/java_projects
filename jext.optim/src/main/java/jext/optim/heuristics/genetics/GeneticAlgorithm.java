@@ -28,13 +28,13 @@ public class GeneticAlgorithm<T> {
     private final CrossoverPolicy<T> crossoverPolicy;
 
     /** the rate of crossover for the algorithm. */
-    private final double crossoverRate;
+    private final float crossoverRate;
 
     /** the mutation policy used by the algorithm. */
     private final MutationPolicy<T> mutationPolicy;
 
     /** the rate of mutation for the algorithm. */
-    private final double mutationRate;
+    private final float mutationRate;
 
     /** the selection policy used by the algorithm. */
     private final SelectionPolicy<T> selectionPolicy;
@@ -74,9 +74,9 @@ public class GeneticAlgorithm<T> {
                 mutationRate, 0, 1);
         }
         this.crossoverPolicy = crossoverPolicy;
-        this.crossoverRate = crossoverRate;
+        this.crossoverRate = (float) crossoverRate;
         this.mutationPolicy = mutationPolicy;
-        this.mutationRate = mutationRate;
+        this.mutationRate = (float) mutationRate;
         this.selectionPolicy = selectionPolicy;
         this.filterPolicy = filterPolicy;
     }
@@ -137,9 +137,7 @@ public class GeneticAlgorithm<T> {
         Population<T> current = initial;
         generationsEvolved = 0;
         while (!condition.isSatisfied(current)) {
-            onGenerationStart(generationsEvolved, current);
             current = nextGeneration(current);
-            onGeneration(generationsEvolved, current);
             generationsEvolved++;
         }
         return current;
@@ -176,13 +174,13 @@ public class GeneticAlgorithm<T> {
             ChromosomePair<T> pair = getSelectionPolicy().select(current);
 
             // crossover?
-            if (randGen.nextDouble() < getCrossoverRate()) {
+            if (randGen.nextFloat() < getCrossoverRate()) {
                 // apply crossover policy to create two offspring
                 pair = getCrossoverPolicy().crossover(pair.first(), pair.second());
             }
 
             // mutation?
-            if (randGen.nextDouble() < getMutationRate()) {
+            if (randGen.nextFloat() < getMutationRate()) {
                 // apply mutation policy to the chromosomes
                 pair = new ChromosomePair<>(
                     getMutationPolicy().mutate(pair.first()),
@@ -214,7 +212,7 @@ public class GeneticAlgorithm<T> {
      * Returns the crossover rate.
      * @return crossover rate
      */
-    public double getCrossoverRate() {
+    public float getCrossoverRate() {
         return crossoverRate;
     }
 
@@ -230,7 +228,7 @@ public class GeneticAlgorithm<T> {
      * Returns the mutation rate.
      * @return mutation rate
      */
-    public double getMutationRate() {
+    public float getMutationRate() {
         return mutationRate;
     }
 
@@ -258,18 +256,5 @@ public class GeneticAlgorithm<T> {
     public Population<T> getPopulation() {
         return population;
     }
-
-    // ----------------------------------------------------------------------
-    // Events
-    // ----------------------------------------------------------------------
-
-    protected void onGenerationStart(int generationsEvolved, Population<T> population) {
-
-    }
-
-    protected void onGeneration(int generationsEvolved, Population<T> population) {
-
-    }
-
 
 }

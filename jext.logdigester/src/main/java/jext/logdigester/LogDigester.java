@@ -1,6 +1,6 @@
 package jext.logdigester;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;

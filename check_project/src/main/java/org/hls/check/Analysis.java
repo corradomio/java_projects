@@ -17,7 +17,7 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistryType
 import jext.javaparser.symbolsolver.resolution.typesolvers.ContextTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JarsTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.name.Name;
 import jext.name.PathName;
 import jext.sourcecode.project.Module;

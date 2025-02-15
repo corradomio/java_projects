@@ -1,23 +1,23 @@
 package jext.optim.heuristics.genetics.util;
 
+import static jext.util.MathUtils.sq;
+
 public class GiniIndex {
 
-    public static double value(double[] values) {
+    public static float value(float[] values) {
         int n = values.length;
-        double total = 0;
+        float total = 0;
         for(int i=0; i<n; ++i)
             total += values[i];
         return value(values, total);
     }
 
-    public static double value(double[] values, double total) {
+    public static float value(float[] values, float total) {
         int n = values.length;
-        double gi = 1;
+        float gi = 1;
         for(int i=0; i<n; ++i)
             gi -= sq(values[i]/total);
         return gi;
     }
-
-    private static double sq(double x) { return x*x; }
 
 }

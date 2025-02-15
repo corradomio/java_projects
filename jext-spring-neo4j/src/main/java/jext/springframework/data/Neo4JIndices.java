@@ -1,6 +1,6 @@
 package jext.springframework.data;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.springframework.data.indices.IndexCollection;
 import jext.springframework.data.indices.IndexDescriptor;
 import jext.util.PropertiesUtils;

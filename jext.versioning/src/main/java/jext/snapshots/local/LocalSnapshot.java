@@ -1,6 +1,6 @@
 package jext.snapshots.local;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.snapshots.Snapshot;
 import jext.snapshots.SnapshotDifferences;
 import jext.snapshots.SnapshotInfo;

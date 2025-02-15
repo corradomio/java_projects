@@ -3,7 +3,7 @@ package jext.sourcecode.project.java.types;
 import jext.java.TypeRole;
 import jext.sourcecode.project.java.JavaConstants;
 import jext.java.JavaUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.name.Name;
 import jext.name.NamedObject;
 import jext.name.ObjectName;

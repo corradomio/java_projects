@@ -1,6 +1,6 @@
 package jext.sourcecode.project.lfm.java;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.util.BaseLibraryRepository;
 import jext.util.FileUtils;
 

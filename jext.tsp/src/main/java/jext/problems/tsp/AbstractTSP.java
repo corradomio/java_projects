@@ -34,7 +34,7 @@ public abstract class AbstractTSP implements TSPSolver {//
      * @return a Solution object
      */
     public Solution solve(Distances distances) {
-        return solve(distances, TourUtils.defaultTour(distances.order()));
+        return solve(distances, TourUtils.defaultTour(distances.size()));
     }
 
     /**

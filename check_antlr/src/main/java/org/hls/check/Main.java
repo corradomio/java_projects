@@ -15,7 +15,7 @@ import jext.antlr.v4.python3.Python3Lexer;
 import jext.antlr.v4.python3.Python3Parser;
 import jext.antlr.v4.scala.ScalaLexer;
 import jext.antlr.v4.scala.ScalaParser;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

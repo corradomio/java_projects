@@ -1,6 +1,6 @@
 package jext.net;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;

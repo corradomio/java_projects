@@ -1,6 +1,6 @@
 package org.example;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 /**
  * Hello world!

@@ -1,7 +1,7 @@
 package jext.sourcecode.project.lfm;
 
 import jext.compress.Archives;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.net.RemoteFileDownloader;
 import jext.util.FileUtils;
 import jext.xml.XPathUtils;

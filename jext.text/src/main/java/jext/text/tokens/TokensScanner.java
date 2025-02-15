@@ -1,7 +1,7 @@
 package jext.text.tokens;
 
 import jext.io.filters.FileFilters;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 import org.jetbrains.annotations.Nullable;
 

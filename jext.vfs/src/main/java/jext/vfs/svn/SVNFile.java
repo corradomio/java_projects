@@ -1,6 +1,6 @@
 package jext.vfs.svn;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.vfs.AbstractFile;
 import jext.vfs.VFile;
 import jext.vfs.VFileContent;

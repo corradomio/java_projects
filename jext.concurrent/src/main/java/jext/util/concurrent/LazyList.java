@@ -1,6 +1,6 @@
 package jext.util.concurrent;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.util.AbstractList;
 import java.util.ArrayList;

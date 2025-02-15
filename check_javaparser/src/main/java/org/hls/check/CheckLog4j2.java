@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.logging.v2.Logger;
+import jext.util.logging.v2.Logger;
 
 public class CheckLog4j2 {
 

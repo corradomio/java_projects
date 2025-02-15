@@ -8,7 +8,7 @@ import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
 import jext.graph.neo4j.VGraphDatabase;
 import jext.graph.schema.GraphSchema;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.MapUtils;
 import jext.util.PropertiesUtils;
 import org.xml.sax.SAXException;

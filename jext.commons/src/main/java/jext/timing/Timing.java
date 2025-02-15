@@ -1,6 +1,6 @@
 package jext.timing;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 public class Timing {
 

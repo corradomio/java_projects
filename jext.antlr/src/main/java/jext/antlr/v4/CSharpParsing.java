@@ -4,7 +4,7 @@ import jext.antlr.v4.csharp.CSharpParser;
 import jext.antlr.v4.util.ErrorListener;
 import jext.antlr.v4.csharp.CSharpLexer;
 import jext.antlr.v4.csharp.SkipByteOrderMarkerInputStream;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

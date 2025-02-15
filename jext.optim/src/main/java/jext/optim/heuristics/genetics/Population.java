@@ -5,7 +5,7 @@ import jext.math.exception.NotPositiveException;
 import jext.math.exception.OutOfRangeException;
 import jext.math.exception.util.LocalizedFormats;
 import jext.optim.heuristics.genetics.filter.AcceptAll;
-import jext.optim.heuristics.genetics.util.QuickSort;
+import jext.util.QuickSort;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,9 +41,9 @@ public class Population<T> implements Iterable<Chromosome<T>> {
     /** number of chromosomes/candidates in the population */
     private final int populationLimit;
     /** quota of the best population to transfer in the next generation */
-    private final double elitismRate;
+    private final float elitismRate;
     /** quota of the population to add as new random candidates */
-    private final double foreignerRate;
+    private final float foreignerRate;
     /** candidate generator */
     private final CandidateFactory<T> candidateFactory;
     /** function used to evaluate a candidate */
@@ -64,8 +64,8 @@ public class Population<T> implements Iterable<Chromosome<T>> {
         FitnessFunction<T> fitnessFunction
     ) {
         this.populationLimit = populationSize;
-        this.elitismRate = elitismRate;
-        this.foreignerRate = foreignerRate;
+        this.elitismRate = (float) elitismRate;
+        this.foreignerRate = (float) foreignerRate;
         this.candidateFactory = candidateFactory;
         this.fitnessFunction = fitnessFunction;
 
@@ -141,7 +141,7 @@ public class Population<T> implements Iterable<Chromosome<T>> {
         // keep at minimum the best solution
         int elitism = Math.max(1, (int) Math.round(elitismRate* chromosomes.size()));
         // add at minimum a new random candidate
-        int offspring = Math.max(1, (int) Math.round(foreignerRate * chromosomes.size()));
+        int foreigner = Math.max(1, (int) Math.round(foreignerRate * chromosomes.size()));
 
         List<Chromosome<T>> chromosomes = filterPolicy.filter(this.chromosomes);
 
@@ -167,7 +167,7 @@ public class Population<T> implements Iterable<Chromosome<T>> {
             newPopulation.addChromosome(chromosomes.get(i));
 
         // add the new chromosomes
-        for (int i=0; i<offspring; i++)
+        for (int i=0; i<foreigner; i++)
             newPopulation.addChromosome(new Chromosome<>(candidateFactory.candidate(rng), fitnessFunction, decreasingOrder));
 
         return newPopulation;
@@ -185,7 +185,7 @@ public class Population<T> implements Iterable<Chromosome<T>> {
 
     /**
      * Retrieve the fittest chromosome.
-     * Note: it orders the chromosomes
+     * Note: the chromosomes are NOT ordered
      * @return the fittest chromosome
      */
     public Chromosome<T> getFittestChromosome() {

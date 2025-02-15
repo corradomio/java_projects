@@ -15,6 +15,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math4-core -->
         <!--<dependency>
             <groupId>org.apache.commons</groupId>

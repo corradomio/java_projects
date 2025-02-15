@@ -3,7 +3,7 @@ package jext.maven;
 import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.exception.MultipleException;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 import jext.util.JarUtils;
 import jext.util.StringUtils;

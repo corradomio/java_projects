@@ -9,14 +9,14 @@ import java.util.HashSet;
  * Solves the traveling salesman problem using Branch and Bound by utilizing Node's
  */
 public class Solver {
-	private double[][] distances;
-	private double best_cost;
+	private float[][] distances;
+	private float best_cost;
 	private int[] best_path;
 
 	/**
 	 * Constructs a new Solver and initializes distances array
 	 */
-	public Solver(double[][] distances) {
+	public Solver(float[][] distances) {
 		this.distances = distances;
 	}
 
@@ -47,7 +47,7 @@ public class Solver {
 	 *
 	 * @return The cost
 	 */
-	public double getCost() {
+	public float getCost() {
 		return best_cost;
 	}
 
@@ -59,23 +59,23 @@ public class Solver {
 	 * @param distances The 2D array containing point distances
 	 * @return The greedy cost
 	 */
-	private double findGreedyCost(int i, HashSet<Integer> location_set, double[][] distances) {
+	private float findGreedyCost(int i, HashSet<Integer> location_set, float[][] distances) {
 		if(location_set.isEmpty())
 			return distances[0][i];
 
 		location_set.remove(i);
 
-		double lowest = Double.MAX_VALUE;
+		float lowest = Float.MAX_VALUE;
 		int closest = 0;
 		for(int location : location_set) {
-			double cost = distances[i][location];
+			float cost = distances[i][location];
 			if(cost < lowest) {
 				lowest = cost;
 				closest = location;
 			}
 		}
 
-		double greedyCost = findGreedyCost(closest, location_set, distances);
+		float greedyCost = findGreedyCost(closest, location_set, distances);
 
 		return lowest + greedyCost;
 	}
@@ -90,7 +90,7 @@ public class Solver {
 
 		for(Node child : children) {
 			if(child.isTerminal()) {
-				double cost = child.getPathCost();
+				float cost = child.getPathCost();
 				if(cost < best_cost) {
 					best_cost = cost;
 					best_path = child.getPath();

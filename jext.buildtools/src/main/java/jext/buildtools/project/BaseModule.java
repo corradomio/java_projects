@@ -20,7 +20,7 @@ import jext.buildtools.source.java.JavaSources;
 import jext.buildtools.util.FileFilters;
 import jext.buildtools.util.NamedObject;
 import jext.buildtools.util.PathName;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.nio.file.FilteredFileVisitor;
 import jext.util.FileUtils;
 import jext.util.PropertiesUtils;

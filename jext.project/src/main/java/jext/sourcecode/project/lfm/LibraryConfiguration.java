@@ -2,7 +2,7 @@ package jext.sourcecode.project.lfm;
 
 import jext.configuration.Configuration;
 import jext.configuration.HierarchicalConfiguration;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.StringUtils;
 
 import java.io.File;

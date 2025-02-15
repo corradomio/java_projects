@@ -2,7 +2,7 @@ package jext.jgrapht.alg.closure;
 
 import jext.jgrapht.Graphs;
 import jext.jgrapht.util.Utils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.Assert;
 import jext.util.Pair;
 import jext.util.concurrent.ConcurrentArrayList;

@@ -102,7 +102,7 @@ import com.github.javaparser.resolution.SymbolResolver;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
 import jext.javaparser.util.JPUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 public class VoidVisitorWithDefaults<A> extends VoidVisitorAdapter<A> {
 

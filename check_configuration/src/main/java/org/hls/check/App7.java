@@ -3,7 +3,7 @@ package org.hls.check;
 import jext.configuration.Configuration;
 import jext.configuration.ConfigurationUtils;
 import jext.configuration.PriorityConfiguration;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.File;
 import java.util.Map;

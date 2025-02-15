@@ -1,5 +1,6 @@
 package jext.optim.heuristics.genetics.domain.bitset;
 
+import jext.optim.domain.bitset.BitSet;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
 

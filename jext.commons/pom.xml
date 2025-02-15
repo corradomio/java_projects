@@ -9,8 +9,8 @@
     <version>1.0</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <log4j.version>2.17.1</log4j.version> <!-- 2.13.3 -->
     </properties>
 
@@ -22,17 +22,17 @@
             <version>1.2.17</version>
         </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-web -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
             <version>${log4j.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-1.2-api -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
             <version>${log4j.version}</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>

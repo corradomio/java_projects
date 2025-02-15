@@ -2,7 +2,7 @@ package org.hls.check;
 
 import com.scitools.understand.UnderstandException;
 import jext.cache.CacheManager;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.scitools.UndDatabase;
 import jext.sourcecode.project.ProjectComparator;
 import jext.util.concurrent.Parallel;

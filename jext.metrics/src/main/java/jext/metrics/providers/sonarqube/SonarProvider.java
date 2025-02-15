@@ -1,6 +1,6 @@
 package jext.metrics.providers.sonarqube;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.metrics.Metric;
 import jext.metrics.MetricsCategory;
 import jext.metrics.MetricsProject;

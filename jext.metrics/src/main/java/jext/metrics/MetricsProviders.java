@@ -1,7 +1,7 @@
 package jext.metrics;
 
 import jext.exception.InvalidValueException;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.PropertiesUtils;
 
 import java.io.IOException;

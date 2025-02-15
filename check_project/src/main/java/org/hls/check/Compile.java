@@ -2,7 +2,7 @@ package org.hls.check;
 
 import jext.cache.CacheManager;
 import jext.javaparser.JavaParserPool;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.name.Name;
 import jext.name.PathName;
 import jext.sourcecode.project.Project;

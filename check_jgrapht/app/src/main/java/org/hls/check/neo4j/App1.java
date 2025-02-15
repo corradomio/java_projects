@@ -4,7 +4,7 @@ import jext.jgrapht.edges.Edge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.nio.neo4j.Neo4JGraphImporter;
 import jext.jgrapht.util.GraphDescribe;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.GraphExporter;

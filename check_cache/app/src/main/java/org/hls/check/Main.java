@@ -2,7 +2,7 @@ package org.hls.check;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.util.concurrent.ExecutionException;
 

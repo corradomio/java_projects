@@ -1,6 +1,6 @@
 package jext.tasks;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.MemoryUtils;
 import jext.util.Sleep;
 

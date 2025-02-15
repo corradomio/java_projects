@@ -3,7 +3,7 @@ package org.hls.check.misc;
 import jext.jgrapht.edges.Edge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.util.GraphDescribe;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.ScaleFreeGraphGenerator;
 

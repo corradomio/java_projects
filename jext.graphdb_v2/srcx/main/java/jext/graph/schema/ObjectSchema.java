@@ -1,7 +1,7 @@
 package jext.graph.schema;
 
 import jext.graph.Param;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;

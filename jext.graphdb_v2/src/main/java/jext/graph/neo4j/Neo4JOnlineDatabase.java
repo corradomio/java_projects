@@ -6,7 +6,7 @@ import jext.graph.GraphVersion;
 import jext.graph.named.NamedIndex;
 import jext.graph.named.NamedIndices;
 import jext.graph.named.NamedQueries;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.net.URL;
 import jext.util.MapUtils;
 import jext.util.Parameters;

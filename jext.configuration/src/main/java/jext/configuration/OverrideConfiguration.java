@@ -1,6 +1,6 @@
 package jext.configuration;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.FileUtils;
 
 import java.io.File;

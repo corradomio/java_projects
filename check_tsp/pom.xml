@@ -12,7 +12,7 @@
     <modules>
         <module>app</module>
         <module>../jext.tsp</module>
-        <module>../jext.logging</module>
+        <module>../jext.commons</module>
     </modules>
 
     <properties>

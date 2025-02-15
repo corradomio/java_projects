@@ -1,6 +1,6 @@
 package jext.sourcecode.project.java.ant.util;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.xml.XPathUtils;
 import org.w3c.dom.Element;

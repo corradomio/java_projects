@@ -34,7 +34,7 @@ Alcune migliorie
 RandomGenerator
 ---------------
 
-    Ci sono multi punti in cui server in RNG.
+    Ci sono molti punti in cui server in RNG.
     L'implementazione corrente, che distribuisce l'RNG ai vari oggetti,
     non sembra molto 'intelligente' e, soprattutto, contrasta con
     l'implementazione di Apache.
@@ -52,8 +52,12 @@ RandomGenerator
 Candidati
 ---------
 
-    Il candidato DEVE implementare "hashCode()" perche' viene usato per
-    eliminare i duplicati.
+    Il candidato DEVE implementare
+
+        "hashCode()"
+        "equals(Object obj)"
+
+    perche' fa parte del contratto necessario per metter gli ogetti in HashMap e HashSet
     Il candidato e' un oggetto IMMUTABILE. Quindi MutatePolicy DEVE creare
     un nuovo oggetto.
 
@@ -113,8 +117,6 @@ Apache Commons Genetic
         - Population nextGeneration();
         - void addChromosome(Chromosome chromosome)
         - Chromosome getFittestChromosome();
-        ListPopulation (abstract)
-            ElitisticListPopulation
 
 
 -----------------------------------------------------------------------------
@@ -125,23 +127,29 @@ Lista di 'domini' (usati in Mathematica)
     Booleans([n1,...nk])
         generic tensor k-dim of binary values
 
-    Assignment(n,m, row|col)
+    Assignment[n,m, Row|Column]
         assignment with a single 1 in each row or column
+        The 'compact' representation is the same than Partition(n,k)
+        where, for each element, it is specified where the 1 is located
+            Row     -> column
+            Column  -> row
 
-    Subset(n)
+    Subset[n]
         generic subset of a set {0,...n-1}
+        it can be represented as Boolean[n]
 
-    Permutation(n)
+    Permutation[n]
         generic permutation of [0,...n-1]
 
-    Partition(n,k)
+    Partition[n,k]
         partitioning of {0,..n-1} in k subsets
+        The representation is the array of integers {s1,...s[n-1]}
+        where each si specify in which subset (0..k-1) the element is located
 
     Range([n1,...nk],{min,max})     integer/float/
         generic tensor k-dim of integer/real values in the specified range
+        For simplicity, the range is the same for all elements in the tensor
 
-    Set<T>  {s1,...sn}
-        generic subset of {s1, ...sn}
-
-    List<T> [l1,...ln]
-        generic permutation of [l1,...ln]
+    Component[{c1,...cn},{v1,...vn},{vmin,vmax}]
+    Component[{c1,...cn},{{v11,...v1},...n},{{v1min,v1max}, ...}]
+        each component has one or more values and there are min/max constraints

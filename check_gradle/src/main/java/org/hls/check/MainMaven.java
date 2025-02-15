@@ -2,7 +2,7 @@ package org.hls.check;
 
 import jext.buildtools.SourceProject;
 import jext.buildtools.maven.MavenProject;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.buildtools.maven.MavenCoords;
 import jext.buildtools.maven.MavenDownloader;
 import jext.buildtools.maven.MavenPom;

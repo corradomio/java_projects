@@ -5,7 +5,7 @@ import jext.graph.GraphDatabase;
 import jext.graph.GraphIterator;
 import jext.graph.GraphSession;
 import jext.graph.Query;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.Assert;
 import jext.util.Parameters;
 import jext.util.StringUtils;

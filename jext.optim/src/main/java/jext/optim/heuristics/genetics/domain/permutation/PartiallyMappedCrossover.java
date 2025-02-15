@@ -1,5 +1,6 @@
 package jext.optim.heuristics.genetics.domain.permutation;
 
+import jext.optim.domain.permutation.Permutation;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.ChromosomePair;
 import jext.optim.heuristics.genetics.util.AbstractCrossoverPolicy;
@@ -10,17 +11,6 @@ public class PartiallyMappedCrossover extends AbstractCrossoverPolicy<Permutatio
 
     @Override
     public ChromosomePair<Permutation> crossover(Chromosome<Permutation> first, Chromosome<Permutation> second, RandomGenerator rng) {
-        // int[] p1 = first.candidate().permutation();
-        // int[] p2 = second.candidate().permutation();
-        // int n = p1.length;
-        //
-        // int i = rng.nextInt(n);
-        // int j = rng.nextInt(n);
-        //
-        // int[] c1 = Utils.pmx(p1, p2, i, j);
-        // int[] c2 = Utils.pmx(p2, p1, i, j);
-        //
-        // return ChromosomePair.of(new Permutation(c1), new Permutation(c2), first);
 
         Permutation p1 = first.candidate();
         Permutation p2 = second.candidate();

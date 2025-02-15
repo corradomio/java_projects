@@ -5,7 +5,7 @@ import jext.jgrapht.alg.closure.Closure;
 import jext.jgrapht.alg.closure.ClosuresGraph;
 import jext.jgrapht.generate.RandomCavemanGraphGenerator;
 import jext.jgrapht.util.Utils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.Assert;
 import jext.util.concurrent.Parallel;
 import org.jgrapht.Graph;

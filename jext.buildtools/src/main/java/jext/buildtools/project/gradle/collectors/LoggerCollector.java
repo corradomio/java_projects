@@ -1,7 +1,7 @@
 package jext.buildtools.project.gradle.collectors;
 
 import jext.io.LineOutputStream;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 public class LoggerCollector extends LineOutputStream {
 

@@ -1,5 +1,6 @@
 package jext.optim.heuristics.genetics.domain.partition;
 
+import jext.optim.domain.partition.Partition;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.util.AbstractMutationPolicy;
 
@@ -7,13 +8,13 @@ import java.util.random.RandomGenerator;
 
 public class UniformMutation  extends AbstractMutationPolicy<Partition> {
 
-    private final double prob;
+    private final float prob;
 
     public UniformMutation() {
         this.prob = -1;
     }
 
-    public UniformMutation(double prob) {
+    public UniformMutation(float prob) {
         this.prob = prob;
     }
 
@@ -22,10 +23,10 @@ public class UniformMutation  extends AbstractMutationPolicy<Partition> {
         Partition partition = original.candidate().clone();
         int n = partition.length();
         int nparts = partition.nparts();
-        double prob = (this.prob == -1) ? 1./n : this.prob;
+        float prob = (this.prob == -1) ? 1.f/n : this.prob;
 
         for (int i = 0; i < n; i++) {
-            double r = rng.nextDouble();
+            float r = rng.nextFloat();
             if (r < prob) {
                 int p = rng.nextInt(nparts);
                 partition.set(i, p);

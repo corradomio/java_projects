@@ -4,7 +4,7 @@ import jext.cache.CacheConfiguration;
 import jext.configuration.Configuration;
 import jext.configuration.HierarchicalConfiguration;
 import jext.configuration.PriorityConfiguration;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.File;
 import java.util.Properties;

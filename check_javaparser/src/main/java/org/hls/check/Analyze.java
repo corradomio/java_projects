@@ -11,7 +11,7 @@ import jext.javaparser.symbolsolver.resolution.typesolvers.CompositeTypeSolver;
 import jext.javaparser.symbolsolver.resolution.typesolvers.JavaParserPoolTypeSolver;
 import jext.javaparser.util.ContextSolvedSymbols;
 import jext.javaparser.util.UnsolvedSymbols;
-import jext.logging.v2.Logger;
+import jext.util.logging.v2.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectDump;

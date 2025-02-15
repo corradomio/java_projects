@@ -1,7 +1,7 @@
 package org.hls.check;
 
 import jext.configuration.PriorityConfiguration;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.MapUtils;
 
 import java.io.File;

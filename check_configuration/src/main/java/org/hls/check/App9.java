@@ -4,7 +4,7 @@ import jext.configuration.Configuration;
 import jext.configuration.ConfigurationException;
 import jext.configuration.HierarchicalConfiguration;
 import jext.configuration.XMLConfiguration;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.File;
 import java.util.List;

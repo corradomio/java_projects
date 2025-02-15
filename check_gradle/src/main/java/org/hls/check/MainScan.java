@@ -2,7 +2,7 @@ package org.hls.check;
 
 import jext.buildtools.SourceProject;
 import jext.buildtools.scan.ScanProject;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.File;
 

@@ -6,12 +6,12 @@ import jext.optim.heuristics.genetics.util.FitnessComparators;
 public class Chromosome<T> implements Comparable<Chromosome<T>>, Solution<T> {
 
     /** Value assigned when no fitness has been computed yet. */
-    private static final double NO_FITNESS = Double.NEGATIVE_INFINITY;
+    private static final float NO_FITNESS = Float.NEGATIVE_INFINITY;
 
     private final T candidate;
     private final FitnessFunction<T> fitnessFunction;
     private final boolean decreasingOrder;
-    private double fitness = NO_FITNESS;
+    private float fitness = NO_FITNESS;
 
     // ----------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ public class Chromosome<T> implements Comparable<Chromosome<T>>, Solution<T> {
     // Properties
     // ----------------------------------------------------------------------
 
-    public double fitness() {
+    public float fitness() {
         if (this.fitness == NO_FITNESS) {
             this.fitness = fitnessFunction.fitness(candidate);
         }
@@ -62,7 +62,7 @@ public class Chromosome<T> implements Comparable<Chromosome<T>>, Solution<T> {
 
     @Override
     public int compareTo(final Chromosome<T> another) {
-        int cmp = Double.compare(fitness(), another.fitness());
+        int cmp = Float.compare(fitness(), another.fitness());
         return decreasingOrder ? -cmp : cmp;
     }
 

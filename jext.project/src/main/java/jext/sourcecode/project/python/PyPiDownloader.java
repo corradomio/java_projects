@@ -1,7 +1,7 @@
 package jext.sourcecode.project.python;
 
 import jext.compress.Archives;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.maven.MavenCoords;
 import jext.maven.Versions;
 import jext.sourcecode.project.LibraryDownloader;

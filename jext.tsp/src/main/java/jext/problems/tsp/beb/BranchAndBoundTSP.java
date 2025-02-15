@@ -9,7 +9,7 @@ public class BranchAndBoundTSP extends AbstractTSP {
     @Override
     public Solution solve() {
 
-        Solver solver = new Solver(distances.distanceMatrix());
+        Solver solver = new Solver(distances.getDistances().getMatrix());
 
         int[] bbtour = solver.calculate();
 

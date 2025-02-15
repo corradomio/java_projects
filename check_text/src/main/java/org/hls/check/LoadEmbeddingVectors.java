@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.logging.v2.Logger;
+import jext.util.logging.v2.Logger;
 import jext.text.embedding.FastTextEmbedding;
 import jext.text.embedding.GloVeEmbedding;
 import jext.text.embedding.Word2VecEmbedding;

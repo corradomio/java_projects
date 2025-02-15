@@ -1,6 +1,6 @@
 package jext.metrics.providers.javaflightrecorder;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.metrics.*;
 import jext.util.*;
 import jext.xml.XPathUtils;

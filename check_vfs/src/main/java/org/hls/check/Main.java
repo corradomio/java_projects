@@ -1,6 +1,6 @@
 package org.hls.check;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.vfs.VFile;
 import jext.vfs.VFileSystem;
 import jext.vfs.VFileSystems;

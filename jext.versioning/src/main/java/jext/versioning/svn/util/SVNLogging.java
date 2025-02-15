@@ -1,6 +1,6 @@
 package jext.versioning.svn.util;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.tmatesoft.svn.util.SVNLogType;
 
 import java.util.logging.Level;

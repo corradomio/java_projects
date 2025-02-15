@@ -3,7 +3,7 @@ package jext.jgrapht.alg.color;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.util.EdgeInfo;
 import jext.jgrapht.util.VertexInfo;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.concurrent.SharedBitSet;
 import jext.util.concurrent.ThreadLocalRandom;
 import org.jgrapht.Graph;

@@ -1,6 +1,6 @@
 package jext.metrics.providers.scitools;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.metrics.Metric;
 import jext.metrics.MetricsException;
 import jext.metrics.MetricsObject;

@@ -2,7 +2,7 @@ package org.hls.check;
 
 import com.objectdb.Utilities;
 import jext.cache.CacheManager;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.hls.check.data.Address;
 import org.hls.check.data.Person;
 

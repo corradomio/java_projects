@@ -2,7 +2,7 @@ package jext.util;
 
 import jext.io.filters.FalseFileFilter;
 import jext.io.filters.FileFilters;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +42,7 @@ import java.util.zip.ZipInputStream;
 
 public class FileUtils {
 
-    private static Logger logger = Logger.getLogger(FileUtils.class);
+    private static final Logger logger = Logger.getLogger(FileUtils.class);
 
     // ----------------------------------------------------------------------
     // Count extensions
@@ -197,6 +197,14 @@ public class FileUtils {
             return file;
         else
             return addExtension(file, String.format(".%d", counter));
+    }
+
+    public static File replaceExtension(File file, String ext) {
+        if (!ext.startsWith("."))
+            ext = "." + ext;
+        String name = file.getName();
+        int pos = name.lastIndexOf('.');
+        return new File(file.getParentFile(), name.substring(0, pos) + ext);
     }
 
     // ----------------------------------------------------------------------

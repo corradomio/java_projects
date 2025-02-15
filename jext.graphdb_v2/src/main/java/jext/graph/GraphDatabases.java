@@ -1,6 +1,6 @@
 package jext.graph;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.net.URL;
 import jext.util.PropertiesUtils;
 

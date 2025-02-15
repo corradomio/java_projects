@@ -1,7 +1,7 @@
 package jext.versioning;
 
 import jext.io.filters.FalseFileFilter;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.net.URL;
 import jext.util.FileUtils;
 import jext.versioning.util.Authentication;

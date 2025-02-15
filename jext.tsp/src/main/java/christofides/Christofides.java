@@ -27,7 +27,7 @@ public class Christofides {
      * @return The path of the travelling salesman.
      * @since 1.0
      */
-    public int[] solve(double[][] weightMatrix) {
+    public int[] solve(float[][] weightMatrix) {
 
         int mst[] = prim(weightMatrix, weightMatrix[0].length);
 
@@ -37,7 +37,7 @@ public class Christofides {
 
         int route[] = getEulerCircuit(nodes);
 
-        double sum = 0;
+        float sum = 0;
 
         for (int i = 1; i < route.length; i++) {
             sum += weightMatrix[route[i - 1]][route[i]];
@@ -137,7 +137,7 @@ public class Christofides {
      * @return The parentvector. p[i] gives the parent of node i.
      * @since 1.0
      */
-    public int[] prim(double[][] wt, int dim) {
+    public int[] prim(float[][] wt, int dim) {
 
         Vector queue = new Vector();
         for (int i = 0; i < dim; i++)
@@ -145,7 +145,7 @@ public class Christofides {
 
         // Prim's algorithm
         boolean isInTree[] = new boolean[dim];
-        double key[] = new double[dim]; // avstånd från nod i och nod parent[i].
+        float key[] = new float[dim]; // avstånd från nod i och nod parent[i].
         int p[] = new int[dim]; // parent
 
         for (int i = 0; i < dim; i++) {
@@ -155,7 +155,7 @@ public class Christofides {
         key[0] = 0; // root-node
         int u = 0;
 
-        double temp;
+        float temp;
         Integer elem;
         do {
             isInTree[u] = true; // lägg till noden i trädet
@@ -168,7 +168,7 @@ public class Christofides {
             }
 
             // ExtractMin, går igenom alla kvarvarande noder och tar ut den med kortast avstånd till trädet
-            double mint = Double.MAX_VALUE;
+            float mint = Float.MAX_VALUE;
             for (int i = 0; i < queue.size(); i++) {
                 elem = (Integer) queue.elementAt(i); // ineffektivt
                 temp = key[elem.intValue()];
@@ -192,7 +192,7 @@ public class Christofides {
      * @return Twodimensional matrix containing the pairs. Two columns where each row represent a pair.
      * @since 1.0
      */
-    private int[][] greadyMatch(int[] p, double[][] wt, int dim) {
+    private int[][] greadyMatch(int[] p, float[][] wt, int dim) {
 
         Node nodes[] = new Node[p.length];
 

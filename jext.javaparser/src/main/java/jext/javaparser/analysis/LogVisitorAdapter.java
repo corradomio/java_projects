@@ -5,7 +5,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 public class LogVisitorAdapter<R, A> extends VisitorWithDefaults<R, A> {
 

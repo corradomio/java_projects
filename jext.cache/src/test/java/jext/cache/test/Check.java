@@ -2,7 +2,7 @@ package jext.cache.test;
 
 import jext.cache.Cache;
 import jext.cache.CacheManager;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 public class Check {
 

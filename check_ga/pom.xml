@@ -11,7 +11,8 @@
     <modules>
         <module>app</module>
         <module>../jext.optim</module>
-        <module>../jext.linalg</module>
+        <module>../jext.tsp</module>
+        <module>../jext.commons</module>
     </modules>
 
     <properties>

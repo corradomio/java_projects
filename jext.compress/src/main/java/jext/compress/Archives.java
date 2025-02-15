@@ -1,6 +1,6 @@
 package jext.compress;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 

@@ -1,6 +1,6 @@
 package jext.security;
 
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

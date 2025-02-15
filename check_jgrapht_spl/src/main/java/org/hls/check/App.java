@@ -3,7 +3,7 @@ package org.hls.check;
 import jext.jgrapht.DirectedEdge;
 import jext.jgrapht.Graphs;
 import jext.jgrapht.alg.closure.ClosuresGraph;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.concurrent.Parallel;
 import org.jgrapht.Graph;
 import org.jgrapht.nio.Attribute;

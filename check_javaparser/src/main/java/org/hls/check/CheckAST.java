@@ -8,7 +8,7 @@ import jext.javaparser.analysis.LogVoidVisitorAdapter;
 import jext.javaparser.symbolsolver.resolution.typesolvers.ClassPoolRegistry;
 import jext.javaparser.util.ContextSolvedSymbols;
 import jext.javaparser.util.UnsolvedSymbols;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.Project;
 import jext.sourcecode.project.Projects;
 import jext.sourcecode.project.util.ProjectUtils;

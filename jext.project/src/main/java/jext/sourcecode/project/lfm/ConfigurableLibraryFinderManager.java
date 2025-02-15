@@ -5,7 +5,7 @@ import jext.configuration.HierarchicalConfiguration;
 import jext.configuration.XMLConfiguration;
 import jext.lang.OperatingSystem;
 import jext.lang.OperatingSystemUtils;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.sourcecode.project.LibraryFinder;
 import jext.sourcecode.project.LibraryFinderManager;
 import jext.sourcecode.project.Project;

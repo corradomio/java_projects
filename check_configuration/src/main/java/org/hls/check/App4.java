@@ -4,7 +4,7 @@ import jext.configuration.Configuration;
 import jext.configuration.ConfigurationUtils;
 import jext.configuration.HierarchicalConfiguration;
 import jext.configuration.PriorityConfiguration;
-import jext.logging.Logger;
+import jext.util.logging.Logger;
 import jext.util.StringUtils;
 import lombok.var;
 
