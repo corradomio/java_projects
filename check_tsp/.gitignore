@@ -1,5 +1,11 @@
 .idea
 .mvn
 target
-
+*.csv
 *.exe
+*.par
+*.tsp
+*.vrp
+*.sol
+*.tour
+*.atsp

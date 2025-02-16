@@ -1,7 +1,7 @@
 package jext.problems.tsp;
 
-import jext.problems.Distances;
-import jext.problems.dist.TourDistances;
+import jext.optim.problems.Distances;
+import jext.optim.problems.distance.TourDistances;
 
 /**
  * Abstract base class for TSP solvers

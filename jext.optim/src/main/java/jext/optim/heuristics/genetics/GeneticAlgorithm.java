@@ -2,7 +2,7 @@ package jext.optim.heuristics.genetics;
 
 import jext.math.exception.OutOfRangeException;
 import jext.math.exception.util.LocalizedFormats;
-import jext.optim.Solution;
+import jext.optim.problems.Solution;
 import jext.optim.heuristics.genetics.filter.AcceptAll;
 
 import java.util.Random;

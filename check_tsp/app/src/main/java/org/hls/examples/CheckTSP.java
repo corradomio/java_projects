@@ -1,8 +1,7 @@
 package org.hls.examples;
 
-import jext.problems.Distances;
-import jext.problems.dist.EuclideanSpace;
-import jext.problems.tsblib.TSPProblemLoader;
+import jext.optim.problems.Distances;
+import jext.optim.problems.distance.EuclideanSpace;
 import jext.problems.tsblib.TSPProblem;
 import jext.problems.tsp.TSPSolver;
 import jext.problems.tsp.ch.ChristofidesTSP;
@@ -30,14 +29,14 @@ public class CheckTSP {
         for(File tspProblem : Objects.requireNonNull(tspProblems.listFiles((dir, name) -> name.endsWith(".tsp")))) {
             try {
 
-                TSPProblem tsp = TSPProblemLoader.loadTSP(tspProblem);
+                TSPProblem tsp = TSPProblem.load(tspProblem);
 
                 if (tsp.getDimension() < 400 || tsp.getDimension() >= 500)
                     continue;
 
                 System.out.printf("%s: order=%d\n", tsp.getName(), tsp.getDimension());
 
-                Distances dmatrix = tsp.getDistanceMatrix();
+                Distances dmatrix = tsp.getDistances();
 
                 checkSolver(new NearestNeighborTSP(), dmatrix);
                 checkSolver(new LinKernighanTSP(), dmatrix);

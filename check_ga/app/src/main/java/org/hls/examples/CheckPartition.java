@@ -16,7 +16,7 @@ import jext.optim.heuristics.genetics.stopping.LogGeneration;
 import jext.optim.heuristics.genetics.stopping.MultipleConditions;
 import jext.optim.heuristics.genetics.stopping.NeverStop;
 import jext.optim.heuristics.genetics.stopping.Patience;
-import jext.util.ArrayOps;
+import jext.util.ArrayUtils;
 
 public class CheckPartition {
 
@@ -65,7 +65,7 @@ public class CheckPartition {
         float[] pvalues = fitnessFunction.values(bestChromosome.candidate());
 
         System.out.println(bestChromosome);
-        System.out.println(ArrayOps.asList(pvalues));
+        System.out.println(ArrayUtils.asList(pvalues));
 
         // ------------------------------------------------------------------
 
@@ -102,6 +102,6 @@ public class CheckPartition {
         pvalues = fitnessFunction.values(bestChromosome.candidate());
 
         System.out.println(bestChromosome);
-        System.out.println(ArrayOps.asList(pvalues));
+        System.out.println(ArrayUtils.asList(pvalues));
     }
 }

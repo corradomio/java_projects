@@ -1,7 +1,7 @@
 package org.hls.examples.utils;
 
 import com.opencsv.bean.CsvToBeanBuilder;
-import jext.problems.dist.Point;
+import jext.optim.problems.distance.Point;
 
 import java.io.File;
 import java.io.FileReader;
@@ -14,7 +14,7 @@ public class Location extends Point {
 
     }
 
-    public Location(int id, double longitude, double latitude) {
+    public Location(int id, float longitude, float latitude) {
         super(id, longitude, latitude);
     }
 

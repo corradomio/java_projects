@@ -5,11 +5,11 @@ import java.util.Calendar;
 public class TPrint {
 
     private static long timestamp = System.currentTimeMillis();
-    private static long delta = 3000;
+    public static long DELAY = 3000;
 
     public static void println(Object o) {
         long now = System.currentTimeMillis();
-        if (now - timestamp > delta) {
+        if (now - timestamp > DELAY) {
             timestamp = now;
             tsprint();
             System.out.println(o);
@@ -18,7 +18,7 @@ public class TPrint {
 
     public static void printf(String fmt, Object... o) {
         long now = System.currentTimeMillis();
-        if (now - timestamp > delta) {
+        if (now - timestamp > DELAY) {
             timestamp = now;
             tsprint();
             System.out.printf(fmt, o);

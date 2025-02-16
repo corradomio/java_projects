@@ -11,8 +11,9 @@
 
     <modules>
         <module>app</module>
-        <module>../jext.tsp</module>
         <module>../jext.commons</module>
+        <module>../jext.optim</module>
+        <module>../jext.tsp</module>
     </modules>
 
     <properties>

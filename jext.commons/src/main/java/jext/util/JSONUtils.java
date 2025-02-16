@@ -52,7 +52,7 @@ public class JSONUtils {
 
     public static <T> T parse(InputStream istream, Class<T> objectType) throws IOException {
         ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-        FileUtils.copy(istream, ostream);
+        FileCopy.copy(istream, ostream);
         String content = new String(ostream.toByteArray(), StandardCharsets.UTF_8);
         return parse(content, objectType);
     }

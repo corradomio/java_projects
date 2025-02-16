@@ -1,14 +1,14 @@
 package org.hls.examples;
 
 import jext.optim.domain.permutation.PermutationFitnessFunction;
-import jext.optim.heuristics.ants.AntColony;
-import jext.optim.heuristics.ants.AntColonyOptimization;
-import jext.optim.heuristics.ants.Tour;
-import jext.optim.heuristics.ants.stopping.FixedGenerationCount;
-import jext.optim.heuristics.ants.stopping.LogGeneration;
-import jext.optim.heuristics.ants.stopping.MultipleConditions;
-import jext.optim.heuristics.ants.stopping.NeverStop;
-import jext.optim.heuristics.ants.stopping.Patience;
+import jext.optim.heuristics.aco.AntColony;
+import jext.optim.heuristics.aco.AntColonyOptimization;
+import jext.optim.heuristics.aco.Tour;
+import jext.optim.heuristics.aco.stopping.FixedGenerationCount;
+import jext.optim.heuristics.aco.stopping.LogGeneration;
+import jext.optim.heuristics.aco.stopping.MultipleConditions;
+import jext.optim.heuristics.aco.stopping.NeverStop;
+import jext.optim.heuristics.aco.stopping.Patience;
 
 import java.util.Arrays;
 

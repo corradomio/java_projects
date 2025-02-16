@@ -1,7 +1,6 @@
 package jext.problems.vrp;
 
-import jext.problems.Distances;
-import jext.problems.dist.TourDistances;
+import jext.optim.problems.Distances;
 
 import java.util.Arrays;
 

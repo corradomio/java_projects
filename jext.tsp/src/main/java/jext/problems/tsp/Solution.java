@@ -1,7 +1,7 @@
 package jext.problems.tsp;
 
-import jext.problems.Distances;
-import jext.util.ArrayOps;
+import jext.optim.problems.Distances;
+import jext.util.ArrayUtils;
 
 /**
  * TSP solver solution:
@@ -46,7 +46,7 @@ public class Solution {
 
     @Override
     public String toString() {
-        return String.format("%s: %f", ArrayOps.asList(tour), length());
+        return String.format("%s: %f", ArrayUtils.asList(tour), length());
     }
 
 }

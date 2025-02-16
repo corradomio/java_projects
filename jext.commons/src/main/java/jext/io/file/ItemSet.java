@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static jext.util.ArrayUtils.asList;
+
 /*
         <directory name="..."  includes="pat1,pat2 pat3" excludes="pat1 pat2 pat3">
              <include name="pattern"/>
@@ -183,7 +185,7 @@ public class ItemSet {
 
     private List<File> getCurrentFiles(File baseDir) {
         File[] files = baseDir.listFiles(File::isFile);
-        return FileUtils.asList(files)
+        return asList(files)
                 .stream()
                 .filter(file -> accept(baseDir, file))
                 .collect(Collectors.toList());

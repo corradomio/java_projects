@@ -1,11 +1,11 @@
 package jext.problems.vrp.lkh;
 
-import jext.problems.Coords;
-import jext.problems.dist.TourDistances;
+import jext.optim.problems.Coords;
+import jext.optim.problems.distance.TourDistances;
 import jext.problems.tsblib.TSPProblem;
 import jext.problems.vrp.AbstractVRP;
 import jext.problems.vrp.Solution;
-import jext.util.ArrayOps;
+import jext.util.ArrayUtils;
 import jext.util.FileUtils;
 
 import java.io.File;
@@ -42,9 +42,9 @@ public class LinKernighanHeuristicVRP extends AbstractVRP {
 
     private TSPProblem composeProblem() {
 
-        int nVehicles = ArrayOps.sum(numDepositVehicles);
+        int nVehicles = ArrayUtils.sum(numDepositVehicles);
         TourDistances tourDistances = new TourDistances(distances).withDepositsAndLocations(deposits, locations);
-        Optional<Coords[]> coords = tourDistances.coordinates();
+        Optional<Coords[]> coords = tourDistances.getCoordinates();
 
         TSPProblem vrp = new TSPProblem();
         vrp.setName("test");
@@ -81,7 +81,7 @@ public class LinKernighanHeuristicVRP extends AbstractVRP {
         par.problemFile = problemFile;
         par.tourFile = tourFile;
         par.solutionFile = solutionFile;
-        par.vehicles = ArrayOps.sum(this.numDepositVehicles);
+        par.vehicles = ArrayUtils.sum(this.numDepositVehicles);
 
         par.maxTrials = dimension;
         par.salesmen = dimension - this.deposits.length;

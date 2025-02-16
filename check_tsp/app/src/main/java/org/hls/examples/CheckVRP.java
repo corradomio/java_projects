@@ -4,13 +4,11 @@ import ae.ac.ebtic.tools.vr.data.Location;
 import ae.ac.ebtic.tools.vr.data.LocationList;
 import ae.ac.ebtic.tools.vr.data.TaskList;
 import ae.ac.ebtic.tools.vr.data.VehicleList;
-import jext.problems.Distances;
-import jext.problems.dist.EuclideanSpace;
+import jext.optim.problems.Distances;
+import jext.optim.problems.distance.EuclideanSpace;
 import jext.problems.tsblib.TSPProblem;
-import jext.problems.tsblib.TSPProblemLoader;
 import jext.problems.vrp.Solution;
 import jext.problems.vrp.VRPConstraints;
-import jext.problems.vrp.VRPParameters;
 import jext.problems.vrp.VRPSolver;
 import jext.problems.vrp.lkh.LKHParameters;
 import jext.problems.vrp.lkh.LinKernighanHeuristicVRP;
@@ -72,7 +70,7 @@ public class CheckVRP {
             try {
                 System.out.println(vrpProblem);
 
-                TSPProblem vrp = TSPProblemLoader.loadVRP(vrpProblem);
+                TSPProblem vrp = TSPProblem.load(vrpProblem);
 
                 String relativePath = FileUtils.relativePath(vrpProblems, vrpProblem);
                 File tstProblem = new File(tstProblems, relativePath);

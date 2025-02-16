@@ -1,11 +1,11 @@
 package jext.problems.tsblib;
 
-import jext.problems.Coords;
-import jext.problems.Distances;
-import jext.problems.dist.DistanceMatrix;
-import jext.problems.dist.EuclideanSpace;
-import jext.problems.dist.Point;
-import jext.util.ArrayOps;
+import jext.optim.problems.Coords;
+import jext.optim.problems.Distances;
+import jext.optim.problems.distance.DistanceMatrix;
+import jext.optim.problems.distance.EuclideanSpace;
+import jext.optim.problems.distance.Point;
+import jext.util.ArrayUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -211,7 +211,7 @@ public class TSPProblem {
     }
 
     public void setDeposits(int... deposits) {
-        setDeposits(ArrayOps.asList(deposits));
+        setDeposits(ArrayUtils.asList(deposits));
     }
 
     public void setDeposits(List<Integer> dlist) {

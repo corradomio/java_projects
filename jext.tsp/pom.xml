@@ -20,6 +20,11 @@
             <artifactId>jext.commons</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.optim</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.ortools/ortools-java -->
         <dependency>

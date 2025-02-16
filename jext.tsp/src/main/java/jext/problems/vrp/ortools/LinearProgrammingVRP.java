@@ -8,12 +8,12 @@ import com.google.ortools.constraintsolver.RoutingIndexManager;
 import com.google.ortools.constraintsolver.RoutingModel;
 import com.google.ortools.constraintsolver.RoutingSearchParameters;
 import com.google.ortools.constraintsolver.main;
-import jext.problems.Distances;
-import jext.problems.dist.TourDistances;
+import jext.optim.problems.Distances;
+import jext.optim.problems.distance.TourDistances;
 import jext.problems.vrp.AbstractVRP;
 import jext.problems.vrp.Solution;
 import jext.problems.vrp.VRPUtils;
-import jext.util.ArrayOps;
+import jext.util.ArrayUtils;
 
 import java.util.Arrays;
 
@@ -46,9 +46,9 @@ public class LinearProgrammingVRP extends AbstractVRP {
         Distances tourDistances = new TourDistances(distances).withDepositsAndLocations(deposits, locations);
 
         // the deposit locations are the first 'deposits.length' virtual locations
-        int[] tourDeposits = ArrayOps.range(deposits.length);
+        int[] tourDeposits = ArrayUtils.range(deposits.length);
         // the locations to visit are the remaining virtual loations
-        int[] tourDemands = ArrayOps.moveToEnd(deposits.length, locationsDemand);
+        int[] tourDemands = ArrayUtils.moveToEnd(deposits.length, locationsDemand);
 
         // where te vehicles are located: vehicles starts and comes back to the same deposit
         // there is an element in the array for each vehicle

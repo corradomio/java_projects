@@ -1,6 +1,6 @@
 package jext.optim.heuristics.genetics;
 
-import jext.optim.Solution;
+import jext.optim.problems.Solution;
 import jext.optim.heuristics.genetics.util.FitnessComparators;
 
 public class Chromosome<T> implements Comparable<Chromosome<T>>, Solution<T> {

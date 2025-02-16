@@ -56,6 +56,8 @@ public class Population<T> implements Iterable<Chromosome<T>> {
     /** current population of candidates */
     private final List<Chromosome<T>> chromosomes = new ArrayList<>();
 
+    private final int elitismSize;
+
     // ----------------------------------------------------------------------
 
     public Population(
@@ -75,6 +77,8 @@ public class Population<T> implements Iterable<Chromosome<T>> {
             throw new OutOfRangeException(LocalizedFormats.ELITISM_RATE, elitismRate, 0, 1);
         if (foreignerRate < 0 || foreignerRate > 1)
             throw new OutOfRangeException(LocalizedFormats2.OFFSPRING_RATE, foreignerRate, 0, 1);
+
+        this.elitismSize = (elitismRate >= 1) ? (int)elitismRate : (int)(elitismRate*populationSize);
     }
 
     // ----------------------------------------------------------------------
@@ -139,7 +143,7 @@ public class Population<T> implements Iterable<Chromosome<T>> {
     /// @return self
     public Population<T> nextGeneration() {
         // keep at minimum the best solution
-        int elitism = Math.max(1, (int) Math.round(elitismRate* chromosomes.size()));
+        int elitism = elitismSize;
         // add at minimum a new random candidate
         int foreigner = Math.max(1, (int) Math.round(foreignerRate * chromosomes.size()));
 

@@ -1,52 +1,71 @@
 package org.hls.examples;
 
-import jext.optim.heuristics.ants.AntColony;
-import jext.optim.heuristics.ants.AntColonyOptimization;
-import jext.optim.heuristics.ants.Tour;
-import jext.optim.heuristics.ants.stopping.FixedGenerationCount;
-import jext.optim.heuristics.ants.stopping.LogGeneration;
-import jext.optim.heuristics.ants.stopping.MultipleConditions;
-import jext.optim.heuristics.ants.stopping.NeverStop;
-import jext.optim.heuristics.ants.stopping.Patience;
-import jext.problems.Distances;
+import jext.optim.heuristics.aco.AntColony;
+import jext.optim.heuristics.aco.AntColonyOptimization;
+import jext.optim.heuristics.aco.Tour;
+import jext.optim.heuristics.aco.stopping.FixedGenerationCount;
+import jext.optim.heuristics.aco.stopping.MultipleConditions;
+import jext.optim.heuristics.aco.stopping.NeverStop;
+import jext.optim.heuristics.aco.stopping.Patience;
+import jext.optim.problems.Distances;
 import jext.problems.tsblib.TSPProblem;
 import jext.problems.tsp.Solution;
 import jext.problems.tsp.ch.ChristofidesTSP;
+import jext.util.FileUtils;
+import jext.util.TPrint;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 public class CheckTSP {
 
     public static void main(String[] args) throws IOException {
+        TPrint.DELAY = 0;
 
-        TSPProblem problem = TSPProblem.load(new File("D:\\Projects.github\\java_projects\\jext.tsp\\problems\\tsplib\\a280.tsp"));
+        List<File> tspFiles = FileUtils.listFiles(new File("D:\\Projects.github\\java_projects\\jext.tsp\\TSP_instances\\tsplib"), ".tsp");
 
-        Distances distances = problem.getDistances();
-        float[][] distanceMatrix = problem.getDistances().getMatrix();
+        for (File tspFile : tspFiles) {
+            TSPProblem problem = TSPProblem.load(tspFile);
 
-        ChristofidesTSP tsp = new ChristofidesTSP();
-        Solution sol = tsp.solve(distances);
-        System.out.println(sol);
+            if (problem.getDimension() > 1000)
+                continue;
 
-        AntColony ac = new AntColony(
-            1000, .001,
-            2, 2, 1,
-            distanceMatrix
-        );
+            TPrint.println(problem.getName());
 
-        AntColonyOptimization aco = new AntColonyOptimization();
 
-        ac = aco.evolve(ac, new MultipleConditions(new NeverStop()
-            , new LogGeneration()
-            , new FixedGenerationCount(1000)
-            , new Patience(20)
-        ));
-        Tour tour = ac.getBestTour();
+            Distances distances = problem.getDistances();
+            float[][] distanceMatrix = problem.getDistances().getMatrix();
 
-        System.out.printf("%s: %f\n", Arrays.toString(tour.tour), tour.length);
-        System.out.println("done");
+            ChristofidesTSP tsp = new ChristofidesTSP();
+            Solution sol = tsp.solve(distances);
+            TPrint.printf("Cri: %f\n", sol.length());
 
+            // alpha        pheromoneInfluence
+            // beta         heuristicInfluence
+            // ro           pheromoneDecay
+            //
+            //      alpha   beta    ro
+            //      1       2-5     .5
+
+            AntColony ac = new AntColony(
+                100, 1,
+                1, 2, .5,
+                distanceMatrix
+            );
+
+            AntColonyOptimization aco = new AntColonyOptimization();
+
+            ac = aco.evolve(ac, new MultipleConditions(new NeverStop()
+                // , new LogGeneration()
+                , new FixedGenerationCount(1000)
+                , new Patience(20)
+            ));
+            Tour tour = ac.getBestTour();
+
+            TPrint.printf("ACO: %f\n", tour.length);
+            TPrint.println("----");
+
+        }
     }
 }

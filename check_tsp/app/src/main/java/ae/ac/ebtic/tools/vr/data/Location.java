@@ -38,7 +38,7 @@ public class Location extends LonLat {
 
     }
 
-    public Location(int id, double longitude, double latitude) {
+    public Location(int id, float longitude, float latitude) {
         super(longitude, latitude);
         this.id = id;
     }

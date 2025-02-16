@@ -1,6 +1,8 @@
 .idea
 target
-problems
 TSP_problems
 TSP_solvers
 VRP_problems
+TSP_instances
+*.tsp
+*.vrp

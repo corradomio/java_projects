@@ -1,6 +1,6 @@
 package jext.optim.domain.permutation;
 
-import jext.util.ArrayOps;
+import jext.util.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.random.RandomGenerator;
@@ -32,11 +32,11 @@ public class Permutation implements Cloneable {
     // ----------------------------------------------------------------------
 
     public void swap(int i, int j) {
-        ArrayOps.swap(perm, i, j);
+        ArrayUtils.swap(perm, i, j);
     }
 
     public void shuffle(int i, int j, RandomGenerator rng) {
-        ArrayOps.shuffle(perm, i, j, rng);
+        ArrayUtils.shuffle(perm, i, j, rng);
     }
 
     public void insert(int i, int j) {
@@ -44,7 +44,7 @@ public class Permutation implements Cloneable {
     }
 
     public void reverse(int i, int j) {
-        ArrayOps.reverse(perm, i, j);
+        ArrayUtils.reverse(perm, i, j);
     }
 
     // ----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 package jext.problems.vrp;
 
-import jext.problems.Distances;
+import jext.optim.problems.Distances;
 
 public class Solution {
     public final Distances distances;

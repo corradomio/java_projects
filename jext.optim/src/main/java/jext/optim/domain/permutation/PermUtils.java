@@ -1,6 +1,6 @@
 package jext.optim.domain.permutation;
 
-import jext.util.ArrayOps;
+import jext.util.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -53,7 +53,7 @@ public class PermUtils {
     public static int[] random(int n, int start, RandomGenerator rng) {
         int[] perm = defaultPerm(n, start);
         // shuffle_(perm, 0, n-1, rng);
-        ArrayOps.shuffle(perm, rng);
+        ArrayUtils.shuffle(perm, rng);
         return perm;
     }
 
