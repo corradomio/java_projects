@@ -1,4 +1,4 @@
-Uso di Distances invece di float[][]
+Uso di Distances invece di double[][]
 ------------------------------------
 
     Ant Colony Optimizatopn
@@ -15,4 +15,31 @@ Uso di Distances invece di float[][]
     MDVRP
 
 
-https://github.com/markusmkim/GA-MDVRP
+    https://github.com/markusmkim/GA-MDVRP
+
+
+    GeneticAlgorithm
+        - population
+        CrossoverPolicy(Chromosome,Chromosome) -> (Chromosome,Chromosome)
+        MutationPolicy(Chromosome) -> Chromosome
+        SelectionPolicy(Population) -> (Chromosome,Chromosome)
+        FilterPolicy(Population) -> Population
+    Population
+        - chromosomes
+        populationSize
+        elitismRate
+        foreignerRate
+        CandidateFactory() -> Candidate
+        FitnessFunction(Candidate) -> double
+    Chromosome
+        candidate
+        fitness
+
+    AntColonyOptimization (== GeneticAlgorithm)
+        - colony
+        InitializePolicy(colony)
+
+    AntColony (== Population)
+        - ants
+
+    Ant (== Chromosome)

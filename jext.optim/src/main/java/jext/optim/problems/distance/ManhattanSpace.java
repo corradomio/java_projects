@@ -17,7 +17,7 @@ public class ManhattanSpace extends MetricSpace {
     }
 
     @Override
-    protected float distance(Coords li, Coords lj) {
+    protected double distance(Coords li, Coords lj) {
         return abs(li.getX() - lj.getX()) + abs(li.getY() - lj.getY());
     }
 

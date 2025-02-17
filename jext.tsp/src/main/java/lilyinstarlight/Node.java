@@ -5,9 +5,9 @@ package lilyinstarlight;
 
 public class Node {
     public Node parent;
-    private float parent_cost;
+    private double parent_cost;
 
-    private float[][] distances;
+    private double[][] distances;
     private int[] active_set;
 
     public int index;
@@ -21,7 +21,7 @@ public class Node {
      * @param active_set The set of all points (including this node) that are being calculated
      * @param index The location index of this node
      */
-    public Node(Node parent, float parent_cost, float[][] distances, int[] active_set, int index) {
+    public Node(Node parent, double parent_cost, double[][] distances, int[] active_set, int index) {
         this.parent = parent;
         this.parent_cost = parent_cost;
         this.distances = distances;
@@ -92,21 +92,21 @@ public class Node {
      *
      * @return Lower bound cost
      */
-    public float getLowerBound() {
-        float value = 0;
+    public double getLowerBound() {
+        double value = 0;
 
         if(active_set.length == 2)
             return getPathCost() + distances[active_set[0]][active_set[1]];
 
         for(int location : active_set) {
-            float low1 = Float.MAX_VALUE;
-            float low2 = Float.MAX_VALUE;
+            double low1 = Double.MAX_VALUE;
+            double low2 = Double.MAX_VALUE;
 
             for(int other: active_set) {
                 if(other == location)
                     continue;
 
-                float cost = distances[location][other];
+                double cost = distances[location][other];
                 if(cost < low1) {
                     low2 = low1;
                     low1 = cost;
@@ -127,7 +127,7 @@ public class Node {
      *
      * @return Cost of path including return
      */
-    public float getPathCost() {
+    public double getPathCost() {
         return distances[0][index] + getParentCost();
     }
 
@@ -136,7 +136,7 @@ public class Node {
      *
      * @return Cost of path
      */
-    public float getParentCost() {
+    public double getParentCost() {
         if(parent == null)
             return 0;
 

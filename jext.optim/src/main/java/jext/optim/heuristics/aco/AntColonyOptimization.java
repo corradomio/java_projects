@@ -3,6 +3,9 @@ package jext.optim.heuristics.aco;
 import java.util.Random;
 import java.util.random.RandomGenerator;
 
+import jext.optim.heuristics.aco.AntColony;
+
+
 public class AntColonyOptimization {
 
     private static RandomGenerator randomGenerator = new Random();
@@ -15,19 +18,18 @@ public class AntColonyOptimization {
 
         generationsEvolved = 0;
         while(!condition.isSatisfied(colony)) {
-            nextGeneration(colony);
+            colony.nextGeneration();
             generationsEvolved++;
         }
 
         return colony;
     }
 
-    private AntColony nextGeneration(AntColony current) {
-        current = current.nextGeneration();
-        return current;
-    }
-
     public static synchronized RandomGenerator getRandomGenerator() {
         return randomGenerator;
+    }
+
+    public int getGenerationsEvolved() {
+        return generationsEvolved;
     }
 }

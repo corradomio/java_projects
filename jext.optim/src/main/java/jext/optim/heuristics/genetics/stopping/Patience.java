@@ -9,25 +9,25 @@ import static java.lang.Math.max;
 
 public class Patience implements StoppingCondition {
     private final int count;
-    private final float delta;
+    private final double delta;
     private int current;
-    private float bestFitness;
+    private double bestFitness;
 
     public Patience(int count) {
         this(count, 0.00001f);
     }
 
-    public Patience(int count, float delta) {
+    public Patience(int count, double delta) {
         this.count = count;
         this.delta = delta;
         this.current = 0;
-        this.bestFitness = Float.NEGATIVE_INFINITY;
+        this.bestFitness = Double.NEGATIVE_INFINITY;
     }
 
     @Override
     public boolean isSatisfied(Population population) {
-        float fitness = population.getFittestChromosome().fitness();
-        float delta = abs(fitness - bestFitness)/max(fitness, bestFitness);
+        double fitness = population.getFittestChromosome().fitness();
+        double delta = abs(fitness - bestFitness)/max(fitness, bestFitness);
 
         if (delta > this.delta) {
             bestFitness = fitness;

@@ -69,7 +69,7 @@ public class TSPProblem {
 
     private String name = "noname";
     private String comment = "";
-    private float[][] distanceMatrix;
+    private double[][] distanceMatrix;
 
     private String type = "";
     private String problemType = "";
@@ -81,7 +81,7 @@ public class TSPProblem {
 
     private int dimension = -1;
     private final List<Coords> points = new ArrayList<>();
-    private final List<Float> edgeWeights = new ArrayList<>();
+    private final List<Double> edgeWeights = new ArrayList<>();
     
     // VRP problems
 
@@ -326,10 +326,10 @@ public class TSPProblem {
         return Double.parseDouble(parseString(line));
     }
 
-    private float[] parseValues(String[] parts) {
-        float[] values = new float[parts.length];
+    private double[] parseValues(String[] parts) {
+        double[] values = new double[parts.length];
         for(int i=0; i<parts.length; ++i)
-            values[i] = Float.parseFloat(parts[i]);
+            values[i] = Double.parseDouble(parts[i]);
         return values;
     }
 
@@ -346,7 +346,7 @@ public class TSPProblem {
         if (edgeWeights.isEmpty())
             return;
 
-        distanceMatrix = new float[this.dimension][this.dimension];
+        distanceMatrix = new double[this.dimension][this.dimension];
 
         // FULL_MATRIX
         // UPPER_ROW
@@ -396,16 +396,16 @@ public class TSPProblem {
         String[] parts = line.split("\\s+");
         if (parts.length == 4) {
             int id = Integer.parseInt(parts[0]);
-            float x = Float.parseFloat(parts[1]);
-            float y = Float.parseFloat(parts[2]);
-            float z = Float.parseFloat(parts[3]);
+            double x = Double.parseDouble(parts[1]);
+            double y = Double.parseDouble(parts[2]);
+            double z = Double.parseDouble(parts[3]);
 
             points.add(new Point(id, x, y, z));
         }
         else if (parts.length == 3) {
             int id = Integer.parseInt(parts[0]);
-            float x = Float.parseFloat(parts[1]);
-            float y = Float.parseFloat(parts[2]);
+            double x = Double.parseDouble(parts[1]);
+            double y = Double.parseDouble(parts[2]);
 
             points.add(new Point(id, x, y));
         }
@@ -416,9 +416,9 @@ public class TSPProblem {
     }
 
     private void parseEdgeWeights(String line) {
-        float[] values = parseValues(line.split("\s+"));
+        double[] values = parseValues(line.split("\s+"));
 
-        for (float v : values)
+        for (double v : values)
             this.edgeWeights.add(v);
     }
 

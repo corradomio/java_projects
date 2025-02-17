@@ -1,6 +1,6 @@
 package org.hls.examples;
 
-import jext.optim.domain.permutation.PermUtils;
+import jext.optim.heuristics.genetics.domain.permutation.PermUtils;
 
 public class Check1 {
 

@@ -13,7 +13,7 @@ public class LogGeneration implements StoppingCondition {
     @Override
     public boolean isSatisfied(final AntColony population) {
         ++g;
-        TPrint.printf("[%7d]: %.6f\n", g, population.getBestTour().getTourLength());
+        TPrint.tprintf("[%7d]: %.6f\n", g, population.getFittestSolution().fitness());
         return false;
     }
 }

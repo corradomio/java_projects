@@ -5,7 +5,7 @@ import jext.optim.problems.Coords;
 import java.util.List;
 
 import static jext.util.MathUtils.sq;
-import static jext.util.MathUtils.sqrt;
+import static java.lang.Math.sqrt;
 
 
 public class EuclideanSpace extends MetricSpace{
@@ -19,7 +19,7 @@ public class EuclideanSpace extends MetricSpace{
     }
 
     @Override
-    protected float distance(Coords li, Coords lj) {
+    protected double distance(Coords li, Coords lj) {
         return sqrt(sq(li.getX() - lj.getX()) + sq(li.getY() - lj.getY()));
     }
 

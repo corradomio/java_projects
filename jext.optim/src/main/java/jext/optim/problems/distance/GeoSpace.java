@@ -22,13 +22,13 @@ public class GeoSpace extends MetricSpace {
     }
 
     @Override
-    protected float distance(Coords li, Coords lj) {
+    protected double distance(Coords li, Coords lj) {
         return distance(li.getX(), li.getY(), lj.getX(), lj.getY());
     }
 
-    private static final float R = 6371.0088f; // Km
+    private static final double R = 6371.0088f; // Km
 
-    private static float distance(double lon1, double lat1, double lon2, double lat2) {
+    private static double distance(double lon1, double lat1, double lon2, double lat2) {
         double dlat, dlon, a, c;
 
         lat1 = toRadians(lat1);
@@ -41,7 +41,7 @@ public class GeoSpace extends MetricSpace {
         a = sq(sin(dlat/2)) + cos(lat1) * cos(lat2) * sq(sin(dlon/2));
         c = R * 2 * atan2(sqrt(a), sqrt(1-a));
 
-        return (float) c;
+        return (double) c;
     }
 
 }

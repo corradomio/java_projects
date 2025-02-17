@@ -27,8 +27,8 @@ public abstract class MetricSpace implements Distances {
     }
 
     @Override
-    public float[][] getMatrix() {
-        float[][] matrix = new float[coords.length][coords.length];
+    public double[][] getMatrix() {
+        double[][] matrix = new double[coords.length][coords.length];
         for (int i = 0; i < coords.length; i++) {
             for (int j = 0; j < coords.length; j++) {
                 matrix[i][j] = distance(coords[i], coords[j]);
@@ -38,7 +38,7 @@ public abstract class MetricSpace implements Distances {
     }
 
     @Override
-    public float distance(int i, int j) {
+    public double distance(int i, int j) {
         return distance(coords[i], coords[j]);
     }
 
@@ -46,6 +46,6 @@ public abstract class MetricSpace implements Distances {
         return coords;
     }
 
-    protected abstract float distance(Coords li, Coords lj);
+    protected abstract double distance(Coords li, Coords lj);
 
 }

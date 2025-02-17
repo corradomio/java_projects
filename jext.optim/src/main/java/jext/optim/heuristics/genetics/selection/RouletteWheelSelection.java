@@ -13,7 +13,7 @@ public class RouletteWheelSelection<T> extends AbstractSelectionPolicy<T> {
     @Override
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
         List<Chromosome<T>> chromosomes = population.getChromosomes();
-        float total = total(chromosomes);
+        double total = total(chromosomes);
 
         for (Chromosome<T> chromosome : chromosomes)
             total += chromosome.fitness();
@@ -24,9 +24,9 @@ public class RouletteWheelSelection<T> extends AbstractSelectionPolicy<T> {
         return new ChromosomePair<>(bs1, bs2);
     }
 
-    private static <T> Chromosome<T> rouletteSelect(List<Chromosome<T>> chromosomes, float total, RandomGenerator rng) {
-        float cumulative = 0;
-        float r = rng.nextFloat();
+    private static <T> Chromosome<T> rouletteSelect(List<Chromosome<T>> chromosomes, double total, RandomGenerator rng) {
+        double cumulative = 0;
+        double r = rng.nextDouble();
 
         for (Chromosome<T> chromosome : chromosomes) {
             cumulative += chromosome.fitness()/total;
@@ -38,7 +38,7 @@ public class RouletteWheelSelection<T> extends AbstractSelectionPolicy<T> {
         return chromosomes.get(0);
     }
 
-    private float total(List<Chromosome<T>> chromosomes) {
+    private double total(List<Chromosome<T>> chromosomes) {
         int n = chromosomes.size();
         return 0.5f*n*(n+1);
     }

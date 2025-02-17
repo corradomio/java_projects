@@ -20,7 +20,7 @@ public class PowerRankSelection<T> extends AbstractSelectionPolicy<T> {
     @Override
     public ChromosomePair<T> select(Population<T> population, RandomGenerator rng) {
         List<Chromosome<T>> chromosomes = population.getChromosomes();
-        float total = total(chromosomes);
+        double total = total(chromosomes);
 
         Chromosome<T> c1 = rankSelect(chromosomes, total, rng);
         Chromosome<T> c2 = rankSelect(chromosomes, total, rng);
@@ -28,10 +28,10 @@ public class PowerRankSelection<T> extends AbstractSelectionPolicy<T> {
         return new ChromosomePair<>(c1, c2);
     }
 
-    private Chromosome<T> rankSelect(List<Chromosome<T>> chromosomes, float total, RandomGenerator rng) {
+    private Chromosome<T> rankSelect(List<Chromosome<T>> chromosomes, double total, RandomGenerator rng) {
         int n = chromosomes.size();
-        float cumulative = 0;
-        float r = rng.nextFloat();
+        double cumulative = 0;
+        double r = rng.nextDouble();
 
         int i = 0;
         for (Chromosome<T> chromosome : chromosomes) {
@@ -44,9 +44,9 @@ public class PowerRankSelection<T> extends AbstractSelectionPolicy<T> {
         return chromosomes.get(n-1);
     }
 
-    private float total(List<Chromosome<T>> chromosomes) {
+    private double total(List<Chromosome<T>> chromosomes) {
         int n = chromosomes.size();
-        float total = 0;
+        double total = 0;
 
         for (int i=0; i<n; ++i) {
             total += 1 - exp(-i);

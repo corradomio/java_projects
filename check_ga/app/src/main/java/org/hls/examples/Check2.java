@@ -1,9 +1,9 @@
 package org.hls.examples;
 
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.domain.bitset.BitSet;
-import jext.optim.domain.bitset.BitSetFactory;
-import jext.optim.domain.bitset.BitSetFitnessFunction;
+import jext.optim.heuristics.genetics.domain.bitset.BitSet;
+import jext.optim.heuristics.genetics.domain.bitset.BitSetFactory;
+import jext.optim.heuristics.genetics.domain.bitset.BitSetFitnessFunction;
 
 public class Check2 {
 

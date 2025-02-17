@@ -11,7 +11,7 @@ public class LogGeneration implements StoppingCondition {
     @Override
     public boolean isSatisfied(Population population) {
         ++g;
-        TPrint.printf("[%7d]: %.6f\n", g, population.getFittestChromosome().fitness());
+        TPrint.tprintf("[%7d]: %.6f\n", g, population.getFittestChromosome().fitness());
         return false;
     }
 }

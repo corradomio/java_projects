@@ -28,13 +28,13 @@ public class GeneticAlgorithm<T> {
     private final CrossoverPolicy<T> crossoverPolicy;
 
     /** the rate of crossover for the algorithm. */
-    private final float crossoverRate;
+    private final double crossoverRate;
 
     /** the mutation policy used by the algorithm. */
     private final MutationPolicy<T> mutationPolicy;
 
     /** the rate of mutation for the algorithm. */
-    private final float mutationRate;
+    private final double mutationRate;
 
     /** the selection policy used by the algorithm. */
     private final SelectionPolicy<T> selectionPolicy;
@@ -74,9 +74,9 @@ public class GeneticAlgorithm<T> {
                 mutationRate, 0, 1);
         }
         this.crossoverPolicy = crossoverPolicy;
-        this.crossoverRate = (float) crossoverRate;
+        this.crossoverRate = (double) crossoverRate;
         this.mutationPolicy = mutationPolicy;
-        this.mutationRate = (float) mutationRate;
+        this.mutationRate = (double) mutationRate;
         this.selectionPolicy = selectionPolicy;
         this.filterPolicy = filterPolicy;
     }
@@ -174,13 +174,13 @@ public class GeneticAlgorithm<T> {
             ChromosomePair<T> pair = getSelectionPolicy().select(current);
 
             // crossover?
-            if (randGen.nextFloat() < getCrossoverRate()) {
+            if (randGen.nextDouble() < getCrossoverRate()) {
                 // apply crossover policy to create two offspring
                 pair = getCrossoverPolicy().crossover(pair.first(), pair.second());
             }
 
             // mutation?
-            if (randGen.nextFloat() < getMutationRate()) {
+            if (randGen.nextDouble() < getMutationRate()) {
                 // apply mutation policy to the chromosomes
                 pair = new ChromosomePair<>(
                     getMutationPolicy().mutate(pair.first()),
@@ -212,7 +212,7 @@ public class GeneticAlgorithm<T> {
      * Returns the crossover rate.
      * @return crossover rate
      */
-    public float getCrossoverRate() {
+    public double getCrossoverRate() {
         return crossoverRate;
     }
 
@@ -228,7 +228,7 @@ public class GeneticAlgorithm<T> {
      * Returns the mutation rate.
      * @return mutation rate
      */
-    public float getMutationRate() {
+    public double getMutationRate() {
         return mutationRate;
     }
 

@@ -18,6 +18,8 @@ public class MathUtils {
     public static float  log2(float  x) { return x == 0 ? 0 : ILOG2F*(float)Math.log(x); }
 
     public static float pow(float x, float y) { return (float)Math.pow(x, y); }
+    public static double pow(double x, double y) { return Math.pow(x, y); }
 
     public static float sqrt(float x) { return (float) Math.sqrt(x); }
+    public static double sqrt(double x) { return Math.sqrt(x); }
 }

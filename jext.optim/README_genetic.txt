@@ -146,7 +146,7 @@ Lista di 'domini' (usati in Mathematica)
         The representation is the array of integers {s1,...s[n-1]}
         where each si specify in which subset (0..k-1) the element is located
 
-    Range([n1,...nk],{min,max})     integer/float/
+    Range([n1,...nk],{min,max})     integer/double/
         generic tensor k-dim of integer/real values in the specified range
         For simplicity, the range is the same for all elements in the tensor
 

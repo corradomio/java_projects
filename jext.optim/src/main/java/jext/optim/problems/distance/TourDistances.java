@@ -83,7 +83,7 @@ public class TourDistances implements Distances {
      * @return distance
      */
     @Override
-    public float distance(int i, int j) {
+    public double distance(int i, int j) {
         int li = toLocation(i);
         int lj = toLocation(j);
 
@@ -116,9 +116,9 @@ public class TourDistances implements Distances {
      * @return the distance matrix
      */
     @Override
-    public float[][] getMatrix() {
+    public double[][] getMatrix() {
         int n = this.locations.length;
-        float[][] dmatrix = new float[n][n];
+        double[][] dmatrix = new double[n][n];
 
         for (int i=0; i<n; ++i)
             for (int j=0; j<n; ++j)

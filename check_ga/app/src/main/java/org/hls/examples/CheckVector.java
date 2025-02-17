@@ -3,12 +3,12 @@ package org.hls.examples;
 import jext.optim.heuristics.genetics.FitnessFunction;
 import jext.optim.heuristics.genetics.GeneticAlgorithm;
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.domain.reals.LineCrossover;
-import jext.optim.heuristics.genetics.domain.reals.NormalMutation;
-import jext.optim.domain.reals.Range;
-import jext.optim.domain.reals.Vector;
-import jext.optim.domain.reals.VectorFactory;
+import jext.optim.heuristics.genetics.domain.reals.Range;
+import jext.optim.heuristics.genetics.domain.reals.Vector;
+import jext.optim.heuristics.genetics.domain.reals.VectorFactory;
 import jext.optim.heuristics.genetics.filter.DropDuplicates;
+import jext.optim.heuristics.genetics.operator.reals.LineCrossover;
+import jext.optim.heuristics.genetics.operator.reals.NormalMutation;
 import jext.optim.heuristics.genetics.selection.TournamentSelection;
 import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
 import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
@@ -33,10 +33,10 @@ public class CheckVector {
         VectorFactory cf = new VectorFactory(PROBLEM_SIZE, new Range(-PI, PI));
         FitnessFunction<Vector> ff = new FitnessFunction<Vector>() {
             @Override
-            public float fitness(Vector vector) {
-                float x = vector.data()[0];
-                float y = vector.data()[1];
-                return (float) sin(x*y);
+            public double fitness(Vector vector) {
+                double x = vector.data()[0];
+                double y = vector.data()[1];
+                return sin(x*y);
             }
         };
 

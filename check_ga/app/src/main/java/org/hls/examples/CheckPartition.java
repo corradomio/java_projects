@@ -3,12 +3,12 @@ package org.hls.examples;
 import jext.optim.heuristics.genetics.Chromosome;
 import jext.optim.heuristics.genetics.GeneticAlgorithm;
 import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.domain.partition.NElementsMutation;
-import jext.optim.heuristics.genetics.domain.partition.OnePointCrossover;
-import jext.optim.domain.partition.Partition;
-import jext.optim.domain.partition.PartitionFactory;
-import jext.optim.domain.partition.PartitionFitnessFunction;
+import jext.optim.heuristics.genetics.domain.partition.Partition;
+import jext.optim.heuristics.genetics.domain.partition.PartitionFactory;
+import jext.optim.heuristics.genetics.domain.partition.PartitionFitnessFunction;
 import jext.optim.heuristics.genetics.filter.DropDuplicates;
+import jext.optim.heuristics.genetics.operator.partition.NElementsMutation;
+import jext.optim.heuristics.genetics.operator.partition.OnePointCrossover;
 import jext.optim.heuristics.genetics.selection.TournamentSelection;
 import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
 import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
@@ -62,7 +62,7 @@ public class CheckPartition {
         );
 
         Chromosome<Partition> bestChromosome = bestPop.getFittestChromosome();
-        float[] pvalues = fitnessFunction.values(bestChromosome.candidate());
+        double[] pvalues = fitnessFunction.values(bestChromosome.candidate());
 
         System.out.println(bestChromosome);
         System.out.println(ArrayUtils.asList(pvalues));

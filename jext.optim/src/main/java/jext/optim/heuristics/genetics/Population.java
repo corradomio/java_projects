@@ -41,9 +41,9 @@ public class Population<T> implements Iterable<Chromosome<T>> {
     /** number of chromosomes/candidates in the population */
     private final int populationLimit;
     /** quota of the best population to transfer in the next generation */
-    private final float elitismRate;
+    private final double elitismRate;
     /** quota of the population to add as new random candidates */
-    private final float foreignerRate;
+    private final double foreignerRate;
     /** candidate generator */
     private final CandidateFactory<T> candidateFactory;
     /** function used to evaluate a candidate */
@@ -66,8 +66,8 @@ public class Population<T> implements Iterable<Chromosome<T>> {
         FitnessFunction<T> fitnessFunction
     ) {
         this.populationLimit = populationSize;
-        this.elitismRate = (float) elitismRate;
-        this.foreignerRate = (float) foreignerRate;
+        this.elitismRate = (double) elitismRate;
+        this.foreignerRate = (double) foreignerRate;
         this.candidateFactory = candidateFactory;
         this.fitnessFunction = fitnessFunction;
 

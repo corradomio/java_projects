@@ -9,9 +9,9 @@ public class Point implements Coords {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.######");
 
     public final int id;
-    public final float x;
-    public final float y;
-    public final float z;
+    public final double x;
+    public final double y;
+    public final double z;
     public final int ndims;
 
     public Point() {
@@ -22,7 +22,7 @@ public class Point implements Coords {
         this.ndims = 0;
     }
 
-    public Point(int id, float x, float y) {
+    public Point(int id, double x, double y) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -30,7 +30,7 @@ public class Point implements Coords {
         this.ndims = 2;
     }
 
-    public Point(int id, float x, float y, float z) {
+    public Point(int id, double x, double y, double z) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -39,12 +39,12 @@ public class Point implements Coords {
     }
 
     @Override
-    public float getX() {
+    public double getX() {
         return x;
     }
 
     @Override
-    public float getY() {
+    public double getY() {
         return y;
     }
 

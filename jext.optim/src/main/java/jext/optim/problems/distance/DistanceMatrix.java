@@ -4,9 +4,9 @@ import jext.optim.problems.Distances;
 
 public class DistanceMatrix implements Distances {
 
-    private float[][] distances;
+    private double[][] distances;
 
-    public DistanceMatrix(float[][] distances) {
+    public DistanceMatrix(double[][] distances) {
         this.distances = distances;
     }
 
@@ -16,11 +16,11 @@ public class DistanceMatrix implements Distances {
     }
 
     @Override
-    public float distance(int i, int j) {
+    public double distance(int i, int j) {
         return distances[i][j];
     }
 
-    public float[][] getMatrix() {
+    public double[][] getMatrix() {
         return distances;
     }
 

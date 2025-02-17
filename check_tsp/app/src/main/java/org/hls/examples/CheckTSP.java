@@ -23,7 +23,7 @@ public class CheckTSP {
 
         Logger.configure(new File("logging.properties"));
 
-        File tspProblems = new File("D:\\Projects.github\\java_projects\\jext.tsp\\problems\\tsplib");
+        File tspProblems = new File("D:\\Projects.github\\java_projects\\jext.tsp\\TSP_instances\\tsplib");
         // File tspProblems = new File("D:\\Projects.github\\java_projects\\jext.tsp\\problems\\tspext");
 
         for(File tspProblem : Objects.requireNonNull(tspProblems.listFiles((dir, name) -> name.endsWith(".tsp")))) {
@@ -31,8 +31,9 @@ public class CheckTSP {
 
                 TSPProblem tsp = TSPProblem.load(tspProblem);
 
-                if (tsp.getDimension() < 400 || tsp.getDimension() >= 500)
-                    continue;
+                // if (tsp.getDimension() < 400 || tsp.getDimension() >= 500)
+                //     continue;
+                if (tsp.getDimension() > 500) continue;
 
                 System.out.printf("%s: order=%d\n", tsp.getName(), tsp.getDimension());
 

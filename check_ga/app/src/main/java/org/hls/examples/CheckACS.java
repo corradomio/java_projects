@@ -1,14 +1,15 @@
 package org.hls.examples;
 
-import jext.optim.domain.permutation.PermutationFitnessFunction;
 import jext.optim.heuristics.aco.AntColony;
 import jext.optim.heuristics.aco.AntColonyOptimization;
-import jext.optim.heuristics.aco.Tour;
 import jext.optim.heuristics.aco.stopping.FixedGenerationCount;
 import jext.optim.heuristics.aco.stopping.LogGeneration;
 import jext.optim.heuristics.aco.stopping.MultipleConditions;
 import jext.optim.heuristics.aco.stopping.NeverStop;
 import jext.optim.heuristics.aco.stopping.Patience;
+import jext.optim.heuristics.aco.tsp.TSPAntColony;
+import jext.optim.heuristics.genetics.domain.permutation.PermutationFitnessFunction;
+import jext.optim.problems.Solution;
 
 import java.util.Arrays;
 
@@ -18,9 +19,9 @@ public class CheckACS {
 
     public static void main(String[] args) {
         PermutationFitnessFunction ff = PermutationFitnessFunction.random(SIZE);
-        float[][] distanceMatrix = ff.getDistanceMatrix();
+        double[][] distanceMatrix = ff.getDistanceMatrix();
 
-        AntColony ac = new AntColony(
+        AntColony ac = new TSPAntColony(
             1000, .005,
             .5, .5, .5,
             distanceMatrix
@@ -33,9 +34,9 @@ public class CheckACS {
             , new FixedGenerationCount(1000)
             , new Patience(100)
         ));
-        Tour tour = ac.getBestTour();
+        Solution<int[]> tour = ac.getFittestSolution();
 
-        System.out.printf("%s: %f\n", Arrays.toString(tour.tour), tour.length);
+        System.out.printf("%s: %f\n", Arrays.toString(tour.candidate()), tour.fitness());
         System.out.println("done");
     }
 }

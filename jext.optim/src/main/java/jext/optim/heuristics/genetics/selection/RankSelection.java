@@ -17,9 +17,9 @@ import java.util.random.RandomGenerator;
 
 public class RankSelection<T> extends AbstractSelectionPolicy<T> {
 
-    private float sigma = 1;
+    private double sigma = 1;
 
-    public RankSelection(float sigma) {
+    public RankSelection(double sigma) {
         if (sigma < 1 || sigma > 2)
             throw new OutOfRangeException(LocalizedFormats.SIGMA_VALUE,
                 sigma, 1, 2);
@@ -39,11 +39,11 @@ public class RankSelection<T> extends AbstractSelectionPolicy<T> {
 
     private Chromosome<T> rankSelect(List<Chromosome<T>> chromosomes, RandomGenerator rng) {
         int n = chromosomes.size();
-        float s = sigma;
-        float foffs = (2f-s)/n;
-        float frank = 2*(s-1)/(n*(n-1));
-        float cumulative = 0;
-        float r = rng.nextFloat();
+        double s = sigma;
+        double foffs = (2f-s)/n;
+        double frank = 2*(s-1)/(n*(n-1));
+        double cumulative = 0;
+        double r = rng.nextDouble();
 
         int i = 1;
         for (Chromosome<T> chromosome : chromosomes) {

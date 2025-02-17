@@ -1,16 +1,16 @@
 package ae.ac.ebtic.tools.vr.data;
 
 
-import jext.optim.problems.Coordinates;
+import jext.optim.problems.Coords;
 
-public class LonLat implements Coordinates {
+public class LonLat implements Coords {
 
     // ----------------------------------------------------------------------
     // Fields
     // ----------------------------------------------------------------------
 
-    protected final float longitude;
-    protected final float latitude;
+    protected final double longitude;
+    protected final double latitude;
 
     // ----------------------------------------------------------------------
     // Constructor
@@ -21,7 +21,7 @@ public class LonLat implements Coordinates {
         latitude = 0;
     }
 
-    public LonLat(float longitude, float latitude) {
+    public LonLat(double longitude, double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -31,20 +31,20 @@ public class LonLat implements Coordinates {
     // ----------------------------------------------------------------------
 
     @Override
-    public float getX() {
+    public double getX() {
         return longitude;
     }
 
     @Override
-    public float getY() {
+    public double getY() {
         return latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
