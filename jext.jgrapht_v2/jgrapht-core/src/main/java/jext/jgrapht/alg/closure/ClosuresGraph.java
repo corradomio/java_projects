@@ -429,7 +429,7 @@ public class ClosuresGraph<V, E> {
         List<Pair<V, V>> edges = new ConcurrentArrayList<>();
 
         Serial.forEach(2, maxSize+1, size -> {
-            logger.infoft("... computeClosureDependencies[%d]", size);
+            logger.debugft("... computeClosureDependencies[%d]", size);
 
             List<Closure<V>> closures = getClosures(size);
             List<Closure<V>> smallerClosures = getSmallerClosures(size);

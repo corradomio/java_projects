@@ -1,7 +1,7 @@
 package jext.optim.heuristics.aco.tsp;
 
+import jext.math.random.UniformRandomGenerator;
 import jext.optim.heuristics.aco.AntColony;
-import jext.optim.heuristics.aco.AntColonyOptimization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +12,14 @@ public class TSPAntColony implements AntColony {
     private final int colonySize;
     private final double elitismRate;
 
-    private final List<Ant> hive = new ArrayList<>();
-
     private final int candidateSize;
     private final int elitismSize;
 
     private final ConstructionGraph constructionGraph;
     private final PheromoneTrails pheromoneTrails;
+    private final List<Ant> hive = new ArrayList<>();
+
+    // ----------------------------------------------------------------------
 
     public TSPAntColony(
         int colonySize, double elitismRate,
@@ -29,7 +30,6 @@ public class TSPAntColony implements AntColony {
         this.colonySize = colonySize;
         this.elitismRate = elitismRate;
         this.elitismSize = (elitismRate >=1) ? (int)elitismRate : (int)(colonySize*elitismRate);
-
         this.candidateSize = distanceMatrix.length;
 
         this.pheromoneTrails = new PheromoneTrails(
@@ -41,8 +41,18 @@ public class TSPAntColony implements AntColony {
         this.constructionGraph = new ConstructionGraph(distanceMatrix);
     }
 
+    // ----------------------------------------------------------------------
+
     public int getCandidateSize() {
         return candidateSize;
+    }
+
+    public int getColonySize() {
+        return colonySize;
+    }
+
+    public double getElitismRate() {
+        return elitismRate;
     }
 
     public ConstructionGraph getConstructionGraph() {
@@ -52,18 +62,6 @@ public class TSPAntColony implements AntColony {
     public PheromoneTrails getPheromoneTrails() {
         return pheromoneTrails;
     }
-
-    // public double getDistance(int i, int j) {
-    //     return constructionGraph.getDistance(i, j);
-    // }
-
-    // public int[] getNearestNeighbours(int s) {
-    //     return constructionGraph.getNearestNeighbours(s);
-    // }
-
-    // public double[][] getChoices() {
-    //     return pheromoneTrails.getChoices();
-    // }
 
     @Override
     public Tour getFittestSolution() {
@@ -79,6 +77,8 @@ public class TSPAntColony implements AntColony {
         return new Tour(tour, tourLength);
     }
 
+    // ----------------------------------------------------------------------
+
     public void initialize() {
         pheromoneTrails.initialize(colonySize);
         constructionGraph.initialize();
@@ -89,7 +89,7 @@ public class TSPAntColony implements AntColony {
 
         // initialize the ants with a first tour
         // this is necessary to support 'elitism'
-        final RandomGenerator rng = AntColonyOptimization.getRandomGenerator();
+        final RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
         hive.stream().limit(elitismSize).forEach(ant -> ant.findTour(rng));
     }
 
@@ -99,8 +99,10 @@ public class TSPAntColony implements AntColony {
         updatePheromones();
     }
 
+    // ----------------------------------------------------------------------
+
     private void findTours() {
-        RandomGenerator rng = AntColonyOptimization.getRandomGenerator();
+        RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
         hive.stream().skip(elitismSize).parallel().forEach(ant -> ant.findTour(rng));
     }
 

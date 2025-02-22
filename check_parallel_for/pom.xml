@@ -5,7 +5,7 @@
     <groupId>org.hls.examples</groupId>
     <artifactId>check_parallel_for</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>check_parallel_for</name>
     <url>http://maven.apache.org</url>
@@ -14,6 +14,7 @@
         <module>../jext.commons</module>
         <module>../jext.collections</module>
         <module>../jext.concurrent</module>
+        <module>app</module>
     </modules>
 
     <properties>

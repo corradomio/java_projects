@@ -1,6 +1,6 @@
 package jext.optim.heuristics.aco;
 
-import jext.optim.problems.Solution;
+import jext.optim.domain.Solution;
 
 public interface AntColony {
 

@@ -38,7 +38,10 @@ public class Driver  implements java.sql.Driver {
         if (jdbcUrl == null) {
             throw new SQLException("url is null");
         }
+
         if (!jdbcUrl.startsWith(PROTOCOL)) {
+            // MUST NOT throw an exception, because the DriverManager uses this value to understand
+            // that THIS driver is for the specified DBMS, and it tries another driver
             return null;
         }
 

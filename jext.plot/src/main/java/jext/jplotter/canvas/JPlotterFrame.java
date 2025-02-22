@@ -10,7 +10,7 @@ import java.awt.Dimension;
  */
 public class JPlotterFrame extends JFrame {
 
-    private JPlotterCanvas canvas;
+    private final JPlotterCanvas canvas;
 
     // ----------------------------------------------------------------------
     //

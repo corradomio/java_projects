@@ -26,7 +26,7 @@ WARNING: Restricted methods will be blocked in a future release unless native ac
 [16:23:57] ----
 [16:23:57] bays29
 [16:23:57] Cri: 2970.000000
-[16:23:57] ACO: 1886.000000`
+[16:23:57] ACO: 1886.000000
 [16:23:57] ----
 [16:23:57] berlin52
 [16:23:57] Cri: 9996.074219

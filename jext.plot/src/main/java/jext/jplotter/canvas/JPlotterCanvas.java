@@ -4,6 +4,7 @@ import hageldave.jplotter.canvas.BlankCanvasFallback;
 import hageldave.jplotter.renderers.Renderer;
 import jext.jplotter.renderables.Lines;
 import jext.jplotter.renderables.Points;
+import jext.jplotter.renderables.Renderable;
 import jext.jplotter.renderers.CompleteRenderer;
 import jext.jplotter.renderers.CoordSysRenderer;
 
@@ -18,6 +19,13 @@ public class JPlotterCanvas extends BlankCanvasFallback {
         //         .addItemToRender(new Lines())
         // );
     }
+
+    // ----------------------------------------------------------------------
+
+    // public JPlotterCanvas addContent(Renderable... items) {
+    //     getContent().addAll(items);
+    //     return this;
+    // }
 
     // ----------------------------------------------------------------------
 
@@ -38,16 +46,6 @@ public class JPlotterCanvas extends BlankCanvasFallback {
     public CompleteRenderer getContent() {
         return getCoordSysRenderer().getContent();
     }
-
-    // public JPlotterCanvas addPoints(Points points) {
-    //     getContent().add(points);
-    //     return this;
-    // }
-
-    // public JPlotterCanvas addLines(Lines lines) {
-    //     getContent().add(lines);
-    //     return this;
-    // }
 
     // ----------------------------------------------------------------------
 

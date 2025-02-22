@@ -17,7 +17,7 @@ public class BTConnection extends BaseConnection {
     String token;
     HttpClient client;
 
-    private Map<String, String> queries = new HashMap<>();
+    private final Map<String, String> queries = new HashMap<>();
 
     // ----------------------------------------------------------------------
     // BTConnection
@@ -43,7 +43,7 @@ public class BTConnection extends BaseConnection {
         if (queries.containsKey(name))
             throw new jext.sql.SQLException("Duplicated named query", name);
 
-        this.queries.put(name, statement);
+        this.queries.put(name, statement.trim());
     }
 
     @Override
@@ -69,11 +69,15 @@ public class BTConnection extends BaseConnection {
 
     private static final List<String> SUPPORTED_STATEMENT_TYPES = Arrays.asList("SELECT", "INSERT", "UPDATE", "DELETE");
 
+    String getStatement(String name) {
+        return this.queries.getOrDefault(name, name);
+    }
+
     String getStatementType(String name) throws jext.sql.SQLException {
         // it must handle:
         //      SELECT ...
         //      SELECT\n...
-        String statement = this.queries.get(name);
+        String statement = this.queries.getOrDefault(name, name);
         int spos = statement.indexOf(' ');
         int npos = statement.indexOf('\n');
         int pos = Math.max(spos, npos);

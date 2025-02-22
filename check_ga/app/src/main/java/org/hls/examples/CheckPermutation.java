@@ -1,21 +1,20 @@
 package org.hls.examples;
 
-import jext.optim.heuristics.genetics.Chromosome;
-import jext.optim.heuristics.genetics.GeneticAlgorithm;
-import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.domain.permutation.Permutation;
-import jext.optim.heuristics.genetics.domain.permutation.PermutationFactory;
-import jext.optim.heuristics.genetics.domain.permutation.PermutationFitnessFunction;
-import jext.optim.heuristics.genetics.filter.AcceptAll;
-import jext.optim.heuristics.genetics.operator.permutation.InversionMutation;
-import jext.optim.heuristics.genetics.operator.permutation.OrderCrossover;
-import jext.optim.heuristics.genetics.selection.TournamentSelection;
-import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
-import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
-import jext.optim.heuristics.genetics.stopping.LogGeneration;
-import jext.optim.heuristics.genetics.stopping.MultipleConditions;
-import jext.optim.heuristics.genetics.stopping.NeverStop;
-import jext.optim.heuristics.genetics.stopping.Patience;
+import jext.optim.heuristics.ga.Chromosome;
+import jext.optim.heuristics.ga.GeneticAlgorithm;
+import jext.optim.heuristics.ga.Population;
+import jext.optim.domain.permutation.Permutation;
+import jext.optim.domain.permutation.PermutationFactory;
+import jext.optim.domain.permutation.PermutationFitnessFunction;
+import jext.optim.heuristics.ga.filter.AcceptAll;
+import jext.optim.heuristics.ga.operator.permutation.InversionMutation;
+import jext.optim.heuristics.ga.operator.permutation.OrderCrossover;
+import jext.optim.heuristics.ga.selection.TournamentSelection;
+import jext.optim.heuristics.ga.stopping.FixedElapsedTime;
+import jext.optim.heuristics.ga.stopping.FixedGenerationCount;
+import jext.optim.heuristics.ga.stopping.Conditions;
+import jext.optim.heuristics.ga.stopping.NeverStop;
+import jext.optim.heuristics.ga.stopping.Patience;
 
 
 public class CheckPermutation {
@@ -55,12 +54,10 @@ public class CheckPermutation {
 
         Population<Permutation> bestPop = ga.evolve(true,
             pop,
-            new MultipleConditions(new NeverStop()
-                , new LogGeneration()
+            new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)
-                , new LogGeneration()
             )
         );
 
@@ -76,8 +73,7 @@ public class CheckPermutation {
 
         Population<Permutation> worstPop = ga.evolve(false,
             pop,
-            new MultipleConditions(new NeverStop()
-                , new LogGeneration()
+            new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)

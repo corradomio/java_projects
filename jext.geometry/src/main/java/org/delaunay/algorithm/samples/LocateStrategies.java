@@ -13,7 +13,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class LocateStrategies {
-	public static interface LocateStrategy {
+	public interface LocateStrategy {
 		void initialize(Iterable<Vector> samples, Rectangle2D bounds);
 		boolean addSample(Vector v);
 		Vector getNearest(Vector v);

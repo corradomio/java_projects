@@ -8,8 +8,8 @@ import jext.optim.heuristics.aco.stopping.MultipleConditions;
 import jext.optim.heuristics.aco.stopping.NeverStop;
 import jext.optim.heuristics.aco.stopping.Patience;
 import jext.optim.heuristics.aco.tsp.TSPAntColony;
-import jext.optim.heuristics.genetics.domain.permutation.PermutationFitnessFunction;
-import jext.optim.problems.Solution;
+import jext.optim.domain.permutation.PermutationFitnessFunction;
+import jext.optim.domain.Solution;
 
 import java.util.Arrays;
 

@@ -1,6 +1,7 @@
 package org.hls.example;
 
 import hageldave.jplotter.misc.DefaultGlyph;
+import jext.jplotter.canvas.JPlotterCanvas;
 import jext.jplotter.canvas.JPlotterFrame;
 import jext.jplotter.renderables.Legend;
 import jext.jplotter.renderables.Lines;
@@ -77,22 +78,26 @@ public class CheckJPlotter4 {
         // ----------------------------------------------------------------------------------
 
         JPlotterFrame frame = new JPlotterFrame("Example Viz");
-        frame.getCanvas().getContent().addAll(
+        JPlotterCanvas canvas = frame.getCanvas();
+
+        canvas.getContent().addAll(
             sineLine,
             pointsC1,
             pointsC2,
             pointsC3
         );
 
-        frame.getCanvas()
+        canvas
             .getCoordSysRenderer()
             .setMarginView(.1, .1)
+            .setAspectRatio(1)
             .setLegend(new Legend().addAll(
                 sineLine,
                 pointsC1,
                 pointsC2,
                 pointsC3
             ), 80, false)
+            .compose()
         ;
 
         SwingUtilities.invokeLater(() -> {

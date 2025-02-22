@@ -7,17 +7,23 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static ae.ac.ebtic.sql.bt.btproxy.Driver.QUERY_SUFFIX;
 
 public class BTPreparedStatement extends BaseStatement {
+
+    private static final Logger logger = Logger.getLogger(BTPreparedStatement.class.getCanonicalName());
 
     private final String name;
     private final String token;
@@ -27,7 +33,7 @@ public class BTPreparedStatement extends BaseStatement {
 
     private final ArrayList<String> stmtParams = new ArrayList<>();
     private final ArrayList<Object> queryParams = new ArrayList<>();
-    private final ArrayList<Integer> batchResults = new ArrayList<>();
+    private final ArrayList<List<Object>> batchParameters = new ArrayList<>();
 
     // ----------------------------------------------------------------------
 
@@ -88,6 +94,11 @@ public class BTPreparedStatement extends BaseStatement {
     }
 
     @Override
+    public void setBigDecimal(int parameterIndex, BigDecimal x) {
+        set(queryParams, parameterIndex-1, x);
+    }
+
+    @Override
     public void setFloat(int parameterIndex, float x) {
         set(queryParams, parameterIndex-1, x);
     }
@@ -142,23 +153,55 @@ public class BTPreparedStatement extends BaseStatement {
 
     @Override
     public void addBatch() throws SQLException {
-        int ret = executeUpdate();
-        batchResults.add(ret);
+        // int ret = executeUpdate();
+        batchParameters.add(new ArrayList<>(queryParams));
+        queryParams.clear();
     }
 
     @Override
-    public int[] executeBatch() {
-        int j = 0;
-        int[] ret = new int[batchResults.size()];
-        for(int br : batchResults)
-            ret[j++] = br;
-        batchResults.clear();
-        return ret;
+    public int[] executeBatch() throws SQLException {
+        prepareBatch();
+
+        Map<String, Object> result = tryExecute();
+
+        clearBatch();
+
+        return toIndices(result);
+    }
+
+    private static int[] toIndices(Map<String, Object> result) {
+
+        /*
+            {
+              "query_id" : "test_batch",
+              "status" : "SUCCESS",
+              "results" : {
+                "rowCount" : 1,
+                "rows" : [ 5 ]
+              }
+            }
+         */
+
+        List<Integer> indexList = MapUtils.get(result, "results", "rows");
+        int n = indexList.size();
+        int[] indices = new int[n];
+        for (int i=0; i<n; ++i)
+            indices[i] = indexList.get(i);
+        return indices;
+    }
+
+    private void prepareBatch() {
+        if (!batchParameters.isEmpty()) {
+            queryParams.clear();
+            queryParams.addAll(batchParameters);
+            batchParameters.clear();
+        }
     }
 
     @Override
     public void clearBatch() {
-        batchResults.clear();
+        batchParameters.clear();
+        queryParams.clear();
     }
 
     // ----------------------------------------------------------------------
@@ -185,14 +228,20 @@ public class BTPreparedStatement extends BaseStatement {
 
     @Override
     public boolean execute() throws SQLException {
-        int count = executeUpdate();
-        return count > 0;
+        trickForInsert();
+
+        Map<String, Object> result = tryExecute();
+        int rowCount = MapUtils.get(result, "results", "rowCount");
+        return rowCount > 0;
     }
 
     @Override
     public int executeUpdate() throws SQLException {
+        trickForInsert();
+
         Map<String, Object> result = tryExecute();
-        return 0;
+        int[] indices = toIndices(result);
+        return indices.length > 0 ? indices[0] : -1;
     }
 
     // ----------------------------------------------------------------------
@@ -203,7 +252,16 @@ public class BTPreparedStatement extends BaseStatement {
         return new BTResultSet(resultSet);
     }
 
+    private void trickForInsert() throws SQLException {
+        String statementType = this.conn.getStatementType(this.name);
+        if ("INSERT".equals(statementType)) {
+            addBatch();
+            prepareBatch();
+        }
+    }
+
     private Map<String, Object> tryExecute() throws SQLException {
+        logQuery();
         try {
             Map<String, Object> postBody = MapUtils.asMap(
                 "query_id", name,
@@ -243,6 +301,24 @@ public class BTPreparedStatement extends BaseStatement {
             "name", name,
             "structure_parameters", stmtParams,
             "query_parameters", queryParams
+        ));
+    }
+
+    private void logQuery() {
+        if (!logger.isLoggable(Level.FINE))
+            return;
+
+        logger.fine(String.format(
+                """
+                name: %s
+                %s
+                queryParams: %s
+                stmtParams : %s
+                """,
+            this.name,
+            conn.getStatement(this.name),
+            stmtParams,
+            queryParams
         ));
     }
 

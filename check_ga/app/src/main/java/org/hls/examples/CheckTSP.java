@@ -63,7 +63,7 @@ public class CheckTSP {
                 , new Patience(20)
             ));
 
-            jext.optim.problems.Solution<int[]> tour = ac.getFittestSolution();
+            jext.optim.domain.Solution<int[]> tour = ac.getFittestSolution();
 
             TPrint.printf("ACO: %f\n", tour.fitness());
             TPrint.println("----");

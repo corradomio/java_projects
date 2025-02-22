@@ -5,6 +5,67 @@
         "language": "java",
         "query": [
             {
+                "query_id": "test_batch",
+                "query_type": "INSERT",
+                "statement": [
+                    "INSERT INTO test_proxy (",
+                    "    str, flt, dbl, bol, i2, i4, i8, bi, d, t, dt",
+                    ")",
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                ],
+                "description": "Test",
+                "structure_parameters": [
+
+                ],
+                "query_parameters": [
+                    {
+                        "name": "?",
+                        "type": "string"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "double"
+                    },
+                    {
+                        "name": "?",
+                        "type": "bool"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "int"
+                    },
+                    {
+                        "name": "?",
+                        "type": "date"
+                    },
+                    {
+                        "name": "?",
+                        "type": "time"
+                    },
+                    {
+                        "name": "?",
+                        "type": "datetime"
+                    }
+
+                ]
+            },
+            {
                 "query_id": "test",
                 "query_type": "SELECT",
                 "statement": [

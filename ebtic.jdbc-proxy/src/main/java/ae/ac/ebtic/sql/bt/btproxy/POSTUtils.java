@@ -5,11 +5,16 @@ import org.apache.http.entity.StringEntity;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class POSTUtils {
 
+    private static Logger logger = Logger.getLogger(POSTUtils.class.getCanonicalName());
+
     public static void setBody(HttpPost post, Map<String, Object> body) throws UnsupportedEncodingException {
         String sbody = JSONUtils.serialize(body);
+
+        logger.fine(sbody);
 
         post.setHeader("Content-Type", "application/json");
         post.setHeader("User-Agent", "ae.ac.ebtic.sql.bt.btproxy");

@@ -32,7 +32,7 @@ public class CheckJPlotter3 {
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                Thread.sleep(2000);
+                // Thread.sleep(2000);
                 for(int i=0; i<10; i++) {
                     Thread.sleep(2000);
                     System.out.println("point");

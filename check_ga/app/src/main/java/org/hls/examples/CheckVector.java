@@ -1,21 +1,20 @@
 package org.hls.examples;
 
-import jext.optim.heuristics.genetics.FitnessFunction;
-import jext.optim.heuristics.genetics.GeneticAlgorithm;
-import jext.optim.heuristics.genetics.Population;
-import jext.optim.heuristics.genetics.domain.reals.Range;
-import jext.optim.heuristics.genetics.domain.reals.Vector;
-import jext.optim.heuristics.genetics.domain.reals.VectorFactory;
-import jext.optim.heuristics.genetics.filter.DropDuplicates;
-import jext.optim.heuristics.genetics.operator.reals.LineCrossover;
-import jext.optim.heuristics.genetics.operator.reals.NormalMutation;
-import jext.optim.heuristics.genetics.selection.TournamentSelection;
-import jext.optim.heuristics.genetics.stopping.FixedElapsedTime;
-import jext.optim.heuristics.genetics.stopping.FixedGenerationCount;
-import jext.optim.heuristics.genetics.stopping.LogGeneration;
-import jext.optim.heuristics.genetics.stopping.MultipleConditions;
-import jext.optim.heuristics.genetics.stopping.NeverStop;
-import jext.optim.heuristics.genetics.stopping.Patience;
+import jext.optim.domain.FitnessFunction;
+import jext.optim.heuristics.ga.GeneticAlgorithm;
+import jext.optim.heuristics.ga.Population;
+import jext.optim.domain.reals.Range;
+import jext.optim.domain.reals.Vector;
+import jext.optim.domain.reals.VectorFactory;
+import jext.optim.heuristics.ga.filter.DropDuplicates;
+import jext.optim.heuristics.ga.operator.reals.LineCrossover;
+import jext.optim.heuristics.ga.operator.reals.NormalMutation;
+import jext.optim.heuristics.ga.selection.TournamentSelection;
+import jext.optim.heuristics.ga.stopping.FixedElapsedTime;
+import jext.optim.heuristics.ga.stopping.FixedGenerationCount;
+import jext.optim.heuristics.ga.stopping.Conditions;
+import jext.optim.heuristics.ga.stopping.NeverStop;
+import jext.optim.heuristics.ga.stopping.Patience;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
@@ -58,8 +57,7 @@ public class CheckVector {
 
         Population<Vector> bestPop = ga.evolve(true,
             pop,
-            new MultipleConditions(new NeverStop()
-                , new LogGeneration()
+            new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)
@@ -76,7 +74,7 @@ public class CheckVector {
 
         Population<Vector> worstPop = ga.evolve(false,
             pop,
-            new MultipleConditions(new NeverStop()
+            new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
                 , new FixedElapsedTime(30)

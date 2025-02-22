@@ -1,8 +1,9 @@
 package jext.lang;
 
-import java.lang.reflect.Field;
-
 public class RuntimeException extends java.lang.RuntimeException {
+
+    private String message;
+    private Throwable cause;
 
     public RuntimeException() {
         super();
@@ -25,21 +26,20 @@ public class RuntimeException extends java.lang.RuntimeException {
     }
 
     public void setMessage(String message) {
-        try {
-            if (message == null)
-                message = getClass().getName();
-            Field detailedMessage = Throwable.class.getDeclaredField("detailMessage");
-            detailedMessage.setAccessible(true);
-            detailedMessage.set(this, message);
-        } catch (NoSuchFieldException | IllegalAccessException e) { }
+        // if (message == null)
+        //     message = getClass().getName();
+        this.message = message;
     }
 
-    public void setCause(Throwable t) {
-        try {
-            if (t == null) return;
-            Field cause = Throwable.class.getDeclaredField("cause");
-            cause.setAccessible(true);
-            cause.set(this, t);
-        } catch (NoSuchFieldException | IllegalAccessException e) { }
+    public String getMessage() {
+        return message != null ? message : super.getMessage();
+    }
+
+    public void setCause(Throwable cause) {
+        this.cause = cause;
+    }
+
+    public Throwable getCause() {
+        return cause != null ? cause : super.getCause();
     }
 }

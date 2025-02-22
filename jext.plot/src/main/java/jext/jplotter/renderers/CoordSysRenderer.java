@@ -7,13 +7,25 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
     private boolean automaticBounds = true;
     private double marginX = 0;
     private double marginY = 0;
+    private double aspectRatio = 1;
+
+    // ----------------------------------------------------------------------
 
     public CoordSysRenderer() { }
+
+    // ----------------------------------------------------------------------
 
     public CoordSysRenderer setAutomaticBounds(boolean automaticBounds) {
         this.automaticBounds = automaticBounds;
         return this;
     }
+
+    public CoordSysRenderer setAspectRatio(double aspectRatio) {
+        this.aspectRatio = aspectRatio;
+        return this;
+    }
+
+    // ----------------------------------------------------------------------
 
     public CompleteRenderer getContent() {
         CompleteRenderer content = (CompleteRenderer) super.getContent();
@@ -24,17 +36,17 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
         return content;
     }
 
-    public CoordSysRenderer addContent(CompleteRenderer content){
+    public CoordSysRenderer setContent(CompleteRenderer content){
         super.setContent(content);
-        if (automaticBounds)
-            setCoordinateView(content.getBounds().margin(marginX, marginY));
+        // if (automaticBounds)
+        //     setCoordinateView(content.getBounds().margin(marginX, marginY));
         return this;
     }
 
     /**
      * Extend the content bounds of the specified margin
      *
-     * Note: call 'setMarginView' after 'addContent'
+     * Note: call 'setMarginView' after 'setContent'
      * @param marginX horizontal margin
      * @param marginY vertical margin
      * @return this
@@ -42,11 +54,10 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
     public CoordSysRenderer setMarginView(double marginX, double marginY) {
         this.marginX = marginX;
         this.marginY = marginY;
-
-        if (automaticBounds) {
-            CompleteRenderer cr = getContent();
-            setCoordinateView(cr.getBounds().margin(marginX, marginY));
-        }
+        // if (automaticBounds) {
+        //     CompleteRenderer cr = getContent();
+        //     setCoordinateView(cr.getBounds().margin(marginX, marginY));
+        // }
         return this;
     }
 
@@ -90,4 +101,13 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
         return this;
     }
 
+    // ----------------------------------------------------------------------
+
+    public CoordSysRenderer compose() {
+        if (automaticBounds) {
+            CompleteRenderer cr = getContent();
+            setCoordinateView(cr.getBounds().margin(marginX, marginY));
+        }
+        return this;
+    }
 }

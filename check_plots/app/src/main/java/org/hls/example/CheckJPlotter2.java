@@ -96,7 +96,7 @@ public class CheckJPlotter2 {
             .add(pointsC3);
 
         CoordSysRenderer coordsys = new CoordSysRenderer()
-            .addContent(content)
+            .setContent(content)
             .setMarginView(.1, .1)
             // .setCoordinateView(-.5, -3.3, 6.5, 3.3)
             .setLegend(legend, 80, false)

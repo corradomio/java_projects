@@ -6,18 +6,66 @@ import jext.sql.DriverManager;
 import jext.sql.Connection;
 import jext.sql.queries.JSONQueries;
 import jext.sql.queries.NamedQueries;
-import java.sql.PreparedStatement;
+import jext.sql.PreparedStatement;
+
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import jext.util.JSONUtils;
+import jext.util.logging.LogManager;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 public class CheckBTProxy {
 
     public static void main(String[] args) throws Exception {
+        LogManager.configure(new File("logging.properties"));
+
         Class.forName("ae.ac.ebtic.sql.bt.btproxy.Driver");
 
+
+        PreparedStatement statement;
+        Connection connection = DriverManager.getConnection(
+            // "jdbc:btproxy://localhost:9002/spare-dimensioning-server",
+            "jdbc:btproxy://localhost:9001/spare-dimensioning-server",
+            "ciccio", "pasticcio");
+
+        Map<String, Object> queries = JSONUtils.load(new File("sparemanagement-queries.json"));
+        NamedQueries jq = JSONQueries.of(queries);
+        jq.registerTo(connection);
+
+        Date now = new Date();
+
+        statement = connection.prepareStatement("test_batch");
+
+        for (int i=0; i<10; ++i) {
+            // (str, flt, dbl, bol, i2, i4, i8, bi, d, t, dt)"
+            statement.setString(1, "Ciccio Pasticcio");
+            statement.setFloat(2, 1.2f);
+            statement.setDouble(3, 3.4);
+            statement.setBoolean(4, true);
+            statement.setShort(5, (short)123);
+            statement.setInt(6, 456789);
+            statement.setLong(7, 123456789L);
+            statement.setBigDecimal(8, new BigDecimal(1000+i));
+            statement.setDate(9, new java.sql.Date(now.getTime()));
+            statement.setTime(10, new java.sql.Time(now.getTime()));
+            statement.setTimestamp(11, new java.sql.Timestamp(now.getTime()));
+
+            // statement.addBatch();
+        }
+        // int[] indices = statement.executeBatch();
+        // System.out.println(Arrays.toString(indices));
+
+        int index = statement.executeUpdate();
+        System.out.println(index);
+
+    }
+
+    public static void main4(String[] args) throws Exception {
+        Class.forName("ae.ac.ebtic.sql.bt.btproxy.Driver");
 
         PreparedStatement statement;
         Connection connection = DriverManager.getConnection("jdbc:btproxy://localhost:9002/spare-dimensioning-server", "ciccio", "pasticcio");

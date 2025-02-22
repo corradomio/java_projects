@@ -28,6 +28,21 @@
             <artifactId>jext.tsp</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.collections</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.geometry</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.plot</artifactId>
+            <version>1.0</version>
+        </dependency>
 
     </dependencies>
 

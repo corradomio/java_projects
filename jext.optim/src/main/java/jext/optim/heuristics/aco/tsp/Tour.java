@@ -1,6 +1,6 @@
 package jext.optim.heuristics.aco.tsp;
 
-import jext.optim.problems.Solution;
+import jext.optim.domain.Solution;
 import jext.util.ArrayUtils;
 
 import java.util.Arrays;

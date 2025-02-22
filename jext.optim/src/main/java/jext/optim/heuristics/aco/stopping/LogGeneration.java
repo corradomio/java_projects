@@ -3,7 +3,6 @@ package jext.optim.heuristics.aco.stopping;
 
 import jext.optim.heuristics.aco.AntColony;
 import jext.optim.heuristics.aco.StoppingCondition;
-
 import jext.util.TPrint;
 
 public class LogGeneration implements StoppingCondition {

@@ -1,7 +1,9 @@
 package jext.util.concurrent;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class ParallelException extends jext.lang.RuntimeException {
@@ -13,14 +15,15 @@ public class ParallelException extends jext.lang.RuntimeException {
     }
 
     private LinkedCauseException lce;
-    private Set<String> messages = new HashSet<>();
+    // private final List<Throwable> causes = new ArrayList<>();
+    private final Set<String> messages = new HashSet<>();
 
     public ParallelException() {
 
     }
 
     boolean isEmpty() {
-        return lce == null;
+        return messages.isEmpty();
     }
 
     public void add(Throwable t) {
@@ -28,6 +31,7 @@ public class ParallelException extends jext.lang.RuntimeException {
         if (message == null)
             message = t.getClass().getName();
         messages.add(message);
+        // causes.add(t);
 
         LinkedCauseException lce = new LinkedCauseException(t);
         if (this.lce == null) {

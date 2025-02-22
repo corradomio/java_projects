@@ -28,6 +28,21 @@ import java.util.stream.*;
     3) it is necessary to "shutdown" the pool at the end of the application. And also this is reasonable.
 
     Note: this class must be improved to support exceptions in some thread!
+
+    Mathematica:
+        ParallelArray   [f, n] [f, dims]
+        ParallelCases   [{e1, ...}, pattern]
+        ParallelCombine ?
+        ParallelEvaluate[expr]
+        Parallelize     [expr]
+        ParallelMap     [f, expr]
+        ParallelSelect  [data, crit]
+        ParallelTry     [f, {arg1, ...}]
+
+        ParallelDo      [expr, {imax} | {i, imin, imax}]
+        ParallelTable   [expr, {imax} | {i, imin, imax}]
+        ParallelProduct [expr, {imax} | {i, imin, imax}]
+        ParallelSum     [expr, {imax} | {i, imin, imax}]
  */
 
 public class Parallel {
@@ -260,6 +275,28 @@ public class Parallel {
     }
 
     // ----------------------------------------------------------------------
+    // forEach native data
+    // ----------------------------------------------------------------------
+
+    public static void forEach(int[] array, IntConsumer body) {
+        List<Callable<Boolean>> tasks = new ArrayList<>();
+        for(int t : array) tasks.add(new IntTask(t, body));
+        invokeAll(tasks);
+    }
+
+    public static void forEach(long[] array, LongConsumer body) {
+        List<Callable<Boolean>> tasks = new ArrayList<>();
+        for(long t : array) tasks.add(new LongTask(t, body));
+        invokeAll(tasks);
+    }
+
+    public static void forEach(double[] array, DoubleConsumer body) {
+        List<Callable<Boolean>> tasks = new ArrayList<>();
+        for(double t : array) tasks.add(new DoubleTask(t, body));
+        invokeAll(tasks);
+    }
+
+    // ----------------------------------------------------------------------
     // forEach native streams
     // ----------------------------------------------------------------------
 
@@ -278,28 +315,6 @@ public class Parallel {
     public static void forEach(DoubleStream s, DoubleConsumer body) {
         List<Callable<Boolean>> tasks = s.mapToObj(t -> new DoubleTask(t, body))
             .collect(Collectors.toList());
-        invokeAll(tasks);
-    }
-
-    // ----------------------------------------------------------------------
-    // forEach native data
-    // ----------------------------------------------------------------------
-
-    public static void forEach(int[] array, IntConsumer body) {
-        List<Callable<Boolean>> tasks = new ArrayList<>();
-        for(int t : array) tasks.add(new IntTask(t, body));
-        invokeAll(tasks);
-    }
-
-    public static void forEach(long[] array, LongConsumer body) {
-        List<Callable<Boolean>> tasks = new ArrayList<>();
-        for(long t : array) tasks.add(new LongTask(t, body));
-        invokeAll(tasks);
-    }
-
-    public static void forEach(double[] array,DoubleConsumer body) {
-        List<Callable<Boolean>> tasks = new ArrayList<>();
-        for(double t : array) tasks.add(new DoubleTask(t, body));
         invokeAll(tasks);
     }
 
@@ -344,43 +359,41 @@ public class Parallel {
     }
 
     // ----------------------------------------------------------------------
-    // Parallel.apply
+    // Parallel.map
     // ----------------------------------------------------------------------
 
     private static class CallableTask<V, R> implements Callable<R> {
 
-        private V t;
+        private V v;
         private Function<V, R> function;
 
-        CallableTask(V t, Function<V, R> function) {
-            this.t = t;
+        CallableTask(V v, Function<V, R> function) {
+            this.v = v;
             this.function = function;
         }
 
         @Override
         public R call() throws Exception {
-            return function.apply(t);
+            return function.apply(v);
         }
     }
 
-    public static <V, R> List<R> apply(Collection<V> collection, Function<V, R> function) {
+    public static <V, R> List<R> map(Collection<V> collection, Function<V, R> function) {
         List<Callable<R>> tasks = new ArrayList<>();
-        collection.forEach(t -> {
-            tasks.add(new CallableTask<>(t, function));
-        });
+        collection.forEach(t -> tasks.add(new CallableTask<>(t, function)));
 
         return invokeAll(tasks);
     }
 
     // ----------------------------------------------------------------------
-    // Parallel.apply
+    // Parallel.map(Map<K, V> map, R f(V))
     // ----------------------------------------------------------------------
 
     private static class EntryResult<K, R> {
         private K k;
         private R r;
 
-        public EntryResult(K k, R r) {
+        EntryResult(K k, R r) {
             this.k = k;
             this.r = r;
         }
@@ -389,34 +402,30 @@ public class Parallel {
     private static class CallableEntryTask<K, V, R> implements Callable<EntryResult<K, R>> {
 
         private K k;
-        private V t;
+        private V v;
         private Function<V, R> function;
 
-        CallableEntryTask(K k, V t, Function<V, R> function) {
+        CallableEntryTask(K k, V v, Function<V, R> function) {
             this.k = k;
-            this.t = t;
+            this.v = v;
             this.function = function;
         }
 
         @Override
-        public EntryResult<K, R> call() throws Exception {
-            R r = function.apply(t);
+        public EntryResult<K, R> call() {
+            R r = function.apply(v);
             return new EntryResult<>(k, r);
         }
     }
 
-    public static <K, V, R> Map<K, R> apply(Map<K, V> dictionary, Function<V, R> function) {
+    public static <K, V, R> Map<K, R> map(Map<K, V> dictionary, Function<V, R> function) {
         List<Callable<EntryResult<K, R>>> tasks = new ArrayList<>();
-        dictionary.forEach((k, t) -> {
-            tasks.add(new CallableEntryTask<>(k, t, function));
-        });
+        dictionary.forEach((k, t) -> tasks.add(new CallableEntryTask<>(k, t, function)));
 
         List<EntryResult<K, R>> results = invokeAll(tasks);
 
         Map<K, R> mapResult = new HashMap<>();
-        results.forEach(e -> {
-            mapResult.put(e.k, e.r);
-        });
+        results.forEach(e -> mapResult.put(e.k, e.r));
 
         return mapResult;
     }
