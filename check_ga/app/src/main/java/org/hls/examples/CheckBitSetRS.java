@@ -36,7 +36,7 @@ public class CheckBitSetRS {
         // ------------------------------------------------------------------
 
         System.out.println("-- Maximize --");
-        System.out.println(fitnessFunction.getBestChromosome());
+        System.out.println(fitnessFunction.getBestSolution());
 
         RandomFactory<BitSet> rf = new RandomFactory<>(
             bitsetFactory,
@@ -56,7 +56,7 @@ public class CheckBitSetRS {
         // ------------------------------------------------------------------
 
         System.out.println("-- Minimize --");
-        System.out.println(fitnessFunction.getWorstChromosome());
+        System.out.println(fitnessFunction.getWorstSolution());
 
         sol = rs.solve(false, rf, new FixedGenerationCount(100000));
 

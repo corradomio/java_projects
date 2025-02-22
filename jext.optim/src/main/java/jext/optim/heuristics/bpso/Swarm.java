@@ -1,19 +1,16 @@
 package jext.optim.heuristics.bpso;
 
-import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import jext.math.random.UniformRandomGenerator;
 import jext.optim.domain.CandidateFactory;
 import jext.optim.domain.FitnessFunction;
-import jext.optim.domain.Solution;
 import jext.util.concurrent.Parallel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
-import static java.lang.Math.max;
-
 public class Swarm<T> {
+
     private static final RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
 
     private final int swarmSize;
@@ -98,24 +95,20 @@ public class Swarm<T> {
         // initialize swarm
         for (int i=0; i<swarmSize; i++) {
             T candidate = candidateFactory.candidate(rng);
-            addCandidate(candidate);
+
+            double[] psticky = new double[length];
+            for (int d=0; d<length; d++)
+                psticky[d] = rng.nextDouble();
+
+            Particle<T> particle = new Particle<>(candidate, fitnessFunction, decreasingOrder, psticky);
+
+            addParticle(particle);
         }
 
         // initialize pbest, gbest
         gbest = pbest;
 
         return this;
-    }
-
-    void addCandidate(T candidate) {
-
-        double[] psticky = new double[length];
-        for (int i=0; i<length; i++)
-            psticky[i] = rng.nextDouble();
-
-        Particle<T> particle = new Particle<>(candidate, fitnessFunction, decreasingOrder, psticky);
-
-        addParticle(particle);
     }
 
     void addParticle(Particle<T> particle) {

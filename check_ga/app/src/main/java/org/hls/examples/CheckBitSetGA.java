@@ -44,7 +44,7 @@ public class CheckBitSetGA {
 
         System.out.println("-- Maximize --");
 
-        System.out.println(fitnessFunction.getBestChromosome());
+        System.out.println(fitnessFunction.getBestSolution());
 
         Population<BitSet> pop = new Population<>(
             100,.10, .10,
@@ -90,7 +90,7 @@ public class CheckBitSetGA {
 
         System.out.println("-- Minimize --");
 
-        System.out.println(fitnessFunction.getWorstChromosome());
+        System.out.println(fitnessFunction.getWorstSolution());
 
         // Population<BitSet> worstPop = ga.evolve(false,
         //     pop,

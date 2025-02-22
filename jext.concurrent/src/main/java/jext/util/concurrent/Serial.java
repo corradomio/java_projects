@@ -65,7 +65,7 @@ public class Serial {
     // apply
     // ----------------------------------------------------------------------
 
-    public static <V, R> List<R> apply(List<V> list, Function<V, R> function) {
+    public static <V, R> List<R> map(List<V> list, Function<V, R> function) {
         List<R> results = new ArrayList<>();
         for(V v : list)
             results.add(function.apply(v));

@@ -4,14 +4,17 @@ import jext.optim.domain.Solution;
 import jext.optim.domain.bitset.BitSet;
 import jext.optim.domain.bitset.BitSetFactory;
 import jext.optim.domain.bitset.BitSetFitnessFunction;
-import jext.optim.heuristics.bpso.BinaryParticleSwarmOptimization;
-import jext.optim.heuristics.bpso.Swarm;
-import jext.optim.heuristics.bpso.operators.bitset.BitSetUpdate;
-import jext.optim.heuristics.bpso.stopping.Conditions;
-import jext.optim.heuristics.bpso.stopping.FixedGenerationCount;
-import jext.optim.heuristics.bpso.stopping.Patience;
+import jext.optim.heuristics.sa.stopping.Conditions;
+import jext.optim.heuristics.sa.stopping.FixedGenerationCount;
+import jext.optim.heuristics.sa.DefaultTemperatureScheduler;
+import jext.optim.heuristics.sa.Population;
+import jext.optim.heuristics.sa.SimulatedAnnealing;
+import jext.optim.heuristics.sa.operators.bitset.BitSetNeighboursPolicy;
+import jext.optim.heuristics.sa.stopping.Patience;
+import jext.util.concurrent.Parallel;
 
-public class CheckBitSetBPSO {
+
+public class CheckBitSetSA {
 
     static int TOURNAMENT_ARITY = 2;
     static int NUM_GENERATIONS = 1000000;
@@ -38,47 +41,46 @@ public class CheckBitSetBPSO {
         // ------------------------------------------------------------------
 
         System.out.println("-- Maximize --");
-
         System.out.println(fitnessFunction.getBestSolution());
 
-        Swarm<BitSet> pop = new Swarm<>(
-            1000,.001, .001, .01,
+        Solution<BitSet> sol;
+
+        Population<BitSet> pop = new Population<>(
+            1000, 3,
             bitsetFactory,
             fitnessFunction
         );
 
         // crossover
         // mutation
-        // selection
-        BinaryParticleSwarmOptimization<BitSet> ga = new BinaryParticleSwarmOptimization<>(
-            new BitSetUpdate()
+        // selectio
+        SimulatedAnnealing<BitSet> sa = new SimulatedAnnealing<>(
+            1000,
+            new DefaultTemperatureScheduler(1000),
+            new BitSetNeighboursPolicy()
         );
 
-        Solution<BitSet> sol = ga.solve(true, pop,
-            new Conditions(
-                new FixedGenerationCount(10000),
-                new Patience(1000)
-            )
-        );
-
-        System.out.println(sol.fitness());
-        System.out.println(sol.candidate());
+        // sol = sa.solve(true, pop, new Conditions(
+        //     new FixedGenerationCount(10000),
+        //     new Patience(100)
+        // ));
+        //
+        // System.out.println(sol.fitness());
+        // System.out.println(sol.candidate());
 
         // ------------------------------------------------------------------
 
         System.out.println("-- Minimize --");
-
         System.out.println(fitnessFunction.getWorstSolution());
 
-        sol = ga.solve(false, pop,
-            new Conditions(
-                new FixedGenerationCount(10000),
-                new Patience(1000)
-            )
-        );
+        sol = sa.solve(false, pop, new Conditions(
+            new FixedGenerationCount(10000)
+            , new Patience(500)
+        ));
 
         System.out.println(sol.fitness());
         System.out.println(sol.candidate());
 
+        Parallel.shutdown();
     }
 }

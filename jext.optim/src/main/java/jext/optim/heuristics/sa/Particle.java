@@ -1,9 +1,9 @@
-package jext.optim.heuristics.bpso;
+package jext.optim.heuristics.sa;
 
 import jext.optim.domain.FitnessFunction;
 import jext.optim.domain.Solution;
 
-public class Particle<T> implements Comparable<Particle<T>>, Solution<T> {
+public class Particle<T> implements Comparable<Particle<T>>, Solution<T>  {
 
     /** Value assigned when no fitness has been computed yet. */
     private static final double NO_FITNESS = Double.NEGATIVE_INFINITY;
@@ -12,28 +12,21 @@ public class Particle<T> implements Comparable<Particle<T>>, Solution<T> {
     private final FitnessFunction<T> fitnessFunction;
     private final boolean decreasingOrder;
     private double fitness = NO_FITNESS;
-    private final double[] psticky;
 
-    public Particle(final T candidate,
-                    FitnessFunction<T> fitnessFunction,
-                    final boolean decreasingOrder,
-                    final double[] psticky) {
+    public Particle(T candidate, FitnessFunction<T> fitnessFunction, boolean decreasingOrder) {
         this.candidate = candidate;
         this.fitnessFunction = fitnessFunction;
         this.decreasingOrder = decreasingOrder;
-        this.psticky = psticky;
     }
 
     public Particle(final T candidate, final Particle<T> template) {
         this.candidate = candidate;
         this.fitnessFunction = template.fitnessFunction;
         this.decreasingOrder = template.decreasingOrder;
-        this.psticky = template.psticky;
     }
 
     @Override
     public T candidate() {
-        fitness = NO_FITNESS;
         return candidate;
     }
 
@@ -43,10 +36,6 @@ public class Particle<T> implements Comparable<Particle<T>>, Solution<T> {
             fitness = fitnessFunction.fitness(candidate);
         }
         return fitness;
-    }
-
-    public double[] psticky() {
-        return psticky;
     }
 
     @Override

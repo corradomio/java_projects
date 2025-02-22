@@ -33,7 +33,7 @@ public class BitSetFitnessFunction implements FitnessFunction<BitSet> {
         return fitness;
     }
 
-    public Chromosome<BitSet> getBestChromosome() {
+    public Chromosome<BitSet> getBestSolution() {
         BitSet bs = new BitSet(values.length);
         for (int i=0; i<values.length; i++)
             if (values[i] > 0)
@@ -42,7 +42,7 @@ public class BitSetFitnessFunction implements FitnessFunction<BitSet> {
         return new Chromosome<>(bs, this, true);
     }
 
-    public Chromosome<BitSet> getWorstChromosome() {
+    public Chromosome<BitSet> getWorstSolution() {
         BitSet bs = new BitSet(values.length);
         for (int i=0; i<values.length; i++)
             if (values[i] < 0)
