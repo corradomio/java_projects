@@ -17,7 +17,7 @@ import jext.optim.heuristics.ga.stopping.NeverStop;
 import jext.optim.heuristics.ga.stopping.Patience;
 
 
-public class CheckPermutation {
+public class CheckPermutationGA {
 
     static int TOURNAMENT_ARITY = 2;
     static int NUM_GENERATIONS = 1000000;

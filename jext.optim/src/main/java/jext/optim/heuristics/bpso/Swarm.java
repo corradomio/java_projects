@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
-public class Swarm<T> {
+public class Swarm<T> implements Cloneable{
 
     private static final RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
 
@@ -20,13 +20,14 @@ public class Swarm<T> {
     private final CandidateFactory<T> candidateFactory;
     private final FitnessFunction<T> fitnessFunction;
 
+    private final int length;
+    private final double is, ip, ig;
     private boolean decreasingOrder;
     private List<Particle<T>> swarm = new ArrayList<>();
     private Particle<T> pbest;
     private Particle<T> gbest;
-    private final int length;
-    private final double is, ip, ig;
-    private UpdatePolicy<T> updatePolicy;
+
+    // ----------------------------------------------------------------------
 
     public Swarm(
         int swarmSize,
@@ -51,14 +52,30 @@ public class Swarm<T> {
         this.ig = socialFactor/sum;
     }
 
-    public Swarm<T> setUpdatePolicy(UpdatePolicy<T> updatePolicy) {
-        this.updatePolicy = updatePolicy;
-        return this;
+    public Swarm<T> clone() {
+        return new Swarm<>(
+            swarmSize,
+            cognitiveFactor, socialFactor, stickiness,
+            candidateFactory, fitnessFunction
+        );
     }
+
+    // ----------------------------------------------------------------------
 
     public Swarm<T> setDecreasingOrder(boolean decreasingOrder) {
         this.decreasingOrder = decreasingOrder;
         return this;
+    }
+
+    // ----------------------------------------------------------------------
+
+    public List<Particle<T>> getSwarm() {
+        return swarm;
+    }
+
+    public void setSwarm(List<Particle<T>> swarm) {
+        this.swarm = swarm;
+        updateBest();
     }
 
     public double getStickiness() {
@@ -88,9 +105,6 @@ public class Swarm<T> {
     // ----------------------------------------------------------------------
 
     public Swarm<T> initialize() {
-        // initialize stickiness
-        // for (int i=0; i<length; i++)
-        //     psticky[i] = rng.nextDouble();
 
         // initialize swarm
         for (int i=0; i<swarmSize; i++) {
@@ -119,30 +133,20 @@ public class Swarm<T> {
 
     // ----------------------------------------------------------------------
 
-    public Swarm<T> nextGeneration() {
+    // public Swarm<T> nextGeneration() {
+    //
+    //     updateParticles(rng);
+    //     updateBest();
+    //
+    //     return this;
+    // }
 
-        updateParticles(rng);
-        updateBest();
-
-        return this;
-    }
-
-    private void updateParticles(RandomGenerator rng) {
-        // List<Particle<T>> generation = new ArrayList<>(swarmSize);
-        //
-        // for (Particle<T> particle : swarm) {
-        //
-        //     particle = updatePolicy.updateParticle(particle, rng, this);
-        //
-        //     generation.add(particle);
-        // }
-
-        List<Particle<T>> generation = Parallel.map(swarm,
-            particle -> updatePolicy.updateParticle(particle, rng, this)
-        );
-
-        swarm = generation;
-    }
+    // private void updateParticles(RandomGenerator rng) {
+    //
+    //     swarm = Parallel.map(swarm,
+    //         particle -> updatePolicy.updateParticle(particle, rng, this)
+    //     );
+    // }
 
     private void updateBest() {
         for (Particle<T> particle : swarm) {

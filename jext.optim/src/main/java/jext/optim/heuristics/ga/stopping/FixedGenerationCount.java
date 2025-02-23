@@ -36,7 +36,7 @@ public class FixedGenerationCount implements StoppingCondition {
      */
     @Override
     public boolean isSatisfied(final Population population) {
-        TPrint.tprintf("[%7d]: %.6f\n", numGenerations, population.getFittestChromosome());
+        TPrint.tprintf("[%7d]: %s\n", numGenerations, population.getFittestChromosome());
 
         if (this.numGenerations < this.maxGenerations) {
             numGenerations++;

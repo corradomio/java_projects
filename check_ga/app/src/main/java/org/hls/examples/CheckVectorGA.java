@@ -19,7 +19,7 @@ import jext.optim.heuristics.ga.stopping.Patience;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 
-public class CheckVector {
+public class CheckVectorGA {
 
     static int TOURNAMENT_ARITY = 2;
     static int NUM_GENERATIONS = 1000;

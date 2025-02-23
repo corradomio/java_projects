@@ -5,8 +5,13 @@ import jext.math.exception.util.LocalizedFormats;
 import jext.math.random.UniformRandomGenerator;
 import jext.optim.heuristics.ga.filter.AcceptAll;
 import jext.optim.domain.Solution;
+import jext.util.concurrent.Parallel;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 import java.util.random.RandomGenerator;
+import java.util.stream.IntStream;
 
 /**
  * Implementation of a genetic algorithm. All factors that govern the operation
@@ -134,13 +139,13 @@ public class GeneticAlgorithm<T> {
      * @return the population that satisfies the stopping condition.
      */
     protected Population<T> evolve(final Population<T> initial, final StoppingCondition condition) {
-        Population<T> current = initial;
+        population = initial;
         generationsEvolved = 0;
-        while (!condition.isSatisfied(current)) {
-            current = nextGeneration(current);
+        while (!condition.isSatisfied(population)) {
+            population = nextGeneration(population);
             generationsEvolved++;
         }
-        return current;
+        return population;
     }
 
     /**
@@ -167,20 +172,22 @@ public class GeneticAlgorithm<T> {
     public Population<T> nextGeneration(final Population<T> current) {
         Population<T> nextGeneration = current.nextGeneration();
 
-        RandomGenerator randGen = UniformRandomGenerator.getRandomGenerator();
+        RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
 
-        while (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit()) {
+        int nPairs = current.getPopulationSize()/2;
+
+        List<ChromosomePair<T>> chromosomePairs = Parallel.map(0, nPairs, i -> {
             // select parent chromosomes
             ChromosomePair<T> pair = getSelectionPolicy().select(current);
 
             // crossover?
-            if (randGen.nextDouble() < getCrossoverRate()) {
+            if (rng.nextDouble() < getCrossoverRate()) {
                 // apply crossover policy to create two offspring
                 pair = getCrossoverPolicy().crossover(pair.first(), pair.second());
             }
 
             // mutation?
-            if (randGen.nextDouble() < getMutationRate()) {
+            if (rng.nextDouble() < getMutationRate()) {
                 // apply mutation policy to the chromosomes
                 pair = new ChromosomePair<>(
                     getMutationPolicy().mutate(pair.first()),
@@ -188,14 +195,44 @@ public class GeneticAlgorithm<T> {
                 );
             }
 
-            // add the first chromosome to the population
-            nextGeneration.addChromosome(pair.first());
-            // is there still a place for the second chromosome?
-            if (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit()) {
-                // add the second chromosome to the population
+            return pair;
+        });
+
+        // fill the new population
+        for (ChromosomePair<T> pair : chromosomePairs) {
+            if (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit())
+                nextGeneration.addChromosome(pair.first());
+            if (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit())
                 nextGeneration.addChromosome(pair.second());
-            }
         }
+
+        // while (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit()) {
+        //     // select parent chromosomes
+        //     ChromosomePair<T> pair = getSelectionPolicy().select(current);
+        //
+        //     // crossover?
+        //     if (rng.nextDouble() < getCrossoverRate()) {
+        //         // apply crossover policy to create two offspring
+        //         pair = getCrossoverPolicy().crossover(pair.first(), pair.second());
+        //     }
+        //
+        //     // mutation?
+        //     if (rng.nextDouble() < getMutationRate()) {
+        //         // apply mutation policy to the chromosomes
+        //         pair = new ChromosomePair<>(
+        //             getMutationPolicy().mutate(pair.first()),
+        //             getMutationPolicy().mutate(pair.second())
+        //         );
+        //     }
+        //
+        //     // add the first chromosome to the population
+        //     nextGeneration.addChromosome(pair.first());
+        //     // is there still a place for the second chromosome?
+        //     if (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit()) {
+        //         // add the second chromosome to the population
+        //         nextGeneration.addChromosome(pair.second());
+        //     }
+        // }
 
         return nextGeneration;
     }

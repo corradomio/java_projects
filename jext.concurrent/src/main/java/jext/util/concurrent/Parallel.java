@@ -385,6 +385,27 @@ public class Parallel {
         return invokeAll(tasks);
     }
 
+    public static <V, R> List<R> map(Iterable<V> iterable, Function<V, R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        iterable.forEach(t -> tasks.add(new CallableTask<>(t, function)));
+
+        return invokeAll(tasks);
+    }
+
+    public static <V, R> List<R> map(V[] array, Function<V, R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        for(V t : array) tasks.add(new CallableTask<>(t, function));
+
+        return invokeAll(tasks);
+    }
+
+    public static <R> List<R> map(int start, int end, Function<Integer, R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        for(int t=start; t<end; ++t) tasks.add(new CallableTask<>(t, function));
+
+        return invokeAll(tasks);
+    }
+
     // ----------------------------------------------------------------------
     // Parallel.map(Map<K, V> map, R f(V))
     // ----------------------------------------------------------------------

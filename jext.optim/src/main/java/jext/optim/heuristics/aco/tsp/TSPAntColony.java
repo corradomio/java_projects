@@ -79,7 +79,7 @@ public class TSPAntColony implements AntColony {
 
     // ----------------------------------------------------------------------
 
-    public void initialize() {
+    public void initialize(RandomGenerator rng) {
         pheromoneTrails.initialize(colonySize);
         constructionGraph.initialize();
 
@@ -89,7 +89,6 @@ public class TSPAntColony implements AntColony {
 
         // initialize the ants with a first tour
         // this is necessary to support 'elitism'
-        final RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
         hive.stream().limit(elitismSize).forEach(ant -> ant.findTour(rng));
     }
 

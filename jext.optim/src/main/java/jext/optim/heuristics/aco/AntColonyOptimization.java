@@ -1,5 +1,7 @@
 package jext.optim.heuristics.aco;
 
+import jext.math.random.UniformRandomGenerator;
+
 import java.util.Random;
 import java.util.random.RandomGenerator;
 
@@ -8,9 +10,9 @@ public class AntColonyOptimization {
 
     private int generationsEvolved;
 
-
     public AntColony evolve(AntColony colony, StoppingCondition condition) {
-        colony.initialize();
+        final RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
+        colony.initialize(rng);
 
         generationsEvolved = 0;
         while(!condition.isSatisfied(colony)) {
