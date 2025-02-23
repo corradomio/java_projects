@@ -3,7 +3,6 @@ package jext.optim.heuristics.ga.stopping;
 import jext.optim.heuristics.ga.Population;
 import jext.optim.heuristics.ga.StoppingCondition;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

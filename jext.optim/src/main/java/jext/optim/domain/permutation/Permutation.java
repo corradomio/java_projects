@@ -31,6 +31,10 @@ public class Permutation implements Cloneable {
 
     // ----------------------------------------------------------------------
 
+    public int get(int i) {
+        return perm[i];
+    }
+
     public void flip(int i) {
         int j = i+1; if (j == perm.length) j = 0;
         swap(i, j);

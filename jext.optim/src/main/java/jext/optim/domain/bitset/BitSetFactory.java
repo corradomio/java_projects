@@ -18,6 +18,11 @@ public class BitSetFactory implements CandidateFactory<BitSet> {
     }
 
     @Override
+    public int size() {
+        return 2;
+    }
+
+    @Override
     public BitSet candidate(RandomGenerator rng) {
         BitSet bitSet = new BitSet(nbits);
         for(int i = 0; i < nbits; i++)

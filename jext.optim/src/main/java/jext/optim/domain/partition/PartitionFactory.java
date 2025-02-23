@@ -20,6 +20,11 @@ public class PartitionFactory  implements CandidateFactory<Partition> {
     }
 
     @Override
+    public int size() {
+        return nparts;
+    }
+
+    @Override
     public Partition candidate(RandomGenerator rng) {
         int[] elements = new int[length];
         for (int i = 0; i < length; i++) {

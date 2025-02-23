@@ -2,5 +2,6 @@ package jext.optim.domain;
 
 public interface FitnessFunction<T> {
 
-    double fitness(T t);
+    /// Value of the candiate solution
+    double fitness(T candidate);
 }

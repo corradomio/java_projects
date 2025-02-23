@@ -19,6 +19,11 @@ public class VectorFactory  implements CandidateFactory<Vector> {
     }
 
     @Override
+    public int size() {
+        return -1;
+    }
+
+    @Override
     public Vector candidate(RandomGenerator rng) {
         double[] data = new double[length];
 

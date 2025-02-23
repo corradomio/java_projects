@@ -4,6 +4,7 @@ package jext.optim.heuristics.rand.stopping;
 import jext.math.exception.NumberIsTooSmallException;
 import jext.optim.heuristics.rand.RandomCandidate;
 import jext.optim.heuristics.rand.StoppingCondition;
+import jext.util.TPrint;
 
 public class FixedGenerationCount implements StoppingCondition {
 
@@ -28,6 +29,7 @@ public class FixedGenerationCount implements StoppingCondition {
 
     @Override
     public boolean isSatisfied(RandomCandidate randomCandidate) {
+        TPrint.tprintf("[%7d]: %s\n", numGenerations, randomCandidate);
         if (this.numGenerations < this.maxGenerations) {
             numGenerations++;
             return false;

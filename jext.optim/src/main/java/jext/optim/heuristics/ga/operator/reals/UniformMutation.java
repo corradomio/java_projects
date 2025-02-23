@@ -1,7 +1,7 @@
 package jext.optim.heuristics.ga.operator.reals;
 
-import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.domain.reals.Vector;
+import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.heuristics.ga.util.AbstractMutationPolicy;
 
 import java.util.random.RandomGenerator;

@@ -45,14 +45,14 @@ public class CheckPermutationGA {
         // mutation
         // selectio
 
-        GeneticAlgorithm<Permutation> ga = new GeneticAlgorithm<Permutation>(
+        GeneticAlgorithm<Permutation> solver = new GeneticAlgorithm<Permutation>(
             new OrderCrossover(), .25,
             new InversionMutation(), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY),
             new AcceptAll<>()
         );
 
-        Population<Permutation> bestPop = ga.evolve(true,
+        Population<Permutation> bestPop = solver.evolve(true,
             pop,
             new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
@@ -71,7 +71,7 @@ public class CheckPermutationGA {
 
         System.out.println(fitnessFunction.getDefaultChromosome());
 
-        Population<Permutation> worstPop = ga.evolve(false,
+        Population<Permutation> worstPop = solver.evolve(false,
             pop,
             new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)

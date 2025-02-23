@@ -2,7 +2,7 @@ package jext.optim.heuristics.bpso.stopping;
 
 
 import jext.math.exception.NumberIsTooSmallException;
-import jext.optim.heuristics.bpso.Swarm;
+import jext.optim.heuristics.bpso.Population;
 import jext.optim.heuristics.bpso.StoppingCondition;
 import jext.util.TPrint;
 
@@ -20,8 +20,8 @@ public class FixedGenerationCount implements StoppingCondition {
     }
 
     @Override
-    public boolean isSatisfied(final Swarm swarm) {
-        TPrint.tprintf("[%7d]: %s\n", numGenerations, swarm.getGlobalBest());
+    public boolean isSatisfied(final Population population) {
+        TPrint.tprintf("[%7d]: %s\n", numGenerations, population.getGlobalBest());
 
         if (this.numGenerations < this.maxGenerations) {
             numGenerations++;

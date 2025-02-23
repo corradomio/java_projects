@@ -1,7 +1,7 @@
 package jext.optim.heuristics.ga.operator.bitset;
 
-import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.domain.bitset.BitSet;
+import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.heuristics.ga.util.AbstractMutationPolicy;
 
 import java.util.random.RandomGenerator;

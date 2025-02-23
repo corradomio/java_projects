@@ -55,7 +55,7 @@ public class CheckBitSetGA {
         // crossover
         // mutation
         // selectio
-        GeneticAlgorithm<BitSet> ga = new GeneticAlgorithm<BitSet>(
+        GeneticAlgorithm<BitSet> solver = new GeneticAlgorithm<BitSet>(
             new OnePointCrossover(), .25,
             new OneBitMutation(), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY)
@@ -75,7 +75,7 @@ public class CheckBitSetGA {
         // System.out.println(bestChromosome);
         // System.out.println(bestChromosome.candidate().symdiff(fitnessFunction.getBestChromosome().candidate()));
 
-        Solution<BitSet> sol = ga.solve(true, pop,
+        Solution<BitSet> sol = solver.solve(true, pop,
             new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
                 , new Patience(PATIENCE)
@@ -107,7 +107,7 @@ public class CheckBitSetGA {
         // System.out.println(worstChromosome);
         // System.out.println(worstChromosome.candidate().symdiff(fitnessFunction.getWorstChromosome().candidate()));
 
-        sol = ga.solve(false, pop,
+        sol = solver.solve(false, pop,
                 new Conditions(new NeverStop()
                     , new FixedGenerationCount(NUM_GENERATIONS)
                     , new Patience(PATIENCE)

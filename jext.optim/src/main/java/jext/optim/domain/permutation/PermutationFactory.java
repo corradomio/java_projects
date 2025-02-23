@@ -6,20 +6,25 @@ import java.util.random.RandomGenerator;
 
 public class PermutationFactory implements CandidateFactory<Permutation> {
 
-    private int n;
+    private int length;
 
-    public PermutationFactory(int n) {
-        this.n = n;
+    public PermutationFactory(int length) {
+        this.length = length;
     }
 
     @Override
     public int length() {
-        return n;
+        return length;
+    }
+
+    @Override
+    public int size() {
+        return length;
     }
 
     @Override
     public Permutation candidate(RandomGenerator rng) {
-        int[] perm = PermUtils.random(n, rng);
+        int[] perm = PermUtils.random(length, rng);
         return new Permutation(perm);
     }
 }

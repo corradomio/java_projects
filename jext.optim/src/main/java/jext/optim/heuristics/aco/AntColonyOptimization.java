@@ -2,7 +2,6 @@ package jext.optim.heuristics.aco;
 
 import jext.math.random.UniformRandomGenerator;
 
-import java.util.Random;
 import java.util.random.RandomGenerator;
 
 

@@ -9,7 +9,7 @@ import jext.optim.heuristics.sa.stopping.FixedGenerationCount;
 import jext.optim.heuristics.sa.DefaultTemperatureScheduler;
 import jext.optim.heuristics.sa.Population;
 import jext.optim.heuristics.sa.SimulatedAnnealing;
-import jext.optim.heuristics.sa.operators.bitset.BitSetNeighboursPolicy;
+import jext.optim.heuristics.sa.operator.bitset.BitSetNeighbours;
 import jext.optim.heuristics.sa.stopping.Patience;
 import jext.util.concurrent.Parallel;
 
@@ -54,10 +54,10 @@ public class CheckBitSetSA {
         // crossover
         // mutation
         // selectio
-        SimulatedAnnealing<BitSet> sa = new SimulatedAnnealing<>(
+        SimulatedAnnealing<BitSet> solver = new SimulatedAnnealing<>(
             1000,
             new DefaultTemperatureScheduler(1000),
-            new BitSetNeighboursPolicy()
+            new BitSetNeighbours()
         );
 
         // sol = sa.solve(true, pop, new Conditions(
@@ -73,7 +73,7 @@ public class CheckBitSetSA {
         System.out.println("-- Minimize --");
         System.out.println(fitnessFunction.getWorstSolution());
 
-        sol = sa.solve(false, pop, new Conditions(
+        sol = solver.solve(false, pop, new Conditions(
             new FixedGenerationCount(10000)
             , new Patience(500)
         ));

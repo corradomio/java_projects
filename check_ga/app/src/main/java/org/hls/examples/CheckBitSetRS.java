@@ -38,7 +38,7 @@ public class CheckBitSetRS {
         System.out.println("-- Maximize --");
         System.out.println(fitnessFunction.getBestSolution());
 
-        RandomFactory<BitSet> rf = new RandomFactory<>(
+        RandomFactory<BitSet> solver = new RandomFactory<>(
             bitsetFactory,
             fitnessFunction
         );
@@ -48,7 +48,7 @@ public class CheckBitSetRS {
         // selectio
         RandomSearch<BitSet> rs = new RandomSearch<>();
 
-        Solution<BitSet> sol = rs.solve(true, rf, new FixedGenerationCount(100000));
+        Solution<BitSet> sol = rs.solve(true, solver, new FixedGenerationCount(100000));
 
         System.out.println(sol.fitness());
         System.out.println(sol.candidate());
@@ -58,7 +58,7 @@ public class CheckBitSetRS {
         System.out.println("-- Minimize --");
         System.out.println(fitnessFunction.getWorstSolution());
 
-        sol = rs.solve(false, rf, new FixedGenerationCount(100000));
+        sol = rs.solve(false, solver, new FixedGenerationCount(100000));
 
         System.out.println(sol.fitness());
         System.out.println(sol.candidate());

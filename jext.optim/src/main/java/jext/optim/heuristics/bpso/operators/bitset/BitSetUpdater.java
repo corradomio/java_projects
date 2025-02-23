@@ -2,7 +2,7 @@ package jext.optim.heuristics.bpso.operators.bitset;
 
 import jext.optim.domain.bitset.BitSet;
 import jext.optim.heuristics.bpso.Particle;
-import jext.optim.heuristics.bpso.Swarm;
+import jext.optim.heuristics.bpso.Population;
 import jext.optim.heuristics.bpso.UpdatePolicy;
 
 import java.util.random.RandomGenerator;
@@ -10,7 +10,7 @@ import java.util.random.RandomGenerator;
 import static java.lang.Math.max;
 
 
-public class BitSetUpdate implements UpdatePolicy<BitSet> {
+public class BitSetUpdater implements UpdatePolicy<BitSet> {
 
     @Override
     public boolean compareWith(Particle<BitSet> particle, Particle<BitSet> reference, int bitIndex) {
@@ -28,17 +28,17 @@ public class BitSetUpdate implements UpdatePolicy<BitSet> {
     // }
 
     @Override
-    public Particle<BitSet> updateParticle(Particle<BitSet> particle, RandomGenerator rng, Swarm<BitSet> swarm) {
+    public Particle<BitSet> updateParticle(Particle<BitSet> particle, RandomGenerator rng, Population<BitSet> population) {
         BitSet bs = particle.candidate().clone();
         int nbits = bs.length();
         double[] psticky = particle.psticky();
 
-        Particle<BitSet> pbest = swarm.getPopulationBest();
-        Particle<BitSet> gbest = swarm.getGlobalBest();
-        double stickiness = swarm.getStickiness();
-        double is = swarm.getIs();
-        double ip = swarm.getIp();
-        double ig = swarm.getIg();
+        Particle<BitSet> pbest = population.getPopulationBest();
+        Particle<BitSet> gbest = population.getGlobalBest();
+        double stickiness = population.getStickiness();
+        double is = population.getIs();
+        double ip = population.getIp();
+        double ig = population.getIg();
 
         for (int d=0; d<nbits; d++) {
             double cognitive = compareWith(particle, pbest, d) ? 0 : ip;

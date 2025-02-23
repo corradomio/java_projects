@@ -3,9 +3,6 @@ package jext.optim.heuristics.ga.stopping;
 import jext.optim.heuristics.ga.Population;
 import jext.optim.heuristics.ga.StoppingCondition;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-
 
 public class Patience implements StoppingCondition {
     private final int count;

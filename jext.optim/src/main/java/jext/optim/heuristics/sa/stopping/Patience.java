@@ -1,7 +1,7 @@
 package jext.optim.heuristics.sa.stopping;
 
-import jext.optim.heuristics.sa.StoppingCondition;
 import jext.optim.heuristics.sa.Population;
+import jext.optim.heuristics.sa.StoppingCondition;
 
 public class Patience implements StoppingCondition {
     private final int count;

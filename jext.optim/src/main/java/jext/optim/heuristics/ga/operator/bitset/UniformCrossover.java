@@ -1,8 +1,8 @@
 package jext.optim.heuristics.ga.operator.bitset;
 
+import jext.optim.domain.bitset.BitSet;
 import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.heuristics.ga.ChromosomePair;
-import jext.optim.domain.bitset.BitSet;
 import jext.optim.heuristics.ga.util.AbstractCrossoverPolicy;
 
 import java.util.random.RandomGenerator;

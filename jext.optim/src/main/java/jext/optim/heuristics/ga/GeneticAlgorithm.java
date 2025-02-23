@@ -3,15 +3,12 @@ package jext.optim.heuristics.ga;
 import jext.math.exception.OutOfRangeException;
 import jext.math.exception.util.LocalizedFormats;
 import jext.math.random.UniformRandomGenerator;
-import jext.optim.heuristics.ga.filter.AcceptAll;
 import jext.optim.domain.Solution;
+import jext.optim.heuristics.ga.filter.AcceptAll;
 import jext.util.concurrent.Parallel;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.random.RandomGenerator;
-import java.util.stream.IntStream;
 
 /**
  * Implementation of a genetic algorithm. All factors that govern the operation
@@ -201,9 +198,9 @@ public class GeneticAlgorithm<T> {
         // fill the new population
         for (ChromosomePair<T> pair : chromosomePairs) {
             if (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit())
-                nextGeneration.addChromosome(pair.first());
+                nextGeneration.add(pair.first());
             if (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit())
-                nextGeneration.addChromosome(pair.second());
+                nextGeneration.add(pair.second());
         }
 
         // while (nextGeneration.getPopulationSize() < nextGeneration.getPopulationLimit()) {

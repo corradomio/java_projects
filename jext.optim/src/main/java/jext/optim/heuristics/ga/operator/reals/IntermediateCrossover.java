@@ -1,8 +1,8 @@
 package jext.optim.heuristics.ga.operator.reals;
 
+import jext.optim.domain.reals.Vector;
 import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.heuristics.ga.ChromosomePair;
-import jext.optim.domain.reals.Vector;
 import jext.optim.heuristics.ga.util.AbstractCrossoverPolicy;
 
 import java.util.random.RandomGenerator;

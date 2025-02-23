@@ -43,14 +43,14 @@ public class CheckPartitionGA {
         // mutation
         // selection
 
-        GeneticAlgorithm<Partition> ga = new GeneticAlgorithm<>(
+        GeneticAlgorithm<Partition> solver = new GeneticAlgorithm<>(
             new OnePointCrossover(), .25,
             new NElementsMutation(3), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY),
             new DropDuplicates<>()
         );
 
-        Population<Partition> bestPop = ga.evolve(true,
+        Population<Partition> bestPop = solver.evolve(true,
             pop,
             new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
@@ -79,14 +79,14 @@ public class CheckPartitionGA {
         // mutation
         // selectio
 
-        ga = new GeneticAlgorithm<>(
+        solver = new GeneticAlgorithm<>(
             new OnePointCrossover(), .25,
             new NElementsMutation(3), .01,
             new TournamentSelection<>(TOURNAMENT_ARITY),
             new DropDuplicates<>()
         );
 
-        bestPop = ga.evolve(false,
+        bestPop = solver.evolve(false,
             pop,
             new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)

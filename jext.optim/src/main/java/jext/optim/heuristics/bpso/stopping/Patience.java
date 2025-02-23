@@ -1,6 +1,6 @@
 package jext.optim.heuristics.bpso.stopping;
 
-import jext.optim.heuristics.bpso.Swarm;
+import jext.optim.heuristics.bpso.Population;
 import jext.optim.heuristics.bpso.StoppingCondition;
 
 public class Patience implements StoppingCondition {
@@ -13,7 +13,7 @@ public class Patience implements StoppingCondition {
     }
 
     @Override
-    public boolean isSatisfied(Swarm population) {
+    public boolean isSatisfied(Population population) {
         double fitness = population.getGlobalBest().fitness();
 
         if (bestFitness != fitness) {

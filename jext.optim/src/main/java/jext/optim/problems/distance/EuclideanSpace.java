@@ -4,8 +4,8 @@ import jext.optim.problems.Coords;
 
 import java.util.List;
 
-import static jext.util.MathUtils.sq;
 import static java.lang.Math.sqrt;
+import static jext.util.MathUtils.sq;
 
 
 public class EuclideanSpace extends MetricSpace{

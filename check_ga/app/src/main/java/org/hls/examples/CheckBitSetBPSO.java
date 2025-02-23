@@ -5,8 +5,8 @@ import jext.optim.domain.bitset.BitSet;
 import jext.optim.domain.bitset.BitSetFactory;
 import jext.optim.domain.bitset.BitSetFitnessFunction;
 import jext.optim.heuristics.bpso.BinaryParticleSwarmOptimization;
-import jext.optim.heuristics.bpso.Swarm;
-import jext.optim.heuristics.bpso.operators.bitset.BitSetUpdate;
+import jext.optim.heuristics.bpso.Population;
+import jext.optim.heuristics.bpso.operators.bitset.BitSetUpdater;
 import jext.optim.heuristics.bpso.stopping.Conditions;
 import jext.optim.heuristics.bpso.stopping.FixedGenerationCount;
 import jext.optim.heuristics.bpso.stopping.Patience;
@@ -41,7 +41,7 @@ public class CheckBitSetBPSO {
 
         System.out.println(fitnessFunction.getBestSolution());
 
-        Swarm<BitSet> pop = new Swarm<>(
+        Population<BitSet> pop = new Population<>(
             1000,.001, .001, .01,
             bitsetFactory,
             fitnessFunction
@@ -50,11 +50,11 @@ public class CheckBitSetBPSO {
         // crossover
         // mutation
         // selection
-        BinaryParticleSwarmOptimization<BitSet> ga = new BinaryParticleSwarmOptimization<>(
-            new BitSetUpdate()
+        BinaryParticleSwarmOptimization<BitSet> solver = new BinaryParticleSwarmOptimization<>(
+            new BitSetUpdater()
         );
 
-        Solution<BitSet> sol = ga.solve(true, pop,
+        Solution<BitSet> sol = solver.solve(true, pop,
             new Conditions(
                 new FixedGenerationCount(10000),
                 new Patience(1000)
@@ -70,7 +70,7 @@ public class CheckBitSetBPSO {
 
         System.out.println(fitnessFunction.getWorstSolution());
 
-        sol = ga.solve(false, pop,
+        sol = solver.solve(false, pop,
             new Conditions(
                 new FixedGenerationCount(10000),
                 new Patience(1000)

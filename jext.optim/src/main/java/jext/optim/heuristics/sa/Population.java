@@ -4,10 +4,12 @@ import jext.optim.domain.CandidateFactory;
 import jext.optim.domain.FitnessFunction;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.random.RandomGenerator;
 
-public class Population<T> {
+public class Population<T> implements Iterable<Particle<T>> {
 
     private final int populationSize;
     private final int neighboursCount;
@@ -50,6 +52,14 @@ public class Population<T> {
 
     public Particle<T> getFittestParticle() {
         return fittestParticle;
+    }
+
+    public Iterator<Particle<T>> iterator() {
+        return particles.iterator();
+    }
+
+    public void forEach(Consumer<? super Particle<T>> action) {
+        particles.forEach(action);
     }
 
     // ----------------------------------------------------------------------

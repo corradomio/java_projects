@@ -1,9 +1,8 @@
 package jext.optim.heuristics.bpso.stopping;
 
+import jext.optim.heuristics.bpso.Population;
 import jext.optim.heuristics.bpso.StoppingCondition;
-import jext.optim.heuristics.bpso.Swarm;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class Conditions implements StoppingCondition {
     }
 
     @Override
-    public boolean isSatisfied(Swarm population) {
+    public boolean isSatisfied(Population population) {
         for (StoppingCondition condition : conditions)
             if (condition.isSatisfied(population))
                 return true;

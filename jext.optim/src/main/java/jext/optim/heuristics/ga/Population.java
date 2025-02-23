@@ -64,9 +64,9 @@ public class Population<T> implements Iterable<Chromosome<T>> {
     // ----------------------------------------------------------------------
 
     public Population(
-        int populationSize, double elitismRate, double foreignerRate,
-        CandidateFactory<T> candidateFactory,
-        FitnessFunction<T> fitnessFunction
+        final int populationSize, final double elitismRate, final double foreignerRate,
+        final CandidateFactory<T> candidateFactory,
+        final FitnessFunction<T> fitnessFunction
     ) {
         this.populationLimit = populationSize;
         this.elitismRate = (double) elitismRate;
@@ -118,6 +118,14 @@ public class Population<T> implements Iterable<Chromosome<T>> {
         return chromosomes;
     }
 
+    public Iterator<Chromosome<T>> iterator() {
+        return chromosomes.iterator();
+    }
+
+    public void forEach(Consumer<? super Chromosome<T>> action) {
+        chromosomes.forEach(action);
+    }
+
     // ----------------------------------------------------------------------
 
     /**
@@ -127,7 +135,7 @@ public class Population<T> implements Iterable<Chromosome<T>> {
     public Population<T> initialize() {
         while (chromosomes.size() < populationLimit) {
             T candidate = candidateFactory.candidate(rng);
-            addCandidate(candidate);
+            add(new Chromosome<>(candidate, fitnessFunction, decreasingOrder));
         }
         return this;
     }
@@ -171,20 +179,16 @@ public class Population<T> implements Iterable<Chromosome<T>> {
         chromosomes = QuickSort.sort(chromosomes);
 
         for (int i=0; i<elitism; i++)
-            newPopulation.addChromosome(chromosomes.get(i));
+            newPopulation.add(chromosomes.get(i));
 
         // add the new chromosomes
         for (int i=0; i<foreigner; i++)
-            newPopulation.addChromosome(new Chromosome<>(candidateFactory.candidate(rng), fitnessFunction, decreasingOrder));
+            newPopulation.add(new Chromosome<>(candidateFactory.candidate(rng), fitnessFunction, decreasingOrder));
 
         return newPopulation;
     }
 
-    public void addCandidate(T candidate) {
-        addChromosome(new Chromosome<>(candidate, fitnessFunction, decreasingOrder));
-    }
-
-    public void addChromosome(Chromosome<T> chromosome) {
+    public void add(Chromosome<T> chromosome) {
         this.chromosomes.add(chromosome);
     }
 
@@ -202,14 +206,6 @@ public class Population<T> implements Iterable<Chromosome<T>> {
                 fittest = chromosome;
 
         return fittest;
-    }
-
-    public Iterator<Chromosome<T>> iterator() {
-        return chromosomes.iterator();
-    }
-
-    public void forEach(Consumer<? super Chromosome<T>> action) {
-        chromosomes.forEach(action);
     }
 
 }

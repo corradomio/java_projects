@@ -3,7 +3,6 @@ package jext.optim.heuristics.rand;
 import jext.math.random.UniformRandomGenerator;
 import jext.optim.domain.Solution;
 
-import java.util.Random;
 import java.util.random.RandomGenerator;
 
 public class RandomSearch<T> {

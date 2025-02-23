@@ -44,7 +44,7 @@ public class CheckVectorGA {
             cf, ff
         );
 
-        GeneticAlgorithm<Vector> ga = new GeneticAlgorithm<Vector>(
+        GeneticAlgorithm<Vector> solver = new GeneticAlgorithm<Vector>(
             new LineCrossover(0.1), .1,
             new NormalMutation(0.1, 0.01), .1,
             new TournamentSelection<>(TOURNAMENT_ARITY),
@@ -55,7 +55,7 @@ public class CheckVectorGA {
 
         System.out.println("-- Maximize --");
 
-        Population<Vector> bestPop = ga.evolve(true,
+        Population<Vector> bestPop = solver.evolve(true,
             pop,
             new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)
@@ -72,7 +72,7 @@ public class CheckVectorGA {
 
         System.out.println("-- Minimize --");
 
-        Population<Vector> worstPop = ga.evolve(false,
+        Population<Vector> worstPop = solver.evolve(false,
             pop,
             new Conditions(new NeverStop()
                 , new FixedGenerationCount(NUM_GENERATIONS)

@@ -1,8 +1,8 @@
 package jext.optim.heuristics.ga.operator.partition;
 
+import jext.optim.domain.partition.Partition;
 import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.heuristics.ga.ChromosomePair;
-import jext.optim.domain.partition.Partition;
 import jext.optim.heuristics.ga.util.AbstractCrossoverPolicy;
 
 import java.util.random.RandomGenerator;

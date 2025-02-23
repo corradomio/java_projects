@@ -3,17 +3,17 @@ package jext.optim.heuristics.bpso;
 import jext.math.random.UniformRandomGenerator;
 import jext.optim.domain.CandidateFactory;
 import jext.optim.domain.FitnessFunction;
-import jext.util.concurrent.Parallel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
-public class Swarm<T> implements Cloneable{
+public class Population<T> implements Iterable<Particle<T>> /*  implements Cloneable */ {
 
     private static final RandomGenerator rng = UniformRandomGenerator.getRandomGenerator();
 
-    private final int swarmSize;
+    private final int populationSize;
     private final double cognitiveFactor;
     private final double socialFactor;
     private final double stickiness;
@@ -29,15 +29,15 @@ public class Swarm<T> implements Cloneable{
 
     // ----------------------------------------------------------------------
 
-    public Swarm(
-        int swarmSize,
+    public Population(
+        int populationSize,
         double cognitiveFactor,
         double socialFactor,
         double stickiness,
         CandidateFactory<T> candidateFactory,
         FitnessFunction<T> fitnessFunction
     ) {
-        this.swarmSize = swarmSize;
+        this.populationSize = populationSize;
         this.cognitiveFactor = cognitiveFactor;
         this.socialFactor = socialFactor;
         this.stickiness = stickiness;
@@ -52,28 +52,28 @@ public class Swarm<T> implements Cloneable{
         this.ig = socialFactor/sum;
     }
 
-    public Swarm<T> clone() {
-        return new Swarm<>(
-            swarmSize,
-            cognitiveFactor, socialFactor, stickiness,
-            candidateFactory, fitnessFunction
-        );
-    }
+    // public Population<T> clone() {
+    //     return new Population<>(
+    //         swarmSize,
+    //         cognitiveFactor, socialFactor, stickiness,
+    //         candidateFactory, fitnessFunction
+    //     );
+    // }
 
     // ----------------------------------------------------------------------
 
-    public Swarm<T> setDecreasingOrder(boolean decreasingOrder) {
+    public Population<T> setDecreasingOrder(boolean decreasingOrder) {
         this.decreasingOrder = decreasingOrder;
         return this;
     }
 
     // ----------------------------------------------------------------------
 
-    public List<Particle<T>> getSwarm() {
+    public List<Particle<T>> getParticles() {
         return swarm;
     }
 
-    public void setSwarm(List<Particle<T>> swarm) {
+    public void setParticles(List<Particle<T>> swarm) {
         this.swarm = swarm;
         updateBest();
     }
@@ -102,12 +102,17 @@ public class Swarm<T> implements Cloneable{
         return ig;
     }
 
+    @Override
+    public Iterator<Particle<T>> iterator() {
+        return swarm.iterator();
+    }
+
     // ----------------------------------------------------------------------
 
-    public Swarm<T> initialize() {
+    public Population<T> initialize() {
 
         // initialize swarm
-        for (int i=0; i<swarmSize; i++) {
+        for (int i = 0; i< populationSize; i++) {
             T candidate = candidateFactory.candidate(rng);
 
             double[] psticky = new double[length];
@@ -116,7 +121,7 @@ public class Swarm<T> implements Cloneable{
 
             Particle<T> particle = new Particle<>(candidate, fitnessFunction, decreasingOrder, psticky);
 
-            addParticle(particle);
+            add(particle);
         }
 
         // initialize pbest, gbest
@@ -125,7 +130,7 @@ public class Swarm<T> implements Cloneable{
         return this;
     }
 
-    void addParticle(Particle<T> particle) {
+    public void add(Particle<T> particle) {
         swarm.add(particle);
         if (pbest == null || particle.compareTo(pbest) < 0)
             pbest = particle;

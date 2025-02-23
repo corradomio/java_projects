@@ -97,6 +97,13 @@ public class ArrayUtils {
         return Arrays.copyOf(arr, arr.length);
     }
 
+    public static double[][] copyOf(double[][] mat) {
+        double[][] copy = new double[mat.length][];
+        for (int i=0; i<mat.length; i++)
+            copy[i] = Arrays.copyOf(mat[i], mat[i].length);
+        return copy;
+    }
+
     // ----------------------------------------------------------------------
     // range
     // ----------------------------------------------------------------------

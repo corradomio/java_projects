@@ -1,8 +1,8 @@
 package jext.optim.domain.bitset;
 
 import jext.math.random.UniformRandomGenerator;
-import jext.optim.heuristics.ga.Chromosome;
 import jext.optim.domain.FitnessFunction;
+import jext.optim.heuristics.ga.Chromosome;
 
 import java.util.random.RandomGenerator;
 

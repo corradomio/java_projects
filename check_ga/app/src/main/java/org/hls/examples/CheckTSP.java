@@ -3,7 +3,6 @@ package org.hls.examples;
 import jext.optim.heuristics.aco.AntColony;
 import jext.optim.heuristics.aco.AntColonyOptimization;
 import jext.optim.heuristics.aco.stopping.FixedGenerationCount;
-import jext.optim.heuristics.aco.stopping.LogGeneration;
 import jext.optim.heuristics.aco.stopping.MultipleConditions;
 import jext.optim.heuristics.aco.stopping.NeverStop;
 import jext.optim.heuristics.aco.stopping.Patience;
@@ -55,10 +54,9 @@ public class CheckTSP {
                 distanceMatrix
             );
 
-            AntColonyOptimization aco = new AntColonyOptimization();
+            AntColonyOptimization solver = new AntColonyOptimization();
 
-            ac = aco.evolve(ac, new MultipleConditions(new NeverStop()
-                , new LogGeneration()
+            ac = solver.evolve(ac, new MultipleConditions(new NeverStop()
                 , new FixedGenerationCount(1000)
                 , new Patience(20)
             ));
