@@ -3,6 +3,9 @@ package jext.util.concurrent;
 import java.util.List;
 import java.util.concurrent.Future;
 
+/// Extends Java ExecutorService with some extra useful information:
+/// the number of tasks running, waiting, and it permits to wait for
+/// the completion of all tasks.
 public interface ExecutorService extends java.util.concurrent.ExecutorService {
 
     // void shutdown();

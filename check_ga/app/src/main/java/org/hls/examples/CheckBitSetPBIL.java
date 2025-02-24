@@ -49,7 +49,7 @@ public class CheckBitSetPBIL {
 
         sol = solver.solve(true, pop, new Conditions(
             new FixedGenerationCount(10000)
-            // , new Patience(500)
+            , new Patience(500)
         ));
 
         System.out.println(sol.fitness());
@@ -62,7 +62,7 @@ public class CheckBitSetPBIL {
 
         sol = solver.solve(false, pop, new Conditions(
             new FixedGenerationCount(10000)
-            // , new Patience(500)
+            , new Patience(500)
         ));
 
         System.out.println(sol.fitness());

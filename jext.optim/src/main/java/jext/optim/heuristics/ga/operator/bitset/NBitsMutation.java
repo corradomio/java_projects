@@ -16,14 +16,14 @@ public class NBitsMutation extends AbstractMutationPolicy<BitSet> {
 
     @Override
     public Chromosome<BitSet> mutate(Chromosome<BitSet> original, RandomGenerator rng) {
-        BitSet bs = original.candidate().clone();
-        int n = bs.length();
+        BitSet candidate = original.candidate().clone();
+        int n = candidate.length();
 
         for (int k=0; k<nbits; ++k) {
             int i = rng.nextInt(n);
-            bs.flip(i);
+            candidate.flip(i);
         }
 
-        return new Chromosome<>(bs, original);
+        return new Chromosome<>(candidate, original);
     }
 }

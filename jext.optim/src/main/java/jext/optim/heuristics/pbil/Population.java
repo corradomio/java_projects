@@ -96,12 +96,12 @@ public class Population<T> implements Iterable<Learner<T>> {
         int size = candidateFactory.size();
 
         for (int i=0; i<length; i++) {
-            int bestMember  = updatePolicy.getMember(bestWorst.best, i);
+            int bestMember  = updatePolicy.getMember(bestWorst.best,  i);
             int worstMember = updatePolicy.getMember(bestWorst.worst, i);
             if (bestMember == worstMember)
-                ProbUtils.improveMember(bestMember, membersProbability[bestMember], learningRate);
+                ProbUtils.improveMember(bestMember, membersProbability[i], learningRate);
             else
-                ProbUtils.improveMember(bestMember, membersProbability[bestMember], learningRate+negativeRate);
+                ProbUtils.improveMember(bestMember, membersProbability[i], learningRate+negativeRate);
         }
 
         // mutation

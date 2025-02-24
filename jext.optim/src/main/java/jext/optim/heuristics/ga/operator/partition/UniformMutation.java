@@ -20,19 +20,19 @@ public class UniformMutation  extends AbstractMutationPolicy<Partition> {
 
     @Override
     public Chromosome<Partition> mutate(Chromosome<Partition> original, RandomGenerator rng) {
-        Partition partition = original.candidate().clone();
-        int n = partition.length();
-        int nparts = partition.nparts();
+        Partition candidate = original.candidate().clone();
+        int n = candidate.length();
+        int nparts = candidate.nparts();
         double prob = (this.prob == -1) ? 1.f/n : this.prob;
 
         for (int i = 0; i < n; i++) {
             double r = rng.nextDouble();
             if (r < prob) {
                 int p = rng.nextInt(nparts);
-                partition.set(i, p);
+                candidate.set(i, p);
             }
         }
 
-        return new Chromosome<>(partition, original);
+        return new Chromosome<>(candidate, original);
     }
 }

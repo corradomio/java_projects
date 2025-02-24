@@ -10,13 +10,13 @@ public class OneElementMutation extends AbstractMutationPolicy<Partition> {
 
     @Override
     public Chromosome<Partition> mutate(Chromosome<Partition> original, RandomGenerator rng) {
-        Partition partition = original.candidate().clone();
+        Partition candidate = original.candidate().clone();
 
-        int e = rng.nextInt(partition.length());
-        int p = rng.nextInt(partition.nparts());
+        int e = rng.nextInt(candidate.length());
+        int p = rng.nextInt(candidate.nparts());
 
-        partition.set(e, p);
+        candidate.set(e, p);
 
-        return new Chromosome<>(partition, original);
+        return new Chromosome<>(candidate, original);
     }
 }

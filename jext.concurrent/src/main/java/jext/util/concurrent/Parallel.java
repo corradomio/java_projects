@@ -51,12 +51,15 @@ public class Parallel {
     // Private fields
     // ----------------------------------------------------------------------
 
-    private static int nthreads = 0;
+    public static final int MAX_PARALLELISM = Runtime.getRuntime().availableProcessors() - 1;
+    public static int MAX_TASKS_LIST_SIZE = 10*MAX_PARALLELISM;
+
+    private static int nthreads = MAX_PARALLELISM;
     private static List<ExecutorService> running;
     private static Queue<WaitingExecutorService> waiting;
     private static long TIMEOUT = 60000;
 
-    static class DefaultThreadFactory implements ThreadFactory {
+    private static class DefaultThreadFactory implements ThreadFactory {
         private static final AtomicInteger poolNumber = new AtomicInteger(1);
         private final ThreadGroup group;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -90,6 +93,16 @@ public class Parallel {
     // ----------------------------------------------------------------------
     // Task implementation
     // ----------------------------------------------------------------------
+
+    private static class Ordered<T> {
+        int order;
+        T value;
+
+        Ordered(int order, T value) {
+            this.order = order;
+            this.value = value;
+        }
+    }
 
     private static class TaskBase {
 
@@ -241,6 +254,23 @@ public class Parallel {
         }
     }
 
+    private static class OrderedTask<T> implements Callable<Ordered<T>> {
+
+        private final int order;
+        private Callable<T> callable;
+
+        OrderedTask(int order, Callable<T> callable) {
+            this.order = order;
+            this.callable = callable;
+        }
+
+        @Override
+        public Ordered<T> call() throws Exception {
+            T value = callable.call();
+            return new Ordered<>(order, value);
+        }
+    }
+
     // ----------------------------------------------------------------------
     // forEach
     // ----------------------------------------------------------------------
@@ -324,7 +354,6 @@ public class Parallel {
 
     public static void invokeAll(Runnable ... tasks) {
         List<Callable<Boolean>> callables = new ArrayList<>();
-
         for (Runnable runnable : tasks)
             callables.add(new RunnableTask(runnable));
 
@@ -332,8 +361,20 @@ public class Parallel {
     }
 
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
+        int order = 0;
+        List<Callable<Ordered<T>>> orderedTasks = new ArrayList<>();
+        for (Callable<T> task : tasks)
+            orderedTasks.add(new OrderedTask(order++, task));
+
+        if (tasks.size() <= MAX_TASKS_LIST_SIZE)
+            return invokeOnList(orderedTasks);
+        else
+            return invokeOnSplittedLists(orderedTasks);
+    }
+
+    private static <T> List<T> invokeOnList(List<Callable<Ordered<T>>> tasks) {
         ExecutorService executor = null;
-        List<Future<T>> futures = Collections.emptyList();
+        List<Future<Ordered<T>>> futures = Collections.emptyList();
         try {
             executor = newExecutorService();
 
@@ -356,6 +397,60 @@ public class Parallel {
             throw pe;
 
         return results;
+    }
+
+    // ----------------------------------------------------------------------
+
+    private static <T> List<T> invokeOnSplittedLists(List<Callable<Ordered<T>>> tasks) {
+        List<List<Callable<Ordered<T>>>> splittedTasks = splitTasks(tasks);
+        List<Callable<Ordered<List<T>>>> callables = new ArrayList<>();
+
+        for (List<Callable<Ordered<T>>> taskList : splittedTasks)
+            callables.add(new RunTaskList(taskList));
+
+        List<List<T>> results = invokeOnList(callables);
+
+        return flatten(results);
+    }
+
+    private static <T> List<List<Callable<T>>> splitTasks(List<Callable<T>> tasks) {
+        int ntasks = tasks.size();
+        int ptasks = (ntasks + nthreads - 1) / nthreads;
+        List<List<Callable<T>>> parts = new ArrayList<>();
+        for (int s = 0; s < ntasks; s += ptasks) {
+            int e = Math.min(ntasks, s+ptasks);
+            List<Callable<T>> part = tasks.subList(s, e);
+            parts.add(part);
+        }
+        return parts;
+    }
+
+    private static <T> List<T> flatten(List<List<T>> ll) {
+        List<T> flatten = new ArrayList<>();
+        for (List<T> l : ll)
+            flatten.addAll(l);
+        return flatten;
+    }
+
+    private static class RunTaskList<T> implements Callable<List<T>> {
+
+        private final List<Callable<T>> tasks;
+
+        RunTaskList(List<Callable<T>> tasks) {
+            this.tasks = tasks;
+        }
+
+        @Override
+        public List<T> call() throws Exception {
+            List<T> results = new ArrayList<>();
+
+            for (Callable<T> task : tasks) {
+                T resul = task.call();
+                results.add(resul);
+            }
+
+            return results;
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -492,9 +587,9 @@ public class Parallel {
     // Implementation
     // ----------------------------------------------------------------------
 
-    private static <T> List<T> collectExceptions(List<Future<T>> futures, ParallelException pe) {
-        List<T> results = new ArrayList<>();
-        for (Future<T> future : futures) {
+    private static <T> List<T> collectExceptions(List<Future<Ordered<T>>> futures, ParallelException pe) {
+        List<Ordered<T>> results = new ArrayList<>();
+        for (Future<Ordered<T>> future : futures) {
             try {
                 results.add(future.get());
             }
@@ -507,7 +602,10 @@ public class Parallel {
                 pe.add(t);
             }
         }
-        return results;
+
+        results.sort((o1, o2) -> Integer.compare(o1.order, o2.order));
+
+        return results.stream().map(o -> o.value).collect(Collectors.toList());
     }
 
     private static class WaitingExecutorService {

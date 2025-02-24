@@ -17,14 +17,14 @@ public class OneUniformMutation extends AbstractMutationPolicy<Vector> {
     @Override
     public Chromosome<Vector> mutate(Chromosome<Vector> original, RandomGenerator rng) {
 
-        Vector vector = original.candidate().clone();
-        int n = vector.length();
+        Vector candidate = original.candidate().clone();
+        int n = candidate.length();
 
         int i = rng.nextInt(n);
         double offset = rng.nextDouble(-step, step);
 
-        vector.add(i, offset);
+        candidate.add(i, offset);
 
-        return new Chromosome<>(vector, original);
+        return new Chromosome<>(candidate, original);
     }
 }

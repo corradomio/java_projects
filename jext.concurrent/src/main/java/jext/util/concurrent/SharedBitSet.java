@@ -42,6 +42,7 @@ public class SharedBitSet {
     private void set(int position, boolean value) {
         bits[position] = value;
     }
+
     private void set(int startIndex, int excludeIndex, boolean value) {
         for(int i = startIndex; i < excludeIndex; ++i)
             bits[i] = value;

@@ -15,17 +15,17 @@ public class BitSetUpdater implements UpdatePolicy<BitSet> {
     }
 
     @Override
-    public Learner<BitSet> updateMembers(Learner<BitSet> learner, RandomGenerator rng, double[/*length*/][/*size*/] membersProb) {
-        BitSet bs = learner.candidate().clone();
-        int length = bs.length();
+    public Learner<BitSet> updateMembers(Learner<BitSet> original, RandomGenerator rng, double[/*length*/][/*size*/] membersProb) {
+        BitSet candidate = original.candidate().clone();
+        int length = candidate.length();
 
         for (int i = 0; i < length; i++) {
             boolean value = ProbUtils.nextMember(rng, membersProb[i]) != 0;
 
-            bs.set(i, value);
+            candidate.set(i, value);
         }
 
-        return new Learner<>(bs, learner);
+        return new Learner<>(candidate, original);
     }
 
     @Override

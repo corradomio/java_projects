@@ -11,13 +11,13 @@ public class TwoOptMutation  extends AbstractMutationPolicy<Permutation> {
     @Override
     public Chromosome<Permutation> mutate(Chromosome<Permutation> original, RandomGenerator rng) {
 
-        Permutation p = original.candidate().clone();
-        int n = p.length();
+        Permutation candidate = original.candidate().clone();
+        int n = candidate.length();
         int i = rng.nextInt(n);
         int j = i + 1; if (j == n) j = 0;
 
-        p.swap(i, j);
+        candidate.swap(i, j);
 
-        return new Chromosome<>(p, original);
+        return new Chromosome<>(candidate, original);
     }
 }

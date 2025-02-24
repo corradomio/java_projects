@@ -3,9 +3,9 @@ package jext.util.concurrent;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-/**
- * Tasks submitted inside a specified queue are executed sequentially
- */
+///
+/// Tasks submitted inside a specified queue are executed sequentially
+///
 public interface QueueExecutorService extends ExecutorService {
 
     <T> void submit(String queue, Callable<T> task);

@@ -13,8 +13,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * Another
- * @param <E>
+ * Like a lis but populated in background
  */
 public class LazyList<E> extends AbstractList<E> implements List<E> {
 

@@ -24,17 +24,17 @@ public class NormalMutation extends AbstractMutationPolicy<Vector> {
     @Override
     public Chromosome<Vector> mutate(Chromosome<Vector> original, RandomGenerator rng) {
 
-        Vector vector = original.candidate().clone();
-        int n = vector.length();
+        Vector candidate = original.candidate().clone();
+        int n = candidate.length();
 
         for (int i=0; i<n; ++i) {
             double r = rng.nextDouble();
             if (r < prob) {
                 double step = (double) rng.nextGaussian(0, variance);
-                vector.add(i, step);
+                candidate.add(i, step);
             }
         }
 
-        return new Chromosome<>(vector, original);
+        return new Chromosome<>(candidate, original);
     }
 }

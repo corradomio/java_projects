@@ -10,6 +10,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
+/// Same interface than Java Executors, plus some useful extensions:
+///
+///     - support for an Executor based on queues, where the tasks in each queue
+///       are executed sequentially
+///     - the possibility to call list of tasks in form of List\[Task\] object
+///     - a service to convert RUnnables into Callables
+///
 public class Executors  {
 
     private static java.util.concurrent.Executors executors;

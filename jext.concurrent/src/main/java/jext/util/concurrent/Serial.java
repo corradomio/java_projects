@@ -11,6 +11,8 @@ import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/// As Parallel but the code is executed sequentially
+/// Used in debugging
 public class Serial {
 
     private static final Logger logger = Logger.getLogger(Serial.class);
@@ -86,7 +88,6 @@ public class Serial {
 
     public static void setup() { }
     public static void setup(int nth) { }
-
     public static void shutdown() { }
 
     // ----------------------------------------------------------------------

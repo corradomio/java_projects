@@ -20,16 +20,16 @@ public class UniformMutation extends AbstractMutationPolicy<BitSet> {
 
     @Override
     public Chromosome<BitSet> mutate(Chromosome<BitSet> original, RandomGenerator rng) {
-        BitSet bs = original.candidate().clone();
-        int n = bs.length();
+        BitSet candidate = original.candidate().clone();
+        int n = candidate.length();
         double prob = (this.prob == -1) ? 1.f/n : this.prob;
 
         for (int i = 0; i < n; i++) {
             double r = rng.nextDouble();
             if (r < prob)
-                bs.flip(i);
+                candidate.flip(i);
         }
 
-        return new Chromosome<>(bs, original);
+        return new Chromosome<>(candidate, original);
     }
 }

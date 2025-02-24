@@ -16,17 +16,17 @@ public class NElementsMutation extends AbstractMutationPolicy<Partition> {
 
     @Override
     public Chromosome<Partition> mutate(Chromosome<Partition> original, RandomGenerator rng) {
-        Partition partition = original.candidate().clone();
-        int n = partition.length();
-        int nparts = partition.nparts();
+        Partition candidate = original.candidate().clone();
+        int n = candidate.length();
+        int nparts = candidate.nparts();
 
         for (int i=0; i<nelts; ++i) {
             int e = rng.nextInt(n);
             int p = rng.nextInt(nparts);
 
-            partition.set(e, p);
+            candidate.set(e, p);
         }
 
-        return new Chromosome<>(partition, original);
+        return new Chromosome<>(candidate, original);
     }
 }

@@ -9,6 +9,8 @@ import java.util.random.RandomGenerator;
 
 public class PopulationBasedIncrementalLearning<T> {
 
+    // https://en.wikipedia.org/wiki/Population-based_incremental_learning
+    //
     // learningRate = 0.1,
     // negativeRate = 0.075,
     // mutationRate = 0.02,

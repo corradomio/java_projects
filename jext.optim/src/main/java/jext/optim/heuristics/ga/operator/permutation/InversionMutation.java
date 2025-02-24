@@ -11,13 +11,13 @@ public class InversionMutation extends AbstractMutationPolicy<Permutation> {
     @Override
     public Chromosome<Permutation> mutate(Chromosome<Permutation> original, RandomGenerator rng) {
 
-        Permutation p = original.candidate().clone();
-        int n = p.length();
+        Permutation candidate = original.candidate().clone();
+        int n = candidate.length();
         int i = rng.nextInt(n);
         int j = rng.nextInt(n);
 
-        p.reverse(i, j);
+        candidate.reverse(i, j);
 
-        return new Chromosome<>(p, original);
+        return new Chromosome<>(candidate, original);
     }
 }

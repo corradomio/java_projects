@@ -15,10 +15,6 @@ public class ConcurrentTwoKeysBidiMap<K1, K2, V> extends ConcurrentHashMap<K1, B
         super.put(key1, new ConcurrentBidiMap<>());
     }
 
-    // public BidiMap<K, V> get(K key1) {
-    //     return super.get(key1);
-    // }
-
     public void put(K1 key1, K2 key2, V value) {
         BidiMap<K2, V> map = super.get(key1);
         map.put(key2, value);
