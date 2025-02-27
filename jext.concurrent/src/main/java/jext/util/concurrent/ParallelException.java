@@ -6,42 +6,44 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class ParallelException extends jext.lang.RuntimeException {
+public class ParallelException extends java.lang.RuntimeException {
 
-    private static class LinkedCauseException extends jext.lang.RuntimeException {
-        LinkedCauseException(Throwable t) {
-            super(t);
-        }
-    }
+    // private static class LinkedCauseException extends java.lang.RuntimeException {
+    //     private Throwable cause;
+    //
+    //     LinkedCauseException(Throwable t) {
+    //         super(t);
+    //     }
+    //
+    //     void setCause(Throwable cause) {
+    //         this.cause = cause;
+    //     }
+    //
+    //     @Override
+    //     public Throwable getCause() {
+    //         return cause != null ? cause : super.getCause();
+    //     }
+    // }
 
-    private LinkedCauseException lce;
-    // private final List<Throwable> causes = new ArrayList<>();
+    // private LinkedCauseException lce;
+
     private final Set<String> messages = new HashSet<>();
+    private final List<Throwable> causes = new ArrayList<>();
 
     public ParallelException() {
-
+        super("ParallelException");
     }
 
     boolean isEmpty() {
         return messages.isEmpty();
     }
 
-    public void add(Throwable t) {
+    void add(Throwable t) {
         String message = t.getMessage();
         if (message == null)
             message = t.getClass().getName();
         messages.add(message);
-        // causes.add(t);
-
-        LinkedCauseException lce = new LinkedCauseException(t);
-        if (this.lce == null) {
-            this.lce = lce;
-            this.setCause(lce);
-        }
-        else {
-            this.lce.setCause(lce);
-            this.lce = lce;
-        }
+        causes.add(t);
     }
 
     public String getMessage() {
@@ -56,5 +58,9 @@ public class ParallelException extends jext.lang.RuntimeException {
             sb.append(" | ").append(it.next());
         }
         return sb.toString();
+    }
+
+    public List<Throwable> getCauses() {
+        return causes;
     }
 }

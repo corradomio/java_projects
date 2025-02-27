@@ -21,16 +21,18 @@ public class App
         //     "Hello", "Cruel", "World", "!"
         // };
 
-        Integer[] array = {
+        int[] array = {
             1,2,3,4,5,6,7,8,9,10,
             11,12,13,14,15,16,17,18,19,20
         };
 
+        array = new int[1000];
+        for (int i=0; i<1000; ++i)
+            array[i] = i;
+
         List<Integer> result = Parallel.map(array, i -> {
             return i*2;
         });
-
-        System.out.println(result);
 
         // Parallel.forEach(0,10, (i)->{
         //     System.out.println(i);

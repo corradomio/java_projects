@@ -57,7 +57,7 @@ Candidati
         "hashCode()"
         "equals(Object obj)"
 
-    perche' fa parte del contratto necessario per metter gli ogetti in HashMap e HashSet
+    perche' fa parte del contratto necessario per metter gli oggetti in HashMap e HashSet
     Il candidato e' un oggetto IMMUTABILE. Quindi MutatePolicy DEVE creare
     un nuovo oggetto.
 
@@ -133,6 +133,7 @@ Lista di 'domini' (usati in Mathematica)
         where, for each element, it is specified where the 1 is located
             Row     -> column
             Column  -> row
+        Nota: puo' essere rappresentato come un Partition
 
     Subset[n]
         generic subset of a set {0,...n-1}

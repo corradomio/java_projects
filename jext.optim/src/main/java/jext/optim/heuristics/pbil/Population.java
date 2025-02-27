@@ -1,6 +1,7 @@
 package jext.optim.heuristics.pbil;
 
 import jext.optim.domain.CandidateFactory;
+import jext.optim.domain.ComponentFactory;
 import jext.optim.domain.FitnessFunction;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.random.RandomGenerator;
 public class Population<T> implements Iterable<Learner<T>> {
 
     private final int populationSize;
-    private final CandidateFactory<T> candidateFactory;
+    private final ComponentFactory<T> candidateFactory;
     private final FitnessFunction<T> fitnessFunction;
     private boolean decreasingOrder;
 
@@ -23,7 +24,7 @@ public class Population<T> implements Iterable<Learner<T>> {
     // ----------------------------------------------------------------------
 
     public Population(final int populationSize,
-                      final CandidateFactory<T> candidateFactory,
+                      final ComponentFactory<T> candidateFactory,
                       final FitnessFunction<T> fitnessFunction) {
         this.populationSize = populationSize;
         this.candidateFactory = candidateFactory;

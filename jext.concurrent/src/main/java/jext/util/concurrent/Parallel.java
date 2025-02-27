@@ -1,19 +1,35 @@
 package jext.util.concurrent;
 
-import jext.exception.AbortedException;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleFunction;
+import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
+import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 /*
-    In theory, it is possible to use 'parallelStream()' a job in multiple threads using the ForkJoin pool.
+    In theory, it is possible to use 'parallelStream()' for a job in multiple threads using the ForkJoin pool.
 
     We have observed, unfortunately, that IF the threads need to wait for an external resource, the number
     of threads in the ForkJoin pool increase. But there is also another problem: the pool is not reused.
@@ -29,7 +45,19 @@ import java.util.stream.*;
 
     Note: this class must be improved to support exceptions in some thread!
 
-    Mathematica:
+    The current implementation intercept the exception raised in some thread and, at the end of all executions,
+    it is raised a ParallelException.
+    In theory, it could be useful to decide IF to raise the exception or to ignore the thread result.
+    But this, at the moment, seems to introduce an unnecessary complication. It is more simple to intercept
+    the exceptions inside the thread body (implemented by the user)
+
+
+Mathematica
+-----------
+
+    Support for Parallel executione:
+
+    Mathematica (Parallel*):
         ParallelArray   [f, n] [f, dims]
         ParallelCases   [{e1, ...}, pattern]
         ParallelCombine ?
@@ -51,14 +79,30 @@ public class Parallel {
     // Private fields
     // ----------------------------------------------------------------------
 
-    public static final int MAX_PARALLELISM = Runtime.getRuntime().availableProcessors() - 1;
-    public static int MAX_TASKS_LIST_SIZE = 10*MAX_PARALLELISM;
+    /// Factor used to compute the maximum list size used to apply the parallelism
+    /// to each element of the list. Otherwise, the list is split in sublist and
+    /// each thread is applied on each sublist.
+    /// It theory, it is possible to change it.
+    public static int MAX_TASK_LIST_FACTOR = 4;
 
-    private static int nthreads = MAX_PARALLELISM;
+    /// Number of threads used in the pool
+    /// Default: the number of physical threads minus one
+    private static int nthreads = Runtime.getRuntime().availableProcessors() - 1;
+
+    /// List of running tasks
     private static List<ExecutorService> running;
+    /// List of waiting tasks (in waiting queue)
     private static Queue<WaitingExecutorService> waiting;
-    private static long TIMEOUT = 60000;
 
+    /// Timeout used to park unused threads in thread pool
+    /// It theory, it is possible to change it.
+    public static long TIMEOUT = 60000;
+
+    /// Thread factory.
+    /// It is a copy&past of java.util.concurrent.Executors.DefaultThreadFactory
+    /// It is used to create threads with a priority lower than the standard priority.
+    /// This is necessary to keep the computer 'reactive' also when all CPU threads are
+    /// used in the computation
     private static class DefaultThreadFactory implements ThreadFactory {
         private static final AtomicInteger poolNumber = new AtomicInteger(1);
         private final ThreadGroup group;
@@ -87,63 +131,63 @@ public class Parallel {
         }
     }
 
-    // decrease the thread priority used in Parallel
+    /// Thread factory used to create thread with lower priority than the thread's default
+    /// when created with 'new Thread(...)'
     private static ThreadFactory threadFactory = new DefaultThreadFactory();
 
     // ----------------------------------------------------------------------
     // Task implementation
     // ----------------------------------------------------------------------
+    // A 'task' is a Runnable executed by each tread in the pool.
+    // There are two main object:
+    //
+    //      Runnable { void run() }
+    //      Callable<T> { T call() }
+    //
+    // To use Callable<T> is more flexible, because it permits to implement
+    // threads returning some result
+    //
 
-    private static class Ordered<T> {
-        int order;
-        T value;
+    // private static class TaskBase {
+    //
+    //     TaskBase() { }
+    //
+    //     protected void running() {
+    //
+    //     }
+    //
+    //     protected void done() {
+    //
+    //     }
+    //
+    // }
 
-        Ordered(int order, T value) {
-            this.order = order;
-            this.value = value;
-        }
-    }
+    // private static class TaskFunction<T, U> extends TaskBase implements Callable<U> {
+    //     private final T t;
+    //     private final Function<T, U> body;
+    //
+    //     TaskFunction(T t, Function<T, U> body/*, Counters todo*/) {
+    //         // super(todo);
+    //         this.t = t;
+    //         this.body = body;
+    //     }
+    //
+    //     @Override
+    //     public U call() {
+    //         try {
+    //             running();
+    //             return body.apply(t);
+    //         }
+    //         finally {
+    //             done();
+    //         }
+    //
+    //     }
+    // }
 
-    private static class TaskBase {
-
-        TaskBase() { }
-
-        protected void running() {
-
-        }
-
-        protected void done() {
-
-        }
-
-    }
-
-    private static class TaskFunction<T, U> extends TaskBase implements Callable<U> {
-        private T t;
-        private Function<T, U> body;
-
-        TaskFunction(T t, Function<T, U> body/*, Counters todo*/) {
-            // super(todo);
-            this.t = t;
-            this.body = body;
-        }
-
-        @Override
-        public U call() {
-            try {
-                running();
-                return body.apply(t);
-            }
-            finally {
-                done();
-            }
-
-        }
-    }
-
-    private static class Task<T> extends TaskBase implements Callable<Boolean> {
-        private T t;
-        private Consumer<T> body;
+    private static class Task<T> implements Callable<Boolean> {
+        private final T t;
+        private final Consumer<T> body;
 
         Task(T t, Consumer<T> body/*, Counters todo*/) {
             // super(todo);
@@ -153,20 +197,14 @@ public class Parallel {
 
         @Override
         public Boolean call() {
-            try {
-                running();
-                body.accept(t);
-            }
-            finally {
-                done();
-            }
-            return true;
+            body.accept(t);
+            return Boolean.TRUE;
         }
     }
 
-    private static class IntTask extends TaskBase implements Callable<Boolean> {
-        private int t;
-        private IntConsumer body;
+    private static class IntTask implements Callable<Boolean> {
+        private final int t;
+        private final IntConsumer body;
 
         IntTask(int t, IntConsumer body/*, Counters todo*/) {
             // super(todo);
@@ -176,20 +214,14 @@ public class Parallel {
 
         @Override
         public Boolean call() {
-            try {
-                running();
-                body.accept(t);
-            }
-            finally {
-                done();
-            }
-            return true;
+            body.accept(t);
+            return Boolean.TRUE;
         }
     }
 
-    private static class LongTask extends TaskBase implements Callable<Boolean> {
-        private long t;
-        private LongConsumer body;
+    private static class LongTask implements Callable<Boolean> {
+        private final long t;
+        private final LongConsumer body;
 
         LongTask(long t, LongConsumer body/*, Counters todo*/) {
             // super(todo);
@@ -199,20 +231,14 @@ public class Parallel {
 
         @Override
         public Boolean call() {
-            try {
-                running();
-                body.accept(t);
-            }
-            finally {
-                done();
-            }
-            return true;
+            body.accept(t);
+            return Boolean.TRUE;
         }
     }
 
-    private static class DoubleTask extends TaskBase implements Callable<Boolean> {
-        private double t;
-        private DoubleConsumer body;
+    private static class DoubleTask implements Callable<Boolean> {
+        private final double t;
+        private final DoubleConsumer body;
 
         DoubleTask(double t, DoubleConsumer body/*, Counters todo*/) {
             // super(todo);
@@ -222,20 +248,14 @@ public class Parallel {
 
         @Override
         public Boolean call() {
-            try {
-                running();
-                body.accept(t);
-            }
-            finally {
-                done();
-            }
-            return true;
+            body.accept(t);
+            return Boolean.TRUE;
         }
     }
 
-    private static class RunnableTask extends TaskBase implements Callable<Boolean> {
-
-        private Runnable runnable;
+    /// Convert a Runnable in a Callable[Boolean]
+    private static class RunnableTask implements Callable<Boolean> {
+        private final Runnable runnable;
 
         RunnableTask(Runnable runnable) {
             this.runnable = runnable;
@@ -243,31 +263,8 @@ public class Parallel {
 
         @Override
         public Boolean call() {
-            try {
-                running();
-                runnable.run();
-            }
-            finally {
-                done();
-            }
-            return true;
-        }
-    }
-
-    private static class OrderedTask<T> implements Callable<Ordered<T>> {
-
-        private final int order;
-        private Callable<T> callable;
-
-        OrderedTask(int order, Callable<T> callable) {
-            this.order = order;
-            this.callable = callable;
-        }
-
-        @Override
-        public Ordered<T> call() throws Exception {
-            T value = callable.call();
-            return new Ordered<>(order, value);
+            runnable.run();
+            return Boolean.TRUE;
         }
     }
 
@@ -277,12 +274,7 @@ public class Parallel {
 
     public static void forEach(int first, int last, IntConsumer body) {
         List<Callable<Boolean>> tasks = new ArrayList<>();
-
-        if (first <= last)
-            for (int t = first; t < last; ++t) tasks.add(new IntTask(t, body));
-        else
-            for (int t = last; t > first; --t) tasks.add(new IntTask(t, body));
-
+        for (int t = first; t < last; ++t) tasks.add(new IntTask(t, body));
         invokeAll(tasks);
     }
 
@@ -305,7 +297,7 @@ public class Parallel {
     }
 
     // ----------------------------------------------------------------------
-    // forEach native data
+    // forEach native arrays
     // ----------------------------------------------------------------------
 
     public static void forEach(int[] array, IntConsumer body) {
@@ -354,6 +346,7 @@ public class Parallel {
 
     public static void invokeAll(Runnable ... tasks) {
         List<Callable<Boolean>> callables = new ArrayList<>();
+
         for (Runnable runnable : tasks)
             callables.add(new RunnableTask(runnable));
 
@@ -361,20 +354,22 @@ public class Parallel {
     }
 
     public static <T> List<T> invokeAll(List<Callable<T>> tasks) {
-        int order = 0;
-        List<Callable<Ordered<T>>> orderedTasks = new ArrayList<>();
-        for (Callable<T> task : tasks)
-            orderedTasks.add(new OrderedTask(order++, task));
+        // If the list is very long, and the task is very simple, it is not very
+        // efficient to run each single task in the threads of the pool.
+        // It is possible the time of execution is greater that to execute each
+        // task sequentially.
+        // The trich is to split the long list in nthread parts and each thread
+        // in the pool process sequentially each list.
 
-        if (tasks.size() <= MAX_TASKS_LIST_SIZE)
-            return invokeOnList(orderedTasks);
+        if (tasks.size() <= MAX_TASK_LIST_FACTOR*nthreads)
+            return invokeOnList(tasks);
         else
-            return invokeOnSplittedLists(orderedTasks);
+            return invokeOnSublists(tasks);
     }
 
-    private static <T> List<T> invokeOnList(List<Callable<Ordered<T>>> tasks) {
+    private static <T> List<T> invokeOnList(List<Callable<T>> tasks) {
         ExecutorService executor = null;
-        List<Future<Ordered<T>>> futures = Collections.emptyList();
+        List<Future<T>> futures = Collections.emptyList();
         try {
             executor = newExecutorService();
 
@@ -401,21 +396,39 @@ public class Parallel {
 
     // ----------------------------------------------------------------------
 
-    private static <T> List<T> invokeOnSplittedLists(List<Callable<Ordered<T>>> tasks) {
-        List<List<Callable<Ordered<T>>>> splittedTasks = splitTasks(tasks);
-        List<Callable<Ordered<List<T>>>> callables = new ArrayList<>();
+    private static class ListCallableTask<T> implements Callable<List<T>> {
 
-        for (List<Callable<Ordered<T>>> taskList : splittedTasks)
-            callables.add(new RunTaskList(taskList));
+        private final List<Callable<T>> callableList;
 
-        List<List<T>> results = invokeOnList(callables);
+        ListCallableTask(List<Callable<T>> callableList) {
+            this.callableList = callableList;
+        }
 
-        return flatten(results);
+        @Override
+        public List<T> call() throws Exception {
+            List<T> results = new ArrayList<>();
+            for (Callable<T> callable : callableList)
+                results.add(callable.call());
+            return results;
+        }
+
     }
 
-    private static <T> List<List<Callable<T>>> splitTasks(List<Callable<T>> tasks) {
+    private static <T> List<T> invokeOnSublists(List<Callable<T>> tasks) {
+        List<List<Callable<T>>> tasksList = split(tasks, MAX_TASK_LIST_FACTOR*nthreads);
+
+        List<Callable<List<T>>> callableList = new ArrayList<>();
+        for (List<Callable<T>> taskList : tasksList)
+            callableList.add(new ListCallableTask<>(taskList));
+
+        List<List<T>> resultsList = invokeOnList(callableList);
+
+        return flatten(resultsList);
+    }
+
+    private static <T> List<List<Callable<T>>> split(List<Callable<T>> tasks, int nParts) {
         int ntasks = tasks.size();
-        int ptasks = (ntasks + nthreads - 1) / nthreads;
+        int ptasks = (ntasks + nParts - 1) / nParts;
         List<List<Callable<T>>> parts = new ArrayList<>();
         for (int s = 0; s < ntasks; s += ptasks) {
             int e = Math.min(ntasks, s+ptasks);
@@ -426,31 +439,13 @@ public class Parallel {
     }
 
     private static <T> List<T> flatten(List<List<T>> ll) {
+        // if the result is 'null' it is skipped
         List<T> flatten = new ArrayList<>();
         for (List<T> l : ll)
-            flatten.addAll(l);
+            for (T e : l)
+                if (e != null)
+                    flatten.add(e);
         return flatten;
-    }
-
-    private static class RunTaskList<T> implements Callable<List<T>> {
-
-        private final List<Callable<T>> tasks;
-
-        RunTaskList(List<Callable<T>> tasks) {
-            this.tasks = tasks;
-        }
-
-        @Override
-        public List<T> call() throws Exception {
-            List<T> results = new ArrayList<>();
-
-            for (Callable<T> task : tasks) {
-                T resul = task.call();
-                results.add(resul);
-            }
-
-            return results;
-        }
     }
 
     // ----------------------------------------------------------------------
@@ -459,19 +454,77 @@ public class Parallel {
 
     private static class CallableTask<V, R> implements Callable<R> {
 
-        private V v;
-        private Function<V, R> function;
+        private final V value;
+        private final Function<V, R> function;
 
-        CallableTask(V v, Function<V, R> function) {
-            this.v = v;
+        CallableTask(V value, Function<V, R> function) {
+            this.value = value;
             this.function = function;
         }
 
         @Override
         public R call() throws Exception {
-            return function.apply(v);
+            R r;
+            r = function.apply(value);
+            return r;
         }
     }
+
+    private static class IntCallableTask<R> implements Callable<R> {
+
+        private final int value;
+        private final IntFunction<R> function;
+
+        IntCallableTask(int value, IntFunction<R> function) {
+            this.value = value;
+            this.function = function;
+        }
+
+        @Override
+        public R call() throws Exception {
+            R r;
+            r = function.apply(value);
+            return r;
+        }
+    }
+
+    private static class LongCallableTask<R> implements Callable<R> {
+
+        private final long value;
+        private final LongFunction<R> function;
+
+        LongCallableTask(long value, LongFunction<R> function) {
+            this.value = value;
+            this.function = function;
+        }
+
+        @Override
+        public R call() throws Exception {
+            R r;
+            r = function.apply(value);
+            return r;
+        }
+    }
+
+    private static class DoubleCallableTask<R> implements Callable<R> {
+
+        private final double value;
+        private final DoubleFunction<R> function;
+
+        DoubleCallableTask(double value, DoubleFunction<R> function) {
+            this.value = value;
+            this.function = function;
+        }
+
+        @Override
+        public R call() throws Exception {
+            R r;
+            r = function.apply(value);
+            return r;
+        }
+    }
+
+    // ----------------------------------------------------------------------
 
     public static <V, R> List<R> map(Collection<V> collection, Function<V, R> function) {
         List<Callable<R>> tasks = new ArrayList<>();
@@ -487,6 +540,34 @@ public class Parallel {
         return invokeAll(tasks);
     }
 
+    // ----------------------------------------------------------------------
+
+    public static <V, R> List<R> map(int first, int last, IntFunction<R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        for(int i = first; i < last; ++i) tasks.add(new IntCallableTask<>(i, function));
+        return invokeAll(tasks);
+    }
+
+    public static <R> List<R> map(int[] array, IntFunction<R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        for(int v : array) tasks.add(new IntCallableTask<>(v, function));
+        return invokeAll(tasks);
+    }
+
+    public static <R> List<R> map(long[] array, LongFunction<R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        for(long v : array) tasks.add(new LongCallableTask<>(v, function));
+
+        return invokeAll(tasks);
+    }
+
+    public static <R> List<R> map(double[] array, DoubleFunction<R> function) {
+        List<Callable<R>> tasks = new ArrayList<>();
+        for(double v : array) tasks.add(new DoubleCallableTask<>(v, function));
+
+        return invokeAll(tasks);
+    }
+
     public static <V, R> List<R> map(V[] array, Function<V, R> function) {
         List<Callable<R>> tasks = new ArrayList<>();
         for(V t : array) tasks.add(new CallableTask<>(t, function));
@@ -494,20 +575,13 @@ public class Parallel {
         return invokeAll(tasks);
     }
 
-    public static <R> List<R> map(int start, int end, Function<Integer, R> function) {
-        List<Callable<R>> tasks = new ArrayList<>();
-        for(int t=start; t<end; ++t) tasks.add(new CallableTask<>(t, function));
-
-        return invokeAll(tasks);
-    }
-
     // ----------------------------------------------------------------------
-    // Parallel.map(Map<K, V> map, R f(V))
+    // Parallel.map on dictionary
     // ----------------------------------------------------------------------
 
     private static class EntryResult<K, R> {
-        private K k;
-        private R r;
+        private final K k;
+        private final R r;
 
         EntryResult(K k, R r) {
             this.k = k;
@@ -515,28 +589,31 @@ public class Parallel {
         }
     }
 
-    private static class CallableEntryTask<K, V, R> implements Callable<EntryResult<K, R>> {
+    private static class EntryCallableTask<K, V, R> implements Callable<EntryResult<K, R>> {
 
-        private K k;
-        private V v;
+        private final K key;
+        private final V value;
         private Function<V, R> function;
 
-        CallableEntryTask(K k, V v, Function<V, R> function) {
-            this.k = k;
-            this.v = v;
+        EntryCallableTask(K key, V value, Function<V, R> function) {
+            this.key = key;
+            this.value = value;
             this.function = function;
         }
 
         @Override
         public EntryResult<K, R> call() {
-            R r = function.apply(v);
-            return new EntryResult<>(k, r);
+            R r;
+            r = function.apply(value);
+            return new EntryResult<>(key, r);
         }
     }
 
+    // ----------------------------------------------------------------------
+
     public static <K, V, R> Map<K, R> map(Map<K, V> dictionary, Function<V, R> function) {
         List<Callable<EntryResult<K, R>>> tasks = new ArrayList<>();
-        dictionary.forEach((k, t) -> tasks.add(new CallableEntryTask<>(k, t, function)));
+        dictionary.forEach((k, t) -> tasks.add(new EntryCallableTask<>(k, t, function)));
 
         List<EntryResult<K, R>> results = invokeAll(tasks);
 
@@ -555,10 +632,11 @@ public class Parallel {
     }
 
     public static void setup(int nth) {
-        if (nthreads == 0) {
-            nthreads = nth;
-            if (nthreads < 3) nthreads = 3;
-        }
+        // if (nthreads == 0) {
+        //     nthreads = nth;
+        //     if (nthreads < 3) nthreads = 3;
+        // }
+        nthreads = nth;
 
         if (running == null) {
             running = new LinkedList<>();
@@ -587,25 +665,24 @@ public class Parallel {
     // Implementation
     // ----------------------------------------------------------------------
 
-    private static <T> List<T> collectExceptions(List<Future<Ordered<T>>> futures, ParallelException pe) {
-        List<Ordered<T>> results = new ArrayList<>();
-        for (Future<Ordered<T>> future : futures) {
+    private static <T> List<T> collectExceptions(List<Future<T>> futures, ParallelException pe) {
+        List<T> results = new ArrayList<>();
+        for (Future<T> future : futures) {
             try {
-                results.add(future.get());
+                T value = future.get();
+                if (value != null)
+                    results.add(value);
             }
             catch (ExecutionException e) {
                 Throwable t = e.getCause();
-                if (!(t instanceof AbortedException))
-                    pe.add(t);
+                // if (!(t instanceof AbortedException))
+                pe.add(t);
             }
             catch (Throwable t) {
                 pe.add(t);
             }
         }
-
-        results.sort((o1, o2) -> Integer.compare(o1.order, o2.order));
-
-        return results.stream().map(o -> o.value).collect(Collectors.toList());
+        return results;
     }
 
     private static class WaitingExecutorService {

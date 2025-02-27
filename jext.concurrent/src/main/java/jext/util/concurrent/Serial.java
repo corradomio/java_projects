@@ -1,6 +1,6 @@
 package jext.util.concurrent;
 
-import jext.util.logging.Logger;
+import java.util.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 /// Used in debugging
 public class Serial {
 
-    private static final Logger logger = Logger.getLogger(Serial.class);
+    private static final Logger logger = Logger.getLogger(Serial.class.getCanonicalName());
 
     // ----------------------------------------------------------------------
     // forEach

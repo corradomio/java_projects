@@ -1,10 +1,11 @@
 package jext.optim.domain.partition;
 
 import jext.optim.domain.CandidateFactory;
+import jext.optim.domain.ComponentFactory;
 
 import java.util.random.RandomGenerator;
 
-public class PartitionFactory  implements CandidateFactory<Partition> {
+public class PartitionFactory  implements ComponentFactory<Partition> {
 
     private final int length;
     private final int nparts;

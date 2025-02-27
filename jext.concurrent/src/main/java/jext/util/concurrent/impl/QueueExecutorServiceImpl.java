@@ -19,7 +19,7 @@ import java.util.concurrent.RunnableFuture;
  */
 public class QueueExecutorServiceImpl extends CachedThreadPoolImpl implements QueueExecutorService {
 
-    private Map<String, Queue<RunnableFuture<?>>> sequentialQueues = new ConcurrentHashMap<>();
+    private final Map<String, Queue<RunnableFuture<?>>> sequentialQueues = new ConcurrentHashMap<>();
 
     private class ProcessingQueueTask implements Runnable {
 

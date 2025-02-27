@@ -10,12 +10,12 @@
     <packaging>pom</packaging>
     <modules>
         <module>app</module>
-        <module>../jext.optim</module>
-        <module>../jext.tsp</module>
         <module>../jext.commons</module>
         <module>../jext.concurrent</module>
         <module>../jext.geometry</module>
         <module>../jext.collections</module>
+        <module>../jext.optim</module>
+        <module>../jext.tsp</module>
         <module>../jext.plot</module>
     </modules>
 

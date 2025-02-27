@@ -1,10 +1,11 @@
 package jext.optim.domain.bitset;
 
 import jext.optim.domain.CandidateFactory;
+import jext.optim.domain.ComponentFactory;
 
 import java.util.random.RandomGenerator;
 
-public class BitSetFactory implements CandidateFactory<BitSet> {
+public class BitSetFactory implements ComponentFactory<BitSet> {
 
     private final int nbits;
 

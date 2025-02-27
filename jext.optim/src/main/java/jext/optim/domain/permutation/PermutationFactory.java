@@ -1,10 +1,11 @@
 package jext.optim.domain.permutation;
 
 import jext.optim.domain.CandidateFactory;
+import jext.optim.domain.ComponentFactory;
 
 import java.util.random.RandomGenerator;
 
-public class PermutationFactory implements CandidateFactory<Permutation> {
+public class PermutationFactory implements ComponentFactory<Permutation> {
 
     private int length;
 

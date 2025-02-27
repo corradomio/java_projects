@@ -6,7 +6,7 @@ import jext.optim.domain.partition.PartitionFactory;
 import jext.optim.domain.partition.PartitionFitnessFunction;
 import jext.optim.heuristics.dpso.DiscreteParticleSwarmOptimization;
 import jext.optim.heuristics.dpso.Population;
-import jext.optim.heuristics.dpso.operators.partition.PartitionUpdate;
+import jext.optim.heuristics.dpso.operators.partition.PartitionUpdater;
 import jext.optim.heuristics.dpso.stopping.Conditions;
 import jext.optim.heuristics.dpso.stopping.FixedGenerationCount;
 import jext.optim.heuristics.dpso.stopping.Patience;
@@ -39,7 +39,7 @@ public class CheckPartitionDPSO {
         // selection
 
         DiscreteParticleSwarmOptimization<Partition> solver = new DiscreteParticleSwarmOptimization<>(
-            new PartitionUpdate()
+            new PartitionUpdater()
         );
 
         Solution<Partition> bestSol = solver.solve(true,
@@ -69,7 +69,7 @@ public class CheckPartitionDPSO {
         // selectio
 
         solver = new DiscreteParticleSwarmOptimization<>(
-            new PartitionUpdate()
+            new PartitionUpdater()
         );
 
         bestSol = solver.solve(false,

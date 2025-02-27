@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+
 public class DynamicThreadPoolImpl implements ExecutorService {
 
     private class ProcessTask implements Runnable {
@@ -41,10 +42,10 @@ public class DynamicThreadPoolImpl implements ExecutorService {
         }
     }
 
-    private int maximumPoolSize;
-    private BlockingQueue<FutureTask<?>> waitingQueue = new LinkedBlockingQueue<>();
-    private Map<Long, Thread> runningThreads = new ConcurrentHashMap<>();
-    private ThreadFactory threadFactory;
+    private final int maximumPoolSize;
+    private final BlockingQueue<FutureTask<?>> waitingQueue = new LinkedBlockingQueue<>();
+    private final Map<Long, Thread> runningThreads = new ConcurrentHashMap<>();
+    private final ThreadFactory threadFactory;
 
     public DynamicThreadPoolImpl(int maximumPoolSize) {
         this(maximumPoolSize, Executors.defaultThreadFactory());
