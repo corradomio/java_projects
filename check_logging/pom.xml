@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>../jext.logging</module>
+        <module>../jext.commons</module>
         <module>app</module>
     </modules>
 

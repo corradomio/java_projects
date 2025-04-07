@@ -1,0 +1,33 @@
+package jext.swing.colormap.reference.qualitative;
+
+import jext.swing.colormap.QualitativeColormap;
+import jext.swing.colormap.reference.ColormapType;
+import jext.swing.colormap.reference.ReferenceColormap;
+
+import java.awt.*;
+
+/**
+ * Colorbrewer 2.0 Set3
+ */
+@ReferenceColormap(type = ColormapType.QUALITATIVE, name = "Set2", source = "ColorBrewer")
+public final class Set2 extends QualitativeColormap {
+
+
+    /**
+     * Create a colormap based on Colorbrewer 2.0 Set2
+     */
+    public Set2() {
+        super(
+                new Color(102, 194, 165),
+                new Color(252, 141, 98),
+                new Color(141, 160, 203),
+                new Color(231, 138, 195),
+                new Color(166, 216, 84),
+                new Color(255, 217, 47),
+                new Color(229, 196, 148),
+                new Color(179, 179, 179));
+
+    }
+
+
+}

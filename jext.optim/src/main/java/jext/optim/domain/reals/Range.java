@@ -13,8 +13,8 @@ public class Range {
     }
 
     public Range(double min, double max) {
-        this.min = (double) min;
-        this.max = (double) max;
+        this.min = min;
+        this.max = max;
     }
 
     // ----------------------------------------------------------------------
@@ -29,8 +29,8 @@ public class Range {
         return min <= x && x <= max;
     }
 
-    public boolean inRange(double x, double distance) {
-        if (distance < 0) distance = -distance;
-        return min <= (x-distance) && (x+distance) <= max;
+    public boolean inRange(double x, double step) {
+        if (step < 0) step = -step;
+        return min <= (x-step) && (x+step) <= max;
     }
 }

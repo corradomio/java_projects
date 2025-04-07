@@ -1,0 +1,33 @@
+package jext.swing.colormap.reference.sequential;
+
+import jext.swing.colormap.SequentialColormap;
+import jext.swing.colormap.reference.ColormapType;
+import jext.swing.colormap.reference.ReferenceColormap;
+
+import java.awt.*;
+
+/**
+ * Emrld sequential colormap.
+ */
+@ReferenceColormap(type = ColormapType.SEQUENTIAL, name = "Emrld",source = "CARTO")
+public final class Emrld extends SequentialColormap {
+    /**
+     * Create a colormap based on Emrld from Plotly
+     */
+    public Emrld() {
+        super(
+                new Color(211, 242, 163),
+                new Color(151, 225, 150),
+                new Color(108, 192, 139),
+                new Color(76, 155, 130),
+                new Color(33, 122, 121),
+                new Color(16, 89, 101),
+                new Color(7, 64, 80)
+
+        );
+
+
+    }
+
+
+}

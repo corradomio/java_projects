@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.hls</groupId>
-            <artifactId>jext.logging</artifactId>
+            <artifactId>jext.commons</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

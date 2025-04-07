@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 ///     - support for an Executor based on queues, where the tasks in each queue
 ///       are executed sequentially
 ///     - the possibility to call list of tasks in form of List\[Task\] object
-///     - a service to convert RUnnables into Callables
+///     - a service to convert Runnables into Callables
 ///
 public class Executors  {
 
-    private static java.util.concurrent.Executors executors;
+    // private static java.util.concurrent.Executors executors;
 
     private Executors() { }
 

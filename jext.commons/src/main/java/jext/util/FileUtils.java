@@ -1,6 +1,5 @@
 package jext.util;
 
-import jext.io.filters.FalseFileFilter;
 import jext.io.filters.FileFilters;
 import jext.util.logging.Logger;
 
@@ -367,6 +366,18 @@ public class FileUtils {
             return files[0];
         else
             return files[0];
+    }
+
+    // ----------------------------------------------------------------------
+    // End
+    // ----------------------------------------------------------------------
+    public static void delete(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory()) {
+            List<File> files = listFiles(fileOrDirectory);
+            for (File file : files)
+                delete(file);
+        }
+        fileOrDirectory.delete();
     }
 
     // ----------------------------------------------------------------------

@@ -27,9 +27,9 @@ public class Logger {
     //
     // ----------------------------------------------------------------------
 
-    static Logger of(java.util.logging.Logger logger) {
-        return new Logger(logger);
-    }
+    // static Logger of(java.util.logging.Logger logger) {
+    //     return new Logger(logger);
+    // }
 
     // ----------------------------------------------------------------------
     //
@@ -54,7 +54,8 @@ public class Logger {
     }
 
     public static Logger getLogger(Class<?> clazz) {
-        return LogManager.getLogger(clazz.getName());
+        // return  new Logger(java.util.logging.LogManager.getLogManager().getLogger(clazz.getName()));
+        return new Logger(java.util.logging.Logger.getLogger(clazz.getName()));
     }
 
     public static Logger getLogger(String name){
@@ -69,7 +70,7 @@ public class Logger {
     //
     // ----------------------------------------------------------------------
 
-    private Logger(java.util.logging.Logger logger) {
+    protected Logger(java.util.logging.Logger logger) {
         this.logger = logger;
     }
 
@@ -104,7 +105,7 @@ public class Logger {
     }
 
     public void infof(String format, Object... args) {
-        infof(String.format(format, args));
+        info(String.format(format, args));
     }
 
     // ----------------------------------------------------------------------

@@ -1,0 +1,33 @@
+package jext.swing.colormap.reference.sequential;
+
+import jext.swing.colormap.SequentialColormap;
+import jext.swing.colormap.reference.ColormapType;
+import jext.swing.colormap.reference.ReferenceColormap;
+
+import java.awt.*;
+
+/**
+ * Sequential ColorBrewer colormap from Purple to Blue.
+ */
+@ReferenceColormap(type = ColormapType.SEQUENTIAL, name = "PuBu", source = "ColorBrewer")
+public final class PuBu extends SequentialColormap {
+    /**
+     * Create a colormap based on ColorBrewer PuBu.
+     */
+    public PuBu() {
+        super(
+                new Color(255, 247, 251),
+                new Color(236, 231, 242),
+                new Color(208, 209, 230),
+                new Color(166, 189, 219),
+                new Color(116, 169, 207),
+                new Color(54, 144, 192),
+                new Color(5, 112, 176),
+                new Color(4, 90, 141),
+                new Color(2, 56, 88));
+
+
+    }
+
+
+}

@@ -1,6 +1,8 @@
 package jext.jplotter.renderers;
 
 import hageldave.jplotter.renderers.Renderer;
+import jext.jplotter.renderables.Legend;
+import jext.jplotter.renderables.Renderable;
 
 public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRenderer  {
 
@@ -98,6 +100,15 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
             super.setLegendBottom(legend);
         else
             super.setLegendRight(legend);
+        return this;
+    }
+
+    // ----------------------------------------------------------------------
+
+    public CoordSysRenderer addLegend(Renderable... renderables) {
+        setLegend(new Legend().addAll(
+            renderables
+        ), 80, false);
         return this;
     }
 

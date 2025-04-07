@@ -80,23 +80,25 @@ public class CheckJPlotter4 {
         JPlotterFrame frame = new JPlotterFrame("Example Viz");
         JPlotterCanvas canvas = frame.getCanvas();
 
-        canvas.getContent().addAll(
-            sineLine,
-            pointsC1,
-            pointsC2,
-            pointsC3
-        );
+        canvas.getContent()
+            .addAll(
+                sineLine,
+                pointsC1,
+                pointsC2,
+                pointsC3
+            )
+        ;
 
         canvas
             .getCoordSysRenderer()
             .setMarginView(.1, .1)
             .setAspectRatio(1)
-            .setLegend(new Legend().addAll(
+            .addLegend(
                 sineLine,
                 pointsC1,
                 pointsC2,
                 pointsC3
-            ), 80, false)
+            )
             .compose()
         ;
 

@@ -1,14 +1,18 @@
 package jext.io.filters;
 
+import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.List;
 
 public class FileFilters {
 
+    public static final FileFilter IS_DIRECTORY = File::isDirectory;
+    public static final FileFilter IS_FILE = File::isFile;
+
     public static final FileFilter IS_JAR = file -> (file.getName().endsWith(".jar") || file.getName().endsWith(".aar"));
-    public static final FileFilter IS_SPL = file -> file.getName().endsWith(".spl");
     public static final FileFilter IS_DLL = file -> file.getName().endsWith(".dll");
+    // public static final FileFilter IS_SPL = file -> file.getName().endsWith(".spl");
 
     public static final FileFilter TRUE = TrueFileFilter.INSTANCE;
     public static final FileFilter FALSE = FalseFileFilter.INSTANCE;
@@ -60,4 +64,9 @@ public class FileFilters {
     public static FileFilter wildcards(List<String> patterns) {
         return new WildcardFileFilter().addAll(patterns);
     }
+
+    public static FileFilter hasExtension(String extension) {
+        return file -> file.getName().endsWith(extension);
+    }
+
 }

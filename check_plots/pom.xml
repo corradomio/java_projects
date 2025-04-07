@@ -20,5 +20,7 @@
         <module>../jext.plot</module>
         <module>../jext.plot-plotly</module>
         <module>../jext.geo</module>
+        <module>jomapv</module>
+        <module>jxmapv</module>
     </modules>
 </project>

@@ -14,4 +14,54 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>idea-ui-designer</id>
+            <url>https://www.jetbrains.com/intellij-repository/releases/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.commons</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!--
+            WARN: Unfolding uses Log4J v1!!!
+        -->
+        <dependency>
+            <groupId>de.fhpotsdam</groupId>
+            <artifactId>Unfolding</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/Unfolding.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>processing</groupId>
+            <artifactId>processing-core</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/processing-core.jar</systemPath>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.java/java-gui-forms-rt -->
+        <dependency>
+            <groupId>com.jetbrains.intellij.java</groupId>
+            <artifactId>java-gui-forms-rt</artifactId>
+            <version>243.24978.59</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
+    </dependencies>
 </project>

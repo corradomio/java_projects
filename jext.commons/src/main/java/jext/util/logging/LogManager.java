@@ -36,6 +36,6 @@ public class LogManager {
     }
 
     public static Logger getLogger(String name){
-        return Logger.of(java.util.logging.Logger.getLogger(name));
+        return new Logger(java.util.logging.Logger.getLogger(name));
     }
 }

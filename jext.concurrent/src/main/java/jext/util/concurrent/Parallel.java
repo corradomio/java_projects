@@ -83,7 +83,7 @@ public class Parallel {
     /// to each element of the list. Otherwise, the list is split in sublist and
     /// each thread is applied on each sublist.
     /// It theory, it is possible to change it.
-    public static int MAX_TASK_LIST_FACTOR = 4;
+    public static int MAX_TASK_LIST_FACTOR = 1;
 
     /// Number of threads used in the pool
     /// Default: the number of physical threads minus one
@@ -96,7 +96,27 @@ public class Parallel {
 
     /// Timeout used to park unused threads in thread pool
     /// It theory, it is possible to change it.
-    public static long TIMEOUT = 60000;
+    public static long TIMEOUT = 20000;
+
+    /// Timeout used to check is it is necessary to cleanup some
+    /// thread pool
+    public static long CLEANUP_TIMEOUT = 3000;
+
+    /// Thread used to cleanup the the unused thread pools
+    private static class CleanupThread extends Thread {
+        public CleanupThread() {
+            super("Parallel-cleanup");
+        }
+
+        public void run() {
+            while (running != null) {
+                Parallel.sleep(CLEANUP_TIMEOUT);
+                Parallel.cleanup();
+            }
+        }
+    }
+
+    private static CleanupThread cleanupThread;
 
     /// Thread factory.
     /// It is a copy&past of java.util.concurrent.Executors.DefaultThreadFactory
@@ -113,9 +133,7 @@ public class Parallel {
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() :
                 Thread.currentThread().getThreadGroup();
-            namePrefix = "pool-" +
-                poolNumber.getAndIncrement() +
-                "-thread-";
+            namePrefix = "Parallel-" + poolNumber.getAndIncrement() + "-thread-";
         }
 
         public Thread newThread(Runnable r) {
@@ -133,7 +151,7 @@ public class Parallel {
 
     /// Thread factory used to create thread with lower priority than the thread's default
     /// when created with 'new Thread(...)'
-    private static ThreadFactory threadFactory = new DefaultThreadFactory();
+    // private static ThreadFactory threadFactory = new DefaultThreadFactory();
 
     // ----------------------------------------------------------------------
     // Task implementation
@@ -147,43 +165,6 @@ public class Parallel {
     // To use Callable<T> is more flexible, because it permits to implement
     // threads returning some result
     //
-
-    // private static class TaskBase {
-    //
-    //     TaskBase() { }
-    //
-    //     protected void running() {
-    //
-    //     }
-    //
-    //     protected void done() {
-    //
-    //     }
-    //
-    // }
-
-    // private static class TaskFunction<T, U> extends TaskBase implements Callable<U> {
-    //     private final T t;
-    //     private final Function<T, U> body;
-    //
-    //     TaskFunction(T t, Function<T, U> body/*, Counters todo*/) {
-    //         // super(todo);
-    //         this.t = t;
-    //         this.body = body;
-    //     }
-    //
-    //     @Override
-    //     public U call() {
-    //         try {
-    //             running();
-    //             return body.apply(t);
-    //         }
-    //         finally {
-    //             done();
-    //         }
-    //
-    //     }
-    // }
 
     private static class Task<T> implements Callable<Boolean> {
         private final T t;
@@ -631,26 +612,43 @@ public class Parallel {
         setup(Runtime.getRuntime().availableProcessors() - 1);
     }
 
-    public static void setup(int nth) {
-        // if (nthreads == 0) {
-        //     nthreads = nth;
-        //     if (nthreads < 3) nthreads = 3;
-        // }
+    public static synchronized void setup(int nth) {
+        if (nth <= 0)
+            throw new IllegalArgumentException("Number of threads in a thread pool must be > 0");
+
         nthreads = nth;
 
         if (running == null) {
             running = new LinkedList<>();
             waiting = new LinkedList<>();
+
+            cleanupThread = new CleanupThread();
+            cleanupThread.start();
         }
     }
 
     public static synchronized void shutdown() {
-        if (running != null)
+        if (running != null) {
             running.forEach(ExecutorService::shutdownNow);
-        if (waiting != null)
+            running = null;
+        }
+        if (waiting != null) {
             waiting.forEach(WaitingExecutorService::shutdownNow);
-        running = null;
         waiting = null;
+    }
+        if (cleanupThread != null) {
+            // note CleanupThrea checks if 'waiting'
+            join(cleanupThread);
+            cleanupThread = null;
+        }
+    }
+
+    private static void join(Thread thread) {
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+
+        }
     }
 
     // ----------------------------------------------------------------------
@@ -714,7 +712,8 @@ public class Parallel {
 
         if (waiting.isEmpty()) {
             waiting.add(new WaitingExecutorService(
-                Executors.newFixedThreadPool(nthreads, threadFactory)
+                Executors.newFixedThreadPool(nthreads, new DefaultThreadFactory())
+                // Executors.newFixedThreadPool(nthreads, threadFactory)
                 // Executors.newDynamicThreadPool(nthreads)
             ));
         }
@@ -740,10 +739,29 @@ public class Parallel {
         waiting.removeIf(wes -> wes.waitingTime() > TIMEOUT);
     }
 
+    private static synchronized void cleanup() {
+        if (running == null)
+            return;
+
+        List<WaitingExecutorService> toRemove = new ArrayList<>();
+        for (WaitingExecutorService wes : waiting) {
+            if (wes.waitingTime() > TIMEOUT)
+                toRemove.add(wes);
+        }
+
+        // remove & shotdows services
+        for (WaitingExecutorService wes : toRemove) {
+            waiting.remove(wes);
+            wes.get().shutdownNow();
+        }
+    }
+
     private static void sleep(long millis) {
         if (millis > 0)
             try {
                 Thread.sleep(millis);
             } catch (InterruptedException e) { }
     }
+
+
 }

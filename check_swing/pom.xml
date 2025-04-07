@@ -10,6 +10,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>app</module>
+        <module>../jext.commons</module>
+        <module>../jext.concurrent</module>
         <module>../jext.swing</module>
     </modules>
 
