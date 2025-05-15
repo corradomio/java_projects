@@ -2,6 +2,7 @@ package jext.text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -127,8 +128,8 @@ public class Tabulate {
      * @param labels list of labels
      * @return this
      */
-    public Tabulate header(List<String> labels) {
-        header = labels;
+    public Tabulate header(Collection<String> labels) {
+        header.addAll(labels);
         return this;
     }
 

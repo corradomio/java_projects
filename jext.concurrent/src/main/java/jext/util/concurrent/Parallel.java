@@ -83,7 +83,8 @@ public class Parallel {
     /// to each element of the list. Otherwise, the list is split in sublist and
     /// each thread is applied on each sublist.
     /// It theory, it is possible to change it.
-    public static int MAX_TASK_LIST_FACTOR = 1;
+    /// If it is 0, the sublists asre not used
+    public static int MAX_TASK_LIST_FACTOR = 0;
 
     /// Number of threads used in the pool
     /// Default: the number of physical threads minus one
@@ -342,7 +343,7 @@ public class Parallel {
         // The trich is to split the long list in nthread parts and each thread
         // in the pool process sequentially each list.
 
-        if (tasks.size() <= MAX_TASK_LIST_FACTOR*nthreads)
+        if (MAX_TASK_LIST_FACTOR == 0 || tasks.size() <= MAX_TASK_LIST_FACTOR*nthreads)
             return invokeOnList(tasks);
         else
             return invokeOnSublists(tasks);
@@ -634,10 +635,10 @@ public class Parallel {
         }
         if (waiting != null) {
             waiting.forEach(WaitingExecutorService::shutdownNow);
-        waiting = null;
-    }
+            waiting = null;
+        }
         if (cleanupThread != null) {
-            // note CleanupThrea checks if 'waiting'
+            // note CleanupThread checks if 'waiting'
             join(cleanupThread);
             cleanupThread = null;
         }
