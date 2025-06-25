@@ -71,7 +71,8 @@ public class JMapPanel extends JPanel {
         Location center = boundBox.center();
         int zoomLevel = boundBox.zoomLevel();
 
-        this.mapApplet.zoomAndPanTo(center, zoomLevel);
+        if (zoomLevel > 0)
+            this.mapApplet.zoomAndPanTo(center, zoomLevel);
         return this;
     }
 

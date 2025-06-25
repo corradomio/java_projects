@@ -208,13 +208,13 @@ public class MapApplet extends PApplet {
         this.looping = true;
         this.redraw = true;
         this.firstMouse = true;
-        this.sizeMethods = new PApplet.RegisteredMethods();
-        this.preMethods = new PApplet.RegisteredMethods();
-        this.drawMethods = new PApplet.RegisteredMethods();
-        this.postMethods = new PApplet.RegisteredMethods();
-        this.mouseEventMethods = new PApplet.RegisteredMethods();
-        this.keyEventMethods = new PApplet.RegisteredMethods();
-        this.disposeMethods = new PApplet.RegisteredMethods();
+        // this.sizeMethods = new PApplet.RegisteredMethods();
+        // this.preMethods = new PApplet.RegisteredMethods();
+        // this.drawMethods = new PApplet.RegisteredMethods();
+        // this.postMethods = new PApplet.RegisteredMethods();
+        // this.mouseEventMethods = new PApplet.RegisteredMethods();
+        // this.keyEventMethods = new PApplet.RegisteredMethods();
+        // this.disposeMethods = new PApplet.RegisteredMethods();
 
         try {
             this.getAppletContext();
@@ -244,7 +244,7 @@ public class MapApplet extends PApplet {
 
         this.width = this.g.width;
         this.height = this.g.height;
-        this.addListeners();
+        // this.addListeners();
         this.start();
     }
 

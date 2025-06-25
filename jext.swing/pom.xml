@@ -38,6 +38,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/Unfolding.jar</systemPath>
         </dependency>
+        <!--<dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.unfolding</artifactId>
+            <version>1.0</version>
+        </dependency>-->
 
         <dependency>
             <groupId>processing</groupId>
@@ -46,6 +51,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/processing-core.jar</systemPath>
         </dependency>
+        <!--<dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.processing</artifactId>
+            <version>1.0</version>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.java/java-gui-forms-rt -->
         <dependency>

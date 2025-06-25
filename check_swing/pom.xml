@@ -13,6 +13,8 @@
         <module>../jext.commons</module>
         <module>../jext.concurrent</module>
         <module>../jext.swing</module>
+        <module>../jext.processing</module>
+        <module>../jext.unfolding</module>
     </modules>
 
     <properties>

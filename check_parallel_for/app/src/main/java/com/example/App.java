@@ -34,8 +34,10 @@ public class App
         //     return i*2;
         // });
 
-        Parallel.forEach(0,100, (i)->{
-            System.out.println(i);
+        Parallel.forEach(0,10, (i)->{
+            Parallel.forEach(0, 10, (j) -> {
+                System.out.println(i);
+            });
         });
 
         // Parallel.forEach(msg, (m)->{

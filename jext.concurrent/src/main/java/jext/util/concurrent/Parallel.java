@@ -101,7 +101,7 @@ public class Parallel {
 
     /// Timeout used to check is it is necessary to cleanup some
     /// thread pool
-    public static long CLEANUP_TIMEOUT = 3000;
+    public static long CLEANUP_TIMEOUT = 500;
 
     /// Thread used to cleanup the the unused thread pools
     private static class CleanupThread extends Thread {
@@ -740,7 +740,7 @@ public class Parallel {
         waiting.removeIf(wes -> wes.waitingTime() > TIMEOUT);
     }
 
-    private static synchronized void cleanup() {
+    private static /* synchronized */ void cleanup() {
         if (running == null)
             return;
 

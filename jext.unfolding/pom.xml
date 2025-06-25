@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hls</groupId>
+    <artifactId>jext.unfolding</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.15</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib-unfolding/log4j-1.2.15.jar</systemPath>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20231013</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib-unfolding/json4processing.jar</systemPath>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.artistech/tuio-lib -->
+        <dependency>
+            <groupId>com.artistech</groupId>
+            <artifactId>tuio-lib</artifactId>
+            <version>1.1.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib-unfolding/libTUIO.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.processing</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
+
+</project>
