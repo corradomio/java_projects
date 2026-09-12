@@ -1,0 +1,138 @@
+{
+  "stepStatistics" : {
+    "removedForFilters[name]" : [ ],
+    "removedForFilters[path]" : [ ],
+    "singletons" : [ "types.ImplementsMap", "comments.AnotherClass", "comments.AnotherCommentedClass.AClassInMethod", "types.AbstractMap", "comments.AnotherClass.InnerClass", "comments.AnotherStrangeClass", "types.Maps", "comments.AnotherStrangeClass.InnerClass", "types.ExampleFields", "comments.AnotherStrangeClass.InnerClass.InnerInnerClass", "comments.AnotherStrangeClass.InnerClass.InnerInnerClass.InnerInnerInnerClass", "$StandAloneTypes", "comments.CommentedClass", "features.Type3", "comments.AnotherCommentedClass", "temp.Temp", "comments.CommentedClass.CommentedInterface", "types.ExampleExtra", "comments.CommentedClass.AClassInMethod", "comments.AnotherCommentedClass.CommentedInterface" ],
+    "depth[0]" : {
+      "leavesRemoved" : [ "features.Type4", "app.Base", "org.hls.check.DebitResult", "types.Template", "app.Base.Inner" ],
+      "inChainRemoved" : [ "features.Type2", "features.Type1" ],
+      "duplicatedClosures" : [ ]
+    },
+    "depth[1]" : {
+      "leavesRemoved" : [ "features.Type12" ],
+      "inChainRemoved" : [ ],
+      "duplicatedClosures" : [ ]
+    },
+    "depth[2]" : {
+      "leavesRemoved" : [ ],
+      "inChainRemoved" : [ ],
+      "duplicatedClosures" : [ ]
+    }
+  },
+  "analysisConfiguration" : {
+    "webuser" : "salwa",
+    "project" : "check_java_lang",
+    "runtime.library" : "jdk8",
+    "subtask" : true,
+    "repository" : "dev-workspace",
+    "componentSamples" : "100000",
+    "componentTimeout" : "10m",
+    "parentId" : "1661840304662_9",
+    "password" : "",
+    "task" : "CreateComponentModelTask",
+    "name" : "dev-workspace/check_java_lang/component",
+    "model" : "component",
+    "filterTypes" : "",
+    "username" : ""
+  },
+  "analysisStatistics" : {
+    "nRemovedTypesByName" : 0,
+    "nRemovedTypesByPath" : 0,
+    "depth0" : {
+      "nRemovedClosuresForDuplicate" : 0,
+      "nSingletonTypes" : 20,
+      "nOfComponentDependencies" : 1,
+      "nOfComponentUpdated" : 6,
+      "nOfComponents" : 6
+    },
+    "depth[0]" : {
+      "nRemovedInChain" : 2,
+      "nOfComponentDependencies" : 10,
+      "nOfComponentDependenciesAfterTransitiveReduction" : 9,
+      "nOfComponents" : 13,
+      "nRemovedLeaves" : 5
+    },
+    "depth[1]" : {
+      "nRemovedInChain" : 0,
+      "nOfComponentDependencies" : 1,
+      "nOfComponentDependenciesAfterTransitiveReduction" : 1,
+      "nOfComponents" : 6,
+      "nRemovedLeaves" : 1
+    },
+    "depth[2]" : {
+      "nRemovedInChain" : 0,
+      "nOfComponentDependencies" : 0,
+      "nOfComponentDependenciesAfterTransitiveReduction" : 0,
+      "nOfComponents" : 5,
+      "nRemovedLeaves" : 0
+    },
+    "depth1" : {
+      "nOfComponentDependencies" : 0,
+      "nOfComponentUpdated" : 5,
+      "nOfComponents" : 5
+    },
+    "depth2" : {
+      "nOfComponentDependencies" : 0,
+      "nOfComponentUpdated" : 5,
+      "nOfComponents" : 5
+    }
+  },
+  "version" : "1.1",
+  "project" : {
+    "name" : "check_java_lang",
+    "fullname" : "dev-workspace/check_java_lang"
+  },
+  "analysis" : {
+    "model" : "component",
+    "analysisType" : "CREATE",
+    "start" : "2022/08/30 10:31:34",
+    "done" : "2022/08/30 10:31:35",
+    "analysisTime" : "1s",
+    "modelStatus" : "VALID",
+    "reason" : ""
+  },
+  "executionTimes" : {
+    "createModelNode" : "0s",
+    "retrieveTypeDependencyGraph" : "0s",
+    "composeComponentDepths" : "0s",
+    "applyStransforms[0]" : "0",
+    "removeTypesForFilters" : "0s",
+    "applyTransformations[0]" : "0",
+    "computeClosures" : "0s",
+    "collectSingletons[0]" : "0s",
+    "removeDuplicates[0]" : "0s",
+    "createClosureGraph[0]" : "0s",
+    "computeClosureDependencies[0]" : "0s",
+    "transitiveReduction[0]" : "0s",
+    "removeLeaves[0]" : "0s",
+    "collapseChains[0]" : "0s",
+    "isDAG[0]" : "0s",
+    "applyStransforms[1]" : "0",
+    "applyTransformations[1]" : "0",
+    "removeDuplicates[1]" : "0",
+    "createClosureGraph[1]" : "0",
+    "computeClosureDependencies[1]" : "0s",
+    "transitiveReduction[1]" : "0",
+    "removeLeaves[1]" : "0s",
+    "collapseChains[1]" : "0",
+    "isDAG[1]" : "0",
+    "applyStransforms[2]" : "0",
+    "applyTransformations[2]" : "0",
+    "removeDuplicates[2]" : "0",
+    "createClosureGraph[2]" : "0",
+    "computeClosureDependencies[2]" : "0",
+    "transitiveReduction[2]" : "0s",
+    "removeLeaves[2]" : "0",
+    "collapseChains[2]" : "0",
+    "isDAG[2]" : "0",
+    "writeClosuresGraph" : "0",
+    "writeClosuresGraph[0]" : "0s",
+    "writeClosuresGraph[1]" : "0s",
+    "writeClosuresGraph[2]" : "0s",
+    "writeComponentDigests" : "0",
+    "writeComponentDigests[0]" : "0s",
+    "writeComponentDigests[1]" : "0s",
+    "writeComponentDigests[2]" : "0s",
+    "analysisTime" : "1s"
+  }
+}

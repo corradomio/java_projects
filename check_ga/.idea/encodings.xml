@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.geometry/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.geometry/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.optim/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.optim/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.plot/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.plot/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.tsp/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.tsp/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../jext.util/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

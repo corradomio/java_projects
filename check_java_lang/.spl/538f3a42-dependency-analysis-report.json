@@ -1,0 +1,99 @@
+{
+  "memoryStatistics" : {
+    "minMemoryAllocated" : "60.717 MB",
+    "maxMemoryAllocated" : "116.921 MB",
+    "meanMemoryAllocated" : "93.406 MB",
+    "sdevMemoryAllocated" : "18.098 MB",
+    "memoryAllocated" : "56.205 MB",
+    "meanMemoryForLine" : "57.843 KB"
+  },
+  "analysisAborts" : { },
+  "project" : {
+    "name" : "check_java_lang",
+    "fullname" : "dev-workspace/check_java_lang",
+    "repository" : "dev-workspace",
+    "projectType" : "maven",
+    "projectHome" : "D:/Projects.github/java_projects/check_java_lang",
+    "counts" : {
+      "runtimeLibraries" : 1,
+      "sources" : 13,
+      "libraries" : 1,
+      "modules" : 1
+    }
+  },
+  "analysisConfiguration" : {
+    "keepReports" : "3",
+    "line.allocatedMemory" : "10KB",
+    "method.limit" : "20000m",
+    "model" : "dependency",
+    "module.exclude.$" : ".*,_*",
+    "module.resources.$" : ".xml,.properties,.json,.gradle,.project,.classpath",
+    "module.sources.$" : ".java",
+    "parentId" : "1661840304662_9",
+    "password" : "",
+    "runtime.library" : "jdk8",
+    "size.limit" : "0",
+    "subtask" : true,
+    "task" : "CreateDependencyModelTask",
+    "time.limit" : "100000m",
+    "username" : "",
+    "webuser" : "salwa"
+  },
+  "analysisStatistics" : {
+    "processedLines" : 995,
+    "longestAnalyzedFiles" : [ ],
+    "analysisTime" : "13s",
+    "processedFiles" : 65,
+    "meanLineAnalysisTime" : "41.094 ms",
+    "meanFileAnalysisTime" : "629.062 ms",
+    "sequentialTime" : "41s",
+    "analysisTimeCounts" : {
+      "10s" : 65,
+      "30s" : 0,
+      "1:00" : 0,
+      "5:00" : 0,
+      "15:00" : 0,
+      "30:00" : 0,
+      "1:00:00" : 0,
+      "inf" : 0
+    },
+    "speedup" : "3.17 x",
+    "threads" : 7
+  },
+  "analysisErrors" : {
+    "unsolvedSymbols" : { },
+    "unparsedFiles" : { },
+    "missingLibraries" : [ ],
+    "duplicatedMethods" : { }
+  },
+  "version" : "1.1",
+  "analysis" : {
+    "model" : "dependency",
+    "analysisType" : "CREATE",
+    "start" : "2022/08/30 10:31:20",
+    "done" : "2022/08/30 10:31:33",
+    "analysisTime" : "13s",
+    "modelStatus" : "VALID",
+    "reason" : ""
+  },
+  "executionTimes" : {
+    "compareRevisions" : "0s",
+    "loadProjectStructure" : "0s",
+    "createProjectNode" : "0s",
+    "createModuleNodes" : "0s",
+    "createModuleDependencies" : "0s",
+    "createLibraryRepositoriesNodes" : "0s",
+    "updateLibraryVersions" : "0s",
+    "createLibraryNodes" : "0s",
+    "createModuleLibraryDependencies" : "0s",
+    "createSourceNodes" : "0s",
+    "populateInitialTypes" : "0s",
+    "populateUnsolvedTemplates" : "1s",
+    "createTypeDefinitions" : "3s",
+    "createTypeDependencies" : "2s",
+    "createMemberDefinitions" : "5s",
+    "createMethodCalls" : "0s",
+    "cleanup" : "0s",
+    "analysisTime" : "13s"
+  }
+}

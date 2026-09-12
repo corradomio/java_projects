@@ -1,0 +1,32 @@
+{
+  "children" : [ {
+    "children" : [ {
+      "complex" : 0,
+      "name" : "ExtendsTemplate",
+      "value" : 1
+    } ],
+    "name" : "Template"
+  }, {
+    "children" : [ {
+      "complex" : 0,
+      "name" : "Feature",
+      "value" : 1
+    } ],
+    "name" : "Feature"
+  }, {
+    "children" : [ {
+      "complex" : 0,
+      "name" : "CheckEnum",
+      "value" : 1
+    } ],
+    "name" : "Check_Enum"
+  }, {
+    "children" : [ {
+      "complex" : 0,
+      "name" : "App",
+      "value" : 1
+    } ],
+    "name" : "App"
+  } ],
+  "name" : "check_java_lang"
+}

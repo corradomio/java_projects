@@ -10,8 +10,8 @@
             value3="jext.cache.imcache.IMCacheProvider"
             value4="jext.cache.jcs.JCSCacheProvider"
             value5="jext.cache.weak.WeakCacheProvider"
-            value6="jext.cache.ehcache.EHCacheProvider"
-            value="jext.cache.caffeine.CaffeineCacheProvider"
+            value="jext.cache.ehcache.EHCacheProvider"
+            value7="jext.cache.caffeine.CaffeineCacheProvider"
     />
 
     <!--

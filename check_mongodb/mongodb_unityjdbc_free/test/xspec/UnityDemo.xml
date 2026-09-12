@@ -1,0 +1,28 @@
+<SOURCES>
+	<DATABASE>
+		<URL>jdbc:hsqldb:hsql://localhost/tpch</URL>
+		<USER>sa</USER>
+		<PASSWORD></PASSWORD>
+		<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
+		<SCHEMA>UnityDemoPart.xml</SCHEMA>
+	</DATABASE>
+	<DATABASE>
+		<URL>jdbc:hsqldb:hsql://localhost/tpch</URL>
+		<USER>sa</USER>
+		<PASSWORD></PASSWORD>
+		<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
+		<SCHEMA>UnityDemoOrder.xml</SCHEMA>
+	</DATABASE>
+	<DATABASE>
+		<URL>jdbc:hsqldb:hsql://localhost/emptydb</URL>
+		<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
+		<SCHEMA>emptydb.xml</SCHEMA>
+	</DATABASE>
+	<DATABASE>
+		<URL>jdbc:hsqldb:hsql://localhost/xdb</URL>
+		<USER>sa</USER>
+		<PASSWORD></PASSWORD>
+		<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
+		<SCHEMA>mydb.xml</SCHEMA>
+	</DATABASE>
+</SOURCES>

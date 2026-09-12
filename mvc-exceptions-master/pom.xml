@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<groupId>io.spring.demo</groupId>
+	<version>2.1.0</version>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>mvc-exceptions</artifactId>
+	<name>Demo application for Spring Exception Handling Blog</name>
+
+	<!-- Build as a JAR running Tomcat embedded -->
+	<packaging>jar</packaging>
+
+	<!-- Modify to set Java or Spring version -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<start-class>demo.main.Main</start-class>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<!-- Must inherit from the Spring Boot parent POM. -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.18</version>
+	</parent>
+
+	<!-- Spring boot starters automatically configure common setups. It also 
+		detects known dependencies like Thymeleaf. -->
+	<dependencies>
+		<!-- Spring Boot itself. Version number inherited from parent POM. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Tell Spring Boot to setup Thymeleaf for page rendering. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<!-- RESTful API for monitoring the app. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<!-- Auto-restart application if its source changes -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Spring Boot plugin enables: spring-boot:run -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

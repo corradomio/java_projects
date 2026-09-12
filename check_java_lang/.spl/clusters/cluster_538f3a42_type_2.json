@@ -1,0 +1,191 @@
+{
+  "children" : [ {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Template",
+      "value" : 1
+    }, {
+      "complex" : 3,
+      "name" : "ExtendsTemplate",
+      "value" : 1
+    } ],
+    "name" : "Template"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "AClassInMethod",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "AClassInMethod",
+      "value" : 1
+    } ],
+    "name" : "AClass"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "ExampleExtra",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "ExampleFields",
+      "value" : 1
+    } ],
+    "name" : "Example"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "CommentedInterface",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "CommentedInterface",
+      "value" : 1
+    } ],
+    "name" : "Interface"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "ImplementsMap",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "AbstractMap",
+      "value" : 1
+    } ],
+    "name" : "Map"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "CommentedClass",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "AnotherCommentedClass",
+      "value" : 1
+    } ],
+    "name" : "Commented"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "AnotherClass",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "AnotherStrangeClass",
+      "value" : 1
+    } ],
+    "name" : "Another"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "InnerClass",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "InnerClass",
+      "value" : 1
+    } ],
+    "name" : "Class"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Inner",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "InnerInnerClass",
+      "value" : 1
+    }, {
+      "complex" : 4,
+      "name" : "InnerInnerInnerClass",
+      "value" : 1
+    } ],
+    "name" : "Inner"
+  }, {
+    "children" : [ {
+      "complex" : 3,
+      "name" : "App",
+      "value" : 1
+    } ],
+    "name" : "App"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Base",
+      "value" : 1
+    } ],
+    "name" : "Base"
+  }, {
+    "children" : [ {
+      "complex" : 3,
+      "name" : "CheckEnum",
+      "value" : 1
+    } ],
+    "name" : "Check_Enum"
+  }, {
+    "children" : [ {
+      "complex" : 3,
+      "name" : "Feature",
+      "value" : 1
+    } ],
+    "name" : "Feature"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Maps",
+      "value" : 1
+    } ],
+    "name" : "Maps"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "DebitResult",
+      "value" : 1
+    } ],
+    "name" : "Debit_Result"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Type4",
+      "value" : 1
+    } ],
+    "name" : "Type4"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Temp",
+      "value" : 1
+    } ],
+    "name" : "Temp"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Type1",
+      "value" : 1
+    } ],
+    "name" : "Type1"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Type12",
+      "value" : 1
+    } ],
+    "name" : "Type12"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Type2",
+      "value" : 1
+    } ],
+    "name" : "Type2"
+  }, {
+    "children" : [ {
+      "complex" : 4,
+      "name" : "Type3",
+      "value" : 1
+    } ],
+    "name" : "Type3"
+  } ],
+  "name" : "check_java_lang"
+}

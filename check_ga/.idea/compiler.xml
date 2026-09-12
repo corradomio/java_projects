@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="app" />
+        <module name="jext.concurrent" />
+        <module name="jext.commons" />
+        <module name="jext.collections" />
+        <module name="jext.optim" />
+        <module name="jext.tsp" />
+        <module name="jext.geometry" />
+        <module name="jext.plot" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="isula" target="10" />
+      <module name="jext.linalg" target="11" />
+      <module name="jext.math" target="11" />
+      <module name="jext.util" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

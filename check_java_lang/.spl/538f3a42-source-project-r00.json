@@ -1,0 +1,364 @@
+{
+  "version" : "2.0",
+  "name" : "check_java_lang",
+  "repository" : "dev-workspace",
+  "fullname" : "dev-workspace/check_java_lang",
+  "id" : "538f3a42",
+  "type" : "maven",
+  "projectHome" : "D:/Projects.github/java_projects/check_java_lang",
+  "properties" : {
+    "project" : "check_java_lang",
+    "module.sources.$" : ".java",
+    "repository" : "dev-workspace",
+    "password" : "",
+    "module.resources.$" : ".xml,.properties,.json,.gradle,.project,.classpath",
+    "model" : "source",
+    "project.module" : "pom.xml",
+    "project.type" : "maven",
+    "webuser" : "salwa",
+    "runtime.library" : "jdk8",
+    "subtask" : "true",
+    "module.exclude.$" : ".*,_*",
+    "parentId" : "1661840304662_9",
+    "revision" : "0",
+    "revisionId" : "eb932086-ca95-4019-87c2-0fc7934a3e00",
+    "task" : "CreateSourceModelTask",
+    "name" : "dev-workspace/check_java_lang/source",
+    "uploadHome" : "D:/SPLGroup/uploads",
+    "username" : ""
+  },
+  "counts" : {
+    "unusedLibraries" : 0,
+    "mavenRepositories" : 1,
+    "runtimeLibraries" : 1,
+    "libraryRepositories" : 1,
+    "sources" : 13,
+    "libraries" : 1,
+    "modules" : 1
+  },
+  "modules" : {
+    "" : {
+      "sources" : {
+        "src/main/java/org/hls/check/CheckEnum" : {
+          "path" : "src/main/java/org/hls/check/CheckEnum.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 377,
+            "totalLines" : 19,
+            "blankLines" : 5,
+            "codeLines" : 14
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "org.hls.check.CheckEnum" ],
+          "name" : "CheckEnum",
+          "digest" : "2tcwidg570qa6",
+          "language" : "java",
+          "fullname" : "src/main/java/org/hls/check/CheckEnum",
+          "id" : "-495647179",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/features/Feature" : {
+          "path" : "src/main/java/features/Feature.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 171,
+            "totalLines" : 10,
+            "blankLines" : 3,
+            "codeLines" : 7
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "features.Feature" ],
+          "name" : "Feature",
+          "digest" : "17uix4dr8p4dg",
+          "language" : "java",
+          "fullname" : "src/main/java/features/Feature",
+          "id" : "1105467014",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/features/Type4" : {
+          "path" : "src/main/java/features/Type4.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 46,
+            "totalLines" : 4,
+            "blankLines" : 1,
+            "codeLines" : 3
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "features.Type4" ],
+          "name" : "Type4",
+          "digest" : "v6zep9n1jxk5",
+          "language" : "java",
+          "fullname" : "src/main/java/features/Type4",
+          "id" : "984520650",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/app/App" : {
+          "path" : "src/main/java/app/App.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 271,
+            "totalLines" : 16,
+            "blankLines" : 5,
+            "codeLines" : 11
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "app.App" ],
+          "name" : "App",
+          "digest" : "39u8j9jzo08fp",
+          "language" : "java",
+          "fullname" : "src/main/java/app/App",
+          "id" : "911710033",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/features/Type2" : {
+          "path" : "src/main/java/features/Type2.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 78,
+            "totalLines" : 5,
+            "blankLines" : 1,
+            "codeLines" : 4
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "features.Type2" ],
+          "name" : "Type2",
+          "digest" : "2f2f9573m4dzs",
+          "language" : "java",
+          "fullname" : "src/main/java/features/Type2",
+          "id" : "984520648",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/features/Type3" : {
+          "path" : "src/main/java/features/Type3.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 46,
+            "totalLines" : 4,
+            "blankLines" : 1,
+            "codeLines" : 3
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "features.Type3" ],
+          "name" : "Type3",
+          "digest" : "3rwanmkwea66e",
+          "language" : "java",
+          "fullname" : "src/main/java/features/Type3",
+          "id" : "984520649",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/comments/CommentedClass" : {
+          "path" : "src/main/java/comments/CommentedClass.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 1125,
+            "totalLines" : 69,
+            "blankLines" : 15,
+            "codeLines" : 54
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "comments.CommentedClass" ],
+          "name" : "CommentedClass",
+          "digest" : "1jlw65b8afjhk",
+          "language" : "java",
+          "fullname" : "src/main/java/comments/CommentedClass",
+          "id" : "-1002736461",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/features/Type1" : {
+          "path" : "src/main/java/features/Type1.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 80,
+            "totalLines" : 6,
+            "blankLines" : 2,
+            "codeLines" : 4
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "features.Type1" ],
+          "name" : "Type1",
+          "digest" : "3qnsxx7635ccd",
+          "language" : "java",
+          "fullname" : "src/main/java/features/Type1",
+          "id" : "984520647",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/temp/Temp" : {
+          "path" : "src/main/java/temp/Temp.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 140,
+            "totalLines" : 10,
+            "blankLines" : 3,
+            "codeLines" : 7
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "temp.Temp" ],
+          "name" : "Temp",
+          "digest" : "1dse6dd62qe8d",
+          "language" : "java",
+          "fullname" : "src/main/java/temp/Temp",
+          "id" : "1482958861",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/features/Type12" : {
+          "path" : "src/main/java/features/Type12.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 47,
+            "totalLines" : 4,
+            "blankLines" : 1,
+            "codeLines" : 3
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "features.Type12" ],
+          "name" : "Type12",
+          "digest" : "cdhza98g8e9c",
+          "language" : "java",
+          "fullname" : "src/main/java/features/Type12",
+          "id" : "455369035",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/comments/AnotherCommentedClass" : {
+          "path" : "src/main/java/comments/AnotherCommentedClass.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 1459,
+            "totalLines" : 76,
+            "blankLines" : 12,
+            "codeLines" : 64
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "comments.AnotherCommentedClass" ],
+          "name" : "AnotherCommentedClass",
+          "digest" : "o1fnqtnww34h",
+          "language" : "java",
+          "fullname" : "src/main/java/comments/AnotherCommentedClass",
+          "id" : "34891972",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/types/ExampleFields" : {
+          "path" : "src/main/java/types/ExampleFields.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 696,
+            "totalLines" : 29,
+            "blankLines" : 9,
+            "codeLines" : 20
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "types.ExampleFields" ],
+          "name" : "ExampleFields",
+          "digest" : "38u947465y8vr",
+          "language" : "java",
+          "fullname" : "src/main/java/types/ExampleFields",
+          "id" : "664228555",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        },
+        "src/main/java/types/ExampleExtra" : {
+          "path" : "src/main/java/types/ExampleExtra.java",
+          "sourceInfo" : {
+            "modules" : 0,
+            "count" : 1,
+            "bytes" : 110,
+            "totalLines" : 8,
+            "blankLines" : 3,
+            "codeLines" : 5
+          },
+          "sourceRoot" : "src/main/java",
+          "types" : [ "types.ExampleExtra" ],
+          "name" : "ExampleExtra",
+          "digest" : "27tldzx225co1",
+          "language" : "java",
+          "fullname" : "src/main/java/types/ExampleExtra",
+          "id" : "159511998",
+          "mimeType" : "text/x-java-source",
+          "type" : "source"
+        }
+      },
+      "counts" : {
+        "types" : 13,
+        "sources" : 13,
+        "usedTypes" : 4,
+        "sourceRoots" : 1,
+        "declaredLibraries" : 0,
+        "dependencies" : 0
+      },
+      "type" : "module",
+      "sourceRoots" : [ "src/main/java" ],
+      "dependencies" : [ ],
+      "path" : "",
+      "runtimeLibrary" : "jdk11",
+      "name" : "",
+      "digest" : "1c805oqkvksch",
+      "fullname" : "",
+      "id" : "0",
+      "refId" : "0",
+      "declaredLibraries" : [ ],
+      "properties" : {
+        "module.definition" : "configurationFile"
+      }
+    }
+  },
+  "libraries" : {
+    "jdk11" : {
+      "digest" : "0",
+      "file" : "D:/Java/Jdk11.0",
+      "files" : [ "D:/Java/Jdk11.0/jmods/java.base.jmod", "D:/Java/Jdk11.0/jmods/java.compiler.jmod", "D:/Java/Jdk11.0/jmods/java.datatransfer.jmod", "D:/Java/Jdk11.0/jmods/java.desktop.jmod", "D:/Java/Jdk11.0/jmods/java.instrument.jmod", "D:/Java/Jdk11.0/jmods/java.logging.jmod", "D:/Java/Jdk11.0/jmods/java.management.jmod", "D:/Java/Jdk11.0/jmods/java.management.rmi.jmod", "D:/Java/Jdk11.0/jmods/java.naming.jmod", "D:/Java/Jdk11.0/jmods/java.net.http.jmod", "D:/Java/Jdk11.0/jmods/java.prefs.jmod", "D:/Java/Jdk11.0/jmods/java.rmi.jmod", "D:/Java/Jdk11.0/jmods/java.scripting.jmod", "D:/Java/Jdk11.0/jmods/java.se.jmod", "D:/Java/Jdk11.0/jmods/java.security.jgss.jmod", "D:/Java/Jdk11.0/jmods/java.security.sasl.jmod", "D:/Java/Jdk11.0/jmods/java.smartcardio.jmod", "D:/Java/Jdk11.0/jmods/java.sql.jmod", "D:/Java/Jdk11.0/jmods/java.sql.rowset.jmod", "D:/Java/Jdk11.0/jmods/java.transaction.xa.jmod", "D:/Java/Jdk11.0/jmods/java.xml.crypto.jmod", "D:/Java/Jdk11.0/jmods/java.xml.jmod", "D:/Java/Jdk11.0/jmods/jdk.accessibility.jmod", "D:/Java/Jdk11.0/jmods/jdk.aot.jmod", "D:/Java/Jdk11.0/jmods/jdk.attach.jmod", "D:/Java/Jdk11.0/jmods/jdk.charsets.jmod", "D:/Java/Jdk11.0/jmods/jdk.compiler.jmod", "D:/Java/Jdk11.0/jmods/jdk.crypto.cryptoki.jmod", "D:/Java/Jdk11.0/jmods/jdk.crypto.ec.jmod", "D:/Java/Jdk11.0/jmods/jdk.crypto.mscapi.jmod", "D:/Java/Jdk11.0/jmods/jdk.dynalink.jmod", "D:/Java/Jdk11.0/jmods/jdk.editpad.jmod", "D:/Java/Jdk11.0/jmods/jdk.hotspot.agent.jmod", "D:/Java/Jdk11.0/jmods/jdk.httpserver.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.ed.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.jvmstat.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.le.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.opt.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.vm.ci.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.vm.compiler.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.vm.compiler.management.jmod", "D:/Java/Jdk11.0/jmods/jdk.jartool.jmod", "D:/Java/Jdk11.0/jmods/jdk.javadoc.jmod", "D:/Java/Jdk11.0/jmods/jdk.jcmd.jmod", "D:/Java/Jdk11.0/jmods/jdk.jconsole.jmod", "D:/Java/Jdk11.0/jmods/jdk.jdeps.jmod", "D:/Java/Jdk11.0/jmods/jdk.jdi.jmod", "D:/Java/Jdk11.0/jmods/jdk.jdwp.agent.jmod", "D:/Java/Jdk11.0/jmods/jdk.jfr.jmod", "D:/Java/Jdk11.0/jmods/jdk.jlink.jmod", "D:/Java/Jdk11.0/jmods/jdk.jshell.jmod", "D:/Java/Jdk11.0/jmods/jdk.jsobject.jmod", "D:/Java/Jdk11.0/jmods/jdk.jstatd.jmod", "D:/Java/Jdk11.0/jmods/jdk.localedata.jmod", "D:/Java/Jdk11.0/jmods/jdk.management.agent.jmod", "D:/Java/Jdk11.0/jmods/jdk.management.jfr.jmod", "D:/Java/Jdk11.0/jmods/jdk.management.jmod", "D:/Java/Jdk11.0/jmods/jdk.naming.dns.jmod", "D:/Java/Jdk11.0/jmods/jdk.naming.ldap.jmod", "D:/Java/Jdk11.0/jmods/jdk.naming.rmi.jmod", "D:/Java/Jdk11.0/jmods/jdk.net.jmod", "D:/Java/Jdk11.0/jmods/jdk.pack.jmod", "D:/Java/Jdk11.0/jmods/jdk.rmic.jmod", "D:/Java/Jdk11.0/jmods/jdk.scripting.nashorn.jmod", "D:/Java/Jdk11.0/jmods/jdk.scripting.nashorn.shell.jmod", "D:/Java/Jdk11.0/jmods/jdk.sctp.jmod", "D:/Java/Jdk11.0/jmods/jdk.security.auth.jmod", "D:/Java/Jdk11.0/jmods/jdk.security.jgss.jmod", "D:/Java/Jdk11.0/jmods/jdk.unsupported.desktop.jmod", "D:/Java/Jdk11.0/jmods/jdk.unsupported.jmod", "D:/Java/Jdk11.0/jmods/jdk.xml.dom.jmod", "D:/Java/Jdk11.0/jmods/jdk.zipfs.jmod", "D:/Java/Jdk11.0/lib/jrt-fs.jar" ],
+      "fullname" : "jdk11",
+      "id" : "604c851",
+      "language" : "java",
+      "libraryType" : "RUNTIME",
+      "name" : "jdk11",
+      "type" : "library",
+      "valid" : true,
+      "version" : "11.0.0"
+    }
+  },
+  "unusedLibraries" : [ ],
+  "runtimeLibraries" : [ {
+    "digest" : "0",
+    "file" : "D:/Java/Jdk11.0",
+    "files" : [ "D:/Java/Jdk11.0/jmods/java.base.jmod", "D:/Java/Jdk11.0/jmods/java.compiler.jmod", "D:/Java/Jdk11.0/jmods/java.datatransfer.jmod", "D:/Java/Jdk11.0/jmods/java.desktop.jmod", "D:/Java/Jdk11.0/jmods/java.instrument.jmod", "D:/Java/Jdk11.0/jmods/java.logging.jmod", "D:/Java/Jdk11.0/jmods/java.management.jmod", "D:/Java/Jdk11.0/jmods/java.management.rmi.jmod", "D:/Java/Jdk11.0/jmods/java.naming.jmod", "D:/Java/Jdk11.0/jmods/java.net.http.jmod", "D:/Java/Jdk11.0/jmods/java.prefs.jmod", "D:/Java/Jdk11.0/jmods/java.rmi.jmod", "D:/Java/Jdk11.0/jmods/java.scripting.jmod", "D:/Java/Jdk11.0/jmods/java.se.jmod", "D:/Java/Jdk11.0/jmods/java.security.jgss.jmod", "D:/Java/Jdk11.0/jmods/java.security.sasl.jmod", "D:/Java/Jdk11.0/jmods/java.smartcardio.jmod", "D:/Java/Jdk11.0/jmods/java.sql.jmod", "D:/Java/Jdk11.0/jmods/java.sql.rowset.jmod", "D:/Java/Jdk11.0/jmods/java.transaction.xa.jmod", "D:/Java/Jdk11.0/jmods/java.xml.crypto.jmod", "D:/Java/Jdk11.0/jmods/java.xml.jmod", "D:/Java/Jdk11.0/jmods/jdk.accessibility.jmod", "D:/Java/Jdk11.0/jmods/jdk.aot.jmod", "D:/Java/Jdk11.0/jmods/jdk.attach.jmod", "D:/Java/Jdk11.0/jmods/jdk.charsets.jmod", "D:/Java/Jdk11.0/jmods/jdk.compiler.jmod", "D:/Java/Jdk11.0/jmods/jdk.crypto.cryptoki.jmod", "D:/Java/Jdk11.0/jmods/jdk.crypto.ec.jmod", "D:/Java/Jdk11.0/jmods/jdk.crypto.mscapi.jmod", "D:/Java/Jdk11.0/jmods/jdk.dynalink.jmod", "D:/Java/Jdk11.0/jmods/jdk.editpad.jmod", "D:/Java/Jdk11.0/jmods/jdk.hotspot.agent.jmod", "D:/Java/Jdk11.0/jmods/jdk.httpserver.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.ed.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.jvmstat.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.le.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.opt.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.vm.ci.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.vm.compiler.jmod", "D:/Java/Jdk11.0/jmods/jdk.internal.vm.compiler.management.jmod", "D:/Java/Jdk11.0/jmods/jdk.jartool.jmod", "D:/Java/Jdk11.0/jmods/jdk.javadoc.jmod", "D:/Java/Jdk11.0/jmods/jdk.jcmd.jmod", "D:/Java/Jdk11.0/jmods/jdk.jconsole.jmod", "D:/Java/Jdk11.0/jmods/jdk.jdeps.jmod", "D:/Java/Jdk11.0/jmods/jdk.jdi.jmod", "D:/Java/Jdk11.0/jmods/jdk.jdwp.agent.jmod", "D:/Java/Jdk11.0/jmods/jdk.jfr.jmod", "D:/Java/Jdk11.0/jmods/jdk.jlink.jmod", "D:/Java/Jdk11.0/jmods/jdk.jshell.jmod", "D:/Java/Jdk11.0/jmods/jdk.jsobject.jmod", "D:/Java/Jdk11.0/jmods/jdk.jstatd.jmod", "D:/Java/Jdk11.0/jmods/jdk.localedata.jmod", "D:/Java/Jdk11.0/jmods/jdk.management.agent.jmod", "D:/Java/Jdk11.0/jmods/jdk.management.jfr.jmod", "D:/Java/Jdk11.0/jmods/jdk.management.jmod", "D:/Java/Jdk11.0/jmods/jdk.naming.dns.jmod", "D:/Java/Jdk11.0/jmods/jdk.naming.ldap.jmod", "D:/Java/Jdk11.0/jmods/jdk.naming.rmi.jmod", "D:/Java/Jdk11.0/jmods/jdk.net.jmod", "D:/Java/Jdk11.0/jmods/jdk.pack.jmod", "D:/Java/Jdk11.0/jmods/jdk.rmic.jmod", "D:/Java/Jdk11.0/jmods/jdk.scripting.nashorn.jmod", "D:/Java/Jdk11.0/jmods/jdk.scripting.nashorn.shell.jmod", "D:/Java/Jdk11.0/jmods/jdk.sctp.jmod", "D:/Java/Jdk11.0/jmods/jdk.security.auth.jmod", "D:/Java/Jdk11.0/jmods/jdk.security.jgss.jmod", "D:/Java/Jdk11.0/jmods/jdk.unsupported.desktop.jmod", "D:/Java/Jdk11.0/jmods/jdk.unsupported.jmod", "D:/Java/Jdk11.0/jmods/jdk.xml.dom.jmod", "D:/Java/Jdk11.0/jmods/jdk.zipfs.jmod", "D:/Java/Jdk11.0/lib/jrt-fs.jar" ],
+    "fullname" : "jdk11",
+    "id" : "604c851",
+    "language" : "java",
+    "libraryType" : "RUNTIME",
+    "name" : "jdk11",
+    "type" : "library",
+    "valid" : true,
+    "version" : "11.0.0"
+  } ],
+  "mavenRepositories" : [ "https://repo.maven.apache.org/maven2" ],
+  "libraryRepositories" : [ {
+    "id" : "71a23c62",
+    "name" : "71a23c62",
+    "repositoryType" : "MAVEN",
+    "type" : "librepo",
+    "url" : "https://repo.maven.apache.org/maven2"
+  } ]
+}

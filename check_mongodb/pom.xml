@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>check_mongodb</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- THIS IS for MongoDB ENTERPRISE -->
+        <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongodb-jdbc -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-jdbc</artifactId>
+            <version>3.0.5</version>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver (2013) -->
+        <!--<dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.14</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+        <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync -->
+        <!--<dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>5.6.2</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+        <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongodb-jdbc -->
+        <!--<dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-jdbc</artifactId>
+            <version>2.1.0</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.unityjdbc</groupId>
+            <artifactId>mongodb-unityjdbc</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/mongodb_unityjdbc_free.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.mongodb</groupId>
+            <artifactId>mongodb-jdbc</artifactId>
+            <version>3.0.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/mongodb-jdbc-3.0.5-all.jar</systemPath>
+        </dependency>
+
+    </dependencies>
+
+</project>

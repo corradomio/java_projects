@@ -1,0 +1,16 @@
+*.class
+target/*
+build/
+.gradle/
+.project
+.classpath
+.settings/
+bin/
+Thumbs.db
+.DS_Store
+
+# Package Files #
+*.jar
+*.war
+*.ear
+/target

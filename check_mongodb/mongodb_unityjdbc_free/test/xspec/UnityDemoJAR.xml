@@ -1,0 +1,16 @@
+<SOURCES>	
+	<DATABASE>
+		<URL>jdbc:hsqldb:hsql://localhost/tpch</URL>
+		<USER>sa</USER>
+		<PASSWORD></PASSWORD>
+		<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
+		<XSPEC>UnityDemoPart.xml</XSPEC>
+	</DATABASE>
+	<DATABASE>
+		<URL>jdbc:hsqldb:hsql://localhost/tpch</URL>
+		<USER>sa</USER>
+		<PASSWORD></PASSWORD>
+		<DRIVER>org.hsqldb.jdbcDriver</DRIVER>
+		<XSPEC>UnityDemoOrder.xml</XSPEC>
+	</DATABASE>	
+</SOURCES>

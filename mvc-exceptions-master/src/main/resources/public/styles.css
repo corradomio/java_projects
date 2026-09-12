@@ -1,0 +1,63 @@
+/* - - - - - - - - - - - *
+       Local Styles
+ * - - - - - - - - - - - */
+ 
+body {
+	font-family: helvetica;
+	font-size: 13pt;
+}
+
+.navbar, .navbar > a {
+	font-family: helvetica;
+	font-size: 15pt;
+}
+
+ul.openlist li {
+	margin-bottom: 1em;
+}
+
+li {
+	margin-bottom: 1em;
+}
+
+a {
+	font-family: helvetica;
+}
+
+h1, h3 {
+	color: #206090;
+}
+
+h3 {
+	font-size:16pt;
+}
+
+code {
+	background-color: white;
+	border-radius: 0px;
+	color: #80A080;
+	font-size: 100%;
+	font-family: monospace;
+	padding: 0px;
+	white-space: nowrap;
+}
+
+footer {
+	margin-top: 3em;
+	border-top: 1px black solid;
+	text-align: center;
+	color:#6DB33F;   /* Spring Green */
+	font-style: italic;
+}
+
+code, .bg-none {
+	background:none !important;
+}
+
+pre {
+	margin-left: 2em;
+}
+
+.filler {
+	height: 5em;
+}

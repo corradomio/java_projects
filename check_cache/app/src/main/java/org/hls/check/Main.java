@@ -4,6 +4,7 @@ import jext.cache.Cache;
 import jext.cache.CacheManager;
 import jext.util.logging.Logger;
 
+import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
@@ -16,7 +17,11 @@ public class Main {
 
         cache = CacheManager.getCache("test.home.this.ciccio", String.class, Integer.class);
 
-        System.out.println(cache.getOrDefault("zero", -1));
+        System.out.println(cache.get("zero", () -> -1));
+
+        System.out.println(cache.containsKey("zero"));
+        cache.remove("zero");
+        System.out.println(cache.containsKey("zero"));
 
         System.out.printf("%s\n", cache.get("one", () -> {
             System.out.println("called callable 1");

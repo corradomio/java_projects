@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="jext.jgit" />
+        <module name="jext.compress" />
+        <module name="jext.vfs" />
+        <module name="jext.commons" />
+        <module name="jext.collections" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
