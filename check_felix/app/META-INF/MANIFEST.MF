@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: APP
+Bundle-SymbolicName: app;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: tutorial.example1.Activator
+Bundle-Vendor: Varsa Studio
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .

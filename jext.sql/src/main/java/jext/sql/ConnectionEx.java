@@ -404,7 +404,7 @@ public class ConnectionEx implements Connection {
     // Named queries
     // ----------------------------------------------------------------------
 
-    public void registerNamedQuery(String name, String statement) throws SQLException {
+    public void registerNamedQuery(String name, String statement, String version) throws SQLException {
         if (queries.containsKey(name))
             throw new jext.sql.SQLException("Duplicated named query", name);
 

@@ -38,6 +38,16 @@
             <artifactId>cache2k-core</artifactId>
             <version>1.2.4.Final</version>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/net.sf.ehcache/management-ehcache-v2 -->
+        <!-- problems with a dependency:
+             org.terracotta:management-common-resources-v2:pom:2.1.25.3
+        -->
+        <!--dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>management-ehcache-v2</artifactId>
+            <version>2.10.9.2</version>
+        </dependency-->
+
         <!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
         <dependency>
             <groupId>org.ehcache</groupId>

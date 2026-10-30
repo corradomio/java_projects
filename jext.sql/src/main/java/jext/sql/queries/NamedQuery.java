@@ -7,13 +7,16 @@ public class NamedQuery {
     public final String name;
     public final String id;
     public final String statement;
+    public final String version;
     public final List<NamedParameter> structuredParameters;
     public final List<NamedParameter> queryParameters;
 
-    public NamedQuery(String namespace, String queryId, String statement, List<NamedParameter> structuredParameters, List<NamedParameter> queryParameters) {
+    public NamedQuery(String namespace, String queryId, String statement, String version,
+                      List<NamedParameter> structuredParameters, List<NamedParameter> queryParameters) {
         this.id = queryId;
         this.name = compose(namespace, queryId);
         this.statement = statement;
+        this.version = version;
         this.structuredParameters = structuredParameters;
         this.queryParameters = queryParameters;
     }

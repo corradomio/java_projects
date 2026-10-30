@@ -21,5 +21,5 @@ public interface Connection extends java.sql.Connection {
     CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException;
     CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException;
 
-    void registerNamedQuery(String name, String statement) throws SQLException;
+    void registerNamedQuery(String name, String statement, String version) throws SQLException;
 }

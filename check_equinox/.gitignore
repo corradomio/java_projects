@@ -1,0 +1,23 @@
+_suspended/
+downloads*
+target/
+.idea
+log/
+eclipse-workspace
+org.ops4j.pax.*
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+rt*
+
+*.docx
+*.md
+*.txt
+*.cmd

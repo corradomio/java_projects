@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: check_equinox_app
+Bundle-SymbolicName: check_equinox_app;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.example.Activator
+Bundle-Vendor: HLS Software
+Require-Bundle: org.eclipse.osgi_3.15.300.v20200520-1959
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .

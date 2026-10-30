@@ -1,6 +1,8 @@
 package jext.util.logging;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Logger {
 
@@ -41,6 +43,14 @@ public class Logger {
     // Factory methods
     // ----------------------------------------------------------------------
 
+    public static void configure() {
+        LogManager.configure(new File("logging.properties"));
+    }
+
+    public static void configure(String loggingConfig) {
+        LogManager.configure(new File(loggingConfig));
+    }
+
     public static void configure(File loggingConfig) {
         LogManager.configure(loggingConfig);
     }
@@ -65,6 +75,32 @@ public class Logger {
     public static void setTimeout(int timeout) {
         Logger.timeout = timeout;
     }
+
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+    // Simplify the conversion of 'System.out.print..' and 'System.err.print..'
+    // with logging
+
+    private static final Map<String, SystemOut> SYSTEM_OUT_MAP = new HashMap<>();
+
+    public static SystemOut getSystemOut(String format, Object... args) {
+        return Logger.getSystemOut(String.format(format, args));
+    }
+
+    public static SystemOut getSystemOut(Class<?> clazz) {
+        return Logger.getSystemOut(clazz.getName());
+    }
+
+    public static SystemOut getSystemOut(String name){
+        synchronized (SYSTEM_OUT_MAP) {
+            if (!SYSTEM_OUT_MAP.containsKey(name))
+                SYSTEM_OUT_MAP.put(name, new SystemOut(LogManager.getLogger(name)));
+            return SYSTEM_OUT_MAP.get(name);
+        }
+    }
+
 
     // ----------------------------------------------------------------------
     //

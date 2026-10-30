@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public abstract class BaseConnection implements jext.sql.Connection {
+
     @Override
     public Statement createStatement() throws SQLException {
         throw new UnsupportedOperationException();
@@ -281,7 +282,7 @@ public abstract class BaseConnection implements jext.sql.Connection {
     }
 
     @Override
-    public void registerNamedQuery(String name, String statement) throws SQLException {
+    public void registerNamedQuery(String name, String statement, String version) throws SQLException {
         throw new UnsupportedOperationException();
     }
 

@@ -61,7 +61,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/mongodb-jdbc-3.0.5-all.jar</systemPath>
         </dependency>
-
+        <!-- Source: https://mvnrepository.com/artifact/log4j/log4j -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CHECK_EQUINOX
+Bundle-SymbolicName: check_equinox;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: check_equinox.Activator
+Bundle-Vendor: Varsa Studio
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .

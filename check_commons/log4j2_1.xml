@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+
+    <!-- 1. Properties: Global reusable variables -->
+    <Properties>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <!-- 2. Appenders: Destinations for your log messages -->
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${PATTERN}"/>
+        </Console>
+
+        <!-- File Appender -->
+        <File name="FileAppender" fileName="${LOG_DIR}/application.log" append="true">
+            <PatternLayout pattern="${PATTERN}"/>
+        </File>
+
+        <!-- Rolling File Appender (Optional, for production) -->
+        <RollingFile name="RollingFileAppender"
+                     fileName="${LOG_DIR}/app-rolling.log"
+                     filePattern="${LOG_DIR}/archive/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <!-- 3. Loggers: Direct specific code packages to appenders -->
+    <Loggers>
+        <!-- Application-specific logger -->
+        <Logger name="com.example" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!-- Catch-all Root logger for third-party libraries -->
+        <Root level="ERROR">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

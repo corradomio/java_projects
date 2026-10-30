@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.example</groupId>
+        <artifactId>check_equinox</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>app</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Source: https://mvnrepository.com/artifact/org.ops4j.pax.logging/pax-logging-api -->
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+            <version>2.2.14</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.ops4j.pax.logging/pax-logging-log4j2 -->
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-log4j2</artifactId>
+            <version>2.2.14</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <!--<dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.12.4</version>
+            <scope>compile</scope>
+        </dependency>-->
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+        <!--<dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.12.4</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+        <!-- in org.eclipse.osgi -->
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/osgi.core -->
+        <!--<dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            &lt;!&ndash;<version>8.0.0</version>&ndash;&gt;
+            <version>7.0.0</version>
+            <scope>provided</scope>
+        </dependency>-->
+
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/osgi.annotation -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
+            <version>8.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/org.osgi.framework -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.framework</artifactId>
+            <version>1.10.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/osgi.cmpn -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>7.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/org.osgi.annotation.bundle -->
+        <!--
+            Attribute
+            Capabilities
+            Capability
+            Directive
+            Export
+            Header
+            Headers
+            package-info
+            Referenced
+            Requirement
+            Requirements
+        -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.annotation.bundle</artifactId>
+            <version>2.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/org.osgi.service.log -->
+        <!--<dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.log</artifactId>
+            <version>1.3.0</version>
+            <scope>compile</scope>
+        </dependency>-->
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/org.osgi.util.tracker -->
+        <!--<dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.util.tracker</artifactId>
+            <version>1.5.4</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+        <!-- Source: https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.osgi -->
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.osgi</artifactId>
+            <version>3.18.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.eclipse.equinox/org.eclipse.equinox.common -->
+        <dependency>
+            <groupId>org.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.common</artifactId>
+            <version>3.6.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.eclipse.osgi/org.eclipse.osgi.services -->
+        <dependency>
+            <groupId>org.eclipse.osgi</groupId>
+            <artifactId>org.eclipse.osgi.services</artifactId>
+            <version>3.2.100.v20100503</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/org.osgi.service.component.annotations -->
+        <!--<dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
+            <version>1.5.1</version>
+            <scope>compile</scope>
+        </dependency>-->
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/org.osgi.service.component -->
+        <!--<dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component</artifactId>
+            <version>1.5.1</version>
+            <scope>compile</scope>
+        </dependency>-->
+        <!-- Source: https://mvnrepository.com/artifact/org.osgi/org.osgi.util.promise -->
+        <!--<dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.util.promise</artifactId>
+            <version>1.3.0</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+    </dependencies>
+
+    <!--<pluginRepositories>
+        <pluginRepository>
+            <id>bnd-releases</id>
+            <url>https://bndtools.jfrog.io/bndtools/libs-release/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>-->
+
+    <build>
+        <plugins>
+            <!-- 1. Use Apache Felix maven-bundle-plugin to generate manifests -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.9</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <!-- Identifies the class that starts/stops this bundle -->
+                        <Bundle-Activator>org.example.Activator</Bundle-Activator>
+                        <!-- Packages you want to expose to other bundles -->
+                        <Export-Package>org.example</Export-Package>
+                        <!-- Automatically calculates imports based on bytecode -->
+                        <Import-Package>*</Import-Package>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 2. Standard JAR plugin configured to pick up the generated manifest -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--<plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+                <version>7.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>bnd-process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
+        </plugins>
+    </build>
+
+</project>

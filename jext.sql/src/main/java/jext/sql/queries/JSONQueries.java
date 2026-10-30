@@ -1,9 +1,9 @@
 package jext.sql.queries;
 
 import jext.sql.Connection;
-import java.sql.SQLException;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +36,7 @@ public class JSONQueries implements NamedQueries {
                 namespace,
                 queryId,
                 statement,
+                version,
                 structuredParameters,
                 queryParameters
             );
@@ -168,8 +169,8 @@ public class JSONQueries implements NamedQueries {
 
     public void registerTo(Connection c) throws SQLException {
         for(NamedQuery q : queries.values()) {
-            c.registerNamedQuery(q.name, q.statement);
-            c.registerNamedQuery(q.id, q.statement);
+            c.registerNamedQuery(q.name, q.statement, q.version);
+            c.registerNamedQuery(q.id, q.statement, q.version);
         }
     }
 
