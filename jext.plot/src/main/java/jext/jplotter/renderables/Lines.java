@@ -19,6 +19,11 @@ public class Lines extends hageldave.jplotter.renderables.Lines implements Rende
 
     }
 
+    public Lines(Color color, int thickness) {
+        this.color = color;
+        this.thickness = thickness;
+    }
+
     // ----------------------------------------------------------------------
     //
     // ----------------------------------------------------------------------

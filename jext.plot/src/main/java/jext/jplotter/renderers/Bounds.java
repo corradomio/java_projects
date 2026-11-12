@@ -9,6 +9,7 @@ public class Bounds {
     public double maxX;
     public double minY;
     public double maxY;
+    private int count = 0;
 
     public Bounds() {
         minX = +Double.MAX_VALUE;
@@ -22,6 +23,7 @@ public class Bounds {
         if (maxX > this.maxX) this.maxX = maxX;
         if (minY < this.minY) this.minY = minY;
         if (maxY > this.maxY) this.maxY = maxY;
+        ++count;
         return this;
     }
 
@@ -30,6 +32,7 @@ public class Bounds {
         if (x > maxX) maxX = x;
         if (y < minY) minY = y;
         if (y > maxY) maxY = y;
+        ++count;
         return this;
     }
 
@@ -44,4 +47,35 @@ public class Bounds {
     public Bounds margin(double marginX, double marginY) {
         return new Bounds().update(minX - marginX, maxX + marginX, minY - marginY, maxY + marginY);
     }
+
+    /**
+     * Update the bounds to ensure the aspect ratio.
+     * The bounds are NOT reduced, only expanded
+     *
+     * @param aspectRatio required aspect ratio
+     * @return
+     */
+    public void aspectRatio(double aspectRatio) {
+        double width = maxX - minX;
+        double height = maxY - minY;
+
+        double currentRatio = width/height;
+
+        if (currentRatio < aspectRatio) {
+            double xc = (minX + maxX) / 2;
+            width = height*aspectRatio;
+            double dx = width/2;
+            minX = xc - dx;
+            maxX = xc + dx;
+        }
+        else if (currentRatio > aspectRatio) {
+            double yc = (minY + maxY) / 2;
+            height = width/aspectRatio;
+            double dy = height/2;
+            minY = yc -dy;
+            maxY = yc + dy;
+        }
+
+    }
+
 }

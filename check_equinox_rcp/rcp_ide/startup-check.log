@@ -1,0 +1,540 @@
+Built D:\Projects.github\java_projects\check_equinox_rcp\rcp_ide\build\rcp.ide_1.0.0.jar
+!SESSION 2026-11-04 14:46:28.631 -----------------------------------------------
+eclipse.buildId=4.30.0.20231201-1200
+java.version=17.0.8
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -clean -data D:\Projects.github\java_projects\check_equinox_rcp\rcp_ide\runtime-workspace -consoleLog
+
+!ENTRY org.eclipse.equinox.event 4 0 2026-11-04 14:46:29.822
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.equinox.event [47]
+  Unresolved requirement: Require-Capability: osgi.extender; filter:="(&(osgi.extender=osgi.component)(version>=1.0)(!(version>=2.0)))"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1788)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.core.commands 4 0 2026-11-04 14:46:29.826
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.core.commands [15]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.core.contexts 4 0 2026-11-04 14:46:29.827
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.core.contexts [16]
+  Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.core.di 4 0 2026-11-04 14:46:29.829
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.core.di [17]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.0.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.core.di.extensions 4 0 2026-11-04 14:46:29.831
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.core.di.extensions [19]
+  Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.core.di.extensions.supplier 4 0 2026-11-04 14:46:29.832
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.core.di.extensions.supplier [20]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.core.services 4 0 2026-11-04 14:46:29.834
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.core.services [21]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.0.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.bindings 4 0 2026-11-04 14:46:29.836
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.bindings [23]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.css.swt 4 0 2026-11-04 14:46:29.839
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.css.swt [25]
+  Unresolved requirement: Import-Package: org.w3c.css.sac; version="1.3.0"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.css.swt.theme 4 0 2026-11-04 14:46:29.841
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.css.swt.theme [26]
+  Unresolved requirement: Import-Package: org.w3c.css.sac; version="1.3.0"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.di 4 0 2026-11-04 14:46:29.843
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.di [27]
+  Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.model.workbench 4 0 2026-11-04 14:46:29.844
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.model.workbench [29]
+  Unresolved requirement: Require-Bundle: org.eclipse.e4.core.services; bundle-version="0.9.0"
+    -> Bundle-SymbolicName: org.eclipse.e4.core.services; bundle-version="2.4.200.v20231103-2012"; singleton:="true"
+       org.eclipse.e4.core.services [21]
+         Unresolved requirement: Import-Package: jakarta.annotation; version="[2.0.0,3.0.0)"
+  Unresolved requirement: Require-Bundle: org.eclipse.e4.core.di; bundle-version="1.0.0"
+    -> Bundle-SymbolicName: org.eclipse.e4.core.di; bundle-version="1.9.200.v20231105-0754"
+       org.eclipse.e4.core.di [17]
+         Unresolved requirement: Import-Package: jakarta.annotation; version="[2.0.0,3.0.0)"
+  Unresolved requirement: Require-Bundle: org.eclipse.e4.emf.xpath; bundle-version="0.1.100"
+    -> Bundle-SymbolicName: org.eclipse.e4.emf.xpath; bundle-version="0.4.100.v20230801-1255"
+       org.eclipse.e4.emf.xpath [22]
+         Unresolved requirement: Require-Bundle: org.apache.commons.jxpath; bundle-version="1.2.0"
+  Unresolved requirement: Require-Bundle: org.eclipse.e4.core.contexts; bundle-version="1.0.0"
+    -> Bundle-SymbolicName: org.eclipse.e4.core.contexts; bundle-version="1.12.400.v20231103-2012"
+       org.eclipse.e4.core.contexts [16]
+         Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.progress 4 0 2026-11-04 14:46:29.846
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.progress [30]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.services 4 0 2026-11-04 14:46:29.848
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.services [31]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.workbench 4 0 2026-11-04 14:46:29.849
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.workbench [34]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.workbench.addons.swt 4 0 2026-11-04 14:46:29.851
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.workbench.addons.swt [35]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.workbench.renderers.swt 4 0 2026-11-04 14:46:29.852
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.workbench.renderers.swt [36]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.e4.ui.workbench.swt 4 0 2026-11-04 14:46:29.853
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.e4.ui.workbench.swt [37]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.ui 4 0 2026-11-04 14:46:29.856
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.ui [60]
+  Unresolved requirement: Require-Bundle: org.eclipse.ui.workbench; bundle-version="[3.130.0,4.0.0)"; visibility:="reexport"
+    -> Bundle-SymbolicName: org.eclipse.ui.workbench; bundle-version="3.131.0.v20231201-0512"; singleton:="true"
+       org.eclipse.ui.workbench [61]
+         Unresolved requirement: Import-Package: com.ibm.icu.util
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.ui.workbench 4 0 2026-11-04 14:46:29.858
+!MESSAGE FrameworkEvent ERROR
+!STACK 0
+org.osgi.framework.BundleException: Could not resolve module: org.eclipse.ui.workbench [61]
+  Unresolved requirement: Import-Package: com.ibm.icu.util
+
+	at org.eclipse.osgi.container.Module.start(Module.java:463)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel$2.run(ModuleContainer.java:1852)
+	at org.eclipse.osgi.internal.framework.EquinoxContainerAdaptor$1$1.execute(EquinoxContainerAdaptor.java:136)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1845)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.incStartLevel(ModuleContainer.java:1786)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.doContainerStartLevel(ModuleContainer.java:1750)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1672)
+	at org.eclipse.osgi.container.ModuleContainer$ContainerStartLevel.dispatchEvent(ModuleContainer.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.EventManager$EventThread.run(EventManager.java:345)
+
+!ENTRY org.eclipse.osgi 4 0 2026-11-04 14:46:30.083
+!MESSAGE Bundle initial@reference:file:plugins/org.eclipse.equinox.event_1.6.300.v20231012-1251.jar was not resolved.
+
+!ENTRY org.eclipse.e4.ui.css.core 2 0 2026-11-04 14:46:30.159
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.css.core [24]
+  Unresolved requirement: Import-Package: org.w3c.css.sac; version="1.3.0"
+
+
+!ENTRY org.eclipse.e4.emf.xpath 2 0 2026-11-04 14:46:30.161
+!MESSAGE Could not resolve module: org.eclipse.e4.emf.xpath [22]
+  Unresolved requirement: Require-Bundle: org.apache.commons.jxpath; bundle-version="1.2.0"
+
+
+!ENTRY org.eclipse.e4.ui.workbench.addons.swt 2 0 2026-11-04 14:46:30.162
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.workbench.addons.swt [35]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.swt.win32 2 0 2026-11-04 14:46:30.163
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.swt.win32 [32]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+  Unresolved requirement: Fragment-Host: org.eclipse.e4.ui.css.swt.theme; bundle-version="0.10.0"
+    -> Bundle-SymbolicName: org.eclipse.e4.ui.css.swt.theme; bundle-version="0.14.200.v20230913-1724"; singleton:="true"
+       org.eclipse.e4.ui.css.swt.theme [26]
+         Unresolved requirement: Import-Package: org.w3c.css.sac; version="1.3.0"
+
+
+!ENTRY org.eclipse.e4.core.services 2 0 2026-11-04 14:46:30.164
+!MESSAGE Could not resolve module: org.eclipse.e4.core.services [21]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.0.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.progress 2 0 2026-11-04 14:46:30.166
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.progress [30]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.core.di 2 0 2026-11-04 14:46:30.168
+!MESSAGE Could not resolve module: org.eclipse.e4.core.di [17]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.0.0,3.0.0)"
+
+
+!ENTRY rcp.ide 2 0 2026-11-04 14:46:30.169
+!MESSAGE Could not resolve module: rcp.ide [79]
+  Unresolved requirement: Require-Bundle: org.eclipse.ui
+    -> Bundle-SymbolicName: org.eclipse.ui; bundle-version="3.205.0.v20230922-1312"; singleton:="true"
+       org.eclipse.ui [60]
+         Unresolved requirement: Require-Bundle: org.eclipse.ui.workbench; bundle-version="[3.130.0,4.0.0)"; visibility:="reexport"
+           -> Bundle-SymbolicName: org.eclipse.ui.workbench; bundle-version="3.131.0.v20231201-0512"; singleton:="true"
+              org.eclipse.ui.workbench [61]
+                Unresolved requirement: Import-Package: com.ibm.icu.util
+
+
+!ENTRY org.eclipse.e4.ui.workbench.swt 2 0 2026-11-04 14:46:30.173
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.workbench.swt [37]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.core.di.annotations 2 0 2026-11-04 14:46:30.175
+!MESSAGE Could not resolve module: org.eclipse.e4.core.di.annotations [18]
+  Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.css.swt.theme 2 0 2026-11-04 14:46:30.176
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.css.swt.theme [26]
+  Unresolved requirement: Import-Package: org.w3c.css.sac; version="1.3.0"
+
+
+!ENTRY org.eclipse.e4.core.commands 2 0 2026-11-04 14:46:30.178
+!MESSAGE Could not resolve module: org.eclipse.e4.core.commands [15]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.core.di.extensions.supplier 2 0 2026-11-04 14:46:30.180
+!MESSAGE Could not resolve module: org.eclipse.e4.core.di.extensions.supplier [20]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.di 2 0 2026-11-04 14:46:30.181
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.di [27]
+  Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+
+!ENTRY org.eclipse.equinox.event 2 0 2026-11-04 14:46:30.182
+!MESSAGE Could not resolve module: org.eclipse.equinox.event [47]
+  Unresolved requirement: Require-Capability: osgi.extender; filter:="(&(osgi.extender=osgi.component)(version>=1.0)(!(version>=2.0)))"
+
+
+!ENTRY org.eclipse.urischeme 2 0 2026-11-04 14:46:30.183
+!MESSAGE Could not resolve module: org.eclipse.urischeme [63]
+  Unresolved requirement: Require-Bundle: com.sun.jna; bundle-version="[5.8.0,6.0.0)"
+
+
+!ENTRY org.apache.xmlgraphics 2 0 2026-11-04 14:46:30.184
+!MESSAGE Could not resolve module: org.apache.xmlgraphics [5]
+  Unresolved requirement: Import-Package: org.apache.commons.io; version="[1.4.0,2.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.css.swt 2 0 2026-11-04 14:46:30.186
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.css.swt [25]
+  Unresolved requirement: Import-Package: org.w3c.css.sac; version="1.3.0"
+
+
+!ENTRY org.eclipse.ui.workbench 2 0 2026-11-04 14:46:30.189
+!MESSAGE Could not resolve module: org.eclipse.ui.workbench [61]
+  Unresolved requirement: Import-Package: com.ibm.icu.util
+
+
+!ENTRY org.eclipse.e4.ui.workbench.renderers.swt 2 0 2026-11-04 14:46:30.191
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.workbench.renderers.swt [36]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.model.workbench 2 0 2026-11-04 14:46:30.193
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.model.workbench [29]
+  Unresolved requirement: Require-Bundle: org.eclipse.e4.core.services; bundle-version="0.9.0"
+    -> Bundle-SymbolicName: org.eclipse.e4.core.services; bundle-version="2.4.200.v20231103-2012"; singleton:="true"
+       org.eclipse.e4.core.services [21]
+         Unresolved requirement: Import-Package: jakarta.annotation; version="[2.0.0,3.0.0)"
+
+
+!ENTRY org.eclipse.ui 2 0 2026-11-04 14:46:30.195
+!MESSAGE Could not resolve module: org.eclipse.ui [60]
+  Unresolved requirement: Require-Bundle: org.eclipse.ui.workbench; bundle-version="[3.130.0,4.0.0)"; visibility:="reexport"
+    -> Bundle-SymbolicName: org.eclipse.ui.workbench; bundle-version="3.131.0.v20231201-0512"; singleton:="true"
+       org.eclipse.ui.workbench [61]
+         Unresolved requirement: Import-Package: com.ibm.icu.util
+
+
+!ENTRY org.eclipse.e4.ui.workbench 2 0 2026-11-04 14:46:30.196
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.workbench [34]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.core.di.extensions 2 0 2026-11-04 14:46:30.198
+!MESSAGE Could not resolve module: org.eclipse.e4.core.di.extensions [19]
+  Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.bindings 2 0 2026-11-04 14:46:30.199
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.bindings [23]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.ui.services 2 0 2026-11-04 14:46:30.201
+!MESSAGE Could not resolve module: org.eclipse.e4.ui.services [31]
+  Unresolved requirement: Import-Package: jakarta.annotation; version="[2.1.0,3.0.0)"
+
+
+!ENTRY org.eclipse.e4.core.contexts 2 0 2026-11-04 14:46:30.203
+!MESSAGE Could not resolve module: org.eclipse.e4.core.contexts [16]
+  Unresolved requirement: Import-Package: jakarta.inject; version="[2.0.0,3.0.0)"
+
+
+!ENTRY org.eclipse.osgi 4 0 2026-11-04 14:46:30.203
+!MESSAGE Application error
+!STACK 1
+java.lang.RuntimeException: Application "rcp.ide.application" could not be found in the registry. The applications available are: org.eclipse.equinox.app.error.
+	at org.eclipse.equinox.internal.app.EclipseAppContainer.startDefaultApp(EclipseAppContainer.java:264)
+	at org.eclipse.equinox.internal.app.MainApplicationLauncher.run(MainApplicationLauncher.java:34)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:136)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:104)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:402)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:651)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:588)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1459)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1432)
+An error has occurred. See the log file
+D:\Projects.github\java_projects\check_equinox_rcp\rcp_ide\build\configuration\1793789188914.log.

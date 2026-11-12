@@ -1,0 +1,1163 @@
+aliceblue	f0f8ff	true
+antiquewhite	faebd7	true
+aqua	00ffff	true
+aquamarine	7fffd4	true
+azure	f0ffff	true
+b	0000ff	false
+beige	f5f5dc	true
+bisque	ffe4c4	true
+black	000000	true
+blanchedalmond	ffebcd	true
+blue	0000ff	true
+blueviolet	8a2be2	true
+brown	a52a2a	true
+burlywood	deb887	true
+c	00bfbf	false
+cadetblue	5f9ea0	true
+chartreuse	7fff00	true
+chocolate	d2691e	true
+coral	ff7f50	true
+cornflowerblue	6495ed	true
+cornsilk	fff8dc	true
+crimson	dc143c	true
+cyan	00ffff	true
+darkblue	00008b	true
+darkcyan	008b8b	true
+darkgoldenrod	b8860b	true
+darkgray	a9a9a9	true
+darkgreen	006400	true
+darkgrey	a9a9a9	true
+darkkhaki	bdb76b	true
+darkmagenta	8b008b	true
+darkolivegreen	556b2f	true
+darkorange	ff8c00	true
+darkorchid	9932cc	true
+darkred	8b0000	true
+darksalmon	e9967a	true
+darkseagreen	8fbc8f	true
+darkslateblue	483d8b	true
+darkslategray	2f4f4f	true
+darkslategrey	2f4f4f	true
+darkturquoise	00ced1	true
+darkviolet	9400d3	true
+deeppink	ff1493	true
+deepskyblue	00bfff	true
+dimgray	696969	true
+dimgrey	696969	true
+dodgerblue	1e90ff	true
+firebrick	b22222	true
+floralwhite	fffaf0	true
+forestgreen	228b22	true
+fuchsia	ff00ff	true
+g	008000	false
+gainsboro	dcdcdc	true
+ghostwhite	f8f8ff	true
+gold	ffd700	true
+goldenrod	daa520	true
+gray	808080	true
+green	008000	true
+greenyellow	adff2f	true
+grey	808080	true
+honeydew	f0fff0	true
+hotpink	ff69b4	true
+indianred	cd5c5c	true
+indigo	4b0082	true
+ivory	fffff0	true
+k	000000	false
+khaki	f0e68c	true
+lavender	e6e6fa	true
+lavenderblush	fff0f5	true
+lawngreen	7cfc00	true
+lemonchiffon	fffacd	true
+lightblue	add8e6	true
+lightcoral	f08080	true
+lightcyan	e0ffff	true
+lightgoldenrodyellow	fafad2	true
+lightgray	d3d3d3	true
+lightgreen	90ee90	true
+lightgrey	d3d3d3	true
+lightpink	ffb6c1	true
+lightsalmon	ffa07a	true
+lightseagreen	20b2aa	true
+lightskyblue	87cefa	true
+lightslategray	778899	true
+lightslategrey	778899	true
+lightsteelblue	b0c4de	true
+lightyellow	ffffe0	true
+lime	00ff00	true
+limegreen	32cd32	true
+linen	faf0e6	true
+m	bf00bf	false
+magenta	ff00ff	true
+maroon	800000	true
+mediumaquamarine	66cdaa	true
+mediumblue	0000cd	true
+mediumorchid	ba55d3	true
+mediumpurple	9370db	true
+mediumseagreen	3cb371	true
+mediumslateblue	7b68ee	true
+mediumspringgreen	00fa9a	true
+mediumturquoise	48d1cc	true
+mediumvioletred	c71585	true
+midnightblue	191970	true
+mintcream	f5fffa	true
+mistyrose	ffe4e1	true
+moccasin	ffe4b5	true
+navajowhite	ffdead	true
+navy	000080	true
+oldlace	fdf5e6	true
+olive	808000	true
+olivedrab	6b8e23	true
+orange	ffa500	true
+orangered	ff4500	true
+orchid	da70d6	true
+palegoldenrod	eee8aa	true
+palegreen	98fb98	true
+paleturquoise	afeeee	true
+palevioletred	db7093	true
+papayawhip	ffefd5	true
+peachpuff	ffdab9	true
+peru	cd853f	true
+pink	ffc0cb	true
+plum	dda0dd	true
+powderblue	b0e0e6	true
+purple	800080	true
+r	ff0000	false
+rebeccapurple	663399	true
+red	ff0000	true
+rosybrown	bc8f8f	true
+royalblue	4169e1	true
+saddlebrown	8b4513	true
+salmon	fa8072	true
+sandybrown	f4a460	true
+seagreen	2e8b57	true
+seashell	fff5ee	true
+sienna	a0522d	true
+silver	c0c0c0	true
+skyblue	87ceeb	true
+slateblue	6a5acd	true
+slategray	708090	true
+slategrey	708090	true
+snow	fffafa	true
+springgreen	00ff7f	true
+steelblue	4682b4	true
+tab:blue	1f77b4	false
+tab:brown	8c564b	false
+tab:cyan	17becf	false
+tab:gray	7f7f7f	false
+tab:green	2ca02c	false
+tab:grey	7f7f7f	false
+tab:olive	bcbd22	false
+tab:orange	ff7f0e	false
+tab:pink	e377c2	false
+tab:purple	9467bd	false
+tab:red	d62728	false
+tan	d2b48c	true
+teal	008080	true
+thistle	d8bfd8	true
+tomato	ff6347	true
+turquoise	40e0d0	true
+violet	ee82ee	true
+w	ffffff	false
+wheat	f5deb3	true
+white	ffffff	true
+whitesmoke	f5f5f5	true
+xkcd:acid green	8ffe09	false
+xkcd:adobe	bd6c48	false
+xkcd:algae	54ac68	false
+xkcd:algae green	21c36f	false
+xkcd:almost black	070d0d	false
+xkcd:amber	feb308	false
+xkcd:amethyst	9b5fc0	false
+xkcd:apple	6ecb3c	false
+xkcd:apple green	76cd26	false
+xkcd:apricot	ffb16d	false
+xkcd:aqua	13eac9	false
+xkcd:aqua blue	02d8e9	false
+xkcd:aqua green	12e193	false
+xkcd:aqua marine	2ee8bb	false
+xkcd:aquamarine	04d8b2	false
+xkcd:army green	4b5d16	false
+xkcd:asparagus	77ab56	false
+xkcd:aubergine	3d0734	false
+xkcd:auburn	9a3001	false
+xkcd:avocado	90b134	false
+xkcd:avocado green	87a922	false
+xkcd:azul	1d5dec	false
+xkcd:azure	069af3	false
+xkcd:baby blue	a2cffe	false
+xkcd:baby green	8cff9e	false
+xkcd:baby pink	ffb7ce	false
+xkcd:baby poo	ab9004	false
+xkcd:baby poop	937c00	false
+xkcd:baby poop green	8f9805	false
+xkcd:baby puke green	b6c406	false
+xkcd:baby purple	ca9bf7	false
+xkcd:baby shit brown	ad900d	false
+xkcd:baby shit green	889717	false
+xkcd:banana	ffff7e	false
+xkcd:banana yellow	fafe4b	false
+xkcd:barbie pink	fe46a5	false
+xkcd:barf green	94ac02	false
+xkcd:barney	ac1db8	false
+xkcd:barney purple	a00498	false
+xkcd:battleship gray	6b7c85	false
+xkcd:battleship grey	6b7c85	false
+xkcd:beige	e6daa6	false
+xkcd:berry	990f4b	false
+xkcd:bile	b5c306	false
+xkcd:black	000000	false
+xkcd:bland	afa88b	false
+xkcd:blood	770001	false
+xkcd:blood orange	fe4b03	false
+xkcd:blood red	980002	false
+xkcd:blue	0343df	false
+xkcd:blue blue	2242c7	false
+xkcd:blue gray	607c8e	false
+xkcd:blue green	137e6d	false
+xkcd:blue grey	607c8e	false
+xkcd:blue purple	5729ce	false
+xkcd:blue violet	5d06e9	false
+xkcd:blue with a hint of purple	533cc6	false
+xkcd:blue/gray	758da3	false
+xkcd:blue/green	0f9b8e	false
+xkcd:blue/grey	758da3	false
+xkcd:blue/purple	5a06ef	false
+xkcd:blueberry	464196	false
+xkcd:bluegray	85a3b2	false
+xkcd:bluegreen	017a79	false
+xkcd:bluegrey	85a3b2	false
+xkcd:bluey gray	89a0b0	false
+xkcd:bluey green	2bb179	false
+xkcd:bluey grey	89a0b0	false
+xkcd:bluey purple	6241c7	false
+xkcd:bluish	2976bb	false
+xkcd:bluish gray	748b97	false
+xkcd:bluish green	10a674	false
+xkcd:bluish grey	748b97	false
+xkcd:bluish purple	703be7	false
+xkcd:blurple	5539cc	false
+xkcd:blush	f29e8e	false
+xkcd:blush pink	fe828c	false
+xkcd:booger	9bb53c	false
+xkcd:booger green	96b403	false
+xkcd:bordeaux	7b002c	false
+xkcd:boring green	63b365	false
+xkcd:bottle green	044a05	false
+xkcd:brick	a03623	false
+xkcd:brick orange	c14a09	false
+xkcd:brick red	8f1402	false
+xkcd:bright aqua	0bf9ea	false
+xkcd:bright blue	0165fc	false
+xkcd:bright cyan	41fdfe	false
+xkcd:bright green	01ff07	false
+xkcd:bright lavender	c760ff	false
+xkcd:bright light blue	26f7fd	false
+xkcd:bright light green	2dfe54	false
+xkcd:bright lilac	c95efb	false
+xkcd:bright lime	87fd05	false
+xkcd:bright lime green	65fe08	false
+xkcd:bright magenta	ff08e8	false
+xkcd:bright olive	9cbb04	false
+xkcd:bright orange	ff5b00	false
+xkcd:bright pink	fe01b1	false
+xkcd:bright purple	be03fd	false
+xkcd:bright red	ff000d	false
+xkcd:bright sea green	05ffa6	false
+xkcd:bright sky blue	02ccfe	false
+xkcd:bright teal	01f9c6	false
+xkcd:bright turquoise	0ffef9	false
+xkcd:bright violet	ad0afd	false
+xkcd:bright yellow	fffd01	false
+xkcd:bright yellow green	9dff00	false
+xkcd:british racing green	05480d	false
+xkcd:bronze	a87900	false
+xkcd:brown	653700	false
+xkcd:brown gray	8d8468	false
+xkcd:brown green	706c11	false
+xkcd:brown grey	8d8468	false
+xkcd:brown orange	b96902	false
+xkcd:brown red	922b05	false
+xkcd:brown yellow	b29705	false
+xkcd:brownish	9c6d57	false
+xkcd:brownish gray	86775f	false
+xkcd:brownish green	6a6e09	false
+xkcd:brownish grey	86775f	false
+xkcd:brownish orange	cb7723	false
+xkcd:brownish pink	c27e79	false
+xkcd:brownish purple	76424e	false
+xkcd:brownish red	9e3623	false
+xkcd:brownish yellow	c9b003	false
+xkcd:browny green	6f6c0a	false
+xkcd:browny orange	ca6b02	false
+xkcd:bruise	7e4071	false
+xkcd:bubble gum pink	ff69af	false
+xkcd:bubblegum	ff6cb5	false
+xkcd:bubblegum pink	fe83cc	false
+xkcd:buff	fef69e	false
+xkcd:burgundy	610023	false
+xkcd:burnt orange	c04e01	false
+xkcd:burnt red	9f2305	false
+xkcd:burnt siena	b75203	false
+xkcd:burnt sienna	b04e0f	false
+xkcd:burnt umber	a0450e	false
+xkcd:burnt yellow	d5ab09	false
+xkcd:burple	6832e3	false
+xkcd:butter	ffff81	false
+xkcd:butter yellow	fffd74	false
+xkcd:butterscotch	fdb147	false
+xkcd:cadet blue	4e7496	false
+xkcd:camel	c69f59	false
+xkcd:camo	7f8f4e	false
+xkcd:camo green	526525	false
+xkcd:camouflage green	4b6113	false
+xkcd:canary	fdff63	false
+xkcd:canary yellow	fffe40	false
+xkcd:candy pink	ff63e9	false
+xkcd:caramel	af6f09	false
+xkcd:carmine	9d0216	false
+xkcd:carnation	fd798f	false
+xkcd:carnation pink	ff7fa7	false
+xkcd:carolina blue	8ab8fe	false
+xkcd:celadon	befdb7	false
+xkcd:celery	c1fd95	false
+xkcd:cement	a5a391	false
+xkcd:cerise	de0c62	false
+xkcd:cerulean	0485d1	false
+xkcd:cerulean blue	056eee	false
+xkcd:charcoal	343837	false
+xkcd:charcoal gray	3c4142	false
+xkcd:charcoal grey	3c4142	false
+xkcd:chartreuse	c1f80a	false
+xkcd:cherry	cf0234	false
+xkcd:cherry red	f7022a	false
+xkcd:chestnut	742802	false
+xkcd:chocolate	3d1c02	false
+xkcd:chocolate brown	411900	false
+xkcd:cinnamon	ac4f06	false
+xkcd:claret	680018	false
+xkcd:clay	b66a50	false
+xkcd:clay brown	b2713d	false
+xkcd:clear blue	247afd	false
+xkcd:cloudy blue	acc2d9	false
+xkcd:cobalt	1e488f	false
+xkcd:cobalt blue	030aa7	false
+xkcd:cocoa	875f42	false
+xkcd:coffee	a6814c	false
+xkcd:cool blue	4984b8	false
+xkcd:cool gray	95a3a6	false
+xkcd:cool green	33b864	false
+xkcd:cool grey	95a3a6	false
+xkcd:copper	b66325	false
+xkcd:coral	fc5a50	false
+xkcd:coral pink	ff6163	false
+xkcd:cornflower	6a79f7	false
+xkcd:cornflower blue	5170d7	false
+xkcd:cranberry	9e003a	false
+xkcd:cream	ffffc2	false
+xkcd:creme	ffffb6	false
+xkcd:crimson	8c000f	false
+xkcd:custard	fffd78	false
+xkcd:cyan	00ffff	false
+xkcd:dandelion	fedf08	false
+xkcd:dark	1b2431	false
+xkcd:dark aqua	05696b	false
+xkcd:dark aquamarine	017371	false
+xkcd:dark beige	ac9362	false
+xkcd:dark blue	00035b	false
+xkcd:dark blue gray	1f3b4d	false
+xkcd:dark blue green	005249	false
+xkcd:dark blue grey	1f3b4d	false
+xkcd:dark brown	341c02	false
+xkcd:dark coral	cf524e	false
+xkcd:dark cream	fff39a	false
+xkcd:dark cyan	0a888a	false
+xkcd:dark forest green	002d04	false
+xkcd:dark fuchsia	9d0759	false
+xkcd:dark gold	b59410	false
+xkcd:dark grass green	388004	false
+xkcd:dark gray	363737	false
+xkcd:dark gray blue	29465b	false
+xkcd:dark green	033500	false
+xkcd:dark green blue	1f6357	false
+xkcd:dark grey	363737	false
+xkcd:dark grey blue	29465b	false
+xkcd:dark hot pink	d90166	false
+xkcd:dark indigo	1f0954	false
+xkcd:dark khaki	9b8f55	false
+xkcd:dark lavender	856798	false
+xkcd:dark lilac	9c6da5	false
+xkcd:dark lime	84b701	false
+xkcd:dark lime green	7ebd01	false
+xkcd:dark magenta	960056	false
+xkcd:dark maroon	3c0008	false
+xkcd:dark mauve	874c62	false
+xkcd:dark mint	48c072	false
+xkcd:dark mint green	20c073	false
+xkcd:dark mustard	a88905	false
+xkcd:dark navy	000435	false
+xkcd:dark navy blue	00022e	false
+xkcd:dark olive	373e02	false
+xkcd:dark olive green	3c4d03	false
+xkcd:dark orange	c65102	false
+xkcd:dark pastel green	56ae57	false
+xkcd:dark peach	de7e5d	false
+xkcd:dark periwinkle	665fd1	false
+xkcd:dark pink	cb416b	false
+xkcd:dark plum	3f012c	false
+xkcd:dark purple	35063e	false
+xkcd:dark red	840000	false
+xkcd:dark rose	b5485d	false
+xkcd:dark royal blue	02066f	false
+xkcd:dark sage	598556	false
+xkcd:dark salmon	c85a53	false
+xkcd:dark sand	a88f59	false
+xkcd:dark sea green	11875d	false
+xkcd:dark seafoam	1fb57a	false
+xkcd:dark seafoam green	3eaf76	false
+xkcd:dark sky blue	448ee4	false
+xkcd:dark slate blue	214761	false
+xkcd:dark tan	af884a	false
+xkcd:dark taupe	7f684e	false
+xkcd:dark teal	014d4e	false
+xkcd:dark turquoise	045c5a	false
+xkcd:dark violet	34013f	false
+xkcd:dark yellow	d5b60a	false
+xkcd:dark yellow green	728f02	false
+xkcd:darkblue	030764	false
+xkcd:darkgreen	054907	false
+xkcd:darkish blue	014182	false
+xkcd:darkish green	287c37	false
+xkcd:darkish pink	da467d	false
+xkcd:darkish purple	751973	false
+xkcd:darkish red	a90308	false
+xkcd:deep aqua	08787f	false
+xkcd:deep blue	040273	false
+xkcd:deep brown	410200	false
+xkcd:deep green	02590f	false
+xkcd:deep lavender	8d5eb7	false
+xkcd:deep lilac	966ebd	false
+xkcd:deep magenta	a0025c	false
+xkcd:deep orange	dc4d01	false
+xkcd:deep pink	cb0162	false
+xkcd:deep purple	36013f	false
+xkcd:deep red	9a0200	false
+xkcd:deep rose	c74767	false
+xkcd:deep sea blue	015482	false
+xkcd:deep sky blue	0d75f8	false
+xkcd:deep teal	00555a	false
+xkcd:deep turquoise	017374	false
+xkcd:deep violet	490648	false
+xkcd:denim	3b638c	false
+xkcd:denim blue	3b5b92	false
+xkcd:desert	ccad60	false
+xkcd:diarrhea	9f8303	false
+xkcd:dirt	8a6e45	false
+xkcd:dirt brown	836539	false
+xkcd:dirty blue	3f829d	false
+xkcd:dirty green	667e2c	false
+xkcd:dirty orange	c87606	false
+xkcd:dirty pink	ca7b80	false
+xkcd:dirty purple	734a65	false
+xkcd:dirty yellow	cdc50a	false
+xkcd:dodger blue	3e82fc	false
+xkcd:drab	828344	false
+xkcd:drab green	749551	false
+xkcd:dried blood	4b0101	false
+xkcd:duck egg blue	c3fbf4	false
+xkcd:dull blue	49759c	false
+xkcd:dull brown	876e4b	false
+xkcd:dull green	74a662	false
+xkcd:dull orange	d8863b	false
+xkcd:dull pink	d5869d	false
+xkcd:dull purple	84597e	false
+xkcd:dull red	bb3f3f	false
+xkcd:dull teal	5f9e8f	false
+xkcd:dull yellow	eedc5b	false
+xkcd:dusk	4e5481	false
+xkcd:dusk blue	26538d	false
+xkcd:dusky blue	475f94	false
+xkcd:dusky pink	cc7a8b	false
+xkcd:dusky purple	895b7b	false
+xkcd:dusky rose	ba6873	false
+xkcd:dust	b2996e	false
+xkcd:dusty blue	5a86ad	false
+xkcd:dusty green	76a973	false
+xkcd:dusty lavender	ac86a8	false
+xkcd:dusty orange	f0833a	false
+xkcd:dusty pink	d58a94	false
+xkcd:dusty purple	825f87	false
+xkcd:dusty red	b9484e	false
+xkcd:dusty rose	c0737a	false
+xkcd:dusty teal	4c9085	false
+xkcd:earth	a2653e	false
+xkcd:easter green	8cfd7e	false
+xkcd:easter purple	c071fe	false
+xkcd:ecru	feffca	false
+xkcd:egg shell	fffcc4	false
+xkcd:eggplant	380835	false
+xkcd:eggplant purple	430541	false
+xkcd:eggshell	ffffd4	false
+xkcd:eggshell blue	c4fff7	false
+xkcd:electric blue	0652ff	false
+xkcd:electric green	21fc0d	false
+xkcd:electric lime	a8ff04	false
+xkcd:electric pink	ff0490	false
+xkcd:electric purple	aa23ff	false
+xkcd:emerald	01a049	false
+xkcd:emerald green	028f1e	false
+xkcd:evergreen	05472a	false
+xkcd:faded blue	658cbb	false
+xkcd:faded green	7bb274	false
+xkcd:faded orange	f0944d	false
+xkcd:faded pink	de9dac	false
+xkcd:faded purple	916e99	false
+xkcd:faded red	d3494e	false
+xkcd:faded yellow	feff7f	false
+xkcd:fawn	cfaf7b	false
+xkcd:fern	63a950	false
+xkcd:fern green	548d44	false
+xkcd:fire engine red	fe0002	false
+xkcd:flat blue	3c73a8	false
+xkcd:flat green	699d4c	false
+xkcd:fluorescent green	08ff08	false
+xkcd:fluro green	0aff02	false
+xkcd:foam green	90fda9	false
+xkcd:forest	0b5509	false
+xkcd:forest green	06470c	false
+xkcd:forrest green	154406	false
+xkcd:french blue	436bad	false
+xkcd:fresh green	69d84f	false
+xkcd:frog green	58bc08	false
+xkcd:fuchsia	ed0dd9	false
+xkcd:gold	dbb40c	false
+xkcd:golden	f5bf03	false
+xkcd:golden brown	b27a01	false
+xkcd:golden rod	f9bc08	false
+xkcd:golden yellow	fec615	false
+xkcd:goldenrod	fac205	false
+xkcd:grape	6c3461	false
+xkcd:grape purple	5d1451	false
+xkcd:grapefruit	fd5956	false
+xkcd:grass	5cac2d	false
+xkcd:grass green	3f9b0b	false
+xkcd:grassy green	419c03	false
+xkcd:gray	929591	false
+xkcd:gray blue	6b8ba4	false
+xkcd:gray brown	7f7053	false
+xkcd:gray green	789b73	false
+xkcd:gray pink	c3909b	false
+xkcd:gray purple	826d8c	false
+xkcd:gray teal	5e9b8a	false
+xkcd:gray/blue	647d8e	false
+xkcd:gray/green	86a17d	false
+xkcd:grayblue	77a1b5	false
+xkcd:grayish	a8a495	false
+xkcd:grayish blue	5e819d	false
+xkcd:grayish brown	7a6a4f	false
+xkcd:grayish green	82a67d	false
+xkcd:grayish pink	c88d94	false
+xkcd:grayish purple	887191	false
+xkcd:grayish teal	719f91	false
+xkcd:green	15b01a	false
+xkcd:green apple	5edc1f	false
+xkcd:green blue	06b48b	false
+xkcd:green brown	544e03	false
+xkcd:green gray	77926f	false
+xkcd:green grey	77926f	false
+xkcd:green teal	0cb577	false
+xkcd:green yellow	c9ff27	false
+xkcd:green/blue	01c08d	false
+xkcd:green/yellow	b5ce08	false
+xkcd:greenblue	23c48b	false
+xkcd:greenish	40a368	false
+xkcd:greenish beige	c9d179	false
+xkcd:greenish blue	0b8b87	false
+xkcd:greenish brown	696112	false
+xkcd:greenish cyan	2afeb7	false
+xkcd:greenish gray	96ae8d	false
+xkcd:greenish grey	96ae8d	false
+xkcd:greenish tan	bccb7a	false
+xkcd:greenish teal	32bf84	false
+xkcd:greenish turquoise	00fbb0	false
+xkcd:greenish yellow	cdfd02	false
+xkcd:greeny blue	42b395	false
+xkcd:greeny brown	696006	false
+xkcd:greeny gray	7ea07a	false
+xkcd:greeny grey	7ea07a	false
+xkcd:greeny yellow	c6f808	false
+xkcd:grey	929591	false
+xkcd:grey blue	6b8ba4	false
+xkcd:grey brown	7f7053	false
+xkcd:grey green	789b73	false
+xkcd:grey pink	c3909b	false
+xkcd:grey purple	826d8c	false
+xkcd:grey teal	5e9b8a	false
+xkcd:grey/blue	647d8e	false
+xkcd:grey/green	86a17d	false
+xkcd:greyblue	77a1b5	false
+xkcd:greyish	a8a495	false
+xkcd:greyish blue	5e819d	false
+xkcd:greyish brown	7a6a4f	false
+xkcd:greyish green	82a67d	false
+xkcd:greyish pink	c88d94	false
+xkcd:greyish purple	887191	false
+xkcd:greyish teal	719f91	false
+xkcd:gross green	a0bf16	false
+xkcd:gunmetal	536267	false
+xkcd:hazel	8e7618	false
+xkcd:heather	a484ac	false
+xkcd:heliotrope	d94ff5	false
+xkcd:highlighter green	1bfc06	false
+xkcd:hospital green	9be5aa	false
+xkcd:hot green	25ff29	false
+xkcd:hot magenta	f504c9	false
+xkcd:hot pink	ff028d	false
+xkcd:hot purple	cb00f5	false
+xkcd:hunter green	0b4008	false
+xkcd:ice	d6fffa	false
+xkcd:ice blue	d7fffe	false
+xkcd:icky green	8fae22	false
+xkcd:indian red	850e04	false
+xkcd:indigo	380282	false
+xkcd:indigo blue	3a18b1	false
+xkcd:iris	6258c4	false
+xkcd:irish green	019529	false
+xkcd:ivory	ffffcb	false
+xkcd:jade	1fa774	false
+xkcd:jade green	2baf6a	false
+xkcd:jungle green	048243	false
+xkcd:kelley green	009337	false
+xkcd:kelly green	02ab2e	false
+xkcd:kermit green	5cb200	false
+xkcd:key lime	aeff6e	false
+xkcd:khaki	aaa662	false
+xkcd:khaki green	728639	false
+xkcd:kiwi	9cef43	false
+xkcd:kiwi green	8ee53f	false
+xkcd:lavender	c79fef	false
+xkcd:lavender blue	8b88f8	false
+xkcd:lavender pink	dd85d7	false
+xkcd:lawn green	4da409	false
+xkcd:leaf	71aa34	false
+xkcd:leaf green	5ca904	false
+xkcd:leafy green	51b73b	false
+xkcd:leather	ac7434	false
+xkcd:lemon	fdff52	false
+xkcd:lemon green	adf802	false
+xkcd:lemon lime	bffe28	false
+xkcd:lemon yellow	fdff38	false
+xkcd:lichen	8fb67b	false
+xkcd:light aqua	8cffdb	false
+xkcd:light aquamarine	7bfdc7	false
+xkcd:light beige	fffeb6	false
+xkcd:light blue	95d0fc	false
+xkcd:light blue gray	b7c9e2	false
+xkcd:light blue green	7efbb3	false
+xkcd:light blue grey	b7c9e2	false
+xkcd:light bluish green	76fda8	false
+xkcd:light bright green	53fe5c	false
+xkcd:light brown	ad8150	false
+xkcd:light burgundy	a8415b	false
+xkcd:light cyan	acfffc	false
+xkcd:light eggplant	894585	false
+xkcd:light forest green	4f9153	false
+xkcd:light gold	fddc5c	false
+xkcd:light grass green	9af764	false
+xkcd:light gray	d8dcd6	false
+xkcd:light gray blue	9dbcd4	false
+xkcd:light gray green	b7e1a1	false
+xkcd:light green	96f97b	false
+xkcd:light green blue	56fca2	false
+xkcd:light greenish blue	63f7b4	false
+xkcd:light grey	d8dcd6	false
+xkcd:light grey blue	9dbcd4	false
+xkcd:light grey green	b7e1a1	false
+xkcd:light indigo	6d5acf	false
+xkcd:light khaki	e6f2a2	false
+xkcd:light lavendar	efc0fe	false
+xkcd:light lavender	dfc5fe	false
+xkcd:light light blue	cafffb	false
+xkcd:light light green	c8ffb0	false
+xkcd:light lilac	edc8ff	false
+xkcd:light lime	aefd6c	false
+xkcd:light lime green	b9ff66	false
+xkcd:light magenta	fa5ff7	false
+xkcd:light maroon	a24857	false
+xkcd:light mauve	c292a1	false
+xkcd:light mint	b6ffbb	false
+xkcd:light mint green	a6fbb2	false
+xkcd:light moss green	a6c875	false
+xkcd:light mustard	f7d560	false
+xkcd:light navy	155084	false
+xkcd:light navy blue	2e5a88	false
+xkcd:light neon green	4efd54	false
+xkcd:light olive	acbf69	false
+xkcd:light olive green	a4be5c	false
+xkcd:light orange	fdaa48	false
+xkcd:light pastel green	b2fba5	false
+xkcd:light pea green	c4fe82	false
+xkcd:light peach	ffd8b1	false
+xkcd:light periwinkle	c1c6fc	false
+xkcd:light pink	ffd1df	false
+xkcd:light plum	9d5783	false
+xkcd:light purple	bf77f6	false
+xkcd:light red	ff474c	false
+xkcd:light rose	ffc5cb	false
+xkcd:light royal blue	3a2efe	false
+xkcd:light sage	bcecac	false
+xkcd:light salmon	fea993	false
+xkcd:light sea green	98f6b0	false
+xkcd:light seafoam	a0febf	false
+xkcd:light seafoam green	a7ffb5	false
+xkcd:light sky blue	c6fcff	false
+xkcd:light tan	fbeeac	false
+xkcd:light teal	90e4c1	false
+xkcd:light turquoise	7ef4cc	false
+xkcd:light urple	b36ff6	false
+xkcd:light violet	d6b4fc	false
+xkcd:light yellow	fffe7a	false
+xkcd:light yellow green	ccfd7f	false
+xkcd:light yellowish green	c2ff89	false
+xkcd:lightblue	7bc8f6	false
+xkcd:lighter green	75fd63	false
+xkcd:lighter purple	a55af4	false
+xkcd:lightgreen	76ff7b	false
+xkcd:lightish blue	3d7afd	false
+xkcd:lightish green	61e160	false
+xkcd:lightish purple	a552e6	false
+xkcd:lightish red	fe2f4a	false
+xkcd:lilac	cea2fd	false
+xkcd:liliac	c48efd	false
+xkcd:lime	aaff32	false
+xkcd:lime green	89fe05	false
+xkcd:lime yellow	d0fe1d	false
+xkcd:lipstick	d5174e	false
+xkcd:lipstick red	c0022f	false
+xkcd:macaroni and cheese	efb435	false
+xkcd:magenta	c20078	false
+xkcd:mahogany	4a0100	false
+xkcd:maize	f4d054	false
+xkcd:mango	ffa62b	false
+xkcd:manilla	fffa86	false
+xkcd:marigold	fcc006	false
+xkcd:marine	042e60	false
+xkcd:marine blue	01386a	false
+xkcd:maroon	650021	false
+xkcd:mauve	ae7181	false
+xkcd:medium blue	2c6fbb	false
+xkcd:medium brown	7f5112	false
+xkcd:medium gray	7d7f7c	false
+xkcd:medium green	39ad48	false
+xkcd:medium grey	7d7f7c	false
+xkcd:medium pink	f36196	false
+xkcd:medium purple	9e43a2	false
+xkcd:melon	ff7855	false
+xkcd:merlot	730039	false
+xkcd:metallic blue	4f738e	false
+xkcd:mid blue	276ab3	false
+xkcd:mid green	50a747	false
+xkcd:midnight	03012d	false
+xkcd:midnight blue	020035	false
+xkcd:midnight purple	280137	false
+xkcd:military green	667c3e	false
+xkcd:milk chocolate	7f4e1e	false
+xkcd:mint	9ffeb0	false
+xkcd:mint green	8fff9f	false
+xkcd:minty green	0bf77d	false
+xkcd:mocha	9d7651	false
+xkcd:moss	769958	false
+xkcd:moss green	658b38	false
+xkcd:mossy green	638b27	false
+xkcd:mud	735c12	false
+xkcd:mud brown	60460f	false
+xkcd:mud green	606602	false
+xkcd:muddy brown	886806	false
+xkcd:muddy green	657432	false
+xkcd:muddy yellow	bfac05	false
+xkcd:mulberry	920a4e	false
+xkcd:murky green	6c7a0e	false
+xkcd:mushroom	ba9e88	false
+xkcd:mustard	ceb301	false
+xkcd:mustard brown	ac7e04	false
+xkcd:mustard green	a8b504	false
+xkcd:mustard yellow	d2bd0a	false
+xkcd:muted blue	3b719f	false
+xkcd:muted green	5fa052	false
+xkcd:muted pink	d1768f	false
+xkcd:muted purple	805b87	false
+xkcd:nasty green	70b23f	false
+xkcd:navy	01153e	false
+xkcd:navy blue	001146	false
+xkcd:navy green	35530a	false
+xkcd:neon blue	04d9ff	false
+xkcd:neon green	0cff0c	false
+xkcd:neon pink	fe019a	false
+xkcd:neon purple	bc13fe	false
+xkcd:neon red	ff073a	false
+xkcd:neon yellow	cfff04	false
+xkcd:nice blue	107ab0	false
+xkcd:night blue	040348	false
+xkcd:ocean	017b92	false
+xkcd:ocean blue	03719c	false
+xkcd:ocean green	3d9973	false
+xkcd:ocher	bf9b0c	false
+xkcd:ochre	bf9005	false
+xkcd:ocre	c69c04	false
+xkcd:off blue	5684ae	false
+xkcd:off green	6ba353	false
+xkcd:off white	ffffe4	false
+xkcd:off yellow	f1f33f	false
+xkcd:old pink	c77986	false
+xkcd:old rose	c87f89	false
+xkcd:olive	6e750e	false
+xkcd:olive brown	645403	false
+xkcd:olive drab	6f7632	false
+xkcd:olive green	677a04	false
+xkcd:olive yellow	c2b709	false
+xkcd:orange	f97306	false
+xkcd:orange brown	be6400	false
+xkcd:orange pink	ff6f52	false
+xkcd:orange red	fd411e	false
+xkcd:orange yellow	ffad01	false
+xkcd:orangeish	fd8d49	false
+xkcd:orangered	fe420f	false
+xkcd:orangey brown	b16002	false
+xkcd:orangey red	fa4224	false
+xkcd:orangey yellow	fdb915	false
+xkcd:orangish	fc824a	false
+xkcd:orangish brown	b25f03	false
+xkcd:orangish red	f43605	false
+xkcd:orchid	c875c4	false
+xkcd:pale	fff9d0	false
+xkcd:pale aqua	b8ffeb	false
+xkcd:pale blue	d0fefe	false
+xkcd:pale brown	b1916e	false
+xkcd:pale cyan	b7fffa	false
+xkcd:pale gold	fdde6c	false
+xkcd:pale gray	fdfdfe	false
+xkcd:pale green	c7fdb5	false
+xkcd:pale grey	fdfdfe	false
+xkcd:pale lavender	eecffe	false
+xkcd:pale light green	b1fc99	false
+xkcd:pale lilac	e4cbff	false
+xkcd:pale lime	befd73	false
+xkcd:pale lime green	b1ff65	false
+xkcd:pale magenta	d767ad	false
+xkcd:pale mauve	fed0fc	false
+xkcd:pale olive	b9cc81	false
+xkcd:pale olive green	b1d27b	false
+xkcd:pale orange	ffa756	false
+xkcd:pale peach	ffe5ad	false
+xkcd:pale pink	ffcfdc	false
+xkcd:pale purple	b790d4	false
+xkcd:pale red	d9544d	false
+xkcd:pale rose	fdc1c5	false
+xkcd:pale salmon	ffb19a	false
+xkcd:pale sky blue	bdf6fe	false
+xkcd:pale teal	82cbb2	false
+xkcd:pale turquoise	a5fbd5	false
+xkcd:pale violet	ceaefa	false
+xkcd:pale yellow	ffff84	false
+xkcd:parchment	fefcaf	false
+xkcd:pastel blue	a2bffe	false
+xkcd:pastel green	b0ff9d	false
+xkcd:pastel orange	ff964f	false
+xkcd:pastel pink	ffbacd	false
+xkcd:pastel purple	caa0ff	false
+xkcd:pastel red	db5856	false
+xkcd:pastel yellow	fffe71	false
+xkcd:pea	a4bf20	false
+xkcd:pea green	8eab12	false
+xkcd:pea soup	929901	false
+xkcd:pea soup green	94a617	false
+xkcd:peach	ffb07c	false
+xkcd:peachy pink	ff9a8a	false
+xkcd:peacock blue	016795	false
+xkcd:pear	cbf85f	false
+xkcd:periwinkle	8e82fe	false
+xkcd:periwinkle blue	8f99fb	false
+xkcd:perrywinkle	8f8ce7	false
+xkcd:petrol	005f6a	false
+xkcd:pig pink	e78ea5	false
+xkcd:pine	2b5d34	false
+xkcd:pine green	0a481e	false
+xkcd:pink	ff81c0	false
+xkcd:pink purple	db4bda	false
+xkcd:pink red	f5054f	false
+xkcd:pink/purple	ef1de7	false
+xkcd:pinkish	d46a7e	false
+xkcd:pinkish brown	b17261	false
+xkcd:pinkish gray	c8aca9	false
+xkcd:pinkish grey	c8aca9	false
+xkcd:pinkish orange	ff724c	false
+xkcd:pinkish purple	d648d7	false
+xkcd:pinkish red	f10c45	false
+xkcd:pinkish tan	d99b82	false
+xkcd:pinky	fc86aa	false
+xkcd:pinky purple	c94cbe	false
+xkcd:pinky red	fc2647	false
+xkcd:piss yellow	ddd618	false
+xkcd:pistachio	c0fa8b	false
+xkcd:plum	580f41	false
+xkcd:plum purple	4e0550	false
+xkcd:poison green	40fd14	false
+xkcd:poo	8f7303	false
+xkcd:poo brown	885f01	false
+xkcd:poop	7f5e00	false
+xkcd:poop brown	7a5901	false
+xkcd:poop green	6f7c00	false
+xkcd:powder blue	b1d1fc	false
+xkcd:powder pink	ffb2d0	false
+xkcd:primary blue	0804f9	false
+xkcd:prussian blue	004577	false
+xkcd:puce	a57e52	false
+xkcd:puke	a5a502	false
+xkcd:puke brown	947706	false
+xkcd:puke green	9aae07	false
+xkcd:puke yellow	c2be0e	false
+xkcd:pumpkin	e17701	false
+xkcd:pumpkin orange	fb7d07	false
+xkcd:pure blue	0203e2	false
+xkcd:purple	7e1e9c	false
+xkcd:purple blue	632de9	false
+xkcd:purple brown	673a3f	false
+xkcd:purple gray	866f85	false
+xkcd:purple grey	866f85	false
+xkcd:purple pink	e03fd8	false
+xkcd:purple red	990147	false
+xkcd:purple/blue	5d21d0	false
+xkcd:purple/pink	d725de	false
+xkcd:purpleish	98568d	false
+xkcd:purpleish blue	6140ef	false
+xkcd:purpleish pink	df4ec8	false
+xkcd:purpley	8756e4	false
+xkcd:purpley blue	5f34e7	false
+xkcd:purpley gray	947e94	false
+xkcd:purpley grey	947e94	false
+xkcd:purpley pink	c83cb9	false
+xkcd:purplish	94568c	false
+xkcd:purplish blue	601ef9	false
+xkcd:purplish brown	6b4247	false
+xkcd:purplish gray	7a687f	false
+xkcd:purplish grey	7a687f	false
+xkcd:purplish pink	ce5dae	false
+xkcd:purplish red	b0054b	false
+xkcd:purply	983fb2	false
+xkcd:purply blue	661aee	false
+xkcd:purply pink	f075e6	false
+xkcd:putty	beae8a	false
+xkcd:racing green	014600	false
+xkcd:radioactive green	2cfa1f	false
+xkcd:raspberry	b00149	false
+xkcd:raw sienna	9a6200	false
+xkcd:raw umber	a75e09	false
+xkcd:really light blue	d4ffff	false
+xkcd:red	e50000	false
+xkcd:red brown	8b2e16	false
+xkcd:red orange	fd3c06	false
+xkcd:red pink	fa2a55	false
+xkcd:red purple	820747	false
+xkcd:red violet	9e0168	false
+xkcd:red wine	8c0034	false
+xkcd:reddish	c44240	false
+xkcd:reddish brown	7f2b0a	false
+xkcd:reddish gray	997570	false
+xkcd:reddish grey	997570	false
+xkcd:reddish orange	f8481c	false
+xkcd:reddish pink	fe2c54	false
+xkcd:reddish purple	910951	false
+xkcd:reddy brown	6e1005	false
+xkcd:rich blue	021bf9	false
+xkcd:rich purple	720058	false
+xkcd:robin egg blue	8af1fe	false
+xkcd:robin's egg	6dedfd	false
+xkcd:robin's egg blue	98eff9	false
+xkcd:rosa	fe86a4	false
+xkcd:rose	cf6275	false
+xkcd:rose pink	f7879a	false
+xkcd:rose red	be013c	false
+xkcd:rosy pink	f6688e	false
+xkcd:rouge	ab1239	false
+xkcd:royal	0c1793	false
+xkcd:royal blue	0504aa	false
+xkcd:royal purple	4b006e	false
+xkcd:ruby	ca0147	false
+xkcd:russet	a13905	false
+xkcd:rust	a83c09	false
+xkcd:rust brown	8b3103	false
+xkcd:rust orange	c45508	false
+xkcd:rust red	aa2704	false
+xkcd:rusty orange	cd5909	false
+xkcd:rusty red	af2f0d	false
+xkcd:saffron	feb209	false
+xkcd:sage	87ae73	false
+xkcd:sage green	88b378	false
+xkcd:salmon	ff796c	false
+xkcd:salmon pink	fe7b7c	false
+xkcd:sand	e2ca76	false
+xkcd:sand brown	cba560	false
+xkcd:sand yellow	fce166	false
+xkcd:sandstone	c9ae74	false
+xkcd:sandy	f1da7a	false
+xkcd:sandy brown	c4a661	false
+xkcd:sandy yellow	fdee73	false
+xkcd:sap green	5c8b15	false
+xkcd:sapphire	2138ab	false
+xkcd:scarlet	be0119	false
+xkcd:sea	3c9992	false
+xkcd:sea blue	047495	false
+xkcd:sea green	53fca1	false
+xkcd:seafoam	80f9ad	false
+xkcd:seafoam blue	78d1b6	false
+xkcd:seafoam green	7af9ab	false
+xkcd:seaweed	18d17b	false
+xkcd:seaweed green	35ad6b	false
+xkcd:sepia	985e2b	false
+xkcd:shamrock	01b44c	false
+xkcd:shamrock green	02c14d	false
+xkcd:shit	7f5f00	false
+xkcd:shit brown	7b5804	false
+xkcd:shit green	758000	false
+xkcd:shocking pink	fe02a2	false
+xkcd:sick green	9db92c	false
+xkcd:sickly green	94b21c	false
+xkcd:sickly yellow	d0e429	false
+xkcd:sienna	a9561e	false
+xkcd:silver	c5c9c7	false
+xkcd:sky	82cafc	false
+xkcd:sky blue	75bbfd	false
+xkcd:slate	516572	false
+xkcd:slate blue	5b7c99	false
+xkcd:slate gray	59656d	false
+xkcd:slate green	658d6d	false
+xkcd:slate grey	59656d	false
+xkcd:slime green	99cc04	false
+xkcd:snot	acbb0d	false
+xkcd:snot green	9dc100	false
+xkcd:soft blue	6488ea	false
+xkcd:soft green	6fc276	false
+xkcd:soft pink	fdb0c0	false
+xkcd:soft purple	a66fb5	false
+xkcd:spearmint	1ef876	false
+xkcd:spring green	a9f971	false
+xkcd:spruce	0a5f38	false
+xkcd:squash	f2ab15	false
+xkcd:steel	738595	false
+xkcd:steel blue	5a7d9a	false
+xkcd:steel gray	6f828a	false
+xkcd:steel grey	6f828a	false
+xkcd:stone	ada587	false
+xkcd:stormy blue	507b9c	false
+xkcd:straw	fcf679	false
+xkcd:strawberry	fb2943	false
+xkcd:strong blue	0c06f7	false
+xkcd:strong pink	ff0789	false
+xkcd:sun yellow	ffdf22	false
+xkcd:sunflower	ffc512	false
+xkcd:sunflower yellow	ffda03	false
+xkcd:sunny yellow	fff917	false
+xkcd:sunshine yellow	fffd37	false
+xkcd:swamp	698339	false
+xkcd:swamp green	748500	false
+xkcd:tan	d1b26f	false
+xkcd:tan brown	ab7e4c	false
+xkcd:tan green	a9be70	false
+xkcd:tangerine	ff9408	false
+xkcd:taupe	b9a281	false
+xkcd:tea	65ab7c	false
+xkcd:tea green	bdf8a3	false
+xkcd:teal	029386	false
+xkcd:teal blue	01889f	false
+xkcd:teal green	25a36f	false
+xkcd:tealish	24bca8	false
+xkcd:tealish green	0cdc73	false
+xkcd:terra cotta	c9643b	false
+xkcd:terracota	cb6843	false
+xkcd:terracotta	ca6641	false
+xkcd:tiffany blue	7bf2da	false
+xkcd:tomato	ef4026	false
+xkcd:tomato red	ec2d01	false
+xkcd:topaz	13bbaf	false
+xkcd:toupe	c7ac7d	false
+xkcd:toxic green	61de2a	false
+xkcd:tree green	2a7e19	false
+xkcd:true blue	010fcc	false
+xkcd:true green	089404	false
+xkcd:turquoise	06c2ac	false
+xkcd:turquoise blue	06b1c4	false
+xkcd:turquoise green	04f489	false
+xkcd:turtle green	75b84f	false
+xkcd:twilight	4e518b	false
+xkcd:twilight blue	0a437a	false
+xkcd:ugly blue	31668a	false
+xkcd:ugly brown	7d7103	false
+xkcd:ugly green	7a9703	false
+xkcd:ugly pink	cd7584	false
+xkcd:ugly purple	a442a0	false
+xkcd:ugly yellow	d0c101	false
+xkcd:ultramarine	2000b1	false
+xkcd:ultramarine blue	1805db	false
+xkcd:umber	b26400	false
+xkcd:velvet	750851	false
+xkcd:vermillion	f4320c	false
+xkcd:very dark blue	000133	false
+xkcd:very dark brown	1d0200	false
+xkcd:very dark green	062e03	false
+xkcd:very dark purple	2a0134	false
+xkcd:very light blue	d5ffff	false
+xkcd:very light brown	d3b683	false
+xkcd:very light green	d1ffbd	false
+xkcd:very light pink	fff4f2	false
+xkcd:very light purple	f6cefc	false
+xkcd:very pale blue	d6fffe	false
+xkcd:very pale green	cffdbc	false
+xkcd:vibrant blue	0339f8	false
+xkcd:vibrant green	0add08	false
+xkcd:vibrant purple	ad03de	false
+xkcd:violet	9a0eea	false
+xkcd:violet blue	510ac9	false
+xkcd:violet pink	fb5ffc	false
+xkcd:violet red	a50055	false
+xkcd:viridian	1e9167	false
+xkcd:vivid blue	152eff	false
+xkcd:vivid green	2fef10	false
+xkcd:vivid purple	9900fa	false
+xkcd:vomit	a2a415	false
+xkcd:vomit green	89a203	false
+xkcd:vomit yellow	c7c10c	false
+xkcd:warm blue	4b57db	false
+xkcd:warm brown	964e02	false
+xkcd:warm gray	978a84	false
+xkcd:warm grey	978a84	false
+xkcd:warm pink	fb5581	false
+xkcd:warm purple	952e8f	false
+xkcd:washed out green	bcf5a6	false
+xkcd:water blue	0e87cc	false
+xkcd:watermelon	fd4659	false
+xkcd:weird green	3ae57f	false
+xkcd:wheat	fbdd7e	false
+xkcd:white	ffffff	false
+xkcd:windows blue	3778bf	false
+xkcd:wine	80013f	false
+xkcd:wine red	7b0323	false
+xkcd:wintergreen	20f986	false
+xkcd:wisteria	a87dc2	false
+xkcd:yellow	ffff14	false
+xkcd:yellow brown	b79400	false
+xkcd:yellow green	c0fb2d	false
+xkcd:yellow ochre	cb9d06	false
+xkcd:yellow orange	fcb001	false
+xkcd:yellow tan	ffe36e	false
+xkcd:yellow/green	c8fd3d	false
+xkcd:yellowgreen	bbf90f	false
+xkcd:yellowish	faee66	false
+xkcd:yellowish brown	9b7a01	false
+xkcd:yellowish green	b0dd16	false
+xkcd:yellowish orange	ffab0f	false
+xkcd:yellowish tan	fcfc81	false
+xkcd:yellowy brown	ae8b0c	false
+xkcd:yellowy green	bff128	false
+y	bfbf00	false
+yellow	ffff00	true
+yellowgreen	9acd32	true

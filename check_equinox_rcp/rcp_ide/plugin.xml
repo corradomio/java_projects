@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+    <extension point="org.eclipse.core.runtime.applications" id="application">
+        <application><run class="rcp.ide.Application"/></application>
+    </extension>
+    <extension point="org.eclipse.core.runtime.products" id="product">
+        <product application="rcp.ide.application" name="RCP File Explorer">
+            <property name="appName" value="RCP File Explorer"/>
+        </product>
+    </extension>
+    <extension point="org.eclipse.ui.perspectives">
+        <perspective id="rcp.ide.perspective" name="Explorer" class="rcp.ide.Perspective" fixed="true"/>
+    </extension>
+    <extension point="org.eclipse.ui.views">
+        <view id="rcp.ide.explorer" name="File Explorer" class="rcp.ide.ExplorerView" restorable="false"/>
+    </extension>
+    <extension point="org.eclipse.ui.commands">
+        <command id="rcp.ide.uiSpy" name="UI Spy" description="Show the SWT widget hierarchy"/>
+    </extension>
+    <extension point="org.eclipse.ui.handlers">
+        <handler commandId="rcp.ide.uiSpy" class="rcp.ide.UiSpyHandler"/>
+    </extension>
+    <!-- Adds UI Spy to the Window > Spies submenu of org.eclipse.pde.spy.core when that bundle is installed. -->
+    <extension point="org.eclipse.ui.menus">
+        <menuContribution locationURI="menu:org.eclipse.pde.spy.core.menu.e4spies?after=additions">
+            <command commandId="rcp.ide.uiSpy" label="UI Spy" style="push"/>
+        </menuContribution>
+    </extension>
+
+</plugin>

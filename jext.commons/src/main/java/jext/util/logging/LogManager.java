@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LogManager {
 
@@ -68,15 +70,33 @@ public class LogManager {
         return getLogger("$");
     }
 
-    public static Logger getLogger(String format, Object... args) {
-        return getLogger(String.format(format, args));
-    }
-
     public static Logger getLogger(Class<?> clazz) {
         return getLogger(clazz.getCanonicalName());
     }
 
-    public static Logger getLogger(String name){
+    public static Logger getLogger(String format, Object... args) {
+        String name = String.format(format, args);
         return new Logger(java.util.logging.Logger.getLogger(name));
+    }
+
+    // ----------------------------------------------------------------------
+
+    private static final Map<String, SystemLog> SYSTEM_LOG_MAP = new HashMap<>();
+
+    public static SystemLog getSystemLog(Class<?> clazz) {
+        return getSystemLog(clazz.getCanonicalName());
+    }
+
+    public static SystemLog getSystemLog(String format, Object... args) {
+        String name = String.format(format, args);
+
+        synchronized (SYSTEM_LOG_MAP) {
+            if (!SYSTEM_LOG_MAP.containsKey(name)) {
+                Logger logger = getLogger(name);
+                SystemLog systemLog = new SystemLog(logger);
+                SYSTEM_LOG_MAP.put(name, systemLog);
+            }
+            return SYSTEM_LOG_MAP.get(name);
+        }
     }
 }

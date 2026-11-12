@@ -4,12 +4,15 @@ import hageldave.jplotter.renderers.Renderer;
 import jext.jplotter.renderables.Legend;
 import jext.jplotter.renderables.Renderable;
 
+import java.awt.geom.Rectangle2D;
+
 public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRenderer  {
 
     private boolean automaticBounds = true;
+    private double aspectRatio = 1;
+
     private double marginX = 0;
     private double marginY = 0;
-    private double aspectRatio = 1;
 
     // ----------------------------------------------------------------------
 
@@ -40,8 +43,6 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
 
     public CoordSysRenderer setContent(CompleteRenderer content){
         super.setContent(content);
-        // if (automaticBounds)
-        //     setCoordinateView(content.getBounds().margin(marginX, marginY));
         return this;
     }
 
@@ -56,14 +57,14 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
     public CoordSysRenderer setMarginView(double marginX, double marginY) {
         this.marginX = marginX;
         this.marginY = marginY;
-        // if (automaticBounds) {
-        //     CompleteRenderer cr = getContent();
-        //     setCoordinateView(cr.getBounds().margin(marginX, marginY));
-        // }
         return this;
     }
 
     // ----------------------------------------------------------------------
+
+    public CoordSysRenderer setBounds(Bounds bounds){
+        return setCoordinateView(bounds);
+    }
 
     public CoordSysRenderer setCoordinateView(Bounds bounds){
         return setCoordinateView(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY);
@@ -94,7 +95,7 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
             if (bottom)
                 super.setLegendBottomHeight(legendSize);
             else
-                super.setLegendRightWidth(legendRightWidth);
+                super.setLegendRightWidth(legendSize);
         }
         if (bottom)
             super.setLegendBottom(legend);
@@ -114,11 +115,11 @@ public class CoordSysRenderer extends hageldave.jplotter.renderers.CoordSysRende
 
     // ----------------------------------------------------------------------
 
-    public CoordSysRenderer compose() {
-        if (automaticBounds) {
-            CompleteRenderer cr = getContent();
-            setCoordinateView(cr.getBounds().margin(marginX, marginY));
-        }
-        return this;
-    }
+    // public CoordSysRenderer compose() {
+    //     if (automaticBounds) {
+    //         CompleteRenderer cr = getContent();
+    //         setCoordinateView(cr.getBounds().margin(marginX, marginY));
+    //     }
+    //     return this;
+    // }
 }

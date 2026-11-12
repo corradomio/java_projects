@@ -1,5 +1,10 @@
 package jext.jplotter.canvas;
 
+import hageldave.jplotter.renderers.CoordSysRenderer;
+import hageldave.jplotter.renderers.Renderer;
+import jext.jplotter.renderers.CompleteRenderer;
+
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,7 +23,7 @@ public class JPlotterFrame extends JFrame {
 
     public JPlotterFrame(String title) {
         super(title);
-        canvas = new JPlotterCanvas();
+        canvas = new OpenGLCanvas();
         init();
     }
 
@@ -32,7 +37,7 @@ public class JPlotterFrame extends JFrame {
     private void init() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(canvas, BorderLayout.CENTER);
+        getContentPane().add((JComponent)canvas, BorderLayout.CENTER);
 
         int width = 1440;
 
@@ -53,9 +58,29 @@ public class JPlotterFrame extends JFrame {
         return canvas;
     }
 
+    public Renderer getRenderer() {
+        return canvas.getRenderer();
+    }
+
+    public CoordSysRenderer getCoordSysRenderer() {
+        return canvas.getCoordSysRenderer();
+    }
+
+    public CompleteRenderer getContent() {
+        return canvas.getContent();
+    }
+
     public void setVisible(boolean visible) {
         canvas.repaint();
         super.setVisible(visible);
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
+
+    public void autoBounds() {
+        canvas.autoBounds();
     }
 
     // ----------------------------------------------------------------------

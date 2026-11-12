@@ -34,8 +34,6 @@ JPlotter concepts
                     itemsToRender:  List<Text>
 
 
-
-
 JPlotter extensions
 -------------------
 
@@ -54,7 +52,7 @@ JPlotter extensions
 
 
     jext.jplotter.renderables.Points|Lines
-            invece di assegnare le proprita' di disegno ad ogni singolo elemento (punto, segmento, linea, ...)
+            invece di assegnare le proprieta' di disegno ad ogni singolo elemento (punto, segmento, linea, ...)
             Points e Lines (e ...) vengono inizializzati con le proproprieta' comuni
 
         Points
@@ -67,7 +65,7 @@ JPlotter extensions
             thickness
             pattern
 
-        quando si aggiunge un oggetto, viene inizializzato con le proprita' di default
+        quando si aggiunge un oggetto, viene inizializzato con le proprieta' di default
 
         inoltre e' possibile assegnare un nome. In questo modo diventa semplice creare la leggenda: tutte le info
         necessarie sono gia' contenute in Points, Lines, ...
