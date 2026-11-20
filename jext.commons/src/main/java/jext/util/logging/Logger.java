@@ -1,8 +1,6 @@
 package jext.util.logging;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Logger {
 
@@ -83,24 +81,13 @@ public class Logger {
     // Simplify the conversion of 'System.out.print..' and 'System.err.print..'
     // with logging
 
-    private static final Map<String, SystemLog> SYSTEM_OUT_MAP = new HashMap<>();
-
-    public static SystemLog getSystemOut(String format, Object... args) {
-        return Logger.getSystemOut(String.format(format, args));
+    public static SystemLog getSystemLog(String format, Object... args) {
+        return LogManager.getSystemLog(String.format(format, args));
     }
 
-    public static SystemLog getSystemOut(Class<?> clazz) {
-        return Logger.getSystemOut(clazz.getName());
+    public static SystemLog getSystemLog(Class<?> clazz) {
+        return LogManager.getSystemLog(clazz.getName());
     }
-
-    public static SystemLog getSystemOut(String name){
-        synchronized (SYSTEM_OUT_MAP) {
-            if (!SYSTEM_OUT_MAP.containsKey(name))
-                SYSTEM_OUT_MAP.put(name, new SystemLog(LogManager.getLogger(name)));
-            return SYSTEM_OUT_MAP.get(name);
-        }
-    }
-
 
     // ----------------------------------------------------------------------
     //

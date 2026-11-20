@@ -1,0 +1,209 @@
+Log4J2x 14:54:08 [main] INFO  $ - Logging system configured
+Log4J2x 14:54:09 [main] INFO  $ - CorridorsGenerator
+Log4J2x 14:54:10 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 14:54:10 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 14:54:11 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 14:54:11 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 14:54:11 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 14:54:11 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 14:54:11 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 14:54:13 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 14:54:13 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 14:54:13 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 14:54:13 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 14:54:13 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 14:54:13 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 14:54:13 [main] INFO  $ - Collect data for visualization
+Log4J2x 14:54:13 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 14:54:13 [main] INFO  $ - Populate JPlotter
+Log4J2x 14:54:14 [main] INFO  $ - Show JPlotter
+Log4J2x 14:55:02 [main] INFO  $ - Logging system configured
+Log4J2x 14:55:02 [main] INFO  $ - CorridorsGenerator
+Log4J2x 14:55:03 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 14:55:03 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 14:55:05 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 14:55:07 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 14:55:07 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 14:55:07 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 14:55:07 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 14:55:41 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 14:55:41 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 14:55:41 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 14:55:41 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 14:55:52 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 14:55:52 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 14:55:52 [main] INFO  $ - Collect data for visualization
+Log4J2x 14:55:52 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 14:55:52 [main] INFO  $ - Populate JPlotter
+Log4J2x 14:56:37 [main] INFO  $ - Show JPlotter
+Log4J2x 14:58:57 [main] INFO  $ - Logging system configured
+Log4J2x 14:58:58 [main] INFO  $ - CorridorsGenerator
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 14:58:59 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 14:59:00 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 14:59:00 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 14:59:00 [main] INFO  $ - Collect data for visualization
+Log4J2x 14:59:00 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 14:59:00 [main] INFO  $ - Populate JPlotter
+Log4J2x 14:59:00 [main] INFO  $ - Show JPlotter
+Log4J2x 15:07:31 [main] INFO  $ - Logging system configured
+Log4J2x 15:07:32 [main] INFO  $ - CorridorsGenerator
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 15:07:33 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 15:07:33 [main] INFO  $ - Collect data for visualization
+Log4J2x 15:07:33 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 15:07:33 [main] INFO  $ - Populate JPlotter
+Log4J2x 15:07:33 [main] INFO  $ - Show JPlotter
+Log4J2x 15:14:26 [main] INFO  $ - Logging system configured
+Log4J2x 15:14:27 [main] INFO  $ - CorridorsGenerator
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 15:14:28 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 15:14:28 [main] INFO  $ - Collect data for visualization
+Log4J2x 15:14:28 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 15:14:28 [main] INFO  $ - Populate JPlotter
+Log4J2x 15:14:28 [main] INFO  $ - Show JPlotter
+Log4J2x 15:14:38 [main] INFO  $ - Logging system configured
+Log4J2x 15:14:39 [main] INFO  $ - CorridorsGenerator
+Log4J2x 15:14:40 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 15:14:40 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 15:14:40 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 15:14:40 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 15:14:40 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 15:14:40 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 15:14:40 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 15:14:41 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 15:14:41 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 15:14:41 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 15:14:41 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 15:14:41 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 15:14:41 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 15:14:41 [main] INFO  $ - Collect data for visualization
+Log4J2x 15:14:41 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 15:14:41 [main] INFO  $ - Populate JPlotter
+Log4J2x 15:14:41 [main] INFO  $ - Show JPlotter
+Log4J2x 15:16:11 [main] INFO  $ - Logging system configured
+Log4J2x 15:16:11 [main] INFO  $ - CorridorsGenerator
+Log4J2x 15:16:12 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 15:16:12 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 15:16:12 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 15:16:13 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 15:16:13 [main] INFO  $ - Collect data for visualization
+Log4J2x 15:16:13 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 15:16:13 [main] INFO  $ - Populate JPlotter
+Log4J2x 15:16:13 [main] INFO  $ - Show JPlotter
+Log4J2x 15:16:50 [main] INFO  $ - Logging system configured
+Log4J2x 15:16:51 [main] INFO  $ - CorridorsGenerator
+Log4J2x 15:16:52 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 15:16:52 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 15:16:52 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 15:16:52 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 15:16:52 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 15:16:52 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 15:16:52 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 15:16:53 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 15:16:53 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 15:16:53 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 15:16:53 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 15:16:53 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 15:16:53 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 15:16:53 [main] INFO  $ - Collect data for visualization
+Log4J2x 15:16:53 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 15:16:53 [main] INFO  $ - Populate JPlotter
+Log4J2x 15:16:53 [main] INFO  $ - Show JPlotter
+Log4J2x 15:18:15 [main] INFO  $ - Logging system configured
+Log4J2x 15:18:15 [main] INFO  $ - CorridorsGenerator
+Log4J2x 15:18:16 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 15:18:16 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 15:18:17 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 15:18:17 [main] INFO  $ - Collect data for visualization
+Log4J2x 15:18:17 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 15:18:17 [main] INFO  $ - Populate JPlotter
+Log4J2x 15:18:17 [main] INFO  $ - Show JPlotter
+Log4J2x 20:04:02 [main] INFO  $ - Logging system configured
+Log4J2x 20:04:03 [main] INFO  $ - CorridorsGenerator
+Log4J2x 20:04:04 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 20:04:04 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 20:04:05 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 20:04:06 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 20:04:06 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 20:04:06 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 20:04:06 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 20:04:07 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 20:04:07 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 20:04:07 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 20:04:07 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 20:04:07 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 20:04:07 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 20:04:07 [main] INFO  $ - Collect data for visualization
+Log4J2x 20:04:07 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 20:04:07 [main] INFO  $ - Populate JPlotter
+Log4J2x 20:04:08 [main] INFO  $ - Show JPlotter
+Log4J2x 21:56:11 [main] INFO  $ - Logging system configured
+Log4J2x 21:56:12 [main] INFO  $ - CorridorsGenerator
+Log4J2x 21:56:13 [main] INFO  jext.geotools.CorridorsGenerator - select polygons
+Log4J2x 21:56:13 [main] INFO  jext.geotools.CorridorsGenerator - create clusters
+Log4J2x 21:56:13 [main] INFO  jext.geotools.CorridorsGenerator - create boundaries
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - remove segments too short and merge collinear segments
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - split segments too long
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - compute outward directions
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - compute segments intersections
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - compute the boundary offsets
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - expand boundaries
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - find junctions
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - find junction bridges
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - split expanded with junctions
+Log4J2x 21:56:14 [main] INFO  jext.geotools.CorridorsGenerator - compose the result
+Log4J2x 21:56:14 [main] INFO  $ - Collect data for visualization
+Log4J2x 21:56:14 [main] INFO  $ - Collect bridgeOutwards
+Log4J2x 21:56:14 [main] INFO  $ - Populate JPlotter
+Log4J2x 21:56:14 [main] INFO  $ - Show JPlotter

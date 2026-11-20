@@ -1,5 +1,7 @@
 package jext.geotools;
 
+import jext.util.concurrent.Parallel;
+import jext.util.concurrent.Serial;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import jext.geotools.RayBoundaryIntersector.IntersectionResult;
@@ -8,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Compute the intersection of each boundary's segment with the segments of another
+ * boundary
+ */
 public class BoundaryIntersections {
 
     public final LineString boundary;
@@ -53,19 +59,19 @@ public class BoundaryIntersections {
      *                   Use 0 to disable the filter
      * @return
      */
-    public static List<BoundaryIntersections> boundaryIntersections(
-        List<OutwardDirections> outwardDirections,
-        double maxDistance, double deltaAngle
+    public static List<BoundaryIntersections> findBoundaryIntersections(
+        List<OutwardDirections> outwardDirections, double maxDistance, double deltaAngleRadians
     ) {
         List<BoundaryIntersections> boundariesIntersections = new ArrayList<>();
-        double minAngleDegree = 90 - deltaAngle;
+        //double minAngleDegree = 90 - deltaAngle;
+        double minAngleRadians = Op.HALF_PI - deltaAngleRadians;
 
         // extract the list of boundaries
         List<LineString> boundaries = outwardDirections.stream().map(od -> od.boundary).toList();
 
         RayBoundaryIntersector rbi = new RayBoundaryIntersector(boundaries);
 
-        for (OutwardDirections od : outwardDirections) {
+        boundariesIntersections = Parallel.map(outwardDirections, od -> {
             BoundaryIntersections boundaryIntersections = new  BoundaryIntersections(od);
 
             int n = od.allDrections.length;
@@ -80,7 +86,7 @@ public class BoundaryIntersections {
                 if (intersection.isEmpty())
                     continue;
 
-                if (deltaAngle > 0 && intersection.get().angleDegrees() < minAngleDegree)
+                if (deltaAngleRadians > 0 && intersection.get().angleRadians() < minAngleRadians)
                     continue;
 
                 if (maxDistance > 0 && intersection.get().length() > maxDistance)
@@ -94,24 +100,55 @@ public class BoundaryIntersections {
             boundaryIntersections.lengths[n-1] = boundaryIntersections.lengths[0];
             boundaryIntersections.done();
 
-            boundariesIntersections.add(boundaryIntersections);
-        }
+            return boundaryIntersections;
+        });
 
+        // for (OutwardDirections od : outwardDirections) {
+        //     BoundaryIntersections boundaryIntersections = new  BoundaryIntersections(od);
+        //
+        //     int n = od.allDrections.length;
+        //     for (int i=0; i<n; i++) {
+        //         LineString outwardDir = od.allDrections[i];
+        //
+        //         if (!ShapeUtils.isValid(outwardDir))
+        //             continue;
+        //
+        //         // The angle is in range [0, 90] degree, then positive
+        //         Optional<IntersectionResult> intersection = rbi.nearestIntersection(outwardDir);
+        //         if (intersection.isEmpty())
+        //             continue;
+        //
+        //         if (deltaAngleRadians > 0 && intersection.get().angleRadians() < minAngleRadians)
+        //             continue;
+        //
+        //         if (maxDistance > 0 && intersection.get().length() > maxDistance)
+        //             continue;
+        //
+        //         boundaryIntersections.allIntersections[i] = intersection.get().segment();
+        //         boundaryIntersections.lengths[i] = intersection.get().length();
+        //     }
+        //     // fill the last element
+        //     boundaryIntersections.allIntersections[n-1] = boundaryIntersections.allIntersections[0];
+        //     boundaryIntersections.lengths[n-1] = boundaryIntersections.lengths[0];
+        //     boundaryIntersections.done();
+        //
+        //     boundariesIntersections.add(boundaryIntersections);
+        // }
 
         return boundariesIntersections;
     }
 
-    public static List<BoundaryIntersections> boundaryIntersections(List<OutwardDirections> outwardDirections) {
-        return boundaryIntersections(outwardDirections, 0, 0);
+    public static List<BoundaryIntersections> findBoundaryIntersections(List<OutwardDirections> outwardDirections) {
+        return findBoundaryIntersections(outwardDirections, 0, 0);
     }
 
     // ----------------------------------------------------------------------
 
-    public static List<LineString> boundaryIntersections(List<LineString> boundaries, List<LineString> outwardDirections) {
-        return boundaryIntersections(boundaries, outwardDirections, 0, 0);
+    public static List<LineString> findBoundaryIntersections(List<LineString> boundaries, List<LineString> outwardDirections) {
+        return findBoundaryIntersections(boundaries, outwardDirections, 0, 0);
     }
 
-    public static List<LineString> boundaryIntersections(
+    public static List<LineString> findBoundaryIntersections(
         List<LineString> boundaries, List<LineString> outwardDirections,
         double maxDistance, double deltaAngle
     ) {

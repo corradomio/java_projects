@@ -7,9 +7,17 @@ import org.locationtech.jts.geom.LineString;
 
 public class ShapeUtils {
 
+    public static String toString(Coordinate c) {
+        return String.format("(%.2f, %.2f)", c.x, c.y);
+    }
+
     // ----------------------------------------------------------------------
     // Polyline
     // ----------------------------------------------------------------------
+
+    public static String id(LineString ls) {
+        return String.format("%d:%d:%d", mod(ls.hashCode(), 10000), ls.getNumPoints()-1, 0);
+    }
 
     /**
      * Check if the polyline follows the right-handle rule
@@ -20,46 +28,51 @@ public class ShapeUtils {
      */
     public static boolean isValidOrder(LineString ls) {
         Assert.verify(isClosed(ls), "It is not a closed line");
-        Coordinate[] coords = ls.getCoordinates();
+        return isValidOrder(ls.getCoordinates());
+    }
 
+    public static boolean isValidOrder(Coordinate[] coords) {
         int n = coords.length;
         double cp = 0;
 
         for (int i = 0, j=1; j < n; i++,j++) {
             Coordinate ci = coords[i];
             Coordinate cj = coords[j];
-            cp += (ci.x*cj.y - ci.y*cj.x);
+            cp += (ci.y*cj.x - ci.x*cj.y);
         }
 
         return cp > 0;
     }
 
-    /**
-     * Invert the order of the coordinates, INPLACE
-     * @param ls linestring to process
-     */
-    public static void invertOrder(LineString ls) {
-        Coordinate[] coords = ls.getCoordinates();
-        int i=0, j=coords.length-1;
+    // /**
+    //  * Invert the order of the coordinates, INPLACE
+    //  * @param ls linestring to process
+    //  */
+    // public static void invertOrder(LineString ls) {
+    //     invertOrder(ls.getCoordinates());
+    // }
 
-        while(i < j) {
-            Coordinate t = coords[i];
-            coords[i] = coords[j];
-            coords[j] = t;
-            i++;
-            j--;
-        }
-    }
+    // public static void invertOrder(Coordinate[] coords) {
+    //     int i=0, j=coords.length-1;
+    //
+    //     while(i < j) {
+    //         Coordinate t = coords[i];
+    //         coords[i] = coords[j];
+    //         coords[j] = t;
+    //         i++;
+    //         j--;
+    //     }
+    // }
 
-    /**
-     * Ensure the linestring has the correct points order
-     * @param ls
-     */
-    public static void ensureValidOrder(LineString ls) {
-        if (!isValidOrder(ls)) {
-            invertOrder(ls);
-        }
-    }
+    // /**
+    //  * Ensure the linestring has the correct points order
+    //  * @param ls
+    //  */
+    // public static LineString ensureValidOrder(LineString ls) {
+    //     if (!isValidOrder(ls)) {
+    //         invertOrder(ls);
+    //     }
+    // }
 
     // ----------------------------------------------------------------------
     // Segment utils
@@ -98,7 +111,8 @@ public class ShapeUtils {
     public static boolean isValid(LineString segment) {
         Assert.verify(isSegment(segment), "Is not a segment");
 
-        return !eq(0, length(segment.getCoordinateN(0), segment.getCoordinateN(1)));
+        //return !eq(0, length(segment.getCoordinateN(0), segment.getCoordinateN(1)));
+        return !eq(0, segment.getLength());
     }
 
     /**
@@ -180,9 +194,63 @@ public class ShapeUtils {
         return new Coordinate((origin.x+target.x)/2,(origin.y+target.y)/2);
     }
 
+
+    public static Coordinate between(Coordinate origin, double offset, Coordinate target) {
+        double dist = origin.distance(target);
+        Coordinate dir = direction(origin, target);
+
+        if (offset > 0) {
+            if (offset < dist)
+                return lin(origin, offset, dir);
+            else
+                return lin(origin, dist/2, dir);
+        }
+        else {
+            offset = -offset;
+            if (offset < dist)
+                return lin(origin, dist-offset, dir);
+            else
+                return lin(origin, dist/2, dir);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Angles
+    // ----------------------------------------------------------------------
+
+    public static double absAngle(Coordinate u, Coordinate v) {
+        // Compute cross product (z-component in 3D)
+        double crossProduct = u.x * v.y - u.y * v.x;
+
+        // Compute dot product
+        double dotProduct = u.x * v.x + u.y * v.y;
+
+        // Use atan2 for robust angle calculation
+        // atan2(y, x) returns angle whose tan is y/x, with correct quadrant
+        double angle = Math.atan2(crossProduct, dotProduct);
+
+        return Math.abs(angle);
+    }
+
+
+    public static double angle(Coordinate u, Coordinate v) {
+        // Compute cross product (z-component in 3D)
+        double crossProduct = u.x * v.y - u.y * v.x;
+
+        // Compute dot product
+        double dotProduct = u.x * v.x + u.y * v.y;
+
+        // Use atan2 for robust angle calculation
+        // atan2(y, x) returns angle whose tan is y/x, with correct quadrant
+        double angle = Math.atan2(crossProduct, dotProduct);
+
+        return angle >= 0 ? angle : Op.TWO_PI + angle;
+    }
+
     /**
-     * Compute the smaller angle at middle between [middle, origin] and
-     * [middle, target] in the XY plane. A straight line has angle PI.
+     * Compute the smaller angle at middle between [origin, middle] and
+     * [middle, target] in the XY plane.
+     * A straight [origin->middle->target] line has angle PI.
      *
      * @param a first point
      * @param b vertex of the angle
@@ -191,66 +259,51 @@ public class ShapeUtils {
      * @throws IllegalArgumentException if a point is null or either segment
      *         has zero length in the XY plane
      */
-    public static double angle(Coordinate a, Coordinate b, Coordinate c) {
-        double v1x = b.x - a.x;
-        double v1y = b.y - a.y;
-        double v2x = c.x - b.x;
-        double v2y = c.y - b.y;
+    public static double internalAngle(Coordinate a, Coordinate b, Coordinate c) {
+        double ux = a.x - b.x;
+        double uy = a.y - b.y;
+        double vx = c.x - b.x;
+        double vy = c.y - b.y;
 
         // Compute cross product (z-component in 3D)
-        double crossProduct = v1x * v2y - v1y * v2x;
+        double crossProduct = ux * vy - uy * vx;
 
         // Compute dot product
-        double dotProduct = v1x * v2x + v1y * v2y;
+        double dotProduct = ux * vx + uy * vy;
 
         // Use atan2 for robust angle calculation
         // atan2(y, x) returns angle whose tan is y/x, with correct quadrant
-        return Math.atan2(crossProduct, dotProduct);
+        double angle = Math.atan2(crossProduct, dotProduct);
+
+        return angle >= 0 ? angle : Op.TWO_PI + angle;
+    }
+    public static double angle(Coordinate a, Coordinate b, Coordinate c) {
+        return internalAngle(a, b, c);
     }
 
-    // /**
-    //  * Compute the smaller angle at middle between [middle, origin] and
-    //  * [middle, target] in the XY plane. A straight line has angle 0.
-    //  * An angle lower than 180 degrees is negative
-    //  * An angle greater than 180 degress is positive
-    //  *
-    //  * @param origin first point
-    //  * @param middle vertex of the angle
-    //  * @param target end point
-    //  * @return unsigned angle in radians, in [-PI/2, PI/2]
-    //  */
-    // public static double angle2(Coordinate origin, Coordinate middle, Coordinate target) {
-    //     double first  = Math.atan2(origin.y - middle.y, origin.x - middle.x);
-    //     double second = Math.atan2(target.y - middle.y, target.x - middle.x);
-    //     int cs = csign(origin, middle, target);
-    //
-    //     double angle = first - second;
-    //     // if (cs > 0 && angle > Math.PI) {
-    //     //     angle -= Math.PI;
-    //     // }
-    //     // if (cs < 0 && angle < Math.PI) {
-    //     //     angle += Math.PI;
-    //     // }
-    //
-    //     return angle - Math.PI;
-    // }
+    public static double collinearAngle(Coordinate a, Coordinate b, Coordinate c) {
+        return Math.abs(internalAngle(a,b,c) - Math.PI);
+    }
 
-    // /**
-    //  * Cross sign
-    //  * @param origin
-    //  * @param middle
-    //  * @param target
-    //  * @return
-    //  */
-    // public static int csign(Coordinate origin, Coordinate middle, Coordinate target) {
-    //     double ax =  origin.x - middle.x;
-    //     double ay = origin.y - middle.y;
-    //     double bx =  target.x - middle.x;
-    //     double by = target.y - middle.y;
-    //
-    //     double c = ax*by-ay*bx;
-    //     return c <= 0 ? -1 : +1;
-    // }
+    public static double externalAngle(Coordinate a, Coordinate b, Coordinate c) {
+        return Op.TWO_PI - internalAngle(a, b, c);
+    }
+
+    public static Coordinate rotate(Coordinate p, double angle) {
+        double c = Math.cos(angle);
+        double s = Math.sin(angle);
+
+        double x = p.x*c - p.y*s;
+        double y = p.x*s + p.y*c;
+        return new Coordinate(x, y);
+    }
+
+    // ----------------------------------------------------------------------
+
+    public static Coordinate outward(Coordinate[] coords, int i) {
+        int j = mod(i+1, coords.length - 1);
+        return outward(coords[i], coords[j]);
+    }
 
     /**
      * Compute the outward direction of 2 points [origin->target]
@@ -262,9 +315,9 @@ public class ShapeUtils {
      * @return outward direction
      */
     public static Coordinate outward(Coordinate origin, Coordinate target) {
-        Coordinate dir = new Coordinate(target.x-origin.x, target.y-origin.y);
-        Coordinate outward = new Coordinate(-dir.y, dir.x);
-        Coordinate inward = new Coordinate(dir.y, -dir.x);
+        double dx = target.x-origin.x;
+        double dy = target.y-origin.y;
+        Coordinate outward = new Coordinate(-dy, dx);
         return direction(outward);
     }
 
@@ -286,15 +339,32 @@ public class ShapeUtils {
         return direction(dir);
     }
 
-    /**
-     * Compute the distance between two points
-     *
-     * @param origin first point
-     * @param target end point
-     * @return distance between two points
-     */
-    public static double length(Coordinate origin, Coordinate target) {
-        return Math.sqrt(sq(origin.x - target.x) + sq(origin.y - target.y));
+    // /**
+    //  * Compute the distance between two points
+    //  * Note: Coordinate::distance compute the distance on the Hearth geoid
+    //  *       Here it is enough to use the Euclidean distance
+    //  *
+    //  * @param origin first point
+    //  * @param target end point
+    //  * @return distance between two points
+    //  */
+    // public static double distance(Coordinate origin, Coordinate target) {
+    //     return Math.sqrt(sq(origin.x - target.x) + sq(origin.y - target.y));
+    // }
+
+    public static double distance(Coordinate[] coords, int origin, int target) {
+        double distance = 0;
+        int l = coords.length - 1;
+        int i=origin, j;
+
+        while(i != target) {
+            j = mod(i + 1, l);
+
+            //distance += distance(coords[i], coords[j]);
+            distance += coords[i].distance(coords[j]);
+            i = j;
+        }
+        return distance;
     }
 
     /**
@@ -315,11 +385,21 @@ public class ShapeUtils {
      * @return normalized direction
      */
     public static Coordinate direction(Coordinate dir) {
-        double len = length(dir);
+        double len = Math.sqrt(sq(dir.x) + sq(dir.y));
         if (eq(len, 0))
             return new  Coordinate(0,0);
         else
             return new Coordinate(dir.x/len, dir.y/len);
+    }
+
+    public static Coordinate direction(Coordinate origin, Coordinate target) {
+        double dx = target.x - origin.x;
+        double dy = target.y - origin.y;
+        double len = Math.sqrt(sq(dx) + sq(dy));
+        if (eq(len, 0))
+            return new  Coordinate(0,0);
+        else
+            return new Coordinate(dx/len, dy/len);
     }
 
     /**
@@ -338,57 +418,23 @@ public class ShapeUtils {
     // Utilities
     // ----------------------------------------------------------------------
 
-    public static double EPS = 0.01;
-
-    public static double sq(double x) {
+    private static double sq(double x) {
         return x*x;
     }
 
-    /**
-     * Compare 2 floating point for equality with error
-     * @param u first value
-     * @param v second value
-     * @return if the two values are approximately equals
-     */
-    public static boolean eq(double u, double v) {
+    private static double EPS = 0.01;
+
+    private static boolean eq(double u, double v) {
         // u, v are in meters -> difference less than 10cm
         return Math.abs(u-v) < EPS;
     }
-    // ----------------------------------------------------------------------
-    // increment/decremen by 1 modulo n
 
-    public static int mod(int i, int n) {
+    private static int mod(int i, int n) {
         int m = i%n;
         if (m < 0) m += n;
         return m;
     }
 
-    public static int inc(int i, int n) {
-        i++;
-        if (i >= n) i -= n;
-        return i;
-    }
-    public static int dec(int i, int n) {
-        i--;
-        if (i < 0 ) i += n;
-        return i;
-    }
-
-    /**
-     * Number of steps to go from b to e.
-     * It supports b < e and b > e
-     * If b == e, we suppose the number of steps is n NOT zero
-     * @param b begin position
-     * @param e end position
-     * @param n total n of positions
-     * @return n of position to go from begin to end
-     */
-    public static int steps(int b, int e, int n) {
-        if (b < e)
-            return (e - b);
-        else
-            return (e - b) + n;
-    }
 
     // ----------------------------------------------------------------------
     // Array drop

@@ -93,10 +93,10 @@ public class MultiLineStringMerger {
         Point p;
         Envelope env = mls.getEnvelopeInternal();
         Coordinate[] coords = mls.getCoordinates();
-
         int l = coords.length - 1;
+
         // line of a single point???
-        if (l == 0) return;
+        if (l <= 0) return;
 
         multiLineStrings.put(lineId, mls);
         GeometryFactory gf = mls.getFactory();
@@ -176,8 +176,9 @@ public class MultiLineStringMerger {
                 GeometryFactory gf = mls.getFactory();
                 Coordinate[] coords = mls.getCoordinates();
                 int l = coords.length - 1;
+
                 // line of a single point???
-                if (l == 0) continue;
+                if (l <= 0) continue;
 
                 // merge with first point
                 //merge with last point

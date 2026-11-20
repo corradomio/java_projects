@@ -1,85 +1,82 @@
 package org.hls.example;
 
-import jext.geotools.MultiLineStringMerger;
-import org.geotools.api.data.FileDataStore;
-import org.geotools.api.data.FileDataStoreFinder;
-import org.geotools.api.data.SimpleFeatureSource;
-import org.geotools.api.feature.simple.SimpleFeature;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.locationtech.jts.geom.Geometry;
+import jext.geotools.CorridorsGenerator;
+import jext.jplotter.canvas.JPlotterFrame;
+import jext.jplotter.renderables.Lines;
+import jext.jplotter.renderers.CompleteRenderer;
+import jext.util.concurrent.Flatten;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
 
+import javax.swing.SwingUtilities;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class Main {
-
     public static void main(String[] args) throws IOException {
-        System.out.println("Hello World");
+        if (args.length < 2) {
+            System.out.println("Usage: java -jar <package>.jar  <SHAPE File Path>");
+            return;
+        }
+        JPlotterFrame frame = new JPlotterFrame("Example Viz");
+        CompleteRenderer content = frame.getContent();
+        File polygonsFile = new File(args[1]);
+        CorridorsGenerator cg = new CorridorsGenerator();
+        // cg.setMaxCollinearOffsetAngleDegree((double)5.0F);
+        cg.setMaxIntersectionDistance((double)80.0F);
+        CorridorsGenerator.Result r = cg.generate(polygonsFile);
+        List<LineString> outwardsDirs = Flatten.flatten(r.outwards.stream().map((od) -> od.directions).toList());
+        List<LineString> intersectionDirs = Flatten.flatten(r.intersections.stream().map((od) -> od.intersections).toList());
+        addPolygons(r.polygons, content, Color.GRAY, 1);
+        addLines(r.boundaries, content, Color.BLUE, 1);
+        addLines(outwardsDirs, content, Color.RED, 3);
+        addLines(intersectionDirs, content, Color.GREEN, 1);
+        addLines(r.expanded, content, Color.RED, 1);
+        addLines(r.ticks, content, Color.MAGENTA, 1);
+        frame.autoBounds();
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
+    }
 
-        Set<String> ftypes = new HashSet<String>();
+    private static void addPolygons(List<Polygon> ps, CompleteRenderer content, Color color, int thickness) {
 
-        File file = new File("D:\\Projects.ebtic\\project.ftth\\EbticDATA\\Dubai\\Jumeirah Village\\ROAD.shp");
+        for(Polygon p : ps) {
+            Coordinate[] coords = p.getCoordinates();
+            int n =  coords.length;
 
-        System.out.println("FileDataStore");
-        FileDataStore store = FileDataStoreFinder.getDataStore(file);
-        System.out.println("SimpleFeatureSource");
-        SimpleFeatureSource featureSource = store.getFeatureSource();
-        System.out.println("SimpleFeatureCollection");
-        SimpleFeatureCollection featureCollection = featureSource.getFeatures();
-        System.out.println("SimpleFeatureIterator");
-        SimpleFeatureIterator  featureIterator = featureCollection.features();
+            Lines lines = new  Lines(color, thickness);
 
-        while(featureIterator.hasNext()) {
-
-            SimpleFeature f =  featureIterator.next();
-            Geometry g = (Geometry) f.getDefaultGeometry();
-
-            if (!MultiLineStringMerger.isMultiLineString(f))
-                continue;
-
-            // --
-            var a = g.getArea();
-            var b = g.getBoundary();
-            var bd = g.getBoundaryDimension();
-            var c = g.getCentroid();
-            var xy1 = g.getCoordinate();
-            var d = g.getDimension();
-            var e = g.getEnvelope();
-            var ei = g.getEnvelopeInternal();
-            var xy = g.getCoordinates();
-            var fa = g.getFactory();
-            var gt = g.getGeometryType();
-            if (!ftypes.contains(gt)) {
-                System.out.printf("... %s\n", gt);
-                ftypes.add(gt);
+            for(int i=0, j=n-1; i<coords.length; i++){
+                Coordinate a = coords[j];
+                Coordinate b = coords[i];
+                lines.addSegment(a.x, a.y, b.x, b.y);
+                j = i;
             }
-            var ip = g.getInteriorPoint();
-            var l = g.getLength();
-            var ng = g.getNumGeometries();
-            var np = g.getNumPoints();
-            var pm = g.getPrecisionModel();
-            var srid = g.getSRID();
-            var ud = g.getUserData();
 
-            // --
-            // var b = f.getBounds();
-            // var dgp = f.getDefaultGeometryProperty();
-            // var id = f.getIdentifier();
-            // SimpleFeatureType t = (SimpleFeatureType) f.getType();
-            // System.out.printf("... %s\n", t.getTypeName());
-            // var d = f.getDescriptor();
-            // var n = f.getName();
-            var p = f.getProperties();
-            // var ud = f.getUserData();
-            // var val = f.getValue();
-            // --
-            // System.out.printf("%s: %s\n", f.getType(), f.getIdentifier());
-            // System.out.println(f);
+            content.add(lines);
         }
 
-        return;
     }
+
+    private static void addLines(List<LineString> lss, CompleteRenderer content, Color color, int thickness) {
+
+        for (LineString ls : lss) {
+            // addLine(ls, content, color);
+            Coordinate[] coords = ls.getCoordinates();
+
+            Lines lines = new  Lines(color, thickness);
+
+            for(int i=1, j=0; i<coords.length; i++){
+                Coordinate a = coords[j];
+                Coordinate b = coords[i];
+                lines.addSegment(a.x, a.y, b.x, b.y);
+                j = i;
+            }
+
+            content.add(lines);
+        }
+    }
+
 }

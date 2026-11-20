@@ -118,6 +118,11 @@
             <artifactId>jext.colors</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.hls</groupId>
+            <artifactId>jext.logging</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 </project>

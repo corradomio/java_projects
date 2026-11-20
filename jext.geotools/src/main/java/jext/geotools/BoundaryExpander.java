@@ -1,5 +1,6 @@
 package jext.geotools;
 
+import jext.util.Assert;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
@@ -16,13 +17,15 @@ import java.util.Map;
 public class BoundaryExpander {
 
     public final LineString boundary;
-    public final LineString expanded;
     public final BoundaryOffsets offsets;
+    public LineString expanded;
+    public final LineString unsimplified;
 
     BoundaryExpander(BoundaryOffsets boundaryOffsets, LineString expandedBoundary) {
         this.boundary = boundaryOffsets.boundary;
         this.offsets = boundaryOffsets;
         this.expanded = expandedBoundary;
+        this.unsimplified = expandedBoundary;
     }
 
     // ----------------------------------------------------------------------
@@ -37,26 +40,28 @@ public class BoundaryExpander {
      * Note: not all segments
      *
      * @param boundariesOffsets offset map to use
-     * @param maxCollinearAngle in degree
      * @return
      */
-    public static List<BoundaryExpander> boundaryExpand(List<BoundaryOffsets> boundariesOffsets, double maxCollinearAngle) {
+    public static List<BoundaryExpander> boundaryExpand(List<BoundaryOffsets> boundariesOffsets/* , double maxCollinearAngle */) {
         List<BoundaryExpander> expansions = new ArrayList<>();
-
-        maxCollinearAngle = maxCollinearAngle*Math.PI/180;
 
         for (BoundaryOffsets boundaryOffsets : boundariesOffsets) {
             // LineString expandedBoundary = expandUsingIntersection(boundaryOffsets);
-            // LineString expandedBoundary = expandBoundaryUsingSimpleRules(boundaryOffsets);
-            LineString expandedBoundary = expandBoundaryPlain(boundaryOffsets, maxCollinearAngle);
+            BoundaryExpander expandedBoundary = expandBoundaryPlain(boundaryOffsets/* , maxCollinearAngle */);
             // expanded.add(eb);
-            expansions.add(new BoundaryExpander(
-                boundaryOffsets,
-                expandedBoundary
-            ));
+            expansions.add(expandedBoundary);
         }
 
         return expansions;
+    }
+
+    /**
+     * Extract the expanded boundaries from BoundaryExpander
+     * @param expandedBoundaries list of expanded boundaries
+     * @return list of expanded boundaries represented by a LineString
+     */
+    public static List<LineString> expandedBoundaries(List<BoundaryExpander> expandedBoundaries) {
+        return expandedBoundaries.stream().map(be -> be.expanded).toList();
     }
 
     // ----------------------------------------------------------------------
@@ -71,45 +76,45 @@ public class BoundaryExpander {
     //       of the specified offset
     // b) for each pair of adjacent segments, the intersection point
     // c) based on the intersection points, the new boundary
-    private static LineString expandUsingIntersection(BoundaryOffsets boundaryOffsets) {
-        LineString boundary = boundaryOffsets.boundary;
-        double[] offsets = boundaryOffsets.offsets;
-
-        Coordinate[] coords = boundary.getCoordinates();
-        Coordinate[] movedOrigins = new Coordinate[coords.length];
-        Coordinate[] movedTargets = new Coordinate[coords.length];
-        Coordinate[] intersections = new Coordinate[coords.length];
-        int l = coords.length - 1;
-
-        // a) move each segment along the outward direction
-        for (int i = 0; i<l; ++i) {
-            Coordinate origin = coords[i  ];
-            Coordinate target = coords[i+1];
-
-            Coordinate dir = ShapeUtils.outward(origin, target);
-
-            movedOrigins[i] = ShapeUtils.lin(origin, offsets[i], dir);
-            movedTargets[i] = ShapeUtils.lin(target, offsets[i], dir);
-        }
-        // fill the last coordinate
-        movedOrigins[l] = movedOrigins[0];
-        movedTargets[l] = movedTargets[0];
-
-        // b) compute the intersections
-        for (int i=0, j=l-1; i<=l; ++i) {
-            Coordinate intersection = ShapeUtils.intersection(
-                movedOrigins[j], movedTargets[j], movedOrigins[i], movedTargets[i]
-            );
-            intersections[i] = intersection;
-
-            j = i;
-        }
-        // fill the last coordinate
-        intersections[l] = intersections[0];
-
-        // c) create the new boundary
-        return boundary.getFactory().createLineString(intersections);
-    }
+    // private static LineString expandUsingIntersection(BoundaryOffsets boundaryOffsets) {
+    //     LineString boundary = boundaryOffsets.boundary;
+    //     double[] offsets = boundaryOffsets.offsets;
+    //
+    //     Coordinate[] coords = boundary.getCoordinates();
+    //     Coordinate[] movedOrigins = new Coordinate[coords.length];
+    //     Coordinate[] movedTargets = new Coordinate[coords.length];
+    //     Coordinate[] intersections = new Coordinate[coords.length];
+    //     int l = coords.length - 1;
+    //
+    //     // a) move each segment along the outward direction
+    //     for (int i = 0; i<l; ++i) {
+    //         Coordinate origin = coords[i  ];
+    //         Coordinate target = coords[i+1];
+    //
+    //         Coordinate dir = ShapeUtils.outward(origin, target);
+    //
+    //         movedOrigins[i] = ShapeUtils.lin(origin, offsets[i], dir);
+    //         movedTargets[i] = ShapeUtils.lin(target, offsets[i], dir);
+    //     }
+    //     // fill the last coordinate
+    //     movedOrigins[l] = movedOrigins[0];
+    //     movedTargets[l] = movedTargets[0];
+    //
+    //     // b) compute the intersections
+    //     for (int i=0, j=l-1; i<=l; ++i) {
+    //         Coordinate intersection = ShapeUtils.intersection(
+    //             movedOrigins[j], movedTargets[j], movedOrigins[i], movedTargets[i]
+    //         );
+    //         intersections[i] = intersection;
+    //
+    //         j = i;
+    //     }
+    //     // fill the last coordinate
+    //     intersections[l] = intersections[0];
+    //
+    //     // c) create the new boundary
+    //     return boundary.getFactory().createLineString(intersections);
+    // }
 
     /**
      * Intersect two finite, two-coordinate segments in the XY plane.
@@ -123,10 +128,6 @@ public class BoundaryExpander {
      *         contain exactly two coordinates
      */
     public static Coordinate intersection(LineString first, LineString second) {
-        // if (first == null || second == null
-        //         || first.getNumPoints() != 2 || second.getNumPoints() != 2)
-        //     throw new IllegalArgumentException("Segments must contain exactly two coordinates");
-
         Coordinate a = first.getCoordinateN(0);
         Coordinate b = first.getCoordinateN(1);
         Coordinate c = second.getCoordinateN(0);
@@ -138,11 +139,15 @@ public class BoundaryExpander {
 
     // ----------------------------------------------------------------------
 
-    private static LineString expandBoundaryUsingSimpleRules(BoundaryOffsets boundaryOffsets, double maxCollinearAngle) {
+    private static BoundaryExpander expandBoundaryPlain(BoundaryOffsets boundaryOffsets/* , double maxCollinearAngle */) {
         LineString boundary = boundaryOffsets.boundary;
-        double[] offsets = boundaryOffsets.offsets;
-
         Coordinate[] coords = boundary.getCoordinates();
+        double[]    offsets = boundaryOffsets.offsets;
+        // boolean[] collinear = new boolean[offsets.length];
+
+        Assert.verify(boundary.isClosed(), "Boundary not closed");
+        Assert.verify(coords.length == offsets.length, "num of offsets not consistent with num of coordinates");
+
         Coordinate[] movedOrigins = new Coordinate[coords.length];
         Coordinate[] movedTargets = new Coordinate[coords.length];
         Coordinate[] intersections = new Coordinate[2*coords.length];
@@ -164,86 +169,40 @@ public class BoundaryExpander {
         movedTargets[l] = movedTargets[0];
 
         // b) compute the intersections
-        for (int i=0, j=l-1; i<l; ++i) {
-            Coordinate po = movedOrigins[j];
-            Coordinate pt = movedTargets[j];
-            Coordinate co = movedOrigins[i];
-            Coordinate ct = movedTargets[i];
+        for (int i=0; i<l; ++i) {
+            int p = Op.dec(i, l);
+            int s = Op.inc(i, l);
 
-            // check for collinearity
-            Coordinate ci = ShapeUtils.intersection(po, pt, co, ct);
-            double angle = ShapeUtils.angle(coords[j], coords[i], coords[i+1]);
+            Coordinate cp = movedTargets[p];
+            Coordinate ci = movedOrigins[i];
+            Coordinate cs = movedOrigins[s];
 
+            double angle = ShapeUtils.internalAngle(coords[p], coords[i], coords[s]);
+            double collinearAngle = ShapeUtils.collinearAngle(coords[p], coords[i], coords[s]);
 
-            if (Math.abs(angle) < maxCollinearAngle) {
-                // ci = ShapeUtils.center(pt, co);
+            // Note: we ALREADY simplified the boundary for collinearity and short segments!
+            // This test IS NOT NECESSARY
+            //
+            // Apply ONLY IF the offsets are equal!
+            // if (collinearAngle < maxCollinearAngle && offsets[p] == offsets[i]) {
+            //     // intersections[n++] = ci;
+            //     // collinear[i] = true;
+            //     intersections[n++] = ShapeUtils.between(cp, -0.1, ci);
+            //     intersections[n++] = ShapeUtils.between(ci,  0.1, cs);
+            //     collinear[i] = false;
+            // }
+            // else
+
+            if (angle > Math.PI) {
                 intersections[n++] = ci;
-            }
-            else if (angle > 0) {
-                intersections[n++] = pt;
-                intersections[n++] = co;
+                intersections[n++] = cp;
+                // collinear[i] = false;
             }
             else {
+                intersections[n++] = cp;
                 intersections[n++] = ci;
+                // collinear[i] = false;
             }
-
-            j = i;
-        }
-        // fill the last coordinate
-        intersections[n++] = intersections[0];
-        intersections = Arrays.copyOf(intersections, n);
-
-        return boundary.getFactory().createLineString(intersections);
-    }
-
-    private static LineString expandBoundaryPlain(BoundaryOffsets boundaryOffsets, double maxCollinearAngle) {
-        LineString boundary = boundaryOffsets.boundary;
-        double[] offsets = boundaryOffsets.offsets;
-
-        Coordinate[] coords = boundary.getCoordinates();
-        Coordinate[] movedOrigins = new Coordinate[coords.length];
-        Coordinate[] movedTargets = new Coordinate[coords.length];
-        Coordinate[] intersections = new Coordinate[2*coords.length];
-        int l = coords.length - 1;
-        int n = 0;
-
-        // a) move each segment along the outward direction
-        for (int i = 0; i<l; ++i) {
-            Coordinate origin = coords[i  ];
-            Coordinate target = coords[i+1];
-
-            Coordinate dir = ShapeUtils.outward(origin, target);
-
-            movedOrigins[i] = ShapeUtils.lin(origin, offsets[i], dir);
-            movedTargets[i] = ShapeUtils.lin(target, offsets[i], dir);
-        }
-        // fill the last coordinate
-        movedOrigins[l] = movedOrigins[0];
-        movedTargets[l] = movedTargets[0];
-
-        // b) compute the intersections
-        for (int i=0, j=l-1; i<l; ++i) {
-            Coordinate po = movedOrigins[j];
-            Coordinate pt = movedTargets[j];
-            Coordinate co = movedOrigins[i];
-            Coordinate ct = movedTargets[i];
-            Coordinate ci;
-
-            double angle = ShapeUtils.angle(coords[j], coords[i], coords[i+1]);
-
-            if (Math.abs(angle) < maxCollinearAngle) {
-                intersections[n++] = co;
-            }
-            else if (angle > 0) {
-                intersections[n++] = co;
-                intersections[n++] = pt;
-            }
-            else {
-                intersections[n++] = pt;
-                intersections[n++] = co;
-            }
-
-            j = i;
         }
         // fill the last coordinate
         intersections[n++] = intersections[0];
@@ -251,7 +210,12 @@ public class BoundaryExpander {
 
         if (n< 3) return null;
 
-        return boundary.getFactory().createLineString(intersections);
+        LineString expandedBoundary = boundary.getFactory().createLineString(intersections);
+
+        return new BoundaryExpander(
+            boundaryOffsets,
+            expandedBoundary
+        );
     }
 
 }

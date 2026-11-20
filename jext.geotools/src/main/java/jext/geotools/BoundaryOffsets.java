@@ -1,5 +1,6 @@
 package jext.geotools;
 
+import jext.util.Assert;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
@@ -7,31 +8,89 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Compute the boundary offsets based on the intersection distance
+ * with other boundaries. If for some segments there is no intersections
+ * some heuristic rules are applied:
+ * .
+ *      1) all collinear segment must have the same offset
+ *      2) the not collinear segments will are initialized with
+ *         the smaller offset
+ * .
+ * It is also applied a cleanup:
+ * .
+ *      - if offset[i-1] == offset[i+1]
+ *        and offset[i] != offset[i+1]
+ *        then offset[i] <- offset[i+1]
+ *
+ */
 public class BoundaryOffsets {
 
     final LineString boundary;
     final double[] offsets;
-    // final Coordinate[] origins;
-    // final Coordinate[] targets;
 
     final boolean useMax = false;
-    final double deltaAngle = 1.0;  // 1 radian
 
     BoundaryOffsets(LineString boundary) {
         this.boundary = boundary;
 
         int n = boundary.getNumPoints();
         this.offsets = new double[n];
-        // this.origins = new Coordinate[n];
-        // this.targets = new Coordinate[n];
     }
 
-    void fillOffsets(double defaultOffset) {
-        propagateCollinearOffsets();
-        propagateMinMaxOffsets();
-        removeOutliers();
-        useDefaultOffset(defaultOffset);
+    void initializeOffsets(BoundaryIntersections boundaryIntersections, ExpanderOffsets offsets) {
+
+        int n = boundaryIntersections.lengths.length;
+        for (int i=0; i<n; ++i) {
+            double length = boundaryIntersections.lengths[i];
+            // no intersection
+            if (length == 0) continue;
+
+            double offset = offsets.get(length);
+            this.offsets[i] = offset;
+        }
+
     }
+
+    void fillOffsets(double defaultOffset, double maxOffsetCollinearAngle) {
+        // propagateCollinearOffsetsMiddle(maxOffsetCollinearAngle);
+        propagateCollinearOffsetsHeadTail(maxOffsetCollinearAngle);
+        propagateMinMaxOffsets();
+        useDefaultOffset(defaultOffset);
+        // removeOutliers41();
+        // removeOutliers4();
+        removeOutliers3();
+    }
+
+    void fixChamferOffsets(double minChamferAngle) {
+        Coordinate[] coords = boundary.getCoordinates();
+        int l = coords.length - 1;
+        double maxInternalChamferAngle = Math.PI - minChamferAngle;
+        // double maxInternalChamferAngle = Math.PI - minChamferAngle;
+        if (minChamferAngle == 0)
+            return;
+
+        for(int i=0; i<l; ++i) {
+            int p = Op.dec(i, l);       // prevous
+            int s = Op.inc(i, l);       // successive
+
+            double angle = ShapeUtils.internalAngle(coords[p], coords[i], coords[s]);
+            if (angle > maxInternalChamferAngle)
+                continue;
+
+            int o = Op.dec(p, l);
+
+            if (offsets[o] != offsets[p])
+                offsets[p] = offsets[o];
+
+            if (offsets[i] != offsets[s])
+                offsets[i] = offsets[s];
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     private void useDefaultOffset(double offset) {
         if (offsets[0] == 0)
@@ -40,10 +99,12 @@ public class BoundaryOffsets {
 
     // Propagate the offset for collinearity
     // If the points are collinear, it is reasonable to suppose the offset is the same
-    private void propagateCollinearOffsets() {
+    private void propagateCollinearOffsetsMiddle(double maxOffsetCollinearAngle) {
         Coordinate[] coords = boundary.getCoordinates();
         int p,i,s, l = offsets.length - 1;
-        double minAngle = Math.PI - deltaAngle;
+
+        if (ShapeUtils.id(boundary). equals("7804:17:0"))
+            Assert.nop();
 
         // implementation
         // scan forward
@@ -60,13 +121,17 @@ public class BoundaryOffsets {
         i = -1;
         while (i < l) {
             i++;
-            s = ShapeUtils.mod(i+1, l);
-            if (!(offsets[i] != 0 && offsets[s] == 0))
-                continue;
+            s = Op.inc(i, l);   // succesive/next
+            p = Op.dec(i, l);   // previous
 
-            p = ShapeUtils.mod(i-1, l);
+            if (offsets[i] == 0) continue;
+            if (offsets[s] != 0) continue;
+
+            // HERE offsets[i] != 0 & offsets[i+1] == 0
+            double collinearAngle = ShapeUtils.collinearAngle(coords[p], coords[i], coords[s]);
+
             // check for collinearity
-            if (ShapeUtils.angle(coords[p], coords[i], coords[s]) > minAngle)
+            if (collinearAngle <= maxOffsetCollinearAngle)
                 offsets[s] = offsets[i];
         }
 
@@ -74,13 +139,17 @@ public class BoundaryOffsets {
         i = l;
         while(i > 0) {
             i--;
-            p = ShapeUtils.mod(i-1, l);
-            if (!(offsets[p] == 0 && offsets[i] != 0))
-                continue;
+            p = Op.dec(i, l);   // previous
+            s = Op.inc(i, l);   // succesive/next
 
-            s = ShapeUtils.mod(i+1, l);
+            if (offsets[i] == 0) continue;
+            if (offsets[p] != 0) continue;
+
+            // HERE offsets[i] != 0 & offsets[i-1] == 0
+            double collinearAngle = ShapeUtils.collinearAngle(coords[p], coords[i], coords[s]);
+
             // check for collinearity
-            if (ShapeUtils.angle(coords[p], coords[i], coords[s]) > minAngle)
+            if (collinearAngle <= maxOffsetCollinearAngle)
                 offsets[p] = offsets[i];
         }
 
@@ -88,7 +157,7 @@ public class BoundaryOffsets {
         offsets[l] = offsets[0];
     }
 
-    // Propagate the max offset
+    // propagate the max offset
     // If there are missing offsets, it is reasonable to suppose this happen because
     // the intersection point is too far, not because the intersection angle is
     // different of 90 degrees.
@@ -114,6 +183,9 @@ public class BoundaryOffsets {
         //
         // repeat until all elements of 'offsets' are filled
 
+        if (ShapeUtils.id(boundary). equals("7804:17:0"))
+            Assert.nop();
+
         int b = 0;
         int e = 1;
 
@@ -121,14 +193,14 @@ public class BoundaryOffsets {
         if (offsets[b] == 0) {
             e = 1;
             while (offsets[b] == 0 && b != e) {
-                b = ShapeUtils.dec(b,  n);
+                b = Op.dec(b,  n);
             }
         }
         // else scan forward
         else {
             e = n-1;
             while(b != e && offsets[b+1] != 0) {
-                b = ShapeUtils.inc(b,  n);
+                b = Op.inc(b,  n);
             }
         }
 
@@ -137,9 +209,9 @@ public class BoundaryOffsets {
 
         // HERE we have: offsets[b] != 0, offsets[b+1] == 0
         while (true) {
-            e = ShapeUtils.inc(b,  n);
+            e = Op.inc(b,  n);
             while (offsets[e] == 0) {
-                e = ShapeUtils.inc(e,  n);
+                e = Op.inc(e,  n);
             }
 
             // HERE we have:
@@ -162,46 +234,144 @@ public class BoundaryOffsets {
             // double dd = delta/ nz;
 
             // int p = b;
-            b = ShapeUtils.inc(b, n);
+            b = Op.inc(b, n);
             while (b != e) {
                 // offsets[b] = offsets[p] + dd;
                 offsets[b] = useOffset;
                 // p = b;
-                b = ShapeUtils.inc(b, n);
+                b = Op.inc(b, n);
             }
 
             // advance until the next 0
-            e = ShapeUtils.dec(b, n);
+            e = Op.dec(b, n);
             while (offsets[b] != 0 && b != e) {
-                b = ShapeUtils.inc(b,  n);
+                b = Op.inc(b,  n);
             }
 
             // there are no zeros
             if (b == e) break;
 
             // HERE we have offsets[b] == 0 && offsets[b-1] != 0
-            b = ShapeUtils.dec(b,  n);
+            b = Op.dec(b,  n);
         }
 
         // align the last point
         offsets[l] = offsets[0];
     }
 
+    private void propagateCollinearOffsetsHeadTail(double maxOffsetCollinearAngle) {
+        Coordinate[] coords = boundary.getCoordinates();
+        int l = offsets.length - 1;
 
-    //  if offset[i-1] == offset[i+1] && offset[i] != offset[i+1]
-    //  then offset[i] = offset[i+1]
-    private void removeOutliers() {
-        int l = offsets.length-1;
-        for (int i=0,j=l-1; i < l; i++) {
-            if (offsets[j] == offsets[i+1] && offsets[i] != offsets[i+1]) {
-                offsets[i] = offsets[i+1];
-            }
+        if (ShapeUtils.id(boundary). equals("2536:30:0"))
+            Assert.nop();
 
-            j = i;
+        // scan forward
+        for (int i=0; i<l; ++i) {
+            int j = Op.inc(i, l);
+            int k = Op.inc(j, l);
+
+            double collinearAngle = ShapeUtils.collinearAngle(coords[i], coords[j], coords[k]);
+            if (collinearAngle > maxOffsetCollinearAngle)
+                continue;
+            else if (offsets[i] == offsets[j] && offsets[j] == offsets[k])
+                continue;
+            else if (offsets[i] == 0 && offsets[j] != 0)
+                offsets[i] = offsets[j];
+            else if (offsets[i] != 0 && offsets[j] == 0)
+                offsets[j] = offsets[i];
         }
-        // fill the last element
-        offsets[l] =  offsets[0];
+
+        // scan backward
+        for(int i=l-1; i>=0; --i) {
+            int j = Op.dec(i, l);
+            int k = Op.dec(j, l);
+
+            double collinearAngle = ShapeUtils.collinearAngle(coords[k], coords[j], coords[i]);
+            if (collinearAngle > maxOffsetCollinearAngle)
+                continue;
+            else if (offsets[i] == offsets[j] && offsets[j] == offsets[k])
+                continue;
+            else if (offsets[i] == 0 && offsets[j] != 0)
+                offsets[i] = offsets[j];
+            else if (offsets[i] != 0 && offsets[j] == 0)
+                offsets[j] = offsets[i];
+        }
     }
+
+    // if offset[i-1] == offset[i+1] && offset[i] != offset[i+1]
+    // then
+    //    offset[i] = offset[i+1]
+    private void removeOutliers3() {
+        boolean updated = true;
+        while (updated) {
+            updated = false;
+
+            int l = offsets.length - 1;
+            for (int i = 0; i < l; i++) {
+                int p = Op.dec(i, l);
+                int s = Op.inc(i, l);
+                if (offsets[p] == offsets[s] && offsets[i] != offsets[s]) {
+                    offsets[i] = offsets[s];
+                    updated = true;
+                }
+            }
+            // fill the last element
+            offsets[l] = offsets[0];
+        }
+    }
+
+    // if offset[i-1] == offsets[i+2] && offset[i] != offset[i+1] && offset[i+1] != offset[i+2]
+    // then
+    //   offset[i]   = offset[i+2]
+    //   offset[i+1] = offset[i+2]
+    private void removeOutliers4() {
+        boolean updated = true;
+        while (updated) {
+            updated = false;
+
+            int l = offsets.length - 1;
+            for (int i = 0; i < l; i++) {
+                int p = Op.dec(i, l);
+                int s = Op.inc(i, l);
+                int t = Op.inc(s, l);
+
+                if (offsets[p] == offsets[t] && offsets[p] != offsets[i] && offsets[s] != offsets[t] &&
+                    offsets[i] != offsets[s]) {
+                    offsets[i] = offsets[t];
+                    offsets[s] = offsets[t];
+                    updated = true;
+                }
+            }
+        }
+    }
+
+    // if outlier[i-1] == outlier[i+1] && outlier[i+1] != outlier[i+2] &&
+    //    outlier[i] != outlier[i+2]
+    // then
+    //    outlier[i] = outlier[i-1]
+    private void removeOutliers41() {
+        boolean updated = true;
+        while (updated) {
+            updated = false;
+
+            int l = offsets.length - 1;
+            for (int i = 0; i < l; i++) {
+                int p = Op.dec(i, l);
+                int s = Op.inc(i, l);
+                int t = Op.inc(s, l);
+
+                if (offsets[p] == offsets[s] && offsets[s] != offsets[t] && offsets[i] != offsets[t]) {
+                    offsets[s] = offsets[i];
+                    updated = true;
+                }
+            }
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    //
+    // ----------------------------------------------------------------------
 
     // used to plot the ticks
     public List<LineString> ticks() {
@@ -235,11 +405,20 @@ public class BoundaryOffsets {
      * @param offset offset, in meters
      * @return
      */
-    public static List<BoundaryOffsets> assignBoundaryOffsets(List<BoundaryIntersections> boundaryIntersections, double offset) {
-        return assignBoundaryOffsets(boundaryIntersections, new ExpanderOffsets(offset));
+    public static List<BoundaryOffsets> assignBoundaryOffsets(
+        List<BoundaryIntersections> boundaryIntersections,
+        double offset,
+        double maxOffsetCollinearAngle, double minChamferAngle
+    ) {
+        return assignBoundaryOffsets(boundaryIntersections, new ExpanderOffsets(offset),
+            maxOffsetCollinearAngle, minChamferAngle);
     }
 
-    public static List<BoundaryOffsets> assignBoundaryOffsets(List<BoundaryIntersections> boundariesIntersections, ExpanderOffsets offsets) {
+    public static List<BoundaryOffsets> assignBoundaryOffsets(
+        List<BoundaryIntersections> boundariesIntersections,
+        ExpanderOffsets offsets,
+        double maxOffsetCollinearAngle, double minChamferAngle
+    ) {
         //List<LineString> expanded = new ArrayList<>();
         List<BoundaryOffsets> boundariesOffsets = new ArrayList<>();
 
@@ -247,15 +426,7 @@ public class BoundaryOffsets {
         for (BoundaryIntersections boundaryIntersections : boundariesIntersections) {
             BoundaryOffsets boundaryOffsets = new BoundaryOffsets(boundaryIntersections.boundary);
 
-            int n = boundaryIntersections.lengths.length;
-            for (int i=0; i<n; ++i) {
-                double length = boundaryIntersections.lengths[i];
-                // no intersection
-                if (length == 0) continue;
-
-                double offset = offsets.get(length);
-                boundaryOffsets.offsets[i] = offset;
-            }
+            boundaryOffsets.initializeOffsets(boundaryIntersections, offsets);
 
             boundariesOffsets.add(boundaryOffsets);
         }
@@ -263,7 +434,12 @@ public class BoundaryOffsets {
         // 2) for each boundary, complete the offset table
         double defaultOffset = offsets.get();
         for (BoundaryOffsets boundaryOffsets : boundariesOffsets) {
-            boundaryOffsets.fillOffsets(defaultOffset);
+            boundaryOffsets.fillOffsets(defaultOffset, maxOffsetCollinearAngle);
+        }
+
+        // 3) for each chamfer, correct the offset table
+        for (BoundaryOffsets boundaryOffsets : boundariesOffsets) {
+            boundaryOffsets.fixChamferOffsets(minChamferAngle);
         }
 
         return boundariesOffsets;

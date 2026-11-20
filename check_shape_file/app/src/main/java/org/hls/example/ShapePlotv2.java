@@ -64,15 +64,15 @@ public class ShapePlotv2 {
         System.out.printf("Outward directions: %d\n", outwardsDirections.size());
 
         //List<LineString> intersections = BoundaryIntersection.boundaryIntersections(boundaries, outwardDirections, 50, 10);
-        List<BoundaryIntersections> boundariesIntersections = BoundaryIntersections.boundaryIntersections(outwardsDirections, 100, 10);
+        List<BoundaryIntersections> boundariesIntersections = BoundaryIntersections.findBoundaryIntersections(outwardsDirections, 100, 10);
         System.out.printf("Outward intersections: %d\n", boundariesIntersections.size());
 
         // compute the boundary offsets
-        List<BoundaryOffsets> boundariesOffsets = BoundaryOffsets.assignBoundaryOffsets(boundariesIntersections, new ExpanderOffsets().initialize());
+        List<BoundaryOffsets> boundariesOffsets = BoundaryOffsets.assignBoundaryOffsets(boundariesIntersections, new ExpanderOffsets().initialize(), 0, 0);
         System.out.printf("Boundary offsets maps: %d\n", boundariesOffsets.size());
 
         //List<LineString> expanded = BoundaryExpander.boundaryExpandSame(intersections, 1.5);
-        List<BoundaryExpander> boundariesExpanded = BoundaryExpander.boundaryExpand(boundariesOffsets, 10);
+        List<BoundaryExpander> boundariesExpanded = BoundaryExpander.boundaryExpand(boundariesOffsets/* , 10 */);
         System.out.printf("Expanded boundaries: %d\n", boundariesExpanded.size());
 
         List<LineString> outwardsDirs = Flatten.flatten(outwardsDirections.stream().map(od -> List.of(od.allDrections)).toList());

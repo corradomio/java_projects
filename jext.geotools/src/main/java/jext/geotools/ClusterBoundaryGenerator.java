@@ -27,41 +27,18 @@ public class ClusterBoundaryGenerator {
     public static List<LineString> createBoundaries(List<List<Polygon>> clusters, double bridgeTolerance) {
         List<LineString> boundaries = new ArrayList<>();
         for (List<Polygon> cluster : clusters) {
-            Optional<LineString> boundary = createBoundaryViaBuffer(cluster, bridgeTolerance);
-            boundary = cleanupBoundary(boundary);
-            if (!boundary.isPresent())
+            Optional<LineString> optBoundary = createBoundaryViaBuffer(cluster, bridgeTolerance);
+            if (optBoundary.isEmpty())
                 continue;
 
-            boundaries.add(boundary.get());
+            LineString boundary = optBoundary.get();
+            // if (!ShapeUtils.isValidOrder(boundary)) {
+            //     ShapeUtils.invertOrder(boundary);
+            // }
+
+            boundaries.add(boundary);
         }
         return boundaries;
-    }
-
-    private static Optional<LineString> cleanupBoundary(Optional<LineString> boundary) {
-        if (boundary.isEmpty()) return boundary;
-
-        Coordinate[] coords = boundary.get().getCoordinates();
-        int l = coords.length-1;
-        int i = 0;
-
-        while (i < l) {
-            if (ShapeUtils.length(coords[i], coords[i+1]) < 0.5) {
-                l = ShapeUtils.drop(coords, i+1, l);
-            }
-            else {
-                i++;
-            }
-        }
-
-        if (l < 3)
-            return Optional.empty();
-
-        if (l != (coords.length-1))
-            coords = Arrays.copyOf(coords, l+1);
-        coords[l] = coords[0];
-
-        LineString ls = boundary.get().getFactory().createLineString(coords);
-        return Optional.of(ls);
     }
 
     /**
