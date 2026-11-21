@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+<!ENTITY version "@IGRAPH_VERSION@">
+<!ENTITY mdash "&#8212;">
+<!ENTITY aacute "&#xe1;">
+<!ENTITY ccaron "&#269;">
+<!ENTITY uuml "&#252;">
+<!ENTITY % local.common.attrib    "xmlns:xi            CDATA       #FIXED
+'http://www.w3.org/2001/XInclude'" >
+]>
+
+<book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <bookinfo>
+    <title>&igraph; Reference Manual</title>
+    <releaseinfo>&version;</releaseinfo>
+    <authorgroup>
+      <author><firstname>Gábor</firstname><surname>Csárdi</surname>
+      <affiliation>
+      <orgname>Department of Statistics, Harvard University</orgname>
+      <address>1 Oxford street, Cambridge, MA, 02138 USA</address>
+      </affiliation>
+      </author>
+
+      <author><firstname>Tamás</firstname><surname>Nepusz</surname>
+      <affiliation>
+      <orgname>Department of Biological Physics, Eötvös Loránd University</orgname>
+      <address>1/a Pázmány Péter sétány, 1117 Budapest, Hungary</address>
+      </affiliation>
+      </author>
+
+      <author><firstname>Vincent</firstname><surname>Traag</surname>
+      <affiliation>
+      <orgname>Centre for Science and Technology Studies, Leiden University</orgname>
+      <address>Room B5.31, Kolffpad 1, 2333 BN Leiden, Netherlands</address>
+      </affiliation>
+      </author>
+
+      <author><firstname>Szabolcs</firstname><surname>Horvát</surname>
+      <affiliation>
+      <orgname>Department of Computer Science, Reykjavik University</orgname>
+      <address>Menntavegur 1, 102 Reykjavík, Iceland</address>
+      </affiliation>
+      </author>
+
+      <author><firstname>Fabio</firstname><surname>Zanini</surname>
+      <affiliation>
+      <orgname>Lowy Cancer Research Centre, University of New South Wales</orgname>
+      <address>Room 211, Botany and High St, Kensington, NSW, 2033, Australia</address>
+      </affiliation>
+      </author>
+
+      <author><firstname>Daniel</firstname><surname>Noom</surname>
+      <affiliation>
+      <orgname>jitjit software development</orgname>
+      <address>Amsterdam, Netherlands</address>
+      </affiliation>
+      </author>
+    </authorgroup>
+
+    <legalnotice>
+      <para>This manual is for &igraph;, version &version;.</para>
+
+      <para>
+      Copyright (C) 2005-2019 Gábor Csárdi and Tamás Nepusz.
+      Copyright (C) 2020-2025 igraph development team.
+      Permission is granted to copy, distribute and/or modify this document
+      under the terms of the GNU Free Documentation License, Version 1.2
+      or any later version published by the Free Software Foundation;
+      with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+      Texts. A copy of the license is included in the section entitled
+      <quote>GNU Free Documentation License</quote>.
+      </para>
+    </legalnotice>
+  </bookinfo>
+
+  <xi:include href="introduction.xml"/>
+
+  <xi:include href="installation.xml"/>
+
+  <xi:include href="tutorial.xml"/>
+
+  <xi:include href="basicigraph.xml"/>
+
+  <xi:include href="error.xml"/>
+
+  <xi:include href="memory.xml" />
+
+  <chapter id="igraph-Data-structures">
+    <title>Data structure library: vector, matrix, other data types</title>
+    <xi:include href="pmt.xml"/>
+    <xi:include href="vector.xml"/>
+    <xi:include href="matrix.xml"/>
+    <xi:include href="sparsemat.xml"/>
+    <xi:include href="stack.xml"/>
+    <xi:include href="dqueue.xml"/>
+    <xi:include href="heap.xml"/>
+    <xi:include href="strvector.xml"/>
+    <xi:include href="vectorlist.xml"/>
+    <xi:include href="adjlist.xml"/>
+    <xi:include href="psumtree.xml"/>
+    <xi:include href="bitset.xml"/>
+  </chapter>
+
+  <xi:include href="random.xml"/>
+
+  <xi:include href="iterators.xml"/>
+
+  <xi:include href="attributes.xml"/>
+
+  <xi:include href="generators.xml"/>
+
+  <xi:include href="games.xml"/>
+
+  <xi:include href="bipartite.xml"/>
+
+  <xi:include href="spatial.xml"/>
+
+  <xi:include href="operators.xml"/>
+
+  <xi:include href="visitors.xml"/>
+
+  <xi:include href="structural.xml"/>
+
+  <xi:include href="cycles.xml"/>
+
+  <xi:include href="cliques.xml"/>
+
+  <xi:include href="motifs.xml"/>
+
+  <xi:include href="isomorphism.xml"/>
+
+  <xi:include href="coloring.xml"/>
+
+  <xi:include href="flows.xml"/>
+
+  <xi:include href="separators.xml"/>
+
+  <xi:include href="community.xml"/>
+
+  <xi:include href="graphlets.xml"/>
+
+  <xi:include href="hrg.xml"/>
+
+  <xi:include href="embedding.xml"/>
+
+  <xi:include href="layout.xml"/>
+
+  <xi:include href="processes.xml"/>
+
+  <xi:include href="foreign.xml"/>
+
+  <xi:include href="linalg.xml"/>
+
+  <xi:include href="nongraph.xml"/>
+
+  <chapter id="igraph-Advanced">
+    <title>Advanced igraph programming</title>
+    <xi:include href="threading.xml" />
+    <xi:include href="progress.xml" />
+    <xi:include href="status.xml" />
+  </chapter>
+
+  <xi:include href="glossary.xml"/>
+
+  <xi:include href="licenses.xml"/>
+
+  <index/>
+
+</book>

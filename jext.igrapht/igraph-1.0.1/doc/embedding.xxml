@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-Embedding">
+<title>Embedding of graphs</title>
+
+<section id="spectral-embedding"><title>Spectral embedding</title>
+<!-- doxrox-include igraph_adjacency_spectral_embedding -->
+<!-- doxrox-include igraph_laplacian_spectral_embedding -->
+<!-- doxrox-include igraph_dim_select -->
+</section>
+
+</chapter>

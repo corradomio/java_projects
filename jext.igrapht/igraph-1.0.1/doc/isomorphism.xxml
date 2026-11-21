@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-Isomorphism">
+<title>Graph isomorphism</title>
+
+<section id="isomorphism-simple-interface"><title>The simple interface</title>
+<!-- doxrox-include about_graph_isomorphism -->
+<!-- doxrox-include igraph_isomorphic -->
+<!-- doxrox-include igraph_subisomorphic -->
+<!-- doxrox-include igraph_count_automorphisms -->
+<!-- doxrox-include igraph_automorphism_group -->
+<!-- doxrox-include igraph_canonical_permutation -->
+</section>
+
+<section id="bliss-algorithm"><title>The BLISS algorithm</title>
+<!-- doxrox-include about_bliss -->
+<!-- doxrox-include igraph_bliss_sh_t -->
+<!-- doxrox-include igraph_bliss_info_t -->
+<!-- doxrox-include igraph_isomorphic_bliss -->
+<!-- doxrox-include igraph_count_automorphisms_bliss -->
+<!-- doxrox-include igraph_automorphism_group_bliss -->
+<!-- doxrox-include igraph_canonical_permutation_bliss -->
+
+</section>
+
+<section id="vf2-algorithm"><title>The VF2 algorithm</title>
+<!-- doxrox-include about_vf2 -->
+<!-- doxrox-include igraph_isomorphic_vf2 -->
+<!-- doxrox-include igraph_count_isomorphisms_vf2 -->
+<!-- doxrox-include igraph_get_isomorphisms_vf2 -->
+<!-- doxrox-include igraph_get_isomorphisms_vf2_callback -->
+<!-- doxrox-include igraph_isohandler_t -->
+<!-- doxrox-include igraph_isocompat_t -->
+<!-- doxrox-include igraph_subisomorphic_vf2 -->
+<!-- doxrox-include igraph_count_subisomorphisms_vf2 -->
+<!-- doxrox-include igraph_get_subisomorphisms_vf2 -->
+<!-- doxrox-include igraph_get_subisomorphisms_vf2_callback -->
+
+</section>
+
+<section id="lad-algorithm"><title>The LAD algorithm</title>
+<!-- doxrox-include about_lad -->
+<!-- doxrox-include igraph_subisomorphic_lad -->
+</section>
+
+<section id="functions-for-graphs-with-3-or-4-vertices"><title>Functions for small graphs</title>
+<!-- doxrox-include igraph_isoclass -->
+<!-- doxrox-include igraph_isoclass_subgraph -->
+<!-- doxrox-include igraph_isoclass_create -->
+<!-- doxrox-include igraph_graph_count -->
+</section>
+
+<section id="isomorphism-utility-functions"><title>Utility functions</title>
+<!-- doxrox-include igraph_invert_permutation -->
+<!-- doxrox-include igraph_permute_vertices -->
+<!-- doxrox-include igraph_simplify_and_colorize -->
+</section>
+
+</chapter>

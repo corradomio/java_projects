@@ -17,7 +17,13 @@
 
     <modules>
         <module>app</module>
-        <module>../jext.jgrapht_v2</module>
+        <module>../jext.jgrapht</module>
+        <module>../jext.igraph</module>
+        <module>../jext.logging</module>
+        <module>../jext.concurrent</module>
+        <module>../jext.commons</module>
+        <module>../jext.collections</module>
+        <module>../jext.math</module>
     </modules>
 
 </project>

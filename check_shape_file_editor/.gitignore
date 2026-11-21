@@ -1,0 +1,6 @@
+/.metadata/
+.idea
+eclipse.run
+runtime-workspace
+
+*.shp

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-Nongraph">
+<title>Non-graph related functions </title>
+
+<section id="igraph-version-number"><title>igraph version number</title>
+<!-- doxrox-include igraph_version -->
+</section>
+
+<section id="running-mean-of-a-time-series"><title>Running mean of a time series</title>
+<!-- doxrox-include igraph_running_mean -->
+</section>
+
+<section id="random-sampling-from-very-long-sequences"><title>Random sampling from very long sequences</title>
+<!-- doxrox-include igraph_random_sample -->
+</section>
+
+<section id="random-sampling-of-spatial-points"><title>Random sampling of spatial points</title>
+<!-- doxrox-include igraph_rng_sample_sphere_surface -->
+<!-- doxrox-include igraph_rng_sample_sphere_volume -->
+<!-- doxrox-include igraph_rng_sample_dirichlet -->
+</section>
+
+<section id="fitting-powerlaw-distributions-to-empirical-data"><title>Fitting power-law distributions to empirical data</title>
+<!-- doxrox-include igraph_plfit_result_t -->
+<!-- doxrox-include igraph_power_law_fit -->
+<!-- doxrox-include igraph_plfit_result_calculate_p_value -->
+</section>
+
+<section id="compare-floats-with-tolerance"><title>Comparing floats with a tolerance</title>
+<!-- doxrox-include igraph_cmp_epsilon -->
+<!-- doxrox-include igraph_almost_equals -->
+<!-- doxrox-include igraph_complex_almost_equals -->
+</section>
+
+</chapter>

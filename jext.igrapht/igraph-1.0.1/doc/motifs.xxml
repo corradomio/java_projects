@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-Motifs">
+<title>Graph motifs, dyad census and triad census</title>
+
+<para>
+This section deals with functions which find small induced subgraphs in a
+graph. These were first defined for subgraphs of two and three vertices
+by Holland and Leinhardt, and named dyad census and triad census.
+</para>
+
+<!-- doxrox-include igraph_dyad_census -->
+<!-- doxrox-include igraph_triad_census -->
+
+<section id="finding-triangles"><title>Finding triangles</title>
+<!-- doxrox-include igraph_count_adjacent_triangles -->
+<!-- doxrox-include igraph_count_triangles -->
+<!-- doxrox-include igraph_list_triangles -->
+</section>
+
+<section id="graph-motifs"><title>Graph motifs</title>
+<!-- doxrox-include igraph_motifs_randesu -->
+<!-- doxrox-include igraph_motifs_randesu_no -->
+<!-- doxrox-include igraph_motifs_randesu_estimate -->
+<!-- doxrox-include igraph_motifs_randesu_callback -->
+<!-- doxrox-include igraph_motifs_handler_t -->
+</section>
+
+</chapter>

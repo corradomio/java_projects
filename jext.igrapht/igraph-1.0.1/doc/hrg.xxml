@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-HRG">
+<title>Hierarchical random graphs</title>
+
+<section id="hrg-intro">
+<!-- doxrox-include hrg_intro -->
+</section>
+
+<section id="representing-hrgs"><title>Representing HRGs</title>
+<!-- doxrox-include igraph_hrg_t -->
+<!-- doxrox-include igraph_hrg_init -->
+<!-- doxrox-include igraph_hrg_destroy -->
+<!-- doxrox-include igraph_hrg_size -->
+<!-- doxrox-include igraph_hrg_resize -->
+</section>
+
+<section id="fitting-hrgs"><title>Fitting HRGs</title>
+<!-- doxrox-include igraph_hrg_fit -->
+<!-- doxrox-include igraph_hrg_consensus -->
+</section>
+
+<section id="hrg-sampling"><title>HRG sampling</title>
+<!-- doxrox-include igraph_hrg_sample -->
+<!-- doxrox-include igraph_hrg_game -->
+</section>
+
+<section id="conversion-to-and-from-igraph-graphs"><title>Conversion to and from igraph graphs</title>
+<!-- doxrox-include igraph_from_hrg_dendrogram -->
+<!-- doxrox-include igraph_hrg_create -->
+</section>
+
+<section id="predicting-missing-edges"><title>Predicting missing edges</title>
+<!-- doxrox-include igraph_hrg_predict -->
+</section>
+
+<section id="hrg-deprecated"><title>Deprecated functions</title>
+<!-- doxrox-include igraph_hrg_dendrogram -->
+</section>
+
+</chapter>

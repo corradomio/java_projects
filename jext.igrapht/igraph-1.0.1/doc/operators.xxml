@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-Operators">
+<title>Graph operators</title>
+
+<section id="union-and-intersection"><title>Union and intersection</title>
+<!-- doxrox-include igraph_disjoint_union -->
+<!-- doxrox-include igraph_disjoint_union_many -->
+<!-- doxrox-include igraph_join -->
+<!-- doxrox-include igraph_union -->
+<!-- doxrox-include igraph_union_many -->
+<!-- doxrox-include igraph_intersection -->
+<!-- doxrox-include igraph_intersection_many -->
+</section>
+
+<section id="other-setlike-operators"><title>Other set-like operators</title>
+<!-- doxrox-include igraph_difference -->
+<!-- doxrox-include igraph_complementer -->
+<!-- doxrox-include igraph_compose -->
+</section>
+
+<section id="miscellaneous-operators"><title>Miscellaneous operators</title>
+<!-- doxrox-include igraph_connect_neighborhood -->
+<!-- doxrox-include igraph_contract_vertices -->
+<!-- doxrox-include igraph_graph_power -->
+<!-- doxrox-include igraph_product -->
+<!-- doxrox-include igraph_rooted_product -->
+<!-- doxrox-include igraph_induced_subgraph -->
+<!-- doxrox-include igraph_induced_subgraph_map -->
+<!-- doxrox-include igraph_induced_subgraph_edges -->
+<!-- doxrox-include igraph_linegraph -->
+<!-- doxrox-include igraph_mycielskian -->
+<!-- doxrox-include igraph_simplify -->
+<!-- doxrox-include igraph_subgraph_from_edges -->
+<!-- doxrox-include igraph_reverse_edges -->
+</section>
+
+</chapter>

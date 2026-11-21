@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-Processes">
+<title>Processes on graphs</title>
+
+<section id="epidemic-models"><title>Epidemic models</title>
+<!-- doxrox-include igraph_sir -->
+<!-- doxrox-include igraph_sir_t -->
+<!-- doxrox-include igraph_sir_destroy -->
+</section>
+
+</chapter>

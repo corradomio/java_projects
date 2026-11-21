@@ -51,7 +51,7 @@ public class Line {
     }
 
     public Line addPoints(double... c) {
-        int n = c.length/2;
+        int n = c.length;
         for (int i = 0; i < n; i+=2) {
             points.add(new Point(c[i], c[i+1]));
         }

@@ -1,0 +1,181 @@
+/*
+   igraph library.
+   Copyright (C) 2007-2025  The igraph development team <igraph@igraph.org>
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#ifdef ATOMIC
+    #undef ATOMIC
+#endif
+
+#ifdef ATOMIC_IO
+    #undef ATOMIC_IO
+#endif
+
+#ifdef BASE
+    #undef BASE
+#endif
+
+#ifdef BASE_EPSILON
+    #undef BASE_EPSILON
+#endif
+
+#ifdef BASE_MATRIX
+    #undef BASE_MATRIX
+#endif
+
+#ifdef BASE_VECTOR
+    #undef BASE_VECTOR
+#endif
+
+#ifdef CONCAT2
+    #undef CONCAT2
+#endif
+
+#ifdef CONCAT2x
+    #undef CONCAT2x
+#endif
+
+#ifdef CONCAT3
+    #undef CONCAT3
+#endif
+
+#ifdef CONCAT3x
+    #undef CONCAT3x
+#endif
+
+#ifdef CONCAT4
+    #undef CONCAT4
+#endif
+
+#ifdef CONCAT4x
+    #undef CONCAT4x
+#endif
+
+#ifdef CONCAT5
+    #undef CONCAT5
+#endif
+
+#ifdef CONCAT5x
+    #undef CONCAT5x
+#endif
+
+#ifdef FP
+    #undef FP
+#endif
+
+#ifdef FUNCTION
+    #undef FUNCTION
+#endif
+
+#ifdef IN_FORMAT
+    #undef IN_FORMAT
+#endif
+
+#ifdef INTERNAL_FUNCTION
+    #undef INTERNAL_FUNCTION
+#endif
+
+#ifdef MULTIPLICITY
+    #undef MULTIPLICITY
+#endif
+
+#ifdef ONE
+    #undef ONE
+#endif
+
+#ifdef OUT_FORMAT
+    #undef OUT_FORMAT
+#endif
+
+#ifdef SHORT
+    #undef SHORT
+#endif
+
+#ifdef TYPE
+    #undef TYPE
+#endif
+
+#ifdef ZERO
+    #undef ZERO
+#endif
+
+#ifdef HEAPMORE
+    #undef HEAPMORE
+#endif
+
+#ifdef HEAPLESS
+    #undef HEAPLESS
+#endif
+
+#ifdef HEAPMOREEQ
+    #undef HEAPMOREEQ
+#endif
+
+#ifdef HEAPLESSEQ
+    #undef HEAPLESSEQ
+#endif
+
+#ifdef SUM
+    #undef SUM
+#endif
+
+#ifdef SQ
+    #undef SQ
+#endif
+
+#ifdef PROD
+    #undef PROD
+#endif
+
+#ifdef NOTORDERED
+    #undef NOTORDERED
+#endif
+
+#ifdef EQ
+    #undef EQ
+#endif
+
+#ifdef DIFF
+    #undef DIFF
+#endif
+
+#ifdef DIV
+    #undef DIV
+#endif
+
+#ifdef NOABS
+    #undef NOABS
+#endif
+
+#ifdef PRINTFUNC
+    #undef PRINTFUNC
+#endif
+
+#ifdef SNPRINTFUNC
+    #undef SNPRINTFUNC
+#endif
+
+#ifdef FPRINTFUNC_ALIGNED
+    #undef FPRINTFUNC_ALIGNED
+#endif
+
+#ifdef FPRINTFUNC
+    #undef FPRINTFUNC
+#endif
+
+#ifdef UNSIGNED
+    #undef UNSIGNED
+#endif

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+]>
+
+<chapter id="igraph-Random">
+<title>Random numbers</title>
+
+<!-- doxrox-include about_rngs -->
+
+<section id="default-random-number-generator"><title>The default random number generator</title>
+<!-- doxrox-include igraph_rng_default -->
+<!-- doxrox-include igraph_rng_set_default -->
+</section>
+
+<section id="creating-random-number-generators"><title>Creating random number generators</title>
+<!-- doxrox-include igraph_rng_init -->
+<!-- doxrox-include igraph_rng_destroy -->
+<!-- doxrox-include igraph_rng_seed -->
+<!-- doxrox-include igraph_rng_bits -->
+<!-- doxrox-include igraph_rng_max -->
+<!-- doxrox-include igraph_rng_name -->
+</section>
+
+<section id="generating-random-numbers"><title>Generating random numbers</title>
+<!-- doxrox-include igraph_rng_get_bool -->
+<!-- doxrox-include igraph_rng_get_integer -->
+<!-- doxrox-include igraph_rng_get_unif01 -->
+<!-- doxrox-include igraph_rng_get_unif -->
+<!-- doxrox-include igraph_rng_get_normal -->
+<!-- doxrox-include igraph_rng_get_exp -->
+<!-- doxrox-include igraph_rng_get_gamma -->
+<!-- doxrox-include igraph_rng_get_binom -->
+<!-- doxrox-include igraph_rng_get_geom -->
+<!-- doxrox-include igraph_rng_get_pois -->
+</section>
+
+<section id="supported-random-number-generators"><title>Supported random number generators</title>
+<para>
+By default igraph uses the MT19937 generator. Prior to igraph version
+0.6, the generator supplied by the standard C library was used. This
+means the GLIBC2 generator on GNU libc 2 systems, and maybe the BSD RAND
+generator on others. The RAND generator was removed due to poor statistical
+properties in version 0.10. The PCG32 generator was added in version 0.10.
+</para>
+<!-- doxrox-include igraph_rngtype_mt19937 -->
+<!-- doxrox-include igraph_rngtype_glibc2 -->
+<!-- doxrox-include igraph_rngtype_pcg32 -->
+<!-- doxrox-include igraph_rngtype_pcg64 -->
+</section>
+
+<!-- doxrox-include rng_use_cases -->
+
+</chapter>

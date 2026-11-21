@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+<!ENTITY igraph "igraph">
+<!ENTITY % local.common.attrib    "xmlns:xi            CDATA       #FIXED
+'http://www.w3.org/2001/XInclude'" >
+]>
+
+<chapter id="igraph-Linalg">
+<title>Using BLAS, LAPACK and ARPACK for igraph matrices and graphs</title>
+
+<section id="about-blas">
+<!-- doxrox-include about_blas -->
+<!-- doxrox-include igraph_blas_ddot -->
+<!-- doxrox-include igraph_blas_dnrm2 -->
+<!-- doxrox-include igraph_blas_dgemv -->
+<!-- doxrox-include igraph_blas_dgemm -->
+<!-- doxrox-include igraph_blas_dgemv_array -->
+</section>
+
+<section id="about-lapack">
+  <!-- doxrox-include about_lapack -->
+  <section id="matrix-factorization"><title>Matrix factorization, solving linear systems</title>
+  <!-- doxrox-include igraph_lapack_dgetrf -->
+  <!-- doxrox-include igraph_lapack_dgetrs -->
+  <!-- doxrox-include igraph_lapack_dgesv -->
+  </section>
+  <section id="eigenvalues"><title>Eigenvalues and eigenvectors of matrices</title>
+  <!-- doxrox-include igraph_lapack_dsyevr -->
+  <!-- doxrox-include igraph_lapack_dgeev -->
+  <!-- doxrox-include igraph_lapack_dgeevx -->
+  </section>
+</section>
+
+<section id="about-arpack">
+<!-- doxrox-include about_arpack -->
+<section id="arpack-data-structures"><title>Data structures</title>
+<!-- doxrox-include igraph_arpack_options_t -->
+<!-- doxrox-include igraph_arpack_storage_t -->
+<!-- doxrox-include igraph_arpack_function_t -->
+<!-- doxrox-include igraph_arpack_options_init -->
+<!-- doxrox-include igraph_arpack_storage_init -->
+<!-- doxrox-include igraph_arpack_storage_destroy -->
+</section>
+
+<section id="arpack-solvers"><title>ARPACK solvers</title>
+<!-- doxrox-include igraph_arpack_rssolve -->
+<!-- doxrox-include igraph_arpack_rnsolve -->
+<!-- doxrox-include igraph_arpack_unpack_complex -->
+</section>
+
+</section>
+
+</chapter>

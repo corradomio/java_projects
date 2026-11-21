@@ -4,7 +4,6 @@ import hageldave.jplotter.renderers.CoordSysRenderer;
 import hageldave.jplotter.renderers.Renderer;
 import jext.jplotter.renderers.CompleteRenderer;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,7 +36,8 @@ public class JPlotterFrame extends JFrame {
     private void init() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add((JComponent)canvas, BorderLayout.CENTER);
+        // asComponent(): BlankCanvas is an AWT Canvas, not a JComponent
+        getContentPane().add(canvas.asComponent(), BorderLayout.CENTER);
 
         int width = 1440;
 
