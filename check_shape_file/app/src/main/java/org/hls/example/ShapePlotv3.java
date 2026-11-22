@@ -44,8 +44,8 @@ public class ShapePlotv3 {
         File polygonsFile =
             // new File(EBTIC_ROOT, "EbticDATA/Dubai/Jumeirah Village/PARCEL.shp")
             // new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/yasmeenShape/yasmeen.shp")
-            new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/ALSEYOUH2468/revised/Al_Seyouh_2468.shp")
-            // new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/ZUBAIR/ZUBAIR.shp")
+            // new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/ALSEYOUH2468/revised/Al_Seyouh_2468.shp")
+            new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/ZUBAIR/ZUBAIR.shp")
             // new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\RAK-ORM\\RAK-ORM\\parcel.shp")
             // new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\EC-ODD\\EC-ODD\\parcel.shp")
             // new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\WC-OAM\\WC-OAM\\parcel.shp")

@@ -1,6 +1,7 @@
-/.metadata/
-.idea
+out
+target
 eclipse.run
-runtime-workspace
-
-*.shp
+parcel
+logs
+.settings
+.metadata

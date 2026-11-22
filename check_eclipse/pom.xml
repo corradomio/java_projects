@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hls</groupId>
+    <artifactId>check_eclipse</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>Eclipse</id>
+            <url>https://repo.gradle.org/gradle/libs-releases/</url>
+        </repository>
+        <repository>
+            <id>GEF</id>
+            <url>https://repository.openmindonline.it/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Source: https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.sdk -->
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.sdk</artifactId>
+            <version>4.27.0</version>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.eclipse.gef/org.eclipse.gef -->
+        <dependency>
+            <groupId>org.eclipse.gef</groupId>
+            <artifactId>org.eclipse.gef</artifactId>
+            <version>3.4.1-20081006</version>
+        </dependency>
+    </dependencies>
+
+</project>

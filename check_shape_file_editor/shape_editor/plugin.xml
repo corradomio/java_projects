@@ -2,16 +2,30 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.ui.editors">
+   <extension id="application" point="org.eclipse.core.runtime.applications">
+      <application>
+         <run class="jext.eclipse.shapeeditor.ShapeEditorApplication"/>
+      </application>
+   </extension>
+
+   <extension id="product" point="org.eclipse.core.runtime.products">
+      <product application="jext.eclipse.shapeeditor.application" name="Shape Editor"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.perspectives">
+      <perspective
+            id="jext.eclipse.shapeeditor.perspective"
+            name="Shape Editor"
+            class="jext.eclipse.shapeeditor.ShapeEditorPerspective"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
       <editor
-            id="xml_editor.XMLEditor"
-            name="Sample XML Editor"
-            icon="icons/sample.png"
-            extensions="xml"
-            class="xml_editor.XMLEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">
-      </editor>
+            class="jext.eclipse.shapeeditor.editor.ShapeFileEditor"
+            default="false"
+            extensions="shp"
+            id="jext.eclipse.shapeeditor.editor"
+            name="Shape File Viewer"/>
    </extension>
 
 </plugin>
