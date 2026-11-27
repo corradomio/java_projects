@@ -28,7 +28,7 @@ import java.util.List;
 
 public class ShapePlotv3 {
 
-    private static final File EBTIC_ROOT = new File("D:\\Projects.ebtic\\project.ftth");
+    private static final File EBTIC_ROOT = new File("D:\\Projects.ebtic\\project.ftth.data");
 
     public static void main(String[] args) throws Exception {
         // System.setProperty("org.lwjgl.librarypath", "D:\\Projects.github\\java_projects\\lwjgl\\bin-3.3.6");
@@ -45,10 +45,12 @@ public class ShapePlotv3 {
             // new File(EBTIC_ROOT, "EbticDATA/Dubai/Jumeirah Village/PARCEL.shp")
             // new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/yasmeenShape/yasmeen.shp")
             // new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/ALSEYOUH2468/revised/Al_Seyouh_2468.shp")
-            new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/ZUBAIR/ZUBAIR.shp")
+            // new File(EBTIC_ROOT, "EbticDATA/Etisalat/Greenfield/NorthernEmirates/From Hashim/ZUBAIR/ZUBAIR.shp")
             // new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\RAK-ORM\\RAK-ORM\\parcel.shp")
             // new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\EC-ODD\\EC-ODD\\parcel.shp")
             // new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\WC-OAM\\WC-OAM\\parcel.shp")
+            // new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\AUH-OHY\\base_line.shp");
+            new File(EBTIC_ROOT, "EbticDATA\\MasterPlan\\Latest\\WC-OMN\\WC-OMN1\\base_line.shp");
         ;
 
         CorridorsGenerator cg = new  CorridorsGenerator();
@@ -58,10 +60,12 @@ public class ShapePlotv3 {
         // cg.setMaxCollinearAngleDegree(1);
         // cg.setMaxCollinearOffsetAngleDegree(1);
 
+        cg.setMinPolygonArea(2500);
+
         cg.setMaxIntersectionDistance(80);
         cg.setMaxOffsetCollinearAngleDegree(10);
 
-        cg.setMinChamferAngleDegree(30);
+        cg.setMaxChamferAngleDegree(120);
         cg.setChamferJunctionDistance(5);
         cg.setJunctionDistance(100);
 
@@ -83,7 +87,7 @@ public class ShapePlotv3 {
         List<LineString> bridgeDirections = r.junctionBridges.stream().map(JunctionBridge::direction).toList();
 
         log.info("Populate JPlotter");
-        addPolygons(r.polygons, content, Color.GRAY, 1);
+        addPolygons(r.allPolygons, content, Color.GRAY, 1);
         addLines(r.boundaries, content, Color.BLUE, 1);
         // addLines(outwardsDirs, content, Color.RED, 3);
         // addLines(intersectionDirs, content, Color.GREEN, 1);

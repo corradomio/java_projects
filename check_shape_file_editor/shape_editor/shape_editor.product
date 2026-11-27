@@ -15,5 +15,10 @@
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.ui"/>
+      <property name="osgi.logfile" value="../logs/equinox.log" />
+      <property name="log4j2.configurationFile" value="./logsconfig/log4j2.xml" />
+      <property name="log4j.configuration" value="file:./logsconfig/log4j.xml" />
+      <property name="logback.configurationFile" value="./logsconfig/logback.xml" />
+      <property name="java.util.logging.config.file" value="./logsconfig/jul.properties" />
    </plugins>
 </product>

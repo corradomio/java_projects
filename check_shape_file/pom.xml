@@ -17,6 +17,7 @@
         <module>../jext.plot</module>
         <module>../jext.colors</module>
         <module>../jext.concurrent</module>
+        <module>../jext.configuration</module>
     </modules>
 
     <properties>

@@ -1,4 +1,4 @@
-package jext.eclipse.shapeeditor.editor;
+package jext.eclipse.shapeeditor.editors.csv;
 
 import java.io.File;
 
@@ -6,11 +6,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-public class ShapeFileEditorInput implements IEditorInput {
+public class CsvFileEditorInput implements IEditorInput {
 
     private final File file;
 
-    public ShapeFileEditorInput(File file) {
+    public CsvFileEditorInput(File file) {
         this.file = file;
     }
 
@@ -55,9 +55,9 @@ public class ShapeFileEditorInput implements IEditorInput {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof ShapeFileEditorInput)) return false;
-        ShapeFileEditorInput other = (ShapeFileEditorInput) obj;
-        return this.file != null && this.file.equals(other.file);
+        if (!(obj instanceof CsvFileEditorInput)) return false;
+        CsvFileEditorInput other = (CsvFileEditorInput) obj;
+        return file != null && file.equals(other.file);
     }
 
     @Override

@@ -1,3 +1,4 @@
+bin
 out
 target
 eclipse.run
@@ -5,3 +6,5 @@ parcel
 logs
 .settings
 .metadata
+partial-runtime
+

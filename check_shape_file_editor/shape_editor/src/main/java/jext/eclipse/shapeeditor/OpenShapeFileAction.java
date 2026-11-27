@@ -2,6 +2,7 @@ package jext.eclipse.shapeeditor;
 
 import java.io.File;
 
+import jext.eclipse.shapeeditor.editors.shp.ShapeFileEditor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -9,7 +10,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import jext.eclipse.shapeeditor.editor.ShapeFileEditorInput;
+import jext.eclipse.shapeeditor.editors.shp.ShapeFileEditorInput;
 
 public class OpenShapeFileAction extends Action {
 
@@ -40,7 +41,7 @@ public class OpenShapeFileAction extends Action {
         try {
             IWorkbenchPage page = window.getActivePage();
             ShapeFileEditorInput input = new ShapeFileEditorInput(new File(path));
-            page.openEditor(input, jext.eclipse.shapeeditor.editor.ShapeFileEditor.ID);
+            page.openEditor(input, ShapeFileEditor.ID);
         } catch (Exception ex) {
             MessageDialog.openError(
                     window.getShell(),

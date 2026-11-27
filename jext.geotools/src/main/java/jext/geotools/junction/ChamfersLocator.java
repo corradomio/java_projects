@@ -20,12 +20,12 @@ public class ChamfersLocator {
 
     public static List<BoundaryChamfers> findChamferLocations(
         List<BoundaryExpander> expandedBoundaries,
-        double minChamferAngle
+        double maxChamferAngle
     ) {
         List<BoundaryChamfers> allChamferLocations = new ArrayList<>();
 
         for(BoundaryExpander expandedBoundary : expandedBoundaries) {
-            BoundaryChamfers chamferLocations = findChamferLocations(expandedBoundary, minChamferAngle);
+            BoundaryChamfers chamferLocations = findChamferLocations(expandedBoundary, maxChamferAngle);
 
             allChamferLocations.add(chamferLocations);
         }
@@ -33,19 +33,18 @@ public class ChamfersLocator {
     }
 
 
-    public static BoundaryChamfers findChamferLocations(BoundaryExpander expandedBoundary, double minChamferAngle) {
+    public static BoundaryChamfers findChamferLocations(BoundaryExpander expandedBoundary, double maxChamferAngle) {
         LineString boundary = expandedBoundary.boundary;
         Coordinate[] coords = boundary.getCoordinates();
         int l = coords.length - 1;      // coords[0] == coords[n-1]
         List<Chamfer> chamfers = new ArrayList<>();
-        double maxInternalChamferAngle = Math.PI - minChamferAngle;
 
         for(int i=0; i<l; ++i) {
             int p = Op.dec(i, l);       // prevous
             int s = Op.inc(i, l);       // successive
 
             double angle = ShapeUtils.internalAngle(coords[p], coords[i], coords[s]);
-            if (angle > maxInternalChamferAngle)
+            if (angle > maxChamferAngle)
                 continue;
 
             // logger.debugf("... [%d,%d,%d] %.2f [chamfer]", p,i,s, Math.toDegrees(angle));

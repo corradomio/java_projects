@@ -16,8 +16,8 @@
     </properties>
 
     <modules>
-        <module>../jext.jgrapht</module>
-        <module>../jext.igrapht</module>
+        <module>../jext.jgrapht/jext.jgrapht-core</module>
+        <module>../jext.igrapht-core</module>
         <module>../jext.logging</module>
         <module>../jext.concurrent</module>
         <module>../jext.commons</module>

@@ -62,12 +62,12 @@ public class BoundaryOffsets {
         removeOutliers3();
     }
 
-    void fixChamferOffsets(double minChamferAngle) {
+    void fixChamferOffsets(double maxChamferAngle) {
         Coordinate[] coords = boundary.getCoordinates();
         int l = coords.length - 1;
-        double maxInternalChamferAngle = Math.PI - minChamferAngle;
-        // double maxInternalChamferAngle = Math.PI - minChamferAngle;
-        if (minChamferAngle == 0)
+        double maxInternalChamferAngle = maxChamferAngle;
+
+        if (maxChamferAngle == 0)
             return;
 
         for(int i=0; i<l; ++i) {
@@ -417,7 +417,7 @@ public class BoundaryOffsets {
     public static List<BoundaryOffsets> assignBoundaryOffsets(
         List<BoundaryIntersections> boundariesIntersections,
         ExpanderOffsets offsets,
-        double maxOffsetCollinearAngle, double minChamferAngle
+        double maxOffsetCollinearAngle, double maxChamferAngle
     ) {
         //List<LineString> expanded = new ArrayList<>();
         List<BoundaryOffsets> boundariesOffsets = new ArrayList<>();
@@ -439,7 +439,7 @@ public class BoundaryOffsets {
 
         // 3) for each chamfer, correct the offset table
         for (BoundaryOffsets boundaryOffsets : boundariesOffsets) {
-            boundaryOffsets.fixChamferOffsets(minChamferAngle);
+            boundaryOffsets.fixChamferOffsets(maxChamferAngle);
         }
 
         return boundariesOffsets;

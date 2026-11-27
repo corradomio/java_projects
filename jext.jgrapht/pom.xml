@@ -11,10 +11,10 @@
 
     <modules>
         <!--<module>color-clustering</module>-->
-        <module>jgrapht-core</module>
-        <module>jgrapht-io</module>
-        <module>jgrapht-neo4j</module>
-        <module>jgrapht-clustering</module>
+        <module>jext.jgrapht-core</module>
+        <module>jext.jgrapht-io</module>
+        <module>jext.jgrapht-neo4j</module>
+        <module>jext.jgrapht-clustering</module>
     </modules>
 
     <properties>

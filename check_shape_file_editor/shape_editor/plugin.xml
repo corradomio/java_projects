@@ -19,13 +19,39 @@
             class="jext.eclipse.shapeeditor.ShapeEditorPerspective"/>
    </extension>
 
+   <extension point="org.eclipse.ui.views">
+      <view
+            id="jext.eclipse.shapeeditor.views.directoryTree"
+            name="Directories"
+            class="jext.eclipse.shapeeditor.views.DirectoryTreeView"
+            restorable="true"/>
+   </extension>
+
    <extension point="org.eclipse.ui.editors">
       <editor
-            class="jext.eclipse.shapeeditor.editor.ShapeFileEditor"
+            class="jext.eclipse.shapeeditor.editors.shp.ShapeFileEditor"
             default="false"
             extensions="shp"
             id="jext.eclipse.shapeeditor.editor"
             name="Shape File Viewer"/>
+      <editor
+            class="jext.eclipse.shapeeditor.editors.xml.XmlFileEditor"
+            default="false"
+            extensions="xml"
+            id="jext.eclipse.shapeeditor.editors.xml.XmlFileEditor"
+            name="XML File Viewer"/>
+      <editor
+            class="jext.eclipse.shapeeditor.editors.dbf.DbfFileEditor"
+            default="false"
+            extensions="dbf"
+            id="jext.eclipse.shapeeditor.editors.dbf.DbfFileEditor"
+            name="DBF File Viewer"/>
+      <editor
+            class="jext.eclipse.shapeeditor.editors.csv.CsvFileEditor"
+            default="false"
+            extensions="csv"
+            id="jext.eclipse.shapeeditor.editors.csv.CsvFileEditor"
+            name="CSV File Viewer"/>
    </extension>
 
 </plugin>

@@ -49,19 +49,22 @@ public class CorridorsGenerator {
     private double clusterTolerance = 4;                // m
     // max length of the segment when it is created the boundary and it
     // is necessary to connect not adjacent polygons
-    private double clusterBridgeTolerance = 20;                // m
-    // max segment length in boundary. If a segment is longer
-    // it is split in smaller component
-    private double maxSegmentLength = 0;                // m
-    // max angle to consider two segments collinear
-    private double maxCollinearAngle = 0;               // radians
-    // max angle to consider two segments collinear during the offset propagation
-    private double maxOffsetCollinearAngle = 0;
+    private double boundarySides = 20;                // m
+
     // min segment length to consider valid. If it is shorter
     // it is removed. Default: 20cm
     // This step is MANDATORY because if a segment has length 0
     // this generates a lot of problems in the remaining steps
     private double minSegmentLength = 0.2;              // m
+    // max segment length in boundary.
+    // If a segment is longer it is split in smaller component
+    private double maxSegmentLength = 0;                // m
+    // max angle to consider two segments collinear
+    private double maxCollinearAngle = 0;               // radians
+
+    // max angle to consider two segments collinear during the offset propagation
+    private double maxOffsetCollinearAngle = 0;
+
     // max accepted angle to consider the intersection valid
     // It is the difference between 90 degres: 10 degrees means [80,100]
     private double maxIntersectionAngle = Math.toRadians(10);           // radians
@@ -69,6 +72,7 @@ public class CorridorsGenerator {
     // farther it is not considered
     // boundary offsets to use, based on the intersection distance
     private double maxIntersectionDistance = 40;        // m
+
     private ExpanderOffsets offsets = new  ExpanderOffsets().initialize();
 
     //
@@ -77,7 +81,7 @@ public class CorridorsGenerator {
     // chamfer offset where to create the vertex to connect boundaries
     private double chamferJunctionDistance = 5;
     // maximum angle between two boundary segments to consider a chamfer
-    private double minChamferAngle = Math.toRadians(60);
+    private double maxChamferAngle = Math.toRadians(60);
     // distance between 2 junctions on boundaries
     private double junctionDistance = 300;
 
@@ -126,8 +130,8 @@ public class CorridorsGenerator {
 
     /// length of the segments when it is necessary to connect not adjacent polygons
     /// Default: 20 m
-    public void setClusterBridgeTolerance(double clusterBridgeTolerance) {
-        this.clusterBridgeTolerance = clusterBridgeTolerance;
+    public void setBoundarySides(double boundarySides) {
+        this.boundarySides = boundarySides;
     }
 
     /// Which is the maximum segment length of the boundaries. It is used to increase the places where
@@ -184,11 +188,11 @@ public class CorridorsGenerator {
     // Chamfers & Junctions
 
     /// Set the minimum angle
-    public void setMinChamferAngle(double minChamferAngle) {
-        this.minChamferAngle = minChamferAngle;
+    public void setMaxChamferAngle(double maxChamferAngle) {
+        this.maxChamferAngle = maxChamferAngle;
     }
-    public void setMinChamferAngleDegree(double minChamferAngle) {
-        this.minChamferAngle = Math.toRadians(minChamferAngle);
+    public void setMaxChamferAngleDegree(double maxChamferAngle) {
+        this.maxChamferAngle = Math.toRadians(maxChamferAngle);
     }
 
     public void setChamferJunctionDistance(double chamferJunctionDistance) {
@@ -249,7 +253,7 @@ public class CorridorsGenerator {
 
         // create boundaries
         logger.info("create boundaries");
-        List<LineString> boundaries = ClusterBoundaryGenerator.createBoundaries(clusters, clusterBridgeTolerance);
+        List<LineString> boundaries = ClusterBoundaryGenerator.createBoundaries(clusters, boundarySides);
         Assert.verify(boundaries.size() == n, "Wrong number of boundaries");
 
         // remove segments too short
@@ -275,7 +279,7 @@ public class CorridorsGenerator {
 
         // compute the boundary offsets
         logger.info("compute the boundary offsets");
-        List<BoundaryOffsets> boundaryOffsets = BoundaryOffsets.assignBoundaryOffsets(boundaryIntersections, offsets, maxOffsetCollinearAngle, minChamferAngle);
+        List<BoundaryOffsets> boundaryOffsets = BoundaryOffsets.assignBoundaryOffsets(boundaryIntersections, offsets, maxOffsetCollinearAngle, maxChamferAngle);
         Assert.verify(boundaryOffsets.size() == n, "Wrong number of boundaryOffsets");
 
         // expand boundaries
@@ -305,7 +309,7 @@ public class CorridorsGenerator {
         Assert.verify(expanded.size() == n, "Wrong number of expandedBoundaries");
 
         // find the chamfer locations
-        List<BoundaryChamfers> chamferLocations = ChamfersLocator.findChamferLocations(expandedBoundaries, minChamferAngle);
+        List<BoundaryChamfers> chamferLocations = ChamfersLocator.findChamferLocations(expandedBoundaries, maxChamferAngle);
         Assert.verify(chamferLocations.size() == n, "Wrong number of expandedBoundaries");
 
         // find the junction locations. There are 2 places to consider

@@ -1,5 +1,6 @@
 package jext.configuration;
 
+import jext.util.FileCopy;
 import jext.util.logging.Logger;
 import jext.util.FileUtils;
 
@@ -259,8 +260,8 @@ public class OverrideConfiguration implements HierarchicalConfiguration {
     }
 
     private void writeEmptyConfiguration(File overrideFile) {
-        FileUtils.mkdirs(overrideFile.getAbsoluteFile().getParentFile());
-        FileUtils.asFile(overrideFile,
+        FileCopy.mkdirs(overrideFile.getAbsoluteFile().getParentFile());
+        FileCopy.asFile(overrideFile,
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<configuration/>"
         );

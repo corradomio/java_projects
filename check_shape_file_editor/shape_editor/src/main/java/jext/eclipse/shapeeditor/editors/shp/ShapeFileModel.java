@@ -1,4 +1,4 @@
-package jext.eclipse.shapeeditor.editor;
+package jext.eclipse.shapeeditor.editors.shp;
 
 import java.io.File;
 import java.util.ArrayList;
